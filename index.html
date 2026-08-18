@@ -124,6 +124,23 @@
   .flecha{color:var(--gris-3);flex:none}
   .flecha svg{width:16px;height:16px;display:block}
 
+  /* Mini hilo de match en cada pedido: vos de un lado, el proveedor del otro.
+     Mientras buscamos, el segundo nodo es un aro vacío; cuando aparecen
+     proveedores se enciende en latón, el mismo remate que en el ingreso. Así
+     el estado se entiende de un vistazo, sin depender de leer el sello. */
+  #lista-pedidos .item-pie > span:first-of-type{margin-right:auto}
+  #lista-pedidos .item-pie::before{content:'';flex:none;width:32px;height:8px;
+    background:
+      radial-gradient(circle at 4px 4px, var(--verde) 3.5px, transparent 4px),
+      radial-gradient(circle at 28px 4px, transparent 2.3px,
+        var(--linea-fuerte) 2.4px, var(--linea-fuerte) 3.5px, transparent 4px),
+      linear-gradient(90deg,var(--verde),var(--linea-fuerte)) no-repeat 4px 3.5px/24px 1px}
+  #lista-pedidos .item:has(.sello.verde) .item-pie::before{
+    background:
+      radial-gradient(circle at 4px 4px, var(--verde) 3.5px, transparent 4px),
+      radial-gradient(circle at 28px 4px, var(--laton) 3.5px, transparent 4px),
+      linear-gradient(90deg,var(--verde),var(--laton)) no-repeat 4px 3.5px/24px 1px}
+
   .sello{font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:.11em;
     text-transform:uppercase;border-radius:99px;padding:4px 9px;white-space:nowrap;flex:none;font-weight:500}
   .sello.gris{color:var(--gris);border:1px solid var(--linea-fuerte);background:var(--claro-2)}
