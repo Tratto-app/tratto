@@ -2159,9 +2159,14 @@ async function cargarConexiones(){
 }
 
 function filaConexion(m, titulo, meta){
+  /* El sello mostraba el estado tal cual viene de la base ("sugerido"), que es
+     una palabra de sistema. El color ya trataba igual a todo lo que no está
+     aceptado, así que el texto sigue la misma división en palabras de persona. */
+  const aceptado = m.estado === 'aceptado';
   return '<button class="item" data-match="'+m.id+'" type="button"><div class="item-top">' +
     '<span class="item-tit">'+esc(titulo)+'</span>' +
-    '<span class="sello '+(m.estado==='aceptado'?'verde':'oro')+'">'+esc(m.estado||'sugerido')+'</span></div>' +
+    '<span class="sello '+(aceptado?'verde':'oro')+'">' +
+    (aceptado ? 'Conectados' : 'Te lo recomendamos') + '</span></div>' +
     '<div class="item-meta"><span>'+esc(meta)+'</span></div>' +
     '<div class="item-pie"><span>Abrir conversación</span>' +
     '<span class="flecha"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 5l7 7-7 7"/></svg></span></div></button>';
