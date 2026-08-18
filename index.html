@@ -761,15 +761,27 @@
     text-transform:uppercase;color:var(--gris);margin-top:9px}
   .kpi-nota{font-size:11.5px;color:var(--gris-2);margin-top:6px;line-height:1.4}
   .kpi.ancho{grid-column:1/-1}
-  .embudo{margin-top:14px}
-  .emb{margin-bottom:13px}
-  .emb-top{display:flex;justify-content:space-between;align-items:baseline;font-size:13px;margin-bottom:6px}
+  /* El embudo es el hilo de match en vertical: cada etapa no es una métrica
+     suelta sino la misma relación avanzando, por eso los nodos van encadenados
+     por un hilo y el largo de cada tramo muestra cuánta gente llegó hasta ahí.
+     El nodo final va en latón, igual que el sello de trato cerrado del chat. */
+  .embudo{margin-top:16px}
+  .emb{margin-bottom:17px;padding-left:17px;position:relative}
+  .emb:last-child{margin-bottom:2px}
+  .emb::before{content:'';position:absolute;left:0;top:4px;width:7px;height:7px;
+    border-radius:50%;background:var(--verde);z-index:1}
+  .emb:last-child::before{background:var(--laton)}
+  .emb:not(:last-child)::after{content:'';position:absolute;left:3px;top:11px;bottom:-17px;
+    width:1px;background:var(--linea-fuerte)}
+  .emb-top{display:flex;justify-content:space-between;align-items:baseline;gap:12px;
+    font-size:13px;margin-bottom:8px}
   .emb-top b{font-weight:600}
-  .emb-top span{color:var(--gris);font-size:12px}
-  .emb-barra{height:9px;border-radius:5px;background:var(--claro-3);overflow:hidden}
-  .emb-relleno{height:100%;border-radius:5px;background:var(--verde);transition:width .5s ease}
-  .emb-relleno.oro{background:var(--laton)}
-  .emb-relleno.gris{background:var(--gris-3)}
+  .emb-top span{color:var(--gris);font-size:12px;font-family:'IBM Plex Mono',monospace}
+  .emb-barra{height:2px;border-radius:2px;background:var(--linea);overflow:hidden}
+  .emb-relleno{height:100%;border-radius:2px;background:var(--verde);transition:width .5s ease}
+  /* un solo hilo para todas las etapas: el dato es el largo, no el color */
+  .emb-relleno.oro,.emb-relleno.gris{background:var(--verde)}
+  .emb:last-child .emb-relleno{background:var(--laton)}
 
   /* ═══════════ XP DEL CLIENTE ═══════════ */
   .xp-caja{background:var(--noche);color:var(--claro);border-radius:var(--r);padding:20px;
