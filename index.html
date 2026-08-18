@@ -297,8 +297,18 @@
     font-size:12.5px;color:var(--gris);display:flex;align-items:center;gap:8px}
 
   /* ═══════════ CHAT ═══════════ */
-  .vista.chat{padding:0;display:flex;flex-direction:column;
-    height:calc(100dvh - 54px - var(--st));max-width:640px}
+  /* flex:none + min-height:0 hacen que se respete este alto fijo; si no, .vista
+     es flex:1 y crece con el contenido en vez de dejar scrollear el hilo. */
+  .vista.chat{padding:0;display:flex;flex-direction:column;flex:none;min-height:0;
+    height:calc(100dvh - 56px - var(--st));max-width:640px}
+  /* Mejor que descontar el alto de la topbar a mano: que la app ocupe la pantalla
+     y el chat se quede con lo que sobra. Así no se desfasa si cambia la topbar. */
+  .app:has(> .vista.chat){height:100dvh}
+  .app:has(> .vista.chat) > .vista.chat{flex:1;height:auto}
+  /* La pantalla activa es la que tiene que llenar ese alto y ordenar en columna
+     ficha / hilo / barra. Sin esto queda como bloque suelto y, en charlas largas,
+     la barra de envío termina abajo del borde de la pantalla. */
+  .vista.chat > .pantalla.activa{flex:1;min-height:0;display:flex;flex-direction:column}
   .chat-ficha{background:var(--noche);color:var(--claro);padding:15px 16px;flex:none;
     position:relative;overflow:hidden}
   .chat-ficha::after{content:'';position:absolute;inset:0;pointer-events:none;
@@ -317,10 +327,24 @@
   .cf-detalle.cerrada{display:none}
   .cf-datos{margin-top:10px;display:flex;flex-wrap:wrap;gap:5px 16px;font-size:12.5px}
   .cf-datos b{color:var(--claro);font-weight:600}
+  /* Conector: recuerda que esta conversación salió de un match real. */
+  .cf-vinculo{display:flex;align-items:center;gap:9px;margin-top:11px}
+  .cfv-motivo{display:flex;align-items:center;flex:none}
+  .cfv-punto{width:6px;height:6px;border-radius:50%;flex:none}
+  .cfv-punto.cliente{background:var(--verde-luz)}
+  .cfv-punto.proveedor{background:var(--laton)}
+  .cfv-hilo{width:26px;height:1px;background:linear-gradient(90deg,var(--verde-luz),var(--laton))}
+  .cfv-txt{font-family:'IBM Plex Mono',monospace;font-size:8.5px;letter-spacing:.16em;
+    text-transform:uppercase;color:var(--gris-2)}
 
-  .hilo-msg{flex:1;overflow-y:auto;padding:18px 16px 8px;
+  /* min-height:0 es lo que hace que scrollee el hilo y no la pantalla entera:
+     sin eso la barra de envío se va abajo del borde en charlas largas. */
+  .hilo-msg{flex:1;min-height:0;overflow-y:auto;padding:18px 16px 8px;
     background:var(--claro-2);display:flex;flex-direction:column;gap:9px;
     -webkit-overflow-scrolling:touch}
+  /* Cada mensaje conserva su alto natural y scrollea el hilo: si los dejamos
+     encogerse, las tarjetas de presupuesto se cortan por la mitad. */
+  .hilo-msg > *,.asis-hilo > *{flex:none}
   .dia{align-self:center;font-family:'IBM Plex Mono',monospace;font-size:9.5px;
     letter-spacing:.13em;text-transform:uppercase;color:var(--gris);
     background:var(--claro);border:1px solid var(--linea);border-radius:99px;
@@ -353,33 +377,66 @@
   .aviso-chat.visible{display:block}
 
   /* ═══════════ PRESUPUESTO EN EL CHAT ═══════════ */
-  .presu{max-width:86%;align-self:flex-start;background:var(--claro);
-    border:1px solid var(--linea-fuerte);border-left:3px solid var(--laton);
-    border-radius:12px;padding:14px 15px;box-shadow:var(--sombra);animation:subir .18s ease both}
-  .presu.mia{align-self:flex-end;border-left:1px solid var(--linea-fuerte);border-right:3px solid var(--laton)}
-  .presu-top{display:flex;align-items:center;justify-content:space-between;gap:10px}
+  /* El presupuesto sale de la conversación: ocupa el ancho completo y no se
+     alinea a ningún lado, así se lee como documento y no como un mensaje más.
+     Ojo: la tarjeta se vuelve a renderizar en cada sondeo (~4s), así que no
+     lleva animaciones largas — se verían en loop. */
+  .presu{align-self:stretch;background:var(--claro);margin:7px 0;overflow:hidden;
+    border:1px solid rgba(201,162,39,.5);border-top:3px solid var(--laton);
+    border-radius:var(--r);box-shadow:var(--sombra-alta);animation:subir .18s ease both}
+  .presu-top{display:flex;align-items:center;justify-content:space-between;gap:10px;
+    padding:10px 15px;background:rgba(201,162,39,.08);
+    border-bottom:1px solid rgba(201,162,39,.26)}
   .presu-tag{font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:.15em;
     text-transform:uppercase;color:var(--laton-osc);font-weight:600}
-  .presu-monto{font-family:'IBM Plex Sans Condensed',sans-serif;font-weight:700;font-size:22px;
-    letter-spacing:-.01em;margin-top:8px}
-  .presu-incluye{font-size:13.5px;color:var(--gris);line-height:1.5;margin-top:6px}
-  .presu-plazo{font-size:12.5px;color:var(--gris);margin-top:6px}
-  .presu-acciones{display:flex;gap:8px;margin-top:13px}
+  .presu-cuerpo{padding:15px}
+  .presu-monto{font-family:'IBM Plex Sans Condensed',sans-serif;font-weight:700;font-size:30px;
+    letter-spacing:-.02em;line-height:1}
+  .presu-datos{margin:15px 0 0;display:grid;gap:12px}
+  .presu-datos dt{font-family:'IBM Plex Mono',monospace;font-size:8.5px;letter-spacing:.17em;
+    text-transform:uppercase;color:var(--gris-2);margin-bottom:4px}
+  .presu-datos dd{margin:0;font-size:13.5px;line-height:1.5}
+  .presu-acciones{display:flex;gap:8px;margin-top:16px}
   .presu-acciones .btn{margin-top:0;padding:10px 14px;font-size:14px}
-  .presu .hora{display:block;margin-top:10px;font-size:10.5px;
+  .presu .hora{display:block;margin-top:12px;font-size:10.5px;
     font-family:'IBM Plex Mono',monospace;color:var(--gris-2)}
   .sello.alerta{color:var(--alerta);border:1px solid rgba(166,58,28,.4);background:var(--alerta-luz)}
 
-  .presu-abrir{flex:none;width:100%;background:var(--claro);border:none;border-top:1px solid var(--linea);
-    color:var(--verde);font:inherit;font-size:13.5px;font-weight:600;padding:11px 16px;cursor:pointer;
+  /* Estado aceptado: marco verde (todo bien) + el sello de match en latón,
+     el mismo motivo del ingreso. Es el momento en que el match se cumple. */
+  .presu[data-estado="aceptado"]{border-color:rgba(30,93,73,.45);border-top-color:var(--verde)}
+  .presu[data-estado="aceptado"] .presu-top{background:rgba(30,93,73,.07);
+    border-bottom-color:rgba(30,93,73,.22)}
+  .presu[data-estado="aceptado"] .presu-tag{color:var(--verde)}
+  .presu-firma{display:none;align-items:center;gap:11px;margin-top:20px}
+  .presu[data-estado="aceptado"] .presu-firma{display:flex}
+  .presu-hilo{flex:1;height:1px;background:linear-gradient(90deg,var(--linea-fuerte),var(--laton))}
+  .presu-sello{font-family:'IBM Plex Mono',monospace;font-size:8.5px;letter-spacing:.16em;
+    text-transform:uppercase;color:var(--laton-osc);font-weight:600;
+    border:1px solid rgba(201,162,39,.5);border-radius:99px;padding:4px 10px;flex:none}
+
+  /* Estado rechazado: sigue consultable, pero deja de pedir atención. */
+  .presu[data-estado="rechazado"]{border-color:var(--linea);border-top-color:var(--linea-fuerte);
+    box-shadow:var(--sombra)}
+  .presu[data-estado="rechazado"] .presu-top{background:var(--claro-2);border-bottom-color:var(--linea)}
+  .presu[data-estado="rechazado"] .presu-tag{color:var(--gris-2)}
+  .presu[data-estado="rechazado"] .presu-monto{color:var(--gris-2)}
+
+  /* Mandar el presupuesto es la acción de más valor del proveedor: va en latón
+     para que no se pierda como un renglón de texto más. */
+  .presu-abrir{flex:none;width:100%;background:rgba(201,162,39,.10);border:none;
+    border-top:1px solid rgba(201,162,39,.32);
+    color:var(--laton-osc);font:inherit;font-size:13.5px;font-weight:600;padding:12px 16px;cursor:pointer;
     display:flex;align-items:center;justify-content:center;gap:7px}
   .presu-abrir svg{width:16px;height:16px}
-  .presu-abrir:active{background:var(--claro-2)}
+  .presu-abrir:active{background:rgba(201,162,39,.2)}
 
   .presu-panel{flex:none;background:var(--claro);border-top:1px solid var(--linea);
     padding:16px 16px 6px}
   .presu-panel .campo{margin-bottom:14px}
   .presu-panel textarea{min-height:72px}
+  .presu-panel .btn.lleno{background:var(--laton-osc)}
+  .presu-panel .btn.lleno:active:not(:disabled){background:#755D0D}
 
   /* ═══════════ DECLARACIÓN ═══════════ */
   .declara{border:1px solid var(--linea-fuerte);border-radius:var(--r);padding:16px;
@@ -504,7 +561,7 @@
   .diag-baja .diag-eti{color:var(--gris)}
 
   /* ═══════════ ASISTENTE ═══════════ */
-  .asis-hilo{flex:1;overflow-y:auto;padding:18px 16px 8px;background:var(--claro-2);
+  .asis-hilo{flex:1;min-height:0;overflow-y:auto;padding:18px 16px 8px;background:var(--claro-2);
     display:flex;flex-direction:column;gap:10px;-webkit-overflow-scrolling:touch}
   .asis-burb{max-width:86%;padding:12px 15px;border-radius:15px;font-size:14.5px;
     line-height:1.55;box-shadow:var(--sombra);word-wrap:break-word;overflow-wrap:anywhere;
@@ -1167,6 +1224,14 @@
             <div class="cf-rol" id="ch-rol">—</div>
           </div>
           <button class="cf-abrir" id="ch-abrir" type="button">Ver ficha</button>
+        </div>
+        <div class="cf-vinculo" aria-hidden="true">
+          <span class="cfv-motivo">
+            <span class="cfv-punto cliente"></span>
+            <span class="cfv-hilo"></span>
+            <span class="cfv-punto proveedor"></span>
+          </span>
+          <span class="cfv-txt">Conectados por Tratto</span>
         </div>
         <div class="cf-detalle cerrada" id="ch-detalle">
           <div id="ch-desc">—</div>
@@ -2124,13 +2189,20 @@ function presuHTML(m){
       '<button class="btn vacio-b" data-rechazar-presu="'+m.id+'" type="button">Rechazar</button>' +
       '<button class="btn lleno" data-aceptar-presu="'+m.id+'" type="button">Aceptar</button></div>'
     : '';
-  return '<div class="presu '+(mia?'mia':'')+'" data-presu="'+m.id+'">' +
+  const estado = (est === 'aceptado' || est === 'rechazado') ? est : 'pendiente';
+  return '<div class="presu '+(mia?'mia':'')+'" data-estado="'+estado+'" data-presu="'+m.id+'">' +
     '<div class="presu-top"><span class="presu-tag">Presupuesto</span>'+badge+'</div>' +
-    '<div class="presu-monto">'+pesos(m.monto)+'</div>' +
-    '<div class="presu-incluye">'+esc(m.incluye)+'</div>' +
-    '<div class="presu-plazo">Plazo: '+esc(m.plazo)+'</div>' +
-    acciones +
-    '<span class="hora">'+hora(m.created_at)+'</span></div>';
+    '<div class="presu-cuerpo">' +
+      '<div class="presu-monto">'+pesos(m.monto)+'</div>' +
+      '<dl class="presu-datos">' +
+        '<div><dt>Qué incluye</dt><dd>'+esc(m.incluye)+'</dd></div>' +
+        '<div><dt>Plazo</dt><dd>'+esc(m.plazo)+'</dd></div>' +
+      '</dl>' +
+      acciones +
+      '<div class="presu-firma"><span class="presu-hilo"></span>' +
+        '<span class="presu-sello">Trato cerrado</span></div>' +
+      '<span class="hora">'+hora(m.created_at)+'</span>' +
+    '</div></div>';
 }
 
 function pintarMensajes(msgs, irAbajo){
