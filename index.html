@@ -214,8 +214,8 @@
   .rd dd .hueco{color:var(--gris-2);font-weight:400}
 
   /* ═══════════ AUTENTICACIÓN ═══════════ */
-  .hero{background:var(--noche);color:var(--claro);margin:-22px -16px 26px;
-    padding:calc(var(--st) + 28px) 20px 28px;position:relative;overflow:hidden}
+  .hero{background:var(--noche);color:var(--claro);margin:-22px -16px 34px;
+    padding:calc(var(--st) + 28px) 20px 32px;position:relative;overflow:hidden}
   .hero::after{content:'';position:absolute;inset:0;pointer-events:none;
     background:radial-gradient(130% 95% at 8% 0%, rgba(43,126,98,.34), transparent 62%),
                radial-gradient(90% 70% at 100% 100%, rgba(201,162,39,.11), transparent 58%)}
@@ -542,10 +542,10 @@
   @media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
 
   /* ═══════════ MODO DE INGRESO ═══════════ */
-  .roles{display:grid;gap:12px;margin-top:26px}
-  .rol{background:var(--claro);border:1px solid var(--linea-fuerte);border-radius:var(--r);
-    padding:18px;cursor:pointer;font:inherit;color:inherit;text-align:left;width:100%;
-    display:flex;align-items:center;gap:15px;box-shadow:var(--sombra);
+  .roles{display:grid;gap:12px;margin-top:4px}
+  .rol{background:var(--claro);border:1px solid var(--linea);border-radius:var(--r);
+    padding:16px 18px;cursor:pointer;font:inherit;color:inherit;text-align:left;width:100%;
+    display:flex;align-items:center;gap:15px;
     transition:border-color .16s,box-shadow .16s,transform .1s}
   .rol:active{transform:scale(.99)}
   .rol.elegido{border-color:var(--verde);box-shadow:0 0 0 3px rgba(30,93,73,.13)}
@@ -554,6 +554,9 @@
   .rol-ico svg{width:22px;height:22px;color:var(--verde);stroke-width:1.8}
   .rol.elegido .rol-ico{background:var(--verde);border-color:var(--verde)}
   .rol.elegido .rol-ico svg{color:#fff}
+  #rol-proveedor:not(.elegido) .rol-ico svg{color:var(--laton-osc)}
+  #rol-proveedor.elegido{border-color:var(--laton-osc);box-shadow:0 0 0 3px rgba(201,162,39,.16)}
+  #rol-proveedor.elegido .rol-ico{background:var(--laton-osc);border-color:var(--laton-osc)}
   .rol-tit{font-family:'IBM Plex Sans Condensed',sans-serif;font-weight:700;font-size:17px;line-height:1.2}
   .rol-txt{font-size:12.5px;color:var(--gris);margin-top:4px;line-height:1.45}
   .cambiar-modo{font:inherit;font-size:13px;font-weight:600;color:var(--verde);background:none;
