@@ -244,16 +244,25 @@
   .pest.activa{background:var(--claro);color:var(--tinta);font-weight:600;box-shadow:0 1px 2px rgba(14,24,21,.11)}
 
   /* ═══════════ CUENTA ═══════════ */
-  .placa{background:var(--claro);border:1px solid var(--linea);border-radius:var(--r);
-    box-shadow:var(--sombra);overflow:hidden}
-  .placa-top{background:var(--noche);color:var(--claro);padding:20px;display:flex;align-items:center;gap:14px;
+  /* La placa ya insinuaba una credencial: acá se termina la idea. Radio de
+     tarjeta física, marca de quién la emite arriba, y el hilo de match como
+     banda al pie del encabezado — la seña de identidad haciendo de banda de
+     seguridad, que es justo lo que se espera de un carnet. */
+  .placa{background:var(--claro);border:1px solid var(--linea);border-radius:14px;
+    box-shadow:var(--sombra-alta);overflow:hidden}
+  .placa-top{background:var(--noche);color:var(--claro);padding:18px 20px 20px;
     position:relative;overflow:hidden}
   .placa-top::after{content:'';position:absolute;inset:0;pointer-events:none;
     background:radial-gradient(110% 100% at 100% 0%, rgba(43,126,98,.30), transparent 60%)}
+  .placa-top::before{content:'';position:absolute;left:0;right:0;bottom:0;height:2px;z-index:2;
+    background:linear-gradient(90deg,var(--verde-luz),var(--laton))}
   .placa-top > *{position:relative;z-index:1}
-  .avatar{width:46px;height:46px;border-radius:50%;background:var(--noche-3);flex:none;
+  .placa-marca{font-family:'IBM Plex Mono',monospace;font-size:8.5px;letter-spacing:.19em;
+    text-transform:uppercase;color:var(--gris-2);margin-bottom:15px}
+  .placa-id{display:flex;align-items:center;gap:14px}
+  .avatar{width:48px;height:48px;border-radius:13px;background:var(--noche-3);flex:none;
     display:flex;align-items:center;justify-content:center;border:1px solid var(--noche-4);
-    font-family:'IBM Plex Sans Condensed',sans-serif;font-weight:700;font-size:20px;color:var(--laton)}
+    font-family:'IBM Plex Sans Condensed',sans-serif;font-weight:700;font-size:21px;color:var(--laton)}
   .placa-mail{font-weight:600;font-size:15px;word-break:break-all;line-height:1.3}
   .placa-estado{font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:.15em;
     text-transform:uppercase;color:var(--verde-luz);margin-top:4px;display:flex;align-items:center;gap:6px}
@@ -263,7 +272,9 @@
   .dato:last-child{border-bottom:none}
   .dato dt{font-size:10px;color:var(--gris);text-transform:uppercase;letter-spacing:.12em;
     font-family:'IBM Plex Mono',monospace;margin-bottom:6px}
-  .dato dd{font-family:'IBM Plex Mono',monospace;font-size:12px;word-break:break-all;line-height:1.5}
+  /* anywhere en vez de break-all: el identificador corta en los guiones y se lee
+     como un número de documento, no partido en cualquier lado. */
+  .dato dd{font-family:'IBM Plex Mono',monospace;font-size:12px;overflow-wrap:anywhere;line-height:1.5}
   .fila-copia{display:flex;gap:10px;align-items:flex-start}
   .copiar{font-family:'IBM Plex Sans',sans-serif;font-size:11.5px;font-weight:600;color:var(--verde);
     background:var(--claro-2);border:1px solid var(--linea);border-radius:5px;cursor:pointer;
@@ -978,10 +989,13 @@
 
       <div class="placa" style="margin-top:20px">
         <div class="placa-top">
-          <div class="avatar" id="c-inicial">—</div>
-          <div style="min-width:0">
-            <div class="placa-mail" id="c-mail">—</div>
-            <div class="placa-estado"><span class="pulso"></span>Sesión activa</div>
+          <div class="placa-marca">Cuenta Tratto</div>
+          <div class="placa-id">
+            <div class="avatar" id="c-inicial">—</div>
+            <div style="min-width:0">
+              <div class="placa-mail" id="c-mail">—</div>
+              <div class="placa-estado"><span class="pulso"></span>Sesión activa</div>
+            </div>
           </div>
         </div>
         <div class="placa-cuerpo">
