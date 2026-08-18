@@ -197,6 +197,13 @@
   label{display:block;font-weight:600;font-size:13.5px;margin-bottom:7px}
   .indice{font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--laton-osc);
     margin-right:9px;font-weight:600}
+  /* Bifurcación: la foto es el camino corto y los campos numerados el largo.
+     Decirlo con todas las letras evita que la pantalla arranque como un muro
+     de formulario, que es lo que espanta a quien no es técnico. */
+  .bifurca{display:flex;align-items:center;gap:12px;margin:0;
+    font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:.17em;
+    text-transform:uppercase;color:var(--gris-2)}
+  .bifurca::before,.bifurca::after{content:'';flex:1;height:1px;background:var(--linea)}
   .caja-monto{position:relative}
   .caja-monto .signo{position:absolute;left:14px;top:50%;transform:translateY(-50%);
     color:var(--gris-2);font-size:16px;pointer-events:none}
@@ -595,8 +602,13 @@
   .tasar-ico{width:42px;height:42px;border-radius:11px;background:var(--noche-3);flex:none;
     display:flex;align-items:center;justify-content:center;border:1px solid var(--noche-4)}
   .tasar-ico svg{width:21px;height:21px;color:var(--verde-luz);stroke-width:1.8}
-  .tasar-tit{font-family:'IBM Plex Sans Condensed',sans-serif;font-weight:700;font-size:17px;line-height:1.2}
-  .tasar-txt{font-size:12.5px;color:var(--gris-2);margin-top:4px;line-height:1.45}
+  .tasar-kicker{display:block;font-family:'IBM Plex Mono',monospace;font-size:8.5px;
+    letter-spacing:.19em;text-transform:uppercase;color:var(--laton);margin-bottom:7px}
+  /* display:block porque son <span>: sin esto el título y la bajada se pegan
+     en el mismo renglón y el margen de arriba de la bajada no hace nada. */
+  .tasar-tit{display:block;font-family:'IBM Plex Sans Condensed',sans-serif;font-weight:700;
+    font-size:17px;line-height:1.2}
+  .tasar-txt{display:block;font-size:12.5px;color:var(--gris-2);margin-top:5px;line-height:1.45}
   .tasar:active{transform:scale(.99)}
 
   .diag{background:var(--claro);border:1px solid var(--linea-fuerte);border-left:3px solid var(--laton);
@@ -1087,6 +1099,7 @@
         <span class="tasar-top">
           <span class="tasar-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7.5h3l1.5-2h7L17 7.5h3a1 1 0 0 1 1 1v9a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1v-9a1 1 0 0 1 1-1z"/><circle cx="12" cy="13" r="3.4"/></svg></span>
           <span style="min-width:0">
+            <span class="tasar-kicker">Empezá por acá</span>
             <span class="tasar-tit">Sacale una foto y te decimos cuánto sale</span>
             <span class="tasar-txt">Completamos el pedido por vos, con un precio orientativo. Cada proveedor pone el suyo.</span>
           </span>
@@ -1094,6 +1107,8 @@
       </button>
       <input type="file" id="tasar-archivo" accept="image/*" capture="environment" class="oculto">
       <div id="tasar-resultado"></div>
+
+      <div class="bifurca"><span>o cargá los datos vos</span></div>
 
       <div style="margin-top:26px">
         <div class="campo">
