@@ -500,6 +500,20 @@
   .tildar input{width:20px;height:20px;flex:none;margin-top:1px;accent-color:var(--verde)}
   .tildar span{font-size:13.5px;line-height:1.45;font-weight:500}
 
+  /* ═══════════ PUBLICAR UN SERVICIO: EL MISMO FORMULARIO, EN CLAVE LATÓN ═══════════ */
+  /* Es el espejo de "nuevo pedido": misma estructura de campos numerados, pero
+     acá estás del lado del que ofrece. El cambio de color avisa el cambio de rol
+     sin tener que releer nada. Los índices ya son latón en todos los
+     formularios, así que lo que cambia es todo lo que estaba en verde. */
+  #p-nuevo-proveedor .kicker{color:var(--laton-osc)}
+  #p-nuevo-proveedor input:focus,
+  #p-nuevo-proveedor select:focus,
+  #p-nuevo-proveedor textarea:focus{border-color:var(--laton-osc);
+    box-shadow:0 0 0 3px rgba(201,162,39,.16)}
+  #p-nuevo-proveedor .tildar input{accent-color:var(--laton-osc)}
+  #p-nuevo-proveedor .btn.lleno{background:var(--laton-osc)}
+  #p-nuevo-proveedor .btn.lleno:active:not(:disabled){background:#755D0D}
+
   /* ═══════════ REPORTAR Y BAJA ═══════════ */
   .reportar{background:none;border:none;font:inherit;font-size:11.5px;color:var(--gris-2);
     cursor:pointer;padding:5px 7px;display:inline-flex;align-items:center;gap:5px}
