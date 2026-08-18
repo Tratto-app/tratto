@@ -124,22 +124,34 @@
   .flecha{color:var(--gris-3);flex:none}
   .flecha svg{width:16px;height:16px;display:block}
 
-  /* Mini hilo de match en cada pedido: vos de un lado, el proveedor del otro.
-     Mientras buscamos, el segundo nodo es un aro vacío; cuando aparecen
-     proveedores se enciende en latón, el mismo remate que en el ingreso. Así
-     el estado se entiende de un vistazo, sin depender de leer el sello. */
-  #lista-pedidos .item-pie > span:first-of-type{margin-right:auto}
-  #lista-pedidos .item-pie::before{content:'';flex:none;width:32px;height:8px;
+  /* Hilo de match en miniatura dentro de una tarjeta: dos nodos unidos por el
+     hilo. La geometría es común; cada lista define quién es cada nodo, así el
+     mismo dibujo significa siempre lo mismo — verde el cliente, latón el
+     proveedor — y el estado se entiende sin leer el sello. */
+  #lista-pedidos .item-pie,#lista-cliente .item-pie,#lista-proveedor .item-pie{
+    --nodo-a:var(--verde);--nodo-b:var(--laton)}
+  #lista-proveedor .item-pie{--nodo-a:var(--laton);--nodo-b:var(--verde)}
+  #lista-pedidos .item-pie > span:first-of-type,
+  #lista-cliente .item-pie > span:first-of-type,
+  #lista-proveedor .item-pie > span:first-of-type{margin-right:auto}
+  #lista-pedidos .item-pie::before,
+  #lista-cliente .item-pie::before,
+  #lista-proveedor .item-pie::before{content:'';flex:none;width:32px;height:8px;
+    background:
+      radial-gradient(circle at 4px 4px, var(--nodo-a) 3.5px, transparent 4px),
+      radial-gradient(circle at 28px 4px, var(--nodo-b) 3.5px, transparent 4px),
+      linear-gradient(90deg,var(--nodo-a),var(--nodo-b)) no-repeat 4px 3.5px/24px 1px}
+  /* pedido que todavía no tiene proveedores: el otro extremo queda sin encender */
+  #lista-pedidos .item:not(:has(.sello.verde)) .item-pie::before{
     background:
       radial-gradient(circle at 4px 4px, var(--verde) 3.5px, transparent 4px),
       radial-gradient(circle at 28px 4px, transparent 2.3px,
         var(--linea-fuerte) 2.4px, var(--linea-fuerte) 3.5px, transparent 4px),
       linear-gradient(90deg,var(--verde),var(--linea-fuerte)) no-repeat 4px 3.5px/24px 1px}
-  #lista-pedidos .item:has(.sello.verde) .item-pie::before{
-    background:
-      radial-gradient(circle at 4px 4px, var(--verde) 3.5px, transparent 4px),
-      radial-gradient(circle at 28px 4px, var(--laton) 3.5px, transparent 4px),
-      linear-gradient(90deg,var(--verde),var(--laton)) no-repeat 4px 3.5px/24px 1px}
+  /* En conexiones el sello ya usa el latón para "sugerido", así que el rol se
+     marca con el filete lateral y no con el sello. */
+  #lista-cliente .item{border-left:3px solid var(--verde)}
+  #lista-proveedor .item{border-left:3px solid var(--laton-osc)}
 
   .sello{font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:.11em;
     text-transform:uppercase;border-radius:99px;padding:4px 9px;white-space:nowrap;flex:none;font-weight:500}
