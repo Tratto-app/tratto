@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="es-AR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Hair Beauty Salón — qué tiene el sitio</title>
+<style>
+@font-face{font-family:'Pinyon Script';src:url('fuentes/pinyon-script-latin.woff2') format('woff2');font-weight:400;font-display:swap}
+@font-face{font-family:'Jost';src:url('fuentes/jost-latin.woff2') format('woff2');font-weight:300 500;font-display:swap}
+
+:root{
+  --negro:#0B0A0A;--negro-2:#161213;
+  --rose:#B98A86;--rose-luz:#E3C0B8;--rose-osc:#7E5450;
+  --blanco:#F5EFE9;--gris:#A9A09B;--ang:95deg;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{
+  background:var(--negro);color:var(--blanco);
+  font-family:'Jost',system-ui,sans-serif;font-weight:300;
+  font-size:17px;line-height:1.65;
+  -webkit-font-smoothing:antialiased;
+}
+.hoja{max-width:640px;margin:0 auto;padding:56px 26px 80px}
+
+.tapa{margin-bottom:52px}
+.tapa::before{content:'';display:block;width:52px;height:1px;margin-bottom:22px;
+  background:linear-gradient(var(--ang),var(--rose-luz),rgba(185,138,134,.15))}
+.caps{font-size:10px;text-transform:uppercase;letter-spacing:.26em;color:var(--gris)}
+.tapa h1{
+  font-family:'Pinyon Script','Snell Roundhand',cursive;font-weight:400;
+  font-size:54px;line-height:1;margin:14px 0 10px;color:var(--blanco);
+}
+.tapa p{color:var(--gris);max-width:34ch}
+
+h2{
+  font-size:24px;font-weight:300;line-height:1.25;
+  color:var(--blanco);margin:44px 0 14px;
+}
+p{margin-bottom:15px;color:var(--gris)}
+p b,li b{color:var(--blanco);font-weight:400}
+
+.recorrido{list-style:none;margin:18px 0 8px}
+.recorrido li{padding:16px 0;display:grid;grid-template-columns:34px 1fr;column-gap:12px;align-items:baseline}
+.recorrido .n{font-size:10px;letter-spacing:.14em;color:var(--rose-osc);text-transform:uppercase}
+.recorrido .q{font-size:19px;color:var(--blanco);line-height:1.3}
+.recorrido .d{grid-column:2;margin-top:5px;color:var(--gris);font-size:16px}
+
+.pedido{list-style:none;margin:16px 0}
+.pedido li{padding:11px 0 11px 20px;position:relative;color:var(--gris)}
+.pedido li::before{content:'';position:absolute;left:0;top:19px;width:8px;height:1px;background:var(--rose)}
+
+.aparte{
+  margin:34px 0;padding:22px 22px 24px;background:var(--negro-2);
+  border-top:1px solid rgba(185,138,134,.25);
+}
+.aparte p:last-child{margin-bottom:0}
+
+.firma{
+  display:block;margin-top:52px;
+  font-family:'Pinyon Script','Snell Roundhand',cursive;
+  font-size:34px;color:var(--rose);line-height:1;
+}
+.pie{display:block;margin-top:14px}
+
+@media print{
+  body{font-size:12pt}
+  .hoja{max-width:none;padding:0}
+  h2{margin-top:26px;page-break-after:avoid}
+  .recorrido li,.aparte{page-break-inside:avoid}
+}
+</style>
+</head>
+<body>
+<div class="hoja">
+
+  <header class="tapa">
+    <span class="caps">Hair Beauty Salón · Didy Zárate</span>
+    <h1>Tu sitio</h1>
+    <p>Qué tiene, por qué está así, y qué falta.</p>
+  </header>
+
+  <p>Didy, esto es lo que quedó armado hasta ahora. Leelo cuando tengas cinco
+  minutos y decime qué te gusta y qué no. Todo se puede cambiar, así que no te
+  guardes nada.</p>
+
+  <h2>Está hecho para el celular, no para la computadora</h2>
+
+  <p>Casi todas las que entren van a llegar tocando el link de tu Instagram,
+  con el teléfono en una mano, en el colectivo o esperando en una cola. Ese es
+  el caso real, así que el sitio se armó para eso primero.</p>
+
+  <p>Por eso lo importante quedó <b>abajo de la pantalla</b>, que es donde
+  llega el pulgar sin acomodar la mano, y las fotos ocupan todo el ancho. En la
+  computadora también se ve bien, pero si en algún momento hay que elegir entre
+  que quede lindo en la compu o cómodo en el celular, gana el celular.</p>
+
+  <h2>Lo que ve alguien que entra, de arriba a abajo</h2>
+
+  <ul class="recorrido">
+    <li>
+      <span class="n">01</span>
+      <span class="q">La portada</span>
+      <span class="d">Una foto grande, sin una sola palabra encima, que se va
+      apagando dentro del negro. Abajo tu nombre y el botón de WhatsApp. Nada
+      más. En los primeros dos segundos tiene que entender qué hacés y cómo
+      escribirte.</span>
+    </li>
+    <li>
+      <span class="n">02</span>
+      <span class="q">Tus trabajos</span>
+      <span class="d">Es el corazón del sitio. Las fotos no van todas del mismo
+      tamaño: una grande, después el antes y después, después dos chicas, y
+      otra grande. Ese cambio de tamaño hace que el ojo frene en vez de pasar
+      de largo. El nombre de cada trabajo va abajo, chiquito, para no taparte
+      el color.</span>
+    </li>
+    <li>
+      <span class="n">03</span>
+      <span class="q">En qué te especializás</span>
+      <span class="d">Balayage, rubios y morochas, cada uno con una línea. Los
+      textos los escribí de borrador: cambialos por cómo lo decís vos.</span>
+    </li>
+    <li>
+      <span class="n">04</span>
+      <span class="q">Quién sos</span>
+      <span class="d">Tu foto y un par de líneas en primera persona, firmadas
+      con tu nombre escrito a mano. Acá la foto va más chica que las de los
+      trabajos, a propósito: si va igual de grande, se lee como una muestra más
+      de color en vez de como vos.</span>
+    </li>
+    <li>
+      <span class="n">05</span>
+      <span class="q">Dónde estás</span>
+      <span class="d">Maza 1193, con un link que le abre el mapa del teléfono y
+      la lleva caminando hasta la puerta. Los horarios están esperando que me
+      los pases.</span>
+    </li>
+    <li>
+      <span class="n">06</span>
+      <span class="q">El cierre</span>
+      <span class="d">El último empujón para que te escriba, y abajo el link a
+      tu Instagram.</span>
+    </li>
+  </ul>
+
+  <h2>El WhatsApp no se pierde nunca de vista</h2>
+
+  <p>Todo el sitio está armado para una sola cosa: que la persona termine
+  escribiéndote. Si mira las fotos y se va, no sirvió de nada.</p>
+
+  <p>Por eso hay un botón fijo abajo a la derecha que la acompaña todo el
+  scroll. Cuando lo toca se le abre el WhatsApp con el mensaje ya escrito
+  &mdash;<b>&ldquo;Hola Didy! Quería sacar un turno&rdquo;</b>&mdash; así no
+  tiene que pensar cómo arrancar. Esa tontería es la diferencia entre que te
+  escriba y que lo deje para después.</p>
+
+  <p>No le puse uno de esos formularios de &ldquo;nombre, mail,
+  consulta&rdquo;. Desde el celular nadie los llena, y a vos te llegaría a un
+  mail que no mirás. Mejor que caiga donde ya estás.</p>
+
+  <div class="aparte">
+    <p>Un detalle: el botón que dice &ldquo;Mandame una foto y te digo&rdquo;,
+    en la parte de precios, te llega con un mensaje distinto al del resto. Así,
+    apenas te escriben, ya sabés si te están preguntando un presupuesto o
+    pidiendo un turno.</p>
+  </div>
+
+  <h2>Por qué es negro con rosa</h2>
+
+  <p>No lo elegí yo: salió de tu logo. El negro, el rosa viejo y el blanco
+  tibio ya eran tuyos, y la letra manuscrita también. Lo único que hice fue
+  estirar eso mismo a todas las secciones.</p>
+
+  <p>El negro además tiene una razón práctica: sobre fondo negro, el pelo
+  rubio y los reflejos se ven como en una foto de backstage. Sobre fondo
+  blanco, el mismo trabajo se ve como un folleto de peluquería.</p>
+
+  <p>Y hay un detalle que se repite en todo el sitio: <b>un hilo de luz que
+  cruza en diagonal</b>. Aparece grande en la portada, chiquito debajo de cada
+  título, y suave en el fondo del final. Es siempre el mismo, cambiando de
+  tamaño. Está ahí porque <i>balayage</i>, en francés, quiere decir
+  &ldquo;barrido&rdquo;: es tu especialidad convertida en marca visual, sin
+  tener que dibujar una tijera como hacen todos.</p>
+
+  <h2>Las fotos son lo que falta, y son la mitad del sitio</h2>
+
+  <p>Esto es lo más importante del documento, así que te lo digo derecho:
+  <b>las imágenes que estás viendo ahora no son trabajos tuyos.</b> Son
+  texturas que armé con los colores del sitio para que puedas ver cómo queda el
+  diseño. El sitio no se puede publicar así.</p>
+
+  <p>Necesito ocho fotos tuyas, verticales, con buena luz y &mdash;esto
+  importa&mdash; <b>sin filtro</b>. Vos vendés color: si la foto tiene un
+  filtro que le cambia el tono, la clienta llega al salón esperando algo que no
+  era. El sitio tampoco les toca el color, por la misma razón.</p>
+
+  <p>Lo más rápido es que las saques de tu propio Instagram, que ya están
+  sacadas y son trabajos de verdad.</p>
+
+  <h2>Lo que necesito que me mandes</h2>
+
+  <ul class="pedido">
+    <li><b>Una foto para la portada.</b> Vertical, alguien mostrando el color,
+    de espaldas o de tres cuartos.</li>
+    <li><b>Cuatro fotos de trabajos</b> para la galería.</li>
+    <li><b>Un antes y un después</b> del mismo trabajo. Que sean con la misma
+    luz y el mismo encuadre: si el &ldquo;antes&rdquo; está sacado con luz fea,
+    el &ldquo;después&rdquo; parece photoshopeado y se pierde justo lo que
+    queremos mostrar.</li>
+    <li><b>Una foto tuya</b> para la parte de quién sos. Sirve una en el salón,
+    no hace falta que sea de estudio.</li>
+    <li><b>Los días y horarios</b> que atendés.</li>
+    <li><b>El logo en archivo</b>, si lo tenés. Con eso ajusto los colores
+    exactos y uso tu firma de verdad en lugar de una letra parecida.</li>
+    <li><b>Que leas los textos</b> de servicios y el de quién sos. Están
+    escritos de borrador y quiero que suenen a vos, no a mí.</li>
+  </ul>
+
+  <h2>Qué pasa cuando esté listo</h2>
+
+  <p>El sitio es un archivo, no un programa. No tiene base de datos ni nada que
+  se rompa solo, así que no hay mantenimiento mensual. Se sube una vez y
+  queda.</p>
+
+  <p>Ese link es el que va en la bio de tu Instagram. Si más adelante querés un
+  nombre propio, tipo hairbeautysalon.com.ar, eso se compra aparte y se paga
+  una vez por año.</p>
+
+  <p>Cambiar una foto más adelante es abrir la carpeta y reemplazar el archivo.
+  No hace falta tocar nada de programación.</p>
+
+  <h2>Ahora te toca a vos</h2>
+
+  <p>Miralo en el celular, tranquila, y decime qué cambiarías. Si hay algo que
+  no te representa &mdash;el rosa, el orden de las secciones, alguna
+  palabra&mdash; se cambia y listo. Es tu salón: tiene que sonar a vos.</p>
+
+  <span class="firma">Hair Beauty</span>
+  <span class="caps pie">Maza 1193 · Boedo, CABA</span>
+
+</div>
+</body>
+</html>

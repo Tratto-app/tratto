@@ -1,0 +1,673 @@
+<!DOCTYPE html>
+<html lang="es-AR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#0B0A0A">
+<title>Hair Beauty Salón — Didy Zárate | Peluquería en Boedo, CABA</title>
+<meta name="description" content="Rubios, balayage y morochas. Peluquería de Didy Zárate en Maza 1193, Boedo, CABA. Escribime por WhatsApp y sacá tu turno.">
+
+<!-- Para cuando alguien comparte el link por WhatsApp o lo pone en la bio de Instagram -->
+<meta property="og:type" content="website">
+<meta property="og:title" content="Hair Beauty Salón — Didy Zárate">
+<meta property="og:description" content="Rubios, balayage y morochas. Te espero en Boedo.">
+<meta property="og:image" content="fotos/hero.jpg">
+<meta property="og:locale" content="es_AR">
+<!-- Al publicar: og:image tiene que ser la dirección completa
+     (https://tudominio.com/fotos/hero.jpg), si no WhatsApp e Instagram
+     no muestran la miniatura al compartir el link. -->
+
+<!-- El barrido como ícono de la pestaña. Va acá adentro, no es un
+     archivo aparte. -->
+<link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns%3D%27http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%27%20viewBox%3D%270%200%2032%2032%27%3E%3Cdefs%3E%3ClinearGradient%20id%3D%27b%27%20x1%3D%270%27%20y1%3D%271%27%20x2%3D%271%27%20y2%3D%270%27%3E%3Cstop%20offset%3D%270%27%20stop-color%3D%27%237E5450%27%2F%3E%3Cstop%20offset%3D%27.55%27%20stop-color%3D%27%23E3C0B8%27%2F%3E%3Cstop%20offset%3D%271%27%20stop-color%3D%27%23B98A86%27%2F%3E%3C%2FlinearGradient%3E%3C%2Fdefs%3E%3Crect%20width%3D%2732%27%20height%3D%2732%27%20fill%3D%27%230B0A0A%27%2F%3E%3Cpath%20d%3D%27M2%2023L30%209%27%20stroke%3D%27url%28%23b%29%27%20stroke-width%3D%273%27%20stroke-linecap%3D%27round%27%2F%3E%3C%2Fsvg%3E">
+
+<style>
+/* Las tipografías se sirven desde esta misma carpeta: cargan más rápido
+   con datos móviles y el sitio no depende de que Google responda.
+   Jost y Pinyon Script, ambas con licencia SIL Open Font License. */
+@font-face{
+  font-family:'Pinyon Script';
+  src:url('fuentes/pinyon-script-latin.woff2') format('woff2');
+  font-weight:400;font-style:normal;font-display:swap;
+}
+@font-face{
+  font-family:'Jost';
+  src:url('fuentes/jost-latin.woff2') format('woff2');
+  font-weight:300 500;font-style:normal;font-display:swap;
+}
+:root{
+  /* Paleta del logo: negro profundo + rosé metálico + blanco cálido.
+     Si tenemos el archivo del logo, estos valores se ajustan contra él. */
+  --negro:#0B0A0A;
+  --negro-2:#161213;
+  --rose:#B98A86;
+  --rose-luz:#E3C0B8;
+  --rose-osc:#7E5450;
+  --blanco:#F5EFE9;
+  --gris:#A9A09B;
+
+  /* EL BARRIDO — elemento firma. Un solo ángulo en todo el sitio.
+     La luz barre a 95°; la foto se disuelve a 185°, o sea exactamente
+     perpendicular al barrido. Ese es el sistema, no se cambia por sección. */
+  --ang:95deg;
+  --ang-perp:185deg;
+
+  --sb:env(safe-area-inset-bottom,0px);
+}
+
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html{-webkit-text-size-adjust:100%;background:var(--negro)}
+body{
+  background:var(--negro);
+  color:var(--blanco);
+  font-family:'Jost',system-ui,-apple-system,'Segoe UI',sans-serif;
+  font-size:16px;line-height:1.55;font-weight:300;
+  -webkit-font-smoothing:antialiased;
+  overflow-x:hidden;
+}
+::selection{background:var(--rose-osc);color:var(--blanco)}
+
+/* Quien navega con teclado tiene que ver dónde está parado. */
+a:focus-visible,button:focus-visible{
+  outline:2px solid var(--rose-luz);outline-offset:3px;border-radius:2px;
+}
+a{color:inherit;text-decoration:none}
+img{display:block;max-width:100%}
+
+/* Sans en mayúsculas con tracking amplio: datos, etiquetas, subtítulos. */
+.caps{
+  font-size:10px;font-weight:400;
+  text-transform:uppercase;letter-spacing:.26em;
+  color:var(--gris);
+}
+
+/* ══════════════ HERO ══════════════ */
+
+.hero{
+  position:relative;
+  min-height:100svh;
+  display:flex;flex-direction:column;justify-content:flex-end;
+  overflow:hidden;
+  padding:0 24px calc(30px + var(--sb));
+}
+
+/* La foto ocupa la parte de arriba y se disuelve en el negro.
+   La máscara es lo que hace que no haya un borde recto de foto: el pelo
+   se va apagando dentro del fondo. */
+.hero-foto{
+  position:absolute;top:0;left:0;right:0;
+  height:74%;
+  background:var(--negro-2);
+  -webkit-mask-image:linear-gradient(var(--ang-perp),#000 44%,rgba(0,0,0,.6) 68%,transparent 92%);
+  mask-image:linear-gradient(var(--ang-perp),#000 44%,rgba(0,0,0,.6) 68%,transparent 92%);
+}
+.hero-foto img{
+  position:absolute;inset:0;z-index:1; /* la foto va por encima del hueco */
+  width:100%;height:100%;
+  object-fit:cover;object-position:center 32%;
+}
+
+/* EL BARRIDO, escala L: el filo de luz donde la foto entrega al negro.
+   Es el único barrido de esta pantalla. Si aparece un segundo, deja de
+   leerse como firma y pasa a ser textura. */
+.hero-txt::before{
+  content:'';
+  position:absolute;bottom:100%;left:50%;
+  width:130vw;height:1px;margin-bottom:40px;
+  background:linear-gradient(var(--ang),
+    transparent 8%,
+    rgba(185,138,134,.3) 30%,
+    var(--rose-luz) 52%,
+    rgba(185,138,134,.3) 72%,
+    transparent 92%);
+  transform:translateX(-50%) rotate(-5deg);
+  opacity:.8;
+  pointer-events:none;
+}
+
+/* Lugar de la foto mientras no tengamos las reales.
+   No usamos fotos de stock: mejor un hueco declarado. */
+.hero-slot{
+  position:absolute;inset:0;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  gap:10px;
+  background:
+    radial-gradient(120% 80% at 50% 25%, #201a1b 0%, var(--negro) 72%);
+  border-bottom:1px dashed rgba(126,84,80,.5);
+}
+.hero-slot span{color:var(--rose-osc)}
+.hero-slot .slot-nota{font-size:11px;letter-spacing:.04em;text-transform:none;color:#5a4b49}
+
+/* ── Bloque de abajo: todo al alcance del pulgar ── */
+.hero-txt{position:relative;z-index:2;text-align:center}
+
+.marca{
+  font-family:'Pinyon Script','Snell Roundhand','Segoe Script',cursive;
+  font-weight:400;
+  font-size:clamp(46px,15vw,64px);
+  line-height:.95;
+  color:var(--blanco);
+  margin-bottom:14px;
+}
+.marca-sub{
+  display:block;
+  font-family:'Jost',sans-serif;
+  font-size:10px;font-weight:400;
+  text-transform:uppercase;letter-spacing:.34em;
+  color:var(--rose);
+  margin-top:12px;
+  text-indent:.34em; /* compensa el tracking del último caracter */
+}
+
+.hero-linea{
+  font-size:16px;
+  color:var(--gris);
+  max-width:26ch;
+  margin:0 auto 26px;
+}
+.hero-linea b{display:block;margin-top:2px;color:var(--blanco);font-weight:400}
+
+/* ── Botón de WhatsApp: la acción principal del sitio ── */
+.cta{
+  display:flex;align-items:center;justify-content:center;gap:10px;
+  width:100%;min-height:54px;
+  padding:15px 22px;
+  background:var(--rose);
+  color:var(--negro);
+  font-size:15px;font-weight:500;letter-spacing:.02em;
+  border-radius:2px;
+  transition:background .2s ease,transform .1s ease;
+}
+.cta:active{background:var(--rose-luz);transform:scale(.985)}
+.cta svg{width:19px;height:19px;flex:none}
+
+.hero-dir{
+  margin-top:18px;
+  display:inline-block;
+  padding:8px 4px; /* área tocable, es un link a Google Maps */
+}
+
+/* ── Botón flotante: aparece cuando el de arriba se fue de pantalla ── */
+.wa-flota{
+  position:fixed;right:16px;bottom:calc(16px + var(--sb));z-index:50;
+  display:flex;align-items:center;gap:9px;
+  min-height:48px;padding:12px 18px;
+  background:var(--rose);color:var(--negro);
+  font-size:14px;font-weight:500;
+  border-radius:999px;
+  box-shadow:0 6px 22px rgba(0,0,0,.55);
+  opacity:0;transform:translateY(14px);pointer-events:none;
+  transition:opacity .3s ease,transform .3s ease;
+}
+.wa-flota.visible{opacity:1;transform:none;pointer-events:auto}
+.wa-flota svg{width:18px;height:18px;flex:none}
+
+
+/* ══════════════ TRABAJOS ══════════════ */
+
+.sec{padding:64px 24px 76px}
+
+.sec-cab{margin-bottom:34px}
+/* EL BARRIDO, escala M: subrayado corto del título. Es el único de
+   esta sección; las fotos van limpias para no competir con el color. */
+.sec-cab::before{
+  content:'';display:block;
+  width:52px;height:1px;margin-bottom:20px;
+  background:linear-gradient(var(--ang),var(--rose-luz),rgba(185,138,134,.15));
+}
+.sec-eyebrow{display:block;margin-bottom:10px}
+.sec-tit{
+  font-size:29px;font-weight:300;line-height:1.15;
+  letter-spacing:-.01em;color:var(--blanco);
+}
+.sec-bajada{margin-top:12px;font-size:15px;color:var(--gris);max-width:32ch}
+
+/* Las fotos: el marco reserva el lugar exacto para que nada salte
+   mientras carga, y muestra el hueco marcado si el archivo no está. */
+.marco{position:relative;overflow:hidden;background:var(--negro-2)}
+.marco::after{
+  content:'foto → ' attr(data-foto);
+  position:absolute;inset:0;
+  display:flex;align-items:center;justify-content:center;text-align:center;
+  padding:12px;
+  border:1px dashed rgba(126,84,80,.45);
+  background:radial-gradient(120% 90% at 50% 30%,#1c1718 0%,var(--negro) 75%);
+  font-size:11px;letter-spacing:.05em;color:#5f4f4d;
+}
+.marco img{
+  position:absolute;inset:0;z-index:1;
+  width:100%;height:100%;object-fit:cover;
+}
+
+.obra figcaption{margin-top:11px}
+.obra .caps{color:var(--rose)}
+
+.r-4-5 .marco{aspect-ratio:4/5}
+.r-3-4 .marco{aspect-ratio:3/4}
+
+.obras{display:flex;flex-direction:column;gap:44px}
+
+/* Antes y después: mismo encuadre, y el después más grande.
+   Sin slider: en el celular estorba más de lo que aporta. */
+.par-ad{display:grid;grid-template-columns:1fr 1.75fr;gap:10px;align-items:end}
+.par-ad .marco{aspect-ratio:3/4}
+.par-ad figcaption{margin-top:9px}
+.par-ad .caps{color:var(--gris)}
+.par-ad .es-despues .caps{color:var(--rose)}
+.ad-titulo{margin-bottom:14px}
+
+.duo{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+
+.mas-ig{
+  display:inline-block;margin-top:40px;padding:10px 2px;
+  color:var(--gris);font-size:14px;
+  border-bottom:1px solid rgba(126,84,80,.55);
+}
+.mas-ig b{color:var(--rose);font-weight:400}
+
+
+/* ══════════════ SERVICIOS ══════════════ */
+
+.servicios{display:flex;flex-direction:column;gap:34px}
+
+/* Lista numerada, no tarjetas con íconos: el número marca el ritmo y
+   el nombre del servicio es lo que pesa. */
+.serv{display:grid;grid-template-columns:36px 1fr;column-gap:14px;align-items:baseline}
+.serv-num{color:var(--rose-osc);letter-spacing:.14em}
+.serv-nom{font-size:25px;font-weight:300;line-height:1.2;color:var(--blanco)}
+.serv-desc{grid-column:2;margin-top:7px;font-size:15px;color:var(--gris);max-width:34ch}
+
+/* Los precios de color dependen del largo y del estado del pelo, así que
+   en vez de una lista de precios el cierre empuja a WhatsApp. */
+.nota-precio{
+  margin-top:48px;padding:24px 22px;
+  background:var(--negro-2);
+}
+.nota-precio p{font-size:15px;color:var(--gris);max-width:36ch}
+.nota-precio a{
+  display:inline-block;margin-top:14px;
+  color:var(--rose);font-size:15px;
+  border-bottom:1px solid rgba(185,138,134,.5);
+  padding-bottom:2px;
+}
+
+
+/* ══════════════ SOBRE DIDY ══════════════ */
+
+/* El retrato no va a sangre como los trabajos: más chico y corrido a un
+   lado, así se lee como persona y no como muestra de trabajo. */
+.sobre-foto{width:76%;max-width:290px}
+.sobre-foto .marco{aspect-ratio:3/4}
+
+.sobre-txt{margin-top:28px;font-size:16px;color:var(--gris);max-width:34ch}
+.sobre-txt p + p{margin-top:14px}
+.sobre-txt b{color:var(--blanco);font-weight:400}
+
+/* La letra manuscrita vuelve solo acá, como firma al pie de lo que
+   cuenta. Es lo que hace que se lea como ella hablando. */
+.firma{
+  display:block;margin-top:24px;
+  font-family:'Pinyon Script','Snell Roundhand','Segoe Script',cursive;
+  font-size:40px;line-height:1;color:var(--rose);
+}
+
+
+/* ══════════════ DÓNDE ESTOY ══════════════ */
+
+/* Sin mapa incrustado: es un rectángulo claro que rompe el negro, suma
+   peso en datos móviles y en el celular lo que sirve es que se abra el
+   Maps del teléfono. Acá la dirección misma es lo gráfico. */
+.dir-barrio{display:block;margin-top:12px}
+
+.link-linea{
+  display:inline-block;margin-top:26px;padding:10px 2px;
+  color:var(--rose);font-size:15px;
+  border-bottom:1px solid rgba(185,138,134,.5);
+}
+
+.horarios{margin-top:46px}
+.horas{list-style:none;margin-top:16px;display:flex;flex-direction:column;gap:12px}
+.horas li{display:flex;justify-content:space-between;align-items:baseline;gap:20px;max-width:340px}
+.horas li span:last-child{color:var(--blanco);font-size:15px}
+
+/* Mismo lenguaje que los huecos de foto: si falta el dato, se ve que
+   falta y no se inventa. */
+.hueco{
+  margin-top:16px;padding:22px 18px;
+  border:1px dashed rgba(126,84,80,.45);
+  background:radial-gradient(120% 90% at 50% 30%,#1c1718 0%,var(--negro) 75%);
+  font-size:12px;letter-spacing:.05em;color:#5f4f4d;text-align:center;
+}
+
+
+/* ══════════════ CIERRE ══════════════ */
+
+/* EL BARRIDO, escala XL: acá baña toda la sección, apenas perceptible.
+   Cierra el círculo que abre el hero con el filo de luz de la foto.
+   Por eso esta sección no lleva el subrayado del título: uno solo por
+   pantalla. */
+.cierre{position:relative;overflow:hidden}
+.cierre::before{
+  content:'';position:absolute;inset:-15% -25%;
+  background:linear-gradient(var(--ang),
+    transparent 16%,rgba(185,138,134,.07) 48%,transparent 80%);
+  pointer-events:none;
+}
+.cierre > *{position:relative;z-index:1}
+.cierre .sec-cab::before{display:none}
+.cierre .sec-tit{max-width:15ch}
+
+.cierre .cta{margin-top:32px}
+
+.cierre-ig{
+  display:inline-block;margin-top:26px;padding:10px 2px;
+  color:var(--gris);font-size:15px;
+}
+.cierre-ig b{color:var(--rose);font-weight:400;
+  border-bottom:1px solid rgba(185,138,134,.5);padding-bottom:2px}
+
+.pie{margin-top:64px;display:flex;flex-direction:column;gap:8px}
+.pie .caps{color:#6b6360}
+
+
+/* ── Área tocable ──
+   Varios links son chicos por diseño (los datos van en letra chiquita
+   con tracking). Pero el dedo necesita 44px, así que se agranda la zona
+   sensible sin mover un pixel de lo que se ve. */
+.hero-dir,.mas-ig,.nota-precio a,.cierre-ig{position:relative}
+.hero-dir::after,.mas-ig::after,.nota-precio a::after,.cierre-ig::after{
+  content:'';position:absolute;left:0;right:0;top:50%;
+  transform:translateY(-50%);height:44px;
+}
+/* En el pie los links van pegados, así que ahí no sirve agrandar la zona
+   invisible (se pisarían entre ellos): se separan de verdad. */
+.pie{gap:0}
+.pie a{display:inline-flex;align-items:center;min-height:44px}
+.pie > span:first-child{margin-bottom:6px}
+
+/* ── Desktop: el mismo diseño con más aire, no otro layout ── */
+@media (min-width:760px){
+  .hero{padding:0 40px 56px;align-items:center}
+  .hero-foto{height:78%}
+  .hero-txt{max-width:520px}
+  .marca{font-size:76px}
+  .hero-linea{font-size:17px;max-width:26ch}
+  .cta{width:auto;min-width:300px;margin:0 auto}
+  .sec{padding:100px 40px 110px;max-width:1080px;margin:0 auto}
+  .sec-tit{font-size:38px}
+  .obras{gap:64px}
+  .servicios{gap:42px}
+  .serv{grid-template-columns:48px 1fr}
+  .serv-nom{font-size:30px}
+  .nota-precio{padding:30px 28px}
+  .sobre{display:grid;grid-template-columns:290px 1fr;gap:48px;align-items:center}
+  .sobre-txt{margin-top:0;font-size:17px}
+  .cierre{text-align:center}
+  .cierre .sec-tit{max-width:none}
+  .cierre .cta{margin-left:auto;margin-right:auto}
+}
+
+@media (prefers-reduced-motion:reduce){
+  *{transition:none!important;animation:none!important}
+}
+</style>
+</head>
+<body>
+
+<header class="hero">
+
+  <!-- FOTO PRINCIPAL — reemplazar
+       Poné la foto en:  hair-beauty/fotos/hero.jpg
+       Ideal: vertical, la clienta de espaldas o de 3/4 mostrando el color,
+       buena luz, sin filtro. Si el archivo no existe, se muestra el hueco
+       gris de abajo y no se rompe nada. -->
+  <div class="hero-foto">
+    <img src="fotos/hero.jpg" alt="Color hecho en Hair Beauty Salón" onerror="this.remove()">
+    <div class="hero-slot" aria-hidden="true">
+      <span class="caps">Foto principal</span>
+      <span class="slot-nota">fotos/hero.jpg</span>
+    </div>
+  </div>
+
+  <div class="hero-txt">
+    <h1 class="marca">
+      Hair Beauty
+      <span class="marca-sub">Salón · Didy Zárate</span>
+    </h1>
+
+    <p class="hero-linea">Rubios, balayage y morochas. <b>Te espero en Boedo.</b></p>
+
+    <a class="cta" id="cta-hero"
+       href="https://wa.me/5491168723710?text=Hola%20Didy!%20Quer%C3%ADa%20sacar%20un%20turno%20%F0%9F%92%95">
+      <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M17.5 14.4c-.3-.2-1.7-.9-2-1-.3-.1-.5-.2-.7.1-.2.3-.7 1-.9 1.2-.2.2-.3.2-.6.1-.3-.2-1.2-.5-2.3-1.4-.9-.8-1.4-1.7-1.6-2-.2-.3 0-.5.1-.6l.5-.5c.1-.2.2-.3.3-.5 0-.2 0-.4 0-.5 0-.2-.7-1.6-.9-2.2-.2-.6-.5-.5-.7-.5h-.6c-.2 0-.5.1-.8.4-.3.3-1 1-1 2.5s1.1 2.9 1.2 3.1c.2.2 2.1 3.2 5.1 4.5.7.3 1.3.5 1.7.6.7.2 1.4.2 1.9.1.6-.1 1.7-.7 2-1.4.2-.7.2-1.3.2-1.4-.1-.2-.3-.2-.6-.4M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2m0 1.7a8.3 8.3 0 0 1 6.5 13.4 8.3 8.3 0 0 1-11 2l-.4-.2-3 .8.8-2.9-.2-.4A8.3 8.3 0 0 1 12 3.7"/></svg>
+      Escribime por WhatsApp
+    </a>
+
+    <a class="hero-dir caps" href="https://maps.google.com/?q=Maza+1193,+Boedo,+CABA">
+      Maza 1193 · Boedo, CABA
+    </a>
+  </div>
+</header>
+
+
+<!-- ══════════════ TRABAJOS ══════════════
+     Las fotos van en hair-beauty/fotos/ con estos nombres exactos.
+     Mientras no estén, se ve el hueco marcado y no se rompe nada.
+     Los epígrafes (BALAYAGE, RUBIO, etc.) se cambian por lo que sea
+     cada trabajo. -->
+<section class="sec" id="trabajos">
+  <header class="sec-cab">
+    <span class="sec-eyebrow caps">Color</span>
+    <h2 class="sec-tit">Lo que sale del salón</h2>
+    <p class="sec-bajada">Trabajos reales, sin filtro y sin retoque: el color que ves acá es el que te llevás.</p>
+  </header>
+
+  <div class="obras">
+
+    <figure class="obra r-4-5">
+      <div class="marco" data-foto="fotos/trabajo-01.jpg">
+        <img src="fotos/trabajo-01.jpg" alt="Balayage hecho en Hair Beauty Salón" loading="lazy" onerror="this.remove()">
+      </div>
+      <figcaption class="caps">Balayage</figcaption>
+    </figure>
+
+    <div class="obra-ad">
+      <p class="ad-titulo caps">Antes y después</p>
+      <div class="par-ad">
+        <figure>
+          <div class="marco" data-foto="fotos/antes-01.jpg">
+            <img src="fotos/antes-01.jpg" alt="El pelo antes del trabajo de color" loading="lazy" onerror="this.remove()">
+          </div>
+          <figcaption class="caps">Antes</figcaption>
+        </figure>
+        <figure class="es-despues">
+          <div class="marco" data-foto="fotos/despues-01.jpg">
+            <img src="fotos/despues-01.jpg" alt="El resultado después del trabajo de color" loading="lazy" onerror="this.remove()">
+          </div>
+          <figcaption class="caps">Después</figcaption>
+        </figure>
+      </div>
+    </div>
+
+    <div class="duo">
+      <figure class="obra r-3-4">
+        <div class="marco" data-foto="fotos/trabajo-02.jpg">
+          <img src="fotos/trabajo-02.jpg" alt="Rubio trabajado en el salón" loading="lazy" onerror="this.remove()">
+        </div>
+        <figcaption class="caps">Rubio</figcaption>
+      </figure>
+      <figure class="obra r-3-4">
+        <div class="marco" data-foto="fotos/trabajo-03.jpg">
+          <img src="fotos/trabajo-03.jpg" alt="Color en morocha trabajado en el salón" loading="lazy" onerror="this.remove()">
+        </div>
+        <figcaption class="caps">Morocha</figcaption>
+      </figure>
+    </div>
+
+    <figure class="obra r-4-5">
+      <div class="marco" data-foto="fotos/trabajo-04.jpg">
+        <img src="fotos/trabajo-04.jpg" alt="Trabajo de color hecho en Hair Beauty Salón" loading="lazy" onerror="this.remove()">
+      </div>
+      <figcaption class="caps">Iluminación</figcaption>
+    </figure>
+
+  </div>
+
+  <a class="mas-ig" href="https://instagram.com/didy_zarate">Más trabajos en <b>@didy_zarate</b></a>
+</section>
+
+
+<!-- ══════════════ SERVICIOS ══════════════
+     OJO: los textos de abajo son un borrador para que Didy los cambie
+     por sus palabras. NO hay precios ni duraciones inventadas.
+     Para agregar un servicio, copiá un bloque <div class="serv"> y
+     cambiale el número. -->
+<section class="sec" id="servicios">
+  <header class="sec-cab">
+    <span class="sec-eyebrow caps">Servicios</span>
+    <h2 class="sec-tit">En qué me especializo</h2>
+    <p class="sec-bajada">Si lo que buscás no está acá, escribime igual y lo vemos.</p>
+  </header>
+
+  <div class="servicios">
+
+    <div class="serv">
+      <span class="serv-num caps">01</span>
+      <h3 class="serv-nom">Balayage</h3>
+      <p class="serv-desc">Mechas pintadas a mano, que crecen parejas y no te obligan a volver cada mes.</p>
+    </div>
+
+    <div class="serv">
+      <span class="serv-num caps">02</span>
+      <h3 class="serv-nom">Rubios</h3>
+      <p class="serv-desc">Del castaño al rubio que tenés en la cabeza, cuidando que el pelo llegue bien.</p>
+    </div>
+
+    <div class="serv">
+      <span class="serv-num caps">03</span>
+      <h3 class="serv-nom">Morochas</h3>
+      <p class="serv-desc">Castaños profundos con reflejos que aparecen cuando te da la luz.</p>
+    </div>
+
+  </div>
+
+  <!-- TEXTO A CONFIRMAR CON DIDY: dice cómo cotiza. Si ella prefiere
+       publicar una lista de precios, se reemplaza este bloque. -->
+  <div class="nota-precio">
+    <p>El precio del color depende del largo y de cómo esté tu pelo, así que no lo puedo poner en una lista.</p>
+    <a href="https://wa.me/5491168723710?text=Hola%20Didy!%20Te%20mando%20una%20foto%20de%20mi%20pelo%20para%20consultarte%20un%20color">Mandame una foto y te digo</a>
+  </div>
+</section>
+
+
+<!-- ══════════════ SOBRE DIDY ══════════════
+     BORRADOR: este texto lo tiene que escribir ella. Acá solo va lo
+     confirmado (su nombre, el barrio, sus tres especialidades) y sin
+     ningún dato inventado: nada de años de experiencia, premios ni
+     cantidad de clientas.
+     Foto: hair-beauty/fotos/didy.jpg -->
+<section class="sec" id="sobre">
+  <header class="sec-cab">
+    <span class="sec-eyebrow caps">Quién te atiende</span>
+    <h2 class="sec-tit">Didy Zárate</h2>
+  </header>
+
+  <div class="sobre">
+    <div class="sobre-foto">
+      <div class="marco" data-foto="fotos/didy.jpg">
+        <img src="fotos/didy.jpg" alt="Didy Zárate en su salón" loading="lazy" onerror="this.remove()">
+      </div>
+    </div>
+
+    <div class="sobre-txt">
+      <p>Soy Didy y trabajo el color acá en Boedo. <b>Rubios, balayage y morochas</b>: eso es lo mío.</p>
+      <p>Cada pelo llega distinto. Por eso lo primero es escucharte y decirte qué se puede hacer con el tuyo.</p>
+      <span class="firma" aria-hidden="true">Didy</span>
+    </div>
+  </div>
+</section>
+
+
+<!-- ══════════════ DÓNDE ESTOY ══════════════
+     La dirección está confirmada. Los horarios NO: hasta que Didy los
+     pase queda el hueco marcado, no se inventan. -->
+<section class="sec" id="donde">
+  <header class="sec-cab">
+    <span class="sec-eyebrow caps">Dónde estoy</span>
+    <h2 class="sec-tit">Maza 1193</h2>
+    <span class="dir-barrio caps">Boedo · Ciudad de Buenos Aires</span>
+  </header>
+
+  <a class="link-linea" href="https://maps.google.com/?q=Maza+1193,+Boedo,+CABA">Cómo llegar</a>
+
+  <div class="horarios">
+    <span class="caps">Horarios</span>
+
+    <!-- Cuando Didy pase los días y horarios, borrá el <p class="hueco">
+         de acá abajo y descomentá la lista:
+    <ul class="horas">
+      <li><span class="caps">Lunes a viernes</span><span>9 a 19</span></li>
+      <li><span class="caps">Sábados</span><span>9 a 15</span></li>
+      <li><span class="caps">Domingos</span><span>Cerrado</span></li>
+    </ul>
+    -->
+
+    <p class="hueco">falta que Didy pase los días y horarios</p>
+  </div>
+</section>
+
+
+<!-- ══════════════ CIERRE ══════════════
+     El último empujón a WhatsApp. Instagram va como actor secundario:
+     si compite con el WhatsApp, la persona se va a mirar fotos y no
+     saca el turno. -->
+<section class="sec cierre" id="turno">
+  <header class="sec-cab">
+    <span class="sec-eyebrow caps">Tu turno</span>
+    <h2 class="sec-tit">Contame qué buscás y lo vemos juntas.</h2>
+  </header>
+
+  <a class="cta"
+     href="https://wa.me/5491168723710?text=Hola%20Didy!%20Quer%C3%ADa%20sacar%20un%20turno%20%F0%9F%92%95">
+    <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M17.5 14.4c-.3-.2-1.7-.9-2-1-.3-.1-.5-.2-.7.1-.2.3-.7 1-.9 1.2-.2.2-.3.2-.6.1-.3-.2-1.2-.5-2.3-1.4-.9-.8-1.4-1.7-1.6-2-.2-.3 0-.5.1-.6l.5-.5c.1-.2.2-.3.3-.5 0-.2 0-.4 0-.5 0-.2-.7-1.6-.9-2.2-.2-.6-.5-.5-.7-.5h-.6c-.2 0-.5.1-.8.4-.3.3-1 1-1 2.5s1.1 2.9 1.2 3.1c.2.2 2.1 3.2 5.1 4.5.7.3 1.3.5 1.7.6.7.2 1.4.2 1.9.1.6-.1 1.7-.7 2-1.4.2-.7.2-1.3.2-1.4-.1-.2-.3-.2-.6-.4M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2m0 1.7a8.3 8.3 0 0 1 6.5 13.4 8.3 8.3 0 0 1-11 2l-.4-.2-3 .8.8-2.9-.2-.4A8.3 8.3 0 0 1 12 3.7"/></svg>
+    Escribime por WhatsApp
+  </a>
+
+  <a class="cierre-ig" href="https://instagram.com/didy_zarate">O seguime en <b>@didy_zarate</b></a>
+
+  <footer class="pie">
+    <span class="caps">Hair Beauty Salón · Didy Zárate</span>
+    <a class="caps" href="https://maps.google.com/?q=Maza+1193,+Boedo,+CABA">Maza 1193 · Boedo, CABA</a>
+    <a class="caps" href="https://wa.me/5491168723710">WhatsApp 11 6872-3710</a>
+  </footer>
+</section>
+
+<!-- Queda fijo y aparece apenas el botón de arriba sale de pantalla,
+     así nunca hay un momento del scroll sin WhatsApp a mano. -->
+<a class="wa-flota" id="wa-flota"
+   href="https://wa.me/5491168723710?text=Hola%20Didy!%20Quer%C3%ADa%20sacar%20un%20turno%20%F0%9F%92%95">
+  <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M17.5 14.4c-.3-.2-1.7-.9-2-1-.3-.1-.5-.2-.7.1-.2.3-.7 1-.9 1.2-.2.2-.3.2-.6.1-.3-.2-1.2-.5-2.3-1.4-.9-.8-1.4-1.7-1.6-2-.2-.3 0-.5.1-.6l.5-.5c.1-.2.2-.3.3-.5 0-.2 0-.4 0-.5 0-.2-.7-1.6-.9-2.2-.2-.6-.5-.5-.7-.5h-.6c-.2 0-.5.1-.8.4-.3.3-1 1-1 2.5s1.1 2.9 1.2 3.1c.2.2 2.1 3.2 5.1 4.5.7.3 1.3.5 1.7.6.7.2 1.4.2 1.9.1.6-.1 1.7-.7 2-1.4.2-.7.2-1.3.2-1.4-.1-.2-.3-.2-.6-.4M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2m0 1.7a8.3 8.3 0 0 1 6.5 13.4 8.3 8.3 0 0 1-11 2l-.4-.2-3 .8.8-2.9-.2-.4A8.3 8.3 0 0 1 12 3.7"/></svg>
+  Escribime
+</a>
+
+<script>
+// El flotante solo molesta si se pisa con un botón grande de WhatsApp.
+// Aparece cuando no hay ninguno a la vista, y se esconde cuando aparece
+// el del hero o el del cierre.
+(function(){
+  var flota = document.getElementById('wa-flota');
+  var botones = document.querySelectorAll('.cta');
+  if(!flota || !botones.length || !('IntersectionObserver' in window)) return;
+  var aLaVista = new Set();
+  var obs = new IntersectionObserver(function(entradas){
+    entradas.forEach(function(e){
+      if(e.isIntersecting) aLaVista.add(e.target); else aLaVista.delete(e.target);
+    });
+    flota.classList.toggle('visible', aLaVista.size === 0);
+  },{threshold:0});
+  botones.forEach(function(b){ obs.observe(b); });
+})();
+</script>
+
+</body>
+</html>
