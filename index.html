@@ -279,6 +279,20 @@
     color:var(--gris);padding:10px 6px;border-radius:5px;transition:background .17s,color .17s}
   .pest.activa{background:var(--claro);color:var(--tinta);font-weight:600;box-shadow:0 1px 2px rgba(14,24,21,.11)}
 
+  /* ── Confirmación por código ──
+     El código es un dato, no una frase: va en Mono, grande y bien separado
+     para poder compararlo de un vistazo con el que llegó al mail. */
+  .codigo-cab{margin-top:24px;margin-bottom:20px}
+  .codigo-tit{font-family:'IBM Plex Sans Condensed',sans-serif;font-weight:700;font-size:21px;
+    line-height:1.2;letter-spacing:-.015em}
+  .codigo-txt{font-size:13.5px;color:var(--gris);line-height:1.55;margin-top:9px}
+  .codigo-txt b{color:var(--tinta);font-weight:600;overflow-wrap:anywhere}
+  #a-codigo{font-family:'IBM Plex Mono',monospace;font-size:26px;font-weight:500;
+    letter-spacing:.34em;text-indent:.34em;text-align:center;padding:16px 13px}
+  #a-codigo::placeholder{color:var(--gris-3)}
+  #a-codigo-acciones{margin-top:18px;text-align:center}
+  #a-codigo-acciones .ver{margin-top:15px}
+
   /* ═══════════ CUENTA ═══════════ */
   /* La placa ya insinuaba una credencial: acá se termina la idea. Radio de
      tarjeta física, marca de quién la emite arriba, y el hilo de match como
@@ -996,29 +1010,52 @@
         </button>
       </div>
 
-      <div class="pestanas" style="margin-top:24px">
-        <button class="pest activa" id="tab-entrar" type="button">Iniciar sesión</button>
-        <button class="pest" id="tab-crear" type="button">Crear cuenta</button>
+      <div id="a-datos">
+        <div class="pestanas" style="margin-top:24px">
+          <button class="pest activa" id="tab-entrar" type="button">Iniciar sesión</button>
+          <button class="pest" id="tab-crear" type="button">Crear cuenta</button>
+        </div>
+
+        <div class="campo">
+          <label for="a-email">Email</label>
+          <input id="a-email" type="email" autocomplete="email" placeholder="tucorreo@ejemplo.com">
+          <div class="err" id="e-a-email">Revisá el email: falta el @ o el dominio.</div>
+        </div>
+        <div class="campo">
+          <div class="campo-top">
+            <label for="a-pass">Contraseña</label>
+            <button class="ver" id="ver-pass" type="button">Mostrar</button>
+          </div>
+          <input id="a-pass" type="password" autocomplete="current-password" placeholder="••••••••">
+          <div class="ayuda">Al menos 8 caracteres.</div>
+          <div class="err" id="e-a-pass">La contraseña tiene que tener al menos 8 caracteres.</div>
+        </div>
       </div>
 
-      <div class="campo">
-        <label for="a-email">Email</label>
-        <input id="a-email" type="email" autocomplete="email" placeholder="tucorreo@ejemplo.com">
-        <div class="err" id="e-a-email">Revisá el email: falta el @ o el dominio.</div>
-      </div>
-      <div class="campo">
-        <div class="campo-top">
-          <label for="a-pass">Contraseña</label>
-          <button class="ver" id="ver-pass" type="button">Mostrar</button>
+      <div class="oculto" id="a-codigo-caja">
+        <div class="codigo-cab">
+          <div class="codigo-tit">Confirmá tu email</div>
+          <p class="codigo-txt">Te mandamos un código de 6 números a <b id="a-codigo-dest">—</b>.
+            Escribilo acá y entrás.</p>
         </div>
-        <input id="a-pass" type="password" autocomplete="current-password" placeholder="••••••••">
-        <div class="ayuda">Al menos 8 caracteres.</div>
-        <div class="err" id="e-a-pass">La contraseña tiene que tener al menos 8 caracteres.</div>
+        <div class="campo">
+          <label for="a-codigo">Código</label>
+          <input id="a-codigo" type="text" inputmode="numeric" autocomplete="one-time-code"
+                 maxlength="6" placeholder="000000">
+          <div class="ayuda">Puede tardar un minuto. Fijate también en el correo no deseado.</div>
+          <div class="err" id="e-a-codigo">Son 6 números. Revisá el código del mail.</div>
+        </div>
       </div>
+
       <button class="btn lleno" id="a-enviar" type="button">
         <span class="rueda"></span><span id="a-txt">Iniciar sesión</span>
       </button>
       <div class="aviso" id="a-aviso" role="status"></div>
+
+      <div class="oculto" id="a-codigo-acciones">
+        <button class="btn vacio-b" id="a-reenviar" type="button">Reenviame el código</button>
+        <button class="ver" id="a-otro-email" type="button">Usar otro email</button>
+      </div>
     </section>
 
     <!-- ══════ INICIO ══════ -->
@@ -1913,6 +1950,7 @@ function cambiarAuth(m){
   $('a-txt').textContent = c ? 'Crear cuenta' : 'Iniciar sesión';
   $('a-pass').setAttribute('autocomplete', c ? 'new-password' : 'current-password');
   limpiar(['a-email','a-pass']); $('a-aviso').className='aviso';
+  if(pasoAuth === 'codigo') volverAPasoDatos();
 }
 $('tab-entrar').addEventListener('click', () => cambiarAuth('entrar'));
 $('tab-crear').addEventListener('click', () => cambiarAuth('crear'));
@@ -1930,12 +1968,16 @@ function traducir(t){
   if(t.includes('already registered')||t.includes('already been registered')) return 'Ese email ya tiene una cuenta. Probá iniciando sesión.';
   if(t.includes('invalid login credentials')) return 'Email o contraseña incorrectos.';
   if(t.includes('password should be')) return 'La contraseña es muy corta. Usá al menos 8 caracteres.';
-  if(t.includes('email not confirmed')) return 'Falta confirmar el email. Revisá la configuración de Supabase.';
+  if(t.includes('email not confirmed')) return 'Todavía no confirmaste el email. Poné el código que te mandamos.';
+  if(t.includes('expired')||t.includes('otp_expired')||(t.includes('token')&&t.includes('invalid')))
+    return 'Ese código no coincide o ya venció. Revisalo, o pedí uno nuevo.';
+  if(t.includes('for security purposes')) return 'Esperá unos segundos antes de pedir otro código.';
   if(t.includes('rate limit')||t.includes('too many')) return 'Demasiados intentos seguidos. Esperá un minuto.';
   return 'No se pudo completar: ' + (t || 'error desconocido');
 }
 
 $('a-enviar').addEventListener('click', async () => {
+  if(pasoAuth === 'codigo') return confirmarCodigo();
   limpiar(['a-email','a-pass']);
   const r={p:null}, email=$('a-email').value.trim(), pass=$('a-pass').value;
   if(!mailOk(email)) fallar('a-email',r);
@@ -1950,8 +1992,15 @@ $('a-enviar').addEventListener('click', async () => {
       body: JSON.stringify({email, password:pass})
     });
     const j = await res.json();
-    if(!res.ok){ avisar('a-aviso', traducir(j.msg||j.error_description||j.message),'mal'); return; }
-    if(!j.access_token){ avisar('a-aviso','Listo. Te mandamos un mail para confirmar tu cuenta. Revisá tu casilla y la carpeta de spam.','ok'); return; }
+    if(!res.ok){
+      const crudo = (j.msg||j.error_description||j.message||'').toLowerCase();
+      avisar('a-aviso', traducir(j.msg||j.error_description||j.message),'mal');
+      /* cuenta creada pero sin confirmar: en vez de dejarlo trabado, lo llevamos
+         al paso del código, que es justo lo que le falta hacer. */
+      if(crudo.includes('email not confirmed')) irAPasoCodigo(email);
+      return;
+    }
+    if(!j.access_token){ irAPasoCodigo(email); return; }
     store.escribir({access_token:j.access_token, refresh_token:j.refresh_token, modo:rolElegido});
     sesion = {access_token:j.access_token, user:j.user};
     modo = rolElegido;
@@ -1960,8 +2009,116 @@ $('a-enviar').addEventListener('click', async () => {
   }catch(e){ console.error(e); avisar('a-aviso','No se pudo conectar. Revisá tu conexión.','mal'); }
   finally{
     b.disabled=false; b.classList.remove('cargando');
-    $('a-txt').textContent = modoAuth==='crear' ? 'Crear cuenta':'Iniciar sesión';
+    /* si pasamos al paso del código, ese texto ya lo puso irAPasoCodigo */
+    if(pasoAuth !== 'codigo') $('a-txt').textContent = modoAuth==='crear' ? 'Crear cuenta':'Iniciar sesión';
   }
+});
+
+/* ══════════════════ CONFIRMACIÓN POR CÓDIGO ══════════════════ */
+/* Supabase manda el código de 6 números en el mismo mail de confirmación: el
+   template de "Confirm signup" tiene que mostrar {{ .Token }} en vez del enlace.
+   El código se valida contra /auth/v1/verify, que devuelve la sesión igual que
+   un login, así que a partir de ahí el resto del flujo no cambia. */
+let pasoAuth = 'datos', emailPendiente = '';
+
+function irAPasoCodigo(email){
+  pasoAuth = 'codigo'; emailPendiente = email;
+  $('a-datos').classList.add('oculto');
+  $('a-codigo-caja').classList.remove('oculto');
+  $('a-codigo-acciones').classList.remove('oculto');
+  $('a-codigo-dest').textContent = email;
+  $('a-txt').textContent = 'Confirmar y entrar';
+  $('a-codigo').value = '';
+  limpiar(['a-codigo']);
+  $('a-codigo').focus();
+}
+
+function volverAPasoDatos(){
+  pasoAuth = 'datos'; emailPendiente = '';
+  $('a-datos').classList.remove('oculto');
+  $('a-codigo-caja').classList.add('oculto');
+  $('a-codigo-acciones').classList.add('oculto');
+  $('a-codigo').value = '';
+  limpiar(['a-codigo']);
+  $('a-txt').textContent = modoAuth === 'crear' ? 'Crear cuenta' : 'Iniciar sesión';
+}
+
+/* sólo números, y si ya escribió los 6 no lo hacemos buscar el botón */
+$('a-codigo').addEventListener('input', () => {
+  const i = $('a-codigo');
+  const limpio = i.value.replace(/\D/g,'').slice(0,6);
+  if(i.value !== limpio) i.value = limpio;
+  limpiar(['a-codigo']); $('a-aviso').className = 'aviso';
+  if(limpio.length === 6) confirmarCodigo();
+});
+$('a-codigo').addEventListener('keydown', e => { if(e.key === 'Enter') confirmarCodigo(); });
+
+let confirmando = false;
+async function confirmarCodigo(){
+  if(confirmando) return;
+  limpiar(['a-codigo']);
+  const r = {p:null}, codigo = $('a-codigo').value.replace(/\D/g,'');
+  if(codigo.length !== 6) fallar('a-codigo', r);
+  if(enfocar(r)) return;
+
+  confirmando = true;
+  const b = $('a-enviar'); b.disabled = true; b.classList.add('cargando');
+  $('a-txt').textContent = 'Confirmando…';
+  try{
+    const res = await fetch(SUPABASE_URL + '/auth/v1/verify', {
+      method:'POST', headers:{'apikey':SUPABASE_ANON,'Content-Type':'application/json'},
+      body: JSON.stringify({type:'signup', email:emailPendiente, token:codigo})
+    });
+    const j = await res.json();
+    if(!res.ok || !j.access_token){
+      avisar('a-aviso', traducir(j.msg||j.error_description||j.message), 'mal');
+      $('a-codigo').select();
+      return;
+    }
+    store.escribir({access_token:j.access_token, refresh_token:j.refresh_token, modo:rolElegido});
+    sesion = {access_token:j.access_token, user:j.user};
+    modo = rolElegido;
+    $('a-pass').value = '';
+    volverAPasoDatos();
+    $('a-aviso').className = 'aviso';
+    entrarApp();
+  }catch(e){ console.error(e); avisar('a-aviso','No se pudo conectar. Revisá tu conexión.','mal'); }
+  finally{
+    confirmando = false;
+    b.disabled = false; b.classList.remove('cargando');
+    if(pasoAuth === 'codigo') $('a-txt').textContent = 'Confirmar y entrar';
+  }
+}
+
+/* Supabase no deja mandar dos mails seguidos, así que el botón se toma un
+   minuto y lo dice, en vez de fallar con un error que nadie entiende. */
+$('a-reenviar').addEventListener('click', async () => {
+  const b = $('a-reenviar');
+  if(b.disabled || !emailPendiente) return;
+  b.disabled = true; b.textContent = 'Mandando…';
+  try{
+    const res = await fetch(SUPABASE_URL + '/auth/v1/resend', {
+      method:'POST', headers:{'apikey':SUPABASE_ANON,'Content-Type':'application/json'},
+      body: JSON.stringify({type:'signup', email:emailPendiente})
+    });
+    const j = await res.json().catch(() => ({}));
+    if(!res.ok) avisar('a-aviso', traducir(j.msg||j.error_description||j.message), 'mal');
+    else avisar('a-aviso','Listo, va en camino un código nuevo.','ok');
+  }catch(e){ avisar('a-aviso','No se pudo conectar. Revisá tu conexión.','mal'); }
+  let quedan = 60;
+  b.textContent = 'Reenviame el código (' + quedan + ')';
+  const reloj = setInterval(() => {
+    quedan--;
+    if(quedan <= 0 || pasoAuth !== 'codigo'){
+      clearInterval(reloj); b.disabled = false; b.textContent = 'Reenviame el código';
+    } else b.textContent = 'Reenviame el código (' + quedan + ')';
+  }, 1000);
+});
+
+$('a-otro-email').addEventListener('click', () => {
+  volverAPasoDatos();
+  $('a-aviso').className = 'aviso';
+  $('a-email').focus();
 });
 
 $('salir').addEventListener('click', async () => {
