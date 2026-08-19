@@ -65,3 +65,27 @@ las fotos y los horarios, el sitio queda listo para publicar.
 4. [x] Sobre Didy
 5. [x] Dónde estoy
 6. [x] Cierre con WhatsApp + Instagram
+
+## Cómo publicarlo
+
+Es una carpeta de archivos comunes: no necesita servidor, ni base de
+datos, ni instalar nada. Cualquier hosting de archivos estáticos sirve
+(Netlify, GitHub Pages, Vercel, o el hosting que ya tengan).
+
+El camino más corto: entrar a `app.netlify.com/drop` y arrastrar ahí la
+carpeta `hair-beauty` entera. Devuelve un link en unos segundos, y ese
+link es el que va en la bio de Instagram.
+
+**Antes de publicar, un solo cambio:** en el `<head>` del `index.html`
+está la línea `og:image` apuntando a `fotos/hero.jpg`. Cambiala por la
+dirección completa (por ejemplo `https://eldominio.com/fotos/hero.jpg`).
+Si queda como está, cuando alguien comparta el link por WhatsApp no se
+va a ver la miniatura. Está señalado con un comentario en el archivo.
+
+## Para el próximo que lo toque
+
+El sitio tiene su propia guía de diseño en
+`.claude/skills/disenador-hairbeauty/SKILL.md`: la paleta, las dos
+tipografías, cómo funciona el barrido y qué cosas no hay que hacer.
+Conviene leerla antes de agregar una sección nueva, para que el sitio
+siga siendo uno solo y no un collage.

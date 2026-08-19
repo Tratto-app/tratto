@@ -13,6 +13,13 @@
 <meta property="og:description" content="Rubios, balayage y morochas. Te espero en Boedo.">
 <meta property="og:image" content="fotos/hero.jpg">
 <meta property="og:locale" content="es_AR">
+<!-- Al publicar: og:image tiene que ser la dirección completa
+     (https://tudominio.com/fotos/hero.jpg), si no WhatsApp e Instagram
+     no muestran la miniatura al compartir el link. -->
+
+<!-- El barrido como ícono de la pestaña. Va acá adentro, no es un
+     archivo aparte. -->
+<link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns%3D%27http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%27%20viewBox%3D%270%200%2032%2032%27%3E%3Cdefs%3E%3ClinearGradient%20id%3D%27b%27%20x1%3D%270%27%20y1%3D%271%27%20x2%3D%271%27%20y2%3D%270%27%3E%3Cstop%20offset%3D%270%27%20stop-color%3D%27%237E5450%27%2F%3E%3Cstop%20offset%3D%27.55%27%20stop-color%3D%27%23E3C0B8%27%2F%3E%3Cstop%20offset%3D%271%27%20stop-color%3D%27%23B98A86%27%2F%3E%3C%2FlinearGradient%3E%3C%2Fdefs%3E%3Crect%20width%3D%2732%27%20height%3D%2732%27%20fill%3D%27%230B0A0A%27%2F%3E%3Cpath%20d%3D%27M2%2023L30%209%27%20stroke%3D%27url%28%23b%29%27%20stroke-width%3D%273%27%20stroke-linecap%3D%27round%27%2F%3E%3C%2Fsvg%3E">
 
 <style>
 /* Las tipografías se sirven desde esta misma carpeta: cargan más rápido
@@ -59,6 +66,11 @@ body{
   overflow-x:hidden;
 }
 ::selection{background:var(--rose-osc);color:var(--blanco)}
+
+/* Quien navega con teclado tiene que ver dónde está parado. */
+a:focus-visible,button:focus-visible{
+  outline:2px solid var(--rose-luz);outline-offset:3px;border-radius:2px;
+}
 a{color:inherit;text-decoration:none}
 img{display:block;max-width:100%}
 
