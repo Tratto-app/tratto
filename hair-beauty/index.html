@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <meta name="theme-color" content="#0B0A0A">
 <title>Hair Beauty Salón — Didy Zárate | Peluquería en Boedo, CABA</title>
-<meta name="description" content="Rubios, balayage y morochas. Peluquería de Didy Zárate en Maza 1193, Boedo, CABA. Escribime por WhatsApp y sacá tu turno.">
+<meta name="description" content="Balayage, reflejos, color, alisados, uñas y pestañas. Peluquería de Didy Zárate en Maza 1193, Boedo, CABA. Escribime por WhatsApp y sacá tu turno.">
 
 <!-- Para cuando alguien comparte el link por WhatsApp o lo pone en la bio de Instagram -->
 <meta property="og:type" content="website">
@@ -19,15 +19,17 @@
 
 <!-- El barrido como ícono de la pestaña. Va acá adentro, no es un
      archivo aparte. -->
-<link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns%3D%27http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%27%20viewBox%3D%270%200%2032%2032%27%3E%3Cdefs%3E%3ClinearGradient%20id%3D%27b%27%20x1%3D%270%27%20y1%3D%271%27%20x2%3D%271%27%20y2%3D%270%27%3E%3Cstop%20offset%3D%270%27%20stop-color%3D%27%237E5450%27%2F%3E%3Cstop%20offset%3D%27.55%27%20stop-color%3D%27%23E3C0B8%27%2F%3E%3Cstop%20offset%3D%271%27%20stop-color%3D%27%23B98A86%27%2F%3E%3C%2FlinearGradient%3E%3C%2Fdefs%3E%3Crect%20width%3D%2732%27%20height%3D%2732%27%20fill%3D%27%230B0A0A%27%2F%3E%3Cpath%20d%3D%27M2%2023L30%209%27%20stroke%3D%27url%28%23b%29%27%20stroke-width%3D%273%27%20stroke-linecap%3D%27round%27%2F%3E%3C%2Fsvg%3E">
+<link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns%3D%27http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%27%20viewBox%3D%270%200%2032%2032%27%3E%3Cdefs%3E%3ClinearGradient%20id%3D%27b%27%20x1%3D%270%27%20y1%3D%271%27%20x2%3D%271%27%20y2%3D%270%27%3E%3Cstop%20offset%3D%270%27%20stop-color%3D%27%238E5A66%27%2F%3E%3Cstop%20offset%3D%27.55%27%20stop-color%3D%27%23F2CBD3%27%2F%3E%3Cstop%20offset%3D%271%27%20stop-color%3D%27%23D9A3AE%27%2F%3E%3C%2FlinearGradient%3E%3C%2Fdefs%3E%3Crect%20width%3D%2732%27%20height%3D%2732%27%20fill%3D%27%230B0A0A%27%2F%3E%3Cpath%20d%3D%27M2%2023L30%209%27%20stroke%3D%27url%28%23b%29%27%20stroke-width%3D%273%27%20stroke-linecap%3D%27round%27%2F%3E%3C%2Fsvg%3E">
 
 <style>
 /* Las tipografías se sirven desde esta misma carpeta: cargan más rápido
    con datos móviles y el sitio no depende de que Google responda.
-   Jost y Pinyon Script, ambas con licencia SIL Open Font License. */
+   Jost y Sacramento, ambas con licencia SIL Open Font License.
+   Sacramento se eligió por parecerse a la manuscrita del logo: trazo
+   fino y parejo, sin el contraste grueso/fino de una copperplate. */
 @font-face{
-  font-family:'Pinyon Script';
-  src:url('fuentes/pinyon-script-latin.woff2') format('woff2');
+  font-family:'Sacramento';
+  src:url('fuentes/sacramento-latin.woff2') format('woff2');
   font-weight:400;font-style:normal;font-display:swap;
 }
 @font-face{
@@ -40,9 +42,9 @@
      Si tenemos el archivo del logo, estos valores se ajustan contra él. */
   --negro:#0B0A0A;
   --negro-2:#161213;
-  --rose:#B98A86;
-  --rose-luz:#E3C0B8;
-  --rose-osc:#7E5450;
+  --rose:#D9A3AE;
+  --rose-luz:#F2CBD3;
+  --rose-osc:#8E5A66;
   --blanco:#F5EFE9;
   --gris:#A9A09B;
 
@@ -116,9 +118,9 @@ img{display:block;max-width:100%}
   width:130vw;height:1px;margin-bottom:40px;
   background:linear-gradient(var(--ang),
     transparent 8%,
-    rgba(185,138,134,.3) 30%,
+    rgba(217,163,174,.3) 30%,
     var(--rose-luz) 52%,
-    rgba(185,138,134,.3) 72%,
+    rgba(217,163,174,.3) 72%,
     transparent 92%);
   transform:translateX(-50%) rotate(-5deg);
   opacity:.8;
@@ -133,7 +135,7 @@ img{display:block;max-width:100%}
   gap:10px;
   background:
     radial-gradient(120% 80% at 50% 25%, #201a1b 0%, var(--negro) 72%);
-  border-bottom:1px dashed rgba(126,84,80,.5);
+  border-bottom:1px dashed rgba(142,90,102,.5);
 }
 .hero-slot span{color:var(--rose-osc)}
 .hero-slot .slot-nota{font-size:11px;letter-spacing:.04em;text-transform:none;color:#5a4b49}
@@ -141,22 +143,26 @@ img{display:block;max-width:100%}
 /* ── Bloque de abajo: todo al alcance del pulgar ── */
 .hero-txt{position:relative;z-index:2;text-align:center}
 
-.marca{
-  font-family:'Pinyon Script','Snell Roundhand','Segoe Script',cursive;
+.marca{margin-bottom:14px}
+/* El logo de verdad manda; la versión tipográfica es el respaldo. */
+.marca-logo{width:min(230px,62vw);margin:0 auto 4px}
+.marca-logo + .marca-txt{display:none}
+.marca-txt{
+  display:block;
+  font-family:'Sacramento','Snell Roundhand','Segoe Script',cursive;
   font-weight:400;
-  font-size:clamp(46px,15vw,64px);
-  line-height:.95;
-  color:var(--blanco);
-  margin-bottom:14px;
+  font-size:clamp(44px,13.5vw,58px);
+  line-height:1;
+  color:var(--rose-luz);
 }
 .marca-sub{
   display:block;
   font-family:'Jost',sans-serif;
-  font-size:10px;font-weight:400;
-  text-transform:uppercase;letter-spacing:.34em;
-  color:var(--rose);
-  margin-top:12px;
-  text-indent:.34em; /* compensa el tracking del último caracter */
+  font-size:11px;font-weight:400;
+  text-transform:uppercase;letter-spacing:.36em;
+  color:var(--blanco);
+  margin-top:14px;
+  text-indent:.36em; /* compensa el tracking del último caracter */
 }
 
 .hero-linea{
@@ -213,7 +219,7 @@ img{display:block;max-width:100%}
 .sec-cab::before{
   content:'';display:block;
   width:52px;height:1px;margin-bottom:20px;
-  background:linear-gradient(var(--ang),var(--rose-luz),rgba(185,138,134,.15));
+  background:linear-gradient(var(--ang),var(--rose-luz),rgba(217,163,174,.15));
 }
 .sec-eyebrow{display:block;margin-bottom:10px}
 .sec-tit{
@@ -230,9 +236,9 @@ img{display:block;max-width:100%}
   position:absolute;inset:0;
   display:flex;align-items:center;justify-content:center;text-align:center;
   padding:12px;
-  border:1px dashed rgba(126,84,80,.45);
-  background:radial-gradient(120% 90% at 50% 30%,#1c1718 0%,var(--negro) 75%);
-  font-size:11px;letter-spacing:.05em;color:#5f4f4d;
+  border:1px dashed rgba(142,90,102,.45);
+  background:radial-gradient(120% 90% at 50% 30%,#191416 0%,var(--negro) 75%);
+  font-size:11px;letter-spacing:.05em;color:#6b565c;
 }
 .marco img{
   position:absolute;inset:0;z-index:1;
@@ -261,36 +267,40 @@ img{display:block;max-width:100%}
 .mas-ig{
   display:inline-block;margin-top:40px;padding:10px 2px;
   color:var(--gris);font-size:14px;
-  border-bottom:1px solid rgba(126,84,80,.55);
+  border-bottom:1px solid rgba(142,90,102,.55);
 }
 .mas-ig b{color:var(--rose);font-weight:400}
 
 
 /* ══════════════ SERVICIOS ══════════════ */
 
-.servicios{display:flex;flex-direction:column;gap:34px}
+/* Listas agrupadas por rubro. Sin filetes separando cada renglón: la
+   separación la hace el aire, si no queda cara de menú de bar. */
+.serv-grupo{margin-top:40px}
+.serv-grupo:first-child{margin-top:0}
+.serv-grupo > .caps{display:block;color:var(--rose);margin-bottom:18px}
 
-/* Lista numerada, no tarjetas con íconos: el número marca el ritmo y
-   el nombre del servicio es lo que pesa. */
-.serv{display:grid;grid-template-columns:36px 1fr;column-gap:14px;align-items:baseline}
-.serv-num{color:var(--rose-osc);letter-spacing:.14em}
-.serv-nom{font-size:25px;font-weight:300;line-height:1.2;color:var(--blanco)}
-.serv-desc{grid-column:2;margin-top:7px;font-size:15px;color:var(--gris);max-width:34ch}
+.lista-serv{list-style:none;display:flex;flex-direction:column;gap:16px}
+.serv-fila{display:flex;justify-content:space-between;align-items:baseline;gap:16px}
+.serv-n{font-size:17px;font-weight:300;color:var(--blanco)}
+.serv-p{font-size:15px;color:var(--rose);white-space:nowrap;text-align:right}
+.serv-p.consultar{color:var(--gris);font-size:13px;letter-spacing:.12em;text-transform:uppercase}
+.serv-nota{margin-top:6px;font-size:13px;line-height:1.5;color:var(--gris);max-width:38ch}
 
-/* Los precios de color dependen del largo y del estado del pelo, así que
-   en vez de una lista de precios el cierre empuja a WhatsApp. */
+/* Los precios de color se cierran por WhatsApp: dependen del largo y del
+   estado del pelo, y encima cambian seguido. */
 .nota-precio{
   margin-top:48px;padding:24px 22px;
   background:var(--negro-2);
 }
 .nota-precio p{font-size:15px;color:var(--gris);max-width:36ch}
+.nota-precio p + p{margin-top:13px}
 .nota-precio a{
   display:inline-block;margin-top:14px;
   color:var(--rose);font-size:15px;
-  border-bottom:1px solid rgba(185,138,134,.5);
+  border-bottom:1px solid rgba(217,163,174,.5);
   padding-bottom:2px;
 }
-
 
 /* ══════════════ SOBRE DIDY ══════════════ */
 
@@ -307,7 +317,7 @@ img{display:block;max-width:100%}
    cuenta. Es lo que hace que se lea como ella hablando. */
 .firma{
   display:block;margin-top:24px;
-  font-family:'Pinyon Script','Snell Roundhand','Segoe Script',cursive;
+  font-family:'Sacramento','Snell Roundhand','Segoe Script',cursive;
   font-size:40px;line-height:1;color:var(--rose);
 }
 
@@ -322,7 +332,7 @@ img{display:block;max-width:100%}
 .link-linea{
   display:inline-block;margin-top:26px;padding:10px 2px;
   color:var(--rose);font-size:15px;
-  border-bottom:1px solid rgba(185,138,134,.5);
+  border-bottom:1px solid rgba(217,163,174,.5);
 }
 
 .horarios{margin-top:46px}
@@ -334,9 +344,9 @@ img{display:block;max-width:100%}
    falta y no se inventa. */
 .hueco{
   margin-top:16px;padding:22px 18px;
-  border:1px dashed rgba(126,84,80,.45);
-  background:radial-gradient(120% 90% at 50% 30%,#1c1718 0%,var(--negro) 75%);
-  font-size:12px;letter-spacing:.05em;color:#5f4f4d;text-align:center;
+  border:1px dashed rgba(142,90,102,.45);
+  background:radial-gradient(120% 90% at 50% 30%,#191416 0%,var(--negro) 75%);
+  font-size:12px;letter-spacing:.05em;color:#6b565c;text-align:center;
 }
 
 
@@ -350,7 +360,7 @@ img{display:block;max-width:100%}
 .cierre::before{
   content:'';position:absolute;inset:-15% -25%;
   background:linear-gradient(var(--ang),
-    transparent 16%,rgba(185,138,134,.07) 48%,transparent 80%);
+    transparent 16%,rgba(217,163,174,.07) 48%,transparent 80%);
   pointer-events:none;
 }
 .cierre > *{position:relative;z-index:1}
@@ -364,7 +374,7 @@ img{display:block;max-width:100%}
   color:var(--gris);font-size:15px;
 }
 .cierre-ig b{color:var(--rose);font-weight:400;
-  border-bottom:1px solid rgba(185,138,134,.5);padding-bottom:2px}
+  border-bottom:1px solid rgba(217,163,174,.5);padding-bottom:2px}
 
 .pie{margin-top:64px;display:flex;flex-direction:column;gap:8px}
 .pie .caps{color:#6b6360}
@@ -390,15 +400,15 @@ img{display:block;max-width:100%}
   .hero{padding:0 40px 56px;align-items:center}
   .hero-foto{height:78%}
   .hero-txt{max-width:520px}
-  .marca{font-size:76px}
+  .marca-txt{font-size:68px}
+  .marca-logo{width:270px}
   .hero-linea{font-size:17px;max-width:26ch}
   .cta{width:auto;min-width:300px;margin:0 auto}
   .sec{padding:100px 40px 110px;max-width:1080px;margin:0 auto}
   .sec-tit{font-size:38px}
   .obras{gap:64px}
-  .servicios{gap:42px}
-  .serv{grid-template-columns:48px 1fr}
-  .serv-nom{font-size:30px}
+  .serv-n{font-size:18px}
+  .lista-serv{max-width:520px}
   .nota-precio{padding:30px 28px}
   .sobre{display:grid;grid-template-columns:290px 1fr;gap:48px;align-items:center}
   .sobre-txt{margin-top:0;font-size:17px}
@@ -430,9 +440,16 @@ img{display:block;max-width:100%}
   </div>
 
   <div class="hero-txt">
+    <!-- Si está el archivo del logo en fotos/logo.png se usa ese, que es
+         el de verdad. Si no, se arma con tipografía: mismo texto, misma
+         disposición que el logo. -->
     <h1 class="marca">
-      Hair Beauty
-      <span class="marca-sub">Salón · Didy Zárate</span>
+      <img class="marca-logo" src="fotos/logo.png"
+           alt="Hair beauty salón — Didy Zárate" onerror="this.remove()">
+      <span class="marca-txt">
+        Hair beauty salón
+        <span class="marca-sub">Didy Zárate</span>
+      </span>
     </h1>
 
     <p class="hero-linea">Rubios, balayage y morochas. <b>Te espero en Boedo.</b></p>
@@ -518,46 +535,103 @@ img{display:block;max-width:100%}
 
 
 <!-- ══════════════ SERVICIOS ══════════════
-     OJO: los textos de abajo son un borrador para que Didy los cambie
-     por sus palabras. NO hay precios ni duraciones inventadas.
-     Para agregar un servicio, copiá un bloque <div class="serv"> y
-     cambiale el número. -->
+     Los servicios y los precios salen del catálogo de Instagram de Didy.
+     VERIFICAR CADA PRECIO CONTRA LA LISTA ORIGINAL antes de publicar:
+     se transcribieron de una captura de pantalla.
+     Para cambiar un precio, es el número y nada más. -->
 <section class="sec" id="servicios">
   <header class="sec-cab">
     <span class="sec-eyebrow caps">Servicios</span>
-    <h2 class="sec-tit">En qué me especializo</h2>
-    <p class="sec-bajada">Si lo que buscás no está acá, escribime igual y lo vemos.</p>
+    <h2 class="sec-tit">Todo lo que hago</h2>
+    <p class="sec-bajada">El color es lo mío, pero en el salón se hace bastante más.</p>
   </header>
 
-  <div class="servicios">
-
-    <div class="serv">
-      <span class="serv-num caps">01</span>
-      <h3 class="serv-nom">Balayage</h3>
-      <p class="serv-desc">Mechas pintadas a mano, que crecen parejas y no te obligan a volver cada mes.</p>
-    </div>
-
-    <div class="serv">
-      <span class="serv-num caps">02</span>
-      <h3 class="serv-nom">Rubios</h3>
-      <p class="serv-desc">Del castaño al rubio que tenés en la cabeza, cuidando que el pelo llegue bien.</p>
-    </div>
-
-    <div class="serv">
-      <span class="serv-num caps">03</span>
-      <h3 class="serv-nom">Morochas</h3>
-      <p class="serv-desc">Castaños profundos con reflejos que aparecen cuando te da la luz.</p>
-    </div>
-
+  <div class="serv-grupo">
+    <span class="caps">Color</span>
+    <ul class="lista-serv">
+      <li>
+        <div class="serv-fila"><span class="serv-n">Mechas y balayage</span><span class="serv-p">desde $150.000</span></div>
+      </li>
+      <li>
+        <div class="serv-fila"><span class="serv-n">Reflejos</span><span class="serv-p">desde $95.000</span></div>
+        <p class="serv-nota">Corto $95.000 · medio $128.000 · largo $160.000</p>
+      </li>
+      <li>
+        <div class="serv-fila"><span class="serv-n">Color completo</span><span class="serv-p">desde $68.000</span></div>
+      </li>
+      <li>
+        <div class="serv-fila"><span class="serv-n">Color raíz</span><span class="serv-p">desde $53.000</span></div>
+      </li>
+      <li>
+        <div class="serv-fila"><span class="serv-n">Baño de luz</span><span class="serv-p">desde $68.000</span></div>
+      </li>
+      <li>
+        <div class="serv-fila"><span class="serv-n">Aplicación</span><span class="serv-p">desde $25.000</span></div>
+      </li>
+    </ul>
   </div>
 
-  <!-- TEXTO A CONFIRMAR CON DIDY: dice cómo cotiza. Si ella prefiere
-       publicar una lista de precios, se reemplaza este bloque. -->
+  <div class="serv-grupo">
+    <span class="caps">Corte y peinado</span>
+    <ul class="lista-serv">
+      <li>
+        <div class="serv-fila"><span class="serv-n">Corte</span><span class="serv-p">$25.000</span></div>
+        <p class="serv-nota">De lunes a miércoles, $23.000</p>
+      </li>
+      <li>
+        <div class="serv-fila"><span class="serv-n">Brushing</span><span class="serv-p">desde $25.000</span></div>
+      </li>
+      <li>
+        <div class="serv-fila"><span class="serv-n">Planchita</span><span class="serv-p">desde $30.000</span></div>
+      </li>
+      <li>
+        <div class="serv-fila"><span class="serv-n">Lavado</span><span class="serv-p">desde $10.000</span></div>
+      </li>
+    </ul>
+  </div>
+
+  <div class="serv-grupo">
+    <span class="caps">Tratamientos</span>
+    <ul class="lista-serv">
+      <li>
+        <div class="serv-fila"><span class="serv-n">Alisado</span><span class="serv-p">desde $70.000</span></div>
+        <p class="serv-nota">Hombro $70.000 · corpiño $85.000 · cintura $97.000 · XL $115.000. Va con el corte de regalo.</p>
+      </li>
+      <li>
+        <div class="serv-fila"><span class="serv-n">Keratina</span><span class="serv-p">desde $55.000</span></div>
+      </li>
+      <li>
+        <div class="serv-fila"><span class="serv-n">Botox capilar</span><span class="serv-p">desde $48.000</span></div>
+      </li>
+      <li>
+        <div class="serv-fila"><span class="serv-n">Baño de crema</span><span class="serv-p">desde $20.000</span></div>
+      </li>
+    </ul>
+  </div>
+
+  <div class="serv-grupo">
+    <span class="caps">Uñas, pestañas y cejas</span>
+    <ul class="lista-serv">
+      <li>
+        <div class="serv-fila"><span class="serv-n">Uñas esculpidas</span><span class="serv-p consultar">Consultá</span></div>
+        <p class="serv-nota">También kapping y esmaltado semipermanente.</p>
+      </li>
+      <li>
+        <div class="serv-fila"><span class="serv-n">Lifting de pestañas</span><span class="serv-p consultar">Consultá</span></div>
+      </li>
+      <li>
+        <div class="serv-fila"><span class="serv-n">Microblading de cejas</span><span class="serv-p consultar">Consultá</span></div>
+      </li>
+    </ul>
+  </div>
+
   <div class="nota-precio">
-    <p>El precio del color depende del largo y de cómo esté tu pelo, así que no lo puedo poner en una lista.</p>
+    <p>De lunes a miércoles hay precios especiales. Y como los valores cambian seguido, confirmámelos antes de venir.</p>
+    <p>Si es color, mandame una foto de tu pelo: el precio depende del largo y de cómo esté.</p>
     <a href="https://wa.me/5491168723710?text=Hola%20Didy!%20Te%20mando%20una%20foto%20de%20mi%20pelo%20para%20consultarte%20un%20color">Mandame una foto y te digo</a>
   </div>
 </section>
+
 
 
 <!-- ══════════════ SOBRE DIDY ══════════════

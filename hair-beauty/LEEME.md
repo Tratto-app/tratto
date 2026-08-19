@@ -45,9 +45,24 @@ instalar nada.
       hay un hueco marcado esperándolos; adentro del HTML quedó la
       lista ya armada y comentada, así se completa cambiando los
       textos, sin tocar nada de diseño.
-- [ ] **El logo** en archivo (PNG con fondo transparente o SVG), para
-      ajustar los colores exactos y usar la firma real en vez de una
-      tipografía parecida.
+- [ ] **El logo** en archivo → `fotos/logo.png` (PNG con fondo
+      transparente, o el original). El sitio ya lo está esperando: si
+      aparece ese archivo, se usa el logo de verdad arriba de todo, con
+      el círculo y todo. Si no está, se arma el nombre con tipografía.
+      La manuscrita quedó en Sacramento, que es la que más se le parece
+      a la del logo, pero no es la misma.
+
+- [ ] **Verificar los precios uno por uno.** Se transcribieron del
+      catálogo de Instagram a partir de una captura, así que hay que
+      confirmarlos antes de publicar.
+
+- [ ] **Los precios de uñas, pestañas y cejas**, que no estaban en la
+      lista. Por ahora esos tres dicen "Consultá".
+
+- [ ] **Confirmar el usuario de Instagram.** El logo dice
+      `@didy_zarate` y el catálogo aparece como `didyzarate7`. El sitio
+      hoy usa `@didy_zarate`; si el bueno es el otro, hay que cambiar
+      los dos links.
 
 Nada de esto se inventa: hasta que llegue, la sección queda con el
 lugar marcado.
@@ -68,7 +83,7 @@ las fotos y los horarios, el sitio queda listo para publicar.
 
 1. [x] Hero
 2. [x] Trabajos (galería de color)
-3. [x] Servicios
+3. [x] Servicios (con precios del catálogo de Instagram)
 4. [x] Sobre Didy
 5. [x] Dónde estoy
 6. [x] Cierre con WhatsApp + Instagram

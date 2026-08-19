@@ -40,6 +40,12 @@ def main():
         dato = base64.b64encode(foto.read_bytes()).decode()
         sitio = sitio.replace(f'src="fotos/{foto.name}"', f'src="data:image/jpeg;base64,{dato}"')
         sitio = sitio.replace(f'data-foto="fotos/{foto.name}"', 'data-foto=""')
+    # Si un archivo todavía no llegó (el logo), se saca la etiqueta del
+    # archivo suelto: el sitio ya tiene su respaldo y así lo que mandás no
+    # sale a buscar nada que no esté adentro.
+    sitio = re.sub(r'\s*<img[^>]+src="(?:fotos|fuentes)/[^"]*"[^>]*>',
+                   lambda m: '' if not (AQUI / re.search(r'src="([^"]+)"', m.group(0)).group(1)).exists() else m.group(0),
+                   sitio)
     (SALIDA / 'hair-beauty-para-mostrar.html').write_text(sitio)
 
     doc = (AQUI / 'para-didy.html').read_text()
@@ -53,13 +59,26 @@ def main():
     # Solo importan las referencias que el navegador sale a buscar de verdad:
     # src=, href= y url(). Los comentarios y los textos que nombran la carpeta
     # no cargan nada.
-    sueltas = re.findall(r'''(?:src|href)=["'](?:fotos|fuentes)/[^"']+|url\(["']?(?:fotos|fuentes)/[^)]+''', sitio)
-    if sueltas:
-        print('\nOJO: quedaron archivos sin incrustar:', file=sys.stderr)
-        for x in dict.fromkeys(sueltas):
-            print('  ', x[:90], file=sys.stderr)
+    # Solo importan las referencias que el navegador sale a buscar de verdad.
+    # Si el archivo existe y quedó afuera, es un error: lo que mandás sale
+    # roto. Si todavía no llegó (el logo, por ejemplo), es solo un aviso: el
+    # sitio ya está preparado para que no se rompa.
+    sueltas = re.findall(r'''(?:src|href)=["']((?:fotos|fuentes)/[^"']+)|url\(["']?((?:fotos|fuentes)/[^)"']+)''', sitio)
+    rutas = dict.fromkeys(a or b for a, b in sueltas)
+    rotas    = [r for r in rutas if (AQUI / r).exists()]
+    esperando = [r for r in rutas if not (AQUI / r).exists()]
+
+    if esperando:
+        print('\nTodavía no llegaron (el sitio no se rompe sin ellos):')
+        for r in esperando:
+            print('   -', r)
+    if rotas:
+        print('\nERROR: estos archivos existen pero quedaron sin incrustar,',
+              'o sea que lo que mandás sale roto:', file=sys.stderr)
+        for r in rotas:
+            print('   -', r, file=sys.stderr)
         sys.exit(1)
-    print('\nSin archivos sueltos: los dos se abren solos en cualquier carpeta.')
+    print('\nListo: los dos se abren solos en cualquier carpeta.')
 
 if __name__ == '__main__':
     main()
