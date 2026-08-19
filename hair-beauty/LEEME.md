@@ -13,8 +13,12 @@ instalar nada.
       Vertical, la clienta mostrando el color (de espaldas o de 3/4),
       con buena luz y **sin filtro**. Mientras no esté, se ve un hueco
       gris marcado; no se rompe nada.
-- [ ] **Fotos de trabajos** para la galería (idealmente pares
-      antes/después con el mismo encuadre y la misma luz).
+- [ ] **Fotos de trabajos** para la galería. Van con estos nombres
+      exactos dentro de `fotos/`:
+      - `trabajo-01.jpg` … `trabajo-04.jpg` (verticales)
+      - `antes-01.jpg` y `despues-01.jpg` — el par antes/después.
+        Que sean **el mismo encuadre y la misma luz**: si el "antes"
+        está sacado con luz fea, el "después" parece photoshop.
 - [ ] **Lista de servicios y precios**, con las palabras que usa ella.
 - [ ] **Días y horarios** de atención.
 - [ ] **El logo** en archivo (PNG con fondo transparente o SVG), para
@@ -33,7 +37,7 @@ lugar marcado.
 ## Secciones
 
 1. [x] Hero
-2. [ ] Trabajos (galería de color)
+2. [x] Trabajos (galería de color)
 3. [ ] Servicios
 4. [ ] Sobre Didy
 5. [ ] Dónde estoy

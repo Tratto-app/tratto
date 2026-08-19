@@ -90,6 +90,7 @@ img{display:block;max-width:100%}
   mask-image:linear-gradient(var(--ang-perp),#000 44%,rgba(0,0,0,.6) 68%,transparent 92%);
 }
 .hero-foto img{
+  position:absolute;inset:0;z-index:1; /* la foto va por encima del hueco */
   width:100%;height:100%;
   object-fit:cover;object-position:center 32%;
 }
@@ -189,6 +190,69 @@ img{display:block;max-width:100%}
 .wa-flota.visible{opacity:1;transform:none;pointer-events:auto}
 .wa-flota svg{width:18px;height:18px;flex:none}
 
+
+/* ══════════════ TRABAJOS ══════════════ */
+
+.sec{padding:64px 24px 76px}
+
+.sec-cab{margin-bottom:34px}
+/* EL BARRIDO, escala M: subrayado corto del título. Es el único de
+   esta sección; las fotos van limpias para no competir con el color. */
+.sec-cab::before{
+  content:'';display:block;
+  width:52px;height:1px;margin-bottom:20px;
+  background:linear-gradient(var(--ang),var(--rose-luz),rgba(185,138,134,.15));
+}
+.sec-eyebrow{display:block;margin-bottom:10px}
+.sec-tit{
+  font-size:29px;font-weight:300;line-height:1.15;
+  letter-spacing:-.01em;color:var(--blanco);
+}
+.sec-bajada{margin-top:12px;font-size:15px;color:var(--gris);max-width:32ch}
+
+/* Las fotos: el marco reserva el lugar exacto para que nada salte
+   mientras carga, y muestra el hueco marcado si el archivo no está. */
+.marco{position:relative;overflow:hidden;background:var(--negro-2)}
+.marco::after{
+  content:'foto → ' attr(data-foto);
+  position:absolute;inset:0;
+  display:flex;align-items:center;justify-content:center;text-align:center;
+  padding:12px;
+  border:1px dashed rgba(126,84,80,.45);
+  background:radial-gradient(120% 90% at 50% 30%,#1c1718 0%,var(--negro) 75%);
+  font-size:11px;letter-spacing:.05em;color:#5f4f4d;
+}
+.marco img{
+  position:absolute;inset:0;z-index:1;
+  width:100%;height:100%;object-fit:cover;
+}
+
+.obra figcaption{margin-top:11px}
+.obra .caps{color:var(--rose)}
+
+.r-4-5 .marco{aspect-ratio:4/5}
+.r-3-4 .marco{aspect-ratio:3/4}
+
+.obras{display:flex;flex-direction:column;gap:44px}
+
+/* Antes y después: mismo encuadre, y el después más grande.
+   Sin slider: en el celular estorba más de lo que aporta. */
+.par-ad{display:grid;grid-template-columns:1fr 1.75fr;gap:10px;align-items:end}
+.par-ad .marco{aspect-ratio:3/4}
+.par-ad figcaption{margin-top:9px}
+.par-ad .caps{color:var(--gris)}
+.par-ad .es-despues .caps{color:var(--rose)}
+.ad-titulo{margin-bottom:14px}
+
+.duo{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+
+.mas-ig{
+  display:inline-block;margin-top:40px;padding:10px 2px;
+  color:var(--gris);font-size:14px;
+  border-bottom:1px solid rgba(126,84,80,.55);
+}
+.mas-ig b{color:var(--rose);font-weight:400}
+
 /* ── Desktop: el mismo diseño con más aire, no otro layout ── */
 @media (min-width:760px){
   .hero{padding:0 40px 56px;align-items:center}
@@ -197,6 +261,9 @@ img{display:block;max-width:100%}
   .marca{font-size:76px}
   .hero-linea{font-size:17px;max-width:26ch}
   .cta{width:auto;min-width:300px;margin:0 auto}
+  .sec{padding:100px 40px 110px;max-width:1080px;margin:0 auto}
+  .sec-tit{font-size:38px}
+  .obras{gap:64px}
 }
 
 @media (prefers-reduced-motion:reduce){
@@ -240,6 +307,73 @@ img{display:block;max-width:100%}
     </a>
   </div>
 </header>
+
+
+<!-- ══════════════ TRABAJOS ══════════════
+     Las fotos van en hair-beauty/fotos/ con estos nombres exactos.
+     Mientras no estén, se ve el hueco marcado y no se rompe nada.
+     Los epígrafes (BALAYAGE, RUBIO, etc.) se cambian por lo que sea
+     cada trabajo. -->
+<section class="sec" id="trabajos">
+  <header class="sec-cab">
+    <span class="sec-eyebrow caps">Color</span>
+    <h2 class="sec-tit">Lo que sale del salón</h2>
+    <p class="sec-bajada">Trabajos reales, sin filtro y sin retoque: el color que ves acá es el que te llevás.</p>
+  </header>
+
+  <div class="obras">
+
+    <figure class="obra r-4-5">
+      <div class="marco" data-foto="fotos/trabajo-01.jpg">
+        <img src="fotos/trabajo-01.jpg" alt="Balayage hecho en Hair Beauty Salón" loading="lazy" onerror="this.remove()">
+      </div>
+      <figcaption class="caps">Balayage</figcaption>
+    </figure>
+
+    <div class="obra-ad">
+      <p class="ad-titulo caps">Antes y después</p>
+      <div class="par-ad">
+        <figure>
+          <div class="marco" data-foto="fotos/antes-01.jpg">
+            <img src="fotos/antes-01.jpg" alt="El pelo antes del trabajo de color" loading="lazy" onerror="this.remove()">
+          </div>
+          <figcaption class="caps">Antes</figcaption>
+        </figure>
+        <figure class="es-despues">
+          <div class="marco" data-foto="fotos/despues-01.jpg">
+            <img src="fotos/despues-01.jpg" alt="El resultado después del trabajo de color" loading="lazy" onerror="this.remove()">
+          </div>
+          <figcaption class="caps">Después</figcaption>
+        </figure>
+      </div>
+    </div>
+
+    <div class="duo">
+      <figure class="obra r-3-4">
+        <div class="marco" data-foto="fotos/trabajo-02.jpg">
+          <img src="fotos/trabajo-02.jpg" alt="Rubio trabajado en el salón" loading="lazy" onerror="this.remove()">
+        </div>
+        <figcaption class="caps">Rubio</figcaption>
+      </figure>
+      <figure class="obra r-3-4">
+        <div class="marco" data-foto="fotos/trabajo-03.jpg">
+          <img src="fotos/trabajo-03.jpg" alt="Color en morocha trabajado en el salón" loading="lazy" onerror="this.remove()">
+        </div>
+        <figcaption class="caps">Morocha</figcaption>
+      </figure>
+    </div>
+
+    <figure class="obra r-4-5">
+      <div class="marco" data-foto="fotos/trabajo-04.jpg">
+        <img src="fotos/trabajo-04.jpg" alt="Trabajo de color hecho en Hair Beauty Salón" loading="lazy" onerror="this.remove()">
+      </div>
+      <figcaption class="caps">Iluminación</figcaption>
+    </figure>
+
+  </div>
+
+  <a class="mas-ig" href="https://instagram.com/didy_zarate">Más trabajos en <b>@didy_zarate</b></a>
+</section>
 
 <!-- Queda fijo y aparece apenas el botón de arriba sale de pantalla,
      así nunca hay un momento del scroll sin WhatsApp a mano. -->
