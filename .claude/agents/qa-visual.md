@@ -3,7 +3,7 @@ name: qa-visual
 description: Revisa cada pantalla rediseñada por consistencia visual 
   y que no se haya roto ninguna función. Usar proactivamente después 
   de cualquier cambio de diseño en una pantalla.
-tools: Read, Grep, Glob
+tools: Read, Grep, Glob, Bash
 model: sonnet
 skills:
   - disenador-marketplace
