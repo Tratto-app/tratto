@@ -9,16 +9,23 @@ instalar nada.
 
 ## Lo que falta que mande Didy
 
+> ⚠️ **Las fotos que están hoy en `fotos/` son de muestra, no son
+> trabajos de Didy.** Sirven para mostrarle el diseño; el sitio no se
+> puede publicar así. Ver `fotos/LEEME-IMPORTANTE.txt`.
+
 - [ ] **Foto principal** → guardarla como `fotos/hero.jpg`.
       Vertical, la clienta mostrando el color (de espaldas o de 3/4),
-      con buena luz y **sin filtro**. Mientras no esté, se ve un hueco
-      gris marcado; no se rompe nada.
+      con buena luz y **sin filtro**.
 - [ ] **Fotos de trabajos** para la galería. Van con estos nombres
       exactos dentro de `fotos/`:
       - `trabajo-01.jpg` … `trabajo-04.jpg` (verticales)
       - `antes-01.jpg` y `despues-01.jpg` — el par antes/después.
         Que sean **el mismo encuadre y la misma luz**: si el "antes"
         está sacado con luz fea, el "después" parece photoshop.
+
+      El camino más rápido para tener el sitio real: bajar ocho fotos
+      del propio Instagram de Didy (@didy_zarate) y guardarlas con
+      esos nombres. Son de ella y ya son trabajos reales.
 - [ ] **Una foto de Didy** para la sección "Quién te atiende" →
       `fotos/didy.jpg`, vertical. Sirve una en el salón, trabajando o
       mirando a cámara; no hace falta que sea de estudio.
