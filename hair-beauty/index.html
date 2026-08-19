@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="es-AR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#0B0A0A">
+<title>Hair Beauty Salón — Didy Zárate | Peluquería en Boedo, CABA</title>
+<meta name="description" content="Rubios, balayage y morochas. Peluquería de Didy Zárate en Maza 1193, Boedo, CABA. Escribime por WhatsApp y sacá tu turno.">
+
+<!-- Para cuando alguien comparte el link por WhatsApp o lo pone en la bio de Instagram -->
+<meta property="og:type" content="website">
+<meta property="og:title" content="Hair Beauty Salón — Didy Zárate">
+<meta property="og:description" content="Rubios, balayage y morochas. Te espero en Boedo.">
+<meta property="og:image" content="fotos/hero.jpg">
+<meta property="og:locale" content="es_AR">
+
+<style>
+/* Las tipografías se sirven desde esta misma carpeta: cargan más rápido
+   con datos móviles y el sitio no depende de que Google responda.
+   Jost y Pinyon Script, ambas con licencia SIL Open Font License. */
+@font-face{
+  font-family:'Pinyon Script';
+  src:url('fuentes/pinyon-script-latin.woff2') format('woff2');
+  font-weight:400;font-style:normal;font-display:swap;
+}
+@font-face{
+  font-family:'Jost';
+  src:url('fuentes/jost-latin.woff2') format('woff2');
+  font-weight:300 500;font-style:normal;font-display:swap;
+}
+:root{
+  /* Paleta del logo: negro profundo + rosé metálico + blanco cálido.
+     Si tenemos el archivo del logo, estos valores se ajustan contra él. */
+  --negro:#0B0A0A;
+  --negro-2:#161213;
+  --rose:#B98A86;
+  --rose-luz:#E3C0B8;
+  --rose-osc:#7E5450;
+  --blanco:#F5EFE9;
+  --gris:#A9A09B;
+
+  /* EL BARRIDO — elemento firma. Un solo ángulo en todo el sitio.
+     La luz barre a 95°; la foto se disuelve a 185°, o sea exactamente
+     perpendicular al barrido. Ese es el sistema, no se cambia por sección. */
+  --ang:95deg;
+  --ang-perp:185deg;
+
+  --sb:env(safe-area-inset-bottom,0px);
+}
+
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html{-webkit-text-size-adjust:100%;background:var(--negro)}
+body{
+  background:var(--negro);
+  color:var(--blanco);
+  font-family:'Jost',system-ui,-apple-system,'Segoe UI',sans-serif;
+  font-size:16px;line-height:1.55;font-weight:300;
+  -webkit-font-smoothing:antialiased;
+  overflow-x:hidden;
+}
+::selection{background:var(--rose-osc);color:var(--blanco)}
+a{color:inherit;text-decoration:none}
+img{display:block;max-width:100%}
+
+/* Sans en mayúsculas con tracking amplio: datos, etiquetas, subtítulos. */
+.caps{
+  font-size:10px;font-weight:400;
+  text-transform:uppercase;letter-spacing:.26em;
+  color:var(--gris);
+}
+
+/* ══════════════ HERO ══════════════ */
+
+.hero{
+  position:relative;
+  min-height:100svh;
+  display:flex;flex-direction:column;justify-content:flex-end;
+  overflow:hidden;
+  padding:0 24px calc(30px + var(--sb));
+}
+
+/* La foto ocupa la parte de arriba y se disuelve en el negro.
+   La máscara es lo que hace que no haya un borde recto de foto: el pelo
+   se va apagando dentro del fondo. */
+.hero-foto{
+  position:absolute;top:0;left:0;right:0;
+  height:74%;
+  background:var(--negro-2);
+  -webkit-mask-image:linear-gradient(var(--ang-perp),#000 44%,rgba(0,0,0,.6) 68%,transparent 92%);
+  mask-image:linear-gradient(var(--ang-perp),#000 44%,rgba(0,0,0,.6) 68%,transparent 92%);
+}
+.hero-foto img{
+  width:100%;height:100%;
+  object-fit:cover;object-position:center 32%;
+}
+
+/* EL BARRIDO, escala L: el filo de luz donde la foto entrega al negro.
+   Es el único barrido de esta pantalla. Si aparece un segundo, deja de
+   leerse como firma y pasa a ser textura. */
+.hero-txt::before{
+  content:'';
+  position:absolute;bottom:100%;left:50%;
+  width:130vw;height:1px;margin-bottom:40px;
+  background:linear-gradient(var(--ang),
+    transparent 8%,
+    rgba(185,138,134,.3) 30%,
+    var(--rose-luz) 52%,
+    rgba(185,138,134,.3) 72%,
+    transparent 92%);
+  transform:translateX(-50%) rotate(-5deg);
+  opacity:.8;
+  pointer-events:none;
+}
+
+/* Lugar de la foto mientras no tengamos las reales.
+   No usamos fotos de stock: mejor un hueco declarado. */
+.hero-slot{
+  position:absolute;inset:0;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  gap:10px;
+  background:
+    radial-gradient(120% 80% at 50% 25%, #201a1b 0%, var(--negro) 72%);
+  border-bottom:1px dashed rgba(126,84,80,.5);
+}
+.hero-slot span{color:var(--rose-osc)}
+.hero-slot .slot-nota{font-size:11px;letter-spacing:.04em;text-transform:none;color:#5a4b49}
+
+/* ── Bloque de abajo: todo al alcance del pulgar ── */
+.hero-txt{position:relative;z-index:2;text-align:center}
+
+.marca{
+  font-family:'Pinyon Script','Snell Roundhand','Segoe Script',cursive;
+  font-weight:400;
+  font-size:clamp(46px,15vw,64px);
+  line-height:.95;
+  color:var(--blanco);
+  margin-bottom:14px;
+}
+.marca-sub{
+  display:block;
+  font-family:'Jost',sans-serif;
+  font-size:10px;font-weight:400;
+  text-transform:uppercase;letter-spacing:.34em;
+  color:var(--rose);
+  margin-top:12px;
+  text-indent:.34em; /* compensa el tracking del último caracter */
+}
+
+.hero-linea{
+  font-size:16px;
+  color:var(--gris);
+  max-width:26ch;
+  margin:0 auto 26px;
+}
+.hero-linea b{display:block;margin-top:2px;color:var(--blanco);font-weight:400}
+
+/* ── Botón de WhatsApp: la acción principal del sitio ── */
+.cta{
+  display:flex;align-items:center;justify-content:center;gap:10px;
+  width:100%;min-height:54px;
+  padding:15px 22px;
+  background:var(--rose);
+  color:var(--negro);
+  font-size:15px;font-weight:500;letter-spacing:.02em;
+  border-radius:2px;
+  transition:background .2s ease,transform .1s ease;
+}
+.cta:active{background:var(--rose-luz);transform:scale(.985)}
+.cta svg{width:19px;height:19px;flex:none}
+
+.hero-dir{
+  margin-top:18px;
+  display:inline-block;
+  padding:8px 4px; /* área tocable, es un link a Google Maps */
+}
+
+/* ── Botón flotante: aparece cuando el de arriba se fue de pantalla ── */
+.wa-flota{
+  position:fixed;right:16px;bottom:calc(16px + var(--sb));z-index:50;
+  display:flex;align-items:center;gap:9px;
+  min-height:48px;padding:12px 18px;
+  background:var(--rose);color:var(--negro);
+  font-size:14px;font-weight:500;
+  border-radius:999px;
+  box-shadow:0 6px 22px rgba(0,0,0,.55);
+  opacity:0;transform:translateY(14px);pointer-events:none;
+  transition:opacity .3s ease,transform .3s ease;
+}
+.wa-flota.visible{opacity:1;transform:none;pointer-events:auto}
+.wa-flota svg{width:18px;height:18px;flex:none}
+
+/* ── Desktop: el mismo diseño con más aire, no otro layout ── */
+@media (min-width:760px){
+  .hero{padding:0 40px 56px;align-items:center}
+  .hero-foto{height:78%}
+  .hero-txt{max-width:520px}
+  .marca{font-size:76px}
+  .hero-linea{font-size:17px;max-width:26ch}
+  .cta{width:auto;min-width:300px;margin:0 auto}
+}
+
+@media (prefers-reduced-motion:reduce){
+  *{transition:none!important;animation:none!important}
+}
+</style>
+</head>
+<body>
+
+<header class="hero">
+
+  <!-- FOTO PRINCIPAL — reemplazar
+       Poné la foto en:  hair-beauty/fotos/hero.jpg
+       Ideal: vertical, la clienta de espaldas o de 3/4 mostrando el color,
+       buena luz, sin filtro. Si el archivo no existe, se muestra el hueco
+       gris de abajo y no se rompe nada. -->
+  <div class="hero-foto">
+    <img src="fotos/hero.jpg" alt="Color hecho en Hair Beauty Salón" onerror="this.remove()">
+    <div class="hero-slot" aria-hidden="true">
+      <span class="caps">Foto principal</span>
+      <span class="slot-nota">fotos/hero.jpg</span>
+    </div>
+  </div>
+
+  <div class="hero-txt">
+    <h1 class="marca">
+      Hair Beauty
+      <span class="marca-sub">Salón · Didy Zárate</span>
+    </h1>
+
+    <p class="hero-linea">Rubios, balayage y morochas. <b>Te espero en Boedo.</b></p>
+
+    <a class="cta" id="cta-hero"
+       href="https://wa.me/5491168723710?text=Hola%20Didy!%20Quer%C3%ADa%20sacar%20un%20turno%20%F0%9F%92%95">
+      <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M17.5 14.4c-.3-.2-1.7-.9-2-1-.3-.1-.5-.2-.7.1-.2.3-.7 1-.9 1.2-.2.2-.3.2-.6.1-.3-.2-1.2-.5-2.3-1.4-.9-.8-1.4-1.7-1.6-2-.2-.3 0-.5.1-.6l.5-.5c.1-.2.2-.3.3-.5 0-.2 0-.4 0-.5 0-.2-.7-1.6-.9-2.2-.2-.6-.5-.5-.7-.5h-.6c-.2 0-.5.1-.8.4-.3.3-1 1-1 2.5s1.1 2.9 1.2 3.1c.2.2 2.1 3.2 5.1 4.5.7.3 1.3.5 1.7.6.7.2 1.4.2 1.9.1.6-.1 1.7-.7 2-1.4.2-.7.2-1.3.2-1.4-.1-.2-.3-.2-.6-.4M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2m0 1.7a8.3 8.3 0 0 1 6.5 13.4 8.3 8.3 0 0 1-11 2l-.4-.2-3 .8.8-2.9-.2-.4A8.3 8.3 0 0 1 12 3.7"/></svg>
+      Escribime por WhatsApp
+    </a>
+
+    <a class="hero-dir caps" href="https://maps.google.com/?q=Maza+1193,+Boedo,+CABA">
+      Maza 1193 · Boedo, CABA
+    </a>
+  </div>
+</header>
+
+<!-- Queda fijo y aparece apenas el botón de arriba sale de pantalla,
+     así nunca hay un momento del scroll sin WhatsApp a mano. -->
+<a class="wa-flota" id="wa-flota"
+   href="https://wa.me/5491168723710?text=Hola%20Didy!%20Quer%C3%ADa%20sacar%20un%20turno%20%F0%9F%92%95">
+  <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M17.5 14.4c-.3-.2-1.7-.9-2-1-.3-.1-.5-.2-.7.1-.2.3-.7 1-.9 1.2-.2.2-.3.2-.6.1-.3-.2-1.2-.5-2.3-1.4-.9-.8-1.4-1.7-1.6-2-.2-.3 0-.5.1-.6l.5-.5c.1-.2.2-.3.3-.5 0-.2 0-.4 0-.5 0-.2-.7-1.6-.9-2.2-.2-.6-.5-.5-.7-.5h-.6c-.2 0-.5.1-.8.4-.3.3-1 1-1 2.5s1.1 2.9 1.2 3.1c.2.2 2.1 3.2 5.1 4.5.7.3 1.3.5 1.7.6.7.2 1.4.2 1.9.1.6-.1 1.7-.7 2-1.4.2-.7.2-1.3.2-1.4-.1-.2-.3-.2-.6-.4M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2m0 1.7a8.3 8.3 0 0 1 6.5 13.4 8.3 8.3 0 0 1-11 2l-.4-.2-3 .8.8-2.9-.2-.4A8.3 8.3 0 0 1 12 3.7"/></svg>
+  Escribime
+</a>
+
+<script>
+// El botón flotante solo molesta si se superpone con el del hero.
+// Aparece cuando ese sale de pantalla.
+(function(){
+  var hero = document.getElementById('cta-hero');
+  var flota = document.getElementById('wa-flota');
+  if(!hero || !flota || !('IntersectionObserver' in window)) return;
+  new IntersectionObserver(function(e){
+    flota.classList.toggle('visible', !e[0].isIntersecting);
+  },{threshold:0}).observe(hero);
+})();
+</script>
+
+</body>
+</html>
