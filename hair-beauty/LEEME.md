@@ -19,7 +19,14 @@ instalar nada.
       - `antes-01.jpg` y `despues-01.jpg` — el par antes/después.
         Que sean **el mismo encuadre y la misma luz**: si el "antes"
         está sacado con luz fea, el "después" parece photoshop.
-- [ ] **Lista de servicios y precios**, con las palabras que usa ella.
+- [ ] **Que Didy lea los textos de Servicios.** Están escritos como
+      borrador, con sus tres especialidades (balayage, rubios,
+      morochas), para que los cambie por sus palabras. Si hace más
+      cosas, se agregan.
+- [ ] **Confirmar cómo cotiza.** Hoy el sitio dice que el precio
+      depende del largo y del estado del pelo, y invita a mandar una
+      foto por WhatsApp. Si ella prefiere publicar una lista de
+      precios, se reemplaza ese bloque.
 - [ ] **Días y horarios** de atención.
 - [ ] **El logo** en archivo (PNG con fondo transparente o SVG), para
       ajustar los colores exactos y usar la firma real en vez de una
@@ -38,7 +45,7 @@ lugar marcado.
 
 1. [x] Hero
 2. [x] Trabajos (galería de color)
-3. [ ] Servicios
+3. [x] Servicios
 4. [ ] Sobre Didy
 5. [ ] Dónde estoy
 6. [ ] Cierre con WhatsApp + Instagram
