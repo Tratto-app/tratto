@@ -51,6 +51,12 @@ lugar marcado.
 - WhatsApp: 11 6872-3710
 - Instagram: [@didy_zarate](https://instagram.com/didy_zarate)
 
+## El sitio está armado
+
+Las seis secciones están hechas y probadas en pantallas de 320 a
+1280px. Lo que falta es contenido de Didy, no diseño: apenas lleguen
+las fotos y los horarios, el sitio queda listo para publicar.
+
 ## Secciones
 
 1. [x] Hero
@@ -58,4 +64,4 @@ lugar marcado.
 3. [x] Servicios
 4. [x] Sobre Didy
 5. [x] Dónde estoy
-6. [ ] Cierre con WhatsApp + Instagram
+6. [x] Cierre con WhatsApp + Instagram

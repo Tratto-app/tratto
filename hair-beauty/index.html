@@ -327,6 +327,52 @@ img{display:block;max-width:100%}
   font-size:12px;letter-spacing:.05em;color:#5f4f4d;text-align:center;
 }
 
+
+/* ══════════════ CIERRE ══════════════ */
+
+/* EL BARRIDO, escala XL: acá baña toda la sección, apenas perceptible.
+   Cierra el círculo que abre el hero con el filo de luz de la foto.
+   Por eso esta sección no lleva el subrayado del título: uno solo por
+   pantalla. */
+.cierre{position:relative;overflow:hidden}
+.cierre::before{
+  content:'';position:absolute;inset:-15% -25%;
+  background:linear-gradient(var(--ang),
+    transparent 16%,rgba(185,138,134,.07) 48%,transparent 80%);
+  pointer-events:none;
+}
+.cierre > *{position:relative;z-index:1}
+.cierre .sec-cab::before{display:none}
+.cierre .sec-tit{max-width:15ch}
+
+.cierre .cta{margin-top:32px}
+
+.cierre-ig{
+  display:inline-block;margin-top:26px;padding:10px 2px;
+  color:var(--gris);font-size:15px;
+}
+.cierre-ig b{color:var(--rose);font-weight:400;
+  border-bottom:1px solid rgba(185,138,134,.5);padding-bottom:2px}
+
+.pie{margin-top:64px;display:flex;flex-direction:column;gap:8px}
+.pie .caps{color:#6b6360}
+
+
+/* ── Área tocable ──
+   Varios links son chicos por diseño (los datos van en letra chiquita
+   con tracking). Pero el dedo necesita 44px, así que se agranda la zona
+   sensible sin mover un pixel de lo que se ve. */
+.hero-dir,.mas-ig,.nota-precio a,.cierre-ig{position:relative}
+.hero-dir::after,.mas-ig::after,.nota-precio a::after,.cierre-ig::after{
+  content:'';position:absolute;left:0;right:0;top:50%;
+  transform:translateY(-50%);height:44px;
+}
+/* En el pie los links van pegados, así que ahí no sirve agrandar la zona
+   invisible (se pisarían entre ellos): se separan de verdad. */
+.pie{gap:0}
+.pie a{display:inline-flex;align-items:center;min-height:44px}
+.pie > span:first-child{margin-bottom:6px}
+
 /* ── Desktop: el mismo diseño con más aire, no otro layout ── */
 @media (min-width:760px){
   .hero{padding:0 40px 56px;align-items:center}
@@ -344,6 +390,9 @@ img{display:block;max-width:100%}
   .nota-precio{padding:30px 28px}
   .sobre{display:grid;grid-template-columns:290px 1fr;gap:48px;align-items:center}
   .sobre-txt{margin-top:0;font-size:17px}
+  .cierre{text-align:center}
+  .cierre .sec-tit{max-width:none}
+  .cierre .cta{margin-left:auto;margin-right:auto}
 }
 
 @media (prefers-reduced-motion:reduce){
@@ -555,6 +604,32 @@ img{display:block;max-width:100%}
   </div>
 </section>
 
+
+<!-- ══════════════ CIERRE ══════════════
+     El último empujón a WhatsApp. Instagram va como actor secundario:
+     si compite con el WhatsApp, la persona se va a mirar fotos y no
+     saca el turno. -->
+<section class="sec cierre" id="turno">
+  <header class="sec-cab">
+    <span class="sec-eyebrow caps">Tu turno</span>
+    <h2 class="sec-tit">Contame qué buscás y lo vemos juntas.</h2>
+  </header>
+
+  <a class="cta"
+     href="https://wa.me/5491168723710?text=Hola%20Didy!%20Quer%C3%ADa%20sacar%20un%20turno%20%F0%9F%92%95">
+    <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M17.5 14.4c-.3-.2-1.7-.9-2-1-.3-.1-.5-.2-.7.1-.2.3-.7 1-.9 1.2-.2.2-.3.2-.6.1-.3-.2-1.2-.5-2.3-1.4-.9-.8-1.4-1.7-1.6-2-.2-.3 0-.5.1-.6l.5-.5c.1-.2.2-.3.3-.5 0-.2 0-.4 0-.5 0-.2-.7-1.6-.9-2.2-.2-.6-.5-.5-.7-.5h-.6c-.2 0-.5.1-.8.4-.3.3-1 1-1 2.5s1.1 2.9 1.2 3.1c.2.2 2.1 3.2 5.1 4.5.7.3 1.3.5 1.7.6.7.2 1.4.2 1.9.1.6-.1 1.7-.7 2-1.4.2-.7.2-1.3.2-1.4-.1-.2-.3-.2-.6-.4M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2m0 1.7a8.3 8.3 0 0 1 6.5 13.4 8.3 8.3 0 0 1-11 2l-.4-.2-3 .8.8-2.9-.2-.4A8.3 8.3 0 0 1 12 3.7"/></svg>
+    Escribime por WhatsApp
+  </a>
+
+  <a class="cierre-ig" href="https://instagram.com/didy_zarate">O seguime en <b>@didy_zarate</b></a>
+
+  <footer class="pie">
+    <span class="caps">Hair Beauty Salón · Didy Zárate</span>
+    <a class="caps" href="https://maps.google.com/?q=Maza+1193,+Boedo,+CABA">Maza 1193 · Boedo, CABA</a>
+    <a class="caps" href="https://wa.me/5491168723710">WhatsApp 11 6872-3710</a>
+  </footer>
+</section>
+
 <!-- Queda fijo y aparece apenas el botón de arriba sale de pantalla,
      así nunca hay un momento del scroll sin WhatsApp a mano. -->
 <a class="wa-flota" id="wa-flota"
@@ -564,15 +639,21 @@ img{display:block;max-width:100%}
 </a>
 
 <script>
-// El botón flotante solo molesta si se superpone con el del hero.
-// Aparece cuando ese sale de pantalla.
+// El flotante solo molesta si se pisa con un botón grande de WhatsApp.
+// Aparece cuando no hay ninguno a la vista, y se esconde cuando aparece
+// el del hero o el del cierre.
 (function(){
-  var hero = document.getElementById('cta-hero');
   var flota = document.getElementById('wa-flota');
-  if(!hero || !flota || !('IntersectionObserver' in window)) return;
-  new IntersectionObserver(function(e){
-    flota.classList.toggle('visible', !e[0].isIntersecting);
-  },{threshold:0}).observe(hero);
+  var botones = document.querySelectorAll('.cta');
+  if(!flota || !botones.length || !('IntersectionObserver' in window)) return;
+  var aLaVista = new Set();
+  var obs = new IntersectionObserver(function(entradas){
+    entradas.forEach(function(e){
+      if(e.isIntersecting) aLaVista.add(e.target); else aLaVista.delete(e.target);
+    });
+    flota.classList.toggle('visible', aLaVista.size === 0);
+  },{threshold:0});
+  botones.forEach(function(b){ obs.observe(b); });
 })();
 </script>
 
