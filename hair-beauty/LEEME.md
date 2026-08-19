@@ -19,6 +19,13 @@ instalar nada.
       - `antes-01.jpg` y `despues-01.jpg` — el par antes/después.
         Que sean **el mismo encuadre y la misma luz**: si el "antes"
         está sacado con luz fea, el "después" parece photoshop.
+- [ ] **Una foto de Didy** para la sección "Quién te atiende" →
+      `fotos/didy.jpg`, vertical. Sirve una en el salón, trabajando o
+      mirando a cámara; no hace falta que sea de estudio.
+- [ ] **Que Didy escriba su propio "sobre mí".** Lo que hay ahora es
+      un borrador armado solo con lo confirmado: su nombre, el barrio
+      y sus tres especialidades. No hay años de experiencia, ni
+      premios, ni cantidad de clientas — eso lo pone ella si quiere.
 - [ ] **Que Didy lea los textos de Servicios.** Están escritos como
       borrador, con sus tres especialidades (balayage, rubios,
       morochas), para que los cambie por sus palabras. Si hace más
@@ -46,6 +53,6 @@ lugar marcado.
 1. [x] Hero
 2. [x] Trabajos (galería de color)
 3. [x] Servicios
-4. [ ] Sobre Didy
+4. [x] Sobre Didy
 5. [ ] Dónde estoy
 6. [ ] Cierre con WhatsApp + Instagram

@@ -279,6 +279,26 @@ img{display:block;max-width:100%}
   padding-bottom:2px;
 }
 
+
+/* ══════════════ SOBRE DIDY ══════════════ */
+
+/* El retrato no va a sangre como los trabajos: más chico y corrido a un
+   lado, así se lee como persona y no como muestra de trabajo. */
+.sobre-foto{width:76%;max-width:290px}
+.sobre-foto .marco{aspect-ratio:3/4}
+
+.sobre-txt{margin-top:28px;font-size:16px;color:var(--gris);max-width:34ch}
+.sobre-txt p + p{margin-top:14px}
+.sobre-txt b{color:var(--blanco);font-weight:400}
+
+/* La letra manuscrita vuelve solo acá, como firma al pie de lo que
+   cuenta. Es lo que hace que se lea como ella hablando. */
+.firma{
+  display:block;margin-top:24px;
+  font-family:'Pinyon Script','Snell Roundhand','Segoe Script',cursive;
+  font-size:40px;line-height:1;color:var(--rose);
+}
+
 /* ── Desktop: el mismo diseño con más aire, no otro layout ── */
 @media (min-width:760px){
   .hero{padding:0 40px 56px;align-items:center}
@@ -294,6 +314,8 @@ img{display:block;max-width:100%}
   .serv{grid-template-columns:48px 1fr}
   .serv-nom{font-size:30px}
   .nota-precio{padding:30px 28px}
+  .sobre{display:grid;grid-template-columns:290px 1fr;gap:48px;align-items:center}
+  .sobre-txt{margin-top:0;font-size:17px}
 }
 
 @media (prefers-reduced-motion:reduce){
@@ -445,6 +467,34 @@ img{display:block;max-width:100%}
   <div class="nota-precio">
     <p>El precio del color depende del largo y de cómo esté tu pelo, así que no lo puedo poner en una lista.</p>
     <a href="https://wa.me/5491168723710?text=Hola%20Didy!%20Te%20mando%20una%20foto%20de%20mi%20pelo%20para%20consultarte%20un%20color">Mandame una foto y te digo</a>
+  </div>
+</section>
+
+
+<!-- ══════════════ SOBRE DIDY ══════════════
+     BORRADOR: este texto lo tiene que escribir ella. Acá solo va lo
+     confirmado (su nombre, el barrio, sus tres especialidades) y sin
+     ningún dato inventado: nada de años de experiencia, premios ni
+     cantidad de clientas.
+     Foto: hair-beauty/fotos/didy.jpg -->
+<section class="sec" id="sobre">
+  <header class="sec-cab">
+    <span class="sec-eyebrow caps">Quién te atiende</span>
+    <h2 class="sec-tit">Didy Zárate</h2>
+  </header>
+
+  <div class="sobre">
+    <div class="sobre-foto">
+      <div class="marco" data-foto="fotos/didy.jpg">
+        <img src="fotos/didy.jpg" alt="Didy Zárate en su salón" loading="lazy" onerror="this.remove()">
+      </div>
+    </div>
+
+    <div class="sobre-txt">
+      <p>Soy Didy y trabajo el color acá en Boedo. <b>Rubios, balayage y morochas</b>: eso es lo mío.</p>
+      <p>Cada pelo llega distinto. Por eso lo primero es escucharte y decirte qué se puede hacer con el tuyo.</p>
+      <span class="firma" aria-hidden="true">Didy</span>
+    </div>
   </div>
 </section>
 
