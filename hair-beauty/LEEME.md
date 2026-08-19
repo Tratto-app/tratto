@@ -34,7 +34,10 @@ instalar nada.
       depende del largo y del estado del pelo, y invita a mandar una
       foto por WhatsApp. Si ella prefiere publicar una lista de
       precios, se reemplaza ese bloque.
-- [ ] **Días y horarios** de atención.
+- [ ] **Días y horarios** de atención. En la sección "Dónde estoy"
+      hay un hueco marcado esperándolos; adentro del HTML quedó la
+      lista ya armada y comentada, así se completa cambiando los
+      textos, sin tocar nada de diseño.
 - [ ] **El logo** en archivo (PNG con fondo transparente o SVG), para
       ajustar los colores exactos y usar la firma real en vez de una
       tipografía parecida.
@@ -54,5 +57,5 @@ lugar marcado.
 2. [x] Trabajos (galería de color)
 3. [x] Servicios
 4. [x] Sobre Didy
-5. [ ] Dónde estoy
+5. [x] Dónde estoy
 6. [ ] Cierre con WhatsApp + Instagram

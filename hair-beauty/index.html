@@ -299,6 +299,34 @@ img{display:block;max-width:100%}
   font-size:40px;line-height:1;color:var(--rose);
 }
 
+
+/* ══════════════ DÓNDE ESTOY ══════════════ */
+
+/* Sin mapa incrustado: es un rectángulo claro que rompe el negro, suma
+   peso en datos móviles y en el celular lo que sirve es que se abra el
+   Maps del teléfono. Acá la dirección misma es lo gráfico. */
+.dir-barrio{display:block;margin-top:12px}
+
+.link-linea{
+  display:inline-block;margin-top:26px;padding:10px 2px;
+  color:var(--rose);font-size:15px;
+  border-bottom:1px solid rgba(185,138,134,.5);
+}
+
+.horarios{margin-top:46px}
+.horas{list-style:none;margin-top:16px;display:flex;flex-direction:column;gap:12px}
+.horas li{display:flex;justify-content:space-between;align-items:baseline;gap:20px;max-width:340px}
+.horas li span:last-child{color:var(--blanco);font-size:15px}
+
+/* Mismo lenguaje que los huecos de foto: si falta el dato, se ve que
+   falta y no se inventa. */
+.hueco{
+  margin-top:16px;padding:22px 18px;
+  border:1px dashed rgba(126,84,80,.45);
+  background:radial-gradient(120% 90% at 50% 30%,#1c1718 0%,var(--negro) 75%);
+  font-size:12px;letter-spacing:.05em;color:#5f4f4d;text-align:center;
+}
+
 /* ── Desktop: el mismo diseño con más aire, no otro layout ── */
 @media (min-width:760px){
   .hero{padding:0 40px 56px;align-items:center}
@@ -495,6 +523,35 @@ img{display:block;max-width:100%}
       <p>Cada pelo llega distinto. Por eso lo primero es escucharte y decirte qué se puede hacer con el tuyo.</p>
       <span class="firma" aria-hidden="true">Didy</span>
     </div>
+  </div>
+</section>
+
+
+<!-- ══════════════ DÓNDE ESTOY ══════════════
+     La dirección está confirmada. Los horarios NO: hasta que Didy los
+     pase queda el hueco marcado, no se inventan. -->
+<section class="sec" id="donde">
+  <header class="sec-cab">
+    <span class="sec-eyebrow caps">Dónde estoy</span>
+    <h2 class="sec-tit">Maza 1193</h2>
+    <span class="dir-barrio caps">Boedo · Ciudad de Buenos Aires</span>
+  </header>
+
+  <a class="link-linea" href="https://maps.google.com/?q=Maza+1193,+Boedo,+CABA">Cómo llegar</a>
+
+  <div class="horarios">
+    <span class="caps">Horarios</span>
+
+    <!-- Cuando Didy pase los días y horarios, borrá el <p class="hueco">
+         de acá abajo y descomentá la lista:
+    <ul class="horas">
+      <li><span class="caps">Lunes a viernes</span><span>9 a 19</span></li>
+      <li><span class="caps">Sábados</span><span>9 a 15</span></li>
+      <li><span class="caps">Domingos</span><span>Cerrado</span></li>
+    </ul>
+    -->
+
+    <p class="hueco">falta que Didy pase los días y horarios</p>
   </div>
 </section>
 
