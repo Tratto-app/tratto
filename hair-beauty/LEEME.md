@@ -73,6 +73,25 @@ las fotos y los horarios, el sitio queda listo para publicar.
 5. [x] Dónde estoy
 6. [x] Cierre con WhatsApp + Instagram
 
+## Para mandar por WhatsApp
+
+En `para-mandar/` hay tres archivos listos para reenviar:
+
+- `hair-beauty-para-mostrar.html` — **el sitio entero en un solo
+  archivo**, con las fotos y las tipografías adentro. Se manda y se
+  abre de un toque, sin descomprimir nada ni tener internet.
+- `Hair-Beauty-que-tiene-el-sitio.pdf` — el documento que le explica a
+  Didy qué tiene el sitio y qué le falta mandar.
+- El mismo documento en `.html`, por si lo prefiere en el navegador.
+
+Cuando cambien las fotos o los textos hay que rearmarlos, si no lo que
+mandás lleva la versión vieja adentro:
+
+    python3 hair-beauty/armar-para-mandar.py
+
+El PDF se rehace abriendo el `.html` del documento e imprimiendo a PDF,
+con la opción de gráficos de fondo activada (si no sale en blanco).
+
 ## Cómo publicarlo
 
 Es una carpeta de archivos comunes: no necesita servidor, ni base de
