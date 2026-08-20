@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html lang="es-AR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#16110F">
+
+<title>Peluquería en Caballito | Pelo's Design</title>
+<meta name="description" content="Peluquería de diseño en Yerbal 880, Caballito. Corte, color y balayage con turno previo. 5,0 en Google con 176 reseñas. Pedí tu turno por WhatsApp.">
+<link rel="canonical" href="https://pelosdesign.vercel.app/">
+
+<meta property="og:type" content="website">
+<meta property="og:locale" content="es_AR">
+<meta property="og:site_name" content="Pelo's Design">
+<meta property="og:title" content="Peluquería en Caballito | Pelo's Design">
+<meta property="og:description" content="Corte, color y balayage en Yerbal 880, Caballito. 5,0 en Google con 176 reseñas.">
+<meta property="og:url" content="https://pelosdesign.vercel.app/">
+<meta property="og:image" content="https://pelosdesign.vercel.app/img/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+
+<link rel="icon" href="img/favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="img/apple-touch-icon.png">
+
+<link rel="preload" href="fonts/archivo-var-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="css/estilo.css">
+
+<script type="application/ld+json" id="ld-negocio"></script>
+<script type="application/ld+json" id="ld-faq"></script>
+</head>
+
+<body>
+<a class="saltar" href="#contenido">Saltar al contenido</a>
+
+<!-- La escala de tonos, versión progreso para mobile -->
+<div class="escala-mobile" id="escalaMobile" aria-hidden="true"></div>
+
+<header class="barra" id="barra">
+  <a class="marca" href="#top">pelo<i>'s</i> design</a>
+  <nav class="menu" aria-label="Secciones">
+    <a href="#servicios">Servicios</a>
+    <a href="#resenas">Reseñas</a>
+    <a href="precios.html" class="destacado">Lista de precios</a>
+    <a href="#equipo">Equipo</a>
+    <a href="#llegar">Cómo llegar</a>
+  </nav>
+  <button class="abrir-menu" id="abrirMenu" aria-expanded="false" aria-controls="panel">Menú</button>
+</header>
+
+<!-- Navegación en mobile: la misma escala de tonos, desplegada -->
+<div class="panel" id="panel" data-abierto="0">
+  <div class="panel-tapa">
+    <span class="marca">pelo<i>'s</i> design</span>
+    <button class="abrir-menu" id="cerrarMenu">Cerrar</button>
+  </div>
+  <ul class="panel-lista" id="panelLista"></ul>
+  <a class="boton boton-1" data-wa="Hola, quiero pedir un turno." href="#">Pedir turno por WhatsApp</a>
+</div>
+
+<!-- El elemento firma: la carta de color del salón es el índice del sitio -->
+<nav class="escala" id="escala" data-fondo="oscuro" aria-label="Índice del sitio"></nav>
+
+<main id="contenido" tabindex="-1">
+
+<!-- ══════════ 01 · HERO ══════════ -->
+<section class="hero" id="top">
+  <div class="contenedor">
+    <p class="condensada eyebrow">Peluquería de diseño · Caballito, CABA</p>
+    <h1><span>Primero <em>te escuchamos</em>.</span> <span>Después cortamos.</span></h1>
+
+    <div class="hero-grilla">
+      <div>
+        <p class="lead">Abelardo hace el corte y el color. Martina te atiende. Somos dos y trabajamos con turno, para dedicarle a cada persona el tiempo que necesita.</p>
+        <div class="acciones">
+          <a class="boton boton-1" data-wa="Hola, quiero pedir un turno." href="#">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12.04 2C6.58 2 2.13 6.45 2.13 11.91c0 1.75.46 3.45 1.32 4.95L2 22l5.25-1.38a9.9 9.9 0 0 0 4.79 1.22h.01c5.46 0 9.91-4.45 9.91-9.91S17.5 2 12.04 2Zm5.8 14.16c-.24.68-1.42 1.31-1.95 1.36-.5.05-.96.23-3.23-.67-2.72-1.07-4.44-3.85-4.57-4.03-.13-.18-1.09-1.45-1.09-2.77s.69-1.96.94-2.23c.24-.27.53-.34.71-.34.18 0 .35 0 .51.01.16 0 .38-.06.6.46.23.55.77 1.9.84 2.04.07.13.11.29.02.47-.09.18-.13.29-.27.45-.13.16-.28.35-.4.47-.13.13-.27.28-.12.55.16.27.7 1.15 1.5 1.86 1.03.92 1.9 1.2 2.17 1.34.27.13.42.11.58-.07.16-.18.67-.78.85-1.05.18-.27.35-.22.6-.13.24.09 1.55.73 1.82.86.27.13.44.2.51.31.07.11.07.63-.17 1.31Z"/></svg>
+            Pedir turno por WhatsApp
+          </a>
+          <a class="boton boton-2" href="precios.html">Ver lista de precios</a>
+        </div>
+        <p class="hero-pie"><b data-dato="direccionCorta"></b> · <span data-dato="resumenHorarios"></span></p>
+      </div>
+
+      <!-- La reputación: el activo más fuerte del negocio, tratado como titular -->
+      <a class="reputacion" data-ficha href="#" rel="noopener">
+        <p class="condensada eyebrow">Calificación en Google</p>
+        <div class="reputacion-num">
+          <b data-dato="puntaje"></b>
+          <span class="estrellas" id="estrellasHero" aria-hidden="true"></span>
+        </div>
+        <p class="reputacion-txt">Sobre <strong data-dato="cantidadReseñas"></strong> reseñas de personas que se atendieron acá. Ninguna la escribimos nosotros.</p>
+        <p class="reputacion-ver condensada">Ver la ficha en Google
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M7 17 17 7M9 7h8v8"/></svg>
+        </p>
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════ 02 · SERVICIOS ══════════ -->
+<section class="seccion claro" id="servicios">
+  <div class="contenedor">
+    <div class="cabecera">
+      <p class="condensada eyebrow">02 — Qué hacemos</p>
+      <h2 class="titulo">Ocho servicios. Ninguno en piloto automático.</h2>
+      <p class="lead">Todo empieza con una charla corta sobre qué querés y qué aguanta tu pelo. Si algo no conviene hacerlo, te lo decimos.</p>
+    </div>
+
+    <div class="servicios">
+      <a class="servicio" style="--tono:var(--t1)" data-wa="Hola, quiero consultar por un corte.">
+        <span class="servicio-tono" aria-hidden="true"></span>
+        <h3>Corte</h3>
+        <p>Con lavado y secado. Antes de tocar la tijera charlamos qué querés y qué se puede sostener en casa.</p>
+        <span class="servicio-link">Consultar <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
+      </a>
+      <a class="servicio" style="--tono:var(--t2)" data-wa="Hola, quiero consultar por un color.">
+        <span class="servicio-tono" aria-hidden="true"></span>
+        <h3>Color</h3>
+        <p>Color completo o retoque de raíz. Elegimos el tono con vos y te explicamos cómo mantenerlo entre visita y visita.</p>
+        <span class="servicio-link">Consultar <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
+      </a>
+      <a class="servicio" style="--tono:var(--t3)" data-wa="Hola, quiero consultar por un balayage.">
+        <span class="servicio-tono" aria-hidden="true"></span>
+        <h3>Balayage</h3>
+        <p>Aclarado a mano alzada, con matizado incluido. Crece parejo, sin la línea marcada de las mechas con papel.</p>
+        <span class="servicio-link">Consultar <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
+      </a>
+      <a class="servicio" style="--tono:var(--t4)" data-wa="Hola, quiero consultar por mechas.">
+        <span class="servicio-tono" aria-hidden="true"></span>
+        <h3>Mechas y babylights</h3>
+        <p>Para sumar luz sin moverte del color de base. Van finitas, pensadas para que se note poco el crecimiento.</p>
+        <span class="servicio-link">Consultar <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
+      </a>
+      <a class="servicio" style="--tono:var(--t5)" data-wa="Hola, quiero consultar por un tratamiento.">
+        <span class="servicio-tono" aria-hidden="true"></span>
+        <h3>Tratamientos</h3>
+        <p>Nutrición, hidratación, botox capilar y brillo. Primero vemos qué le falta a tu pelo y después elegimos.</p>
+        <span class="servicio-link">Consultar <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
+      </a>
+      <a class="servicio" style="--tono:var(--t6)" data-wa="Hola, quiero consultar por definición de rizos.">
+        <span class="servicio-tono" aria-hidden="true"></span>
+        <h3>Definición de rizos</h3>
+        <p>Pelo ondulado y rulo. El corte va en seco, que es la única forma de ver dónde cae cada rulo de verdad.</p>
+        <span class="servicio-link">Consultar <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
+      </a>
+      <a class="servicio" style="--tono:var(--t7)" data-wa="Hola, quiero consultar por un brushing.">
+        <span class="servicio-tono" aria-hidden="true"></span>
+        <h3>Brushing</h3>
+        <p>Liso o con onda, como lo pidas. Si lo cuidás, te dura varios días.</p>
+        <span class="servicio-link">Consultar <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
+      </a>
+      <a class="servicio" style="--tono:var(--t8)" data-wa="Hola, quiero consultar por un peinado para un evento.">
+        <span class="servicio-tono" aria-hidden="true"></span>
+        <h3>Peinado</h3>
+        <p>Recogidos y peinados para eventos. Pedí el turno con tiempo: son los que primero se llenan.</p>
+        <span class="servicio-link">Consultar <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════ 03 · RESEÑAS DE GOOGLE ══════════ -->
+<section class="seccion oscuro" id="resenas">
+  <div class="contenedor">
+    <div id="avisoResenas"></div>
+
+    <div class="resenas-tapa">
+      <div class="cabecera" style="margin-bottom:0">
+        <p class="condensada eyebrow">03 — Lo que dicen</p>
+        <h2 class="titulo"><span data-dato="cantidadReseñas"></span> personas se tomaron el trabajo de volver a Google a escribir algo.</h2>
+        <p class="lead">Están todas publicadas en la ficha de Google del salón, con el nombre de quien las escribió y la fecha. Podés cruzarlas una por una.</p>
+      </div>
+
+      <a class="google-badge" data-ficha href="#" rel="noopener">
+        <span class="g" aria-hidden="true">
+          <svg viewBox="0 0 24 24"><path fill="#4285F4" d="M23.5 12.27c0-.79-.07-1.54-.2-2.27H12v4.51h6.47a5.5 5.5 0 0 1-2.4 3.58v3h3.87c2.26-2.09 3.56-5.17 3.56-8.82Z"/><path fill="#34A853" d="M12 24c3.24 0 5.95-1.08 7.94-2.91l-3.87-3a7.2 7.2 0 0 1-10.73-3.78H1.34v3.09A12 12 0 0 0 12 24Z"/><path fill="#FBBC05" d="M5.34 14.3a7.2 7.2 0 0 1 0-4.6V6.61H1.34a12 12 0 0 0 0 10.78l4-3.09Z"/><path fill="#EA4335" d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.43-3.43C17.95 1.19 15.24 0 12 0A12 12 0 0 0 1.34 6.61l4 3.09A7.2 7.2 0 0 1 12 4.75Z"/></svg>
+        </span>
+        <span>
+          <b data-dato="puntaje"></b>
+          <span class="estrellas" id="estrellasBadge" aria-hidden="true" style="display:inline-flex;vertical-align:middle;margin-left:.35rem"></span>
+          <br><span><span data-dato="cantidadReseñas"></span> reseñas en Google</span>
+        </span>
+      </a>
+    </div>
+
+    <div class="muro" id="muroResenas"></div>
+
+    <p class="atribucion">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 8h.01"/></svg>
+      Reseñas publicadas en Google por sus autores. Las seleccionamos a mano y las reproducimos textuales.
+      <a data-ficha href="#" rel="noopener">Ver las <span data-dato="cantidadReseñas"></span> en Google</a>
+    </p>
+  </div>
+</section>
+
+<!-- ══════════ 04 · PRECIOS ══════════ -->
+<section class="seccion claro" id="precios">
+  <div class="contenedor">
+    <div class="precios-llamada">
+      <div>
+        <p class="condensada eyebrow">04 — Cuánto sale</p>
+        <h2 class="titulo">La lista completa, con precio por largo de pelo.</h2>
+        <p class="lead" style="max-width:46ch">Diecinueve servicios en tres grupos, con el precio según tu largo: corto, mediano, largo o extra largo. Sin letra chica y sin tener que preguntar.</p>
+        <ul class="precios-lista">
+          <li>Cortes y peinados</li>
+          <li>Color</li>
+          <li>Tratamientos</li>
+        </ul>
+      </div>
+      <div class="acciones" style="flex-direction:column;align-items:stretch">
+        <a class="boton boton-1" href="precios.html" style="white-space:nowrap">
+          Abrir la lista de precios
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+        </a>
+        <a class="boton boton-2" data-wa="Hola, vi la lista de precios y quiero reservar un turno." href="#">Consultar un precio</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════ 05 · TRABAJOS ══════════ -->
+<section class="seccion oscuro" id="trabajos">
+  <div class="contenedor">
+    <div id="avisoGaleria"></div>
+    <div class="cabecera">
+      <p class="condensada eyebrow">05 — Nuestros trabajos</p>
+      <h2 class="titulo">Cabezas reales, clientas del salón.</h2>
+      <p class="lead">Todo lo que ves acá lo hicimos nosotros, con permiso de quien se sentó en la silla. No hay una sola foto de banco de imágenes.</p>
+    </div>
+    <div class="galeria" id="galeria"></div>
+    <p class="atribucion">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><path d="M17.5 6.5h.01"/></svg>
+      Subimos trabajos nuevos casi todas las semanas.
+      <a data-ig href="#" rel="noopener">Ver más en Instagram</a>
+    </p>
+  </div>
+</section>
+
+<!-- ══════════ 06 · EQUIPO ══════════ -->
+<section class="seccion oscuro-2" id="equipo">
+  <div class="contenedor">
+    <div class="cabecera">
+      <p class="condensada eyebrow">06 — Quiénes somos</p>
+      <h2 class="titulo">Somos dos. Siempre te atiende alguno de los dos.</h2>
+      <p class="lead">No hay rotación de personal ni te toca uno distinto cada vez. Eso es la mitad de por qué la gente vuelve.</p>
+    </div>
+    <div class="equipo">
+      <article class="persona">
+        <span class="persona-inicial" aria-hidden="true">A</span>
+        <div>
+          <h3>Abelardo</h3>
+          <p class="rol">Corte y color</p>
+        </div>
+        <p>Hace los cortes y todo el color del salón. En las reseñas de Google lo nombran por su nombre, sobre todo cuando el trabajo fue corrección de color.</p>
+      </article>
+      <article class="persona">
+        <span class="persona-inicial" aria-hidden="true">M</span>
+        <div>
+          <h3>Martina</h3>
+          <p class="rol">Atención</p>
+        </div>
+        <p>Arma la agenda y recibe a la gente cuando llega. Si escribís al WhatsApp del salón, la que te contesta es ella.</p>
+      </article>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════ 07 · CÓMO LLEGAR ══════════ -->
+<section class="seccion claro" id="llegar">
+  <div class="contenedor">
+    <div class="cabecera">
+      <p class="condensada eyebrow">07 — Cómo llegar</p>
+      <h2 class="titulo">Yerbal 880, en pleno Caballito.</h2>
+    </div>
+
+    <div class="llegar">
+      <div>
+        <p class="estado" id="estado" data-abierto="0"><span class="punto" aria-hidden="true"></span><span id="estadoTexto">Consultando horario…</span></p>
+
+        <table class="tabla-horarios">
+          <caption class="condensada" style="text-align:left;padding-bottom:.75rem;color:var(--tinta-suave)">Horarios de atención</caption>
+          <thead><tr><th scope="col">Día</th><th scope="col" style="text-align:right">Horario</th></tr></thead>
+          <tbody id="tablaHorarios"></tbody>
+        </table>
+
+        <ul class="datos-lista">
+          <li>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M12 21s-7-5.5-7-11a7 7 0 1 1 14 0c0 5.5-7 11-7 11Z"/><circle cx="12" cy="10" r="2.5"/></svg>
+            <span data-dato="direccionLarga"></span>
+          </li>
+          <li>
+            <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12.04 2C6.58 2 2.13 6.45 2.13 11.91c0 1.75.46 3.45 1.32 4.95L2 22l5.25-1.38a9.9 9.9 0 0 0 4.79 1.22h.01c5.46 0 9.91-4.45 9.91-9.91S17.5 2 12.04 2Zm5.8 14.16c-.24.68-1.42 1.31-1.95 1.36-.5.05-.96.23-3.23-.67-2.72-1.07-4.44-3.85-4.57-4.03-.13-.18-1.09-1.45-1.09-2.77s.69-1.96.94-2.23c.24-.27.53-.34.71-.34.18 0 .35 0 .51.01.16 0 .38-.06.6.46.23.55.77 1.9.84 2.04.07.13.11.29.02.47-.09.18-.13.29-.27.45-.13.16-.28.35-.4.47-.13.13-.27.28-.12.55.16.27.7 1.15 1.5 1.86 1.03.92 1.9 1.2 2.17 1.34.27.13.42.11.58-.07.16-.18.67-.78.85-1.05.18-.27.35-.22.6-.13.24.09 1.55.73 1.82.86.27.13.44.2.51.31.07.11.07.63-.17 1.31Z"/></svg>
+            <span>WhatsApp <a data-wa="Hola, quiero pedir un turno." href="#"><span data-dato="whatsappVisible"></span></a></span>
+          </li>
+          <li>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><path d="M17.5 6.5h.01"/></svg>
+            <a data-ig href="#" rel="noopener">@pelosdesign</a>
+          </li>
+        </ul>
+
+        <div class="acciones" style="margin-top:var(--e3)">
+          <a class="boton boton-1" data-wa="Hola, quiero pedir un turno." href="#">Pedir turno por WhatsApp</a>
+        </div>
+      </div>
+
+      <!-- El mapa no se carga solo: se activa con un click -->
+      <div class="mapa" id="mapa">
+        <div class="mapa-previa">
+          <span class="mapa-pin" aria-hidden="true"><span>880</span></span>
+          <p class="mapa-dir">Yerbal 880</p>
+          <p class="condensada" style="color:var(--tinta-suave)">Caballito · CABA</p>
+          <button class="boton boton-2" id="verMapa" style="margin-top:.5rem">Ver el mapa acá</button>
+          <a class="condensada enlace-mapa" data-ficha href="#" rel="noopener">Abrir en Google Maps</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════ 08 · PREGUNTAS ══════════ -->
+<section class="seccion claro" id="preguntas" style="padding-top:0">
+  <div class="contenedor">
+    <div class="cabecera">
+      <p class="condensada eyebrow">08 — Preguntas frecuentes</p>
+      <h2 class="titulo">Lo que más nos preguntan por WhatsApp.</h2>
+    </div>
+    <div class="faq" id="faq"></div>
+  </div>
+</section>
+
+</main>
+
+<footer class="pie">
+  <div class="contenedor">
+    <div class="pie-grilla">
+      <div class="pie-col">
+        <h2>¿Arrancamos por un turno?</h2>
+        <p style="margin-bottom:var(--e3)">Escribinos y te contestamos con los horarios que tenemos libres esta semana.</p>
+        <a class="boton boton-1" data-wa="Hola, quiero pedir un turno." href="#">Pedir turno por WhatsApp</a>
+      </div>
+      <div class="pie-col">
+        <h3>El salón</h3>
+        <ul>
+          <li><span data-dato="direccionLarga" style="color:var(--crema-suave);font-size:.92rem"></span></li>
+          <li><a data-wa="Hola, quiero pedir un turno." href="#">WhatsApp <span data-dato="whatsappVisible"></span></a></li>
+          <li><a data-ficha href="#" rel="noopener">Ficha en Google Maps</a></li>
+          <li><a data-ig href="#" rel="noopener">Instagram @pelosdesign</a></li>
+        </ul>
+      </div>
+      <div class="pie-col">
+        <h3>El sitio</h3>
+        <ul>
+          <li><a href="#servicios">Servicios</a></li>
+          <li><a href="precios.html">Lista de precios</a></li>
+          <li><a href="#resenas">Reseñas de Google</a></li>
+          <li><a href="#trabajos">Nuestros trabajos</a></li>
+          <li><a href="#equipo">Equipo</a></li>
+          <li><a href="#preguntas">Preguntas frecuentes</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="pie-fondo">
+      <p>Pelo's Design · <span data-dato="direccionCorta"></span></p>
+      <p class="pie-escala" id="pieEscala" aria-hidden="true"></p>
+    </div>
+  </div>
+</footer>
+
+<div class="sticky" id="sticky" data-visible="0">
+  <a class="boton boton-1" data-wa="Hola, quiero pedir un turno." href="#">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12.04 2C6.58 2 2.13 6.45 2.13 11.91c0 1.75.46 3.45 1.32 4.95L2 22l5.25-1.38a9.9 9.9 0 0 0 4.79 1.22h.01c5.46 0 9.91-4.45 9.91-9.91S17.5 2 12.04 2Zm5.8 14.16c-.24.68-1.42 1.31-1.95 1.36-.5.05-.96.23-3.23-.67-2.72-1.07-4.44-3.85-4.57-4.03-.13-.18-1.09-1.45-1.09-2.77s.69-1.96.94-2.23c.24-.27.53-.34.71-.34.18 0 .35 0 .51.01.16 0 .38-.06.6.46.23.55.77 1.9.84 2.04.07.13.11.29.02.47-.09.18-.13.29-.27.45-.13.16-.28.35-.4.47-.13.13-.27.28-.12.55.16.27.7 1.15 1.5 1.86 1.03.92 1.9 1.2 2.17 1.34.27.13.42.11.58-.07.16-.18.67-.78.85-1.05.18-.27.35-.22.6-.13.24.09 1.55.73 1.82.86.27.13.44.2.51.31.07.11.07.63-.17 1.31Z"/></svg>
+    Pedir turno por WhatsApp
+  </a>
+</div>
+
+<script src="js/datos.js"></script>
+<script src="js/comun.js"></script>
+<script src="js/sitio.js"></script>
+</body>
+</html>
