@@ -118,6 +118,11 @@ directamente no aparece en el sitio.
 
 Vercel es gratis para un sitio como este.
 
+> **Antes de empezar, ojo con esto.** Este repositorio ya tiene un proyecto de
+> Vercel conectado, y es el del marketplace, no el de la peluquería. El sitio del
+> salón necesita un proyecto **aparte**. No le cambies el *Root Directory* al que
+> ya existe: si lo hacés, el marketplace deja de publicarse.
+
 1. Entrá a **vercel.com** y creá una cuenta con el usuario de GitHub.
 2. En el panel, tocá **Add New → Project**.
 3. Elegí el repositorio donde está este proyecto y tocá **Import**.
@@ -126,8 +131,14 @@ Vercel es gratis para un sitio como este.
 5. En **Framework Preset** dejá **Other**. No toques Build Command ni Output
    Directory: no hay nada que compilar.
 6. Tocá **Deploy** y esperá menos de un minuto.
-7. Vercel te da una dirección tipo `pelosdesign.vercel.app`. Abrila y revisá que
+7. Ponele un nombre al proyecto que no se confunda con el otro, por ejemplo
+   `pelosdesign`.
+8. Vercel te da una dirección tipo `pelosdesign.vercel.app`. Abrila y revisá que
    se vea bien.
+
+Mientras tanto, el sitio también se puede ver desde el proyecto que ya existe,
+agregándole `/pelosdesign/` al final de la dirección. Sirve para revisar, pero la
+dirección definitiva es la del proyecto nuevo.
 
 ### Conectar el dominio propio, si lo compran
 
