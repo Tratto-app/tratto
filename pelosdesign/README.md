@@ -114,6 +114,40 @@ directamente no aparece en el sitio.
 
 ---
 
+## Mandarle el sitio a alguien por mail o WhatsApp
+
+El sitio son varios archivos que se necesitan entre sí. Si mandás `index.html`
+suelto, del otro lado se abre sin diseño: texto negro sobre blanco y links
+azules. No está roto, le faltan las carpetas de al lado.
+
+Para eso está esta herramienta. Arma **dos archivos que funcionan solos**, con
+el diseño, las tipografías y las fotos adentro:
+
+```
+python3 herramientas/armar-archivo-unico.py
+```
+
+Los deja en la carpeta `para-enviar/`. Se abren con doble click desde cualquier
+lado, sin internet, salvo el mapa.
+
+Tres cosas para tener en cuenta:
+
+- **Guardá los dos en la misma carpeta.** El botón "Ver lista de precios" salta
+  de un archivo al otro.
+- **Son una foto del momento.** Si después cargás precios o reseñas en
+  `js/datos.js`, estos archivos no se enteran: volvé a correr el comando.
+- **No sirven para editar.** Para eso está siempre `js/datos.js`.
+
+El script no necesita instalar nada, solo Python 3. Si además tenés
+`fonttools` (`pip install fonttools brotli`), achica las tipografías y los
+archivos salen menos de la mitad de pesados: unos 220 KB en vez de 380 KB. Se
+ven exactamente igual en los dos casos.
+
+Si alguna foto está anotada en `datos.js` pero no está en `img/`, el script te
+avisa el nombre en vez de dejarla afuera en silencio.
+
+---
+
 ## Publicar el sitio en Vercel, paso a paso
 
 Vercel es gratis para un sitio como este.
@@ -202,6 +236,8 @@ pelosdesign/
 │   └── precios.js      arma precios.html
 ├── fonts/              Archivo y Newsreader, servidas desde acá
 ├── img/                og.png, favicon, apple-touch-icon y las fotos
+├── herramientas/       armar-archivo-unico.py
+├── para-enviar/        lo que arma ese script (no se sube al repo)
 ├── robots.txt · sitemap.xml · vercel.json (para el proyecto propio)
 └── .claude/skills/     las cinco skills del proyecto
 ```
