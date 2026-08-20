@@ -136,9 +136,22 @@ Vercel es gratis para un sitio como este.
 8. Vercel te da una dirección tipo `pelosdesign.vercel.app`. Abrila y revisá que
    se vea bien.
 
-Mientras tanto, el sitio también se puede ver desde el proyecto que ya existe,
-agregándole `/pelosdesign/` al final de la dirección. Sirve para revisar, pero la
-dirección definitiva es la del proyecto nuevo.
+### Mientras tanto: ya se puede ver
+
+El proyecto de Vercel que ya existe publica el repositorio entero, así que el
+sitio del salón **ya se ve** agregándole `/pelosdesign/` al final de la dirección.
+Sirve para revisar y para mostrarlo, aunque la dirección definitiva es la del
+proyecto nuevo.
+
+Por eso hay **dos** archivos `vercel.json` y no uno:
+
+- El de la raíz del repositorio le pone caché a las tipografías y a las imágenes
+  del salón cuando se publica desde el proyecto que ya existe. No toca nada del
+  marketplace: todas sus reglas empiezan con `/pelosdesign/`.
+- El de `pelosdesign/vercel.json` es el que se usa cuando creás el proyecto
+  aparte con *Root Directory* en `pelosdesign`. Hasta ese momento no hace nada.
+
+No borres ninguno de los dos.
 
 ### Conectar el dominio propio, si lo compran
 
@@ -189,7 +202,7 @@ pelosdesign/
 │   └── precios.js      arma precios.html
 ├── fonts/              Archivo y Newsreader, servidas desde acá
 ├── img/                og.png, favicon, apple-touch-icon y las fotos
-├── robots.txt · sitemap.xml · vercel.json
+├── robots.txt · sitemap.xml · vercel.json (para el proyecto propio)
 └── .claude/skills/     las cinco skills del proyecto
 ```
 
