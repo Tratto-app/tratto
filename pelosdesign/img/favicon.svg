@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="Pelo's Design">
+  <rect width="64" height="64" rx="13" fill="#16110F"/>
+  <!-- La escala de tonos del salón, que es la marca -->
+  <rect x="14" y="15"  width="36" height="6" rx="1.5" fill="#3F2C22"/>
+  <rect x="14" y="25"  width="36" height="6" rx="1.5" fill="#7A553A"/>
+  <rect x="14" y="35"  width="36" height="6" rx="1.5" fill="#BE9868"/>
+  <rect x="14" y="45"  width="36" height="6" rx="1.5" fill="#C0A8E6"/>
+</svg>
