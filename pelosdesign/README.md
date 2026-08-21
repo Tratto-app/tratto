@@ -239,6 +239,7 @@ pelosdesign/
 ├── herramientas/       armar-archivo-unico.py
 ├── para-enviar/        lo que arma ese script (no se sube al repo)
 ├── robots.txt · sitemap.xml · vercel.json (para el proyecto propio)
+├── herramientas/  el script que arma los archivos para mandar
 └── .claude/skills/     las cinco skills del proyecto
 ```
 
@@ -259,6 +260,45 @@ Decisiones que conviene conocer antes de tocar nada:
 
 El detalle completo del sistema de diseño está en
 `.claude/skills/marca-pelos-design/SKILL.md`.
+
+---
+
+## Mandarle el sitio a alguien por mail o WhatsApp
+
+El sitio son varios archivos que se necesitan entre sí. Si mandás `index.html`
+solo, del otro lado se abre sin diseño y con la lista de precios vacía.
+
+Peor todavía: **los visores de archivos del celular no ejecutan JavaScript.** El
+visor de WhatsApp, el de documentos de Android y Vista Rápida del iPhone muestran
+el HTML pero no corren nada, y el sitio arma la lista de precios, las reseñas, los
+horarios y los links de WhatsApp con JavaScript. Por eso en el celular se veía el
+diseño pero no se podía tocar nada.
+
+Para eso está esta herramienta:
+
+```
+node herramientas/armar-archivo-unico.mjs
+```
+
+Arma dos archivos en `para-enviar/` que funcionan solos, con el diseño, las
+tipografías, las fotos y **todo el contenido ya escrito adentro**. El selector de
+largo de pelo y el menú andan con CSS, sin una línea de JavaScript, así que se ven
+igual en la computadora y en el celular.
+
+Necesita Node.js, que se baja de nodejs.org. Nada más.
+
+**Volvé a correrlo cada vez que cambies algo en `js/datos.js`**: los archivos que
+arma son una foto del momento y no se actualizan solos.
+
+Tres cosas que esos archivos no tienen, porque necesitan JavaScript o internet:
+
+- El cartel de "abierto ahora": en un archivo congelado mentiría, así que no está.
+  La tabla de horarios sí está completa.
+- El mapa embebido: en su lugar hay un botón que abre Google Maps.
+- El botón de "guardar en PDF": se usa el de imprimir del navegador.
+
+Si en vez de mandar un archivo podés mandar un link, mejor: el sitio publicado no
+tiene ninguna de estas limitaciones.
 
 ---
 
