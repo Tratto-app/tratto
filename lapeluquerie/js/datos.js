@@ -21,11 +21,11 @@ export const NEGOCIO = {
   descripcion: 'Estudio de color especializado en balayage, rubios y corrección de color.',
 
   /* --- Ubicación --------------------------------------------------- */
-  zona:   'Trenque Lauquen',
-  ciudad: 'Trenque Lauquen',
+  zona:   'Pilar',
+  ciudad: 'Pilar, Buenos Aires',
   direccion: {
-    calle:     '[CALLE Y NÚMERO]',
-    localidad: 'Trenque Lauquen',
+    calle:     'Bataglia 572',
+    localidad: 'Pilar',
     provincia: 'Buenos Aires',
     pais:      'AR'
   },
@@ -329,7 +329,7 @@ export const FAQ = [
   },
   {
     q: '¿Dónde queda el salón?',
-    a: 'En [CALLE Y NÚMERO], Trenque Lauquen, provincia de Buenos Aires. Podés abrir la ubicación exacta en Google Maps desde la sección de contacto.'
+    a: 'En Bataglia 572, Pilar, provincia de Buenos Aires. Podés abrir la ubicación exacta en Google Maps desde la sección de contacto.'
   },
   {
     q: '¿Cuánto sale un balayage?',
