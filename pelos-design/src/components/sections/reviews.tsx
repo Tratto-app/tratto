@@ -48,7 +48,7 @@ export function Reviews({ summary }: { summary: ReviewsSummary }) {
           eyebrow="Lo que dicen nuestras clientas"
           title={
             <>
-              La reputación se construye <span className="accent-type">de a una cabeza</span>.
+              La reputación se construye <span className="heading-highlight">de a una cabeza</span>.
             </>
           }
           intro={

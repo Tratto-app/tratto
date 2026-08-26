@@ -8,23 +8,23 @@
 
 @theme {
   /* --- Color ------------------------------------------------ */
-  --color-background: #faf6f0;      /* papel crema, base del sitio */
-  --color-surface: #fffcf8;         /* marfil, superficies elevadas */
-  --color-surface-muted: #f2eae0;   /* arena, bandas de sección */
+  --color-background: #fdf0e4;      /* naranja muy suave, base del sitio */
+  --color-surface: #fff9f3;         /* durazno claro, superficies elevadas */
+  --color-surface-muted: #f8e3d0;   /* naranja arena, bandas de sección */
   --color-surface-deep: #241c17;    /* negro suave, secciones invertidas */
 
-  --color-text-primary: #241c17;    /* 15.56:1 sobre background */
-  --color-text-secondary: #6b5b50;  /*  6.02:1 sobre background */
+  --color-text-primary: #241c17;    /* 14.97:1 sobre background */
+  --color-text-secondary: #6b5b50;  /*  5.79:1 sobre background */
   --color-text-inverse: #faf6f0;    /* 15.56:1 sobre surface-deep */
   --color-text-inverse-muted: #c4b4a6; /* 8.32:1 sobre surface-deep */
 
-  --color-accent: #a8471f;          /* cobre — 5.44:1 sobre background */
-  --color-accent-deep: #7a3517;     /* cobre oscuro para hover */
-  --color-accent-soft: #f0d9c9;     /* durazno empolvado, sólo fondo */
+  --color-accent: #a8471f;          /* cobre — 5.23:1 sobre background */
+  --color-accent-deep: #7a3517;     /* cobre oscuro para hover — 7.99:1 */
+  --color-accent-soft: #f7dcc6;     /* durazno empolvado, sólo fondo */
 
-  --color-border: #e3d7c9;          /* hairline decorativa */
-  --color-border-strong: #9c8b7c;   /* 3.05:1 — controles interactivos */
-  --color-success: #4f6b4a;         /* 5.52:1 sobre background */
+  --color-border: #ebd3bc;          /* hairline decorativa */
+  --color-border-strong: #97836f;   /* 3.24:1 — controles interactivos */
+  --color-success: #4f6b4a;         /* 5.31:1 sobre background */
 
   /* --- Tipografía ------------------------------------------- */
   --font-display: var(--font-fraunces), 'Iowan Old Style', Georgia, serif;
@@ -82,12 +82,17 @@
 
   h1, h2, h3, h4 {
     font-family: var(--font-display);
+    /* Toda la jerarquía de títulos va en cursiva: es la voz de la marca.
+       El texto corrido se mantiene en redonda, que es lo que sostiene la
+       lectura en párrafos largos. */
+    font-style: italic;
     font-weight: 400;
-    line-height: 1.02;
-    letter-spacing: -0.022em;
+    line-height: 1.06;
+    letter-spacing: -0.018em;
     margin: 0;
-    /* Fraunces variable: baja el "wonk" para que no se vuelva decorativa. */
-    font-variation-settings: 'SOFT' 30, 'WONK' 0, 'opsz' 40;
+    /* Fraunces variable: se baja el "wonk" para que la itálica sea elegante
+       y no caricaturesca. */
+    font-variation-settings: 'SOFT' 40, 'WONK' 0, 'opsz' 40;
     text-wrap: balance;
   }
 
@@ -144,12 +149,27 @@
     color: var(--color-text-secondary);
   }
 
-  /* Palabra o frase acentuada: itálica editorial, nunca para bloques largos. */
+  /* Itálica editorial de alto contraste. Se reserva para piezas chicas —los
+     números de sección y el logotipo—, no para los títulos: esos ya van en
+     cursiva con la display, y mezclar dos itálicas distintas al mismo tamaño
+     ensucia la composición. */
   .accent-type {
     font-family: var(--font-accent);
     font-style: italic;
     font-weight: 400;
     letter-spacing: -0.01em;
+  }
+
+  /* Palabra destacada dentro de un título. Como el título ya es cursivo, el
+     énfasis lo da el color, no un cambio de tipografía. */
+  .heading-highlight {
+    color: var(--color-accent);
+  }
+
+  /* Sobre fondo oscuro el cobre no llega al contraste mínimo, así que el
+     énfasis pasa al durazno (12.77:1 sobre la tinta). */
+  .on-dark .heading-highlight {
+    color: var(--color-accent-soft);
   }
 
   /* Subrayado que se dibuja al pasar el cursor. */

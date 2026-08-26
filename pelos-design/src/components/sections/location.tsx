@@ -33,7 +33,7 @@ export function Location() {
           eyebrow="Encontranos"
           title={
             <>
-              {business.address.street}, <span className="accent-type">Caballito</span>.
+              {business.address.street}, <span className="heading-highlight">Caballito</span>.
             </>
           }
           intro="Estamos sobre Yerbal, a pocas cuadras de Avenida Rivadavia."

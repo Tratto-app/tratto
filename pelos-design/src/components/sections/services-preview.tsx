@@ -21,7 +21,7 @@ export function ServicesPreview() {
           eyebrow="Qué hacemos"
           title={
             <>
-              Color, corte y lo que <span className="accent-type">el pelo pida</span>.
+              Color, corte y lo que <span className="heading-highlight">el pelo pida</span>.
             </>
           }
           intro="Cuatro terrenos. Dentro de cada uno, la técnica se elige después de mirarte el pelo, no antes."

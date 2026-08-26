@@ -17,7 +17,10 @@ export function Booking() {
     <section
       id="reservar"
       aria-labelledby="reservar-titulo"
-      className="on-dark bg-surface-deep py-[length:var(--space-section)] text-text-inverse"
+      // Instagram viene inmediatamente después y también es oscuro: con el
+      // padding completo arriba y abajo quedaba una franja vacía enorme entre
+      // las dos. El pie se recorta para que se lean como un bloque continuo.
+      className="on-dark bg-surface-deep pt-[length:var(--space-section)] pb-[clamp(3rem,4vw,5rem)] text-text-inverse"
     >
       <div className="shell">
         <div className="grid gap-x-[var(--space-gutter)] gap-y-12 lg:grid-cols-12 lg:items-end">
@@ -25,7 +28,7 @@ export function Booking() {
             <p className="eyebrow text-text-inverse-muted">Reservar</p>
             <h2 id="reservar-titulo" className="mt-5 text-[length:var(--text-h2)]">
               Contanos qué tenés en la cabeza
-              <span className="accent-type text-accent-soft"> y lo pensamos juntas</span>.
+              <span className="text-accent-soft"> y lo pensamos juntas</span>.
             </h2>
             <p className="mt-6 max-w-[34rem] text-[length:var(--text-lead)] leading-[1.55] text-text-inverse-muted">
               Trabajamos con turno. Escribinos y coordinamos día y horario.
@@ -53,7 +56,7 @@ export function Booking() {
                 'Si te sirve más una mañana o una tarde.',
               ].map((item, index) => (
                 <li key={item} className="flex gap-4 py-4 text-[0.9375rem]">
-                  <span className="accent-type text-accent-soft" aria-hidden="true">
+                  <span className="text-accent-soft" aria-hidden="true">
                     {String(index + 1).padStart(2, '0')}
                   </span>
                   <span className="text-text-inverse-muted">{item}</span>

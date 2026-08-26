@@ -34,7 +34,7 @@ export function Hero() {
             <h1 className="mt-6 text-[length:var(--text-h1)]">
               El color,
               <br />
-              <span className="accent-type text-accent">hecho a mano.</span>
+              <span className="heading-highlight">hecho a mano.</span>
             </h1>
 
             <p className="mt-7 max-w-[34rem] text-[length:var(--text-lead)] leading-[1.5] text-text-secondary">

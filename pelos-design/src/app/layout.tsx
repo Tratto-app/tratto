@@ -17,6 +17,8 @@ const fraunces = Fraunces({
   subsets: ['latin', 'latin-ext'],
   display: 'swap',
   variable: '--font-fraunces',
+  // La itálica es el estilo por defecto de todos los títulos del sitio.
+  style: ['italic', 'normal'],
   axes: ['SOFT', 'WONK', 'opsz'],
 });
 
@@ -85,7 +87,7 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = {
-  themeColor: '#faf6f0',
+  themeColor: '#fdf0e4',
   colorScheme: 'light',
 };
 

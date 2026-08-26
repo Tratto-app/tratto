@@ -22,7 +22,7 @@ export function Instagram({ posts = instagramFallbackPosts }) {
           <div>
             <p className="eyebrow text-text-inverse-muted">Seguinos en Instagram</p>
             <h2 id="instagram-titulo" className="mt-4 text-[length:var(--text-h2)]">
-              Todo lo que sale <span className="accent-type">del salón</span>.
+              Todo lo que sale <span className="heading-highlight">del salón</span>.
             </h2>
           </div>
 

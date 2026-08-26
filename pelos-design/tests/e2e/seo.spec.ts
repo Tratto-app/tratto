@@ -114,6 +114,8 @@ test.describe('Datos estructurados', () => {
     expect((salon!.address as Record<string, string>).streetAddress).toBe('Yerbal 880');
     expect((salon!.address as Record<string, string>).addressLocality).toBe('Caballito');
     expect(salon!.hasMap).toContain('maps.app.goo.gl');
+    // NAP completo: nombre, dirección y teléfono, los tres presentes.
+    expect(salon!.telephone).toMatch(/^\+54/);
 
     expect(nodes.some((n) => n['@type'] === 'Organization')).toBe(true);
     expect(nodes.some((n) => n['@type'] === 'WebSite')).toBe(true);
@@ -162,7 +164,9 @@ test.describe('GEO / búsqueda con IA', () => {
     expect(body).toContain('Caballito');
     expect(body).toContain('## Servicios');
     expect(body).toContain('## Preguntas frecuentes');
-    // No debe afirmar horarios ni puntajes que el sitio no publica.
+    // El teléfono ya está confirmado por el salón y debe figurar.
+    expect(body).toMatch(/Teléfono: \+54/);
+    // Los horarios siguen sin confirmar: no se afirman.
     expect(body).toContain('No publicados');
   });
 });

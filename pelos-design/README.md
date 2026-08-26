@@ -84,8 +84,8 @@ función extra. Ver [`.env.example`](./.env.example) para el detalle.
 | Variable | Efecto si está vacía |
 |----------|---------------------|
 | `NEXT_PUBLIC_SITE_URL` | Usa `https://pelosdesign.com.ar` como canonical |
-| `NEXT_PUBLIC_WHATSAPP_NUMBER` | Los CTA de contacto usan Instagram |
-| `NEXT_PUBLIC_PHONE` | No se muestra teléfono ni se emite en el schema |
+| `NEXT_PUBLIC_WHATSAPP_NUMBER` | Usa el número del salón definido en `src/data/business.ts` |
+| `NEXT_PUBLIC_PHONE` | Usa el teléfono definido en `src/data/business.ts` |
 | `GOOGLE_MAPS_API_KEY` + `GOOGLE_PLACE_ID` | Las opiniones enlazan a Google sin mostrar números |
 | `NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION` | Sin meta de Search Console |
 | `NEXT_PUBLIC_GA_ID` / `NEXT_PUBLIC_META_PIXEL_ID` | No se carga ningún script de medición |
@@ -149,7 +149,7 @@ refrescar las reseñas.
 ## Tests
 
 ```bash
-npm test          # 30 tests unitarios
+npm test          # 41 tests unitarios
 npm run test:e2e  # 92 tests E2E (escritorio + móvil)
 ```
 
@@ -164,6 +164,9 @@ se puede sobrescribir con `PLAYWRIGHT_CHROMIUM_PATH`.
 ## Datos pendientes de confirmar
 
 Ver la sección correspondiente en [`PRODUCT.md`](./PRODUCT.md#7-reglas-de-contenido-innegociables).
-En resumen, el salón todavía tiene que confirmar: **teléfono/WhatsApp**,
-**horarios**, **lista de precios**, **promedio y cantidad de reseñas**, y los
-**textos legales**. Hasta entonces el sitio no publica ninguno de esos datos.
+El teléfono ya está confirmado: **+54 9 11 6792-1212**, cargado en
+`src/data/business.ts`. Todos los CTA de WhatsApp están activos.
+
+Sigue pendiente que el salón confirme: **horarios**, **lista de precios**,
+**promedio y cantidad de reseñas**, y los **textos legales**. Hasta entonces el
+sitio no publica ninguno de esos datos.

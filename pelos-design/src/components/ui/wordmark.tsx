@@ -2,9 +2,12 @@
  * Logotipo de Pelo's Design.
  *
  * Es tipográfico, no una imagen: pesa cero, se ve nítido en cualquier
- * densidad y se adapta al color del contenedor. El contraste entre la serif
- * romana de "Pelo's" y la itálica de "Design" es el gesto de marca — el
- * mismo recurso que después ordena toda la jerarquía del sitio.
+ * densidad y se adapta al color del contenedor.
+ *
+ * "Pelo's" va en redonda y "Design" en itálica: ese contraste es el gesto de
+ * marca. Se mantiene aunque los títulos del sitio sean cursivos, porque acá la
+ * itálica es la de Instrument Serif —más alto contraste y a menor tamaño—, no
+ * la de la display.
  */
 export function Wordmark({
   className = '',

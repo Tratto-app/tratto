@@ -36,7 +36,7 @@ export default function ServiciosPage() {
 
         <p className="eyebrow">Servicios</p>
         <h1 className="mt-5 max-w-[20ch] text-[length:var(--text-h1)]">
-          Todo lo que hacemos, <span className="accent-type text-accent">en detalle</span>.
+          Todo lo que hacemos, <span className="heading-highlight">en detalle</span>.
         </h1>
         <p className="mt-7 max-w-[38rem] text-[length:var(--text-lead)] leading-[1.5] text-text-secondary">
           Cuatro terrenos: {serviceCategories.map((c) => c.name.toLowerCase()).join(', ')}. La

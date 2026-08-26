@@ -35,7 +35,7 @@ export default async function HomePage() {
             eyebrow="Trabajos"
             title={
               <>
-                Pelo real, luz de salón, <span className="accent-type">sin retoque</span>.
+                Pelo real, luz de salón, <span className="heading-highlight">sin retoque</span>.
               </>
             }
             intro="Fotos tomadas en Yerbal 880, el mismo día del servicio. Tocá cualquiera para verla en grande."

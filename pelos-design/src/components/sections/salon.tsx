@@ -24,7 +24,7 @@ export function Salon() {
               eyebrow="El salón"
               title={
                 <>
-                  Un taller de color <span className="accent-type">en Caballito</span>.
+                  Un taller de color <span className="heading-highlight">en Caballito</span>.
                 </>
               }
             />

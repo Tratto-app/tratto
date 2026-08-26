@@ -26,30 +26,39 @@ antes de fijarse. Los valores están en `src/styles/globals.css`.
 
 | Token | Valor | Rol | Contraste |
 |-------|-------|-----|-----------|
-| `--color-background` | `#FAF6F0` | Papel crema, base | — |
-| `--color-surface` | `#FFFCF8` | Marfil, superficies | — |
-| `--color-surface-muted` | `#F2EAE0` | Arena, bandas de sección | — |
+| `--color-background` | `#FDF0E4` | Naranja muy suave, base | — |
+| `--color-surface` | `#FFF9F3` | Durazno claro, superficies | — |
+| `--color-surface-muted` | `#F8E3D0` | Naranja arena, bandas de sección | — |
 | `--color-surface-deep` | `#241C17` | Negro suave, secciones invertidas | — |
-| `--color-text-primary` | `#241C17` | Texto principal | **15.56:1** sobre crema |
-| `--color-text-secondary` | `#6B5B50` | Texto secundario | **6.02:1** sobre crema |
+| `--color-text-primary` | `#241C17` | Texto principal | **14.97:1** sobre el fondo |
+| `--color-text-secondary` | `#6B5B50` | Texto secundario | **5.79:1** sobre el fondo |
 | `--color-text-inverse` | `#FAF6F0` | Texto sobre oscuro | **15.56:1** |
 | `--color-text-inverse-muted` | `#C4B4A6` | Secundario sobre oscuro | **8.32:1** |
-| `--color-accent` | `#A8471F` | Cobre — acento | **5.44:1** sobre crema |
-| `--color-accent-deep` | `#7A3517` | Hover del acento | 8.30:1 |
-| `--color-accent-soft` | `#F0D9C9` | Durazno, sólo fondo | 12.34:1 con tinta |
-| `--color-border` | `#E3D7C9` | Filete decorativo | decorativo |
-| `--color-border-strong` | `#9C8B7C` | Bordes de controles | **3.05:1** (SC 1.4.11) |
-| `--color-success` | `#4F6B4A` | Estado positivo | 5.52:1 |
+| `--color-accent` | `#A8471F` | Cobre — acento | **5.23:1** sobre el fondo |
+| `--color-accent-deep` | `#7A3517` | Hover del acento | 7.99:1 |
+| `--color-accent-soft` | `#F7DCC6` | Durazno, sólo fondo | 12.77:1 con tinta |
+| `--color-border` | `#EBD3BC` | Filete decorativo | decorativo |
+| `--color-border-strong` | `#97836F` | Bordes de controles | **3.24:1** (SC 1.4.11) |
+| `--color-success` | `#4F6B4A` | Estado positivo | 5.31:1 |
 
 **Por qué dos bordes.** `--color-border` es una línea de composición: no
 transporta información, así que no necesita 3:1. Todo borde que delimita algo
 *interactivo* usa `--color-border-strong`, que sí cumple el criterio de contraste
 de componentes no textuales.
 
-**El naranja es acento.** Aparece en los números de sección, en la palabra
-destacada de cada título, en el `+` de las preguntas y en un par de enlaces.
-Nunca como fondo dominante. El cobre elegido es el del pelo de la foto de
-apertura: el acento sale de la marca, no de una paleta prestada.
+**El naranja como base.** A pedido del salón, el fondo del sitio es un naranja
+muy suave (`#FDF0E4`) en lugar del crema neutro original. Funciona porque el
+trabajo del salón es cálido: los cobres y caramelos de las fotos se apoyan en el
+fondo en vez de pelearse con él.
+
+**El cobre sigue siendo acento**, no fondo: aparece en los números de sección, en
+la palabra destacada de cada título, en el `+` de las preguntas y en algunos
+enlaces. El cobre elegido es el del pelo de la foto de apertura, así que el
+acento sale de la marca y no de una paleta prestada.
+
+Sobre fondo oscuro el cobre no llega al contraste mínimo, así que
+`.on-dark .heading-highlight` cambia el énfasis al durazno (12.77:1). La regla
+está en el CSS y no en cada componente, para que no se pueda olvidar.
 
 ## 3. Tipografía
 
@@ -77,20 +86,30 @@ distinguen de una grotesca neutra.
 defecto de la interfaz generada automáticamente; usarla habría delatado el
 origen del sitio antes de leer una palabra.
 
-### Acento — **Instrument Serif Italic**
+### La cursiva
 
-Acá hay una decisión que conviene explicitar. El brief pedía una tipografía
-"manuscrita/cursiva muy sutil" y advertía que **no debía parecer una invitación
-de casamiento**. Esos dos pedidos están en tensión: casi toda script disponible
-cae del lado de la invitación.
+**Toda la jerarquía de títulos va en cursiva** (Fraunces italic): h1, h2, h3 y h4.
+Es la voz de la marca y lo primero que se lee en cada sección.
 
-Se resolvió con una **itálica editorial de alto contraste** en vez de una script.
-Cumple lo que el brief pedía de fondo — delicadeza, marca, contraste con la
-romana — y esquiva por completo el riesgo señalado. En castellano "cursiva" es
-justamente la itálica, así que también cumple con la letra del pedido.
+**El texto corrido se mantiene en redonda.** Es una decisión deliberada: un
+párrafo largo en itálica se lee bastante peor, sobre todo en pantalla chica y con
+la cantidad de acentos que tiene el castellano. La cursiva rinde donde está el
+impacto —los títulos, el logotipo, los números— y el cuerpo sostiene la lectura.
 
-**Dónde se usa:** una palabra o frase por título, los números de sección, la
-mitad del logotipo. Nunca en un bloque de texto corrido.
+Se usa `font-variation-settings: 'SOFT' 40, 'WONK' 0`. El `WONK` en 0 apaga las
+terminaciones excéntricas de Fraunces: con el eje alto la itálica se vuelve
+caricaturesca, y acá se busca elegancia.
+
+**Palabra destacada dentro de un título:** como el título ya es cursivo, el
+énfasis lo da el color (`.heading-highlight`), no un segundo cambio de
+tipografía. Mezclar dos itálicas distintas al mismo tamaño ensucia la
+composición.
+
+### Acento chico — **Instrument Serif Italic**
+
+Itálica editorial de más contraste, reservada para piezas pequeñas: los números
+de sección (`01`, `02`, `03`…), el `Design` del logotipo y el `404`. A ese tamaño
+convive bien con la display sin competirle.
 
 ### Escala
 

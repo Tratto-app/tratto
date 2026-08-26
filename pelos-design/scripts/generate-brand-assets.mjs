@@ -11,9 +11,9 @@ import path from 'node:path';
 
 const PUBLIC_DIR = path.join(process.cwd(), 'public');
 const INK = '#241C17';
-const CREAM = '#FAF6F0';
+const CREAM = '#FDF0E4';
 const COPPER = '#A8471F';
-const SAND = '#E3D7C9';
+const SAND = '#EBD3BC';
 
 const icon = `<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 64 64">
   <rect width="64" height="64" fill="${INK}"/>
@@ -40,10 +40,10 @@ async function buildOgImage() {
     <rect width="${WIDTH}" height="${HEIGHT}" fill="${CREAM}"/>
     <rect x="72" y="96" width="64" height="2" fill="${COPPER}"/>
     <text x="72" y="150" font-family="Georgia, serif" font-size="26" fill="#6B5B50" letter-spacing="4">PELUQUERÍA EN CABALLITO</text>
-    <text x="72" y="268" font-family="Georgia, serif" font-size="82" fill="${INK}">El color,</text>
+    <text x="72" y="268" font-family="Georgia, serif" font-size="82" font-style="italic" fill="${INK}">El color,</text>
     <text x="72" y="360" font-family="Georgia, serif" font-size="82" font-style="italic" fill="${COPPER}">hecho a mano.</text>
     <rect x="72" y="422" width="596" height="1" fill="${SAND}"/>
-    <text x="72" y="486" font-family="Georgia, serif" font-size="34" fill="${INK}">Pelo&#8217;s Design</text>
+    <text x="72" y="486" font-family="Georgia, serif" font-size="34" fill="${INK}">Pelo&#8217;s <tspan font-style="italic" fill="${COPPER}">Design</tspan></text>
     <text x="72" y="536" font-family="Georgia, serif" font-size="27" fill="#6B5B50">Yerbal 880, Caballito &#183; CABA</text>
   </svg>`;
 

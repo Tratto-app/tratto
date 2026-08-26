@@ -21,7 +21,7 @@ export function Faq() {
               eyebrow="Preguntas frecuentes"
               title={
                 <>
-                  Lo que <span className="accent-type">siempre</span> nos preguntan.
+                  Lo que <span className="heading-highlight">siempre</span> nos preguntan.
                 </>
               }
             />

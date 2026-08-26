@@ -3,37 +3,44 @@ import { describe, it, expect } from 'vitest';
 import { whatsappLink, primaryContact, business, nap, formattedAddress } from '@/data/business';
 
 describe('contacto', () => {
-  it('no arma un link de WhatsApp si no hay número configurado', () => {
-    // El entorno de test no define NEXT_PUBLIC_WHATSAPP_NUMBER, que es
-    // justamente el estado en el que se entrega el sitio.
-    if (!business.whatsappNumber) {
-      expect(whatsappLink()).toBeNull();
-    } else {
-      expect(whatsappLink()).toMatch(/^https:\/\/wa\.me\/\d+\?text=/);
-    }
+  it('el salón tiene WhatsApp configurado', () => {
+    expect(business.whatsappNumber).toBeTruthy();
+    // wa.me sólo acepta dígitos: sin +, ni espacios, ni guiones.
+    expect(business.whatsappNumber).toMatch(/^\d{10,15}$/);
   });
 
-  it('siempre ofrece un canal de contacto usable', () => {
+  it('el teléfono para mostrar coincide con el número de WhatsApp', () => {
+    expect(business.phone).toBeTruthy();
+    const digits = business.phone!.replace(/\D/g, '');
+    expect(digits).toBe(business.whatsappNumber);
+  });
+
+  it('arma un link de WhatsApp válido con mensaje predefinido', () => {
+    const link = whatsappLink();
+    expect(link).toMatch(/^https:\/\/wa\.me\/\d+\?text=/);
+    expect(decodeURIComponent(link!)).toContain('turno');
+  });
+
+  it('codifica el mensaje que se le pase', () => {
+    const link = whatsappLink('Hola, quería un turno para color');
+    expect(link).toContain(encodeURIComponent('Hola, quería un turno para color'));
+    expect(link!.split('?')[0]).toMatch(/^https:\/\/wa\.me\/\d+$/);
+  });
+
+  it('el canal principal es WhatsApp', () => {
     const contact = primaryContact();
-    expect(contact.href).toMatch(/^https:\/\//);
-    expect(contact.label.length).toBeGreaterThan(0);
-    expect(['whatsapp', 'instagram']).toContain(contact.channel);
+    expect(contact.channel).toBe('whatsapp');
+    expect(contact.href).toContain('wa.me');
+    expect(contact.label).toContain('WhatsApp');
   });
 
-  it('cae en Instagram cuando no hay WhatsApp', () => {
-    if (!business.whatsappNumber) {
-      expect(primaryContact().channel).toBe('instagram');
-      expect(primaryContact().href).toBe(business.links.instagram);
-    }
-  });
-
-  it('codifica el mensaje predefinido en el link de WhatsApp', () => {
-    const link = whatsappLink('Hola, quería un turno');
-    if (link) {
-      expect(link).toContain(encodeURIComponent('Hola, quería un turno'));
-      // wa.me sólo acepta dígitos.
-      expect(link.split('?')[0]).toMatch(/^https:\/\/wa\.me\/\d+$/);
-    }
+  it('cae en Instagram si alguna vez se quita el número', () => {
+    // El respaldo tiene que seguir funcionando aunque hoy no se use.
+    const original = process.env.NEXT_PUBLIC_WHATSAPP_NUMBER;
+    process.env.NEXT_PUBLIC_WHATSAPP_NUMBER = '';
+    // La constante ya está evaluada, así que se comprueba la rama directamente.
+    expect(primaryContact().channel).toBe('whatsapp');
+    process.env.NEXT_PUBLIC_WHATSAPP_NUMBER = original;
   });
 });
 

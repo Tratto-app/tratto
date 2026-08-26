@@ -83,9 +83,11 @@ Estas reglas están codificadas y cubiertas por tests, no sólo escritas acá:
 2. **No se inventan horarios.** Los directorios que copian la ficha de Google no
    coinciden entre sí, así que no se publica ninguno hasta que el salón confirme.
 3. **No se inventan precios.** Ningún importe vive en el HTML.
-4. **No se inventa el teléfono.** Hay dos números distintos circulando en
-   directorios públicos; hasta que el salón confirme cuál es, el sitio usa
-   Instagram, que sí está verificado.
+4. **El teléfono lo confirmó el salón** (+54 9 11 6792-1212) y está cargado en
+   `src/data/business.ts`. Antes de eso el sitio usaba Instagram como canal,
+   porque en los directorios públicos circulaban dos números distintos y
+   ninguno estaba verificado. El respaldo a Instagram sigue en el código por si
+   alguna vez se quita el número.
 5. **No se inventan servicios.** Cada uno declara en `evidence` de dónde salió.
 6. **No se inventan textos legales.** Las páginas legales muestran un marcador
    visible de "pendiente de redacción".

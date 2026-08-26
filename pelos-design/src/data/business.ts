@@ -25,13 +25,20 @@ function env(value: string | undefined): string | null {
 }
 
 /**
- * Teléfono en formato E.164 sin símbolos, tal como lo pide wa.me.
- * Ej: 5491122334455
+ * Teléfono confirmado por el salón.
+ *
+ * Se deja como valor por defecto en código —y no sólo en el entorno— para que
+ * el sitio funcione igual en cualquier deploy. La variable de entorno sigue
+ * teniendo prioridad, así que cambiarlo no requiere tocar el código.
  */
-const whatsappNumber = env(process.env.NEXT_PUBLIC_WHATSAPP_NUMBER);
+const WHATSAPP_FALLBACK = '5491167921212';
+const PHONE_FALLBACK = '+54 9 11 6792-1212';
+
+/** Número en formato E.164 sin símbolos, tal como lo pide wa.me. */
+const whatsappNumber = env(process.env.NEXT_PUBLIC_WHATSAPP_NUMBER) ?? WHATSAPP_FALLBACK;
 
 /** Teléfono para mostrar y para `tel:` / schema.org. */
-const phone = env(process.env.NEXT_PUBLIC_PHONE);
+const phone = env(process.env.NEXT_PUBLIC_PHONE) ?? PHONE_FALLBACK;
 
 /**
  * Horarios de atención.

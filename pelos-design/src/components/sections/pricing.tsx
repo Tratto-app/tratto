@@ -30,7 +30,7 @@ export function Pricing() {
               eyebrow="Precios"
               title={
                 <>
-                  Los precios, <span className="accent-type">sin sorpresas</span>.
+                  Los precios, <span className="heading-highlight">sin sorpresas</span>.
                 </>
               }
               intro="La lista completa y vigente está en un documento aparte, así siempre ves la última versión y no un número viejo copiado en la web."
