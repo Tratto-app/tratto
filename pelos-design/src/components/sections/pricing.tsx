@@ -1,5 +1,5 @@
-import { serviceCategories } from '@/data/services';
 import { primaryContact } from '@/data/business';
+import { hasPrices, type PriceList } from '@/data/prices';
 import { PRICE_LIST_PATH, priceListAvailable } from '@/lib/price-list';
 import { Section, SectionHeading } from '@/components/ui/section';
 import { Reveal } from '@/components/ui/reveal';
@@ -8,98 +8,119 @@ import { ButtonLink } from '@/components/ui/button';
 /**
  * Precios.
  *
- * La lista completa vive en un único documento oficial (/precios.pdf) para
- * que no haya dos verdades. Acá se explica cómo se cotiza y se linkea al
- * archivo; los importes no se duplican en el HTML.
+ * La lista se muestra completa en la página —que es lo que la gente viene a
+ * buscar— y además se puede descargar en PDF.
  *
- * Si el archivo no está publicado, la sección no muestra un link roto: pasa
- * a ofrecer el presupuesto por mensaje.
+ * Los datos salen de la planilla de Google que edita el salón; si no está
+ * configurada o falla, cae en la copia local. Un servicio sin importe
+ * confirmado se muestra como "Consultar" en vez de inventar un número.
  */
-export function Pricing() {
-  const available = priceListAvailable();
+export function Pricing({ priceList }: { priceList: PriceList }) {
+  const pdfAvailable = priceListAvailable();
+  const withPrices = hasPrices(priceList);
   const contact = primaryContact('Hola Pelo’s Design, quería consultar precios.');
 
   return (
-    <Section id="precios" labelledBy="precios-titulo">
+    <Section id="precios" tone="muted" labelledBy="precios-titulo">
       <div className="shell">
-        <div className="grid gap-x-[var(--space-gutter)] gap-y-12 lg:grid-cols-12">
-          <div className="lg:col-span-6">
-            <SectionHeading
-              id="precios-titulo"
-              index="05"
-              eyebrow="Precios"
-              title={
-                <>
-                  Los precios, <span className="heading-highlight">sin sorpresas</span>.
-                </>
-              }
-              intro="La lista completa y vigente está en un documento aparte, así siempre ves la última versión y no un número viejo copiado en la web."
-            />
+        <SectionHeading
+          id="precios-titulo"
+          eyebrow="Precios"
+          title={
+            <>
+              Los precios, <span className="heading-highlight">sin sorpresas</span>.
+            </>
+          }
+          intro="Está toda acá abajo y también en un PDF que podés descargar. La actualizamos nosotros, así que lo que ves es lo que sale."
+        />
 
-            <Reveal className="mt-10 flex flex-col gap-3 sm:flex-row sm:flex-wrap">
-              {available ? (
-                <ButtonLink
-                  href={PRICE_LIST_PATH}
-                  variant="primary"
-                  external
-                  aria-describedby="precios-formato"
-                >
-                  Ver lista completa de precios
-                </ButtonLink>
+        {/* La lista */}
+        <div className="mt-14 grid gap-x-[clamp(2rem,5vw,5rem)] gap-y-12 lg:mt-16 lg:grid-cols-2">
+          {priceList.groups.map((group, index) => (
+            <Reveal as="section" key={group.title} delay={index * 60} aria-label={group.title}>
+              <h3 className="text-[length:var(--text-h3)]">{group.title}</h3>
+
+              <dl className="mt-5">
+                {group.items.map((item) => (
+                  <div
+                    key={item.name}
+                    className="flex items-baseline gap-3 border-b border-border py-3.5 last:border-b-0"
+                  >
+                    <dt className="shrink-0">{item.name}</dt>
+
+                    {/* Guía de puntos: une el nombre con el importe sin tabla. */}
+                    <span
+                      aria-hidden="true"
+                      className="min-w-6 flex-1 translate-y-[-0.28em] border-b border-dotted border-border-strong/60"
+                    />
+
+                    <dd
+                      className={`shrink-0 tabular-nums ${
+                        item.price ? 'font-medium' : 'text-text-secondary italic'
+                      }`}
+                    >
+                      {item.price ?? 'Consultar'}
+                    </dd>
+
+                    {item.note && (
+                      <dd className="w-full text-[0.8125rem] text-text-secondary">
+                        {item.note}
+                      </dd>
+                    )}
+                  </div>
+                ))}
+              </dl>
+            </Reveal>
+          ))}
+        </div>
+
+        {/* Pie de la lista */}
+        <Reveal className="mt-14 border-t border-border pt-8">
+          <div className="grid gap-x-[var(--space-gutter)] gap-y-8 lg:grid-cols-12">
+            <div className="lg:col-span-7">
+              <p className="max-w-[38rem] text-text-secondary">
+                En color, el largo y lo poblado que tengas el pelo pueden mover el valor
+                final: llevan más producto y más tiempo. Te lo decimos siempre antes de
+                empezar, nunca después.
+              </p>
+              {priceList.validFrom && (
+                <p className="mt-3 text-[0.875rem] text-text-secondary">
+                  Precios vigentes desde {priceList.validFrom}.
+                </p>
+              )}
+              {!withPrices && (
+                <p className="mt-3 text-[0.875rem] text-accent">
+                  Estamos terminando de cargar la lista. Escribinos y te pasamos el valor
+                  de lo que necesites.
+                </p>
+              )}
+            </div>
+
+            <div className="flex flex-col gap-3 sm:flex-row sm:items-start lg:col-span-5 lg:justify-end">
+              {pdfAvailable ? (
+                <>
+                  {/* Abrir y descargar son dos cosas distintas: en el celular
+                      mucha gente prefiere verlo antes de guardarlo. */}
+                  <ButtonLink href={PRICE_LIST_PATH} variant="primary" external>
+                    Ver la lista en PDF
+                  </ButtonLink>
+                  <a
+                    href={PRICE_LIST_PATH}
+                    download
+                    className="inline-flex items-center justify-center border border-border-strong px-7 py-[0.9rem] text-[0.9375rem] font-medium transition-colors duration-300 hover:border-text-primary hover:bg-surface"
+                  >
+                    Descargar
+                    <span className="sr-only"> la lista de precios en PDF</span>
+                  </a>
+                </>
               ) : (
                 <ButtonLink href={contact.href} variant="primary" external>
-                  Pedir la lista de precios
+                  {contact.label}
                 </ButtonLink>
               )}
-
-              {available && (
-                <a
-                  href={PRICE_LIST_PATH}
-                  download
-                  className="inline-flex items-center justify-center border border-border-strong px-7 py-[0.9rem] text-[0.9375rem] font-medium transition-colors duration-300 hover:border-text-primary hover:bg-surface-muted"
-                >
-                  Descargar
-                  <span className="sr-only"> la lista de precios en PDF</span>
-                </a>
-              )}
-            </Reveal>
-
-            {available && (
-              <p id="precios-formato" className="mt-4 text-[0.8125rem] text-text-secondary">
-                Documento PDF. Se abre en una pestaña nueva.
-              </p>
-            )}
-          </div>
-
-          <Reveal className="lg:col-span-5 lg:col-start-8">
-            <div className="border-t border-border pt-8">
-              <h3 className="text-[length:var(--text-h3)]">Cómo cotizamos</h3>
-              <dl className="mt-6 flex flex-col gap-6">
-                <div>
-                  <dt className="eyebrow">Por servicio</dt>
-                  <dd className="mt-2 text-text-secondary">
-                    {serviceCategories.map((c) => c.name).join(', ')}: cada uno tiene su
-                    valor en la lista.
-                  </dd>
-                </div>
-                <div>
-                  <dt className="eyebrow">Por largo y densidad</dt>
-                  <dd className="mt-2 text-text-secondary">
-                    En color, el pelo largo o muy poblado lleva más producto y más tiempo.
-                    Eso puede mover el precio, y te lo decimos antes de empezar.
-                  </dd>
-                </div>
-                <div>
-                  <dt className="eyebrow">Cuando hace falta más de un paso</dt>
-                  <dd className="mt-2 text-text-secondary">
-                    Si tu pelo necesita un tratamiento previo o una segunda sesión para
-                    llegar al tono que querés, lo hablamos y lo presupuestamos junto.
-                  </dd>
-                </div>
-              </dl>
             </div>
-          </Reveal>
-        </div>
+          </div>
+        </Reveal>
       </div>
     </Section>
   );

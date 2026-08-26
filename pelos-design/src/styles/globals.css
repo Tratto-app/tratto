@@ -8,23 +8,26 @@
 
 @theme {
   /* --- Color ------------------------------------------------ */
-  --color-background: #fdf0e4;      /* naranja muy suave, base del sitio */
-  --color-surface: #fff9f3;         /* durazno claro, superficies elevadas */
-  --color-surface-muted: #f8e3d0;   /* naranja arena, bandas de sección */
+  --color-background: #fef8f3;      /* naranja apenas insinuado, base del sitio */
+  --color-surface: #fffcfa;         /* casi blanco cálido, superficies elevadas */
+  --color-surface-muted: #faede2;   /* durazno lavado, bandas de sección */
   --color-surface-deep: #241c17;    /* negro suave, secciones invertidas */
 
-  --color-text-primary: #241c17;    /* 14.97:1 sobre background */
-  --color-text-secondary: #6b5b50;  /*  5.79:1 sobre background */
+  --color-text-primary: #241c17;    /* 15.90:1 sobre background */
+  --color-text-secondary: #6b5b50;  /*  6.16:1 sobre background */
   --color-text-inverse: #faf6f0;    /* 15.56:1 sobre surface-deep */
   --color-text-inverse-muted: #c4b4a6; /* 8.32:1 sobre surface-deep */
 
-  --color-accent: #a8471f;          /* cobre — 5.23:1 sobre background */
-  --color-accent-deep: #7a3517;     /* cobre oscuro para hover — 7.99:1 */
+  --color-accent: #a8471f;          /* cobre — 5.56:1 sobre background */
+  --color-accent-deep: #7a3517;     /* cobre oscuro para hover */
   --color-accent-soft: #f7dcc6;     /* durazno empolvado, sólo fondo */
 
-  --color-border: #ebd3bc;          /* hairline decorativa */
-  --color-border-strong: #97836f;   /* 3.24:1 — controles interactivos */
-  --color-success: #4f6b4a;         /* 5.31:1 sobre background */
+  --color-border: #eedbca;          /* hairline decorativa */
+  --color-border-strong: #9c8b7c;   /* 3.12:1 — controles interactivos */
+  --color-success: #4f6b4a;         /* 5.64:1 sobre background */
+
+  /* Curva mínima. Suaviza las fotos sin caer en la tarjeta redondeada. */
+  --radius-photo: 4px;
 
   /* --- Tipografía ------------------------------------------- */
   --font-display: var(--font-fraunces), 'Iowan Old Style', Georgia, serif;
@@ -140,11 +143,14 @@
   }
 
   /* Ojo de sección: versalitas espaciadas, el marcador editorial del sitio. */
+  /* Ojo de sección. Se bajó el tracking y el peso respecto de la primera
+     versión: las versalitas muy espaciadas se leen como etiqueta de sistema de
+     diseño, no como algo que diría una persona. */
   .eyebrow {
     font-family: var(--font-body);
     font-size: var(--text-eyebrow);
     font-weight: 500;
-    letter-spacing: 0.16em;
+    letter-spacing: 0.1em;
     text-transform: uppercase;
     color: var(--color-text-secondary);
   }

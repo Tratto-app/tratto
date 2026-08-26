@@ -29,14 +29,13 @@ export function Location() {
       <div className="shell">
         <SectionHeading
           id="encontranos-titulo"
-          index="06"
           eyebrow="Encontranos"
           title={
             <>
               {business.address.street}, <span className="heading-highlight">Caballito</span>.
             </>
           }
-          intro="Estamos sobre Yerbal, a pocas cuadras de Avenida Rivadavia."
+          intro="Sobre Yerbal, a pocas cuadras de Rivadavia. Si te perdés, escribinos y te vamos guiando."
         />
 
         <div className="mt-14 grid gap-x-[var(--space-gutter)] gap-y-10 lg:grid-cols-12">
@@ -86,7 +85,7 @@ export function Location() {
                     </ul>
                   ) : (
                     <>
-                      Trabajamos con turno. Escribinos y coordinamos día y horario.
+                      Trabajamos con turno. Escribinos y buscamos el día que te sirva.
                     </>
                   )}
                 </dd>

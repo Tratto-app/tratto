@@ -26,29 +26,30 @@ antes de fijarse. Los valores están en `src/styles/globals.css`.
 
 | Token | Valor | Rol | Contraste |
 |-------|-------|-----|-----------|
-| `--color-background` | `#FDF0E4` | Naranja muy suave, base | — |
-| `--color-surface` | `#FFF9F3` | Durazno claro, superficies | — |
-| `--color-surface-muted` | `#F8E3D0` | Naranja arena, bandas de sección | — |
+| `--color-background` | `#FEF8F3` | Naranja apenas insinuado, base | — |
+| `--color-surface` | `#FFFCFA` | Casi blanco cálido, superficies | — |
+| `--color-surface-muted` | `#FAEDE2` | Durazno lavado, bandas de sección | — |
 | `--color-surface-deep` | `#241C17` | Negro suave, secciones invertidas | — |
-| `--color-text-primary` | `#241C17` | Texto principal | **14.97:1** sobre el fondo |
-| `--color-text-secondary` | `#6B5B50` | Texto secundario | **5.79:1** sobre el fondo |
+| `--color-text-primary` | `#241C17` | Texto principal | **15.90:1** sobre el fondo |
+| `--color-text-secondary` | `#6B5B50` | Texto secundario | **6.16:1** sobre el fondo |
 | `--color-text-inverse` | `#FAF6F0` | Texto sobre oscuro | **15.56:1** |
 | `--color-text-inverse-muted` | `#C4B4A6` | Secundario sobre oscuro | **8.32:1** |
-| `--color-accent` | `#A8471F` | Cobre — acento | **5.23:1** sobre el fondo |
-| `--color-accent-deep` | `#7A3517` | Hover del acento | 7.99:1 |
+| `--color-accent` | `#A8471F` | Cobre — acento | **5.56:1** sobre el fondo |
+| `--color-accent-deep` | `#7A3517` | Hover del acento | 8.34:1 |
 | `--color-accent-soft` | `#F7DCC6` | Durazno, sólo fondo | 12.77:1 con tinta |
-| `--color-border` | `#EBD3BC` | Filete decorativo | decorativo |
-| `--color-border-strong` | `#97836F` | Bordes de controles | **3.24:1** (SC 1.4.11) |
-| `--color-success` | `#4F6B4A` | Estado positivo | 5.31:1 |
+| `--color-border` | `#EEDBCA` | Filete decorativo | decorativo |
+| `--color-border-strong` | `#9C8B7C` | Bordes de controles | **3.12:1** (SC 1.4.11) |
+| `--color-success` | `#4F6B4A` | Estado positivo | 5.64:1 |
 
 **Por qué dos bordes.** `--color-border` es una línea de composición: no
 transporta información, así que no necesita 3:1. Todo borde que delimita algo
 *interactivo* usa `--color-border-strong`, que sí cumple el criterio de contraste
 de componentes no textuales.
 
-**El naranja como base.** A pedido del salón, el fondo del sitio es un naranja
-muy suave (`#FDF0E4`) en lugar del crema neutro original. Funciona porque el
-trabajo del salón es cálido: los cobres y caramelos de las fotos se apoyan en el
+**El naranja como base.** El fondo es un naranja apenas insinuado (`#FEF8F3`).
+Pasó por dos ajustes: primero un durazno más saturado, que resultó demasiado
+presente y le competía a las fotos, y después este, que se lee como papel cálido
+más que como color. Los cobres y caramelos de los trabajos ahora se apoyan en el
 fondo en vez de pelearse con él.
 
 **El cobre sigue siendo acento**, no fondo: aparece en los números de sección, en
@@ -133,9 +134,10 @@ y los párrafos `text-wrap: pretty`, para que ninguna línea quede huérfana.
   bloques de 4, 5, 6 y 7 columnas con arranques distintos. Esa asimetría es lo
   que da lectura de revista en lugar de lectura de plantilla.
 - Ritmo vertical: `--space-section: clamp(4.5rem, 2rem + 9vw, 9.5rem)`.
-- **Numeración editorial.** Cada sección abre con `01`, `02`, `03`… en itálica
-  cobre. Es el recurso que ordena la página y evita la sucesión de bloques
-  intercambiables.
+- **Sin numeración de secciones.** La primera versión abría cada sección con
+  `01`, `02`, `03`… Se sacó: un índice correlativo y perfectamente regular hace
+  que la página se lea como algo generado y no como algo escrito. El ritmo lo
+  dan ahora la fotografía, la variación de los bloques y el aire entre secciones.
 
 ### La galería
 
@@ -194,7 +196,26 @@ Lo que este sitio deliberadamente **no** hace:
 - Fotos de banco de imágenes: **todas las fotos son del salón**.
 - Texto de relleno o copy genérico de plantilla.
 
-## 8. Voz
+## 8. Que se sienta humano
+
+Un sitio puede estar impecable y aun así sonar a máquina. Lo que se hizo para
+evitarlo:
+
+- **Se sacó la numeración de secciones.** Era el tic más delator.
+- **Se bajó el tracking de las versalitas** de 0.16em a 0.1em. Las versalitas
+  muy espaciadas se leen como etiqueta de sistema de diseño.
+- **La sección del salón está escrita en primera persona** y tiene menos
+  estructura que el resto a propósito: sin ojo de sección, sin bajada, con una
+  firma al pie ("Te esperamos."). Es el único lugar del sitio que rompe el
+  patrón, y por eso se nota.
+- **La foto del colorista trabajando pasó a primer plano.** Es el único activo
+  con una persona adentro y vale más que cualquier adjetivo.
+- **Los epígrafes dicen algo**, no describen lo obvio: "Papel por papel. Es
+  lento a propósito." en lugar de "Aplicación de color".
+- **El copy admite límites.** "No queremos poner acá un puntaje que no podamos
+  respaldar" suena a alguien decidiendo, no a una plantilla rellenada.
+
+## 9. Voz
 
 Español rioplatense, voseo. Cálida y segura, sin exageraciones.
 
@@ -207,7 +228,7 @@ Español rioplatense, voseo. Cálida y segura, sin exageraciones.
 La honestidad es parte del tono, no sólo una regla técnica: cuando falta un dato,
 el sitio lo dice con las mismas palabras con las que hablaría el salón.
 
-## 9. Fotografía
+## 10. Fotografía
 
 Seis fotos, todas del negocio. El trabajo de preparación
 (`scripts/prepare-images.mjs`) fue real:

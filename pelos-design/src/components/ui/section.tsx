@@ -3,13 +3,14 @@ import type { ReactNode } from 'react';
 import { Reveal } from './reveal';
 
 /**
- * Cabecera de sección con numeración editorial.
+ * Cabecera de sección.
  *
- * El número (01, 02, 03…) es el recurso que le da al sitio ritmo de revista
- * y evita la sucesión de bloques idénticos típica de las plantillas.
+ * La primera versión numeraba cada sección (01, 02, 03…). Se sacó: la
+ * numeración correlativa hace que la página se lea como un índice generado
+ * automáticamente y no como algo escrito por alguien. El ritmo lo dan ahora la
+ * fotografía, la variación de los bloques y el aire entre secciones.
  */
 interface SectionHeadingProps {
-  index: string;
   eyebrow: string;
   title: ReactNode;
   intro?: ReactNode;
@@ -19,7 +20,6 @@ interface SectionHeadingProps {
 }
 
 export function SectionHeading({
-  index,
   eyebrow,
   title,
   intro,
@@ -32,14 +32,7 @@ export function SectionHeading({
         align === 'right' ? 'lg:ml-auto lg:max-w-[38rem] lg:text-right' : 'max-w-[42rem]'
       }`}
     >
-      <div
-        className={`flex items-baseline gap-4 ${align === 'right' ? 'lg:justify-end' : ''}`}
-      >
-        <span className="accent-type text-[1.35rem] text-accent" aria-hidden="true">
-          {index}
-        </span>
-        <span className="eyebrow">{eyebrow}</span>
-      </div>
+      <p className={`eyebrow ${align === 'right' ? 'lg:text-right' : ''}`}>{eyebrow}</p>
 
       <h2 id={id} className="text-[length:var(--text-h2)]">
         {title}

@@ -67,15 +67,10 @@ export default function ServiciosPage() {
             <div className="grid gap-x-[var(--space-gutter)] gap-y-10 lg:grid-cols-12">
               <div className="lg:col-span-4">
                 <div className="lg:sticky lg:top-32">
-                  <div className="flex items-baseline gap-4">
-                    <span className="accent-type text-[1.35rem] text-accent" aria-hidden="true">
-                      {category.index}
-                    </span>
-                    <span className="eyebrow">{category.name}</span>
-                  </div>
+                  <p className="eyebrow">{category.name}</p>
                   <h2
                     id={`${category.slug}-titulo`}
-                    className="mt-4 text-[length:var(--text-h2)]"
+                    className="mt-3 text-[length:var(--text-h2)]"
                   >
                     {category.name}
                   </h2>

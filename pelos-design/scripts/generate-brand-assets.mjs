@@ -11,9 +11,9 @@ import path from 'node:path';
 
 const PUBLIC_DIR = path.join(process.cwd(), 'public');
 const INK = '#241C17';
-const CREAM = '#FDF0E4';
+const CREAM = '#FEF8F3';
 const COPPER = '#A8471F';
-const SAND = '#EBD3BC';
+const SAND = '#EEDBCA';
 
 const icon = `<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 64 64">
   <rect width="64" height="64" fill="${INK}"/>

@@ -50,11 +50,13 @@ src/
     business.ts           Dirección, contacto, enlaces, horarios
     services.ts           Servicios por categoría, con su evidencia
     gallery.ts            Fotos, alt y transformaciones
+    prices.ts             Copia local de la lista de precios
     reviews.ts            Tipos y datos de respaldo de reseñas
     seo.ts                Metadata, preguntas frecuentes, keywords
     navigation.ts         Menú
   lib/
     google/places.ts      Cliente de Google Places (sólo servidor)
+    prices/sheet.ts       Lectura de la planilla de precios (sólo servidor)
     seo/schema.ts         Constructores de JSON-LD
     price-list.ts         Verificación de existencia del PDF
   assets/images/          Masters procesados
@@ -69,6 +71,7 @@ tests/unit · tests/e2e
 **Todo el contenido editable vive en `src/data/`.** Ningún componente hardcodea
 datos del negocio.
 
+- Cambiar un precio → la planilla de Google (ver más abajo)
 - Agregar un servicio → `src/data/services.ts`
 - Cambiar la dirección o los enlaces → `src/data/business.ts`
 - Sumar una foto → poner el master en `src/assets/images/` y sumarlo a
@@ -86,6 +89,8 @@ función extra. Ver [`.env.example`](./.env.example) para el detalle.
 | `NEXT_PUBLIC_SITE_URL` | Usa `https://pelosdesign.com.ar` como canonical |
 | `NEXT_PUBLIC_WHATSAPP_NUMBER` | Usa el número del salón definido en `src/data/business.ts` |
 | `NEXT_PUBLIC_PHONE` | Usa el teléfono definido en `src/data/business.ts` |
+| `PRICES_SHEET_URL` | Los precios salen de la copia local de `src/data/prices.ts` |
+| `PRICES_VALID_FROM` | No se muestra fecha de vigencia |
 | `GOOGLE_MAPS_API_KEY` + `GOOGLE_PLACE_ID` | Las opiniones enlazan a Google sin mostrar números |
 | `NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION` | Sin meta de Search Console |
 | `NEXT_PUBLIC_GA_ID` / `NEXT_PUBLIC_META_PIXEL_ID` | No se carga ningún script de medición |
@@ -105,16 +110,49 @@ función extra. Ver [`.env.example`](./.env.example) para el detalle.
 La home revalida cada 12 horas. Si la API falla, tiene timeout o devuelve un
 error, la sección cae al respaldo sin romper la página.
 
-## Cómo publicar la lista de precios
+## Precios: cómo los edita el salón
 
-Dos caminos:
+La lista se muestra completa en la home y también se descarga en PDF. Las dos
+salen de la **misma** fuente, así que no pueden contradecirse.
 
-1. **Reemplazar el archivo.** Poner el PDF del salón en `public/precios.pdf`.
-2. **Regenerarlo.** Cargar los importes en `PRICES` dentro de
-   `scripts/generate-price-list.mjs` y correr `npm run precios`.
+### Puesta en marcha (una sola vez)
 
-Si el archivo no existe, la sección de precios lo detecta y cambia el CTA por
-"Pedir la lista de precios" en lugar de dejar un enlace roto.
+1. Crear una planilla en Google Sheets con esta primera fila exacta:
+
+   | Categoria | Servicio | Precio | Nota |
+   |-----------|----------|--------|------|
+   | Color | Coloración | $ 45.000 | |
+   | Color | Mechas y claritos | $ 52.000 | Según el largo |
+   | Corte | Corte | $ 22.000 | |
+
+   La columna **Nota** es opcional. Si una celda de **Precio** queda vacía, el
+   sitio muestra "Consultar" en lugar de inventar un número.
+
+2. En la planilla: **Archivo → Compartir → Publicar en la Web**, elegir la hoja
+   y el formato **CSV**, y copiar el link.
+
+3. Pegar ese link en la variable `PRICES_SHEET_URL` del entorno.
+
+### Día a día
+
+El salón abre la planilla, cambia el precio, y listo. La web se actualiza sola
+**en menos de 10 minutos**, sin tocar código ni pedirle nada a nadie.
+
+### Qué pasa si algo falla
+
+Si la planilla no está configurada, está caída, o alguien rompe el formato, el
+sitio usa la copia local de `src/data/prices.ts` y sigue funcionando. Nunca
+queda sin precios ni muestra un error.
+
+### El PDF
+
+`npm run precios` regenera `public/precios.pdf` leyendo la misma planilla (o la
+copia local si no está configurada). Conviene correrlo cuando cambien mucho los
+precios, para que el PDF descargable acompañe.
+
+Si preferís el PDF propio del salón, alcanza con reemplazar el archivo en
+`public/precios.pdf`. Si el archivo no existe, la sección lo detecta y cambia el
+CTA por uno de contacto en lugar de dejar un enlace roto.
 
 ## Deployment
 
@@ -149,8 +187,8 @@ refrescar las reseñas.
 ## Tests
 
 ```bash
-npm test          # 41 tests unitarios
-npm run test:e2e  # 92 tests E2E (escritorio + móvil)
+npm test          # 60 tests unitarios
+npm run test:e2e  # 94 tests E2E (escritorio + móvil)
 ```
 
 Los E2E levantan el servidor de producción solos. Cubren navegación, menú móvil,

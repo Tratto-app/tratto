@@ -17,14 +17,13 @@ export function ServicesPreview() {
       <div className="shell">
         <SectionHeading
           id="servicios-titulo"
-          index="01"
           eyebrow="Qué hacemos"
           title={
             <>
               Color, corte y lo que <span className="heading-highlight">el pelo pida</span>.
             </>
           }
-          intro="Cuatro terrenos. Dentro de cada uno, la técnica se elige después de mirarte el pelo, no antes."
+          intro="Ninguna cabeza es igual a la anterior, así que la técnica la decidimos cuando te vemos el pelo. Esto es más un mapa que un menú."
         />
 
         <ul className="mt-14 border-t border-border lg:mt-20">
@@ -32,16 +31,9 @@ export function ServicesPreview() {
             <Reveal as="li" key={category.slug} delay={index * 70}>
               <Link
                 href={`/servicios#${category.slug}`}
-                className="group grid gap-x-8 gap-y-3 border-b border-border py-8 transition-colors duration-300 hover:bg-surface-muted lg:grid-cols-12 lg:items-baseline lg:px-4 lg:py-10"
+                className="group grid gap-x-8 gap-y-3 border-b border-border py-8 transition-colors duration-300 hover:bg-surface-muted lg:grid-cols-12 lg:items-baseline lg:py-10"
               >
-                <span
-                  className="accent-type text-[1.1rem] text-accent lg:col-span-1"
-                  aria-hidden="true"
-                >
-                  {category.index}
-                </span>
-
-                <h3 className="text-[length:var(--text-h3)] lg:col-span-3">
+                <h3 className="text-[length:var(--text-h3)] lg:col-span-4">
                   <span className="link-underline bg-[size:0%_1px] group-hover:bg-[size:100%_1px]">
                     {category.name}
                   </span>

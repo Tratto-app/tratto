@@ -38,9 +38,8 @@ export function Hero() {
             </h1>
 
             <p className="mt-7 max-w-[34rem] text-[length:var(--text-lead)] leading-[1.5] text-text-secondary">
-              Cada cabeza pide una fórmula distinta. Miramos tu pelo antes de tocarlo —
-              qué base tenés, qué le quedó del color anterior, cuánto aguanta— y recién
-              ahí decidimos.
+              Antes de mezclar nada te miramos el pelo: qué base tenés, qué le quedó del
+              color anterior, cuánto aguanta. Recién ahí decidimos, y te lo contamos.
             </p>
 
             <div className="mt-10 flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-center">

@@ -17,11 +17,10 @@ export function Faq() {
           <div className="lg:col-span-4">
             <SectionHeading
               id="preguntas-titulo"
-              index="07"
               eyebrow="Preguntas frecuentes"
               title={
                 <>
-                  Lo que <span className="heading-highlight">siempre</span> nos preguntan.
+                  Lo que nos preguntan <span className="heading-highlight">todo el tiempo</span>.
                 </>
               }
             />

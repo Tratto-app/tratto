@@ -31,7 +31,7 @@ export function Booking() {
               <span className="text-accent-soft"> y lo pensamos juntas</span>.
             </h2>
             <p className="mt-6 max-w-[34rem] text-[length:var(--text-lead)] leading-[1.55] text-text-inverse-muted">
-              Trabajamos con turno. Escribinos y coordinamos día y horario.
+              Escribinos y vemos juntas qué día te queda cómodo. Contestamos nosotros, no un bot.
             </p>
 
             <div className="mt-9 flex flex-col gap-3 sm:flex-row sm:flex-wrap">

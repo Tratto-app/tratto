@@ -10,8 +10,8 @@ export default function manifest(): MetadataRoute.Manifest {
       'Peluquería en Caballito, CABA, especializada en color y corte.',
     start_url: '/',
     display: 'standalone',
-    background_color: '#fdf0e4',
-    theme_color: '#fdf0e4',
+    background_color: '#fef8f3',
+    theme_color: '#fef8f3',
     lang: 'es-AR',
     icons: [
       { src: '/icon.svg', sizes: 'any', type: 'image/svg+xml', purpose: 'any' },

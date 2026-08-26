@@ -44,17 +44,16 @@ export function Reviews({ summary }: { summary: ReviewsSummary }) {
       <div className="shell">
         <SectionHeading
           id="opiniones-titulo"
-          index="03"
           eyebrow="Lo que dicen nuestras clientas"
           title={
             <>
-              La reputación se construye <span className="heading-highlight">de a una cabeza</span>.
+              Preferimos que lo cuenten <span className="heading-highlight">ellas</span>.
             </>
           }
           intro={
             showContent
-              ? 'Reseñas publicadas por clientas en la ficha de Google del salón.'
-              : 'Las opiniones de las clientas viven en la ficha de Google del salón, donde cualquiera puede leerlas y dejar la suya.'
+              ? 'Reseñas que dejaron clientas en la ficha de Google del salón.'
+              : 'Todo lo que dicen de nosotros está en la ficha de Google, donde cualquiera puede leerlo y dejar lo suyo.'
           }
         />
 
@@ -106,8 +105,8 @@ export function Reviews({ summary }: { summary: ReviewsSummary }) {
         {!showContent && (
           <Reveal className="mt-12 grid gap-x-[var(--space-gutter)] gap-y-8 border-t border-border pt-10 lg:grid-cols-12">
             <p className="text-[length:var(--text-lead)] leading-[1.55] lg:col-span-5">
-              Preferimos no publicar acá números que no podamos respaldar. Entrá a la ficha
-              de Google y leelas de primera mano.
+              No queremos poner acá un puntaje que no podamos respaldar. Entrá a Google y
+              leelas vos misma, que es más honesto.
             </p>
 
             <dl className="flex flex-col gap-5 lg:col-span-4 lg:col-start-7">

@@ -61,9 +61,29 @@ test.describe('Llamadas a la acción', () => {
 });
 
 test.describe('Precios', () => {
+  test('muestra la lista completa en la propia página', async ({ page }) => {
+    await page.goto('/#precios');
+    const section = page.locator('#precios');
+
+    // Las cuatro categorías del salón, con sus servicios visibles sin clics.
+    for (const group of ['Color', 'Corte', 'Tratamientos', 'Peinados']) {
+      await expect(section.getByRole('heading', { name: group, level: 3 })).toBeVisible();
+    }
+    await expect(section.getByText('Coloración', { exact: true })).toBeVisible();
+    await expect(section.getByText('Balayage y barrido', { exact: true })).toBeVisible();
+
+    // Cada servicio tiene un importe o dice "Consultar": nunca queda vacío.
+    const rows = section.locator('dl > div');
+    const count = await rows.count();
+    expect(count).toBeGreaterThan(8);
+    for (let i = 0; i < count; i++) {
+      await expect(rows.nth(i).locator('dd').first()).not.toBeEmpty();
+    }
+  });
+
   test('el PDF existe y se sirve como PDF', async ({ page, request }) => {
     await page.goto('/');
-    const link = page.getByRole('link', { name: /ver lista completa de precios/i });
+    const link = page.getByRole('link', { name: /ver la lista en pdf/i });
     await expect(link).toBeVisible();
 
     const href = await link.getAttribute('href');
@@ -82,6 +102,8 @@ test.describe('Precios', () => {
     const download = page.locator('a[href="/precios.pdf"][download]');
     await expect(download).toHaveCount(1);
     await expect(download).toContainText('Descargar');
+    // El link para abrirlo es otro y no lleva el atributo download.
+    await expect(page.locator('a[href="/precios.pdf"]:not([download])')).toHaveCount(1);
   });
 });
 
@@ -115,16 +137,22 @@ test.describe('Reseñas', () => {
   test('no inventa puntajes cuando no hay datos verificados', async ({ page }) => {
     await page.goto('/#opiniones');
     const section = page.locator('#opiniones');
-    await expect(section).toContainText('reseñas');
 
-    // Sin API configurada no debe aparecer ningún promedio numérico.
-    const hasRating = await section.locator('blockquote').count();
-    if (hasRating === 0) {
-      await expect(section).toContainText(/no publicar acá números/i);
+    const quotes = await section.locator('blockquote').count();
+
+    if (quotes === 0) {
+      // Sin datos de la API no puede aparecer NINGÚN número con pinta de
+      // puntaje ni de cantidad de reseñas. Se comprueba el invariante y no la
+      // redacción, para que el test no se rompa al reescribir el copy.
+      const text = (await section.innerText()).replace(/\s+/g, ' ');
+      expect(text, 'apareció un promedio inventado').not.toMatch(/\b[1-5][.,]\d\b/);
+      expect(text, 'apareció una cantidad de reseñas inventada').not.toMatch(
+        /\b\d+\s*(reseñas|opiniones|valoraciones)\b/i,
+      );
+      expect(section.locator('[class*="text-\\[3.5rem\\]"]')).toHaveCount(0);
     }
-    await expect(section.getByRole('link', { name: /reseñas/i }).last()).toHaveAttribute(
-      'href',
-      /maps\.app\.goo\.gl/,
-    );
+
+    // En cualquier caso, la ficha real de Google tiene que estar enlazada.
+    await expect(section.locator('a[href*="maps.app.goo.gl"]').last()).toBeVisible();
   });
 });

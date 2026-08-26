@@ -23,8 +23,6 @@ export interface Service {
 
 export interface ServiceCategory {
   slug: string;
-  /** Número editorial que ordena la sección: 01, 02, 03… */
-  index: string;
   name: string;
   intro: string;
   services: Service[];
@@ -33,7 +31,6 @@ export interface ServiceCategory {
 export const serviceCategories: ServiceCategory[] = [
   {
     slug: 'color',
-    index: '01',
     name: 'Color',
     intro:
       'Es lo que mejor hacemos. Cada fórmula se piensa sobre tu pelo, no sobre una carta de colores.',
@@ -74,7 +71,6 @@ export const serviceCategories: ServiceCategory[] = [
   },
   {
     slug: 'corte',
-    index: '02',
     name: 'Corte',
     intro: 'Cortes que caen solos. Pensados para el pelo que tenés y para el tiempo que le dedicás.',
     services: [
@@ -105,7 +101,6 @@ export const serviceCategories: ServiceCategory[] = [
   },
   {
     slug: 'tratamientos',
-    index: '03',
     name: 'Tratamientos',
     intro: 'Cuando el pelo pide otra cosa antes que color.',
     services: [
@@ -129,7 +124,6 @@ export const serviceCategories: ServiceCategory[] = [
   },
   {
     slug: 'peinados',
-    index: '04',
     name: 'Peinados',
     intro: 'Para el día que querés salir del salón lista.',
     services: [

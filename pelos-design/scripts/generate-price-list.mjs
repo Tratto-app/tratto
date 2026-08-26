@@ -1,14 +1,12 @@
 /**
  * Genera /public/precios.pdf.
  *
- * IMPORTANTE: este PDF NO trae importes. El salón todavía no los pasó y
- * inventar precios sería peor que no publicarlos. Lo que se entrega es la
- * plantilla oficial, con la marca, la dirección y todos los servicios reales
- * ya listados, para que el salón sólo tenga que completar los valores.
+ * Los datos salen de la MISMA fuente que la web: la planilla de Google del
+ * salón si está configurada (PRICES_SHEET_URL), o la copia local de
+ * src/data/prices.ts si no. Así el PDF y la página nunca se contradicen.
  *
- * Cuando el salón mande su lista, hay dos caminos:
- *   1. Reemplazar public/precios.pdf por el documento propio, o
- *   2. Cargar los importes en PRICES (abajo) y correr `npm run precios`.
+ * Un servicio sin importe confirmado se imprime como "Consultar". No se
+ * estiman precios ni se completan por analogía.
  *
  * Se escribe el PDF a mano —sin dependencias— usando las fuentes base
  * Times, que todos los lectores traen incorporadas.
@@ -19,14 +17,8 @@ import { writeFile } from 'node:fs/promises';
 import path from 'node:path';
 import { pathToFileURL } from 'node:url';
 
-/**
- * Importes por slug de servicio. Vacío = se imprime una línea para completar
- * a mano. Ejemplo: { coloracion: '$ 45.000', 'corte-mujer': '$ 22.000' }
- */
-const PRICES = {};
-
 /** Fecha de vigencia que se imprime al pie. Null = "Consultar vigencia". */
-const VALID_FROM = null;
+const VALID_FROM = process.env.PRICES_VALID_FROM?.trim() || null;
 
 const INK = '0.141 0.110 0.090';
 const COPPER = '0.659 0.278 0.122';
@@ -116,7 +108,7 @@ class Doc {
   }
 }
 
-function buildDocument(serviceCategories, business) {
+function buildDocument(priceList, business) {
   const page = new Doc();
 
   // Cabecera
@@ -131,43 +123,40 @@ function buildDocument(serviceCategories, business) {
   );
   page.text(business.links.instagramHandle, { size: 9.5, color: GREY, dy: 14 });
 
-  const hasPrices = Object.keys(PRICES).length > 0;
+  const anyPrice = priceList.groups.some((g) => g.items.some((i) => i.price));
 
-  if (!hasPrices) {
+  if (!anyPrice) {
     page.space(26);
-    page.text('LISTA PENDIENTE DE COMPLETAR', { font: 'F2', size: 9, color: COPPER });
-    page.text('Los importes los completa el salón. Este documento es la plantilla oficial', {
+    page.text('LISTA EN PREPARACIÓN', { font: 'F2', size: 9, color: COPPER });
+    page.text('Los importes los carga el salón desde su planilla. Consultanos', {
       size: 9.5,
       color: GREY,
       dy: 15,
     });
-    page.text('con todos los servicios ya listados.', { size: 9.5, color: GREY, dy: 13 });
+    page.text('por el valor de cualquier servicio.', { size: 9.5, color: GREY, dy: 13 });
   }
 
-  // Categorías
-  for (const category of serviceCategories) {
+  for (const group of priceList.groups) {
     // La cabecera de categoría no debe quedar huérfana al pie de una página.
-    page.ensure(120);
-    page.space(hasPrices ? 30 : 26);
-    page.text(`${category.index}  ${category.name.toUpperCase()}`, {
-      font: 'F2',
-      size: 10,
-      color: COPPER,
-    });
+    page.ensure(110);
+    page.space(28);
+    page.text(group.title.toUpperCase(), { font: 'F2', size: 10, color: COPPER });
     page.space(12);
     page.rule();
     page.space(20);
 
-    for (const service of category.services) {
-      page.ensure(54);
-      page.text(service.name, { size: 11.5 });
-      page.textRight(PRICES[service.slug] ?? '$ ______________', {
+    for (const item of group.items) {
+      page.ensure(item.note ? 46 : 30);
+      page.text(item.name, { size: 11.5 });
+      page.textRight(item.price ?? 'Consultar', {
         size: 11.5,
-        color: PRICES[service.slug] ? INK : '0.612 0.545 0.486',
+        color: item.price ? INK : '0.612 0.545 0.486',
       });
-      page.space(15);
-      page.text(service.summary, { font: 'F3', size: 9, color: GREY });
-      page.space(19);
+      page.space(item.note ? 14 : 22);
+      if (item.note) {
+        page.text(item.note, { font: 'F3', size: 9, color: GREY });
+        page.space(18);
+      }
     }
   }
 
@@ -240,15 +229,48 @@ function serialise(pages) {
   return toLatin1(pdf);
 }
 
+/** Trae la lista desde la planilla si está configurada; si no, la copia local. */
+async function loadPriceList(localPriceList) {
+  const configured = process.env.PRICES_SHEET_URL?.trim();
+  if (!configured) return localPriceList;
+
+  const sheetUrl = pathToFileURL(path.join(process.cwd(), 'src/lib/prices/sheet.ts')).href;
+  try {
+    // El módulo del sitio importa 'server-only', que fuera de Next no resuelve.
+    // Se reutilizan sólo las funciones puras de parseo.
+    const source = await import(sheetUrl).catch(() => null);
+    if (!source) return localPriceList;
+
+    const csvUrl = source.toCsvUrl(configured);
+    if (!csvUrl) return localPriceList;
+
+    const response = await fetch(csvUrl, { signal: AbortSignal.timeout(10000) });
+    if (!response.ok) {
+      console.warn(`· la planilla respondió ${response.status}; se usa la copia local`);
+      return localPriceList;
+    }
+
+    const groups = source.rowsToGroups(source.parseCsv(await response.text()));
+    if (groups.length === 0) return localPriceList;
+    return { groups, validFrom: VALID_FROM, source: 'sheet' };
+  } catch (error) {
+    console.warn('· no se pudo leer la planilla; se usa la copia local:', error.message);
+    return localPriceList;
+  }
+}
+
 async function run() {
   // Los datos se leen de la misma fuente que usa el sitio, transpilando el TS
   // a la carrera con el type-stripping nativo de Node.
-  const dataUrl = pathToFileURL(path.join(process.cwd(), 'src/data/services.ts')).href;
+  const pricesUrl = pathToFileURL(path.join(process.cwd(), 'src/data/prices.ts')).href;
   const businessUrl = pathToFileURL(path.join(process.cwd(), 'src/data/business.ts')).href;
-  const { serviceCategories } = await import(dataUrl);
+  const { localPriceList } = await import(pricesUrl);
   const { business } = await import(businessUrl);
 
-  const pdf = serialise(buildDocument(serviceCategories, business));
+  const priceList = await loadPriceList(localPriceList);
+  console.log(`· fuente: ${priceList.source === 'sheet' ? 'planilla de Google' : 'copia local'}`);
+
+  const pdf = serialise(buildDocument(priceList, business));
   const target = path.join(process.cwd(), 'public', 'precios.pdf');
   await writeFile(target, pdf);
   console.log(`✓ precios.pdf  ${(pdf.length / 1024).toFixed(1)} kB`);
