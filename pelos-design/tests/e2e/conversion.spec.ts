@@ -65,19 +65,75 @@ test.describe('Precios', () => {
     await page.goto('/#precios');
     const section = page.locator('#precios');
 
-    // Las cuatro categorías del salón, con sus servicios visibles sin clics.
-    for (const group of ['Color', 'Corte', 'Tratamientos', 'Peinados']) {
-      await expect(section.getByRole('heading', { name: group, level: 3 })).toBeVisible();
+    for (const group of ['Corte y peinado', 'Tratamientos', 'Color']) {
+      await expect(
+        section.getByRole('heading', { name: group, level: 3 }).first(),
+      ).toBeVisible();
     }
-    await expect(section.getByText('Coloración', { exact: true })).toBeVisible();
-    await expect(section.getByText('Balayage y barrido', { exact: true })).toBeVisible();
+    await expect(section.getByText('Balayage').first()).toBeVisible();
 
-    // Cada servicio tiene un importe o dice "Consultar": nunca queda vacío.
-    const rows = section.locator('dl > div');
+    // Cada servicio muestra un importe o dice "Consultar": nunca queda vacío.
+    const rows = section.locator('[role="tabpanel"]:not([hidden]) dl > div');
     const count = await rows.count();
-    expect(count).toBeGreaterThan(8);
+    expect(count).toBeGreaterThan(15);
     for (let i = 0; i < count; i++) {
       await expect(rows.nth(i).locator('dd').first()).not.toBeEmpty();
+    }
+  });
+
+  test('el selector de largo cambia los precios', async ({ page }) => {
+    await page.goto('/#precios');
+    const section = page.locator('#precios');
+
+    const tabs = section.getByRole('tab');
+    await expect(tabs).toHaveCount(4);
+    await expect(tabs.first()).toHaveAttribute('aria-selected', 'true');
+
+    // El corte vale igual en todos los largos; el color no.
+    const visible = () => section.locator('[role="tabpanel"]:not([hidden])');
+    const colorRow = () =>
+      visible().locator('dl > div').filter({ hasText: /^Color/ }).first();
+
+    const shortColor = await colorRow().locator('dd').first().innerText();
+
+    await tabs.nth(3).click();
+    await expect(tabs.nth(3)).toHaveAttribute('aria-selected', 'true');
+    await expect(tabs.first()).toHaveAttribute('aria-selected', 'false');
+
+    const longColor = await colorRow().locator('dd').first().innerText();
+    expect(longColor).not.toBe(shortColor);
+
+    // Sólo un panel visible por vez, pero los cuatro están en el HTML.
+    await expect(section.locator('[role="tabpanel"]')).toHaveCount(4);
+    await expect(section.locator('[role="tabpanel"]:not([hidden])')).toHaveCount(1);
+  });
+
+  test('el selector se maneja con teclado', async ({ page }) => {
+    await page.goto('/#precios');
+    const tabs = page.locator('#precios').getByRole('tab');
+
+    await tabs.first().focus();
+    await page.keyboard.press('ArrowRight');
+    await expect(tabs.nth(1)).toBeFocused();
+    await expect(tabs.nth(1)).toHaveAttribute('aria-selected', 'true');
+
+    await page.keyboard.press('End');
+    await expect(tabs.nth(3)).toBeFocused();
+
+    await page.keyboard.press('Home');
+    await expect(tabs.first()).toBeFocused();
+
+    // Del primero hacia atrás se va al último: el ciclo se cierra.
+    await page.keyboard.press('ArrowLeft');
+    await expect(tabs.nth(3)).toBeFocused();
+  });
+
+  test('los precios de todos los largos están en el HTML', async ({ page }) => {
+    // Aunque en pantalla se vea uno solo, los buscadores tienen que ver todo.
+    await page.goto('/#precios');
+    const html = await page.locator('#precios').innerHTML();
+    for (const price of ['$40.000', '$55.000', '$75.000', '$300.000']) {
+      expect(html, `falta ${price} en el HTML`).toContain(price);
     }
   });
 

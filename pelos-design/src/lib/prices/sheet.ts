@@ -9,14 +9,20 @@ import { localPriceList, type PriceGroup, type PriceList } from '@/data/prices';
  * No hace falta cuenta de servicio ni API key: se usa la URL de publicación en
  * CSV, que Google sirve como archivo estático.
  *
- * La planilla tiene tres columnas, con encabezado en la primera fila:
+ * La planilla tiene UNA FILA POR SERVICIO y UNA COLUMNA POR LARGO de cabello,
+ * igual que la lista impresa del salón. Encabezado en la primera fila:
  *
- *   Categoria | Servicio            | Precio
- *   Color     | Coloración          | $ 45.000
- *   Color     | Mechas y claritos   | $ 52.000
- *   Corte     | Corte               | $ 22.000
+ *   Categoria       | Servicio | Corto   | Mediano | Largo   | Extra largo | Nota
+ *   Corte y peinado | Corte    | $40.000 | $40.000 | $40.000 | $40.000     |
+ *   Color           | Balayage |         | $200.000| $250.000| $300.000    |
  *
- * Una cuarta columna opcional, "Nota", se imprime debajo del servicio.
+ * Así, cambiar el precio de un servicio es tocar una sola fila.
+ *
+ * Los largos se leen del encabezado: cualquier columna que no sea "Categoria",
+ * "Servicio" ni "Nota" se toma como un largo, en el orden en que aparezca. El
+ * salón puede renombrarlos o agregar uno sin que haya que tocar código.
+ *
+ * Una celda de precio vacía significa "a consultar", no cero.
  *
  * Ante cualquier problema —planilla sin configurar, sin conexión, formato
  * inesperado— devuelve la copia local. La página nunca queda sin precios.
@@ -77,21 +83,54 @@ export function parseCsv(text: string): string[][] {
   return rows.filter((r) => r.some((cell) => cell.trim().length > 0));
 }
 
-/** Convierte las filas de la planilla en grupos de precios. */
-export function rowsToGroups(rows: string[][]): PriceGroup[] {
+/** Columnas que NO son un largo de cabello. */
+const RESERVED_HEADERS = ['categoria', 'categoría', 'servicio', 'nota', 'notas'];
+
+function normalise(value: string): string {
+  return value
+    .trim()
+    .toLowerCase()
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '');
+}
+
+export interface SheetShape {
+  tiers: string[];
+  groups: PriceGroup[];
+}
+
+/**
+ * Convierte las filas de la planilla en largos + grupos de precios.
+ * Devuelve null si la planilla no tiene un encabezado utilizable.
+ */
+export function rowsToPriceList(rows: string[][]): SheetShape | null {
+  const header = rows[0];
+  if (!header) return null;
+
+  const headerNames = header.map((cell) => normalise(cell));
+  const categoryIndex = headerNames.findIndex((name) => name.startsWith('categor'));
+  const serviceIndex = headerNames.findIndex((name) => name === 'servicio');
+  if (categoryIndex === -1 || serviceIndex === -1) return null;
+
+  const noteIndex = headerNames.findIndex((name) => name.startsWith('nota'));
+
+  // Todo lo que no sea columna reservada es un largo de cabello.
+  const tierColumns: { index: number; label: string }[] = [];
+  header.forEach((cell, index) => {
+    const label = cell.trim();
+    if (!label) return;
+    if (RESERVED_HEADERS.includes(normalise(label))) return;
+    tierColumns.push({ index, label });
+  });
+
+  if (tierColumns.length === 0) return null;
+
   const groups = new Map<string, PriceGroup>();
 
-  // Se saltea el encabezado si la primera celda dice algo parecido a "categoría".
-  const first = rows[0]?.[0]?.trim().toLowerCase() ?? '';
-  const body = /categor/.test(first) ? rows.slice(1) : rows;
-
-  for (const row of body) {
-    const category = row[0]?.trim();
-    const name = row[1]?.trim();
+  for (const row of rows.slice(1)) {
+    const category = row[categoryIndex]?.trim();
+    const name = row[serviceIndex]?.trim();
     if (!category || !name) continue;
-
-    const rawPrice = row[2]?.trim() ?? '';
-    const note = row[3]?.trim();
 
     let group = groups.get(category);
     if (!group) {
@@ -99,15 +138,22 @@ export function rowsToGroups(rows: string[][]): PriceGroup[] {
       groups.set(category, group);
     }
 
+    const note = noteIndex >= 0 ? row[noteIndex]?.trim() : undefined;
+
     group.items.push({
       name,
-      // Una celda vacía significa "todavía sin confirmar", no cero.
-      price: rawPrice.length > 0 ? rawPrice : null,
+      prices: tierColumns.map(({ index }) => {
+        const cell = row[index]?.trim() ?? '';
+        return cell.length > 0 ? cell : null;
+      }),
       ...(note ? { note } : {}),
     });
   }
 
-  return [...groups.values()].filter((group) => group.items.length > 0);
+  const usable = [...groups.values()].filter((group) => group.items.length > 0);
+  if (usable.length === 0) return null;
+
+  return { tiers: tierColumns.map((column) => column.label), groups: usable };
 }
 
 /**
@@ -148,14 +194,15 @@ export async function fetchPriceList(): Promise<PriceList> {
       return localPriceList;
     }
 
-    const groups = rowsToGroups(parseCsv(await response.text()));
-    if (groups.length === 0) {
-      console.warn('[precios] la planilla no tiene filas usables');
+    const parsed = rowsToPriceList(parseCsv(await response.text()));
+    if (!parsed) {
+      console.warn('[precios] la planilla no tiene un encabezado o filas usables');
       return localPriceList;
     }
 
     return {
-      groups,
+      tiers: parsed.tiers,
+      groups: parsed.groups,
       validFrom: process.env.PRICES_VALID_FROM?.trim() || null,
       source: 'sheet',
     };

@@ -5,6 +5,9 @@
  * salón si está configurada (PRICES_SHEET_URL), o la copia local de
  * src/data/prices.ts si no. Así el PDF y la página nunca se contradicen.
  *
+ * Se imprime una hoja por largo de cabello, igual que la lista original del
+ * salón: corto, mediano, largo y extra largo.
+ *
  * Un servicio sin importe confirmado se imprime como "Consultar". No se
  * estiman precios ni se completan por analogía.
  *
@@ -59,10 +62,41 @@ class Page {
 class Doc {
   constructor() {
     this.pages = [new Page()];
+    // Columna activa: dónde empieza y cuánto mide de ancho.
+    this.colLeft = MARGIN;
+    this.colWidth = PAGE.width - MARGIN * 2;
+    // Altura a la que arranca el cuerpo, para volver a ella al cambiar de columna.
+    this.bodyTop = null;
   }
 
   get page() {
     return this.pages[this.pages.length - 1];
+  }
+
+  /** Fija el ancho de la columna a lo ancho de la hoja. */
+  fullWidth() {
+    this.colLeft = MARGIN;
+    this.colWidth = PAGE.width - MARGIN * 2;
+    return this;
+  }
+
+  /** Marca la altura actual como inicio del cuerpo de la hoja. */
+  markBodyTop() {
+    this.bodyTop = this.page.y;
+    return this;
+  }
+
+  /**
+   * Pasa a una de las dos columnas del cuerpo y vuelve a la altura de inicio.
+   * `index` 0 es la izquierda, 1 la derecha.
+   */
+  column(index) {
+    const gutter = 30;
+    const width = (PAGE.width - MARGIN * 2 - gutter) / 2;
+    this.colLeft = MARGIN + index * (width + gutter);
+    this.colWidth = width;
+    if (this.bodyTop !== null) this.page.y = this.bodyTop;
+    return this;
   }
 
   /** Abre una página nueva si no quedan `needed` puntos hasta el margen. */
@@ -73,31 +107,40 @@ class Doc {
     return this;
   }
 
-  text(content, { font = 'F1', size = 11, color = INK, x = MARGIN, dy = 0 } = {}) {
+  /** Fuerza una página nueva. */
+  newPage() {
+    this.pages.push(new Page());
+    return this;
+  }
+
+  text(content, { font = 'F1', size = 11, color = INK, x = null, dy = 0 } = {}) {
     const page = this.page;
     page.y -= dy;
+    const left = x ?? this.colLeft;
     page.ops.push(
-      `BT /${font} ${size} Tf ${color} rg 1 0 0 1 ${x.toFixed(2)} ${page.y.toFixed(2)} Tm (${esc(content)}) Tj ET`,
+      `BT /${font} ${size} Tf ${color} rg 1 0 0 1 ${left.toFixed(2)} ${page.y.toFixed(2)} Tm (${esc(content)}) Tj ET`,
     );
     return this;
   }
 
-  /** Texto alineado al margen derecho, en la misma línea de base actual. */
+  /** Texto alineado al borde derecho de la columna activa. */
   textRight(content, { font = 'F1', size = 11, color = INK } = {}) {
     const page = this.page;
+    // Ancho aproximado: alcanza para alinear a la derecha con Times.
     const width = content.length * size * 0.5;
-    const x = PAGE.width - MARGIN - width;
+    const x = this.colLeft + this.colWidth - width;
     page.ops.push(
       `BT /${font} ${size} Tf ${color} rg 1 0 0 1 ${x.toFixed(2)} ${page.y.toFixed(2)} Tm (${esc(content)}) Tj ET`,
     );
     return this;
   }
 
-  rule({ color = '0.890 0.843 0.788', dy = 0, width = PAGE.width - MARGIN * 2 } = {}) {
+  rule({ color = '0.890 0.843 0.788', dy = 0 } = {}) {
     const page = this.page;
     page.y -= dy;
     page.ops.push(
-      `${color} RG 0.6 w ${MARGIN} ${page.y.toFixed(2)} m ${(MARGIN + width).toFixed(2)} ${page.y.toFixed(2)} l S`,
+      `${color} RG 0.6 w ${this.colLeft.toFixed(2)} ${page.y.toFixed(2)} m ` +
+        `${(this.colLeft + this.colWidth).toFixed(2)} ${page.y.toFixed(2)} l S`,
     );
     return this;
   }
@@ -108,72 +151,90 @@ class Doc {
   }
 }
 
-function buildDocument(priceList, business) {
-  const page = new Doc();
-
-  // Cabecera
-  page.text("Pelo's Design", { font: 'F2', size: 26, dy: 8 });
-  page.text('Lista de precios', { font: 'F3', size: 20, color: COPPER, dy: 30 });
-  page.space(20);
-  page.rule();
-  page.space(18);
-  page.text(
-    `${business.address.street}, ${business.address.locality}, ${business.address.city}`,
-    { size: 9.5, color: GREY },
-  );
-  page.text(business.links.instagramHandle, { size: 9.5, color: GREY, dy: 14 });
-
-  const anyPrice = priceList.groups.some((g) => g.items.some((i) => i.price));
-
-  if (!anyPrice) {
-    page.space(26);
-    page.text('LISTA EN PREPARACIÓN', { font: 'F2', size: 9, color: COPPER });
-    page.text('Los importes los carga el salón desde su planilla. Consultanos', {
-      size: 9.5,
-      color: GREY,
-      dy: 15,
-    });
-    page.text('por el valor de cualquier servicio.', { size: 9.5, color: GREY, dy: 13 });
-  }
-
-  for (const group of priceList.groups) {
-    // La cabecera de categoría no debe quedar huérfana al pie de una página.
-    page.ensure(110);
-    page.space(28);
-    page.text(group.title.toUpperCase(), { font: 'F2', size: 10, color: COPPER });
-    page.space(12);
-    page.rule();
-    page.space(20);
-
-    for (const item of group.items) {
-      page.ensure(item.note ? 46 : 30);
-      page.text(item.name, { size: 11.5 });
-      page.textRight(item.price ?? 'Consultar', {
-        size: 11.5,
-        color: item.price ? INK : '0.612 0.545 0.486',
-      });
-      page.space(item.note ? 14 : 22);
-      if (item.note) {
-        page.text(item.note, { font: 'F3', size: 9, color: GREY });
-        page.space(18);
-      }
-    }
-  }
-
-  // Pie
-  page.ensure(90);
+/** Encabezado común a todas las hojas. */
+function sheetHeader(page, business, tier) {
+  page.fullWidth();
+  page.text("Pelo's Design", { font: 'F2', size: 21, dy: 4 });
+  page.text('Lista de precios', { font: 'F3', size: 14, color: COPPER, dy: 22 });
   page.space(14);
   page.rule();
-  page.space(18);
+  page.space(19);
+  page.text(`CABELLO ${tier.toUpperCase()}`, { font: 'F2', size: 12.5 });
+  page.textRight(
+    `${business.address.street} · ${business.links.instagramHandle}`,
+    { size: 8.5, color: GREY },
+  );
+  page.space(20);
+}
+
+/** Dibuja un bloque de servicios dentro de la columna activa. */
+function priceBlock(page, group, tierIndex) {
+  page.text(group.title.toUpperCase(), { font: 'F2', size: 9, color: COPPER });
+  page.space(9);
+  page.rule();
+  page.space(16);
+
+  for (const item of group.items) {
+    page.text(item.name, { size: 10 });
+    const price = item.prices[tierIndex] ?? null;
+    page.textRight(price ?? 'Consultar', {
+      size: 10,
+      color: price ? INK : '0.612 0.545 0.486',
+    });
+    page.space(item.note ? 12 : 17);
+    if (item.note) {
+      page.text(item.note, { font: 'F3', size: 8, color: GREY });
+      page.space(15);
+    }
+  }
+}
+
+/** Pie común a todas las hojas. */
+function sheetFooter(page, bottom) {
+  page.fullWidth();
+  page.page.y = bottom;
+  page.rule();
+  page.space(15);
   page.text(
-    VALID_FROM ? `Precios vigentes desde ${VALID_FROM}.` : 'Consultá la vigencia al reservar.',
-    { size: 9, color: GREY },
+    VALID_FROM ? `Lista vigente desde ${VALID_FROM}.` : 'Consultá la vigencia al reservar.',
+    { size: 8, color: GREY },
   );
   page.text(
-    'En color, el largo y la densidad del pelo pueden modificar el valor final.',
-    { size: 9, color: GREY, dy: 13 },
+    'Si tenés el pelo muy poblado, algún color puede moverse de lo que figura acá.',
+    { size: 8, color: GREY, dy: 11 },
   );
-  page.text('Te lo decimos siempre antes de empezar.', { size: 9, color: GREY, dy: 12 });
+  page.text('Te lo decimos siempre antes de empezar.', { size: 8, color: GREY, dy: 10 });
+}
+
+/**
+ * Una hoja por largo de cabello, en dos columnas como la lista original:
+ * a la izquierda corte, peinado y tratamientos; a la derecha, color.
+ */
+function buildDocument(priceList, business) {
+  const page = new Doc();
+  const colorIndex = priceList.groups.length - 1;
+
+  priceList.tiers.forEach((tier, tierIndex) => {
+    if (tierIndex > 0) page.newPage();
+
+    sheetHeader(page, business, tier);
+    page.markBodyTop();
+
+    // Columna izquierda: todo lo que no es color.
+    page.column(0);
+    priceList.groups.slice(0, colorIndex).forEach((group, index) => {
+      if (index > 0) page.space(22);
+      priceBlock(page, group, tierIndex);
+    });
+    const leftBottom = page.page.y;
+
+    // Columna derecha: color.
+    page.column(1);
+    priceBlock(page, priceList.groups[colorIndex], tierIndex);
+    const rightBottom = page.page.y;
+
+    sheetFooter(page, Math.min(leftBottom, rightBottom) - 18);
+  });
 
   return page.pages;
 }

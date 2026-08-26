@@ -117,16 +117,22 @@ salen de la **misma** fuente, así que no pueden contradecirse.
 
 ### Puesta en marcha (una sola vez)
 
-1. Crear una planilla en Google Sheets con esta primera fila exacta:
+1. Crear una planilla en Google Sheets con **una fila por servicio y una
+   columna por largo de cabello**, igual que la lista impresa del salón:
 
-   | Categoria | Servicio | Precio | Nota |
-   |-----------|----------|--------|------|
-   | Color | Coloración | $ 45.000 | |
-   | Color | Mechas y claritos | $ 52.000 | Según el largo |
-   | Corte | Corte | $ 22.000 | |
+   | Categoria | Servicio | Corto | Mediano | Largo | Extra largo | Nota |
+   |-----------|----------|-------|---------|-------|-------------|------|
+   | Corte y peinado | Corte | $40.000 | $40.000 | $40.000 | $40.000 | |
+   | Corte y peinado | Brushing | $24.000 | $26.000 | $28.000 | $35.000 | |
+   | Color | Balayage | | $200.000 | $250.000 | $300.000 | |
 
-   La columna **Nota** es opcional. Si una celda de **Precio** queda vacía, el
-   sitio muestra "Consultar" en lugar de inventar un número.
+   Así, cambiar el precio de un servicio es tocar **una sola fila**.
+
+   - La columna **Nota** es opcional y se imprime debajo del servicio.
+   - Si una celda de precio queda **vacía**, el sitio muestra "Consultar" en
+     lugar de inventar un número.
+   - Los **largos se leen del encabezado**: el salón puede renombrarlos o
+     agregar uno nuevo sin que haya que tocar código.
 
 2. En la planilla: **Archivo → Compartir → Publicar en la Web**, elegir la hoja
    y el formato **CSV**, y copiar el link.
@@ -136,7 +142,9 @@ salen de la **misma** fuente, así que no pueden contradecirse.
 ### Día a día
 
 El salón abre la planilla, cambia el precio, y listo. La web se actualiza sola
-**en menos de 10 minutos**, sin tocar código ni pedirle nada a nadie.
+**en menos de 10 minutos**, sin tocar código ni pedirle nada a nadie. La lista
+que ve la clienta y el PDF descargable salen de la misma planilla, así que no
+pueden quedar desfasados.
 
 ### Qué pasa si algo falla
 
@@ -147,8 +155,9 @@ queda sin precios ni muestra un error.
 ### El PDF
 
 `npm run precios` regenera `public/precios.pdf` leyendo la misma planilla (o la
-copia local si no está configurada). Conviene correrlo cuando cambien mucho los
-precios, para que el PDF descargable acompañe.
+copia local si no está configurada). Son cuatro hojas, una por largo de cabello,
+a dos columnas como la lista original del salón. Conviene correrlo cuando
+cambien los precios, para que el PDF descargable acompañe.
 
 Si preferís el PDF propio del salón, alcanza con reemplazar el archivo en
 `public/precios.pdf`. Si el archivo no existe, la sección lo detecta y cambia el
@@ -187,8 +196,8 @@ refrescar las reseñas.
 ## Tests
 
 ```bash
-npm test          # 60 tests unitarios
-npm run test:e2e  # 94 tests E2E (escritorio + móvil)
+npm test          # 69 tests unitarios
+npm run test:e2e  # 102 tests E2E (escritorio + móvil)
 ```
 
 Los E2E levantan el servidor de producción solos. Cubren navegación, menú móvil,
@@ -202,9 +211,13 @@ se puede sobrescribir con `PLAYWRIGHT_CHROMIUM_PATH`.
 ## Datos pendientes de confirmar
 
 Ver la sección correspondiente en [`PRODUCT.md`](./PRODUCT.md#7-reglas-de-contenido-innegociables).
-El teléfono ya está confirmado: **+54 9 11 6792-1212**, cargado en
-`src/data/business.ts`. Todos los CTA de WhatsApp están activos.
+Ya confirmados:
 
-Sigue pendiente que el salón confirme: **horarios**, **lista de precios**,
-**promedio y cantidad de reseñas**, y los **textos legales**. Hasta entonces el
-sitio no publica ninguno de esos datos.
+- **Teléfono**: +54 9 11 6792-1212, en `src/data/business.ts`.
+- **Lista de precios**: transcripta de la lista oficial del salón, en
+  `src/data/prices.ts`. Ver las notas de ese archivo: hay dos importes de la
+  lista original que conviene que el salón revise.
+
+Sigue pendiente que el salón confirme: **horarios**, **promedio y cantidad de
+reseñas**, y los **textos legales**. Hasta entonces el sitio no publica ninguno
+de esos datos.

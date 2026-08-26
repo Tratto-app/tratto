@@ -1,6 +1,7 @@
 import { business, formattedAddress, openingHours } from '@/data/business';
 import { serviceCategories } from '@/data/services';
 import { faqs, siteUrl } from '@/data/seo';
+import { localPriceList } from '@/data/prices';
 
 /**
  * /llms.txt — resumen del negocio en texto plano.
@@ -12,6 +13,31 @@ import { faqs, siteUrl } from '@/data/seo';
  * que el sitio no publique.
  */
 export const dynamic = 'force-static';
+
+/**
+ * Tabla de precios en texto plano, con una columna por largo de cabello.
+ * Es lo que le permite a un asistente responder "cuánto sale un corte" sin
+ * tener que interpretar la interfaz.
+ */
+function priceBlock(): string {
+  const list = localPriceList;
+  const header = `| Servicio | ${list.tiers.join(' | ')} |`;
+  const divider = `| --- | ${list.tiers.map(() => '---').join(' | ')} |`;
+
+  const sections = list.groups.map((group) => {
+    const rows = group.items.map(
+      (item) =>
+        `| ${item.name} | ${item.prices.map((price) => price ?? 'Consultar').join(' | ')} |`,
+    );
+    return `### ${group.title}\n${header}\n${divider}\n${rows.join('\n')}`;
+  });
+
+  const validity = list.validFrom
+    ? `\n\nLista vigente desde ${list.validFrom}. Los importes están en pesos argentinos.`
+    : '\n\nLos importes están en pesos argentinos.';
+
+  return `Largos de cabello: ${list.tiers.join(', ')}.\n\n${sections.join('\n\n')}${validity}`;
+}
 
 function hoursBlock(): string {
   if (openingHours.length === 0) {
@@ -51,7 +77,9 @@ ${serviceCategories
   .join('\n\n')}
 
 ## Precios
-La lista completa y vigente se publica como documento descargable en ${siteUrl}/#precios. Los importes no se transcriben en el HTML para evitar versiones desactualizadas.
+Los precios dependen del largo del cabello. La lista completa y vigente está publicada en ${siteUrl}/#precios y también en PDF descargable en ${siteUrl}/precios.pdf.
+
+${priceBlock()}
 
 ## Horarios
 ${hoursBlock()}

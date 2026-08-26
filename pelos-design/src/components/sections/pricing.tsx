@@ -1,5 +1,6 @@
 import { primaryContact } from '@/data/business';
 import { hasPrices, type PriceList } from '@/data/prices';
+import { PriceTable } from '@/components/sections/price-table';
 import { PRICE_LIST_PATH, priceListAvailable } from '@/lib/price-list';
 import { Section, SectionHeading } from '@/components/ui/section';
 import { Reveal } from '@/components/ui/reveal';
@@ -31,61 +32,23 @@ export function Pricing({ priceList }: { priceList: PriceList }) {
               Los precios, <span className="heading-highlight">sin sorpresas</span>.
             </>
           }
-          intro="Está toda acá abajo y también en un PDF que podés descargar. La actualizamos nosotros, así que lo que ves es lo que sale."
+          intro="Los precios dependen del largo de tu pelo, así que elegí el tuyo y vas a ver exactamente lo que te sale. Está todo acá; también podés bajarte el PDF."
         />
 
-        {/* La lista */}
-        <div className="mt-14 grid gap-x-[clamp(2rem,5vw,5rem)] gap-y-12 lg:mt-16 lg:grid-cols-2">
-          {priceList.groups.map((group, index) => (
-            <Reveal as="section" key={group.title} delay={index * 60} aria-label={group.title}>
-              <h3 className="text-[length:var(--text-h3)]">{group.title}</h3>
-
-              <dl className="mt-5">
-                {group.items.map((item) => (
-                  <div
-                    key={item.name}
-                    className="flex items-baseline gap-3 border-b border-border py-3.5 last:border-b-0"
-                  >
-                    <dt className="shrink-0">{item.name}</dt>
-
-                    {/* Guía de puntos: une el nombre con el importe sin tabla. */}
-                    <span
-                      aria-hidden="true"
-                      className="min-w-6 flex-1 translate-y-[-0.28em] border-b border-dotted border-border-strong/60"
-                    />
-
-                    <dd
-                      className={`shrink-0 tabular-nums ${
-                        item.price ? 'font-medium' : 'text-text-secondary italic'
-                      }`}
-                    >
-                      {item.price ?? 'Consultar'}
-                    </dd>
-
-                    {item.note && (
-                      <dd className="w-full text-[0.8125rem] text-text-secondary">
-                        {item.note}
-                      </dd>
-                    )}
-                  </div>
-                ))}
-              </dl>
-            </Reveal>
-          ))}
-        </div>
+        <PriceTable list={priceList} />
 
         {/* Pie de la lista */}
         <Reveal className="mt-14 border-t border-border pt-8">
           <div className="grid gap-x-[var(--space-gutter)] gap-y-8 lg:grid-cols-12">
             <div className="lg:col-span-7">
               <p className="max-w-[38rem] text-text-secondary">
-                En color, el largo y lo poblado que tengas el pelo pueden mover el valor
-                final: llevan más producto y más tiempo. Te lo decimos siempre antes de
+                Si tenés el pelo muy poblado, algún color puede moverse un poco de lo que
+                figura acá: lleva más producto y más tiempo. Te lo decimos siempre antes de
                 empezar, nunca después.
               </p>
               {priceList.validFrom && (
                 <p className="mt-3 text-[0.875rem] text-text-secondary">
-                  Precios vigentes desde {priceList.validFrom}.
+                  Lista vigente desde {priceList.validFrom}. Si pasó un tiempo, consultanos.
                 </p>
               )}
               {!withPrices && (

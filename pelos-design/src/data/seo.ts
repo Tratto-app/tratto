@@ -8,6 +8,7 @@
  */
 import { business, formattedAddress, openingHours } from './business';
 import { serviceCategories } from './services';
+import { localPriceList } from './prices';
 
 export const siteUrl = (
   process.env.NEXT_PUBLIC_SITE_URL ?? 'https://pelosdesign.com.ar'
@@ -54,9 +55,21 @@ export const faqs: Faq[] = [
       : `Mandanos un mensaje por Instagram a ${business.links.instagramHandle} y coordinamos día y horario. Contanos qué querés hacerte y cómo tenés el pelo hoy: con eso te decimos cuánto tiempo reservar.`,
   },
   {
-    question: '¿Cuánto sale un color o un corte?',
-    answer:
-      'La lista de precios completa está publicada en la web como documento descargable, en la sección Precios. La actualizamos ahí para que siempre veas la vigente. Si tu pelo necesita más de un paso, te lo decimos antes de empezar.',
+    question: '¿Cuánto sale un corte?',
+    answer: (() => {
+      const corte = localPriceList.groups
+        .flatMap((group) => group.items)
+        .find((item) => item.name.toLowerCase() === 'corte');
+      const price = corte?.prices.find((value) => value !== null);
+      const same = corte && new Set(corte.prices.filter(Boolean)).size === 1;
+      return price
+        ? `El corte sale ${price}${same ? ', el mismo valor para cualquier largo de pelo' : ''}. La lista completa de precios está en la sección Precios de la web, con los valores para cabello ${localPriceList.tiers.join(', ').toLowerCase()}.`
+        : 'La lista completa de precios está en la sección Precios de la web.';
+    })(),
+  },
+  {
+    question: '¿Por qué los precios cambian según el largo del pelo?',
+    answer: `Porque el pelo largo lleva más producto y más tiempo de trabajo, sobre todo en color. Por eso la lista tiene un valor distinto para cabello ${localPriceList.tiers.join(', ').toLowerCase()}. El corte es la excepción: vale igual en todos los largos. Si tenés el pelo muy poblado, algún color puede moverse un poco de lo publicado, y te lo decimos antes de empezar.`,
   },
   {
     question: '¿Qué horarios tienen?',

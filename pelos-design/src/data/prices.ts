@@ -1,82 +1,94 @@
 /**
  * LISTA DE PRECIOS — copia local.
  *
- * Esta es la copia de respaldo que viaja con el sitio. La lista que se muestra
- * normalmente sale de la planilla de Google del salón (ver README), que el
- * salón edita cuando quiere sin tocar nada de código.
+ * Transcripción literal de la lista oficial del salón (Canva, "Agosto –
+ * Octubre"). Los precios dependen del LARGO del cabello: el mismo servicio
+ * vale distinto en corto, mediano, largo y extra largo.
  *
- * Si la planilla no está configurada, o Google no responde, la página muestra
- * esta copia. Nunca queda sin precios ni rota.
+ * Esta es la copia de respaldo que viaja con el sitio. Normalmente los precios
+ * salen de la planilla de Google que edita el salón (ver README). Si la
+ * planilla no está configurada o falla, se muestra esto.
  *
- * IMPORTANTE: los importes vienen de la lista oficial del salón. No se estiman
- * ni se completan por analogía: un servicio sin precio confirmado se muestra
- * como "Consultar", que es honesto.
+ * REGLAS DE TRANSCRIPCIÓN
+ * - Los importes están tal cual la lista oficial. No se corrigió ninguno,
+ *   ni siquiera los que rompen el patrón de la grilla (ver NOTAS abajo).
+ * - Sólo se normalizaron erratas evidentes de tipeo en los NOMBRES
+ *   ("BRSHING" → Brushing, "PLANCHTIA" → planchita) y se pasó de mayúsculas
+ *   sostenidas a mayúscula inicial, que se lee mejor en pantalla.
+ * - Un servicio sin importe en la lista original queda en null y la web
+ *   muestra "Consultar".
+ *
+ * NOTAS PARA EL SALÓN
+ * - "Color rojos" y "Tono sobre tono" figuran en $60.000 para cabello extra
+ *   largo, por debajo de lo que valen en largo ($70.000) y por debajo del
+ *   "Color" del mismo largo ($75.000). En los otros tres largos siempre están
+ *   por encima del "Color". Se transcribió lo que dice la lista; conviene
+ *   revisarlo.
+ * - "Balayage" en cabello corto aparece sin precio en la lista original.
  */
 
-export interface PriceItem {
-  /** Nombre del servicio tal como lo llama el salón. */
+/** Importe por largo, en el mismo orden que `tiers`. null = a consultar. */
+export interface PriceRow {
   name: string;
-  /** Importe ya formateado ("$ 45.000"). null = todavía sin confirmar. */
-  price: string | null;
-  /** Aclaración corta que se imprime debajo, si hace falta. */
+  prices: (string | null)[];
   note?: string;
 }
 
 export interface PriceGroup {
   title: string;
-  items: PriceItem[];
+  items: PriceRow[];
 }
 
 export interface PriceList {
+  /** Largos de cabello, en orden. */
+  tiers: string[];
   groups: PriceGroup[];
-  /** Texto de vigencia al pie. null = no se afirma ninguna fecha. */
+  /** Vigencia declarada por el salón. null = no se afirma ninguna. */
   validFrom: string | null;
-  /** De dónde salieron los datos que se están mostrando. */
   source: 'sheet' | 'local';
 }
 
-/**
- * Estructura por defecto, armada con los servicios verificados del salón.
- * Los importes quedan en null hasta que el salón pase su lista.
- */
 export const localPriceList: PriceList = {
-  validFrom: null,
+  tiers: ['Corto', 'Mediano', 'Largo', 'Extra largo'],
+  validFrom: 'agosto',
   source: 'local',
   groups: [
     {
-      title: 'Color',
+      title: 'Corte y peinado',
       items: [
-        { name: 'Coloración', price: null },
-        { name: 'Retoque de raíz', price: null },
-        { name: 'Mechas y claritos', price: null },
-        { name: 'Balayage y barrido', price: null },
-        { name: 'Cobrizos y rojos', price: null },
-        { name: 'Baño de color', price: null },
-      ],
-    },
-    {
-      title: 'Corte',
-      items: [
-        { name: 'Corte', price: null },
-        { name: 'Capas y movimiento', price: null },
-        { name: 'Flequillo', price: null },
-        { name: 'Puntas', price: null },
+        { name: 'Corte', prices: ['$40.000', '$40.000', '$40.000', '$40.000'] },
+        { name: 'Lavado', prices: ['$15.000', '$15.000', '$15.000', '$15.000'] },
+        { name: 'Brushing', prices: ['$24.000', '$26.000', '$28.000', '$35.000'] },
+        { name: 'Brushing con planchita', prices: ['$26.000', '$28.000', '$35.000', '$38.000'] },
+        { name: 'Brushing con movimiento', prices: ['$28.000', '$30.000', '$38.000', '$40.000'] },
+        { name: 'Modelado', prices: ['$15.000', '$15.000', '$15.000', '$17.000'] },
       ],
     },
     {
       title: 'Tratamientos',
       items: [
-        { name: 'Hidratación', price: null },
-        { name: 'Reconstrucción', price: null },
-        { name: 'Alisado y control del frizz', price: null },
+        { name: 'Nutrición post color', prices: ['$18.000', '$20.000', '$24.000', '$24.000'] },
+        { name: 'Nutrición + lavado', prices: ['$35.000', '$38.000', '$40.000', '$42.000'] },
+        { name: 'Shock de keratina', prices: ['$60.000', '$65.000', '$70.000', '$75.000'] },
+        { name: 'Alisado sin formol', prices: ['$80.000', '$100.000', '$130.000', '$150.000'] },
       ],
     },
     {
-      title: 'Peinados',
+      title: 'Color',
       items: [
-        { name: 'Brushing', price: null },
-        { name: 'Ondas y rulos', price: null },
-        { name: 'Peinado para evento', price: null },
+        { name: 'Color', prices: ['$55.000', '$60.000', '$65.000', '$75.000'] },
+        { name: 'Color rojos', prices: ['$60.000', '$65.000', '$70.000', '$60.000'] },
+        { name: 'Tono sobre tono', prices: ['$60.000', '$65.000', '$70.000', '$60.000'] },
+        { name: 'Iluminación', prices: ['$120.000', '$150.000', '$180.000', '$220.000'] },
+        { name: 'Color + iluminación', prices: ['$160.000', '$190.000', '$220.000', '$265.000'] },
+        { name: 'Oscuros', prices: ['$100.000', '$130.000', '$150.000', '$180.000'] },
+        { name: 'Claros y oscuros', prices: ['$150.000', '$170.000', '$200.000', '$250.000'] },
+        { name: 'Balayage', prices: [null, '$200.000', '$250.000', '$300.000'] },
+        { name: 'Pigmentación', prices: ['$45.000', '$50.000', '$55.000', '$60.000'] },
+        { name: 'Decoloración', prices: ['$90.000', '$120.000', '$130.000', '$150.000'] },
+        { name: 'Limpieza de color', prices: ['$55.000', '$60.000', '$65.000', '$75.000'] },
+        { name: 'Aplicación de color', prices: ['$45.000', '$45.000', '$45.000', '$45.000'] },
+        { name: 'Permanente', prices: ['$80.000', '$150.000', '$180.000', '$220.000'] },
       ],
     },
   ],
@@ -84,5 +96,12 @@ export const localPriceList: PriceList = {
 
 /** ¿Hay al menos un importe cargado? */
 export function hasPrices(list: PriceList): boolean {
-  return list.groups.some((group) => group.items.some((item) => item.price !== null));
+  return list.groups.some((group) =>
+    group.items.some((item) => item.prices.some((price) => price !== null)),
+  );
+}
+
+/** Precio de un servicio para un largo dado, o null si no está cargado. */
+export function priceFor(item: PriceRow, tierIndex: number): string | null {
+  return item.prices[tierIndex] ?? null;
 }

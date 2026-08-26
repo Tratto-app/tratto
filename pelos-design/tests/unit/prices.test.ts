@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest';
 
-import { parseCsv, rowsToGroups, toCsvUrl } from '@/lib/prices/sheet';
-import { localPriceList, hasPrices } from '@/data/prices';
+import { parseCsv, rowsToPriceList, toCsvUrl } from '@/lib/prices/sheet';
+import { localPriceList, hasPrices, priceFor } from '@/data/prices';
 
 /**
  * La planilla la edita el salón, así que hay que asumir lo peor: filas vacías,
@@ -41,50 +41,78 @@ describe('parser de CSV', () => {
 });
 
 describe('armado de la lista', () => {
-  const csv = `Categoria,Servicio,Precio,Nota
-Color,Coloración,$ 45.000,
-Color,Mechas y claritos,$ 52.000,Según el largo
-Corte,Corte,$ 22.000,
-Corte,Flequillo,,
+  const csv = `Categoria,Servicio,Corto,Mediano,Largo,Extra largo,Nota
+Corte y peinado,Corte,$40.000,$40.000,$40.000,$40.000,
+Corte y peinado,Brushing,$24.000,$26.000,$28.000,$35.000,Incluye lavado
+Color,Balayage,,$200.000,$250.000,$300.000,
 `;
 
+  it('lee los largos desde el encabezado, en orden', () => {
+    const parsed = rowsToPriceList(parseCsv(csv));
+    expect(parsed?.tiers).toEqual(['Corto', 'Mediano', 'Largo', 'Extra largo']);
+  });
+
   it('agrupa por categoría respetando el orden de la planilla', () => {
-    const groups = rowsToGroups(parseCsv(csv));
-    expect(groups.map((g) => g.title)).toEqual(['Color', 'Corte']);
-    expect(groups[0]?.items).toHaveLength(2);
+    const parsed = rowsToPriceList(parseCsv(csv));
+    expect(parsed?.groups.map((g) => g.title)).toEqual(['Corte y peinado', 'Color']);
+    expect(parsed?.groups[0]?.items).toHaveLength(2);
   });
 
-  it('descarta la fila de encabezado', () => {
-    const groups = rowsToGroups(parseCsv(csv));
-    expect(groups.some((g) => g.title.toLowerCase().includes('categor'))).toBe(false);
+  it('asocia cada importe con su largo', () => {
+    const parsed = rowsToPriceList(parseCsv(csv));
+    const brushing = parsed?.groups[0]?.items[1];
+    expect(brushing?.prices).toEqual(['$24.000', '$26.000', '$28.000', '$35.000']);
   });
 
-  it('una celda de precio vacía significa "sin confirmar", no cero', () => {
-    const groups = rowsToGroups(parseCsv(csv));
-    const flequillo = groups[1]?.items.find((i) => i.name === 'Flequillo');
-    expect(flequillo?.price).toBeNull();
+  it('una celda de precio vacía significa "a consultar", no cero', () => {
+    const parsed = rowsToPriceList(parseCsv(csv));
+    const balayage = parsed?.groups[1]?.items[0];
+    expect(balayage?.prices[0]).toBeNull();
+    expect(balayage?.prices[1]).toBe('$200.000');
   });
 
   it('conserva la nota cuando existe y la omite cuando no', () => {
-    const groups = rowsToGroups(parseCsv(csv));
-    expect(groups[0]?.items[1]?.note).toBe('Según el largo');
-    expect(groups[0]?.items[0]?.note).toBeUndefined();
+    const parsed = rowsToPriceList(parseCsv(csv));
+    expect(parsed?.groups[0]?.items[1]?.note).toBe('Incluye lavado');
+    expect(parsed?.groups[0]?.items[0]?.note).toBeUndefined();
+  });
+
+  it('acepta encabezados con tilde y en cualquier capitalización', () => {
+    const parsed = rowsToPriceList(
+      parseCsv('CATEGORÍA,Servicio,Corto\nColor,Balayage,$100'),
+    );
+    expect(parsed?.tiers).toEqual(['Corto']);
+    expect(parsed?.groups[0]?.items[0]?.name).toBe('Balayage');
+  });
+
+  it('el salón puede renombrar o agregar largos sin tocar código', () => {
+    const parsed = rowsToPriceList(
+      parseCsv('Categoria,Servicio,Muy corto,Corto,XL\nColor,Color,$10,$20,$30'),
+    );
+    expect(parsed?.tiers).toEqual(['Muy corto', 'Corto', 'XL']);
+    expect(parsed?.groups[0]?.items[0]?.prices).toEqual(['$10', '$20', '$30']);
   });
 
   it('ignora filas sin categoría o sin servicio', () => {
-    const groups = rowsToGroups(parseCsv('Color,,$ 10\n,Corte,$ 20\nColor,Baño,$ 30'));
-    expect(groups).toHaveLength(1);
-    expect(groups[0]?.items).toHaveLength(1);
-    expect(groups[0]?.items[0]?.name).toBe('Baño');
+    const parsed = rowsToPriceList(
+      parseCsv('Categoria,Servicio,Corto\nColor,,$10\n,Corte,$20\nColor,Baño,$30'),
+    );
+    expect(parsed?.groups).toHaveLength(1);
+    expect(parsed?.groups[0]?.items).toHaveLength(1);
+    expect(parsed?.groups[0]?.items[0]?.name).toBe('Baño');
   });
 
-  it('acepta una planilla sin fila de encabezado', () => {
-    const groups = rowsToGroups(parseCsv('Color,Coloración,$ 45.000'));
-    expect(groups[0]?.items[0]?.name).toBe('Coloración');
+  it('devuelve null si falta una columna obligatoria', () => {
+    expect(rowsToPriceList(parseCsv('Servicio,Corto\nCorte,$10'))).toBeNull();
+    expect(rowsToPriceList(parseCsv('Categoria,Corto\nColor,$10'))).toBeNull();
   });
 
-  it('devuelve una lista vacía si no hay nada usable', () => {
-    expect(rowsToGroups(parseCsv('\n\n'))).toEqual([]);
+  it('devuelve null si no hay ninguna columna de largo', () => {
+    expect(rowsToPriceList(parseCsv('Categoria,Servicio,Nota\nColor,Corte,algo'))).toBeNull();
+  });
+
+  it('devuelve null si no hay nada usable', () => {
+    expect(rowsToPriceList(parseCsv('\n\n'))).toBeNull();
   });
 });
 
@@ -113,27 +141,63 @@ describe('normalización de la URL de la planilla', () => {
   });
 });
 
-describe('copia local de respaldo', () => {
-  it('trae las categorías del salón aunque no tenga importes', () => {
+describe('copia local: la lista oficial del salón', () => {
+  it('tiene los cuatro largos de la lista impresa', () => {
+    expect(localPriceList.tiers).toEqual(['Corto', 'Mediano', 'Largo', 'Extra largo']);
+  });
+
+  it('tiene los tres bloques de la lista impresa', () => {
     expect(localPriceList.groups.map((g) => g.title)).toEqual([
-      'Color',
-      'Corte',
+      'Corte y peinado',
       'Tratamientos',
-      'Peinados',
+      'Color',
     ]);
-    expect(localPriceList.groups.every((g) => g.items.length > 0)).toBe(true);
   });
 
-  it('no inventa importes', () => {
-    expect(hasPrices(localPriceList)).toBe(false);
+  it('cada servicio tiene un importe por cada largo', () => {
+    for (const group of localPriceList.groups) {
+      for (const item of group.items) {
+        expect(item.prices, `${item.name} no cubre los cuatro largos`).toHaveLength(
+          localPriceList.tiers.length,
+        );
+      }
+    }
   });
 
-  it('detecta cuando sí hay importes cargados', () => {
+  it('los importes están cargados', () => {
+    expect(hasPrices(localPriceList)).toBe(true);
+  });
+
+  it('todos los importes tienen formato de precio argentino', () => {
+    for (const group of localPriceList.groups) {
+      for (const item of group.items) {
+        for (const price of item.prices) {
+          if (price === null) continue;
+          expect(price, `${item.name}: "${price}"`).toMatch(/^\$\d{1,3}(\.\d{3})*$/);
+        }
+      }
+    }
+  });
+
+  it('respeta los datos de la lista original, incluidos los huecos', () => {
+    const color = localPriceList.groups.find((g) => g.title === 'Color');
+    const balayage = color?.items.find((i) => i.name === 'Balayage');
+    // En la lista original, balayage en cabello corto figura sin precio.
+    expect(priceFor(balayage!, 0)).toBeNull();
+    expect(priceFor(balayage!, 3)).toBe('$300.000');
+  });
+
+  it('el corte vale igual en todos los largos, como en la lista original', () => {
+    const corte = localPriceList.groups[0]?.items.find((i) => i.name === 'Corte');
+    expect(new Set(corte?.prices)).toEqual(new Set(['$40.000']));
+  });
+
+  it('detecta cuando no hay ningún importe cargado', () => {
     expect(
       hasPrices({
         ...localPriceList,
-        groups: [{ title: 'Color', items: [{ name: 'Coloración', price: '$ 45.000' }] }],
+        groups: [{ title: 'Color', items: [{ name: 'Color', prices: [null, null] }] }],
       }),
-    ).toBe(true);
+    ).toBe(false);
   });
 });
