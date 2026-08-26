@@ -7,12 +7,12 @@
    reales antes de publicar y borrá los corchetes.
 
    ⚠️ PENDIENTE DE CONFIRMAR (ver README.md):
-      · dirección, zona y ciudad
-      · número de WhatsApp
-      · horarios de atención
+      · calle y número (la ciudad ya está cargada)
       · duraciones y precios por servicio
       · nombres y fotos del equipo
       · reseñas reales de Google
+
+   Ya confirmados: WhatsApp, teléfono y horarios de atención.
    ============================================================ */
 
 export const NEGOCIO = {
@@ -21,23 +21,24 @@ export const NEGOCIO = {
   descripcion: 'Estudio de color especializado en balayage, rubios y corrección de color.',
 
   /* --- Ubicación --------------------------------------------------- */
-  zona:   '[BARRIO]',
-  ciudad: '[CIUDAD]',
+  zona:   'Trenque Lauquen',
+  ciudad: 'Trenque Lauquen',
   direccion: {
     calle:     '[CALLE Y NÚMERO]',
-    localidad: '[LOCALIDAD]',
-    provincia: '[PROVINCIA]',
-    cp:        '[CP]',
+    localidad: 'Trenque Lauquen',
+    provincia: 'Buenos Aires',
     pais:      'AR'
   },
   maps: 'https://maps.app.goo.gl/LmB59sVP56N6NK4K8?g_st=ic',
 
   /* --- Contacto ----------------------------------------------------
      whatsapp: sólo dígitos, formato internacional, sin + ni espacios.
-     Ejemplo: '5491123456789'. Mientras esté vacío, todos los CTA
-     abren el mensaje directo de Instagram (ig.me), que sí funciona. */
-  whatsapp: '',
-  telefonoVisible: '[+54 9 11 0000-0000]',
+     Si se vacía, todos los CTA caen al mensaje directo de Instagram. */
+  whatsapp: '5492304356392',
+  telefonoVisible: '+54 9 2304 35-6392',
+  /* El mail del perfil (marianadiaz901@gmail.com) queda fuera del sitio
+     a pedido: publicarlo en una web lo expone a spam automático.
+     Si algún día se quiere mostrar, alcanza con cargarlo acá. */
   email: '',
   instagramUsuario: 'lapeluquerie',
   instagram: 'https://www.instagram.com/lapeluquerie',
@@ -45,9 +46,10 @@ export const NEGOCIO = {
   /* --- Horarios ----------------------------------------------------
      Formato schema.org en `abre`/`cierra` (HH:MM, 24 h) para el JSON-LD. */
   horarios: [
-    { dias: 'Lunes a viernes', texto: '[09:00 – 19:00]', schema: ['Mo','Tu','We','Th','Fr'], abre: '09:00', cierra: '19:00' },
-    { dias: 'Sábados',         texto: '[09:00 – 17:00]', schema: ['Sa'],                     abre: '09:00', cierra: '17:00' },
-    { dias: 'Domingos',        texto: 'Cerrado',         schema: [],                          abre: '',      cierra: '' }
+    { dias: 'Martes, miércoles y viernes', texto: '09:00 – 18:00', schema: ['Tu','We','Fr'], abre: '09:00', cierra: '18:00' },
+    { dias: 'Jueves',                      texto: '12:00 – 18:00', schema: ['Th'],           abre: '12:00', cierra: '18:00' },
+    { dias: 'Sábados',                     texto: '09:00 – 18:00', schema: ['Sa'],           abre: '09:00', cierra: '18:00' },
+    { dias: 'Domingos y lunes',            texto: 'Cerrado',       schema: [],               abre: '',      cierra: '' }
   ],
 
   /* --- Motor de reservas -------------------------------------------
@@ -327,7 +329,7 @@ export const FAQ = [
   },
   {
     q: '¿Dónde queda el salón?',
-    a: 'En [CALLE Y NÚMERO], [LOCALIDAD]. Podés abrir la ubicación exacta en Google Maps desde la sección de contacto.'
+    a: 'En [CALLE Y NÚMERO], Trenque Lauquen, provincia de Buenos Aires. Podés abrir la ubicación exacta en Google Maps desde la sección de contacto.'
   },
   {
     q: '¿Cuánto sale un balayage?',
@@ -344,6 +346,10 @@ export const FAQ = [
   {
     q: '¿Cuánto dura un turno de color?',
     a: '[Completar con la duración real por tipo de servicio.] Cuando confirmamos el turno te decimos cuánto tiempo reservar, para que puedas organizarte.'
+  },
+  {
+    q: '¿Qué días atienden?',
+    a: 'Martes, miércoles y viernes de 09:00 a 18:00; jueves de 12:00 a 18:00; sábados de 09:00 a 18:00. Domingos y lunes cerrado. Siempre con turno reservado.'
   },
   {
     q: '¿Atienden pelo con canas?',
