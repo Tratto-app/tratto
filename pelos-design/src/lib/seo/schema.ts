@@ -6,7 +6,12 @@
  * los datos falsos en structured data son motivo de penalización.
  */
 import { business, formattedAddress, openingHours } from '@/data/business';
-import { allServices } from '@/data/services';
+import {
+  formatArs,
+  itemPriceRange,
+  listPriceRange,
+  type PriceList,
+} from '@/data/prices';
 import { faqs, siteUrl, defaultMetadata } from '@/data/seo';
 import type { ReviewsSummary } from '@/data/reviews';
 
@@ -49,9 +54,13 @@ const postalAddress = {
  * HairSalon es el tipo más específico de LocalBusiness para una peluquería,
  * así que se usa ese en lugar del genérico.
  */
-export function hairSalonSchema(reviews?: ReviewsSummary): Json {
+export function hairSalonSchema(reviews?: ReviewsSummary, priceList?: PriceList): Json {
   const hasRealRating =
     reviews && reviews.rating !== null && reviews.total !== null && reviews.total > 0;
+
+  // El rango de precios sale de la lista real del salón. Sin lista, no se
+  // emite: un priceRange inventado es tan malo como un puntaje inventado.
+  const range = priceList ? listPriceRange(priceList) : null;
 
   return prune({
     '@type': 'HairSalon',
@@ -63,7 +72,7 @@ export function hairSalonSchema(reviews?: ReviewsSummary): Json {
     image: `${siteUrl}/og.jpg`,
     logo: `${siteUrl}/icon.svg`,
     telephone: business.phone,
-    priceRange: business.priceRange,
+    priceRange: range ? `${formatArs(range.min)} - ${formatArs(range.max)}` : business.priceRange,
     address: postalAddress,
     geo: business.geo
       ? {
@@ -93,22 +102,52 @@ export function hairSalonSchema(reviews?: ReviewsSummary): Json {
           worstRating: 1,
         }
       : null,
-    hasOfferCatalog: {
-      '@type': 'OfferCatalog',
-      name: 'Servicios de peluquería',
-      itemListElement: allServices.map((service) => ({
-        '@type': 'Offer',
-        itemOffered: {
-          '@type': 'Service',
-          name: service.name,
-          description: service.summary,
-          serviceType: service.name,
-          provider: { '@id': HAIR_SALON_ID },
-          areaServed: { '@type': 'Place', name: business.address.locality },
-        },
-      })),
-    },
+    // El catálogo se arma desde la lista de precios, no desde el listado de
+    // servicios: así cada oferta publicada tiene un importe real detrás.
+    hasOfferCatalog: priceList ? offerCatalog(priceList) : null,
   });
+}
+
+/**
+ * Catálogo de servicios con precios reales.
+ *
+ * Cada servicio se emite con el rango que cubre los cuatro largos de cabello,
+ * porque el precio depende genuinamente del largo. Un servicio sin importe
+ * cargado se publica sin precio en lugar de estimarlo.
+ */
+function offerCatalog(priceList: PriceList): Json {
+  return {
+    '@type': 'OfferCatalog',
+    name: 'Servicios de peluquería',
+    itemListElement: priceList.groups.map((group) => ({
+      '@type': 'OfferCatalog',
+      name: group.title,
+      itemListElement: group.items.map((item) => {
+        const range = itemPriceRange(item);
+        return prune({
+          '@type': 'Offer',
+          priceCurrency: range ? 'ARS' : null,
+          priceSpecification: range
+            ? {
+                '@type': 'PriceSpecification',
+                priceCurrency: 'ARS',
+                minPrice: range.min,
+                maxPrice: range.max,
+                valueAddedTaxIncluded: true,
+              }
+            : null,
+          availability: 'https://schema.org/InStock',
+          itemOffered: {
+            '@type': 'Service',
+            name: item.name,
+            serviceType: `${group.title} — ${item.name}`,
+            provider: { '@id': HAIR_SALON_ID },
+            areaServed: { '@type': 'Place', name: business.address.locality },
+          },
+        });
+      }),
+    })),
+  };
 }
 
 export function websiteSchema(): Json {

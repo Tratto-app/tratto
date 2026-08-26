@@ -128,7 +128,7 @@ export function Location() {
                   vacío. */}
               <div className="absolute inset-0 flex flex-col items-center justify-center gap-3 px-6 text-center">
                 <p className="eyebrow">Cómo llegar</p>
-                <p className="font-[family-name:var(--font-display)] text-[1.5rem] leading-tight">
+                <p className="font-[family-name:var(--font-display)] text-[1.5rem] italic leading-tight">
                   {business.address.street}
                 </p>
                 <p className="text-[0.9375rem] text-text-secondary">

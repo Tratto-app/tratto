@@ -8,23 +8,32 @@ import { MobileCtaBar } from '@/components/mobile-cta-bar';
 import { defaultMetadata, siteUrl } from '@/data/seo';
 import { business } from '@/data/business';
 import { buildGraph, hairSalonSchema, organizationSchema, websiteSchema } from '@/lib/seo/schema';
+import { getPriceList } from '@/lib/prices/sheet';
+import { getReviews } from '@/lib/google/places';
 
 /**
  * Display: serif editorial con eje óptico. Elegida por personalidad y por ser
  * variable (una sola descarga cubre todos los pesos). Ver DESIGN.md.
  */
 const fraunces = Fraunces({
-  subsets: ['latin', 'latin-ext'],
+  // Sólo `latin`: cubre todos los acentos y la eñe del castellano. Sumar
+  // `latin-ext` duplicaba los archivos de esta familia sin aportar un solo
+  // carácter que el sitio use.
+  subsets: ['latin'],
   display: 'swap',
   variable: '--font-fraunces',
-  // La itálica es el estilo por defecto de todos los títulos del sitio.
-  style: ['italic', 'normal'],
-  axes: ['SOFT', 'WONK', 'opsz'],
+  // Sólo itálica. Todo el sitio usa la display en cursiva, así que cargar
+  // además la redonda eran 118 kB para un puñado de elementos: se pasaron
+  // todos a itálica y el logotipo se resolvió con las otras dos familias.
+  style: ['italic'],
+  // Sin el eje WONK: se usa en 0, que ya es el valor por defecto de la fuente,
+  // así que incluirlo sólo agrandaba el archivo variable.
+  axes: ['SOFT', 'opsz'],
 });
 
 /** Texto: sans humanista, muy legible en párrafos largos en castellano. */
 const instrumentSans = Instrument_Sans({
-  subsets: ['latin', 'latin-ext'],
+  subsets: ['latin'],
   display: 'swap',
   variable: '--font-instrument-sans',
 });
@@ -91,8 +100,16 @@ export const viewport: Viewport = {
   colorScheme: 'light',
 };
 
-export default function RootLayout({ children }: { children: React.ReactNode }) {
-  const graph = buildGraph([hairSalonSchema(), organizationSchema(), websiteSchema()]);
+export default async function RootLayout({ children }: { children: React.ReactNode }) {
+  // Ambas lecturas están cacheadas y tienen respaldo, así que no agregan
+  // latencia real ni pueden romper el render.
+  const [priceList, reviews] = await Promise.all([getPriceList(), getReviews()]);
+
+  const graph = buildGraph([
+    hairSalonSchema(reviews, priceList),
+    organizationSchema(),
+    websiteSchema(),
+  ]);
 
   return (
     <html

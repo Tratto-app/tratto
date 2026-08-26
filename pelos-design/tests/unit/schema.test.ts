@@ -10,7 +10,7 @@ import {
 } from '@/lib/seo/schema';
 import { REVIEWS_UNAVAILABLE } from '@/data/reviews';
 import { faqs } from '@/data/seo';
-import { allServices } from '@/data/services';
+import { localPriceList } from '@/data/prices';
 
 describe('JSON-LD', () => {
   it('usa el tipo más específico para una peluquería', () => {
@@ -46,11 +46,53 @@ describe('JSON-LD', () => {
     expect(hairSalonSchema().openingHoursSpecification).toBeUndefined();
   });
 
-  it('publica todos los servicios en el catálogo', () => {
-    const catalog = hairSalonSchema().hasOfferCatalog as {
-      itemListElement: unknown[];
+  it('no publica catálogo ni rango de precios sin lista cargada', () => {
+    const schema = hairSalonSchema();
+    expect(schema.hasOfferCatalog).toBeUndefined();
+    expect(schema.priceRange).toBeUndefined();
+  });
+
+  it('publica una oferta por servicio de la lista de precios', () => {
+    const catalog = hairSalonSchema(undefined, localPriceList).hasOfferCatalog as {
+      itemListElement: { name: string; itemListElement: unknown[] }[];
     };
-    expect(catalog.itemListElement).toHaveLength(allServices.length);
+
+    expect(catalog.itemListElement.map((group) => group.name)).toEqual(
+      localPriceList.groups.map((group) => group.title),
+    );
+
+    const offers = catalog.itemListElement.flatMap((group) => group.itemListElement);
+    const expected = localPriceList.groups.reduce((total, g) => total + g.items.length, 0);
+    expect(offers).toHaveLength(expected);
+  });
+
+  it('cada oferta lleva el rango de precios real del servicio', () => {
+    const catalog = hairSalonSchema(undefined, localPriceList).hasOfferCatalog as {
+      itemListElement: {
+        itemListElement: {
+          priceCurrency?: string;
+          priceSpecification?: { minPrice: number; maxPrice: number };
+          itemOffered: { name: string };
+        }[];
+      }[];
+    };
+    const offers = catalog.itemListElement.flatMap((group) => group.itemListElement);
+
+    // El corte vale igual en los cuatro largos: mínimo y máximo coinciden.
+    const corte = offers.find((offer) => offer.itemOffered.name === 'Corte');
+    expect(corte?.priceCurrency).toBe('ARS');
+    expect(corte?.priceSpecification).toMatchObject({ minPrice: 40000, maxPrice: 40000 });
+
+    // El balayage varía según el largo, y el largo sin precio no cuenta.
+    const balayage = offers.find((offer) => offer.itemOffered.name === 'Balayage');
+    expect(balayage?.priceSpecification).toMatchObject({ minPrice: 200000, maxPrice: 300000 });
+  });
+
+  it('el rango de precios del salón sale de la lista real', () => {
+    const schema = hairSalonSchema(undefined, localPriceList);
+    // El más barato es el lavado ($15.000) y el más caro el balayage extra
+    // largo ($300.000).
+    expect(schema.priceRange).toBe('$15.000 - $300.000');
   });
 
   it('el FAQPage refleja las preguntas reales de la página', () => {

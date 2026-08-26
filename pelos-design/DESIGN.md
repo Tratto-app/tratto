@@ -89,8 +89,13 @@ origen del sitio antes de leer una palabra.
 
 ### La cursiva
 
-**Toda la jerarquía de títulos va en cursiva** (Fraunces italic): h1, h2, h3 y h4.
-Es la voz de la marca y lo primero que se lee en cada sección.
+**Toda la jerarquía de títulos va en cursiva** (Fraunces italic): h1, h2, h3 y h4,
+más los nombres de servicio de la página de Servicios y los pocos elementos que
+usan la display fuera de un encabezado.
+
+De hecho **sólo se carga la itálica**. Cargar además la redonda eran 118 kB para
+un puñado de elementos, así que se pasaron todos a cursiva y el logotipo se
+resolvió con las otras dos familias.
 
 **El texto corrido se mantiene en redonda.** Es una decisión deliberada: un
 párrafo largo en itálica se lee bastante peor, sobre todo en pantalla chica y con
@@ -108,9 +113,28 @@ composición.
 
 ### Acento chico — **Instrument Serif Italic**
 
-Itálica editorial de más contraste, reservada para piezas pequeñas: los números
-de sección (`01`, `02`, `03`…), el `Design` del logotipo y el `404`. A ese tamaño
-convive bien con la display sin competirle.
+Itálica editorial de más contraste, reservada para piezas pequeñas: el `Design`
+del logotipo, la firma del salón y el `404`. A ese tamaño convive bien con la
+display sin competirle.
+
+### El logotipo
+
+`Pelo's` va en la sans en semibold y `Design` en la itálica serif, en cobre. El
+contraste entre las dos familias es el gesto de marca, y de paso resuelve el
+logotipo con tipografías que la página ya carga.
+
+### Peso de las fuentes
+
+Tres familias en **190 kB**, contra los 549 kB de la primera versión. Qué se hizo:
+
+| Cambio | Ahorro |
+|--------|--------|
+| Quitar el subset `latin-ext` (el castellano entra entero en `latin`) | ~180 kB |
+| Quitar el eje `WONK` de Fraunces, que se usa en su valor por defecto | ~60 kB |
+| Cargar Fraunces sólo en itálica | ~118 kB |
+
+En 3G lento con la CPU limitada 4×, eso bajó el FCP de 3504 ms a 2140 ms y el
+LCP de 3552 ms a 2188 ms.
 
 ### Escala
 

@@ -89,7 +89,9 @@ export default function ServiciosPage() {
                       delay={index * 50}
                       className="border-b border-border py-7"
                     >
-                      <dt className="text-[length:var(--text-h3)]">{service.name}</dt>
+                      <dt className="font-[family-name:var(--font-display)] text-[length:var(--text-h3)] leading-[1.1] italic tracking-[-0.018em]">
+                        {service.name}
+                      </dt>
                       <dd className="mt-3 flex flex-col gap-2">
                         <p className="text-text-primary">{service.summary}</p>
                         <p className="text-text-secondary">{service.detail}</p>

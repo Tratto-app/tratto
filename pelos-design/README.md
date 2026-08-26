@@ -193,10 +193,31 @@ refrescar las reseñas.
    [prueba de resultados enriquecidos](https://search.google.com/test/rich-results).
 4. Cargar la URL del sitio en la ficha de Google Business y en el perfil de Instagram.
 
+## Performance
+
+Medido con Chromium sobre el build de producción, no estimado:
+
+| | Escritorio 1440 | Mobile 375, 3G lento + CPU 4× |
+|---|---|---|
+| LCP | 144 ms | 2188 ms |
+| FCP | 144 ms | 2140 ms |
+| CLS | 0 | 0.0001 |
+| Transferido (comprimido) | — | 424 kB |
+
+- **Cero terceros.** Las fuentes las autohospeda `next/font` (no hay pedido a
+  Google en runtime) y el mapa se carga en un iframe diferido.
+- **CLS ~0**: todas las imágenes se importan de forma estática, así que
+  `next/image` reserva el espacio exacto antes de cargar.
+- Las fuentes pesan 190 kB entre las tres familias. Ver `DESIGN.md` para el
+  detalle de cómo se bajó desde 549 kB.
+
+El escenario móvil es deliberadamente pesimista (400 kbps y CPU limitada 4×);
+en una conexión real los números son bastante mejores.
+
 ## Tests
 
 ```bash
-npm test          # 69 tests unitarios
+npm test          # 72 tests unitarios
 npm run test:e2e  # 102 tests E2E (escritorio + móvil)
 ```
 
@@ -213,7 +234,7 @@ se puede sobrescribir con `PLAYWRIGHT_CHROMIUM_PATH`.
 Ver la sección correspondiente en [`PRODUCT.md`](./PRODUCT.md#7-reglas-de-contenido-innegociables).
 Ya confirmados:
 
-- **Teléfono**: +54 9 11 6792-1212, en `src/data/business.ts`.
+- **Teléfono**: +54 9 11 6794-1212, en `src/data/business.ts`.
 - **Lista de precios**: transcripta de la lista oficial del salón, en
   `src/data/prices.ts`. Ver las notas de ese archivo: hay dos importes de la
   lista original que conviene que el salón revise.

@@ -167,7 +167,7 @@ export function SiteHeader() {
               <li key={item.href} className="border-b border-border last:border-b-0">
                 <Link
                   href={item.href}
-                  className="block py-4 font-[family-name:var(--font-display)] text-[1.6rem] tracking-[-0.02em]"
+                  className="block py-4 font-[family-name:var(--font-display)] text-[1.6rem] italic tracking-[-0.02em]"
                 >
                   <span className="accent-type mr-3 text-[0.9rem] text-accent" aria-hidden="true">
                     {String(index + 1).padStart(2, '0')}

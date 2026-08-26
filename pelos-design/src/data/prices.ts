@@ -105,3 +105,43 @@ export function hasPrices(list: PriceList): boolean {
 export function priceFor(item: PriceRow, tierIndex: number): string | null {
   return item.prices[tierIndex] ?? null;
 }
+
+/**
+ * Convierte "$40.000" en 40000.
+ * El punto es separador de miles en Argentina, no decimal.
+ * Devuelve null si la celda no tiene un número reconocible.
+ */
+export function parsePriceValue(price: string | null): number | null {
+  if (!price) return null;
+  const digits = price.replace(/[^\d.,]/g, '').replace(/\./g, '').replace(/,/g, '.');
+  if (!digits) return null;
+  const value = Number(digits);
+  return Number.isFinite(value) && value > 0 ? value : null;
+}
+
+/** Mínimo y máximo de un servicio a lo largo de todos los largos. */
+export function itemPriceRange(item: PriceRow): { min: number; max: number } | null {
+  const values = item.prices
+    .map(parsePriceValue)
+    .filter((value): value is number => value !== null);
+  if (values.length === 0) return null;
+  return { min: Math.min(...values), max: Math.max(...values) };
+}
+
+/** Mínimo y máximo de toda la lista. Sirve para el `priceRange` del schema. */
+export function listPriceRange(list: PriceList): { min: number; max: number } | null {
+  const ranges = list.groups
+    .flatMap((group) => group.items)
+    .map(itemPriceRange)
+    .filter((range): range is { min: number; max: number } => range !== null);
+  if (ranges.length === 0) return null;
+  return {
+    min: Math.min(...ranges.map((range) => range.min)),
+    max: Math.max(...ranges.map((range) => range.max)),
+  };
+}
+
+/** Formatea un importe en pesos argentinos, sin decimales. */
+export function formatArs(value: number): string {
+  return `$${value.toLocaleString('es-AR', { maximumFractionDigits: 0 })}`;
+}

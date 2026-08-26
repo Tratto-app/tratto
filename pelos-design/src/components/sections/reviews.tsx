@@ -59,7 +59,7 @@ export function Reviews({ summary }: { summary: ReviewsSummary }) {
 
         {summary.rating !== null && (
           <Reveal className="mt-12 flex flex-wrap items-baseline gap-x-6 gap-y-3 border-y border-border py-8">
-            <p className="font-[family-name:var(--font-display)] text-[3.5rem] leading-none">
+            <p className="font-[family-name:var(--font-display)] text-[3.5rem] italic leading-none">
               {summary.rating.toFixed(1).replace('.', ',')}
             </p>
             <div className="flex flex-col gap-1">

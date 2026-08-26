@@ -31,8 +31,8 @@ function env(value: string | undefined): string | null {
  * el sitio funcione igual en cualquier deploy. La variable de entorno sigue
  * teniendo prioridad, así que cambiarlo no requiere tocar el código.
  */
-const WHATSAPP_FALLBACK = '5491167921212';
-const PHONE_FALLBACK = '+54 9 11 6792-1212';
+const WHATSAPP_FALLBACK = '5491167941212';
+const PHONE_FALLBACK = '+54 9 11 6794-1212';
 
 /** Número en formato E.164 sin símbolos, tal como lo pide wa.me. */
 const whatsappNumber = env(process.env.NEXT_PUBLIC_WHATSAPP_NUMBER) ?? WHATSAPP_FALLBACK;
