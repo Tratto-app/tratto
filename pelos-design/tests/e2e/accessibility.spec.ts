@@ -26,6 +26,19 @@ test.describe('Accesibilidad', () => {
     });
   }
 
+  test('cada foto de la galería lleva su rótulo visible', async ({ page }) => {
+    await page.goto('/#trabajos');
+    const plates = page.locator('#trabajos button.group');
+    const count = await plates.count();
+    expect(count).toBeGreaterThan(3);
+
+    for (let i = 0; i < count; i++) {
+      const caption = plates.nth(i).locator('span.uppercase');
+      await expect(caption).toBeVisible();
+      await expect(caption).not.toBeEmpty();
+    }
+  });
+
   test('el visor de galería atrapa el foco y se cierra con teclado', async ({ page }) => {
     await page.goto('/#trabajos');
     await page.locator('#trabajos button.group').first().click();

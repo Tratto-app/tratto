@@ -68,12 +68,13 @@ castellano).
 
 ### Display — **Fraunces**
 
-Serif editorial con ejes variables `SOFT`, `WONK` y `opsz`. Tiene personalidad
-sin volverse decorativa. Es variable: una sola descarga cubre todos los pesos.
+Serif editorial con mucha personalidad sin volverse decorativa.
 
-Se fija `font-variation-settings: 'SOFT' 30, 'WONK' 0, 'opsz' 40`. El `WONK` en 0
-apaga las terminaciones excéntricas de la fuente: con el eje alto se vuelve
-caricaturesca, y acá se busca elegancia.
+Se carga como **instancia estática de un solo peso en itálica**, no como fuente
+variable. La variable con sus ejes pesaba 146 kB para un único peso y estilo;
+la estática pesa 22 kB y, al tamaño en que se usa, se ve igual. Los ejes `SOFT`
+y `opsz` aportaban una diferencia imperceptible que no justificaba 124 kB en el
+camino crítico.
 
 **Por qué no Playfair Display:** es la serif por defecto de todo sitio de
 belleza. Se lee como plantilla.
@@ -127,14 +128,17 @@ logotipo con tipografías que la página ya carga.
 
 Tres familias en **190 kB**, contra los 549 kB de la primera versión. Qué se hizo:
 
+Tres familias en **67 kB**, contra los 549 kB de la primera versión:
+
 | Cambio | Ahorro |
 |--------|--------|
 | Quitar el subset `latin-ext` (el castellano entra entero en `latin`) | ~180 kB |
-| Quitar el eje `WONK` de Fraunces, que se usa en su valor por defecto | ~60 kB |
-| Cargar Fraunces sólo en itálica | ~118 kB |
+| Quitar el eje `WONK`, que se usaba en su valor por defecto | ~60 kB |
+| Cargar Fraunces sólo en itálica, no también en redonda | ~118 kB |
+| Pasar Fraunces de variable a instancia estática de un peso | ~124 kB |
 
-En 3G lento con la CPU limitada 4×, eso bajó el FCP de 3504 ms a 2140 ms y el
-LCP de 3552 ms a 2188 ms.
+Las fuentes son lo primero que se precarga, así que cada kilobyte de más ahí
+retrasa el primer pintado en una conexión lenta.
 
 ### Escala
 

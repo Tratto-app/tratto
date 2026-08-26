@@ -5,6 +5,7 @@ import '@/styles/globals.css';
 import { SiteHeader } from '@/components/site-header';
 import { SiteFooter } from '@/components/site-footer';
 import { MobileCtaBar } from '@/components/mobile-cta-bar';
+import { WhatsappFloat } from '@/components/ui/whatsapp-float';
 import { defaultMetadata, siteUrl } from '@/data/seo';
 import { business } from '@/data/business';
 import { buildGraph, hairSalonSchema, organizationSchema, websiteSchema } from '@/lib/seo/schema';
@@ -12,23 +13,19 @@ import { getPriceList } from '@/lib/prices/sheet';
 import { getReviews } from '@/lib/google/places';
 
 /**
- * Display: serif editorial con eje óptico. Elegida por personalidad y por ser
- * variable (una sola descarga cubre todos los pesos). Ver DESIGN.md.
+ * Display: serif editorial. Se carga como instancia ESTÁTICA de un solo peso
+ * en itálica, no como fuente variable.
+ *
+ * La versión variable con sus ejes pesaba 146 kB para un único peso y estilo;
+ * ésta pesa 22 kB y se ve igual. Los ejes SOFT y opsz aportaban una diferencia
+ * imperceptible al tamaño en que se usa. Ver DESIGN.md.
  */
 const fraunces = Fraunces({
-  // Sólo `latin`: cubre todos los acentos y la eñe del castellano. Sumar
-  // `latin-ext` duplicaba los archivos de esta familia sin aportar un solo
-  // carácter que el sitio use.
   subsets: ['latin'],
   display: 'swap',
   variable: '--font-fraunces',
-  // Sólo itálica. Todo el sitio usa la display en cursiva, así que cargar
-  // además la redonda eran 118 kB para un puñado de elementos: se pasaron
-  // todos a itálica y el logotipo se resolvió con las otras dos familias.
-  style: ['italic'],
-  // Sin el eje WONK: se usa en 0, que ya es el valor por defecto de la fuente,
-  // así que incluirlo sólo agrandaba el archivo variable.
-  axes: ['SOFT', 'opsz'],
+  weight: '400',
+  style: 'italic',
 });
 
 /** Texto: sans humanista, muy legible en párrafos largos en castellano. */
@@ -128,6 +125,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
         <main id="contenido">{children}</main>
         <SiteFooter />
         <MobileCtaBar />
+        <WhatsappFloat />
 
         <script
           type="application/ld+json"

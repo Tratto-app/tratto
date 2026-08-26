@@ -46,6 +46,30 @@ test.describe('Llamadas a la acción', () => {
     }
   });
 
+  test('el botón flotante de contacto aparece al bajar, sólo en escritorio', async ({
+    page,
+    isMobile,
+  }) => {
+    await page.goto('/');
+    const float = page.locator('a.fixed[href*="wa.me"], a.fixed[href*="instagram.com"]').first();
+
+    if (isMobile) {
+      // En mobile ya está la barra fija: dos accesos al mismo canal se pisarían.
+      await expect(float).toBeHidden();
+      return;
+    }
+
+    await expect(float).toHaveAttribute('aria-hidden', 'true');
+
+    await page.evaluate(() => window.scrollTo(0, window.innerHeight * 1.5));
+    await page.waitForTimeout(500);
+
+    await expect(float).toHaveAttribute('aria-hidden', 'false');
+    await expect(float).toHaveCSS('opacity', /^(1|0\.99)/);
+    await expect(float).toHaveAttribute('target', '_blank');
+    await expect(float).toHaveAccessibleName(/escribinos por/i);
+  });
+
   test('la barra fija móvil aparece al bajar y no antes', async ({ page, isMobile }) => {
     test.skip(!isMobile, 'sólo aplica en viewport móvil');
     await page.goto('/');

@@ -222,20 +222,25 @@ Medido con Chromium sobre el build de producción, no estimado:
 
 | | Escritorio 1440 | Mobile 375, 3G lento + CPU 4× |
 |---|---|---|
-| LCP | 144 ms | 2188 ms |
-| FCP | 144 ms | 2140 ms |
+| LCP | ~200 ms | ~2550 ms |
+| FCP | ~200 ms | ~2470 ms |
 | CLS | 0 | 0.0001 |
-| Transferido (comprimido) | — | 424 kB |
 
 - **Cero terceros.** Las fuentes las autohospeda `next/font` (no hay pedido a
   Google en runtime) y el mapa se carga en un iframe diferido.
 - **CLS ~0**: todas las imágenes se importan de forma estática, así que
   `next/image` reserva el espacio exacto antes de cargar.
-- Las fuentes pesan 190 kB entre las tres familias. Ver `DESIGN.md` para el
+- Las fuentes pesan **67 kB** entre las tres familias. Ver `DESIGN.md` para el
   detalle de cómo se bajó desde 549 kB.
 
-El escenario móvil es deliberadamente pesimista (400 kbps y CPU limitada 4×);
-en una conexión real los números son bastante mejores.
+El escenario móvil es deliberadamente pesimista: 400 kbps, **400 ms de latencia**
+y CPU limitada 4×. Con esa latencia el primer pintado está dominado por los
+viajes de ida y vuelta, no por el peso: bajar las fuentes de 190 kB a 67 kB casi
+no movió el número, porque el cuello ya no son los bytes.
+
+En una conexión móvil real de Argentina (latencia de 50-100 ms) los tiempos son
+una fracción de eso. **No se midió con Lighthouse ni sobre el dominio final**,
+así que conviene volver a correrlo una vez publicado.
 
 ## Tests
 

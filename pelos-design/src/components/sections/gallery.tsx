@@ -20,49 +20,39 @@ import { Reveal } from '@/components/ui/reveal';
 /**
  * Colocación de cada foto en la grilla de escritorio.
  *
- * Se define por índice, explícita y comentada, en lugar de deducirla con
- * selectores `nth-of-type`: así la composición es predecible y no se rompe
- * cuando se agrega o se saca una foto de `galleryItems`.
+ * La primera versión escalonaba las fotos con desplazamientos verticales. Se
+ * cambió por una grilla que cierra pareja: cada foto es una placa con su
+ * rótulo abajo, y las alturas de cada fila coinciden.
  *
- * Los desplazamientos verticales están calculados para que el hueco que deja
- * cada columna quede ARRIBA de la foto más baja y no debajo, que es lo que
- * produce esos vacíos raros al pie de la sección.
+ * La fila de abajo combina una vertical y una apaisada del doble de ancho:
+ * 4:5 sobre una columna mide casi lo mismo que 8:5 sobre dos, así que los
+ * rótulos quedan alineados sin forzar nada.
  */
 const LAYOUT = [
-  // Fila 1 — la foto que abre, grande, a la izquierda.
   {
-    span: 'sm:col-span-2 lg:col-span-7 lg:col-start-1',
-    offset: '',
+    span: 'lg:col-span-4',
     ratio: '4 / 5',
-    sizes: '(min-width: 1024px) 56vw, (min-width: 640px) 92vw, 100vw',
+    sizes: '(min-width: 1024px) 31vw, (min-width: 640px) 46vw, 100vw',
   },
-  // Fila 1 — vertical angosta a la derecha, bajada para escalonar la lectura.
   {
-    span: 'lg:col-span-4 lg:col-start-9',
-    offset: 'lg:mt-28',
-    ratio: '3 / 4',
-    sizes: '(min-width: 1024px) 32vw, (min-width: 640px) 46vw, 100vw',
-  },
-  // Fila 2 — vertical media a la izquierda.
-  {
-    span: 'lg:col-span-5 lg:col-start-1',
-    offset: 'lg:mt-24',
+    span: 'lg:col-span-4',
     ratio: '4 / 5',
-    sizes: '(min-width: 1024px) 40vw, (min-width: 640px) 46vw, 100vw',
+    sizes: '(min-width: 1024px) 31vw, (min-width: 640px) 46vw, 100vw',
   },
-  // Fila 2 — segunda foto grande, a la derecha y algo más arriba.
   {
-    span: 'sm:col-span-2 lg:col-span-6 lg:col-start-7',
-    offset: 'lg:-mt-16',
+    span: 'lg:col-span-4',
     ratio: '4 / 5',
-    sizes: '(min-width: 1024px) 48vw, (min-width: 640px) 92vw, 100vw',
+    sizes: '(min-width: 1024px) 31vw, (min-width: 640px) 46vw, 100vw',
   },
-  // Fila 3 — plano apaisado del salón, encajado con aire a los dos lados.
   {
-    span: 'sm:col-span-2 lg:col-span-7 lg:col-start-4',
-    offset: 'lg:mt-8',
-    ratio: '4 / 3',
-    sizes: '(min-width: 1024px) 56vw, (min-width: 640px) 92vw, 100vw',
+    span: 'lg:col-span-4',
+    ratio: '4 / 5',
+    sizes: '(min-width: 1024px) 31vw, (min-width: 640px) 46vw, 100vw',
+  },
+  {
+    span: 'sm:col-span-2 lg:col-span-8',
+    ratio: '8 / 5',
+    sizes: '(min-width: 1024px) 63vw, (min-width: 640px) 92vw, 100vw',
   },
 ] as const;
 
@@ -129,42 +119,48 @@ export function Gallery() {
 
   return (
     <>
-      <div className="mt-14 grid gap-x-[var(--space-gutter)] gap-y-[clamp(2rem,4vw,3.5rem)] sm:grid-cols-2 lg:mt-20 lg:grid-cols-12">
+      <div className="mt-14 grid gap-[clamp(1rem,2vw,1.75rem)] sm:grid-cols-2 lg:mt-16 lg:grid-cols-12">
         {galleryItems.map((item, index) => {
           const layout = LAYOUT[index] ?? LAYOUT[LAYOUT.length - 1]!;
 
           return (
-            <Reveal
-              key={item.id}
-              delay={index * 60}
-              className={`${layout.span} ${layout.offset}`}
-            >
+            <Reveal key={item.id} delay={index * 60} className={layout.span}>
               <button
                 type="button"
                 ref={(node) => {
                   triggersRef.current[index] = node;
                 }}
                 onClick={() => setOpenIndex(index)}
-                className="group block w-full text-left"
+                className="group block h-full w-full text-left"
               >
-                <span className="block overflow-hidden bg-surface-muted">
+                {/* La foto */}
+                <span className="relative block overflow-hidden bg-surface-muted">
                   <Image
                     src={item.image}
                     alt={item.alt}
                     placeholder="blur"
-                    loading={index < 2 ? 'eager' : 'lazy'}
+                    // Todas diferidas: la galería está bien abajo del pliegue y
+                    // cualquier descarga temprana le compite el ancho de banda a
+                    // la foto del hero, que es el LCP de la página.
+                    loading="lazy" 
                     sizes={layout.sizes}
-                    className="w-full object-cover transition-transform duration-[900ms] ease-[var(--ease-editorial)] group-hover:scale-[1.03] motion-reduce:transition-none motion-reduce:group-hover:scale-100"
+                    className="w-full object-cover transition-transform duration-[900ms] ease-[var(--ease-editorial)] group-hover:scale-[1.04] motion-reduce:transition-none motion-reduce:group-hover:scale-100"
                     style={{ aspectRatio: layout.ratio }}
                   />
-                </span>
-                <span className="mt-3 flex items-baseline justify-between gap-4">
-                  <span className="text-[0.9375rem]">{item.caption}</span>
+
+                  {/* Señal de que se puede ampliar, sólo al pasar el cursor. */}
                   <span
-                    className="text-[0.8125rem] text-text-secondary opacity-0 transition-opacity duration-300 group-hover:opacity-100 group-focus-visible:opacity-100"
                     aria-hidden="true"
+                    className="pointer-events-none absolute right-3 bottom-3 flex h-9 w-9 items-center justify-center bg-background/90 text-[1.1rem] leading-none text-text-primary opacity-0 transition-opacity duration-300 group-hover:opacity-100 group-focus-visible:opacity-100"
                   >
-                    Ampliar
+                    +
+                  </span>
+                </span>
+
+                {/* El rótulo, como en una placa: banda sólida y texto centrado */}
+                <span className="block bg-surface-deep px-4 py-4 text-center transition-colors duration-300 group-hover:bg-accent-deep">
+                  <span className="block text-[0.75rem] font-medium tracking-[0.14em] text-text-inverse uppercase">
+                    {item.caption}
                   </span>
                 </span>
               </button>

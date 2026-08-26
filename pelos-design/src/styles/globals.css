@@ -93,9 +93,9 @@
     line-height: 1.06;
     letter-spacing: -0.018em;
     margin: 0;
-    /* Fraunces variable: se baja el "wonk" para que la itálica sea elegante
-       y no caricaturesca. */
-    font-variation-settings: 'SOFT' 40, 'WONK' 0, 'opsz' 40;
+    /* Fraunces se carga como instancia estática de un solo peso: los ejes
+       variables (SOFT, WONK, opsz) ya no aplican, y declararlos acá sería
+       código muerto. Ver DESIGN.md para por qué se dejó la variable. */
     text-wrap: balance;
   }
 
