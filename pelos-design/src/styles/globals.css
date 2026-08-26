@@ -1,0 +1,218 @@
+@import 'tailwindcss';
+
+/* ============================================================
+   PELO'S DESIGN — DESIGN TOKENS
+   Paleta y escalas verificadas contra WCAG 2.2 AA.
+   Ver DESIGN.md para el razonamiento de cada decisión.
+   ============================================================ */
+
+@theme {
+  /* --- Color ------------------------------------------------ */
+  --color-background: #faf6f0;      /* papel crema, base del sitio */
+  --color-surface: #fffcf8;         /* marfil, superficies elevadas */
+  --color-surface-muted: #f2eae0;   /* arena, bandas de sección */
+  --color-surface-deep: #241c17;    /* negro suave, secciones invertidas */
+
+  --color-text-primary: #241c17;    /* 15.56:1 sobre background */
+  --color-text-secondary: #6b5b50;  /*  6.02:1 sobre background */
+  --color-text-inverse: #faf6f0;    /* 15.56:1 sobre surface-deep */
+  --color-text-inverse-muted: #c4b4a6; /* 8.32:1 sobre surface-deep */
+
+  --color-accent: #a8471f;          /* cobre — 5.44:1 sobre background */
+  --color-accent-deep: #7a3517;     /* cobre oscuro para hover */
+  --color-accent-soft: #f0d9c9;     /* durazno empolvado, sólo fondo */
+
+  --color-border: #e3d7c9;          /* hairline decorativa */
+  --color-border-strong: #9c8b7c;   /* 3.05:1 — controles interactivos */
+  --color-success: #4f6b4a;         /* 5.52:1 sobre background */
+
+  /* --- Tipografía ------------------------------------------- */
+  --font-display: var(--font-fraunces), 'Iowan Old Style', Georgia, serif;
+  --font-body: var(--font-instrument-sans), 'Helvetica Neue', Arial, sans-serif;
+  --font-accent: var(--font-instrument-serif), Georgia, serif;
+
+  /* Escala fluida: mobile 375 → desktop 1440 */
+  --text-display: clamp(2.75rem, 1.2rem + 7vw, 7rem);
+  --text-h1: clamp(2.25rem, 1.1rem + 5.2vw, 5rem);
+  --text-h2: clamp(1.75rem, 1rem + 3.2vw, 3.25rem);
+  --text-h3: clamp(1.3rem, 1rem + 1.3vw, 1.9rem);
+  --text-lead: clamp(1.0625rem, 0.98rem + 0.5vw, 1.375rem);
+  --text-body: 1.0625rem;
+  --text-small: 0.9375rem;
+  --text-eyebrow: 0.75rem;
+
+  /* --- Ritmo vertical --------------------------------------- */
+  --space-section: clamp(4.5rem, 2rem + 9vw, 9.5rem);
+  --space-gutter: clamp(1.25rem, 0.5rem + 3vw, 3.5rem);
+
+  /* --- Motion ----------------------------------------------- */
+  --ease-editorial: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* ============================================================
+   BASE
+   ============================================================ */
+
+@layer base {
+  *,
+  *::before,
+  *::after {
+    box-sizing: border-box;
+  }
+
+  html {
+    -webkit-text-size-adjust: 100%;
+    scroll-behavior: smooth;
+    /* El nav sticky no debe tapar el destino de los anclajes. */
+    scroll-padding-top: 5.5rem;
+  }
+
+  body {
+    margin: 0;
+    background-color: var(--color-background);
+    color: var(--color-text-primary);
+    font-family: var(--font-body);
+    font-size: var(--text-body);
+    line-height: 1.65;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+    /* Evita el salto horizontal por elementos que sobresalen en mobile. */
+    overflow-x: hidden;
+  }
+
+  h1, h2, h3, h4 {
+    font-family: var(--font-display);
+    font-weight: 400;
+    line-height: 1.02;
+    letter-spacing: -0.022em;
+    margin: 0;
+    /* Fraunces variable: baja el "wonk" para que no se vuelva decorativa. */
+    font-variation-settings: 'SOFT' 30, 'WONK' 0, 'opsz' 40;
+    text-wrap: balance;
+  }
+
+  p { margin: 0; text-wrap: pretty; }
+
+  img, picture, video, svg { display: block; max-width: 100%; }
+
+  a { color: inherit; text-decoration: none; }
+
+  button { font: inherit; color: inherit; }
+
+  /* --- Foco visible, consistente en todo el sitio ----------- */
+  :focus-visible {
+    outline: 2px solid var(--color-accent);
+    outline-offset: 3px;
+    border-radius: 1px;
+  }
+  .on-dark :focus-visible {
+    outline-color: var(--color-accent-soft);
+  }
+
+  ::selection {
+    background-color: var(--color-accent-soft);
+    color: var(--color-text-primary);
+  }
+}
+
+/* ============================================================
+   UTILIDADES EDITORIALES
+   ============================================================ */
+
+@layer components {
+  .shell {
+    width: 100%;
+    max-width: 90rem;
+    margin-inline: auto;
+    padding-inline: var(--space-gutter);
+  }
+
+  .shell-narrow {
+    width: 100%;
+    max-width: 46rem;
+    margin-inline: auto;
+    padding-inline: var(--space-gutter);
+  }
+
+  /* Ojo de sección: versalitas espaciadas, el marcador editorial del sitio. */
+  .eyebrow {
+    font-family: var(--font-body);
+    font-size: var(--text-eyebrow);
+    font-weight: 500;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--color-text-secondary);
+  }
+
+  /* Palabra o frase acentuada: itálica editorial, nunca para bloques largos. */
+  .accent-type {
+    font-family: var(--font-accent);
+    font-style: italic;
+    font-weight: 400;
+    letter-spacing: -0.01em;
+  }
+
+  /* Subrayado que se dibuja al pasar el cursor. */
+  .link-underline {
+    background-image: linear-gradient(currentColor, currentColor);
+    background-position: 0 100%;
+    background-repeat: no-repeat;
+    background-size: 0% 1px;
+    transition: background-size 0.4s var(--ease-editorial);
+    padding-bottom: 0.12em;
+  }
+  .link-underline:hover,
+  .link-underline:focus-visible {
+    background-size: 100% 1px;
+  }
+
+  /* Regla fina que abre cada sección. */
+  .rule {
+    border: 0;
+    border-top: 1px solid var(--color-border);
+    margin: 0;
+  }
+}
+
+/* ============================================================
+   MOTION — todo se apaga con prefers-reduced-motion
+   ============================================================ */
+
+@layer utilities {
+  .reveal {
+    opacity: 0;
+    transform: translateY(1.25rem);
+    transition:
+      opacity 0.8s var(--ease-editorial),
+      transform 0.8s var(--ease-editorial);
+    transition-delay: var(--reveal-delay, 0ms);
+  }
+  .reveal[data-visible='true'] {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+
+  .reveal {
+    opacity: 1 !important;
+    transform: none !important;
+  }
+}
+
+/* Impresión: la lista de precios y la dirección tienen que salir legibles. */
+@media print {
+  .no-print { display: none !important; }
+  body { background: #fff; color: #000; }
+}
