@@ -26,9 +26,9 @@ export function Salon() {
 
               <div className="mt-7 flex max-w-[34rem] flex-col gap-5 text-[length:var(--text-lead)] leading-[1.6] text-text-secondary">
                 <p>
-                  Somos un salón chico sobre Yerbal. Espejos de madera, sillas rojas y unos
-                  cuadros enormes que colgamos hace años y ya son parte de la casa. Nos vas a
-                  reconocer por eso.
+                  Somos Abel y Martina. Un salón chico sobre Yerbal, con espejos de madera,
+                  sillas rojas y unos cuadros enormes que colgamos hace años y ya son parte
+                  de la casa. Nos vas a reconocer por eso.
                 </p>
                 <p>
                   Acá nadie te apura. El color lleva el tiempo que lleva, y preferimos

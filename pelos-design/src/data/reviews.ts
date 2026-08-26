@@ -22,6 +22,11 @@ export interface Review {
   /** Texto relativo que devuelve Google ("hace 2 meses"). */
   relativeTime: string | null;
   authorUrl: string | null;
+  /**
+   * La reseña se muestra recortada porque el original está cortado en Google.
+   * La interfaz agrega los puntos suspensivos y el enlace para leerla entera.
+   */
+  truncated?: boolean;
 }
 
 export interface ReviewsSummary {
@@ -35,38 +40,75 @@ export interface ReviewsSummary {
 
 /**
  * ────────────────────────────────────────────────────────────────────────────
- * PARA CARGAR LAS RESEÑAS A MANO
+ * RESEÑAS CARGADAS A MANO
  * ────────────────────────────────────────────────────────────────────────────
  *
- * Camino recomendado: configurar GOOGLE_MAPS_API_KEY y GOOGLE_PLACE_ID (ver
- * README). Con eso el sitio trae solo el promedio, la cantidad y las reseñas
- * más recientes, y se mantiene al día sin que nadie toque nada.
+ * Estos datos son de la ficha de Google del salón: promedio 5,0 sobre 176
+ * reseñas, con cuatro opiniones textuales.
  *
- * Camino manual: si todavía no hay API, completá los tres campos de abajo con
- * los datos REALES de la ficha de Google del salón.
+ * CÓMO SE TRANSCRIBIERON
+ * - El promedio y la cantidad son los que muestra Google, sin redondear.
+ * - Los nombres se pasaron a mayúscula inicial (Google los muestra tal como
+ *   los escribió cada persona, a veces todo en minúscula).
+ * - Se corrigieron tildes y signos de apertura faltantes, y se reemplazaron
+ *   los saltos de línea por punto. No se cambió ni una palabra ni el sentido.
+ * - Dos reseñas están cortadas en Google con un "más": van marcadas con
+ *   `truncated`, y la interfaz agrega los puntos suspensivos y el enlace para
+ *   leerlas enteras. No se completó lo que no se pudo leer.
+ * - Las fechas de Google son relativas ("hace 2 meses"), así que se guardan
+ *   como tales en `relativeTime` en lugar de inventar una fecha exacta.
  *
- *   1. `rating`: el promedio tal cual figura en Google. Ej: 4.9
- *   2. `total`:  la cantidad de reseñas tal cual figura en Google. Ej: 154
- *   3. `reviews`: copiá las reseñas textuales que quieras mostrar.
+ * MANTENIMIENTO
+ * Lo ideal es configurar GOOGLE_MAPS_API_KEY y GOOGLE_PLACE_ID (ver README):
+ * con eso el sitio trae solo el promedio, la cantidad y las reseñas más
+ * recientes, y esto deja de tener que actualizarse a mano.
  *
- * No completes ninguno "a ojo". Un promedio inventado es publicidad engañosa
- * y además Google penaliza los datos estructurados falsos. Si no tenés el
- * número exacto, dejalo en null: la sección degrada sola y sigue viéndose bien.
+ * REGLA: nunca completar estos campos "a ojo". Un promedio inventado es
+ * publicidad engañosa y Google penaliza los datos estructurados falsos.
  */
 export const manualReviews: ReviewsSummary = {
-  rating: null,
-  total: null,
+  // Datos tomados de la ficha de Google del salón.
+  rating: 5,
+  total: 176,
   reviews: [
-    // Ejemplo del formato. Descomentá y reemplazá por reseñas reales:
-    // {
-    //   id: 'google-1',
-    //   author: 'Nombre tal como figura en Google',
-    //   rating: 5,
-    //   text: 'Texto de la reseña, copiado tal cual.',
-    //   publishedAt: '2026-07-15',
-    //   relativeTime: null,
-    //   authorUrl: null,
-    // },
+    {
+      id: 'google-karina-gonzalez',
+      author: 'Karina Gonzalez',
+      rating: 5,
+      text: 'Tengo cabello finito y no abundante, por eso me sorprendió mi corte de pelo «mágico». ¡Salí feliz!',
+      publishedAt: null,
+      relativeTime: 'hace un mes',
+      authorUrl: null,
+      truncated: true,
+    },
+    {
+      id: 'google-alicia-caprino',
+      author: 'Alicia Caprino',
+      rating: 5,
+      text: 'Excelente lugar. Abel un muy buen profesional, muy bien atendida por Martina, lo recomiendo.',
+      publishedAt: null,
+      relativeTime: 'hace 2 meses',
+      authorUrl: null,
+    },
+    {
+      id: 'google-patricia-blanco',
+      author: 'Patricia Blanco',
+      rating: 5,
+      text: 'Excelente la atención. Hace años que me atiendo con Abel y Martina, siempre contenta con el corte',
+      publishedAt: null,
+      relativeTime: 'hace 5 meses',
+      authorUrl: null,
+      truncated: true,
+    },
+    {
+      id: 'google-emilse-mozotegui',
+      author: 'Emilse Mozotegui',
+      rating: 5,
+      text: 'Fui por primera vez, a hacerme mi primer tono sobre tono, un color más jugado al mío y oscuro. Son excelentes, me quedó un brillo hermoso. Súper dedicados con cada cliente. ¡Volveremos!',
+      publishedAt: null,
+      relativeTime: 'hace un año',
+      authorUrl: null,
+    },
   ],
   source: 'manual',
 };

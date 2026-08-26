@@ -47,10 +47,40 @@ describe('servicios', () => {
 });
 
 describe('reseñas', () => {
-  it('el respaldo manual no trae reseñas ni puntajes inventados', () => {
-    expect(manualReviews.rating).toBeNull();
-    expect(manualReviews.total).toBeNull();
-    expect(manualReviews.reviews).toHaveLength(0);
+  it('coinciden con la ficha de Google del salón', () => {
+    expect(manualReviews.rating).toBe(5);
+    expect(manualReviews.total).toBe(176);
+    expect(manualReviews.reviews.length).toBeGreaterThanOrEqual(4);
+  });
+
+  it('el puntaje está dentro del rango posible', () => {
+    expect(manualReviews.rating).toBeGreaterThan(0);
+    expect(manualReviews.rating).toBeLessThanOrEqual(5);
+    for (const review of manualReviews.reviews) {
+      expect(review.rating).toBeGreaterThanOrEqual(1);
+      expect(review.rating).toBeLessThanOrEqual(5);
+    }
+  });
+
+  it('cada reseña tiene autor, texto y fecha relativa', () => {
+    for (const review of manualReviews.reviews) {
+      expect(review.author.trim().length, 'sin autor').toBeGreaterThan(2);
+      expect(review.text.trim().length, `texto corto: ${review.author}`).toBeGreaterThan(30);
+      expect(review.relativeTime, `sin fecha: ${review.author}`).toBeTruthy();
+    }
+  });
+
+  it('no hay identificadores duplicados', () => {
+    const ids = manualReviews.reviews.map((review) => review.id);
+    expect(new Set(ids).size).toBe(ids.length);
+  });
+
+  it('las reseñas cortadas no terminan en puntos suspensivos en el dato', () => {
+    // Los puntos los agrega la interfaz junto con el enlace a Google; dejarlos
+    // también en el texto los duplicaría.
+    for (const review of manualReviews.reviews) {
+      if (review.truncated) expect(review.text.trim()).not.toMatch(/[.…]{2,}$/);
+    }
   });
 
   it('detecta correctamente cuándo no hay contenido para mostrar', () => {

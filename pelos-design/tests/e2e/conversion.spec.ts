@@ -240,25 +240,66 @@ test.describe('Ubicación', () => {
 });
 
 test.describe('Reseñas', () => {
-  test('no inventa puntajes cuando no hay datos verificados', async ({ page }) => {
+  test('muestra la puntuación y la cantidad reales de Google', async ({ page }) => {
     await page.goto('/#opiniones');
     const section = page.locator('#opiniones');
 
-    const quotes = await section.locator('blockquote').count();
+    await expect(section.getByText('5,0', { exact: true })).toBeVisible();
+    await expect(section.getByText(/sobre 176 reseñas en Google/i)).toBeVisible();
 
-    if (quotes === 0) {
-      // Sin datos de la API no puede aparecer NINGÚN número con pinta de
-      // puntaje ni de cantidad de reseñas. Se comprueba el invariante y no la
-      // redacción, para que el test no se rompa al reescribir el copy.
-      const text = (await section.innerText()).replace(/\s+/g, ' ');
-      expect(text, 'apareció un promedio inventado').not.toMatch(/\b[1-5][.,]\d\b/);
-      expect(text, 'apareció una cantidad de reseñas inventada').not.toMatch(
-        /\b\d+\s*(reseñas|opiniones|valoraciones)\b/i,
-      );
-      expect(section.locator('[class*="text-\\[3.5rem\\]"]')).toHaveCount(0);
+    // La puntuación también tiene que ser legible por lector de pantalla.
+    await expect(section.getByText(/Puntuación media de 5.0 sobre 5/i)).toBeAttached();
+  });
+
+  test('muestra reseñas con autor y fecha', async ({ page }) => {
+    await page.goto('/#opiniones');
+    const quotes = page.locator('#opiniones blockquote');
+
+    const count = await quotes.count();
+    expect(count).toBeGreaterThanOrEqual(4);
+
+    for (let i = 0; i < count; i++) {
+      await expect(quotes.nth(i)).not.toBeEmpty();
     }
 
-    // En cualquier caso, la ficha real de Google tiene que estar enlazada.
-    await expect(section.locator('a[href*="maps.app.goo.gl"]').last()).toBeVisible();
+    // Cada reseña lleva quién la escribió y hace cuánto.
+    const captions = page.locator('#opiniones figcaption');
+    await expect(captions).toHaveCount(count);
+    await expect(captions.first()).toHaveText(/hace/i);
+  });
+
+  test('las reseñas cortadas enlazan a Google en vez de completarse', async ({ page }) => {
+    await page.goto('/#opiniones');
+    const more = page.locator('#opiniones a', { hasText: /seguir leyendo/i });
+
+    const count = await more.count();
+    expect(count).toBeGreaterThan(0);
+    for (let i = 0; i < count; i++) {
+      await expect(more.nth(i)).toHaveAttribute('href', /maps\.app\.goo\.gl/);
+      await expect(more.nth(i)).toHaveAttribute('target', '_blank');
+    }
+  });
+
+  test('el puntaje publicado coincide con el del JSON-LD', async ({ page }) => {
+    await page.goto('/');
+    const nodes = (
+      await page.locator('script[type="application/ld+json"]').allTextContents()
+    ).flatMap((raw) => JSON.parse(raw)['@graph'] as Record<string, unknown>[]);
+
+    const salon = nodes.find((node) => node['@type'] === 'HairSalon')!;
+    const rating = salon.aggregateRating as { ratingValue: number; reviewCount: number };
+
+    expect(rating.ratingValue).toBe(5);
+    expect(rating.reviewCount).toBe(176);
+
+    // Lo que dice el schema tiene que ser lo mismo que ve la clienta.
+    await expect(page.locator('#opiniones').getByText('5,0', { exact: true })).toBeVisible();
+  });
+
+  test('siempre lleva a la ficha real de Google', async ({ page }) => {
+    await page.goto('/#opiniones');
+    await expect(
+      page.locator('#opiniones a[href*="maps.app.goo.gl"]').last(),
+    ).toBeVisible();
   });
 });

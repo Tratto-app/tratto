@@ -2,6 +2,7 @@ import { business, formattedAddress, openingHours, weekSchedule } from '@/data/b
 import { serviceCategories } from '@/data/services';
 import { faqs, siteUrl } from '@/data/seo';
 import { localPriceList } from '@/data/prices';
+import { manualReviews } from '@/data/reviews';
 
 /**
  * /llms.txt — resumen del negocio en texto plano.
@@ -37,6 +38,31 @@ function priceBlock(): string {
     : '\n\nLos importes están en pesos argentinos.';
 
   return `Largos de cabello: ${list.tiers.join(', ')}.\n\n${sections.join('\n\n')}${validity}`;
+}
+
+/** Resumen de reputación en texto plano, sólo con datos de la ficha real. */
+function reviewsBlock(): string {
+  const { rating, total, reviews } = manualReviews;
+  const link = `Ficha con todas las opiniones: ${business.links.googleMaps}`;
+
+  if (rating === null) {
+    return `Las opiniones de clientas están publicadas en la ficha de Google del salón. El sitio no publica puntajes ni cantidades que no provengan de esa ficha.\n${link}`;
+  }
+
+  const summary = `Puntuación media en Google: ${rating} sobre 5${
+    total !== null ? `, sobre ${total} reseñas` : ''
+  }.`;
+
+  if (reviews.length === 0) return `${summary}\n${link}`;
+
+  const quotes = reviews
+    .map(
+      (review) =>
+        `- ${review.author} (${review.rating}/5, ${review.relativeTime ?? 'sin fecha'}): "${review.text}${review.truncated ? '…' : ''}"`,
+    )
+    .join('\n');
+
+  return `${summary}\n\nAlgunas opiniones:\n${quotes}\n\n${link}`;
 }
 
 function hoursBlock(): string {
@@ -88,7 +114,7 @@ ${priceBlock()}
 ${hoursBlock()}
 
 ## Reseñas
-Las opiniones de clientas están publicadas en la ficha de Google del salón: ${business.links.googleMaps}. El sitio no publica puntajes ni cantidades que no provengan de esa ficha.
+${reviewsBlock()}
 
 ## Preguntas frecuentes
 ${faqs.map((faq) => `### ${faq.question}\n${faq.answer}`).join('\n\n')}

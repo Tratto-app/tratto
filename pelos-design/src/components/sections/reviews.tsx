@@ -34,6 +34,18 @@ function Stars({ rating, size = 'md' }: { rating: number; size?: 'md' | 'lg' }) 
   );
 }
 
+/**
+ * Cuántas columnas usar en escritorio.
+ *
+ * Con cuatro reseñas, tres columnas dejan una sola en la fila de abajo; con
+ * dos columnas cierran en un cuadrado. La regla vale también si más adelante
+ * la API devuelve otra cantidad.
+ */
+function columnsFor(count: number): string {
+  if (count <= 2 || count === 4) return 'lg:grid-cols-2';
+  return 'lg:grid-cols-3';
+}
+
 function formatDate(iso: string | null): string | null {
   if (!iso) return null;
   const date = new Date(iso);
@@ -55,7 +67,25 @@ function ReviewCard({ review, index }: { review: Review; index: number }) {
         )}
 
         <blockquote className="text-[1.0625rem] leading-[1.6]">
-          <p>{review.text}</p>
+          <p>
+            {review.text}
+            {/* En Google esta reseña sigue: se marca el corte en vez de
+                completarla, y se ofrece el enlace para leerla entera. */}
+            {review.truncated && (
+              <>
+                <span aria-hidden="true">…</span>{' '}
+                <a
+                  href={business.links.googleMaps}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="link-underline text-[0.9375rem] whitespace-nowrap text-accent"
+                >
+                  seguir leyendo
+                  <span className="sr-only"> la reseña completa de {review.author} en Google</span>
+                </a>
+              </>
+            )}
+          </p>
         </blockquote>
 
         <figcaption className="mt-auto pt-2 text-[0.875rem] text-text-secondary">
@@ -124,9 +154,14 @@ export function Reviews({ summary }: { summary: ReviewsSummary }) {
           </Reveal>
         )}
 
-        {/* Reseñas textuales */}
+        {/* Reseñas textuales. Las columnas se eligen según cuántas haya, para
+            que no quede una sola colgada en la última fila. */}
         {hasQuotes && (
-          <ul className="mt-12 grid gap-x-[var(--space-gutter)] gap-y-10 md:grid-cols-2 lg:grid-cols-3">
+          <ul
+            className={`mt-12 grid gap-x-[var(--space-gutter)] gap-y-10 md:grid-cols-2 ${
+              columnsFor(summary.reviews.length)
+            }`}
+          >
             {summary.reviews.slice(0, 6).map((review, index) => (
               <ReviewCard key={review.id} review={review} index={index} />
             ))}

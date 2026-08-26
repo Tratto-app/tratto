@@ -125,13 +125,16 @@ frecuente de horarios y el `llms.txt`.
 Si la API falla, tiene timeout o devuelve un error, la sección cae al respaldo
 sin romper la página.
 
-**Sin API**, se pueden cargar a mano: completá `rating`, `total` y `reviews` en
-`src/data/reviews.ts` con los datos reales de la ficha de Google. El archivo
-tiene el formato comentado y un ejemplo. Con eso aparecen la puntuación grande,
-las estrellas, la cantidad de reseñas y hasta seis testimonios.
+**Hoy están cargadas a mano** en `src/data/reviews.ts`, transcriptas de la ficha
+de Google: 5,0 sobre 176 reseñas, con cuatro opiniones. Ese archivo documenta
+exactamente qué se transcribió y qué se ajustó (tildes, saltos de línea), y
+marca con `truncated` las que Google muestra cortadas: la interfaz les agrega
+los puntos suspensivos y el enlace, en lugar de completar lo que no se pudo leer.
 
-Mientras los tres campos estén en `null`, la sección degrada a una invitación a
-leerlas en Google: nunca muestra un número sin respaldo.
+Conectar la API reemplaza esa carga manual y mantiene todo al día solo.
+
+Si algún día los tres campos vuelven a `null`, la sección degrada a una
+invitación a leerlas en Google: nunca muestra un número sin respaldo.
 
 ## Precios: cómo los edita el salón
 
@@ -245,8 +248,8 @@ así que conviene volver a correrlo una vez publicado.
 ## Tests
 
 ```bash
-npm test          # 77 tests unitarios
-npm run test:e2e  # 106 tests E2E (escritorio + móvil)
+npm test          # 81 tests unitarios
+npm run test:e2e  # 118 tests E2E (escritorio + móvil)
 ```
 
 Los E2E levantan el servidor de producción solos. Cubren navegación, menú móvil,
@@ -264,14 +267,15 @@ Ya confirmados:
 
 - **Teléfono**: +54 9 11 6794-1212, en `src/data/business.ts`.
 - **Horarios**: de la ficha de Google, en `src/data/business.ts`.
+- **Reseñas**: 5,0 sobre 176, con cuatro opiniones, en `src/data/reviews.ts`.
 - **Lista de precios**: transcripta de la lista oficial del salón, en
   `src/data/prices.ts`. Ver las notas de ese archivo: hay dos importes de la
   lista original que conviene que el salón revise.
 
 Sigue pendiente:
 
-- **Puntuación y cantidad de reseñas**, más los textos que se quieran mostrar.
-  Se cargan con la API de Google o a mano en `src/data/reviews.ts`.
 - **Textos legales** de privacidad y términos.
+- Revisar dos importes de la lista de precios (ver `src/data/prices.ts`).
+- Opcional: conectar la API de Places para que las reseñas se actualicen solas.
 
 Hasta entonces el sitio no publica ninguno de esos datos.

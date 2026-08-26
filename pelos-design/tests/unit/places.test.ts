@@ -1,5 +1,7 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 
+import { manualReviews } from '@/data/reviews';
+
 /**
  * El cliente de Places es el camino más frágil del sitio: depende de una API
  * externa. Estos tests verifican que ante cualquier respuesta rara caiga en el
@@ -55,8 +57,8 @@ describe('cliente de Google Places', () => {
 
     const result = await getReviews();
     expect(fetchMock).not.toHaveBeenCalled();
-    expect(result.source).toBe('manual');
-    expect(result.rating).toBeNull();
+    // Cae en los datos cargados a mano, sin inventar nada por su cuenta.
+    expect(result).toEqual(manualReviews);
   });
 
   it('normaliza una respuesta válida', async () => {
@@ -125,9 +127,7 @@ describe('cliente de Google Places', () => {
     const { getReviews } = await loadClient();
 
     const result = await getReviews();
-    expect(result.source).toBe('manual');
-    expect(result.rating).toBeNull();
-    expect(result.reviews).toHaveLength(0);
+    expect(result).toEqual(manualReviews);
   });
 
   it('ante un fallo de red cae en el respaldo sin lanzar', async () => {
@@ -142,8 +142,7 @@ describe('cliente de Google Places', () => {
     const { getReviews } = await loadClient();
 
     const result = await getReviews();
-    expect(result.source).toBe('manual');
-    expect(result.rating).toBeNull();
+    expect(result).toEqual(manualReviews);
   });
 
   it('acepta puntaje sin reseñas textuales', async () => {

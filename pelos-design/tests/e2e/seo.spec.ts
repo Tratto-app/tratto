@@ -122,13 +122,18 @@ test.describe('Datos estructurados', () => {
     expect(nodes.some((n) => n['@type'] === 'FAQPage')).toBe(true);
   });
 
-  test('no publica un puntaje que no pueda respaldar', async ({ page }) => {
+  test('el puntaje del schema sale de la ficha real', async ({ page }) => {
     await page.goto('/');
-    const raw = (await page.locator('script[type="application/ld+json"]').allTextContents()).join(
-      '',
-    );
-    // Sin la API de Google configurada no puede haber aggregateRating.
-    expect(raw).not.toContain('aggregateRating');
+    const nodes = (
+      await page.locator('script[type="application/ld+json"]').allTextContents()
+    ).flatMap((raw) => JSON.parse(raw)['@graph'] as Record<string, unknown>[]);
+
+    const salon = nodes.find((node) => node['@type'] === 'HairSalon')!;
+    expect(salon.aggregateRating).toMatchObject({
+      ratingValue: 5,
+      reviewCount: 176,
+      bestRating: 5,
+    });
   });
 
   test('publica los horarios reales de la ficha de Google', async ({ page }) => {
@@ -182,5 +187,7 @@ test.describe('GEO / búsqueda con IA', () => {
     // Los horarios ya están confirmados y se listan los siete días.
     expect(body).toMatch(/Martes: 10:00–17:30/);
     expect(body).toMatch(/Jueves: cerrado/);
+    // La reputación se publica con el puntaje real, no en abstracto.
+    expect(body).toMatch(/Puntuación media en Google: 5 sobre 5, sobre 176 reseñas/);
   });
 });
