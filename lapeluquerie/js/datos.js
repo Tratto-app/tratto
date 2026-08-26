@@ -24,7 +24,7 @@ export const NEGOCIO = {
   zona:   'Pilar',
   ciudad: 'Pilar, Buenos Aires',
   direccion: {
-    calle:     'Bataglia 572',
+    calle:     'Luis Bataglia 572',
     localidad: 'Pilar',
     provincia: 'Buenos Aires',
     pais:      'AR'
@@ -66,7 +66,7 @@ export const NEGOCIO = {
 
   /* Poné en true recién cuando cargues reseñas reales de Google:
      recién ahí se emite el structured data de valoraciones. */
-  resenasReales: false
+  resenasReales: true
 };
 
 /* ============================================================
@@ -307,15 +307,15 @@ export const EQUIPO = [
    (NEGOCIO.maps) y poné NEGOCIO.resenasReales = true.
    ============================================================ */
 export const RESENAS = {
-  puntaje: null,      // ej: 4.9
-  cantidad: null,     // ej: 128
+  puntaje: 5,
+  cantidad: null,
   items: [
-    { autor: '[Nombre de la clienta]', fecha: '[Mes AAAA]', servicio: '[Servicio]', estrellas: null,
-      texto: '[Pegar acá el texto textual de la reseña de Google.]' },
-    { autor: '[Nombre de la clienta]', fecha: '[Mes AAAA]', servicio: '[Servicio]', estrellas: null,
-      texto: '[Pegar acá el texto textual de la reseña de Google.]' },
-    { autor: '[Nombre de la clienta]', fecha: '[Mes AAAA]', servicio: '[Servicio]', estrellas: null,
-      texto: '[Pegar acá el texto textual de la reseña de Google.]' }
+    { autor: 'Daniela Salas', fecha: 'hace 9 meses', servicio: 'Google', estrellas: 5,
+      texto: 'Siempre la mejor atención y precios súper justos! Recomendadísima.' },
+    { autor: 'María Celia Pailhe', fecha: 'hace 1 año', servicio: 'Color y corte', estrellas: 5,
+      texto: 'Excelente atención!! July me hizo color como a mí me gusta y Mariana un corte bárbaro. Quedé superconforme! Volveré!' },
+    { autor: 'Julieta Gomez', fecha: 'hace 7 meses', servicio: 'Peinado de evento', estrellas: 5,
+      texto: 'Soy de Mendoza y necesitaba una peluquería para ir a un casamiento! Tengo unos rulos indomables y Flor fue una genia, mucha paciencia. Me quedó hermoso el pelo. Un diez.' }
   ]
 };
 
