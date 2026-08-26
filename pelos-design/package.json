@@ -14,7 +14,8 @@
     "test:e2e": "playwright test",
     "images": "node scripts/prepare-images.mjs",
     "brand": "node scripts/generate-brand-assets.mjs",
-    "precios": "node scripts/generate-price-list.mjs"
+    "precios": "node scripts/generate-price-list.mjs",
+    "export:html": "node scripts/export-single-file.mjs"
   },
   "dependencies": {
     "next": "^16.3.3",
