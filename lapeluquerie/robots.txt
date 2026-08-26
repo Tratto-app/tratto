@@ -1,0 +1,6 @@
+# Lapeluquerie Studio Art
+User-agent: *
+Allow: /
+
+# ⚠️ COMPLETAR: reemplazar [DOMINIO] por el dominio real
+Sitemap: https://[DOMINIO]/sitemap.xml
