@@ -122,13 +122,26 @@ test.describe('Datos estructurados', () => {
     expect(nodes.some((n) => n['@type'] === 'FAQPage')).toBe(true);
   });
 
-  test('no publica puntajes ni horarios sin verificar', async ({ page }) => {
+  test('no publica un puntaje que no pueda respaldar', async ({ page }) => {
     await page.goto('/');
     const raw = (await page.locator('script[type="application/ld+json"]').allTextContents()).join(
       '',
     );
+    // Sin la API de Google configurada no puede haber aggregateRating.
     expect(raw).not.toContain('aggregateRating');
-    expect(raw).not.toContain('openingHoursSpecification');
+  });
+
+  test('publica los horarios reales de la ficha de Google', async ({ page }) => {
+    await page.goto('/');
+    const nodes = (
+      await page.locator('script[type="application/ld+json"]').allTextContents()
+    ).flatMap((raw) => JSON.parse(raw)['@graph'] as Record<string, unknown>[]);
+
+    const salon = nodes.find((node) => node['@type'] === 'HairSalon')!;
+    const spec = salon.openingHoursSpecification as { dayOfWeek: string[] }[];
+    expect(spec).toHaveLength(2);
+    // Jueves cerrado: no debe figurar entre los días de atención.
+    expect(JSON.stringify(spec)).not.toContain('Thursday');
   });
 
   test('las preguntas del schema coinciden con las de la página', async ({ page }) => {
@@ -166,7 +179,8 @@ test.describe('GEO / búsqueda con IA', () => {
     expect(body).toContain('## Preguntas frecuentes');
     // El teléfono ya está confirmado por el salón y debe figurar.
     expect(body).toMatch(/Teléfono: \+54/);
-    // Los horarios siguen sin confirmar: no se afirman.
-    expect(body).toContain('No publicados');
+    // Los horarios ya están confirmados y se listan los siete días.
+    expect(body).toMatch(/Martes: 10:00–17:30/);
+    expect(body).toMatch(/Jueves: cerrado/);
   });
 });

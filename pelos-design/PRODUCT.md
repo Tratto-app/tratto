@@ -80,8 +80,9 @@ Estas reglas están codificadas y cubiertas por tests, no sólo escritas acá:
 
 1. **No se inventan reseñas ni puntajes.** Sin API configurada, la sección
    explica por qué no hay números y manda a la ficha de Google.
-2. **No se inventan horarios.** Los directorios que copian la ficha de Google no
-   coinciden entre sí, así que no se publica ninguno hasta que el salón confirme.
+2. **Los horarios salen de la ficha de Google** del salón, no de directorios que
+   la copian. Se muestran los siete días, incluidos los cerrados: saber cuándo
+   NO abren evita un viaje al pedo.
 3. **No se inventan precios.** Ningún importe vive en el HTML.
 4. **El teléfono lo confirmó el salón** (+54 9 11 6794-1212) y está cargado en
    `src/data/business.ts`. Antes de eso el sitio usaba Instagram como canal,

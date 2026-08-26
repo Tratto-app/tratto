@@ -34,19 +34,40 @@ export interface ReviewsSummary {
 }
 
 /**
- * Datos cargados a mano.
+ * ────────────────────────────────────────────────────────────────────────────
+ * PARA CARGAR LAS RESEÑAS A MANO
+ * ────────────────────────────────────────────────────────────────────────────
  *
- * PENDIENTE: el salón tiene que pasar su promedio y su cantidad de reseñas
- * reales, o configurar la API de Google. Los agregadores que copian la ficha
- * de Google no son fuente confiable, así que no se transcribe nada de ahí.
+ * Camino recomendado: configurar GOOGLE_MAPS_API_KEY y GOOGLE_PLACE_ID (ver
+ * README). Con eso el sitio trae solo el promedio, la cantidad y las reseñas
+ * más recientes, y se mantiene al día sin que nadie toque nada.
  *
- * Para activarlo, completá `rating` y `total` con los números reales de la
- * ficha de Google, y opcionalmente pegá reseñas textuales con permiso.
+ * Camino manual: si todavía no hay API, completá los tres campos de abajo con
+ * los datos REALES de la ficha de Google del salón.
+ *
+ *   1. `rating`: el promedio tal cual figura en Google. Ej: 4.9
+ *   2. `total`:  la cantidad de reseñas tal cual figura en Google. Ej: 154
+ *   3. `reviews`: copiá las reseñas textuales que quieras mostrar.
+ *
+ * No completes ninguno "a ojo". Un promedio inventado es publicidad engañosa
+ * y además Google penaliza los datos estructurados falsos. Si no tenés el
+ * número exacto, dejalo en null: la sección degrada sola y sigue viéndose bien.
  */
 export const manualReviews: ReviewsSummary = {
   rating: null,
   total: null,
-  reviews: [],
+  reviews: [
+    // Ejemplo del formato. Descomentá y reemplazá por reseñas reales:
+    // {
+    //   id: 'google-1',
+    //   author: 'Nombre tal como figura en Google',
+    //   rating: 5,
+    //   text: 'Texto de la reseña, copiado tal cual.',
+    //   publishedAt: '2026-07-15',
+    //   relativeTime: null,
+    //   authorUrl: null,
+    // },
+  ],
   source: 'manual',
 };
 

@@ -1,12 +1,8 @@
-import { business, formattedAddress, openingHours, primaryContact } from '@/data/business';
+import { business, formattedAddress, openingHours, primaryContact, weekSchedule } from '@/data/business';
+import { OpenNow } from '@/components/ui/open-now';
 import { Section, SectionHeading } from '@/components/ui/section';
 import { Reveal } from '@/components/ui/reveal';
 import { ButtonLink } from '@/components/ui/button';
-
-const DAY_LABELS: Record<string, string> = {
-  Monday: 'Lunes', Tuesday: 'Martes', Wednesday: 'Miércoles', Thursday: 'Jueves',
-  Friday: 'Viernes', Saturday: 'Sábado', Sunday: 'Domingo',
-};
 
 /**
  * Encontranos.
@@ -15,8 +11,8 @@ const DAY_LABELS: Record<string, string> = {
  * Maps embebido no la necesita, así que la página no depende de una clave ni
  * suma un script de terceros que bloquee el render.
  *
- * Los horarios sólo aparecen si el salón los confirmó. Publicar un horario
- * equivocado es peor que no publicar ninguno.
+ * Los horarios salen de la ficha de Google del salón. Se muestran los siete
+ * días, incluidos los cerrados: saber cuándo NO abren evita un viaje al pedo.
  */
 export function Location() {
   const contact = primaryContact('Hola Pelo’s Design, quería consultar por un turno.');
@@ -71,22 +67,33 @@ export function Location() {
 
               <div className="py-5">
                 <dt className="eyebrow">Horarios</dt>
-                <dd className="mt-2 text-text-secondary">
+                <dd className="mt-2">
                   {openingHours.length > 0 ? (
-                    <ul className="flex flex-col gap-1">
-                      {openingHours.map((slot, index) => (
-                        <li key={index} className="flex justify-between gap-4">
-                          <span>{slot.days.map((d) => DAY_LABELS[d] ?? d).join(', ')}</span>
-                          <span className="tabular-nums">
-                            {slot.opens} – {slot.closes}
-                          </span>
-                        </li>
-                      ))}
-                    </ul>
-                  ) : (
                     <>
-                      Trabajamos con turno. Escribinos y buscamos el día que te sirva.
+                      <OpenNow className="mb-3" />
+                      <ul aria-label="Horarios de atención por día" className="flex flex-col gap-1.5">
+                        {weekSchedule().map(({ day, label, slot }) => (
+                          <li
+                            key={day}
+                            className={`flex justify-between gap-4 text-[0.9375rem] ${
+                              slot ? '' : 'text-text-secondary'
+                            }`}
+                          >
+                            <span>{label}</span>
+                            <span className={slot ? 'tabular-nums' : ''}>
+                              {slot ? `${slot.opens} – ${slot.closes}` : 'Cerrado'}
+                            </span>
+                          </li>
+                        ))}
+                      </ul>
+                      <p className="mt-3 text-[0.875rem] text-text-secondary">
+                        Trabajamos con turno: escribinos antes de venir.
+                      </p>
                     </>
+                  ) : (
+                    <p className="text-text-secondary">
+                      Trabajamos con turno. Escribinos y coordinamos día y horario.
+                    </p>
                   )}
                 </dd>
               </div>

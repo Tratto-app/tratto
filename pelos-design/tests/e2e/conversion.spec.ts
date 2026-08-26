@@ -164,6 +164,32 @@ test.describe('Precios', () => {
 });
 
 test.describe('Ubicación', () => {
+  test('muestra la semana completa de horarios', async ({ page }) => {
+    await page.goto('/#encontranos');
+    const section = page.locator('#encontranos');
+
+    // Se acota al listado de la semana: fuera de él, el indicador de estado
+    // también puede decir "Cerrado" según la hora en que se corra el test.
+    const week = section.getByRole('list', { name: /horarios de atención/i });
+
+    for (const day of ['Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado', 'Domingo']) {
+      await expect(week.getByText(day, { exact: true })).toBeVisible();
+    }
+
+    // Los días que abre muestran el rango; los otros dicen "Cerrado".
+    await expect(week.getByText('10:00 – 17:30')).toHaveCount(3);
+    await expect(week.getByText('10:00 – 16:00')).toHaveCount(1);
+    await expect(week.getByText('Cerrado', { exact: true })).toHaveCount(3);
+  });
+
+  test('dice si el salón está abierto en este momento', async ({ page }) => {
+    await page.goto('/#encontranos');
+    // Se calcula en el navegador, así que aparece recién después de montar.
+    const status = page.locator('#encontranos [aria-live="polite"]');
+    await expect(status).toBeVisible();
+    await expect(status).toHaveText(/Abierto ahora|Cerrado/);
+  });
+
   test('muestra la dirección, cómo llegar y el mapa', async ({ page }) => {
     await page.goto('/#encontranos');
     const section = page.locator('#encontranos');

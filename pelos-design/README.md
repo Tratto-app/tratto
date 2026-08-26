@@ -99,6 +99,21 @@ función extra. Ver [`.env.example`](./.env.example) para el detalle.
 > servidor. `src/lib/google/places.ts` importa `server-only`, así que el build
 > falla si alguien intenta usarla desde un componente cliente.
 
+## Horarios
+
+Están en `src/data/business.ts`, tomados de la ficha de Google del salón:
+martes, miércoles y viernes de 10:00 a 17:30; sábado de 10:00 a 16:00. Lunes,
+jueves y domingo cerrado.
+
+Se muestran los siete días —incluidos los cerrados— más un indicador de
+**"abierto ahora"** que se calcula en el navegador, en hora de Buenos Aires.
+Se calcula en el cliente a propósito: la página es estática, así que un estado
+resuelto en el build quedaría congelado y mentiría.
+
+Cambiar un horario es editar `openingHours` en ese archivo. Se actualizan solos
+la sección Encontranos, el `openingHoursSpecification` del JSON-LD, la pregunta
+frecuente de horarios y el `llms.txt`.
+
 ## Cómo conectar las reseñas de Google
 
 1. Crear un proyecto en Google Cloud y habilitar **Places API (New)**.
@@ -107,8 +122,16 @@ función extra. Ver [`.env.example`](./.env.example) para el detalle.
    [Place ID Finder](https://developers.google.com/maps/documentation/places/web-service/place-id).
 4. Cargar `GOOGLE_MAPS_API_KEY` y `GOOGLE_PLACE_ID` en el entorno.
 
-La home revalida cada 12 horas. Si la API falla, tiene timeout o devuelve un
-error, la sección cae al respaldo sin romper la página.
+Si la API falla, tiene timeout o devuelve un error, la sección cae al respaldo
+sin romper la página.
+
+**Sin API**, se pueden cargar a mano: completá `rating`, `total` y `reviews` en
+`src/data/reviews.ts` con los datos reales de la ficha de Google. El archivo
+tiene el formato comentado y un ejemplo. Con eso aparecen la puntuación grande,
+las estrellas, la cantidad de reseñas y hasta seis testimonios.
+
+Mientras los tres campos estén en `null`, la sección degrada a una invitación a
+leerlas en Google: nunca muestra un número sin respaldo.
 
 ## Precios: cómo los edita el salón
 
@@ -217,8 +240,8 @@ en una conexión real los números son bastante mejores.
 ## Tests
 
 ```bash
-npm test          # 72 tests unitarios
-npm run test:e2e  # 102 tests E2E (escritorio + móvil)
+npm test          # 77 tests unitarios
+npm run test:e2e  # 106 tests E2E (escritorio + móvil)
 ```
 
 Los E2E levantan el servidor de producción solos. Cubren navegación, menú móvil,
@@ -235,10 +258,15 @@ Ver la sección correspondiente en [`PRODUCT.md`](./PRODUCT.md#7-reglas-de-conte
 Ya confirmados:
 
 - **Teléfono**: +54 9 11 6794-1212, en `src/data/business.ts`.
+- **Horarios**: de la ficha de Google, en `src/data/business.ts`.
 - **Lista de precios**: transcripta de la lista oficial del salón, en
   `src/data/prices.ts`. Ver las notas de ese archivo: hay dos importes de la
   lista original que conviene que el salón revise.
 
-Sigue pendiente que el salón confirme: **horarios**, **promedio y cantidad de
-reseñas**, y los **textos legales**. Hasta entonces el sitio no publica ninguno
-de esos datos.
+Sigue pendiente:
+
+- **Puntuación y cantidad de reseñas**, más los textos que se quieran mostrar.
+  Se cargan con la API de Google o a mano en `src/data/reviews.ts`.
+- **Textos legales** de privacidad y términos.
+
+Hasta entonces el sitio no publica ninguno de esos datos.

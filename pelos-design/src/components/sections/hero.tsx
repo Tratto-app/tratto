@@ -91,10 +91,8 @@ export function Hero() {
             <dd className="mt-2 text-[0.9375rem]">Color y corte</dd>
           </div>
           <div>
-            <dt className="eyebrow">Turnos</dt>
-            <dd className="mt-2 text-[0.9375rem]">
-              Por {contact.channel === 'whatsapp' ? 'WhatsApp' : 'Instagram'}, con reserva previa
-            </dd>
+            <dt className="eyebrow">Cuándo</dt>
+            <dd className="mt-2 text-[0.9375rem]">Martes a sábado, con turno</dd>
           </div>
         </dl>
         <hr className="rule" />

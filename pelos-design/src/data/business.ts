@@ -41,15 +41,41 @@ const whatsappNumber = env(process.env.NEXT_PUBLIC_WHATSAPP_NUMBER) ?? WHATSAPP_
 const phone = env(process.env.NEXT_PUBLIC_PHONE) ?? PHONE_FALLBACK;
 
 /**
- * Horarios de atención.
+ * Horarios de atención, tomados de la ficha de Google del salón.
  *
- * PENDIENTE DE CONFIRMACIÓN DEL SALÓN. Los directorios online que indexan
- * la ficha de Google no coinciden entre sí, así que no se publica ninguno:
- * mostrar un horario equivocado hace perder clientas. Cuando el salón
- * confirme, se completa este array y aparecen automáticamente la sección
- * "Horarios" y el `openingHoursSpecification` del JSON-LD.
+ * Jueves, domingo y lunes el salón no abre. Los días que no figuran acá se
+ * muestran como "Cerrado" y no se emiten en el JSON-LD, que es lo correcto:
+ * `openingHoursSpecification` describe cuándo está abierto.
  */
-export const openingHours: OpeningHours[] = [];
+export const openingHours: OpeningHours[] = [
+  { days: ['Tuesday', 'Wednesday', 'Friday'], opens: '10:00', closes: '17:30' },
+  { days: ['Saturday'], opens: '10:00', closes: '16:00' },
+];
+
+/** Los siete días en el orden en que se muestran. */
+export const WEEK: DayOfWeek[] = [
+  'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday',
+];
+
+export const DAY_LABELS: Record<DayOfWeek, string> = {
+  Monday: 'Lunes',
+  Tuesday: 'Martes',
+  Wednesday: 'Miércoles',
+  Thursday: 'Jueves',
+  Friday: 'Viernes',
+  Saturday: 'Sábado',
+  Sunday: 'Domingo',
+};
+
+/** Tramo de atención de un día, o null si ese día está cerrado. */
+export function hoursForDay(day: DayOfWeek): OpeningHours | null {
+  return openingHours.find((slot) => slot.days.includes(day)) ?? null;
+}
+
+/** La semana completa, lista para renderizar. */
+export function weekSchedule(): { day: DayOfWeek; label: string; slot: OpeningHours | null }[] {
+  return WEEK.map((day) => ({ day, label: DAY_LABELS[day], slot: hoursForDay(day) }));
+}
 
 export const business = {
   name: "Pelo's Design",

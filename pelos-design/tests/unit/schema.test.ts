@@ -42,8 +42,27 @@ describe('JSON-LD', () => {
     expect(schema.aggregateRating).toMatchObject({ ratingValue: 4.9, reviewCount: 132 });
   });
 
-  it('no emite horarios mientras no estén confirmados', () => {
-    expect(hairSalonSchema().openingHoursSpecification).toBeUndefined();
+  it('emite los horarios reales del salón', () => {
+    const spec = hairSalonSchema().openingHoursSpecification as {
+      dayOfWeek: string[];
+      opens: string;
+      closes: string;
+    }[];
+
+    expect(spec).toHaveLength(2);
+    expect(spec[0]?.dayOfWeek).toEqual([
+      'https://schema.org/Tuesday',
+      'https://schema.org/Wednesday',
+      'https://schema.org/Friday',
+    ]);
+    expect(spec[0]).toMatchObject({ opens: '10:00', closes: '17:30' });
+    expect(spec[1]).toMatchObject({ opens: '10:00', closes: '16:00' });
+
+    // Los días cerrados no se declaran: la especificación describe cuándo abre.
+    const declared = spec.flatMap((entry) => entry.dayOfWeek).join(' ');
+    for (const closed of ['Monday', 'Thursday', 'Sunday']) {
+      expect(declared).not.toContain(closed);
+    }
   });
 
   it('no publica catálogo ni rango de precios sin lista cargada', () => {

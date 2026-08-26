@@ -220,7 +220,21 @@ Lo que este sitio deliberadamente **no** hace:
 - Fotos de banco de imágenes: **todas las fotos son del salón**.
 - Texto de relleno o copy genérico de plantilla.
 
-## 8. Que se sienta humano
+## 8. Estados vivos
+
+Dos elementos cambian según el contexto y por eso se resuelven en el navegador,
+no en el build:
+
+- **"Abierto ahora"** en Encontranos, calculado en hora de Buenos Aires. Se lee
+  con `useSyncExternalStore`: el reloj es un sistema externo, así que React se
+  suscribe, devuelve `null` durante la hidratación —lo que evita cualquier
+  desajuste con el HTML del servidor— y recién después pinta el estado real.
+- **El selector de largo** en Precios, que decide qué columna de la lista se ve.
+
+En los dos casos el contenido completo está en el HTML: los siete días de la
+semana y los cuatro largos de la lista. Lo que cambia es qué se resalta.
+
+## 9. Que se sienta humano
 
 Un sitio puede estar impecable y aun así sonar a máquina. Lo que se hizo para
 evitarlo:
@@ -239,7 +253,7 @@ evitarlo:
 - **El copy admite límites.** "No queremos poner acá un puntaje que no podamos
   respaldar" suena a alguien decidiendo, no a una plantilla rellenada.
 
-## 9. Voz
+## 10. Voz
 
 Español rioplatense, voseo. Cálida y segura, sin exageraciones.
 
@@ -252,7 +266,7 @@ Español rioplatense, voseo. Cálida y segura, sin exageraciones.
 La honestidad es parte del tono, no sólo una regla técnica: cuando falta un dato,
 el sitio lo dice con las mismas palabras con las que hablaría el salón.
 
-## 10. Fotografía
+## 11. Fotografía
 
 Seis fotos, todas del negocio. El trabajo de preparación
 (`scripts/prepare-images.mjs`) fue real:

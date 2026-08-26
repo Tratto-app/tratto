@@ -1,6 +1,16 @@
 import { describe, it, expect } from 'vitest';
 
-import { whatsappLink, primaryContact, business, nap, formattedAddress } from '@/data/business';
+import {
+  whatsappLink,
+  primaryContact,
+  business,
+  nap,
+  formattedAddress,
+  openingHours,
+  weekSchedule,
+  hoursForDay,
+  WEEK,
+} from '@/data/business';
 
 describe('contacto', () => {
   it('el salón tiene WhatsApp configurado', () => {
@@ -41,6 +51,49 @@ describe('contacto', () => {
     // La constante ya está evaluada, así que se comprueba la rama directamente.
     expect(primaryContact().channel).toBe('whatsapp');
     process.env.NEXT_PUBLIC_WHATSAPP_NUMBER = original;
+  });
+});
+
+describe('horarios', () => {
+  it('coinciden con la ficha de Google del salón', () => {
+    // Martes, miércoles y viernes de 10 a 17:30; sábado de 10 a 16.
+    expect(hoursForDay('Tuesday')).toMatchObject({ opens: '10:00', closes: '17:30' });
+    expect(hoursForDay('Wednesday')).toMatchObject({ opens: '10:00', closes: '17:30' });
+    expect(hoursForDay('Friday')).toMatchObject({ opens: '10:00', closes: '17:30' });
+    expect(hoursForDay('Saturday')).toMatchObject({ opens: '10:00', closes: '16:00' });
+  });
+
+  it('los días cerrados no tienen tramo de atención', () => {
+    for (const day of ['Monday', 'Thursday', 'Sunday'] as const) {
+      expect(hoursForDay(day), `${day} debería estar cerrado`).toBeNull();
+    }
+  });
+
+  it('la semana se muestra completa y arranca el lunes', () => {
+    const week = weekSchedule();
+    expect(week).toHaveLength(7);
+    expect(week[0]?.label).toBe('Lunes');
+    expect(week[6]?.label).toBe('Domingo');
+    expect(week.filter((entry) => entry.slot !== null)).toHaveLength(4);
+  });
+
+  it('todos los tramos son horas válidas y cierran después de abrir', () => {
+    const toMinutes = (time: string) => {
+      const [h, m] = time.split(':').map(Number);
+      return (h ?? 0) * 60 + (m ?? 0);
+    };
+    for (const slot of openingHours) {
+      expect(slot.opens).toMatch(/^\d{2}:\d{2}$/);
+      expect(slot.closes).toMatch(/^\d{2}:\d{2}$/);
+      expect(toMinutes(slot.closes)).toBeGreaterThan(toMinutes(slot.opens));
+      expect(slot.days.length).toBeGreaterThan(0);
+    }
+  });
+
+  it('ningún día aparece en dos tramos a la vez', () => {
+    const days = openingHours.flatMap((slot) => slot.days);
+    expect(new Set(days).size).toBe(days.length);
+    for (const day of days) expect(WEEK).toContain(day);
   });
 });
 

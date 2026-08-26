@@ -1,4 +1,4 @@
-import { business, formattedAddress, openingHours } from '@/data/business';
+import { business, formattedAddress, openingHours, weekSchedule } from '@/data/business';
 import { serviceCategories } from '@/data/services';
 import { faqs, siteUrl } from '@/data/seo';
 import { localPriceList } from '@/data/prices';
@@ -43,9 +43,12 @@ function hoursBlock(): string {
   if (openingHours.length === 0) {
     return 'No publicados. El salón trabaja con turno previo y los coordina por mensaje.';
   }
-  return openingHours
-    .map((slot) => `- ${slot.days.join(', ')}: ${slot.opens}–${slot.closes}`)
+  // Se listan los siete días, incluidos los cerrados: saber cuándo NO abre es
+  // tan útil como saber cuándo sí, y evita que un asistente lo deduzca mal.
+  const week = weekSchedule()
+    .map(({ label, slot }) => `- ${label}: ${slot ? `${slot.opens}–${slot.closes}` : 'cerrado'}`)
     .join('\n');
+  return `${week}\n\nHorario de Buenos Aires (UTC-3). Se atiende con turno previo.`;
 }
 
 export function GET(): Response {
