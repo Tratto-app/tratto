@@ -50,7 +50,7 @@ export function Hero() {
                 {contact.label}
               </ButtonLink>
               <Link
-                href="/#precios"
+                href="/precios"
                 className="link-underline self-start py-2 text-[0.9375rem] text-text-secondary hover:text-accent sm:ml-2 sm:self-center sm:py-0"
               >
                 Ver precios

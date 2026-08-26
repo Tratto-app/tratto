@@ -27,10 +27,11 @@ test.describe('Llamadas a la acción', () => {
     }
   });
 
-  test('el CTA terciario baja a precios', async ({ page }) => {
+  test('el CTA terciario lleva a la lista de precios', async ({ page }) => {
     await page.goto('/');
     await page.locator('main').getByRole('link', { name: 'Ver precios' }).first().click();
-    await expect(page).toHaveURL(/#precios$/);
+    await expect(page).toHaveURL(/\/precios$/);
+    await expect(page.getByRole('heading', { level: 1 })).toContainText('con su precio');
   });
 
   test('los enlaces externos se abren en pestaña nueva y de forma segura', async ({ page }) => {
@@ -86,8 +87,8 @@ test.describe('Llamadas a la acción', () => {
 
 test.describe('Precios', () => {
   test('muestra la lista completa en la propia página', async ({ page }) => {
-    await page.goto('/#precios');
-    const section = page.locator('#precios');
+    await page.goto('/precios');
+    const section = page.locator('main');
 
     for (const group of ['Corte y peinado', 'Tratamientos', 'Color']) {
       await expect(
@@ -106,8 +107,8 @@ test.describe('Precios', () => {
   });
 
   test('el selector de largo cambia los precios', async ({ page }) => {
-    await page.goto('/#precios');
-    const section = page.locator('#precios');
+    await page.goto('/precios');
+    const section = page.locator('main');
 
     const tabs = section.getByRole('tab');
     await expect(tabs).toHaveCount(4);
@@ -133,8 +134,8 @@ test.describe('Precios', () => {
   });
 
   test('el selector se maneja con teclado', async ({ page }) => {
-    await page.goto('/#precios');
-    const tabs = page.locator('#precios').getByRole('tab');
+    await page.goto('/precios');
+    const tabs = page.locator('main').getByRole('tab');
 
     await tabs.first().focus();
     await page.keyboard.press('ArrowRight');
@@ -154,16 +155,16 @@ test.describe('Precios', () => {
 
   test('los precios de todos los largos están en el HTML', async ({ page }) => {
     // Aunque en pantalla se vea uno solo, los buscadores tienen que ver todo.
-    await page.goto('/#precios');
-    const html = await page.locator('#precios').innerHTML();
+    await page.goto('/precios');
+    const html = await page.locator('main').innerHTML();
     for (const price of ['$40.000', '$55.000', '$75.000', '$300.000']) {
       expect(html, `falta ${price} en el HTML`).toContain(price);
     }
   });
 
   test('el PDF existe y se sirve como PDF', async ({ page, request }) => {
-    await page.goto('/');
-    const link = page.getByRole('link', { name: /ver la lista en pdf/i });
+    await page.goto('/precios');
+    const link = page.locator('a[href="/precios.pdf"]').first();
     await expect(link).toBeVisible();
 
     const href = await link.getAttribute('href');
@@ -177,13 +178,24 @@ test.describe('Precios', () => {
     expect(body.subarray(0, 5).toString()).toBe('%PDF-');
   });
 
-  test('ofrece descargar el archivo además de abrirlo', async ({ page }) => {
-    await page.goto('/');
+  test('ofrece descargar el archivo', async ({ page }) => {
+    await page.goto('/precios');
     const download = page.locator('a[href="/precios.pdf"][download]');
     await expect(download).toHaveCount(1);
     await expect(download).toContainText('Descargar');
-    // El link para abrirlo es otro y no lleva el atributo download.
-    await expect(page.locator('a[href="/precios.pdf"]:not([download])')).toHaveCount(1);
+  });
+
+  test('la home no repite la lista: sólo enlaza a ella', async ({ page }) => {
+    await page.goto('/');
+    const section = page.locator('#precios');
+
+    // Ni tabla ni selector de largo en la portada.
+    await expect(section.getByRole('tab')).toHaveCount(0);
+    await expect(section.locator('dl > div')).toHaveCount(3); // las tres aclaraciones
+
+    const cta = section.getByRole('link', { name: /ver listado de precios/i });
+    await expect(cta).toBeVisible();
+    await expect(cta).toHaveAttribute('href', '/precios');
   });
 });
 

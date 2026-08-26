@@ -63,16 +63,24 @@ reparten por toda la página.
 | Sección | Pregunta que contesta |
 |---------|----------------------|
 | Hero | Qué es, dónde queda, qué puedo hacer ahora |
-| 01 Servicios | Qué hacen |
-| 02 Trabajos | Cómo queda el trabajo, en pelo real |
+| El salón | Quiénes son y por qué acá y no en cualquier otro lado |
+| Servicios | Qué hacen |
+| Trabajos | Cómo queda el trabajo, en pelo real |
 | Transformaciones | Cuánto puede cambiar mi pelo |
-| 03 Opiniones | Qué dicen otras clientas |
-| 04 El salón | Por qué acá y no en cualquier otro lado |
-| 05 Precios | Cuánto sale y cómo se cotiza |
+| Opiniones | Qué dicen otras clientas |
+| Precios | Cómo se cobra, y el enlace al listado completo |
 | Reservar | Cómo saco turno, qué tengo que decir |
 | Instagram | Qué están haciendo ahora |
-| 06 Encontranos | Cómo llego, cómo los contacto |
-| 07 Preguntas | Todo lo que quedó suelto |
+| Encontranos | Cómo llego, cómo los contacto |
+| Preguntas | Todo lo que quedó suelto |
+
+**El salón va segundo, no al final.** Quien entra primero quiere saber a dónde
+está entrando y quién la va a atender; recién después le importa el catálogo.
+
+**La lista de precios no vive en la home.** Veintitrés servicios por cuatro
+largos son una pared de números que corta la lectura. La home explica cómo se
+cobra y manda a `/precios`, que es una página propia: se puede compartir sola,
+se posiciona sola en Google y se puede imprimir.
 
 ## 7. Reglas de contenido innegociables
 

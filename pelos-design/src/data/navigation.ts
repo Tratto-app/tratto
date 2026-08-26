@@ -4,11 +4,13 @@ export interface NavItem {
   href: string;
 }
 
+// El orden acompaña el de la página: primero quiénes somos, después qué
+// hacemos, cómo queda, qué dicen, cuánto sale y dónde estamos.
 export const primaryNav: NavItem[] = [
+  { label: 'Nosotros', href: '/#nosotros' },
   { label: 'Servicios', href: '/servicios' },
   { label: 'Trabajos', href: '/#trabajos' },
   { label: 'Opiniones', href: '/#opiniones' },
-  { label: 'Nosotros', href: '/#nosotros' },
-  { label: 'Precios', href: '/#precios' },
+  { label: 'Precios', href: '/precios' },
   { label: 'Contacto', href: '/#encontranos' },
 ];

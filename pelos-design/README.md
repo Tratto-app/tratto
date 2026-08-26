@@ -39,6 +39,7 @@ src/
   app/                    Rutas (App Router)
     page.tsx              Home
     servicios/            Página de servicios
+    precios/              Lista de precios completa
     legales/              Privacidad y términos
     llms.txt/             Resumen del negocio para asistentes con IA
     sitemap.ts robots.ts manifest.ts
@@ -72,6 +73,7 @@ tests/unit · tests/e2e
 datos del negocio.
 
 - Cambiar un precio → la planilla de Google (ver más abajo)
+- Cambiar el orden de las secciones → `src/app/page.tsx`
 - Agregar un servicio → `src/data/services.ts`
 - Cambiar la dirección o los enlaces → `src/data/business.ts`
 - Sumar una foto → poner el master en `src/assets/images/` y sumarlo a
@@ -138,8 +140,13 @@ invitación a leerlas en Google: nunca muestra un número sin respaldo.
 
 ## Precios: cómo los edita el salón
 
-La lista se muestra completa en la home y también se descarga en PDF. Las dos
-salen de la **misma** fuente, así que no pueden contradecirse.
+La lista vive en su propia página, `/precios`, enlazada desde la home, desde el
+menú y desde el hero. También se descarga en PDF. Las dos salen de la **misma**
+fuente, así que no pueden contradecirse.
+
+Se sacó de la home a propósito: 23 servicios por cuatro largos cortan la lectura
+de la página, y como página propia se comparte sola y posiciona en Google por
+búsquedas del tipo «precios peluquería Caballito».
 
 ### Puesta en marcha (una sola vez)
 

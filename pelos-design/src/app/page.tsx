@@ -11,23 +11,21 @@ import { Faq } from '@/components/sections/faq';
 import { Booking } from '@/components/sections/booking';
 import { Section, SectionHeading } from '@/components/ui/section';
 import { getReviews } from '@/lib/google/places';
-import { getPriceList } from '@/lib/prices/sheet';
 import { buildGraph, faqSchema } from '@/lib/seo/schema';
 
-/**
- * Se revalida cada 12 horas: las reseñas de Google no cambian tan seguido
- * como para pagar una llamada por visita, pero tampoco conviene congelarlas.
- */
-// La home revalida cada 10 minutos para que un cambio de precio en la planilla
-// se vea rápido. Las reseñas tienen su propia caché más larga.
-export const revalidate = 600;
+// Las reseñas de Google no cambian tan seguido como para pagar una llamada por
+// visita, pero tampoco conviene congelarlas.
+export const revalidate = 43200;
 
 export default async function HomePage() {
-  const [reviews, priceList] = await Promise.all([getReviews(), getPriceList()]);
+  const reviews = await getReviews();
 
   return (
     <>
       <Hero />
+      {/* Quiénes somos va arriba de todo: la clienta primero quiere saber a
+          dónde entra y quién la va a atender, y recién después qué se hace. */}
+      <Salon />
       <ServicesPreview />
 
       <Section id="trabajos" labelledBy="trabajos-titulo">
@@ -59,8 +57,7 @@ export default async function HomePage() {
       </Section>
 
       <Reviews summary={reviews} />
-      <Salon />
-      <Pricing priceList={priceList} />
+      <Pricing />
       <Booking />
       <Instagram />
       <Location />

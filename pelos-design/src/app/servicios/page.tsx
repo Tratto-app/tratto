@@ -48,7 +48,7 @@ export default function ServiciosPage() {
           <ButtonLink href="/#reservar" variant="primary">
             Reservar turno
           </ButtonLink>
-          <ButtonLink href="/#precios" variant="secondary">
+          <ButtonLink href="/precios" variant="secondary">
             Ver precios
           </ButtonLink>
         </div>
