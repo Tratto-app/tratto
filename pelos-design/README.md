@@ -88,7 +88,7 @@ función extra. Ver [`.env.example`](./.env.example) para el detalle.
 
 | Variable | Efecto si está vacía |
 |----------|---------------------|
-| `NEXT_PUBLIC_SITE_URL` | Usa `https://pelosdesign.com.ar` como canonical |
+| `NEXT_PUBLIC_SITE_URL` | Usa `https://pelosdesign.com` como canonical |
 | `NEXT_PUBLIC_WHATSAPP_NUMBER` | Usa el número del salón definido en `src/data/business.ts` |
 | `NEXT_PUBLIC_PHONE` | Usa el teléfono definido en `src/data/business.ts` |
 | `PRICES_SHEET_URL` | Los precios salen de la copia local de `src/data/prices.ts` |

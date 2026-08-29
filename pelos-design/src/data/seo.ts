@@ -11,7 +11,7 @@ import { serviceCategories } from './services';
 import { localPriceList } from './prices';
 
 export const siteUrl = (
-  process.env.NEXT_PUBLIC_SITE_URL ?? 'https://pelosdesign.com.ar'
+  process.env.NEXT_PUBLIC_SITE_URL ?? 'https://pelosdesign.com'
 ).replace(/\/$/, '');
 
 export const defaultMetadata = {
