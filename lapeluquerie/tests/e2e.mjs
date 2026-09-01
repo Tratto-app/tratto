@@ -221,8 +221,14 @@ for(const [nombre,vp] of Object.entries(V)){
   await page.goto(BASE,{waitUntil:'load'}); await page.waitForTimeout(600);
   ok('Contenido visible con reduced-motion',
      await page.$eval('.motivo',e=>getComputedStyle(e).opacity==='1'));
-  ok('Sin rotaciones decorativas',
-     await page.$eval('.gitem',e=>getComputedStyle(e).transform==='none'));
+  // La animación de entrada deja una matriz identidad: lo que importa es
+  // que no haya componente de rotación (b y c del matrix en cero).
+  ok('Sin rotaciones decorativas', await page.$eval('.gitem', e => {
+    const t = getComputedStyle(e).transform;
+    if (t === 'none') return true;
+    const [, b, c] = t.match(/[-\d.e]+/g).map(Number);  // matrix(a,b,c,d,e,f)
+    return Math.abs(b) < 1e-6 && Math.abs(c) < 1e-6;
+  }));
   ok('Sin errores con reduced-motion', errs.length===0, errs.join('|'));
   await ctx.close();
 }
