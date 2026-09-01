@@ -11,7 +11,8 @@ lapeluquerie/
 ├── js/datos.js         👈 TODO el contenido y los datos del negocio
 ├── js/app.js           comportamiento (WhatsApp, galería, sliders)
 ├── assets/             fotos, identidad y tipografías autoalojadas
-├── tests/e2e.mjs       suite end-to-end (91 chequeos)
+├── tests/e2e.mjs       suite end-to-end (93 chequeos)
+├── tools/archivo-unico.py  arma el HTML autocontenido para mandar al cliente
 ├── robots.txt
 └── sitemap.xml
 ```
@@ -55,13 +56,32 @@ npm i -D playwright && npx playwright install chromium
 node tests/e2e.mjs                    # en otra
 ```
 
-91 chequeos sobre Chromium: navegación y anchors, menú mobile, filtros y
+93 chequeos sobre Chromium: navegación y anchors, menú mobile, filtros y
 lightbox (teclado incluido), slider antes/después (mouse y teclado), los CTA de
 WhatsApp y sus mensajes contextuales, ausencia total de reservas online,
 datos reales del negocio en pantalla, accesibilidad (nombres accesibles, foco,
 targets ≥24 px, landmarks), contraste WCAG AA calculado sobre el render real,
 cinco viewports (375 / 390 / 768 / 1440 / 1920) sin overflow y
 `prefers-reduced-motion`.
+
+## El archivo para mandar al cliente
+
+```bash
+python3 tools/archivo-unico.py     # genera lapeluquerie-cliente.html
+```
+
+Un solo archivo con todo adentro (CSS, JS, fotos y tipografías como data URI).
+Se abre con doble clic, sin servidor, y sirve para mandar por mail o WhatsApp.
+
+Dos cosas que el script resuelve y conviene no deshacer:
+
+- **`srcset` no admite data URIs.** El atributo separa candidatos con comas y
+  `data:image/webp;base64,` tiene una coma adentro: el navegador parte la URL
+  al medio y la imagen queda vacía, sin tirar ningún error. Por eso el archivo
+  único va con `src` solo.
+- **Nada de `window.open`.** Los navegadores embebidos de Instagram y WhatsApp
+  lo bloquean sin avisar y los botones no hacen nada. Todos los CTA del sitio
+  son enlaces `<a href="https://wa.me/...">` con el mensaje ya armado.
 
 ## Fotos
 

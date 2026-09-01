@@ -39,8 +39,14 @@ async function nueva(vp){
   ok('Jerarquía de headings sin saltos', saltos===0, saltos+' saltos');
   ok('Todas las imágenes con alt',
     (await page.$$eval('img',is=>is.filter(i=>i.getAttribute('alt')===null).length))===0);
-  const rotas=await page.$$eval('img',is=>is.filter(i=>i.getAttribute('src')&&i.complete&&i.naturalWidth===0).map(i=>i.src));
+  const rotas=await page.$$eval('img',is=>is.filter(i=>i.getAttribute('src')&&i.complete&&i.naturalWidth===0).map(i=>i.src.slice(0,60)));
   ok('Ninguna imagen rota', rotas.length===0, rotas.join(','));
+  // Que el <img> exista no alcanza: hay que ver píxeles. Un srcset mal armado
+  // deja la imagen vacía sin tirar ningún error.
+  await page.evaluate(()=>document.querySelectorAll('img[loading=lazy]').forEach(i=>i.loading='eager'));
+  await page.waitForTimeout(1200);
+  const vacias=await page.$$eval('img',is=>is.filter(i=>i.getAttribute('src')&&i.naturalWidth===0).map(i=>(i.currentSrc||i.src).slice(0,60)));
+  ok('Todas las imágenes cargan píxeles', vacias.length===0, vacias.slice(0,3).join(' | '));
   for(const [sel,min] of [['.serv',8],['.gitem',6],['.ad__item',2],['.paso',6],
       ['.motivo',3],['.consejo',6],['.resena',3],['.faq__item',8],['.horarios li',6],['.filtro',4]])
     ok(`Render ${sel} (≥${min})`, (await page.$$(sel)).length>=min,
@@ -141,16 +147,17 @@ async function nueva(vp){
 // ── 7. WhatsApp ──
 {
   const {ctx,page}=await nueva(V.laptop);
-  const urls=[];
-  await page.exposeFunction('_cap',u=>urls.push(u));
-  await page.evaluate(()=>{ window.open=u=>{ window._cap(u); return null; }; });
-  await page.locator('.intro__acciones [data-wa=general]').click(); await page.waitForTimeout(200);
-  ok('CTA principal abre wa.me', /wa\.me\/5492304356392/.test(urls[0]||''), urls[0]);
-  ok('Mensaje prearmado', /text=/.test(urls[0]||''));
-  await page.locator('#servicios').scrollIntoViewIfNeeded();
-  await page.locator('[data-wa=servicio]').first().click(); await page.waitForTimeout(200);
+  // Los CTA son enlaces reales: window.open lo bloquean los webviews de las
+  // apps, así que lo que hay que verificar es el href, no un click simulado.
+  const hrefs=await page.$$eval('[data-wa]',as=>as.map(a=>({tag:a.tagName,href:a.getAttribute('href')})));
+  ok('Todos los CTA son <a> con href', hrefs.every(h=>h.tag==='A'&&/^https:\/\/wa\.me\//.test(h.href)),
+     hrefs.filter(h=>h.tag!=='A'||!/^https:/.test(h.href)).map(h=>h.tag+':'+h.href).slice(0,3).join(' | '));
+  const principal=await page.getAttribute('.intro__acciones [data-wa=general]','href');
+  ok('CTA principal apunta al número real', /wa\.me\/5492304356392/.test(principal), principal);
+  ok('Mensaje prearmado', /\?text=/.test(principal));
+  const serv=await page.getAttribute('[data-wa=servicio]','href');
   ok('Mensaje contextual por servicio',
-     /color/i.test(decodeURIComponent(urls[1]||'')), decodeURIComponent(urls[1]||'').slice(0,70));
+     /color/i.test(decodeURIComponent(serv||'')), decodeURIComponent(serv||'').slice(0,70));
   ok('Links de Instagram correctos',
     (await page.$$eval('[data-href=instagram]',as=>as.every(a=>a.href.includes('instagram.com/lapeluquerie')))));
   ok('Links de Maps correctos',

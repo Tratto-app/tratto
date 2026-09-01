@@ -53,23 +53,20 @@ function urlWhatsapp(mensaje) {
     : `https://ig.me/m/${instagramUsuario}`;
 }
 
-function consultar(tipo = 'general', dato = null) {
-  const mensaje = (MENSAJES[tipo] || MENSAJES.general)(dato);
-  window.open(urlWhatsapp(mensaje), '_blank', 'noopener,noreferrer');
+/* Cada CTA es un enlace de verdad con su href ya resuelto. Nada de
+   window.open: los navegadores embebidos de Instagram y WhatsApp lo
+   bloquean sin avisar, y ahí los botones no hacen nada. */
+function enlazarWhatsapp(raiz = document) {
+  $$('[data-wa]', raiz).forEach(el => {
+    const tipo = el.dataset.wa || 'general';
+    const id = el.dataset.ref;
+    const dato =
+      tipo === 'servicio'       ? servicioPorId(id) :
+      tipo === 'galeria'        ? GALERIA.find(g => g.id === id) :
+      tipo === 'transformacion' ? TRANSFORMACIONES.find(t => t.id === id) : null;
+    el.href = urlWhatsapp((MENSAJES[tipo] || MENSAJES.general)(dato));
+  });
 }
-
-document.addEventListener('click', e => {
-  const el = e.target.closest('[data-wa]');
-  if (!el) return;
-  e.preventDefault();
-  const tipo = el.dataset.wa || 'general';
-  const id = el.dataset.ref;
-  const dato =
-    tipo === 'servicio'       ? servicioPorId(id) :
-    tipo === 'galeria'        ? GALERIA.find(g => g.id === id) :
-    tipo === 'transformacion' ? TRANSFORMACIONES.find(t => t.id === id) : null;
-  consultar(tipo, dato);
-});
 
 /* ════════════════════════════════════════════════════════
    NAVEGACIÓN
@@ -150,9 +147,10 @@ function iniciarServicios() {
       <h3>${s.nombre}</h3>
       <p>${s.texto}</p>
       <div class="serv__pie">${datos}</div>
-      <button class="serv__consulta" type="button" data-wa="servicio" data-ref="${s.id}">
+      <a class="serv__consulta" data-wa="servicio" data-ref="${s.id}"
+         href="#" target="_blank" rel="noopener noreferrer">
         Consultame por esto ${ICO.flecha}
-      </button>
+      </a>
     </article>`;
   }).join('');
 }
@@ -219,9 +217,11 @@ function iniciarGaleria() {
     lbInfo.innerHTML = `
       <h3 id="lb-titulo">${g.titulo}</h3>
       <p>${g.texto}</p>
-      <div><button class="btn btn--claro" type="button" data-wa="galeria" data-ref="${g.id}">
-        ${ICO.wa} Quiero algo así</button></div>
+      <div><a class="btn btn--claro" data-wa="galeria" data-ref="${g.id}"
+        href="#" target="_blank" rel="noopener noreferrer">
+        ${ICO.wa} Quiero algo así</a></div>
       <p class="lb__conteo">${idx + 1} de ${visibles.length}</p>`;
+    enlazarWhatsapp(lbInfo);
   };
   const abrir = i => {
     idx = i; ultimoFoco = document.activeElement;
@@ -290,9 +290,10 @@ function iniciarAntesDespues() {
         <h3>${t.titulo}</h3>
         <span>${t.detalle}</span>
       </div>
-      <button class="btn btn--suave" type="button" data-wa="transformacion" data-ref="${t.id}">
+      <a class="btn btn--suave" data-wa="transformacion" data-ref="${t.id}"
+         href="#" target="_blank" rel="noopener noreferrer">
         ${ICO.wa} Consultame por un cambio así
-      </button>
+      </a>
     </article>`).join('');
 
   $$('.ad__marco', cont).forEach(marco => {
@@ -447,6 +448,7 @@ iniciarServicios();
 iniciarGaleria();
 iniciarAntesDespues();
 iniciarContenido();
+enlazarWhatsapp();
 iniciarNav();
 iniciarReveal();
 if (menosMovimiento()) $$('.rv').forEach(el => el.classList.add('visible'));
