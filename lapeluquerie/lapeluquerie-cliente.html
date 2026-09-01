@@ -449,28 +449,30 @@ em{font-style:italic}
 .intro__fotos img{width:100%;aspect-ratio:4/5;object-fit:cover;border-radius:var(--r-m)}
 .intro__fotos figure:nth-child(2){margin-top:var(--e6)}
 
-/* ═══ SERVICIOS ═══ */
-.servicios__grid{display:grid;gap:var(--e4)}
-@media (min-width:640px){.servicios__grid{grid-template-columns:1fr 1fr}}
-@media (min-width:1000px){.servicios__grid{grid-template-columns:repeat(3,1fr);gap:var(--e5)}}
+/* ═══ SERVICIOS ═══
+   Una lista, como la que tiene cualquier salón colgada en la pared.
+   Sin fotos: sólo hay cinco fotos reales y repetirlas por servicio
+   hacía que la página pareciera rellenada. */
+.servicios__lista{border-top:1px solid var(--linea)}
 .serv{
-  display:grid;gap:var(--e3);align-content:start;
-  background:var(--hueso);border:1px solid var(--linea);
-  border-radius:var(--r-m);padding:var(--e4);
-  transition:transform var(--dur-2) var(--ease),box-shadow var(--dur-2) var(--ease);
+  display:grid;gap:var(--e2) var(--e5);padding-block:var(--e5);
+  border-bottom:1px solid var(--linea);align-items:start;
 }
-.s-hueso-2 .serv{background:var(--hueso)}
-.serv:hover{transform:translateY(-3px);box-shadow:var(--sombra)}
-.serv__foto{border-radius:var(--r-s);overflow:hidden;background:var(--arena)}
-.serv__foto img{width:100%;aspect-ratio:3/2;object-fit:cover}
-.serv h3{font-family:var(--display);font-weight:600;font-size:1.24rem;line-height:1.24}
-.serv p{font-size:var(--t-sm);color:var(--tinta-2);line-height:1.6}
-.serv__pie{display:flex;flex-wrap:wrap;gap:var(--e2);align-items:center;
-  margin-top:var(--e1)}
+@media (min-width:760px){
+  .serv{grid-template-columns:minmax(11rem,15rem) 1fr auto;gap:var(--e5);
+    align-items:baseline}
+}
+.serv__nombre{font-family:var(--display);font-weight:500;font-size:1.22rem;
+  line-height:1.24}
+.serv__texto{display:grid;gap:var(--e2)}
+.serv__texto p{font-size:var(--t-sm);color:var(--tinta-2);line-height:1.62;
+  max-width:60ch}
+.serv__datos{font-size:var(--t-xs);color:var(--tinta-3)}
 .serv__consulta{font-size:var(--t-sm);font-weight:600;color:var(--bronce);
-  display:inline-flex;align-items:center;gap:6px;margin-top:var(--e1)}
-.serv__consulta svg{width:16px;height:16px}
-.serv:hover .serv__consulta{text-decoration:underline;text-underline-offset:3px}
+  display:inline-flex;align-items:center;gap:6px;padding-block:6px;white-space:nowrap}
+.serv__consulta svg{width:15px;height:15px;transition:transform var(--dur-2) var(--ease)}
+.serv__consulta:hover{text-decoration:underline;text-underline-offset:3px}
+.serv__consulta:hover svg{transform:translateX(3px)}
 
 .servicios__nota{margin-top:var(--e6);padding:var(--e5);border-radius:var(--r-m);
   background:var(--realce);display:grid;gap:var(--e3);justify-items:start}
@@ -479,37 +481,23 @@ em{font-style:italic}
 }
 .servicios__nota p{font-size:var(--t-sm);color:var(--tinta);max-width:56ch}
 
-/* ═══ TRABAJOS ═══ */
-.filtros{display:flex;gap:var(--e2);flex-wrap:wrap;margin-bottom:var(--e5)}
-.filtro{padding:.5rem 1rem;min-height:42px;border-radius:var(--r-pill);
-  border:1.5px solid var(--linea-2);background:var(--hueso);
-  font-size:var(--t-sm);font-weight:500;color:var(--tinta-2);
-  transition:all var(--dur-2) var(--ease)}
-.filtro:hover{border-color:var(--bronce-med);color:var(--tinta)}
-.filtro[aria-pressed="true"]{background:var(--tinta);border-color:var(--tinta);
-  color:var(--hueso)}
-
-.galeria{display:grid;gap:var(--e3);grid-template-columns:repeat(2,1fr)}
-@media (min-width:820px){.galeria{grid-template-columns:repeat(3,1fr);gap:var(--e4)}}
-.gitem{position:relative;align-self:start;
+/* ═══ TRABAJOS ═══
+   El epígrafe va debajo de la foto y no superpuesto: superpuesto sólo
+   aparecía al pasar el mouse, así que en la compu se veía distinto que
+   en el celular. Ahora es igual en los dos. */
+.galeria{display:grid;gap:var(--e4) var(--e3);grid-template-columns:repeat(2,1fr)}
+@media (min-width:820px){.galeria{grid-template-columns:repeat(3,1fr);gap:var(--e6) var(--e4)}}
+.gitem{display:grid;gap:var(--e2);align-self:start;
   animation:aparecer var(--dur-3) var(--ease) both}
-@keyframes aparecer{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
-@media (min-width:820px){.gitem:nth-child(3n+2){margin-top:var(--e5)}}
+@keyframes aparecer{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
 .gitem__btn{display:block;width:100%;border-radius:var(--r-m);overflow:hidden;
-  background:var(--arena);position:relative}
+  background:var(--arena)}
 .gitem img{width:100%;aspect-ratio:4/5;object-fit:cover;
   transition:transform var(--dur-3) var(--ease)}
-.gitem__btn:hover img,.gitem__btn:focus-visible img{transform:scale(1.03)}
-.gitem__pie{position:absolute;inset:auto 0 0 0;padding:var(--e5) var(--e3) var(--e3);
-  display:grid;gap:2px;text-align:left;color:#fff;
-  background:linear-gradient(to top,rgba(14,13,12,.86),rgba(14,13,12,0))}
-.gitem__tit{font-family:var(--display);font-weight:500;font-size:1rem;line-height:1.22}
-.gitem__cta{font-size:var(--t-xs);opacity:.9;display:flex;align-items:center;gap:5px}
-.gitem__cta svg{width:12px;height:12px}
+.gitem__btn:hover img,.gitem__btn:focus-visible img{transform:scale(1.02)}
+.gitem__pie{font-size:var(--t-sm);color:var(--tinta-2);line-height:1.4}
 .gitem--ig .gitem__btn{background:var(--negro);display:grid;place-items:center;
-  aspect-ratio:4/5;padding:var(--e4)}
-.gitem--ig span{display:grid;gap:var(--e2);justify-items:center;text-align:center;
-  color:var(--hueso)}
+  aspect-ratio:4/5;padding:var(--e5)}
 .gitem--ig img{width:62px;aspect-ratio:auto;background:none}
 
 /* Lightbox */
@@ -539,7 +527,10 @@ em{font-style:italic}
 .lb__nav--next{right:var(--e2)}
 @media (min-width:860px){.lb__nav--prev{left:var(--e5)}.lb__nav--next{right:var(--e5)}}
 
-/* ═══ ANTES / DESPUÉS ═══ */
+/* ═══ ANTES / DESPUÉS (adentro de Trabajos) ═══ */
+.ad-bloque{margin-top:var(--e8);padding-top:var(--e6);border-top:1px solid var(--linea)}
+.ad-bloque__tit{margin-bottom:var(--e1)}
+.ad-bloque__nota{font-size:var(--t-sm);color:var(--tinta-2);margin-bottom:var(--e5)}
 .ad{display:grid;gap:var(--e6)}
 @media (min-width:820px){.ad{grid-template-columns:1fr 1fr;gap:var(--e5)}}
 .ad__item{display:grid;gap:var(--e3)}
@@ -858,7 +849,6 @@ body.bloqueado{overflow:hidden}
 <section class="seccion s-hueso-2" id="servicios" aria-labelledby="t-servicios">
   <div class="env">
     <div class="cabecera rv">
-      <p class="label">Servicios</p>
       <h2 class="h2" id="t-servicios">Lo que hacemos</h2>
       <p class="entrada">
         Si no sabés bien qué pedir, no importa: escribinos y lo vemos juntas.
@@ -866,7 +856,7 @@ body.bloqueado{overflow:hidden}
       </p>
     </div>
 
-    <div class="servicios__grid"></div>
+    <div class="servicios__lista"></div>
 
     <div class="servicios__nota rv">
       <p>
@@ -883,32 +873,20 @@ body.bloqueado{overflow:hidden}
 <section class="seccion" id="trabajos" aria-labelledby="t-trabajos">
   <div class="env">
     <div class="cabecera rv">
-      <p class="label">Trabajos</p>
-      <h2 class="h2" id="t-trabajos">Pelo de clientas nuestras</h2>
+      <h2 class="h2" id="t-trabajos">Algunos trabajos</h2>
       <p class="entrada">
-        Todas las fotos son de trabajos hechos acá, sin retoque de color.
-        Si alguno te gusta, tocalo y escribinos con esa foto de referencia.
+        Son fotos de acá, sin retoque de color. Tocá cualquiera para verla
+        más grande y escribirnos con esa de referencia.
       </p>
     </div>
 
-    <div class="filtros" role="group" aria-label="Filtrar trabajos"></div>
-    <p class="solo-lector" id="galeria-estado" role="status" aria-live="polite"></p>
     <div class="galeria"></div>
-  </div>
-</section>
 
-<!-- ═══ ANTES / DESPUÉS ═══ -->
-<section class="seccion s-hueso-2" id="cambios" aria-labelledby="t-cambios">
-  <div class="env">
-    <div class="cabecera rv">
-      <p class="label">Antes y después</p>
-      <h2 class="h2" id="t-cambios">Movés la barrita y ves el cambio</h2>
-      <p class="entrada">
-        Dos arreglos de color reales. Ninguno se resolvió con un solo producto:
-        primero miramos qué tenía el pelo y después decidimos cómo hacerlo.
-      </p>
+    <div class="ad-bloque rv">
+      <h3 class="h4 ad-bloque__tit">Dos arreglos de color, antes y después</h3>
+      <p class="ad-bloque__nota">Arrastrá la barrita sobre la foto para comparar.</p>
+      <div class="ad"></div>
     </div>
-    <div class="ad"></div>
   </div>
 </section>
 
@@ -916,7 +894,6 @@ body.bloqueado{overflow:hidden}
 <section class="seccion" id="como-trabajamos" aria-labelledby="t-como">
   <div class="env">
     <div class="cabecera rv">
-      <p class="label">Cómo trabajamos</p>
       <h2 class="h2" id="t-como">Qué pasa cuando venís</h2>
     </div>
 
@@ -935,7 +912,6 @@ body.bloqueado{overflow:hidden}
 <section class="seccion s-hueso-2" id="por-que" aria-labelledby="t-porque">
   <div class="env">
     <div class="cabecera rv">
-      <p class="label">Por qué venir</p>
       <h2 class="h2" id="t-porque">Lo que dicen las clientas</h2>
     </div>
 
@@ -953,7 +929,6 @@ body.bloqueado{overflow:hidden}
 <section class="seccion" id="consejos" aria-labelledby="t-consejos">
   <div class="env">
     <div class="cabecera rv">
-      <p class="label">Cuidados en casa</p>
       <h2 class="h2" id="t-consejos">Para que el color te dure más</h2>
       <p class="entrada">
         Cosas simples que hacen bastante diferencia entre visita y visita.
@@ -967,7 +942,6 @@ body.bloqueado{overflow:hidden}
 <section class="seccion s-hueso-2" id="preguntas" aria-labelledby="t-faq">
   <div class="env">
     <div class="cabecera centrada rv">
-      <p class="label">Preguntas</p>
       <h2 class="h2" id="t-faq">Lo que más nos preguntan</h2>
     </div>
     <div class="faq"></div>
@@ -978,7 +952,6 @@ body.bloqueado{overflow:hidden}
 <section class="seccion" id="donde" aria-labelledby="t-donde">
   <div class="env">
     <div class="cabecera rv">
-      <p class="label">Dónde estamos</p>
       <h2 class="h2" id="t-donde">Te esperamos en Pilar</h2>
     </div>
 
@@ -1152,9 +1125,12 @@ const NEGOCIO = {
 
 /* ============================================================
    SERVICIOS
-   duracion y precio en null a propósito: no están confirmados.
-   Cuando los tengas, escribilos como texto ('2 h', 'Desde $00.000')
-   y aparecen solos en la tarjeta.
+   Sin fotos a propósito: sólo hay cinco fotos reales del salón y
+   repetirlas una por servicio hacía que la página pareciera rellenada.
+   Las fotos viven en GALERIA, una sola vez cada una.
+
+   duracion y precio en null: no están confirmados. Cuando los tengas,
+   escribilos como texto ('2 h', 'Desde $00.000') y aparecen solos.
    ============================================================ */
 const SERVICIOS = [
   {
@@ -1163,7 +1139,6 @@ const SERVICIOS = [
     texto: 'Cobertura de canas o cambio de tono, con el color elegido entre las dos. Si venís seguido, vamos retocando solo la raíz para no castigar el largo.',
     tags: ['Canas', 'Retoque de raíz'],
     duracion: null, precio: null,
-    img: 'caoba', alt: 'Color caoba con brillo parejo'
   },
   {
     id: 'mechitas',
@@ -1171,7 +1146,6 @@ const SERVICIOS = [
     texto: 'Un poco de luz alrededor de la cara y en el largo, sin cambiar tu color de base. Es lo que más piden las que quieren un cambio pero sin animarse a tanto.',
     tags: ['Babylights', 'Reflejos'],
     duracion: null, precio: null,
-    img: 'castano', alt: 'Castaño con reflejos caramelo'
   },
   {
     id: 'balayage',
@@ -1179,7 +1153,6 @@ const SERVICIOS = [
     texto: 'Aclarado pintado a mano, más claro en las puntas y suave en la raíz. Crece prolijo, así que podés dejar pasar varios meses entre visita y visita.',
     tags: ['Crece prolijo', 'Sin línea de raíz'],
     duracion: null, precio: null,
-    img: 'despues-1', alt: 'Balayage beige sobre base castaña'
   },
   {
     id: 'rubios',
@@ -1187,7 +1160,6 @@ const SERVICIOS = [
     texto: 'Si querés un rubio sin tonos anaranjados, vemos hasta dónde podemos llegar hoy cuidando tu pelo, y lo matizamos hasta el tono que te gusta.',
     tags: ['Rubio frío', 'Matizado'],
     duracion: null, precio: null,
-    img: 'bronde', alt: 'Rubio bronde con mechitas finas'
   },
   {
     id: 'correccion',
@@ -1195,7 +1167,6 @@ const SERVICIOS = [
     texto: 'Un color que quedó desparejo, mechas viejas o un tono que no era el que pediste. Se puede arreglar: primero miramos qué tiene el pelo y después vemos si sale en una vez o en dos.',
     tags: ['Sacar el naranja', 'Emparejar'],
     duracion: null, precio: null,
-    img: 'despues-2', alt: 'Cambio de cobre a castaño ceniza'
   },
   {
     id: 'corte',
@@ -1203,7 +1174,6 @@ const SERVICIOS = [
     texto: 'Antes de cortar te pregunto cuánto tiempo le dedicás al pelo a la mañana. De ahí salen el largo y las capas, para que después lo puedas peinar sola.',
     tags: ['Corte', 'Brushing'],
     duracion: null, precio: null,
-    img: 'castano', alt: 'Brushing con ondas suaves'
   },
   {
     id: 'tratamiento',
@@ -1211,7 +1181,6 @@ const SERVICIOS = [
     texto: 'Se hace en el mismo turno, después del color, para que el largo quede suave y más fácil de peinar. Va bien sobre todo si venís de decoloraciones.',
     tags: ['Después del color', 'Suavidad'],
     duracion: null, precio: null,
-    img: 'bronde', alt: 'Largo de pelo hidratado con brillo'
   },
   {
     id: 'eventos',
@@ -1219,41 +1188,28 @@ const SERVICIOS = [
     texto: 'Recogidos, semirecogidos y ondas para casamientos, fiestas o el civil. Si es algo importante, conviene una prueba antes para llegar tranquilas al día.',
     tags: ['Casamientos', 'Con prueba previa'],
     duracion: null, precio: null,
-    img: 'caoba', alt: 'Peinado con ondas para evento'
   }
 ];
 
 /* ============================================================
-   TRABAJOS
+   TRABAJOS — las cinco fotos reales del salón, una sola vez cada una
    ============================================================ */
-const CATEGORIAS = [
-  { id: 'todos',    nombre: 'Todos' },
-  { id: 'rubios',   nombre: 'Rubios' },
-  { id: 'color',    nombre: 'Color' },
-  { id: 'cambios',  nombre: 'Cambios grandes' }
-];
-
 const GALERIA = [
   { id: 'g1', img: 'despues-1', servicio: 'balayage',
     titulo: 'Balayage beige',
-    texto: 'Aclarado pintado a mano y matizado en frío. La raíz queda suave para que el crecimiento no marque una línea.',
-    cats: ['rubios', 'cambios'] },
+    texto: 'Aclarado pintado a mano y matizado en frío. La raíz queda suave para que el crecimiento no marque una línea.' },
   { id: 'g2', img: 'bronde', servicio: 'rubios',
     titulo: 'Rubio con mechitas finas',
-    texto: 'Mechitas cerca de la cara y aclarado hacia las puntas, en un beige neutro.',
-    cats: ['rubios'] },
+    texto: 'Mechitas cerca de la cara y aclarado hacia las puntas, en un beige neutro.' },
   { id: 'g3', img: 'caoba', servicio: 'color',
     titulo: 'Caoba con reflejos',
-    texto: 'Un caoba armado con más de un reflejo, para que el color se mueva con la luz y no quede plano.',
-    cats: ['color'] },
+    texto: 'Un caoba armado con más de un reflejo, para que el color se mueva con la luz y no quede plano.' },
   { id: 'g4', img: 'despues-2', servicio: 'correccion',
     titulo: 'De cobre a castaño ceniza',
-    texto: 'Arreglo de un cobre muy fuerte: se neutralizó y quedó un castaño iluminado con reflejos fríos.',
-    cats: ['color', 'cambios'] },
+    texto: 'Arreglo de un cobre muy fuerte: se neutralizó y quedó un castaño iluminado con reflejos fríos.' },
   { id: 'g5', img: 'castano', servicio: 'mechitas',
     titulo: 'Castaño con caramelo',
-    texto: 'Iluminación suave sobre el color natural: da luz sin obligarte a volver todos los meses.',
-    cats: ['color'] }
+    texto: 'Iluminación suave sobre el color natural: da luz sin obligarte a volver todos los meses.' }
 ];
 
 const TRANSFORMACIONES = [
@@ -1460,24 +1416,18 @@ function iniciarReveal() {
    SERVICIOS
    ════════════════════════════════════════════════════════ */
 function iniciarServicios() {
-  $('.servicios__grid').innerHTML = SERVICIOS.map(s => {
-    const datos = [
-      s.duracion ? `<span class="chip">${s.duracion}</span>` : '',
-      s.precio   ? `<span class="chip">${s.precio}</span>`   : '',
-      ...s.tags.map(t => `<span class="chip">${t}</span>`)
-    ].join('');
+  $('.servicios__lista').innerHTML = SERVICIOS.map(s => {
+    const datos = [s.duracion, s.precio].filter(Boolean).join(' · ');
     return `
     <article class="serv rv">
-      <div class="serv__foto">
-        <img src="assets/${s.img}-640.webp"${srcset(s.img, '(min-width:1000px) 31vw, (min-width:640px) 46vw, 92vw')}
-             alt="${s.alt}" loading="lazy" decoding="async" width="640" height="427">
+      <h3 class="serv__nombre">${s.nombre}</h3>
+      <div class="serv__texto">
+        <p>${s.texto}</p>
+        ${datos ? `<p class="serv__datos">${datos}</p>` : ''}
       </div>
-      <h3>${s.nombre}</h3>
-      <p>${s.texto}</p>
-      <div class="serv__pie">${datos}</div>
       <a class="serv__consulta" data-wa="servicio" data-ref="${s.id}"
          href="#" target="_blank" rel="noopener noreferrer">
-        Consultame por esto ${ICO.flecha}
+        Consultame ${ICO.flecha}
       </a>
     </article>`;
   }).join('');
@@ -1487,51 +1437,25 @@ function iniciarServicios() {
    TRABAJOS + LIGHTBOX
    ════════════════════════════════════════════════════════ */
 function iniciarGaleria() {
-  const filtros = $('.filtros');
   const grid = $('.galeria');
-  let visibles = [...GALERIA];
 
-  filtros.innerHTML = CATEGORIAS.map((c, i) => `
-    <button class="filtro" type="button" data-cat="${c.id}"
-            aria-pressed="${i === 0}">${c.nombre}</button>`).join('');
-
-  const tarjeta = g => `
+  /* El epígrafe va debajo de la foto, no encima: superpuesto sólo aparecía
+     al pasar el mouse, así que en la compu se veía distinto que en el celular. */
+  grid.innerHTML = GALERIA.map(g => `
     <figure class="gitem" data-id="${g.id}">
       <button class="gitem__btn" type="button" aria-label="Ver más grande: ${g.titulo}">
         <img src="assets/${g.img}-640.webp"${srcset(g.img, '(min-width:820px) 31vw, 47vw')}
              alt="${g.titulo}" loading="lazy" decoding="async" width="640" height="800">
-        <figcaption class="gitem__pie">
-          <span class="gitem__tit">${g.titulo}</span>
-          <span class="gitem__cta">Quiero algo así ${ICO.flecha}</span>
-        </figcaption>
       </button>
-    </figure>`;
-
-  const tarjetaIg = () => `
+      <figcaption class="gitem__pie">${g.titulo}</figcaption>
+    </figure>`).join('') + `
     <figure class="gitem gitem--ig">
       <a class="gitem__btn" href="${NEGOCIO.instagram}" target="_blank" rel="noopener noreferrer">
-        <span>
-          <img src="assets/marca-blanca.png" alt="" width="62" height="58"
-               loading="lazy" decoding="async">
-          <span class="gitem__tit">Más trabajos en Instagram</span>
-          <span class="gitem__cta">@${NEGOCIO.instagramUsuario} ${ICO.flecha}</span>
-        </span>
+        <img src="assets/marca-blanca.png" alt="" width="62" height="58"
+             loading="lazy" decoding="async">
       </a>
+      <figcaption class="gitem__pie">Más en @${NEGOCIO.instagramUsuario}</figcaption>
     </figure>`;
-
-  const pintar = () => { grid.innerHTML = visibles.map(tarjeta).join('') + tarjetaIg(); };
-  pintar();
-
-  filtros.addEventListener('click', e => {
-    const b = e.target.closest('.filtro');
-    if (!b) return;
-    $$('.filtro', filtros).forEach(f => f.setAttribute('aria-pressed', String(f === b)));
-    const cat = b.dataset.cat;
-    visibles = cat === 'todos' ? [...GALERIA] : GALERIA.filter(g => g.cats.includes(cat));
-    pintar();
-    $('#galeria-estado').textContent =
-      `${visibles.length} ${visibles.length === 1 ? 'trabajo' : 'trabajos'}`;
-  });
 
   const lb = $('.lb');
   const lbFoto = $('.lb__foto img');
@@ -1539,7 +1463,7 @@ function iniciarGaleria() {
   let idx = 0, ultimoFoco = null;
 
   const render = () => {
-    const g = visibles[idx];
+    const g = GALERIA[idx];
     lbFoto.src = `assets/${g.img}.webp`;
     lbFoto.alt = g.titulo;
     lbInfo.innerHTML = `
@@ -1548,7 +1472,7 @@ function iniciarGaleria() {
       <div><a class="btn btn--claro" data-wa="galeria" data-ref="${g.id}"
         href="#" target="_blank" rel="noopener noreferrer">
         ${ICO.wa} Quiero algo así</a></div>
-      <p class="lb__conteo">${idx + 1} de ${visibles.length}</p>`;
+      <p class="lb__conteo">${idx + 1} de ${GALERIA.length}</p>`;
     enlazarWhatsapp(lbInfo);
   };
   const abrir = i => {
@@ -1565,12 +1489,12 @@ function iniciarGaleria() {
     document.body.classList.remove('bloqueado');
     ultimoFoco?.focus();
   };
-  const mover = d => { idx = (idx + d + visibles.length) % visibles.length; render(); };
+  const mover = d => { idx = (idx + d + GALERIA.length) % GALERIA.length; render(); };
 
   grid.addEventListener('click', e => {
     const btn = e.target.closest('.gitem__btn');
     if (!btn || btn.tagName === 'A') return;
-    abrir(visibles.findIndex(g => g.id === btn.closest('.gitem').dataset.id));
+    abrir(GALERIA.findIndex(g => g.id === btn.closest('.gitem').dataset.id));
   });
   $('.lb__cerrar', lb).addEventListener('click', cerrar);
   $('.lb__nav--prev', lb).addEventListener('click', () => mover(-1));

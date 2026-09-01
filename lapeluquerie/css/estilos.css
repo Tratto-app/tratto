@@ -196,28 +196,30 @@ em{font-style:italic}
 .intro__fotos img{width:100%;aspect-ratio:4/5;object-fit:cover;border-radius:var(--r-m)}
 .intro__fotos figure:nth-child(2){margin-top:var(--e6)}
 
-/* ═══ SERVICIOS ═══ */
-.servicios__grid{display:grid;gap:var(--e4)}
-@media (min-width:640px){.servicios__grid{grid-template-columns:1fr 1fr}}
-@media (min-width:1000px){.servicios__grid{grid-template-columns:repeat(3,1fr);gap:var(--e5)}}
+/* ═══ SERVICIOS ═══
+   Una lista, como la que tiene cualquier salón colgada en la pared.
+   Sin fotos: sólo hay cinco fotos reales y repetirlas por servicio
+   hacía que la página pareciera rellenada. */
+.servicios__lista{border-top:1px solid var(--linea)}
 .serv{
-  display:grid;gap:var(--e3);align-content:start;
-  background:var(--hueso);border:1px solid var(--linea);
-  border-radius:var(--r-m);padding:var(--e4);
-  transition:transform var(--dur-2) var(--ease),box-shadow var(--dur-2) var(--ease);
+  display:grid;gap:var(--e2) var(--e5);padding-block:var(--e5);
+  border-bottom:1px solid var(--linea);align-items:start;
 }
-.s-hueso-2 .serv{background:var(--hueso)}
-.serv:hover{transform:translateY(-3px);box-shadow:var(--sombra)}
-.serv__foto{border-radius:var(--r-s);overflow:hidden;background:var(--arena)}
-.serv__foto img{width:100%;aspect-ratio:3/2;object-fit:cover}
-.serv h3{font-family:var(--display);font-weight:600;font-size:1.24rem;line-height:1.24}
-.serv p{font-size:var(--t-sm);color:var(--tinta-2);line-height:1.6}
-.serv__pie{display:flex;flex-wrap:wrap;gap:var(--e2);align-items:center;
-  margin-top:var(--e1)}
+@media (min-width:760px){
+  .serv{grid-template-columns:minmax(11rem,15rem) 1fr auto;gap:var(--e5);
+    align-items:baseline}
+}
+.serv__nombre{font-family:var(--display);font-weight:500;font-size:1.22rem;
+  line-height:1.24}
+.serv__texto{display:grid;gap:var(--e2)}
+.serv__texto p{font-size:var(--t-sm);color:var(--tinta-2);line-height:1.62;
+  max-width:60ch}
+.serv__datos{font-size:var(--t-xs);color:var(--tinta-3)}
 .serv__consulta{font-size:var(--t-sm);font-weight:600;color:var(--bronce);
-  display:inline-flex;align-items:center;gap:6px;margin-top:var(--e1)}
-.serv__consulta svg{width:16px;height:16px}
-.serv:hover .serv__consulta{text-decoration:underline;text-underline-offset:3px}
+  display:inline-flex;align-items:center;gap:6px;padding-block:6px;white-space:nowrap}
+.serv__consulta svg{width:15px;height:15px;transition:transform var(--dur-2) var(--ease)}
+.serv__consulta:hover{text-decoration:underline;text-underline-offset:3px}
+.serv__consulta:hover svg{transform:translateX(3px)}
 
 .servicios__nota{margin-top:var(--e6);padding:var(--e5);border-radius:var(--r-m);
   background:var(--realce);display:grid;gap:var(--e3);justify-items:start}
@@ -226,37 +228,23 @@ em{font-style:italic}
 }
 .servicios__nota p{font-size:var(--t-sm);color:var(--tinta);max-width:56ch}
 
-/* ═══ TRABAJOS ═══ */
-.filtros{display:flex;gap:var(--e2);flex-wrap:wrap;margin-bottom:var(--e5)}
-.filtro{padding:.5rem 1rem;min-height:42px;border-radius:var(--r-pill);
-  border:1.5px solid var(--linea-2);background:var(--hueso);
-  font-size:var(--t-sm);font-weight:500;color:var(--tinta-2);
-  transition:all var(--dur-2) var(--ease)}
-.filtro:hover{border-color:var(--bronce-med);color:var(--tinta)}
-.filtro[aria-pressed="true"]{background:var(--tinta);border-color:var(--tinta);
-  color:var(--hueso)}
-
-.galeria{display:grid;gap:var(--e3);grid-template-columns:repeat(2,1fr)}
-@media (min-width:820px){.galeria{grid-template-columns:repeat(3,1fr);gap:var(--e4)}}
-.gitem{position:relative;align-self:start;
+/* ═══ TRABAJOS ═══
+   El epígrafe va debajo de la foto y no superpuesto: superpuesto sólo
+   aparecía al pasar el mouse, así que en la compu se veía distinto que
+   en el celular. Ahora es igual en los dos. */
+.galeria{display:grid;gap:var(--e4) var(--e3);grid-template-columns:repeat(2,1fr)}
+@media (min-width:820px){.galeria{grid-template-columns:repeat(3,1fr);gap:var(--e6) var(--e4)}}
+.gitem{display:grid;gap:var(--e2);align-self:start;
   animation:aparecer var(--dur-3) var(--ease) both}
-@keyframes aparecer{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
-@media (min-width:820px){.gitem:nth-child(3n+2){margin-top:var(--e5)}}
+@keyframes aparecer{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
 .gitem__btn{display:block;width:100%;border-radius:var(--r-m);overflow:hidden;
-  background:var(--arena);position:relative}
+  background:var(--arena)}
 .gitem img{width:100%;aspect-ratio:4/5;object-fit:cover;
   transition:transform var(--dur-3) var(--ease)}
-.gitem__btn:hover img,.gitem__btn:focus-visible img{transform:scale(1.03)}
-.gitem__pie{position:absolute;inset:auto 0 0 0;padding:var(--e5) var(--e3) var(--e3);
-  display:grid;gap:2px;text-align:left;color:#fff;
-  background:linear-gradient(to top,rgba(14,13,12,.86),rgba(14,13,12,0))}
-.gitem__tit{font-family:var(--display);font-weight:500;font-size:1rem;line-height:1.22}
-.gitem__cta{font-size:var(--t-xs);opacity:.9;display:flex;align-items:center;gap:5px}
-.gitem__cta svg{width:12px;height:12px}
+.gitem__btn:hover img,.gitem__btn:focus-visible img{transform:scale(1.02)}
+.gitem__pie{font-size:var(--t-sm);color:var(--tinta-2);line-height:1.4}
 .gitem--ig .gitem__btn{background:var(--negro);display:grid;place-items:center;
-  aspect-ratio:4/5;padding:var(--e4)}
-.gitem--ig span{display:grid;gap:var(--e2);justify-items:center;text-align:center;
-  color:var(--hueso)}
+  aspect-ratio:4/5;padding:var(--e5)}
 .gitem--ig img{width:62px;aspect-ratio:auto;background:none}
 
 /* Lightbox */
@@ -286,7 +274,10 @@ em{font-style:italic}
 .lb__nav--next{right:var(--e2)}
 @media (min-width:860px){.lb__nav--prev{left:var(--e5)}.lb__nav--next{right:var(--e5)}}
 
-/* ═══ ANTES / DESPUÉS ═══ */
+/* ═══ ANTES / DESPUÉS (adentro de Trabajos) ═══ */
+.ad-bloque{margin-top:var(--e8);padding-top:var(--e6);border-top:1px solid var(--linea)}
+.ad-bloque__tit{margin-bottom:var(--e1)}
+.ad-bloque__nota{font-size:var(--t-sm);color:var(--tinta-2);margin-bottom:var(--e5)}
 .ad{display:grid;gap:var(--e6)}
 @media (min-width:820px){.ad{grid-template-columns:1fr 1fr;gap:var(--e5)}}
 .ad__item{display:grid;gap:var(--e3)}

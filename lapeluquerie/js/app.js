@@ -3,7 +3,7 @@
    Sin dependencias. Todo el contenido sale de datos.js.
    ============================================================ */
 import {
-  NEGOCIO, SERVICIOS, CATEGORIAS, GALERIA, TRANSFORMACIONES,
+  NEGOCIO, SERVICIOS, GALERIA, TRANSFORMACIONES,
   PASOS, MOTIVOS, CONSEJOS, RESENAS, FAQ
 } from './datos.js';
 
@@ -132,24 +132,18 @@ function iniciarReveal() {
    SERVICIOS
    ════════════════════════════════════════════════════════ */
 function iniciarServicios() {
-  $('.servicios__grid').innerHTML = SERVICIOS.map(s => {
-    const datos = [
-      s.duracion ? `<span class="chip">${s.duracion}</span>` : '',
-      s.precio   ? `<span class="chip">${s.precio}</span>`   : '',
-      ...s.tags.map(t => `<span class="chip">${t}</span>`)
-    ].join('');
+  $('.servicios__lista').innerHTML = SERVICIOS.map(s => {
+    const datos = [s.duracion, s.precio].filter(Boolean).join(' · ');
     return `
     <article class="serv rv">
-      <div class="serv__foto">
-        <img src="assets/${s.img}-640.webp"${srcset(s.img, '(min-width:1000px) 31vw, (min-width:640px) 46vw, 92vw')}
-             alt="${s.alt}" loading="lazy" decoding="async" width="640" height="427">
+      <h3 class="serv__nombre">${s.nombre}</h3>
+      <div class="serv__texto">
+        <p>${s.texto}</p>
+        ${datos ? `<p class="serv__datos">${datos}</p>` : ''}
       </div>
-      <h3>${s.nombre}</h3>
-      <p>${s.texto}</p>
-      <div class="serv__pie">${datos}</div>
       <a class="serv__consulta" data-wa="servicio" data-ref="${s.id}"
          href="#" target="_blank" rel="noopener noreferrer">
-        Consultame por esto ${ICO.flecha}
+        Consultame ${ICO.flecha}
       </a>
     </article>`;
   }).join('');
@@ -159,51 +153,25 @@ function iniciarServicios() {
    TRABAJOS + LIGHTBOX
    ════════════════════════════════════════════════════════ */
 function iniciarGaleria() {
-  const filtros = $('.filtros');
   const grid = $('.galeria');
-  let visibles = [...GALERIA];
 
-  filtros.innerHTML = CATEGORIAS.map((c, i) => `
-    <button class="filtro" type="button" data-cat="${c.id}"
-            aria-pressed="${i === 0}">${c.nombre}</button>`).join('');
-
-  const tarjeta = g => `
+  /* El epígrafe va debajo de la foto, no encima: superpuesto sólo aparecía
+     al pasar el mouse, así que en la compu se veía distinto que en el celular. */
+  grid.innerHTML = GALERIA.map(g => `
     <figure class="gitem" data-id="${g.id}">
       <button class="gitem__btn" type="button" aria-label="Ver más grande: ${g.titulo}">
         <img src="assets/${g.img}-640.webp"${srcset(g.img, '(min-width:820px) 31vw, 47vw')}
              alt="${g.titulo}" loading="lazy" decoding="async" width="640" height="800">
-        <figcaption class="gitem__pie">
-          <span class="gitem__tit">${g.titulo}</span>
-          <span class="gitem__cta">Quiero algo así ${ICO.flecha}</span>
-        </figcaption>
       </button>
-    </figure>`;
-
-  const tarjetaIg = () => `
+      <figcaption class="gitem__pie">${g.titulo}</figcaption>
+    </figure>`).join('') + `
     <figure class="gitem gitem--ig">
       <a class="gitem__btn" href="${NEGOCIO.instagram}" target="_blank" rel="noopener noreferrer">
-        <span>
-          <img src="assets/marca-blanca.png" alt="" width="62" height="58"
-               loading="lazy" decoding="async">
-          <span class="gitem__tit">Más trabajos en Instagram</span>
-          <span class="gitem__cta">@${NEGOCIO.instagramUsuario} ${ICO.flecha}</span>
-        </span>
+        <img src="assets/marca-blanca.png" alt="" width="62" height="58"
+             loading="lazy" decoding="async">
       </a>
+      <figcaption class="gitem__pie">Más en @${NEGOCIO.instagramUsuario}</figcaption>
     </figure>`;
-
-  const pintar = () => { grid.innerHTML = visibles.map(tarjeta).join('') + tarjetaIg(); };
-  pintar();
-
-  filtros.addEventListener('click', e => {
-    const b = e.target.closest('.filtro');
-    if (!b) return;
-    $$('.filtro', filtros).forEach(f => f.setAttribute('aria-pressed', String(f === b)));
-    const cat = b.dataset.cat;
-    visibles = cat === 'todos' ? [...GALERIA] : GALERIA.filter(g => g.cats.includes(cat));
-    pintar();
-    $('#galeria-estado').textContent =
-      `${visibles.length} ${visibles.length === 1 ? 'trabajo' : 'trabajos'}`;
-  });
 
   const lb = $('.lb');
   const lbFoto = $('.lb__foto img');
@@ -211,7 +179,7 @@ function iniciarGaleria() {
   let idx = 0, ultimoFoco = null;
 
   const render = () => {
-    const g = visibles[idx];
+    const g = GALERIA[idx];
     lbFoto.src = `assets/${g.img}.webp`;
     lbFoto.alt = g.titulo;
     lbInfo.innerHTML = `
@@ -220,7 +188,7 @@ function iniciarGaleria() {
       <div><a class="btn btn--claro" data-wa="galeria" data-ref="${g.id}"
         href="#" target="_blank" rel="noopener noreferrer">
         ${ICO.wa} Quiero algo así</a></div>
-      <p class="lb__conteo">${idx + 1} de ${visibles.length}</p>`;
+      <p class="lb__conteo">${idx + 1} de ${GALERIA.length}</p>`;
     enlazarWhatsapp(lbInfo);
   };
   const abrir = i => {
@@ -237,12 +205,12 @@ function iniciarGaleria() {
     document.body.classList.remove('bloqueado');
     ultimoFoco?.focus();
   };
-  const mover = d => { idx = (idx + d + visibles.length) % visibles.length; render(); };
+  const mover = d => { idx = (idx + d + GALERIA.length) % GALERIA.length; render(); };
 
   grid.addEventListener('click', e => {
     const btn = e.target.closest('.gitem__btn');
     if (!btn || btn.tagName === 'A') return;
-    abrir(visibles.findIndex(g => g.id === btn.closest('.gitem').dataset.id));
+    abrir(GALERIA.findIndex(g => g.id === btn.closest('.gitem').dataset.id));
   });
   $('.lb__cerrar', lb).addEventListener('click', cerrar);
   $('.lb__nav--prev', lb).addEventListener('click', () => mover(-1));

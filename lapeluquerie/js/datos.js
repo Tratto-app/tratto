@@ -42,9 +42,12 @@ export const NEGOCIO = {
 
 /* ============================================================
    SERVICIOS
-   duracion y precio en null a propósito: no están confirmados.
-   Cuando los tengas, escribilos como texto ('2 h', 'Desde $00.000')
-   y aparecen solos en la tarjeta.
+   Sin fotos a propósito: sólo hay cinco fotos reales del salón y
+   repetirlas una por servicio hacía que la página pareciera rellenada.
+   Las fotos viven en GALERIA, una sola vez cada una.
+
+   duracion y precio en null: no están confirmados. Cuando los tengas,
+   escribilos como texto ('2 h', 'Desde $00.000') y aparecen solos.
    ============================================================ */
 export const SERVICIOS = [
   {
@@ -53,7 +56,6 @@ export const SERVICIOS = [
     texto: 'Cobertura de canas o cambio de tono, con el color elegido entre las dos. Si venís seguido, vamos retocando solo la raíz para no castigar el largo.',
     tags: ['Canas', 'Retoque de raíz'],
     duracion: null, precio: null,
-    img: 'caoba', alt: 'Color caoba con brillo parejo'
   },
   {
     id: 'mechitas',
@@ -61,7 +63,6 @@ export const SERVICIOS = [
     texto: 'Un poco de luz alrededor de la cara y en el largo, sin cambiar tu color de base. Es lo que más piden las que quieren un cambio pero sin animarse a tanto.',
     tags: ['Babylights', 'Reflejos'],
     duracion: null, precio: null,
-    img: 'castano', alt: 'Castaño con reflejos caramelo'
   },
   {
     id: 'balayage',
@@ -69,7 +70,6 @@ export const SERVICIOS = [
     texto: 'Aclarado pintado a mano, más claro en las puntas y suave en la raíz. Crece prolijo, así que podés dejar pasar varios meses entre visita y visita.',
     tags: ['Crece prolijo', 'Sin línea de raíz'],
     duracion: null, precio: null,
-    img: 'despues-1', alt: 'Balayage beige sobre base castaña'
   },
   {
     id: 'rubios',
@@ -77,7 +77,6 @@ export const SERVICIOS = [
     texto: 'Si querés un rubio sin tonos anaranjados, vemos hasta dónde podemos llegar hoy cuidando tu pelo, y lo matizamos hasta el tono que te gusta.',
     tags: ['Rubio frío', 'Matizado'],
     duracion: null, precio: null,
-    img: 'bronde', alt: 'Rubio bronde con mechitas finas'
   },
   {
     id: 'correccion',
@@ -85,7 +84,6 @@ export const SERVICIOS = [
     texto: 'Un color que quedó desparejo, mechas viejas o un tono que no era el que pediste. Se puede arreglar: primero miramos qué tiene el pelo y después vemos si sale en una vez o en dos.',
     tags: ['Sacar el naranja', 'Emparejar'],
     duracion: null, precio: null,
-    img: 'despues-2', alt: 'Cambio de cobre a castaño ceniza'
   },
   {
     id: 'corte',
@@ -93,7 +91,6 @@ export const SERVICIOS = [
     texto: 'Antes de cortar te pregunto cuánto tiempo le dedicás al pelo a la mañana. De ahí salen el largo y las capas, para que después lo puedas peinar sola.',
     tags: ['Corte', 'Brushing'],
     duracion: null, precio: null,
-    img: 'castano', alt: 'Brushing con ondas suaves'
   },
   {
     id: 'tratamiento',
@@ -101,7 +98,6 @@ export const SERVICIOS = [
     texto: 'Se hace en el mismo turno, después del color, para que el largo quede suave y más fácil de peinar. Va bien sobre todo si venís de decoloraciones.',
     tags: ['Después del color', 'Suavidad'],
     duracion: null, precio: null,
-    img: 'bronde', alt: 'Largo de pelo hidratado con brillo'
   },
   {
     id: 'eventos',
@@ -109,41 +105,28 @@ export const SERVICIOS = [
     texto: 'Recogidos, semirecogidos y ondas para casamientos, fiestas o el civil. Si es algo importante, conviene una prueba antes para llegar tranquilas al día.',
     tags: ['Casamientos', 'Con prueba previa'],
     duracion: null, precio: null,
-    img: 'caoba', alt: 'Peinado con ondas para evento'
   }
 ];
 
 /* ============================================================
-   TRABAJOS
+   TRABAJOS — las cinco fotos reales del salón, una sola vez cada una
    ============================================================ */
-export const CATEGORIAS = [
-  { id: 'todos',    nombre: 'Todos' },
-  { id: 'rubios',   nombre: 'Rubios' },
-  { id: 'color',    nombre: 'Color' },
-  { id: 'cambios',  nombre: 'Cambios grandes' }
-];
-
 export const GALERIA = [
   { id: 'g1', img: 'despues-1', servicio: 'balayage',
     titulo: 'Balayage beige',
-    texto: 'Aclarado pintado a mano y matizado en frío. La raíz queda suave para que el crecimiento no marque una línea.',
-    cats: ['rubios', 'cambios'] },
+    texto: 'Aclarado pintado a mano y matizado en frío. La raíz queda suave para que el crecimiento no marque una línea.' },
   { id: 'g2', img: 'bronde', servicio: 'rubios',
     titulo: 'Rubio con mechitas finas',
-    texto: 'Mechitas cerca de la cara y aclarado hacia las puntas, en un beige neutro.',
-    cats: ['rubios'] },
+    texto: 'Mechitas cerca de la cara y aclarado hacia las puntas, en un beige neutro.' },
   { id: 'g3', img: 'caoba', servicio: 'color',
     titulo: 'Caoba con reflejos',
-    texto: 'Un caoba armado con más de un reflejo, para que el color se mueva con la luz y no quede plano.',
-    cats: ['color'] },
+    texto: 'Un caoba armado con más de un reflejo, para que el color se mueva con la luz y no quede plano.' },
   { id: 'g4', img: 'despues-2', servicio: 'correccion',
     titulo: 'De cobre a castaño ceniza',
-    texto: 'Arreglo de un cobre muy fuerte: se neutralizó y quedó un castaño iluminado con reflejos fríos.',
-    cats: ['color', 'cambios'] },
+    texto: 'Arreglo de un cobre muy fuerte: se neutralizó y quedó un castaño iluminado con reflejos fríos.' },
   { id: 'g5', img: 'castano', servicio: 'mechitas',
     titulo: 'Castaño con caramelo',
-    texto: 'Iluminación suave sobre el color natural: da luz sin obligarte a volver todos los meses.',
-    cats: ['color'] }
+    texto: 'Iluminación suave sobre el color natural: da luz sin obligarte a volver todos los meses.' }
 ];
 
 export const TRANSFORMACIONES = [

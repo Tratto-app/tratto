@@ -48,7 +48,7 @@ async function nueva(vp){
   const vacias=await page.$$eval('img',is=>is.filter(i=>i.getAttribute('src')&&i.naturalWidth===0).map(i=>(i.currentSrc||i.src).slice(0,60)));
   ok('Todas las imágenes cargan píxeles', vacias.length===0, vacias.slice(0,3).join(' | '));
   for(const [sel,min] of [['.serv',8],['.gitem',6],['.ad__item',2],['.paso',6],
-      ['.motivo',3],['.consejo',6],['.resena',3],['.faq__item',8],['.horarios li',6],['.filtro',4]])
+      ['.motivo',3],['.consejo',6],['.resena',3],['.faq__item',8],['.horarios li',6]])
     ok(`Render ${sel} (≥${min})`, (await page.$$(sel)).length>=min,
        'hay '+(await page.$$(sel)).length);
   await ctx.close();
@@ -101,14 +101,12 @@ async function nueva(vp){
 {
   const {ctx,page}=await nueva(V.laptop);
   await page.locator('#trabajos').scrollIntoViewIfNeeded(); await page.waitForTimeout(400);
-  const total=(await page.$$('.gitem')).length;
-  await page.click('.filtro[data-cat=color]'); await page.waitForTimeout(400);
-  const f=(await page.$$('.gitem')).length;
-  ok('El filtro reduce resultados', f<total&&f>1, `${total}→${f}`);
-  ok('Filtro activo con aria-pressed', await page.getAttribute('.filtro[data-cat=color]','aria-pressed')==='true');
-  ok('Estado anunciado', (await page.textContent('#galeria-estado')).length>0);
-  await page.click('.filtro[data-cat=todos]'); await page.waitForTimeout(400);
-  ok('Vuelve a mostrar todo', (await page.$$('.gitem')).length===total);
+  ok('Cada foto se usa una sola vez', await page.$$eval('.gitem img',is=>{
+    const src=is.map(i=>i.getAttribute('src')).filter(Boolean);
+    return new Set(src).size===src.length;
+  }));
+  ok('El epígrafe se ve sin pasar el mouse',
+     await page.$eval('.gitem__pie',e=>getComputedStyle(e).opacity==='1'));
   await page.locator('.gitem .gitem__btn').first().click(); await page.waitForTimeout(400);
   ok('Lightbox abre', await page.$eval('.lb',l=>l.classList.contains('abierto')));
   ok('Imagen del lightbox carga', await page.$eval('.lb__foto img',i=>i.complete&&i.naturalWidth>0));
@@ -127,7 +125,7 @@ async function nueva(vp){
 // ── 6. Antes / después ──
 {
   const {ctx,page}=await nueva(V.laptop);
-  await page.locator('#cambios').scrollIntoViewIfNeeded(); await page.waitForTimeout(500);
+  await page.locator('.ad-bloque').scrollIntoViewIfNeeded(); await page.waitForTimeout(500);
   const marco=page.locator('.ad__marco').first();
   const b=await marco.boundingBox();
   await page.mouse.move(b.x+b.width*0.5,b.y+b.height*0.5);
@@ -285,6 +283,29 @@ for(const [nombre,vp] of Object.entries(V)){
   });
   ok('Contraste AA en todo el texto medible', malos.length===0, malos.slice(0,6).join(' | '));
   await ctx.close();
+}
+
+// ── 13. Coherencia entre celular y compu ──
+{
+  const medir = async vp => {
+    const {ctx,page}=await nueva(vp);
+    await page.evaluate(()=>document.querySelectorAll('.rv').forEach(e=>e.classList.add('visible')));
+    await page.waitForTimeout(300);
+    const r = await page.evaluate(()=>({
+      epigrafes: [...document.querySelectorAll('.gitem__pie')].map(e=>getComputedStyle(e).opacity),
+      fotos: document.querySelectorAll('.gitem img').length,
+      servicios: document.querySelectorAll('.serv').length,
+      secciones: [...document.querySelectorAll('main section')].map(s=>s.id)
+    }));
+    await ctx.close(); return r;
+  };
+  const movil = await medir(V.mobile), compu = await medir(V.laptop);
+  ok('Mismas secciones en celular y compu',
+     JSON.stringify(movil.secciones)===JSON.stringify(compu.secciones));
+  ok('Mismas fotos y servicios en ambos',
+     movil.fotos===compu.fotos && movil.servicios===compu.servicios);
+  ok('Los epígrafes se ven igual en ambos',
+     movil.epigrafes.every(o=>o==='1') && compu.epigrafes.every(o=>o==='1'));
 }
 
 await browser.close();
