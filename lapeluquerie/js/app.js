@@ -17,11 +17,17 @@ const servicioPorId = id => SERVICIOS.find(s => s.id === id);
 const menosMovimiento = () =>
   window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
+/* Único lugar del que salen las rutas de imagen. El armador del archivo
+   autocontenido reemplaza esta función por un mapa de imágenes incrustadas:
+   si las rutas quedaran sueltas en las plantillas, se escaparían sin
+   incrustar y el archivo suelto quedaría sin fotos. */
+const foto = nombre => `assets/${nombre}`;
+
 /* Fotos que existen en dos anchos reales (640 y 1100 px). Los recortes
    del collage sólo existen a 520, así que no llevan srcset. */
 const DOS_ANCHOS = new Set(['bronde', 'caoba', 'castano']);
 const srcset = (base, sizes) => DOS_ANCHOS.has(base)
-  ? ` srcset="assets/${base}-640.webp 640w, assets/${base}.webp 1100w" sizes="${sizes}"`
+  ? ` srcset="${foto(base + '-640.webp')} 640w, ${foto(base + '.webp')} 1100w" sizes="${sizes}"`
   : '';
 
 const ICO = {
@@ -170,14 +176,14 @@ function iniciarGaleria() {
   grid.innerHTML = GALERIA.map(g => `
     <figure class="gitem" data-id="${g.id}">
       <button class="gitem__btn" type="button" aria-label="Ver más grande: ${g.titulo}">
-        <img src="assets/${g.img}-640.webp"${srcset(g.img, '(min-width:820px) 31vw, 47vw')}
+        <img src="${foto(g.img + '-640.webp')}" data-foto="${g.img}-640.webp"${srcset(g.img, '(min-width:820px) 31vw, 47vw')}
              alt="${g.titulo}" loading="lazy" decoding="async" width="640" height="800">
       </button>
       <figcaption class="gitem__pie">${g.titulo}</figcaption>
     </figure>`).join('') + `
     <figure class="gitem gitem--ig">
       <a class="gitem__btn" href="${NEGOCIO.instagram}" target="_blank" rel="noopener noreferrer">
-        <img src="assets/marca-blanca.png" alt="" width="62" height="58"
+        <img src="${foto('marca-blanca.png')}" data-foto="marca-blanca.png" alt="" width="62" height="58"
              loading="lazy" decoding="async">
       </a>
       <figcaption class="gitem__pie">Más en @${NEGOCIO.instagramUsuario}</figcaption>
@@ -190,7 +196,7 @@ function iniciarGaleria() {
 
   const render = () => {
     const g = GALERIA[idx];
-    lbFoto.src = `assets/${g.img}.webp`;
+    lbFoto.src = foto(g.img + '.webp');
     lbFoto.alt = g.titulo;
     lbInfo.innerHTML = `
       <h3 id="lb-titulo">${g.titulo}</h3>
@@ -250,11 +256,11 @@ function iniciarAntesDespues() {
     <article class="ad__item rv">
       <div class="ad__marco" style="--pos:50%">
         <div class="ad__capa">
-          <img src="assets/${t.antes}.webp" alt="${t.altA}" loading="lazy"
+          <img src="${foto(t.antes + '.webp')}" data-foto="${t.antes}.webp" alt="${t.altA}" loading="lazy"
                decoding="async" width="520" height="520">
         </div>
         <div class="ad__capa ad__capa--despues">
-          <img src="assets/${t.despues}.webp" alt="${t.altD}" loading="lazy"
+          <img src="${foto(t.despues + '.webp')}" data-foto="${t.despues}.webp" alt="${t.altD}" loading="lazy"
                decoding="async" width="520" height="520">
         </div>
         <span class="ad__etiq ad__etiq--a">Antes</span>

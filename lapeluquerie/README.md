@@ -14,6 +14,7 @@ lapeluquerie/
 ├── tests/e2e.mjs       suite end-to-end (93 chequeos)
 ├── tools/archivo-unico.py  arma el HTML autocontenido para mandar al cliente
 ├── tools/prerender.mjs     deja ese HTML ya armado, para que ande sin JS
+├── tools/verificar-archivo-unico.mjs  lo prueba en una carpeta vacía
 ├── robots.txt
 └── sitemap.xml
 ```
@@ -86,6 +87,14 @@ Dos cosas que el script resuelve y conviene no deshacer:
 - **Los CTA no dependen del JavaScript.** El `href` de los botones fijos está
   escrito en `index.html`, no lo pone el script. Si el número cambia en
   `datos.js` hay que actualizarlo también ahí; hay un test que lo verifica.
+- **Las rutas de imagen salen todas de `foto()` en `js/app.js`.** Una ruta
+  escrita a mano en una plantilla no la ve una búsqueda de texto sobre el
+  HTML, así que se escapaba sin incrustar y el archivo suelto quedaba sin esa
+  foto. Hay un assert en el armador que lo detecta.
+- **La verificación se hace copiando el archivo a una carpeta vacía**
+  (`verificar-archivo-unico.mjs`, lo corre el armador solo). Probarlo al lado
+  de `assets/` daba falsos positivos: las rutas rotas se resolvían igual
+  contra esa carpeta, que en el celular del cliente no viaja.
 - **El archivo va pre-renderizado.** `prerender.mjs` guarda el HTML ya armado
   adentro, así que aunque el visor bloquee los scripts la página se ve
   completa y los 18 botones de WhatsApp funcionan igual.
