@@ -32,13 +32,8 @@ ul,ol{list-style:none}
 
 /* ═══ TIPOGRAFÍA ═══ */
 h1,h2,h3,h4{font-weight:400}
-.display{font-family:var(--display);font-weight:500;line-height:var(--leading-title);
-  letter-spacing:-.008em;text-wrap:balance;
-  font-variation-settings:'SOFT' 12,'WONK' 0}
 .h2{font-family:var(--display);font-weight:500;font-size:var(--t-h2);
   line-height:var(--leading-title);letter-spacing:-.008em;text-wrap:balance;
-  font-variation-settings:'SOFT' 12,'WONK' 0}
-.h3{font-family:var(--display);font-weight:500;font-size:var(--t-h3);line-height:1.24;
   font-variation-settings:'SOFT' 12,'WONK' 0}
 .h4{font-family:var(--texto);font-size:var(--t-h4);font-weight:600;line-height:1.36}
 em{font-style:italic}
@@ -53,16 +48,10 @@ em{font-style:italic}
 .s-oscura .label{color:var(--bronce-luz)}
 .s-oscura .label::before{background:var(--bronce-luz);opacity:.6}
 
-.plomo{color:var(--tinta-2)}
-.s-oscura .plomo{color:#CDBCAF}
 .entrada{font-size:clamp(1.02rem,1.1vw,1.16rem);line-height:1.62;color:var(--tinta-2);
   max-width:56ch}
 .s-oscura .entrada{color:#CDBCAF}
 
-/* Subrayado hecho a mano, no una línea perfecta */
-.marcado{position:relative;display:inline;background-image:linear-gradient(
-  transparent 62%, var(--bronce-med) 62%, var(--bronce-med) 92%, transparent 92%);
-  padding-inline:.06em}
 
 /* ═══ LAYOUT ═══ */
 .env{width:100%;max-width:var(--ancho);margin-inline:auto;padding-inline:var(--borde-x)}
@@ -70,7 +59,6 @@ em{font-style:italic}
 /* El nav es sticky: las anclas frenan más abajo para no quedar tapadas. */
 .seccion,.intro{scroll-margin-top:calc(var(--nav-h) + var(--e4))}
 .s-hueso-2{background:var(--hueso-2)}
-.s-realce{background:var(--realce)}
 .s-oscura{background:var(--negro);color:var(--hueso)}
 
 .cabecera{display:grid;gap:var(--e4);margin-bottom:var(--e7);max-width:60ch}
@@ -80,7 +68,7 @@ em{font-style:italic}
 .rv{opacity:0;transform:translateY(14px);
   transition:opacity .7s var(--ease),transform .7s var(--ease)}
 .rv.visible{opacity:1;transform:none}
-.rv-d1{transition-delay:.07s}.rv-d2{transition-delay:.14s}
+.rv-d1{transition-delay:.07s}
 @media (prefers-reduced-motion: reduce){.rv{opacity:1;transform:none;transition:none}}
 
 /* ═══ BOTONES ═══ */
@@ -359,7 +347,7 @@ em{font-style:italic}
 
 .resenas{display:grid;gap:var(--e4);margin-top:var(--e7)}
 @media (min-width:760px){.resenas{grid-template-columns:repeat(3,1fr)}}
-.resena{display:grid;gap:var(--e3);align-content:start;padding:var(--e5);
+.resena{display:grid;gap:var(--e3);align-content:start;align-self:start;padding:var(--e5);
   border-radius:var(--r-m);background:var(--hueso-2)}
 .s-hueso-2 .resena{background:var(--hueso)}
 .estrellas{display:flex;gap:2px;color:var(--bronce-med)}
@@ -417,9 +405,12 @@ em{font-style:italic}
 .horarios li span:last-child{color:var(--tinta-2);font-variant-numeric:tabular-nums}
 .horarios li.hoy{font-weight:600}
 .horarios li.hoy span:last-child{color:var(--bronce)}
+/* JS lo completa después del primer pintado: se reserva la altura para que
+   no empuje el resto de la portada (CLS), y se oculta mientras está vacío. */
 .estado{display:inline-flex;align-items:center;gap:8px;font-size:var(--t-sm);
-  font-weight:600;padding:.34rem .8rem;border-radius:var(--r-pill);
+  font-weight:600;padding:.34rem .8rem;min-height:34px;border-radius:var(--r-pill);
   background:var(--realce);color:var(--tinta);width:fit-content}
+.estado:empty{visibility:hidden}
 .estado::before{content:"";width:9px;height:9px;border-radius:50%;
   background:var(--bronce);flex:none}
 .estado[data-abierto="no"]{background:var(--hueso-2);color:var(--tinta-2)}

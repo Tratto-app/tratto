@@ -221,6 +221,3 @@ export const FAQ = [
     a: 'Escribinos por WhatsApp y te contamos cómo lo manejamos según el servicio. Lo importante es avisar si no vas a poder venir, así le podemos dar el lugar a otra persona.' }
 ];
 
-export const TAGLINE = [
-  'Color', 'Cortes', 'Mechitas', 'Peinados', 'Cuidado del pelo'
-];

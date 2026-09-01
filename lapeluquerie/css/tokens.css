@@ -10,7 +10,6 @@
      El negro sale del logo y es el color estructural: nav, botones,
      pie y cierre. El bronce aparece de a poco, nunca como dorado. */
   --negro:    #0E0D0C;   /* superficies oscuras — el negro del logo */
-  --negro-2:  #1B1917;
   --tinta:    #14120F;   /* texto principal */
   --tinta-2:  #5C544A;   /* texto secundario — AA */
   --tinta-3:  #6E6659;   /* texto de apoyo — AA */
@@ -50,7 +49,6 @@
   /* ---------- Espaciado ---------- */
   --e1: 0.25rem;  --e2: 0.5rem;  --e3: 0.75rem;  --e4: 1rem;
   --e5: 1.5rem;   --e6: 2rem;    --e7: 2.5rem;   --e8: 3.25rem;
-  --e9: 4.25rem;
 
   --seccion-y: clamp(3rem, 6vw, 5rem);
   --borde-x:   clamp(1.15rem, 4vw, 3.25rem);
@@ -72,11 +70,10 @@
 
   /* ---------- Movimiento (poco y corto) ---------- */
   --ease: cubic-bezier(.24,.6,.36,1);
-  --dur-1: .15s;
   --dur-2: .24s;
   --dur-3: .42s;
 }
 
 @media (prefers-reduced-motion: reduce){
-  :root{ --dur-1:.01ms; --dur-2:.01ms; --dur-3:.01ms; }
+  :root{ --dur-2:.01ms; --dur-3:.01ms; }
 }
