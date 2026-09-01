@@ -1,87 +1,83 @@
 /* ============================================================
-   LAPELUQUERIE — STUDIO ART
-   Design tokens. Única fuente de verdad del sistema visual.
-   No escribas un color, un espacio o un tiempo fuera de acá.
+   LAPELUQUERIE — tokens
+   Peluquería de barrio, linda y cuidada. Nada de estudio de lujo:
+   cremas, durazno y terracota suave; marrón cálido en vez de negro.
    ============================================================ */
 
 :root{
-  /* ---------- Color ----------
-     Extraído del logo (negro/blanco) y de los trabajos reales
-     del salón: caoba profundo, bronce caramelo, rubio ceniza. */
-  --tinta:      #0E0D0C;   /* negro cálido: fondo dark, texto */
-  --tinta-2:    #1B1917;   /* superficie dark elevada */
-  --tinta-3:    #2A2724;   /* bordes sobre dark */
+  /* ---------- Color ---------- */
+  --crema:      #FBF6EF;   /* fondo principal */
+  --crema-2:    #F4EADD;   /* superficie alterna */
+  --durazno:    #F7DFCC;   /* superficie tibia, destacados suaves */
+  --rosa:       #E7C4B9;   /* rosa viejo: detalles, subrayados */
+  --arena:      #EADCCB;   /* placeholder de imagen */
 
-  --hueso:      #F5F1EA;   /* fondo claro principal */
-  --hueso-2:    #EBE5DA;   /* superficie claro alterna */
-  --arena:      #DED5C6;   /* superficie/tinte */
+  --marron:     #43332A;   /* texto principal (nunca negro puro) */
+  --marron-2:   #6B584C;   /* texto secundario — AA */
+  --marron-3:   #7A6857;   /* texto de apoyo sobre crema — AA */
+  --marron-osc: #3A2C24;   /* superficie oscura cálida (footer, CTA) */
 
-  --caoba:      #4E1D22;   /* acento profundo (sección diagnóstico) */
-  /* Dos bronces: uno pasa contraste AA como texto sobre fondo claro,
-     el otro es relleno/foco (sólo necesita 3:1 como componente). */
-  --bronce:     #85592B;   /* texto y eyebrows sobre claro — AA */
-  --bronce-fill:#A97843;   /* relleno de botón, anillo de foco */
-  --bronce-luz: #D9B98C;   /* acento sobre fondos oscuros */
+  --terracota:     #90523A; /* acento en texto — AA sobre crema */
+  --terracota-med: #BE7A5C; /* relleno de botón, foco */
+  --terracota-luz: #E9B694; /* acento sobre superficie oscura */
 
-  --humo:       #676057;   /* texto secundario sobre claro — AA */
-  --humo-2:     #6B6459;   /* texto terciario: se diferencia por tamaño, no por contraste */
-  --humo-dark:  #A49B8F;   /* texto secundario sobre oscuro */
+  --linea:      #E6D7C6;
+  --linea-2:    #D6C2AC;
+  --linea-osc:  #55443A;
 
-  --linea:      #D8D0C2;   /* hairline sobre claro */
-  --linea-2:    #C3B9A8;
-  --linea-dark: #322E2A;   /* hairline sobre oscuro */
+  /* ---------- Tipografía ----------
+     Fraunces: serif blanda, un poco irregular. Karla: sans cercana.
+     Ninguna de las dos es "de revista": ese es el punto. */
+  --display: 'Fraunces', Georgia, 'Times New Roman', serif;
+  --texto:   'Karla', system-ui, -apple-system, 'Segoe UI', sans-serif;
 
-  /* ---------- Tipografía ---------- */
-  --display: 'Bodoni Moda', 'Didot', 'Times New Roman', serif;
-  --texto:   'Archivo', system-ui, -apple-system, 'Segoe UI', sans-serif;
-
-  --t-hero: clamp(2.9rem, 6vw, 5rem);
-  --t-h2:   clamp(2.15rem, 5.4vw, 4.25rem);
-  --t-h3:   clamp(1.45rem, 2.6vw, 2.1rem);
-  --t-h4:   clamp(1.12rem, 1.6vw, 1.35rem);
-  --t-body: clamp(1rem, 0.35vw + 0.93rem, 1.125rem);
+  --t-hero: clamp(2.5rem, 7.5vw, 4.15rem);
+  --t-h2:   clamp(1.85rem, 4.4vw, 2.9rem);
+  --t-h3:   clamp(1.25rem, 2.2vw, 1.65rem);
+  --t-h4:   clamp(1.06rem, 1.4vw, 1.22rem);
+  --t-body: clamp(1rem, 0.3vw + 0.95rem, 1.1rem);
   --t-sm:   0.9375rem;
-  --t-xs:   0.8125rem;
-  --t-eyebrow: 0.6875rem;
+  --t-xs:   0.8375rem;
+  --t-label: 0.75rem;
 
-  --tracking-eyebrow: 0.24em;
-  --tracking-nav: 0.1em;
-  --leading-tight: 0.94;
-  --leading-title: 1.08;
-  --leading-body: 1.62;
+  --tracking-label: 0.13em;
+  --leading-title: 1.14;
+  --leading-body: 1.68;
 
-  /* ---------- Espaciado (escala 4pt) ---------- */
-  --e1: 0.25rem;  --e2: 0.5rem;   --e3: 0.75rem;  --e4: 1rem;
-  --e5: 1.5rem;   --e6: 2rem;     --e7: 3rem;     --e8: 4rem;
-  --e9: 6rem;     --e10: 8rem;    --e11: 11rem;
+  /* ---------- Espaciado ---------- */
+  --e1: 0.25rem;  --e2: 0.5rem;  --e3: 0.75rem;  --e4: 1rem;
+  --e5: 1.5rem;   --e6: 2rem;    --e7: 2.75rem;  --e8: 3.75rem;
+  --e9: 5rem;
 
-  --seccion-y: clamp(4.5rem, 10vw, 9.5rem);
-  --borde-x:   clamp(1.25rem, 5vw, 5rem);
+  /* Secciones más cortas que en la versión anterior: menos aire
+     de galería de arte, más ritmo de página que se lee de corrido. */
+  --seccion-y: clamp(3.25rem, 7vw, 6rem);
+  --borde-x:   clamp(1.15rem, 4vw, 3.5rem);
 
   /* ---------- Layout ---------- */
-  --ancho:      1440px;
-  --nav-h:      74px;
-  --sticky-h:   68px;
+  --ancho:    1180px;
+  --nav-h:    66px;
+  --sticky-h: 66px;
   --sb: env(safe-area-inset-bottom, 0px);
 
   /* ---------- Forma ----------
-     Deliberadamente casi sin radios: el sistema se apoya en
-     hairlines y en el recorte de las fotos, no en cápsulas. */
-  --r-s: 2px;
+     Radios blandos y desparejos a propósito: nada de cápsulas
+     perfectas ni de esquinas todas iguales. */
+  --r-s:  8px;
+  --r-m:  14px;
+  --r-organico: 18px 22px 16px 24px;
   --r-pill: 999px;
 
-  /* ---------- Elevación ---------- */
-  --sombra:    0 2px 6px rgba(14,13,12,.06), 0 24px 60px rgba(14,13,12,.14);
+  --sombra: 0 1px 2px rgba(67,51,42,.05), 0 10px 26px rgba(67,51,42,.07);
+  --sombra-alta: 0 4px 10px rgba(67,51,42,.08), 0 22px 48px rgba(67,51,42,.14);
 
-  /* ---------- Movimiento ---------- */
-  --ease:      cubic-bezier(.22,.61,.36,1);
-  --ease-suave: cubic-bezier(.4,0,.2,1);
-  --dur-1: .18s;
-  --dur-2: .34s;
-  --dur-3: .62s;
-  --dur-4: 1.05s;
+  /* ---------- Movimiento (poco y suave) ---------- */
+  --ease: cubic-bezier(.24,.6,.36,1);
+  --dur-1: .16s;
+  --dur-2: .28s;
+  --dur-3: .5s;
 }
 
 @media (prefers-reduced-motion: reduce){
-  :root{ --dur-1:.01ms; --dur-2:.01ms; --dur-3:.01ms; --dur-4:.01ms; }
+  :root{ --dur-1:.01ms; --dur-2:.01ms; --dur-3:.01ms; }
 }
