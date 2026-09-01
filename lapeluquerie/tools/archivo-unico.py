@@ -81,6 +81,14 @@ if __name__ == '__main__':
     salida = construir()
     with open(SALIDA, 'w', encoding='utf-8') as f:
         f.write(salida)
+
+    # Deja el HTML ya armado adentro: si el navegador del cliente bloquea el
+    # JavaScript, la página se ve completa igual.
+    import subprocess
+    pre = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'prerender.mjs')
+    if subprocess.run(['node', pre, SALIDA]).returncode == 0:
+        with open(SALIDA, encoding='utf-8') as f:
+            salida = f.read()
     assert 'srcset=' not in salida, 'quedó un srcset con data URI'
     assert '<script type="module"' not in salida, 'quedó un módulo ES'
     print(f'{os.path.relpath(SALIDA, RAIZ)} · {len(salida) / 1024 / 1024:.2f} MB')

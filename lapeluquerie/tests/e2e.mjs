@@ -308,6 +308,46 @@ for(const [nombre,vp] of Object.entries(V)){
      movil.epigrafes.every(o=>o==='1') && compu.epigrafes.every(o=>o==='1'));
 }
 
+// ── 14. Los CTA no pueden depender del JavaScript ──
+{
+  // Si un error de script rompe el arranque, el botón más importante del
+  // sitio tiene que seguir funcionando igual. Por eso el href va escrito
+  // en el HTML y no lo pone el JS.
+  const ctx = await browser.newContext({ viewport: V.mobile, javaScriptEnabled: false });
+  const page = await ctx.newPage();
+  await page.goto(BASE, { waitUntil: 'load' });
+  const sinJs = await page.$$eval('[data-wa]', as =>
+    as.map(a => ({ tag: a.tagName, href: a.getAttribute('href') })));
+  ok('Sin JS igual hay CTA de WhatsApp', sinJs.length >= 8, sinJs.length + '');
+  ok('Sin JS todos apuntan a wa.me con mensaje',
+     sinJs.every(a => a.tag === 'A' && /^https:\/\/wa\.me\/5492304356392\?text=/.test(a.href)),
+     sinJs.filter(a => !/^https:\/\/wa\.me\//.test(a.href)).map(a => a.href).slice(0, 3).join(' | '));
+  ok('Sin JS el menú mobile existe en el HTML', !!(await page.$('#menu-movil .panel__lista a')));
+  await ctx.close();
+}
+
+// ── 15. Un paso caído no puede llevarse el resto ──
+{
+  const ctx = await browser.newContext({ viewport: V.mobile });
+  const page = await ctx.newPage();
+  // Se rompe Intl a propósito: es lo más frágil de la página y antes su
+  // caída dejaba sin menú y sin botones a todo el sitio.
+  await page.addInitScript(() => {
+    const real = Intl.DateTimeFormat;
+    Intl.DateTimeFormat = function () { throw new Error('Intl roto a propósito'); };
+    Intl.DateTimeFormat.prototype = real.prototype;
+  });
+  await page.goto(BASE, { waitUntil: 'load' });
+  await page.waitForTimeout(700);
+  ok('Con Intl roto igual se renderizan los servicios', (await page.$$('.serv')).length === 8);
+  ok('Con Intl roto igual andan los CTA',
+     (await page.$$eval('[data-wa]', as => as.every(a => /wa\.me/.test(a.href)))));
+  await page.click('.hamburguesa'); await page.waitForTimeout(400);
+  ok('Con Intl roto igual abre el menú',
+     await page.$eval('.panel', p => p.classList.contains('abierto')));
+  await ctx.close();
+}
+
 await browser.close();
 console.log(`\n──────────────\n${pass} OK · ${fail} fallos`);
 if(fail){ console.log('\nFallos:'); errores.forEach(e=>console.log(' ✗ '+e)); }

@@ -7,6 +7,10 @@ import {
   PASOS, MOTIVOS, CONSEJOS, RESENAS, FAQ
 } from './datos.js';
 
+/* Marca que el JS está corriendo: lo que sin él quedaría muerto en
+   pantalla (el botón de menú) se muestra recién acá. */
+document.documentElement.classList.add('js');
+
 const $  = (s, c = document) => c.querySelector(s);
 const $$ = (s, c = document) => [...c.querySelectorAll(s)];
 const servicioPorId = id => SERVICIOS.find(s => s.id === id);
@@ -56,6 +60,12 @@ function urlWhatsapp(mensaje) {
 /* Cada CTA es un enlace de verdad con su href ya resuelto. Nada de
    window.open: los navegadores embebidos de Instagram y WhatsApp lo
    bloquean sin avisar, y ahí los botones no hacen nada. */
+function hrefWa(tipo = 'general', dato = null) {
+  return urlWhatsapp((MENSAJES[tipo] || MENSAJES.general)(dato));
+}
+
+/* Los CTA fijos ya traen el href escrito en el HTML: esto sólo los
+   mantiene sincronizados si cambia el número en datos.js. */
 function enlazarWhatsapp(raiz = document) {
   $$('[data-wa]', raiz).forEach(el => {
     const tipo = el.dataset.wa || 'general';
@@ -142,7 +152,7 @@ function iniciarServicios() {
         ${datos ? `<p class="serv__datos">${datos}</p>` : ''}
       </div>
       <a class="serv__consulta" data-wa="servicio" data-ref="${s.id}"
-         href="#" target="_blank" rel="noopener noreferrer">
+         href="${hrefWa('servicio', s)}" target="_blank" rel="noopener noreferrer">
         Consultame ${ICO.flecha}
       </a>
     </article>`;
@@ -186,7 +196,7 @@ function iniciarGaleria() {
       <h3 id="lb-titulo">${g.titulo}</h3>
       <p>${g.texto}</p>
       <div><a class="btn btn--claro" data-wa="galeria" data-ref="${g.id}"
-        href="#" target="_blank" rel="noopener noreferrer">
+        href="${hrefWa('galeria', g)}" target="_blank" rel="noopener noreferrer">
         ${ICO.wa} Quiero algo así</a></div>
       <p class="lb__conteo">${idx + 1} de ${GALERIA.length}</p>`;
     enlazarWhatsapp(lbInfo);
@@ -259,7 +269,7 @@ function iniciarAntesDespues() {
         <span>${t.detalle}</span>
       </div>
       <a class="btn btn--suave" data-wa="transformacion" data-ref="${t.id}"
-         href="#" target="_blank" rel="noopener noreferrer">
+         href="${hrefWa('transformacion', t)}" target="_blank" rel="noopener noreferrer">
         ${ICO.wa} Consultame por un cambio así
       </a>
     </article>`).join('');
@@ -329,7 +339,9 @@ function iniciarContenido() {
     if (d.open) items.forEach(o => { if (o !== d) o.open = false; });
   }));
 
+  document.getElementById('faq-schema')?.remove();
   const ld = document.createElement('script');
+  ld.id = 'faq-schema';
   ld.type = 'application/ld+json';
   ld.textContent = JSON.stringify({
     '@context': 'https://schema.org', '@type': 'FAQPage',
@@ -352,7 +364,7 @@ const ORDEN = ['Su','Mo','Tu','We','Th','Fr','Sa'];
 function ahoraEnElSalon() {
   const p = Object.fromEntries(new Intl.DateTimeFormat('en-GB', {
     timeZone: 'America/Argentina/Buenos_Aires',
-    weekday: 'short', hour: '2-digit', minute: '2-digit', hour12: false
+    weekday: 'short', hour: '2-digit', minute: '2-digit', hourCycle: 'h23'
   }).formatToParts(new Date()).map(x => [x.type, x.value]));
   return { dia: p.weekday.slice(0, 2), minutos: +p.hour * 60 + +p.minute };
 }
@@ -404,19 +416,39 @@ function iniciarDatos() {
       <span>${h.dias}</span><span>${h.texto}</span>
     </li>`).join('');
 
-  const estado = estadoActual();
-  const chip = $('.estado');
-  chip.textContent = estado.texto;
-  chip.dataset.abierto = estado.abierto ? 'si' : 'no';
+  /* El cartel de "abierto ahora" depende de Intl con zona horaria, que es
+     lo más frágil de la página. Si falla en algún navegador simplemente no
+     se muestra: no puede arrastrar al resto. */
+  try {
+    const estado = estadoActual();
+    const chip = $('.estado');
+    chip.textContent = estado.texto;
+    chip.dataset.abierto = estado.abierto ? 'si' : 'no';
+  } catch { /* se queda oculto por .estado:empty */ }
 }
 
-/* ── Arranque ── */
-iniciarDatos();
-iniciarServicios();
-iniciarGaleria();
-iniciarAntesDespues();
-iniciarContenido();
-enlazarWhatsapp();
-iniciarNav();
-iniciarReveal();
+/* ════════════════════════════════════════════════════════
+   ARRANQUE
+   Cada parte va aislada: si una falla en algún navegador, las
+   demás siguen andando. Antes un error en el cartel de horario
+   se llevaba puesto el menú y todos los botones de WhatsApp.
+   El menú va primero, porque sin él no se puede navegar.
+   ════════════════════════════════════════════════════════ */
+[
+  iniciarNav,
+  iniciarServicios,
+  iniciarGaleria,
+  iniciarAntesDespues,
+  iniciarContenido,
+  iniciarDatos,
+  enlazarWhatsapp,
+  iniciarReveal
+].forEach(paso => {
+  try {
+    paso();
+  } catch {
+    /* Un paso caído no puede frenar a los que siguen. */
+  }
+});
+
 if (menosMovimiento()) $$('.rv').forEach(el => el.classList.add('visible'));

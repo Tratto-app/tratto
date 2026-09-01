@@ -13,6 +13,7 @@ lapeluquerie/
 ├── assets/             fotos, identidad y tipografías autoalojadas
 ├── tests/e2e.mjs       suite end-to-end (93 chequeos)
 ├── tools/archivo-unico.py  arma el HTML autocontenido para mandar al cliente
+├── tools/prerender.mjs     deja ese HTML ya armado, para que ande sin JS
 ├── robots.txt
 └── sitemap.xml
 ```
@@ -56,7 +57,7 @@ npm i -D playwright && npx playwright install chromium
 node tests/e2e.mjs                    # en otra
 ```
 
-93 chequeos sobre Chromium: navegación y anchors, menú mobile, filtros y
+99 chequeos sobre Chromium: navegación y anchors, menú mobile, filtros y
 lightbox (teclado incluido), slider antes/después (mouse y teclado), los CTA de
 WhatsApp y sus mensajes contextuales, ausencia total de reservas online,
 datos reales del negocio en pantalla, accesibilidad (nombres accesibles, foco,
@@ -82,6 +83,12 @@ Dos cosas que el script resuelve y conviene no deshacer:
 - **Nada de `window.open`.** Los navegadores embebidos de Instagram y WhatsApp
   lo bloquean sin avisar y los botones no hacen nada. Todos los CTA del sitio
   son enlaces `<a href="https://wa.me/...">` con el mensaje ya armado.
+- **Los CTA no dependen del JavaScript.** El `href` de los botones fijos está
+  escrito en `index.html`, no lo pone el script. Si el número cambia en
+  `datos.js` hay que actualizarlo también ahí; hay un test que lo verifica.
+- **El archivo va pre-renderizado.** `prerender.mjs` guarda el HTML ya armado
+  adentro, así que aunque el visor bloquee los scripts la página se ve
+  completa y los 18 botones de WhatsApp funcionan igual.
 
 ## Fotos
 
