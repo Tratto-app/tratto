@@ -1364,7 +1364,10 @@
             <li>Sos responsable del trabajo que hacés.</li>
           </ul>
           <div class="declara-pie">Tratto cobra una comisión por usar la aplicación cuando cerrás un trabajo.</div>
-          <label class="tildar" for="p-declara">
+          <!-- Sin "for": el input ya está adentro del label, así que la
+               asociación existe sola. Ponerle además el for hace que Safari de
+               iPhone procese el toque dos veces y el tilde no quede nunca. -->
+          <label class="tildar">
             <input type="checkbox" id="p-declara">
             <span>Leí esto y estoy de acuerdo</span>
           </label>
