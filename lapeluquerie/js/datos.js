@@ -37,7 +37,7 @@ export const NEGOCIO = {
     { dias: 'Domingo y lunes', texto: 'Cerrado', schema: [],     abre: '',      cierra: '' }
   ],
 
-  dominio: 'https://[DOMINIO]'
+  dominio: 'https://lapeluquerie.com'
 };
 
 /* ============================================================
