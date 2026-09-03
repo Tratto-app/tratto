@@ -1,0 +1,5 @@
+# Lapeluquerie Studio Art
+User-agent: *
+Allow: /
+
+Sitemap: https://lapeluquerie.com/sitemap.xml

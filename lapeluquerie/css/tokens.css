@@ -1,0 +1,79 @@
+/* ============================================================
+   LAPELUQUERIE — tokens
+   Paleta del logo: negro cálido y hueso, con bronce de acento.
+   La impronta es sobria, no glamorosa: tipografía moderada,
+   secciones compactas y formas simples.
+   ============================================================ */
+
+:root{
+  /* ---------- Color ----------
+     El negro sale del logo y es el color estructural: nav, botones,
+     pie y cierre. El bronce aparece de a poco, nunca como dorado. */
+  --negro:    #0E0D0C;   /* superficies oscuras — el negro del logo */
+  --tinta:    #14120F;   /* texto principal */
+  --tinta-2:  #5C544A;   /* texto secundario — AA */
+  --tinta-3:  #6E6659;   /* texto de apoyo — AA */
+
+  --hueso:    #F5F1EA;   /* fondo principal */
+  --hueso-2:  #ECE5D9;   /* superficie alterna */
+  --realce:   #E4DACA;   /* chips y destacados suaves */
+  --arena:    #DED5C6;   /* fondo de imagen mientras carga */
+
+  --bronce:     #85592B; /* acento en texto — AA sobre hueso */
+  --bronce-med: #A97843; /* relleno secundario y anillo de foco */
+  --bronce-luz: #D9B98C; /* acento sobre fondo oscuro */
+
+  --linea:     #DED5C6;
+  --linea-2:   #C9BEA9;
+  --linea-osc: #2C2925;
+
+  /* ---------- Tipografía ----------
+     Fraunces con poca inclinación: serif cálida y legible, no didona
+     de revista. Karla para el texto corrido. */
+  --display: 'Fraunces', Georgia, 'Times New Roman', serif;
+  --texto:   'Karla', system-ui, -apple-system, 'Segoe UI', sans-serif;
+
+  --t-hero: clamp(2.35rem, 6.4vw, 3.6rem);
+  --t-h2:   clamp(1.7rem, 3.6vw, 2.4rem);
+  --t-h3:   clamp(1.18rem, 1.9vw, 1.45rem);
+  --t-h4:   clamp(1.02rem, 1.2vw, 1.14rem);
+  --t-body: clamp(1rem, 0.28vw + 0.95rem, 1.08rem);
+  --t-sm:   0.9375rem;
+  --t-xs:   0.8375rem;
+  --t-label: 0.72rem;
+
+  --tracking-label: 0.15em;
+  --leading-title: 1.18;
+  --leading-body: 1.66;
+
+  /* ---------- Espaciado ---------- */
+  --e1: 0.25rem;  --e2: 0.5rem;  --e3: 0.75rem;  --e4: 1rem;
+  --e5: 1.5rem;   --e6: 2rem;    --e7: 2.5rem;   --e8: 3.25rem;
+
+  --seccion-y: clamp(3rem, 6vw, 5rem);
+  --borde-x:   clamp(1.15rem, 4vw, 3.25rem);
+
+  /* ---------- Layout ---------- */
+  --ancho:    1140px;
+  --nav-h:    64px;
+  --sticky-h: 66px;
+  --sb: env(safe-area-inset-bottom, 0px);
+
+  /* ---------- Forma ----------
+     Radios chicos y parejos: prolijo sin pretensiones. */
+  --r-s: 4px;
+  --r-m: 8px;
+  --r-pill: 999px;
+
+  --sombra: 0 1px 2px rgba(20,18,15,.05), 0 8px 20px rgba(20,18,15,.06);
+  --sombra-alta: 0 3px 8px rgba(20,18,15,.08), 0 20px 44px rgba(20,18,15,.16);
+
+  /* ---------- Movimiento (poco y corto) ---------- */
+  --ease: cubic-bezier(.24,.6,.36,1);
+  --dur-2: .24s;
+  --dur-3: .42s;
+}
+
+@media (prefers-reduced-motion: reduce){
+  :root{ --dur-2:.01ms; --dur-3:.01ms; }
+}
