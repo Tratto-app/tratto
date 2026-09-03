@@ -504,6 +504,33 @@
   .presu-panel .btn.lleno{background:var(--laton-osc)}
   .presu-panel .btn.lleno:active:not(:disabled){background:#755D0D}
 
+  /* ═══════════ PAGAR EL PRESUPUESTO ═══════════ */
+  /* El pago se abre dentro de la misma tarjeta del presupuesto: la plata no se
+     despega del documento que la justifica. Es el espejo del panel con el que
+     el proveedor manda el presupuesto, pero en verde, que es el color del
+     cliente. */
+  .pago-panel{border-top:1px solid var(--linea);margin:16px -15px 0;padding:16px 15px 2px}
+  .pago-tit{font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:.17em;
+    text-transform:uppercase;color:var(--gris-2);margin-bottom:13px}
+  .pago-panel .campo{margin-bottom:12px}
+  /* Vencimiento y código van juntos: son un solo gesto al copiar de la tarjeta. */
+  .pago-fila{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+  /* Decir dónde viaja el dato de la tarjeta es lo que sostiene la confianza en
+     el momento más delicado de toda la app. */
+  .pago-seguro{display:flex;align-items:flex-start;gap:8px;font-size:11.5px;
+    line-height:1.45;color:var(--gris);margin:2px 0 14px}
+  .pago-seguro svg{width:13px;height:13px;flex:none;margin-top:2px;stroke:var(--verde)}
+  .pago-error{display:none;background:var(--alerta-luz);color:var(--alerta);
+    border-radius:var(--r-ch);padding:10px 12px;font-size:12.5px;line-height:1.45;margin-bottom:12px}
+  .pago-error.visible{display:block}
+  /* El segundo sello: el trato cerrado arriba, la plata firme abajo. */
+  .pago-firma{display:flex;align-items:center;gap:11px;margin-top:12px}
+  .pago-hilo{flex:1;height:1px;background:linear-gradient(90deg,var(--linea-fuerte),var(--laton))}
+  .pago-sello{font-family:'IBM Plex Mono',monospace;font-size:8.5px;letter-spacing:.16em;
+    text-transform:uppercase;color:var(--laton-osc);font-weight:600;
+    border:1px solid rgba(201,162,39,.5);border-radius:99px;padding:4px 10px;flex:none}
+  .pago-nota{font-size:11.5px;color:var(--gris);line-height:1.45;margin-top:10px}
+
   /* ═══════════ DECLARACIÓN ═══════════ */
   .declara{border:1px solid var(--linea-fuerte);border-radius:var(--r);padding:16px;
     background:var(--claro-2);margin-top:22px}
@@ -2494,8 +2521,35 @@ function presuHTML(m){
       acciones +
       '<div class="presu-firma"><span class="presu-hilo"></span>' +
         '<span class="presu-sello">Trato cerrado</span></div>' +
+      pagoHTML(m) +
       '<span class="hora">'+hora(m.created_at)+'</span>' +
     '</div></div>';
+}
+
+/* Lo que se ve del pago dentro del presupuesto, según en qué punto esté. Sólo
+   aparece cuando el trato ya está cerrado: antes de eso no hay nada que pagar. */
+function pagoHTML(m){
+  if(m.estado_presupuesto !== 'aceptado') return '';
+
+  if(m.pago_estado === 'reservado'){
+    return '<div class="pago-firma"><span class="pago-hilo"></span>' +
+      '<span class="pago-sello">Pago reservado</span></div>' +
+      '<div class="pago-nota">' + (miRol === 'cliente'
+        ? 'Ya está reservado en tu tarjeta. Se le paga al proveedor cuando des el trabajo por terminado.'
+        : 'El cliente ya reservó el pago. Vas a cobrarlo cuando dé el trabajo por terminado.') +
+      '</div>';
+  }
+  if(m.pago_estado === 'cobrado'){
+    return '<div class="pago-firma"><span class="pago-hilo"></span>' +
+      '<span class="pago-sello">Pago liberado</span></div>';
+  }
+  /* Sin pagar todavía: sólo el cliente puede hacer algo acá. */
+  if(miRol !== 'cliente') {
+    return '<div class="pago-nota">Esperando que el cliente reserve el pago.</div>';
+  }
+  return '<div class="presu-acciones">' +
+    '<button class="btn lleno" data-pagar-presu="'+m.id+'" data-monto="'+(m.monto||0)+'" ' +
+    'type="button">Pagar con tarjeta</button></div>';
 }
 
 function pintarMensajes(msgs, irAbajo){
@@ -2647,6 +2701,170 @@ $('ch-hilo').addEventListener('click', async (e) => {
     if(nuevoEstado === 'aceptado' && miRol === 'cliente') setTimeout(mostrarCalificar, 600);
   }catch(e){ console.error(e); }
 });
+
+/* ══════════════════ PAGAR EL PRESUPUESTO ══════════════════ */
+/* Los datos de la tarjeta no pasan por Tratto: el SDK de Mercado Pago los
+   cambia por un token de un solo uso contra sus propios servidores, y lo único
+   que sale de acá es ese token. El cobro en sí lo hace n8n, que es el único que
+   tiene el access_token del proveedor. */
+const URL_MP_CLAVE = 'https://marketplace-servicios.app.n8n.cloud/webhook/mp-clave';
+const URL_MP_PAGAR = 'https://marketplace-servicios.app.n8n.cloud/webhook/mp-pagar';
+
+let sdkMP = null, pagando = false;
+
+/* Volver a leer un presupuesto de la base y repintarlo. Lo usamos al cancelar y
+   al terminar de pagar, para que la tarjeta muestre lo que quedó guardado de
+   verdad y no lo que nosotros creemos que pasó. */
+async function repintarPresu(id){
+  try{
+    const [msg] = await api('mensajes?id=eq.'+id);
+    if(msg) actualizarPresu(msg);
+  }catch(e){ console.error(e); }
+}
+
+function cargarSdkMP(){
+  if(window.MercadoPago) return Promise.resolve();
+  return new Promise((ok, mal) => {
+    const s = document.createElement('script');
+    s.src = 'https://sdk.mercadopago.com/js/v2';
+    s.onload = ok;
+    s.onerror = () => mal(new Error('No se pudo cargar Mercado Pago'));
+    document.head.appendChild(s);
+  });
+}
+
+function panelPagoHTML(id, monto){
+  return '<div class="pago-panel" data-pago-panel="'+id+'">' +
+    '<div class="pago-tit">Pagar '+pesos(monto)+'</div>' +
+    '<div class="pago-seguro">' +
+      '<svg viewBox="0 0 24 24" fill="none" stroke-linecap="round" stroke-linejoin="round">' +
+      '<rect x="4" y="10.5" width="16" height="10" rx="2"/><path d="M8 10.5V7a4 4 0 0 1 8 0v3.5"/></svg>' +
+      '<span>Los datos de tu tarjeta viajan directo a Mercado Pago. Tratto no los ve ni los guarda.</span>' +
+    '</div>' +
+    '<div class="pago-error" data-pago-error></div>' +
+    '<div class="campo"><label>Número de la tarjeta</label>' +
+      '<input data-pago="numero" type="text" inputmode="numeric" autocomplete="cc-number" ' +
+      'maxlength="19" placeholder="1234 5678 9012 3456"></div>' +
+    '<div class="campo"><label>Nombre como figura en la tarjeta</label>' +
+      '<input data-pago="nombre" type="text" autocomplete="cc-name" placeholder="JUAN PEREZ"></div>' +
+    '<div class="pago-fila">' +
+      '<div class="campo"><label>Vencimiento</label>' +
+        '<input data-pago="vence" type="text" inputmode="numeric" autocomplete="cc-exp" ' +
+        'maxlength="5" placeholder="MM/AA"></div>' +
+      '<div class="campo"><label>Código</label>' +
+        '<input data-pago="cvv" type="text" inputmode="numeric" autocomplete="cc-csc" ' +
+        'maxlength="4" placeholder="123"></div>' +
+    '</div>' +
+    '<div class="campo"><label>DNI del titular</label>' +
+      '<input data-pago="dni" type="text" inputmode="numeric" maxlength="9" placeholder="30123456"></div>' +
+    '<button class="btn lleno" data-pago-confirmar="'+id+'" type="button">' +
+      '<span class="rueda"></span><span data-pago-txt>Reservar el pago</span></button>' +
+    '<button class="btn vacio-b" data-pago-cancelar type="button">Ahora no</button>' +
+    '</div>';
+}
+
+/* Abrir el formulario, cancelarlo y confirmarlo. Todo cuelga del hilo del chat
+   porque las tarjetas de presupuesto se repintan solas cuando llega un cambio. */
+$('ch-hilo').addEventListener('click', async e => {
+  const abrir = e.target.closest('[data-pagar-presu]');
+  if(abrir){
+    const id = Number(abrir.dataset.pagarPresu);
+    const tarjeta = document.querySelector('[data-presu="'+id+'"]');
+    if(!tarjeta || tarjeta.querySelector('[data-pago-panel]')) return;
+    const monto = Number(abrir.dataset.monto || 0);
+    abrir.closest('.presu-acciones').remove();
+    /* Antes de la hora, para que el pie de la tarjeta siga siendo el pie. */
+    tarjeta.querySelector('.presu-cuerpo .hora')
+      .insertAdjacentHTML('beforebegin', panelPagoHTML(id, monto));
+    $('ch-hilo').scrollTop = $('ch-hilo').scrollHeight;
+    return;
+  }
+  const cancelar = e.target.closest('[data-pago-cancelar]');
+  if(cancelar){
+    const id = Number(cancelar.closest('[data-pago-panel]').dataset.pagoPanel);
+    await repintarPresu(id);
+    return;
+  }
+  const confirmar = e.target.closest('[data-pago-confirmar]');
+  if(confirmar) await reservarPago(Number(confirmar.dataset.pagoConfirmar), confirmar);
+});
+
+async function reservarPago(id, boton){
+  if(pagando) return;
+  const panel = boton.closest('[data-pago-panel]');
+  const err   = panel.querySelector('[data-pago-error]');
+  const dato  = n => (panel.querySelector('[data-pago="'+n+'"]').value || '').trim();
+  const fallar = t => { err.textContent = t; err.classList.add('visible'); };
+
+  err.classList.remove('visible');
+  const numero = dato('numero').replace(/\D/g,'');
+  const vence  = dato('vence').replace(/\D/g,'');
+  const cvv    = dato('cvv'), nombre = dato('nombre'), dni = dato('dni').replace(/\D/g,'');
+
+  if(numero.length < 13)          return fallar('Revisá el número de la tarjeta.');
+  if(!nombre)                     return fallar('Poné el nombre como figura en la tarjeta.');
+  if(vence.length !== 4)          return fallar('El vencimiento va como MM/AA.');
+  if(cvv.length < 3)              return fallar('Revisá el código de seguridad.');
+  if(dni.length < 7)              return fallar('Revisá el DNI del titular.');
+
+  pagando = true;
+  boton.disabled = true; boton.classList.add('cargando');
+  panel.querySelector('[data-pago-txt]').textContent = 'Reservando…';
+
+  try{
+    /* 1. La clave pública del proveedor, que es con la que hay que tokenizar
+          para que la tarjeta quede a nombre de la cuenta que va a cobrar. */
+    const rc = await fetch(URL_MP_CLAVE, {
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({mensaje_id:id, token: sesion.access_token})
+    });
+    const clave = await rc.json().catch(() => null);
+    if(!rc.ok || !clave || !clave.public_key)
+      throw new Error((clave && clave.error) || 'El proveedor todavía no conectó su cuenta de Mercado Pago.');
+
+    /* 2. El SDK cambia la tarjeta por un token contra los servidores de
+          Mercado Pago. Los números nunca salen del navegador hacia nosotros. */
+    await cargarSdkMP();
+    if(!sdkMP) sdkMP = new window.MercadoPago(clave.public_key);
+    const medios = await sdkMP.getPaymentMethods({bin: numero.slice(0,8)});
+    const medio  = medios && medios.results && medios.results[0];
+    if(!medio) throw new Error('No reconocemos esa tarjeta. Probá con otra.');
+
+    const tk = await sdkMP.createCardToken({
+      cardNumber: numero,
+      cardholderName: nombre,
+      cardExpirationMonth: vence.slice(0,2),
+      cardExpirationYear: '20' + vence.slice(2,4),
+      securityCode: cvv,
+      identificationType: 'DNI',
+      identificationNumber: dni
+    });
+    if(!tk || !tk.id) throw new Error('Mercado Pago rechazó los datos de la tarjeta.');
+
+    /* 3. El cobro lo hace n8n: es el único lado con el access_token del
+          proveedor y el que calcula la comisión. */
+    const rp = await fetch(URL_MP_PAGAR, {
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({
+        mensaje_id: id, token: sesion.access_token,
+        card_token: tk.id, payment_method_id: medio.id
+      })
+    });
+    const pago = await rp.json().catch(() => null);
+    if(!rp.ok || !pago || pago.estado !== 'reservado')
+      throw new Error((pago && pago.detalle) || 'No se pudo reservar el pago. Probá con otra tarjeta.');
+
+    /* La fila ya quedó actualizada del lado del servidor: la releemos para
+       pintar el estado real y no una suposición nuestra. */
+    await repintarPresu(id);
+  }catch(ex){
+    console.error(ex);
+    fallar(ex.message || 'No se pudo reservar el pago.');
+    boton.disabled = false; boton.classList.remove('cargando');
+    const t = panel.querySelector('[data-pago-txt]');
+    if(t) t.textContent = 'Reservar el pago';
+  }finally{ pagando = false; }
+}
 
 $('ch-texto').addEventListener('input', e => {
   e.target.style.height = 'auto';
