@@ -852,6 +852,32 @@
   .emb-relleno.oro,.emb-relleno.gris{background:var(--verde)}
   .emb:last-child .emb-relleno{background:var(--laton)}
 
+  /* ═══════════ COBROS POR LA APP ═══════════ */
+  /* Una sola tarjeta que cambia de estado sin moverse de lugar: sin conectar es
+     una invitación, conectada es un comprobante sellado. Que no cambie de sitio
+     hace que conectar se sienta como algo que se completó, no como navegar. */
+  .cobros{background:var(--claro);border:1px solid var(--linea);border-radius:var(--r);
+    padding:19px 18px;box-shadow:var(--sombra)}
+  .cobros.puesta{border-color:rgba(30,93,73,.42);background:rgba(30,93,73,.045)}
+  .cobros-tit{font-family:'IBM Plex Sans Condensed',sans-serif;font-weight:700;
+    font-size:17px;letter-spacing:-.01em}
+  .cobros-txt{font-size:13px;color:var(--gris);margin-top:6px;line-height:1.5}
+  .cobros .btn{margin-top:15px}
+  /* Los datos de la cuenta van en Mono, como toda la metadata de la app. */
+  .cobros-datos{margin:16px 0 0;display:grid;gap:9px}
+  .cobros-dato{display:flex;justify-content:space-between;align-items:baseline;gap:14px}
+  .cobros-dato dt{font-family:'IBM Plex Mono',monospace;font-size:8.5px;letter-spacing:.17em;
+    text-transform:uppercase;color:var(--gris-2);flex:none}
+  .cobros-dato dd{margin:0;font-family:'IBM Plex Mono',monospace;font-size:11.5px;
+    color:var(--tinta);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  /* El mismo hilo con sello que cierra un presupuesto aceptado: cada vez que
+     algo de plata queda firme en la app, aparece esta misma firma. */
+  .cobros-firma{display:flex;align-items:center;gap:11px;margin-top:19px}
+  .cobros-hilo{flex:1;height:1px;background:linear-gradient(90deg,var(--linea-fuerte),var(--laton))}
+  .cobros-sello{font-family:'IBM Plex Mono',monospace;font-size:8.5px;letter-spacing:.16em;
+    text-transform:uppercase;color:var(--laton-osc);font-weight:600;
+    border:1px solid rgba(201,162,39,.5);border-radius:99px;padding:4px 10px;flex:none}
+
   /* ═══════════ XP DEL CLIENTE ═══════════ */
   .xp-caja{background:var(--noche);color:var(--claro);border-radius:var(--r);padding:20px;
     margin-top:20px;position:relative;overflow:hidden}
@@ -1445,6 +1471,9 @@
             <div class="kpi-nota" id="k-monto-nota">Suma de los presupuestos que te aceptaron</div>
           </div>
         </div>
+
+        <div class="sec"><span class="sec-tit">Cobros</span></div>
+        <div id="panel-cobros"></div>
 
         <div class="sec"><span class="sec-tit">Tu trayectoria</span></div>
         <div id="panel-medallas"></div>
@@ -3264,6 +3293,72 @@ $('ed-cred').addEventListener('click', abrirCredencial);
 $('ed-pub').addEventListener('click', abrirPublicacion);
 
 /* ══════════════════ PANEL DEL PROVEEDOR ══════════════════ */
+/* ══════════════════ COBROS POR LA APP ══════════════════ */
+/* El proveedor conecta su cuenta de Mercado Pago una sola vez. Desde ahí la app
+   puede cobrarle al cliente en su nombre y quedarse con la comisión de Tratto.
+   Todo el intercambio de credenciales lo hace un workflow de n8n: acá sólo
+   mandamos al proveedor a Mercado Pago y después leemos si quedó guardada. El
+   access_token nunca pasa por el navegador. */
+const MP_CLIENT_ID = '2631534334320257';
+const MP_REDIRECT  = 'https://marketplace-servicios.app.n8n.cloud/webhook/mp-conectar';
+
+/* El state viaja hasta n8n y vuelve: es cómo sabe a qué proveedor guardarle la
+   cuenta. Por eso mandamos el id del usuario de Supabase. */
+function urlConectarMP(){
+  return 'https://auth.mercadopago.com.ar/authorization?client_id=' + MP_CLIENT_ID +
+    '&response_type=code&platform_id=mp' +
+    '&redirect_uri=' + encodeURIComponent(MP_REDIRECT) +
+    '&state=' + encodeURIComponent(sesion.user.id);
+}
+
+function cobrosHTML(cuenta){
+  if(!cuenta){
+    return '<div class="cobros">' +
+      '<div class="cobros-tit">Cobrá por la app</div>' +
+      '<div class="cobros-txt">Conectá tu cuenta de Mercado Pago y el cliente va a poder ' +
+        'pagarte desde el chat, con tarjeta. La plata queda reservada cuando te acepta el ' +
+        'presupuesto y se te acredita cuando el trabajo está terminado.</div>' +
+      '<button class="btn lleno" id="cobros-conectar" type="button">Conectar Mercado Pago</button>' +
+      '</div>';
+  }
+  const desde = cuenta.created_at
+    ? new Date(cuenta.created_at).toLocaleDateString('es-AR',{day:'2-digit',month:'long',year:'numeric'})
+    : '—';
+  return '<div class="cobros puesta">' +
+    '<div class="cobros-tit">Ya podés cobrar por la app</div>' +
+    '<div class="cobros-txt">Tu cuenta está conectada. Cuando un cliente te acepte un ' +
+      'presupuesto, va a poder pagarlo desde el chat.</div>' +
+    '<dl class="cobros-datos">' +
+      '<div class="cobros-dato"><dt>Cuenta</dt><dd>'+esc(String(cuenta.mp_user_id||'—'))+'</dd></div>' +
+      '<div class="cobros-dato"><dt>Conectada</dt><dd>'+esc(desde)+'</dd></div>' +
+    '</dl>' +
+    '<div class="cobros-firma"><span class="cobros-hilo"></span>' +
+      '<span class="cobros-sello">Cobros habilitados</span></div>' +
+    '</div>';
+}
+
+async function cargarCobros(){
+  const c = $('panel-cobros');
+  if(!c) return;
+  let cuenta = null;
+  try{
+    const filas = await api('cuentas_mp?user_id=eq.'+sesion.user.id+'&select=mp_user_id,created_at');
+    cuenta = filas[0] || null;
+  }catch(e){ console.error(e); }
+  c.innerHTML = cobrosHTML(cuenta);
+}
+
+/* La conexión se abre en otra pestaña y termina en una pantalla de Mercado Pago,
+   así que no hay forma de que nos avise cuando volvió: relemos el estado cuando
+   el proveedor vuelve a mirar la app. */
+$('panel-cobros').addEventListener('click', e => {
+  if(!e.target.closest('#cobros-conectar')) return;
+  window.open(urlConectarMP(), '_blank', 'noopener');
+});
+document.addEventListener('visibilitychange', () => {
+  if(!document.hidden && sesion && actual === 'panel') cargarCobros();
+});
+
 async function cargarPanel(){
   $('panel-saludo').textContent = 'Hola, ' + ((sesion.user.email||'').split('@')[0]);
 
@@ -3278,6 +3373,7 @@ async function cargarPanel(){
   }
   $('panel-sin-perfil').innerHTML = '';
   $('panel-datos').classList.remove('oculto');
+  cargarCobros();
 
   let visitas = 0, leads = 0, presus = 0, cerrados = 0, monto = 0;
   try{
