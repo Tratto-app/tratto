@@ -1137,6 +1137,11 @@
         </div>
       </div>
 
+      <div id="perfil-cobros-sec" class="oculto">
+        <div class="sec"><span class="sec-tit">Cobros</span></div>
+        <div id="perfil-cobros"></div>
+      </div>
+
       <div class="sec"><span class="sec-tit">Servicios que ofrecés</span><span class="sec-num" id="n-perfiles"></span></div>
       <div id="lista-perfiles"></div>
       <button class="btn vacio-b" id="ir-proveedor" type="button" style="margin-top:12px">
@@ -2329,6 +2334,7 @@ async function cargarPerfiles(){
     console.error(e);
     $('lista-perfiles').innerHTML = cajaVacia('No se pudieron cargar','Tocá el botón de actualizar arriba a la derecha.','maleta');
   }
+  cargarCobros();
 }
 
 async function cargarConexiones(){
@@ -3318,7 +3324,7 @@ function cobrosHTML(cuenta){
       '<div class="cobros-txt">Conectá tu cuenta de Mercado Pago y el cliente va a poder ' +
         'pagarte desde el chat, con tarjeta. La plata queda reservada cuando te acepta el ' +
         'presupuesto y se te acredita cuando el trabajo está terminado.</div>' +
-      '<button class="btn lleno" id="cobros-conectar" type="button">Conectar Mercado Pago</button>' +
+      '<button class="btn lleno" data-cobros-conectar type="button">Conectar Mercado Pago</button>' +
       '</div>';
   }
   const desde = cuenta.created_at
@@ -3337,26 +3343,37 @@ function cobrosHTML(cuenta){
     '</div>';
 }
 
+/* La tarjeta vive en dos lados a propósito: en el Panel, que es donde el
+   proveedor mira cómo le va, y en Cuenta, que es donde uno espera encontrar la
+   configuración de la plata. Es la misma tarjeta pintada dos veces, no dos
+   componentes que se puedan desincronizar. */
 async function cargarCobros(){
-  const c = $('panel-cobros');
-  if(!c) return;
+  const destinos = ['panel-cobros','perfil-cobros'].map($).filter(Boolean);
+  if(!destinos.length) return;
   let cuenta = null;
   try{
     const filas = await api('cuentas_mp?user_id=eq.'+sesion.user.id+'&select=mp_user_id,created_at');
     cuenta = filas[0] || null;
   }catch(e){ console.error(e); }
-  c.innerHTML = cobrosHTML(cuenta);
+  const html = cobrosHTML(cuenta);
+  destinos.forEach(d => { d.innerHTML = html; });
+  /* En Cuenta la sección solo tiene sentido si la persona ofrece algo, igual
+     que "Servicios que ofrecés" justo debajo. */
+  const sec = $('perfil-cobros-sec');
+  if(sec) sec.classList.toggle('oculto', !misPerfiles.length);
 }
 
 /* La conexión se abre en otra pestaña y termina en una pantalla de Mercado Pago,
    así que no hay forma de que nos avise cuando volvió: relemos el estado cuando
    el proveedor vuelve a mirar la app. */
-$('panel-cobros').addEventListener('click', e => {
-  if(!e.target.closest('#cobros-conectar')) return;
-  window.open(urlConectarMP(), '_blank', 'noopener');
+['panel-cobros','perfil-cobros'].forEach(id => {
+  $(id).addEventListener('click', e => {
+    if(!e.target.closest('[data-cobros-conectar]')) return;
+    window.open(urlConectarMP(), '_blank', 'noopener');
+  });
 });
 document.addEventListener('visibilitychange', () => {
-  if(!document.hidden && sesion && actual === 'panel') cargarCobros();
+  if(!document.hidden && sesion && (actual === 'panel' || actual === 'perfil')) cargarCobros();
 });
 
 async function cargarPanel(){
