@@ -1,0 +1,6 @@
+User-agent: *
+Allow: /
+
+# Buscadores y asistentes de IA: el contenido de la home está en el HTML,
+# no hace falta ejecutar JavaScript para leerlo.
+Sitemap: https://lapeluquerie.com.ar/sitemap.xml
