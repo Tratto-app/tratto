@@ -432,9 +432,6 @@ em{font-style:italic}
   font-variation-settings:'SOFT' 12,'WONK' 0}
 .intro__bajada{font-size:clamp(1.05rem,1.3vw,1.24rem);color:var(--tinta-2);
   line-height:1.55;max-width:38ch}
-.intro__frase{font-family:var(--display);font-style:italic;font-weight:400;
-  font-size:clamp(1.02rem,1.25vw,1.2rem);line-height:1.5;color:var(--tinta);
-  max-width:36ch;padding-left:var(--e4);border-left:3px solid var(--bronce-med)}
 .intro__acciones{display:flex;flex-wrap:wrap;gap:var(--e3);width:100%}
 .intro__acciones .btn{flex:1 1 100%}
 @media (min-width:520px){.intro__acciones{width:auto}.intro__acciones .btn{flex:0 0 auto}}
@@ -581,7 +578,8 @@ em{font-style:italic}
 
 /* ═══ POR QUÉ VENIR ═══ */
 .motivos{display:grid;gap:var(--e4)}
-@media (min-width:760px){.motivos{grid-template-columns:repeat(3,1fr);gap:var(--e5)}}
+@media (min-width:760px){.motivos{grid-template-columns:repeat(auto-fit,minmax(16rem,1fr));
+  gap:var(--e5)}}
 .motivo{display:grid;gap:var(--e2);align-content:start;padding:var(--e5);
   border-radius:var(--r-m);background:var(--hueso);border:1px solid var(--linea)}
 .motivo__ico{width:40px;height:40px;border-radius:50%;background:var(--realce);
@@ -737,25 +735,24 @@ body.bloqueado{overflow:hidden}
       "dayOfWeek": ["Tuesday","Wednesday","Friday","Saturday"],
       "opens": "09:00", "closes": "18:00" },
     { "@type": "OpeningHoursSpecification",
-      "dayOfWeek": ["Thursday"], "opens": "12:00", "closes": "18:00" }
+      "dayOfWeek": ["Thursday"], "opens": "13:00", "closes": "18:00" }
   ],
   "hasOfferCatalog": {
     "@type": "OfferCatalog",
     "name": "Servicios",
     "itemListElement": [
       { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Color y retoque de raíz" } },
-      { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Mechitas e iluminación" } },
+      { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Contorno" } },
       { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Balayage" } },
-      { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Rubios y matizado" } },
       { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Arreglos de color" } },
-      { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Corte y brushing" } },
-      { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Hidratación" } },
-      { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Peinados para eventos" } }
+      { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Corte y rulos" } },
+      { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Tratamientos de pileta" } },
+      { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Peinados y maquillaje" } }
     ]
   }
 }
 </script>
-<style>.rv{opacity:1!important;transform:none!important}</style><script id="faq-schema" type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"¿Cómo pido un turno?","acceptedAnswer":{"@type":"Answer","text":"Por WhatsApp, desde cualquier botón de este sitio. El mensaje ya viene escrito según lo que estabas mirando, así no tenés que explicar todo de cero. Te contestamos con los días y horarios que tenemos libres."}},{"@type":"Question","name":"¿Dónde están?","acceptedAnswer":{"@type":"Answer","text":"En Luis Bataglia 572, Pilar, provincia de Buenos Aires. Desde la sección de ubicación podés abrir el mapa y llegar directo."}},{"@type":"Question","name":"¿Qué días atienden?","acceptedAnswer":{"@type":"Answer","text":"Martes, miércoles y viernes de 09:00 a 18:00; jueves de 12:00 a 18:00; sábados de 09:00 a 18:00. Domingos y lunes cerrado. Siempre con turno."}},{"@type":"Question","name":"¿Cuánto sale un color?","acceptedAnswer":{"@type":"Answer","text":"Depende del largo de tu pelo y de cómo esté hoy: no es lo mismo un retoque de raíz que un primer aclarado. Mandanos una foto por WhatsApp con luz de día y te pasamos el valor antes de que vengas."}},{"@type":"Question","name":"Tengo el pelo teñido y quiero ser rubia, ¿se puede de una?","acceptedAnswer":{"@type":"Answer","text":"A veces sí y a veces no, depende de qué tenga tu pelo de antes. Cuando hay color oscuro acumulado o decoloraciones viejas, lo más cuidadoso es hacerlo en dos veces. Lo vemos juntas antes de empezar y te decimos qué esperar."}},{"@type":"Question","name":"¿Puedo llevar una foto de lo que quiero?","acceptedAnswer":{"@type":"Answer","text":"Sí, y ayuda muchísimo. Traé también alguna de algo que no te gustaría. Con las dos cosas es mucho más fácil entender qué buscás, y te decimos con sinceridad qué tan cerca puede llegar tu pelo."}},{"@type":"Question","name":"¿Atienden pelo con canas?","acceptedAnswer":{"@type":"Answer","text":"Sí. Se puede cubrir del todo o disimularlas con reflejos, que es una opción para volver menos seguido. En la charla vemos qué te conviene según cada cuánto puedas venir."}},{"@type":"Question","name":"¿Hay que señar el turno?","acceptedAnswer":{"@type":"Answer","text":"Escribinos por WhatsApp y te contamos cómo lo manejamos según el servicio. Lo importante es avisar si no vas a poder venir, así le podemos dar el lugar a otra persona."}}]}</script></head>
+<style>.rv{opacity:1!important;transform:none!important}</style><script id="faq-schema" type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"¿Cómo pido un turno?","acceptedAnswer":{"@type":"Answer","text":"Por WhatsApp, desde cualquier botón de este sitio. El mensaje ya viene escrito según lo que estabas mirando, así no tenés que explicar todo de cero. Te contestamos con los días y horarios que tenemos libres."}},{"@type":"Question","name":"¿Dónde están?","acceptedAnswer":{"@type":"Answer","text":"En Luis Bataglia 572, Pilar, provincia de Buenos Aires. Desde la sección de ubicación podés abrir el mapa y llegar directo."}},{"@type":"Question","name":"¿Qué días atienden?","acceptedAnswer":{"@type":"Answer","text":"Martes, miércoles y viernes de 09:00 a 18:00; jueves de 13:00 a 18:00; sábados de 09:00 a 18:00. Domingos y lunes cerrado. Siempre con turno."}},{"@type":"Question","name":"¿Cuánto sale un color?","acceptedAnswer":{"@type":"Answer","text":"Depende del largo y de la cantidad de pelo. Por teléfono te pasamos un presupuesto estimativo, pero el real lo damos en la visita: las fotos muchas veces no muestran cómo está el pelo en realidad."}},{"@type":"Question","name":"Tengo el pelo teñido y quiero ser rubia, ¿se puede de una?","acceptedAnswer":{"@type":"Answer","text":"A veces sí y a veces no, depende de qué tenga tu pelo de antes. Cuando hay color oscuro acumulado o decoloraciones viejas, lo más cuidadoso es hacerlo en dos veces. Lo vemos juntas antes de empezar y te decimos qué esperar."}},{"@type":"Question","name":"¿Puedo llevar una foto de lo que quiero?","acceptedAnswer":{"@type":"Answer","text":"Sí, y ayuda muchísimo. Traé también alguna de algo que no te gustaría. Con las dos cosas es mucho más fácil entender qué buscás, y te decimos con sinceridad qué tan cerca puede llegar tu pelo."}},{"@type":"Question","name":"¿Atienden pelo con canas?","acceptedAnswer":{"@type":"Answer","text":"Sí. Se puede cubrir del todo o disimularlas con reflejos, que es una opción para volver menos seguido. En la charla vemos qué te conviene según cada cuánto puedas venir."}},{"@type":"Question","name":"¿Hay que señar el turno?","acceptedAnswer":{"@type":"Answer","text":"Escribinos por WhatsApp y te contamos cómo lo manejamos según el servicio. Lo importante es avisar si no vas a poder venir, así le podemos dar el lugar a otra persona."}}]}</script></head>
 
 <body>
 <a class="saltar" href="#contenido">Saltar al contenido</a>
@@ -814,10 +811,6 @@ body.bloqueado{overflow:hidden}
       <p class="label">Peluquería en <span data-campo="zona">Pilar</span></p>
       <h1>Lapeluquerie</h1>
       <p class="intro__bajada">Color, cortes y cuidado del pelo en Pilar.</p>
-      <p class="intro__frase">
-        Charlamos, miramos cómo está tu pelo y buscamos juntas
-        un resultado que te guste y puedas mantener.
-      </p>
       <div class="intro__acciones">
         <a class="btn" data-wa="general" href="https://wa.me/5492304356392?text=Hola!%20Quer%C3%ADa%20hacerte%20una%20consulta." target="_blank" rel="noopener noreferrer">Hablame por WhatsApp</a>
         <a class="btn btn--suave" href="#trabajos">Ver trabajos</a>
@@ -843,10 +836,11 @@ body.bloqueado{overflow:hidden}
 <section class="seccion s-hueso-2" id="servicios" aria-labelledby="t-servicios">
   <div class="env">
     <div class="cabecera rv">
-      <h2 class="h2" id="t-servicios">Lo que hacemos</h2>
+      <h2 class="h2" id="t-servicios">Quiénes somos</h2>
       <p class="entrada">
-        Si no sabés bien qué pedir, no importa: escribinos y lo vemos juntas.
-        Muchas veces lo que se necesita no es lo que uno pensaba al principio.
+        Somos un equipo que decide cada trabajo junto con la clienta, dentro de lo que
+        permite el estado del cabello. Acá todas trabajamos para el mismo objetivo:
+        somos familia, y cuando el trabajo sale bien nos beneficia a todas.
       </p>
     </div>
 
@@ -854,7 +848,7 @@ body.bloqueado{overflow:hidden}
     <article class="serv rv">
       <h3 class="serv__nombre">Color y raíz</h3>
       <div class="serv__texto">
-        <p>Cobertura de canas o cambio de tono, con el color elegido entre las dos. Si venís seguido, vamos retocando solo la raíz para no castigar el largo.</p>
+        <p>Cobertura de canas y cambio de tono. El color lo elegimos entre las dos, y trabajamos con primeras marcas en todo el servicio.</p>
         
       </div>
       <a class="serv__consulta" data-wa="servicio" data-ref="color" href="https://wa.me/5492304356392?text=Hola!%20Quer%C3%ADa%20consultarte%20por%20color%20y%20ra%C3%ADz." target="_blank" rel="noopener noreferrer">
@@ -862,12 +856,12 @@ body.bloqueado{overflow:hidden}
       </a>
     </article>
     <article class="serv rv">
-      <h3 class="serv__nombre">Mechitas e iluminación</h3>
+      <h3 class="serv__nombre">Contorno</h3>
       <div class="serv__texto">
         <p>Un poco de luz alrededor de la cara y en el largo, sin cambiar tu color de base. Es lo que más piden las que quieren un cambio pero sin animarse a tanto.</p>
         
       </div>
-      <a class="serv__consulta" data-wa="servicio" data-ref="mechitas" href="https://wa.me/5492304356392?text=Hola!%20Quer%C3%ADa%20consultarte%20por%20mechitas%20e%20iluminaci%C3%B3n." target="_blank" rel="noopener noreferrer">
+      <a class="serv__consulta" data-wa="servicio" data-ref="mechitas" href="https://wa.me/5492304356392?text=Hola!%20Quer%C3%ADa%20consultarte%20por%20contorno." target="_blank" rel="noopener noreferrer">
         Consultame <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2.5 8h11M9.5 4l4 4-4 4"></path></svg>
       </a>
     </article>
@@ -882,19 +876,9 @@ body.bloqueado{overflow:hidden}
       </a>
     </article>
     <article class="serv rv">
-      <h3 class="serv__nombre">Rubios y matizado</h3>
-      <div class="serv__texto">
-        <p>Si querés un rubio sin tonos anaranjados, vemos hasta dónde podemos llegar hoy cuidando tu pelo, y lo matizamos hasta el tono que te gusta.</p>
-        
-      </div>
-      <a class="serv__consulta" data-wa="servicio" data-ref="rubios" href="https://wa.me/5492304356392?text=Hola!%20Quer%C3%ADa%20consultarte%20por%20rubios%20y%20matizado." target="_blank" rel="noopener noreferrer">
-        Consultame <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2.5 8h11M9.5 4l4 4-4 4"></path></svg>
-      </a>
-    </article>
-    <article class="serv rv">
       <h3 class="serv__nombre">Arreglos de color</h3>
       <div class="serv__texto">
-        <p>Un color que quedó desparejo, mechas viejas o un tono que no era el que pediste. Se puede arreglar: primero miramos qué tiene el pelo y después vemos si sale en una vez o en dos.</p>
+        <p>Un color que quedó desparejo, mechas viejas o un tono que no era el que pediste: se puede arreglar. Priorizando siempre la calidad del cabello, porque muchas veces hay que volver atrás para empezar de nuevo y evaluar qué es posible.</p>
         
       </div>
       <a class="serv__consulta" data-wa="servicio" data-ref="correccion" href="https://wa.me/5492304356392?text=Hola!%20Quer%C3%ADa%20consultarte%20por%20arreglos%20de%20color." target="_blank" rel="noopener noreferrer">
@@ -902,41 +886,41 @@ body.bloqueado{overflow:hidden}
       </a>
     </article>
     <article class="serv rv">
-      <h3 class="serv__nombre">Corte y brushing</h3>
+      <h3 class="serv__nombre">Corte y rulos</h3>
       <div class="serv__texto">
-        <p>Antes de cortar te pregunto cuánto tiempo le dedicás al pelo a la mañana. De ahí salen el largo y las capas, para que después lo puedas peinar sola.</p>
+        <p>Especialización en rulos y cortes en tendencia. Antes de cortar te preguntamos cuánto tiempo le dedicás al pelo a la mañana: de ahí salen el largo y las capas, para que después lo puedas peinar sola.</p>
         
       </div>
-      <a class="serv__consulta" data-wa="servicio" data-ref="corte" href="https://wa.me/5492304356392?text=Hola!%20Quer%C3%ADa%20consultarte%20por%20corte%20y%20brushing." target="_blank" rel="noopener noreferrer">
+      <a class="serv__consulta" data-wa="servicio" data-ref="corte" href="https://wa.me/5492304356392?text=Hola!%20Quer%C3%ADa%20consultarte%20por%20corte%20y%20rulos." target="_blank" rel="noopener noreferrer">
         Consultame <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2.5 8h11M9.5 4l4 4-4 4"></path></svg>
       </a>
     </article>
     <article class="serv rv">
-      <h3 class="serv__nombre">Hidratación</h3>
+      <h3 class="serv__nombre">Tratamientos de pileta</h3>
       <div class="serv__texto">
-        <p>Se hace en el mismo turno, después del color, para que el largo quede suave y más fácil de peinar. Va bien sobre todo si venís de decoloraciones.</p>
+        <p>Nos acompañan las mejores marcas: Olaplex, Schwarzkopf y Framesi. Después de un trabajo químico la terminación es lo que distingue un buen resultado, así que el tratamiento va en el mismo turno.</p>
         
       </div>
-      <a class="serv__consulta" data-wa="servicio" data-ref="tratamiento" href="https://wa.me/5492304356392?text=Hola!%20Quer%C3%ADa%20consultarte%20por%20hidrataci%C3%B3n." target="_blank" rel="noopener noreferrer">
+      <a class="serv__consulta" data-wa="servicio" data-ref="tratamiento" href="https://wa.me/5492304356392?text=Hola!%20Quer%C3%ADa%20consultarte%20por%20tratamientos%20de%20pileta." target="_blank" rel="noopener noreferrer">
         Consultame <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2.5 8h11M9.5 4l4 4-4 4"></path></svg>
       </a>
     </article>
     <article class="serv rv">
-      <h3 class="serv__nombre">Peinados y eventos</h3>
+      <h3 class="serv__nombre">Peinados y maquillaje</h3>
       <div class="serv__texto">
-        <p>Recogidos, semirecogidos y ondas para casamientos, fiestas o el civil. Si es algo importante, conviene una prueba antes para llegar tranquilas al día.</p>
+        <p>Recogidos, semirecogidos, peinados y maquillaje que duran toda la noche. Para casamientos, fiestas y civiles conviene una prueba previa, así llegamos al día con todo definido y sin apuro.</p>
         
       </div>
-      <a class="serv__consulta" data-wa="servicio" data-ref="eventos" href="https://wa.me/5492304356392?text=Hola!%20Quer%C3%ADa%20consultarte%20por%20peinados%20y%20eventos." target="_blank" rel="noopener noreferrer">
+      <a class="serv__consulta" data-wa="servicio" data-ref="eventos" href="https://wa.me/5492304356392?text=Hola!%20Quer%C3%ADa%20consultarte%20por%20peinados%20y%20maquillaje." target="_blank" rel="noopener noreferrer">
         Consultame <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2.5 8h11M9.5 4l4 4-4 4"></path></svg>
       </a>
     </article></div>
 
     <div class="servicios__nota rv">
       <p>
-        Los precios dependen del largo de tu pelo y de cómo esté hoy, así que
-        preferimos pasártelos antes de que vengas. Mandanos una foto con luz de día
-        y te contamos.
+        Los precios dependen del largo y de la cantidad de pelo. Por teléfono te pasamos
+        un presupuesto estimativo, pero el real lo damos en la visita: las fotos muchas
+        veces no muestran cómo está el pelo en realidad.
       </p>
       <a class="btn" data-wa="precios" href="https://wa.me/5492304356392?text=Hola!%20Quer%C3%ADa%20consultarte%20precios%20y%20qu%C3%A9%20d%C3%ADas%20ten%C3%A9s%20lugar." target="_blank" rel="noopener noreferrer">Consultar precios</a>
     </div>
@@ -1095,14 +1079,9 @@ body.bloqueado{overflow:hidden}
     <article class="motivo rv rv-d0">
       <span class="motivo__ico" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12a8 8 0 0 1-11.6 7.1L3 21l1.9-6.4A8 8 0 1 1 21 12Z"></path></svg></span>
       <h3 class="h4">Te escuchamos primero</h3>
-      <p>Nadie se sienta en la silla sin que antes hablemos de lo que querés. Preguntá todo lo que necesites, sin apuro.</p>
+      <p>Preguntá todo lo que quieras, sin apuro, para que podamos entender tu idea y la nuestra, sin fantasías.</p>
     </article>
     <article class="motivo rv rv-d1">
-      <span class="motivo__ico" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><path d="M12 7.5V12l3 2"></path></svg></span>
-      <h3 class="h4">Un turno por vez</h3>
-      <p>Trabajamos con turno para poder dedicarle el tiempo que cada pelo necesita, sin que estés esperando.</p>
-    </article>
-    <article class="motivo rv rv-d2">
       <span class="motivo__ico" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 20s-7.5-4.7-7.5-9.6A4.4 4.4 0 0 1 12 7.6a4.4 4.4 0 0 1 7.5 2.8C19.5 15.3 12 20 12 20Z"></path></svg></span>
       <h3 class="h4">Te decimos la verdad</h3>
       <p>Si lo que pediste no le va a quedar bien a tu pelo, te lo decimos y buscamos algo que sí te guste y puedas mantener.</p>
@@ -1194,11 +1173,11 @@ body.bloqueado{overflow:hidden}
     </details>
     <details class="faq__item">
       <summary>¿Qué días atienden?<span class="faq__icono" aria-hidden="true"></span></summary>
-      <div class="faq__resp"><p>Martes, miércoles y viernes de 09:00 a 18:00; jueves de 12:00 a 18:00; sábados de 09:00 a 18:00. Domingos y lunes cerrado. Siempre con turno.</p></div>
+      <div class="faq__resp"><p>Martes, miércoles y viernes de 09:00 a 18:00; jueves de 13:00 a 18:00; sábados de 09:00 a 18:00. Domingos y lunes cerrado. Siempre con turno.</p></div>
     </details>
     <details class="faq__item">
       <summary>¿Cuánto sale un color?<span class="faq__icono" aria-hidden="true"></span></summary>
-      <div class="faq__resp"><p>Depende del largo de tu pelo y de cómo esté hoy: no es lo mismo un retoque de raíz que un primer aclarado. Mandanos una foto por WhatsApp con luz de día y te pasamos el valor antes de que vengas.</p></div>
+      <div class="faq__resp"><p>Depende del largo y de la cantidad de pelo. Por teléfono te pasamos un presupuesto estimativo, pero el real lo damos en la visita: las fotos muchas veces no muestran cómo está el pelo en realidad.</p></div>
     </details>
     <details class="faq__item">
       <summary>Tengo el pelo teñido y quiero ser rubia, ¿se puede de una?<span class="faq__icono" aria-hidden="true"></span></summary>
@@ -1237,14 +1216,14 @@ body.bloqueado{overflow:hidden}
         <div class="dato">
           <span class="dato__k">Horarios</span>
           <ul class="horarios dato__v">
-    <li class="hoy">
+    <li>
       <span>Martes</span><span>09:00 – 18:00</span>
     </li>
     <li>
       <span>Miércoles</span><span>09:00 – 18:00</span>
     </li>
-    <li>
-      <span>Jueves</span><span>12:00 – 18:00</span>
+    <li class="hoy">
+      <span>Jueves</span><span>13:00 – 18:00</span>
     </li>
     <li>
       <span>Viernes</span><span>09:00 – 18:00</span>
@@ -1397,7 +1376,7 @@ const NEGOCIO = {
   horarios: [
     { dias: 'Martes',    texto: '09:00 – 18:00', schema: ['Tu'], abre: '09:00', cierra: '18:00' },
     { dias: 'Miércoles', texto: '09:00 – 18:00', schema: ['We'], abre: '09:00', cierra: '18:00' },
-    { dias: 'Jueves',    texto: '12:00 – 18:00', schema: ['Th'], abre: '12:00', cierra: '18:00' },
+    { dias: 'Jueves',    texto: '13:00 – 18:00', schema: ['Th'], abre: '13:00', cierra: '18:00' },
     { dias: 'Viernes',   texto: '09:00 – 18:00', schema: ['Fr'], abre: '09:00', cierra: '18:00' },
     { dias: 'Sábado',    texto: '09:00 – 18:00', schema: ['Sa'], abre: '09:00', cierra: '18:00' },
     { dias: 'Domingo y lunes', texto: 'Cerrado', schema: [],     abre: '',      cierra: '' }
@@ -1419,13 +1398,13 @@ const SERVICIOS = [
   {
     id: 'color',
     nombre: 'Color y raíz',
-    texto: 'Cobertura de canas o cambio de tono, con el color elegido entre las dos. Si venís seguido, vamos retocando solo la raíz para no castigar el largo.',
-    tags: ['Canas', 'Retoque de raíz'],
+    texto: 'Cobertura de canas y cambio de tono. El color lo elegimos entre las dos, y trabajamos con primeras marcas en todo el servicio.',
+    tags: ['Canas', 'Retoque de raíz', 'Primeras marcas'],
     duracion: null, precio: null,
   },
   {
     id: 'mechitas',
-    nombre: 'Mechitas e iluminación',
+    nombre: 'Contorno',
     texto: 'Un poco de luz alrededor de la cara y en el largo, sin cambiar tu color de base. Es lo que más piden las que quieren un cambio pero sin animarse a tanto.',
     tags: ['Babylights', 'Reflejos'],
     duracion: null, precio: null,
@@ -1438,38 +1417,31 @@ const SERVICIOS = [
     duracion: null, precio: null,
   },
   {
-    id: 'rubios',
-    nombre: 'Rubios y matizado',
-    texto: 'Si querés un rubio sin tonos anaranjados, vemos hasta dónde podemos llegar hoy cuidando tu pelo, y lo matizamos hasta el tono que te gusta.',
-    tags: ['Rubio frío', 'Matizado'],
-    duracion: null, precio: null,
-  },
-  {
     id: 'correccion',
     nombre: 'Arreglos de color',
-    texto: 'Un color que quedó desparejo, mechas viejas o un tono que no era el que pediste. Se puede arreglar: primero miramos qué tiene el pelo y después vemos si sale en una vez o en dos.',
+    texto: 'Un color que quedó desparejo, mechas viejas o un tono que no era el que pediste: se puede arreglar. Priorizando siempre la calidad del cabello, porque muchas veces hay que volver atrás para empezar de nuevo y evaluar qué es posible.',
     tags: ['Sacar el naranja', 'Emparejar'],
     duracion: null, precio: null,
   },
   {
     id: 'corte',
-    nombre: 'Corte y brushing',
-    texto: 'Antes de cortar te pregunto cuánto tiempo le dedicás al pelo a la mañana. De ahí salen el largo y las capas, para que después lo puedas peinar sola.',
-    tags: ['Corte', 'Brushing'],
+    nombre: 'Corte y rulos',
+    texto: 'Especialización en rulos y cortes en tendencia. Antes de cortar te preguntamos cuánto tiempo le dedicás al pelo a la mañana: de ahí salen el largo y las capas, para que después lo puedas peinar sola.',
+    tags: ['Rulos', 'Cortes en tendencia'],
     duracion: null, precio: null,
   },
   {
     id: 'tratamiento',
-    nombre: 'Hidratación',
-    texto: 'Se hace en el mismo turno, después del color, para que el largo quede suave y más fácil de peinar. Va bien sobre todo si venís de decoloraciones.',
-    tags: ['Después del color', 'Suavidad'],
+    nombre: 'Tratamientos de pileta',
+    texto: 'Nos acompañan las mejores marcas: Olaplex, Schwarzkopf y Framesi. Después de un trabajo químico la terminación es lo que distingue un buen resultado, así que el tratamiento va en el mismo turno.',
+    tags: ['Olaplex', 'Schwarzkopf', 'Framesi'],
     duracion: null, precio: null,
   },
   {
     id: 'eventos',
-    nombre: 'Peinados y eventos',
-    texto: 'Recogidos, semirecogidos y ondas para casamientos, fiestas o el civil. Si es algo importante, conviene una prueba antes para llegar tranquilas al día.',
-    tags: ['Casamientos', 'Con prueba previa'],
+    nombre: 'Peinados y maquillaje',
+    texto: 'Recogidos, semirecogidos, peinados y maquillaje que duran toda la noche. Para casamientos, fiestas y civiles conviene una prueba previa, así llegamos al día con todo definido y sin apuro.',
+    tags: ['Casamientos', 'Maquillaje', 'Con prueba previa'],
     duracion: null, precio: null,
   }
 ];
@@ -1520,9 +1492,7 @@ const PASOS = [
 
 const MOTIVOS = [
   { ico: 'charla', t: 'Te escuchamos primero',
-    d: 'Nadie se sienta en la silla sin que antes hablemos de lo que querés. Preguntá todo lo que necesites, sin apuro.' },
-  { ico: 'reloj', t: 'Un turno por vez',
-    d: 'Trabajamos con turno para poder dedicarle el tiempo que cada pelo necesita, sin que estés esperando.' },
+    d: 'Preguntá todo lo que quieras, sin apuro, para que podamos entender tu idea y la nuestra, sin fantasías.' },
   { ico: 'corazon', t: 'Te decimos la verdad',
     d: 'Si lo que pediste no le va a quedar bien a tu pelo, te lo decimos y buscamos algo que sí te guste y puedas mantener.' }
 ];
@@ -1557,9 +1527,9 @@ const FAQ = [
   { q: '¿Dónde están?',
     a: 'En Luis Bataglia 572, Pilar, provincia de Buenos Aires. Desde la sección de ubicación podés abrir el mapa y llegar directo.' },
   { q: '¿Qué días atienden?',
-    a: 'Martes, miércoles y viernes de 09:00 a 18:00; jueves de 12:00 a 18:00; sábados de 09:00 a 18:00. Domingos y lunes cerrado. Siempre con turno.' },
+    a: 'Martes, miércoles y viernes de 09:00 a 18:00; jueves de 13:00 a 18:00; sábados de 09:00 a 18:00. Domingos y lunes cerrado. Siempre con turno.' },
   { q: '¿Cuánto sale un color?',
-    a: 'Depende del largo de tu pelo y de cómo esté hoy: no es lo mismo un retoque de raíz que un primer aclarado. Mandanos una foto por WhatsApp con luz de día y te pasamos el valor antes de que vengas.' },
+    a: 'Depende del largo y de la cantidad de pelo. Por teléfono te pasamos un presupuesto estimativo, pero el real lo damos en la visita: las fotos muchas veces no muestran cómo está el pelo en realidad.' },
   { q: 'Tengo el pelo teñido y quiero ser rubia, ¿se puede de una?',
     a: 'A veces sí y a veces no, depende de qué tenga tu pelo de antes. Cuando hay color oscuro acumulado o decoloraciones viejas, lo más cuidadoso es hacerlo en dos veces. Lo vemos juntas antes de empezar y te decimos qué esperar.' },
   { q: '¿Puedo llevar una foto de lo que quiero?',
@@ -1609,7 +1579,6 @@ const ICO = {
   arrastrar:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 6 4 12l5 6M15 6l5 6-5 6"/></svg>',
   estrella:'<svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path d="M10 1.5l2.47 5.3 5.53.66-4.1 3.9 1.09 5.64L10 14.3l-4.99 2.7 1.09-5.64-4.1-3.9 5.53-.66L10 1.5Z"/></svg>',
   charla:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12a8 8 0 0 1-11.6 7.1L3 21l1.9-6.4A8 8 0 1 1 21 12Z"/></svg>',
-  reloj:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7.5V12l3 2"/></svg>',
   corazon:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 20s-7.5-4.7-7.5-9.6A4.4 4.4 0 0 1 12 7.6a4.4 4.4 0 0 1 7.5 2.8C19.5 15.3 12 20 12 20Z"/></svg>'
 };
 const estrellas = n => Number.isFinite(n)

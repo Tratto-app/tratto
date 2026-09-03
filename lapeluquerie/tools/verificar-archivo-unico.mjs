@@ -39,10 +39,10 @@ for (const [nombre, conJs] of [['con JavaScript', true], ['sin JavaScript', fals
      (await p.$$eval('img', is => is.filter(i => !i.getAttribute('src') && !i.closest('.lb')).length)) === 0);
   const wa = await p.$$eval('[data-wa]', as => as.map(a => a.getAttribute('href')));
   ok(`Los ${wa.length} CTA apuntan a wa.me`,
-     wa.length >= 18 && wa.every(h => /^https:\/\/wa\.me\/5492304356392\?text=/.test(h)),
+     wa.length >= 12 && wa.every(h => /^https:\/\/wa\.me\/5492304356392\?text=/.test(h)),
      wa.filter(h => !/^https:\/\/wa\.me\//.test(h)).slice(0, 2).join(' | '));
   ok('Contenido completo',
-     (await p.$$('.serv')).length === 8 && (await p.$$('.gitem')).length === 6 &&
+     (await p.$$('.serv')).length === 7 && (await p.$$('.gitem')).length === 6 &&
      (await p.$$('.paso')).length === 6 && (await p.$$('.faq__item')).length === 8);
   await ctx.close();
 }

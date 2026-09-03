@@ -31,7 +31,7 @@ export const NEGOCIO = {
   horarios: [
     { dias: 'Martes',    texto: '09:00 – 18:00', schema: ['Tu'], abre: '09:00', cierra: '18:00' },
     { dias: 'Miércoles', texto: '09:00 – 18:00', schema: ['We'], abre: '09:00', cierra: '18:00' },
-    { dias: 'Jueves',    texto: '12:00 – 18:00', schema: ['Th'], abre: '12:00', cierra: '18:00' },
+    { dias: 'Jueves',    texto: '13:00 – 18:00', schema: ['Th'], abre: '13:00', cierra: '18:00' },
     { dias: 'Viernes',   texto: '09:00 – 18:00', schema: ['Fr'], abre: '09:00', cierra: '18:00' },
     { dias: 'Sábado',    texto: '09:00 – 18:00', schema: ['Sa'], abre: '09:00', cierra: '18:00' },
     { dias: 'Domingo y lunes', texto: 'Cerrado', schema: [],     abre: '',      cierra: '' }
@@ -53,13 +53,13 @@ export const SERVICIOS = [
   {
     id: 'color',
     nombre: 'Color y raíz',
-    texto: 'Cobertura de canas o cambio de tono, con el color elegido entre las dos. Si venís seguido, vamos retocando solo la raíz para no castigar el largo.',
-    tags: ['Canas', 'Retoque de raíz'],
+    texto: 'Cobertura de canas y cambio de tono. El color lo elegimos entre las dos, y trabajamos con primeras marcas en todo el servicio.',
+    tags: ['Canas', 'Retoque de raíz', 'Primeras marcas'],
     duracion: null, precio: null,
   },
   {
     id: 'mechitas',
-    nombre: 'Mechitas e iluminación',
+    nombre: 'Contorno',
     texto: 'Un poco de luz alrededor de la cara y en el largo, sin cambiar tu color de base. Es lo que más piden las que quieren un cambio pero sin animarse a tanto.',
     tags: ['Babylights', 'Reflejos'],
     duracion: null, precio: null,
@@ -72,38 +72,31 @@ export const SERVICIOS = [
     duracion: null, precio: null,
   },
   {
-    id: 'rubios',
-    nombre: 'Rubios y matizado',
-    texto: 'Si querés un rubio sin tonos anaranjados, vemos hasta dónde podemos llegar hoy cuidando tu pelo, y lo matizamos hasta el tono que te gusta.',
-    tags: ['Rubio frío', 'Matizado'],
-    duracion: null, precio: null,
-  },
-  {
     id: 'correccion',
     nombre: 'Arreglos de color',
-    texto: 'Un color que quedó desparejo, mechas viejas o un tono que no era el que pediste. Se puede arreglar: primero miramos qué tiene el pelo y después vemos si sale en una vez o en dos.',
+    texto: 'Un color que quedó desparejo, mechas viejas o un tono que no era el que pediste: se puede arreglar. Priorizando siempre la calidad del cabello, porque muchas veces hay que volver atrás para empezar de nuevo y evaluar qué es posible.',
     tags: ['Sacar el naranja', 'Emparejar'],
     duracion: null, precio: null,
   },
   {
     id: 'corte',
-    nombre: 'Corte y brushing',
-    texto: 'Antes de cortar te pregunto cuánto tiempo le dedicás al pelo a la mañana. De ahí salen el largo y las capas, para que después lo puedas peinar sola.',
-    tags: ['Corte', 'Brushing'],
+    nombre: 'Corte y rulos',
+    texto: 'Especialización en rulos y cortes en tendencia. Antes de cortar te preguntamos cuánto tiempo le dedicás al pelo a la mañana: de ahí salen el largo y las capas, para que después lo puedas peinar sola.',
+    tags: ['Rulos', 'Cortes en tendencia'],
     duracion: null, precio: null,
   },
   {
     id: 'tratamiento',
-    nombre: 'Hidratación',
-    texto: 'Se hace en el mismo turno, después del color, para que el largo quede suave y más fácil de peinar. Va bien sobre todo si venís de decoloraciones.',
-    tags: ['Después del color', 'Suavidad'],
+    nombre: 'Tratamientos de pileta',
+    texto: 'Nos acompañan las mejores marcas: Olaplex, Schwarzkopf y Framesi. Después de un trabajo químico la terminación es lo que distingue un buen resultado, así que el tratamiento va en el mismo turno.',
+    tags: ['Olaplex', 'Schwarzkopf', 'Framesi'],
     duracion: null, precio: null,
   },
   {
     id: 'eventos',
-    nombre: 'Peinados y eventos',
-    texto: 'Recogidos, semirecogidos y ondas para casamientos, fiestas o el civil. Si es algo importante, conviene una prueba antes para llegar tranquilas al día.',
-    tags: ['Casamientos', 'Con prueba previa'],
+    nombre: 'Peinados y maquillaje',
+    texto: 'Recogidos, semirecogidos, peinados y maquillaje que duran toda la noche. Para casamientos, fiestas y civiles conviene una prueba previa, así llegamos al día con todo definido y sin apuro.',
+    tags: ['Casamientos', 'Maquillaje', 'Con prueba previa'],
     duracion: null, precio: null,
   }
 ];
@@ -154,9 +147,7 @@ export const PASOS = [
 
 export const MOTIVOS = [
   { ico: 'charla', t: 'Te escuchamos primero',
-    d: 'Nadie se sienta en la silla sin que antes hablemos de lo que querés. Preguntá todo lo que necesites, sin apuro.' },
-  { ico: 'reloj', t: 'Un turno por vez',
-    d: 'Trabajamos con turno para poder dedicarle el tiempo que cada pelo necesita, sin que estés esperando.' },
+    d: 'Preguntá todo lo que quieras, sin apuro, para que podamos entender tu idea y la nuestra, sin fantasías.' },
   { ico: 'corazon', t: 'Te decimos la verdad',
     d: 'Si lo que pediste no le va a quedar bien a tu pelo, te lo decimos y buscamos algo que sí te guste y puedas mantener.' }
 ];
@@ -191,9 +182,9 @@ export const FAQ = [
   { q: '¿Dónde están?',
     a: 'En Luis Bataglia 572, Pilar, provincia de Buenos Aires. Desde la sección de ubicación podés abrir el mapa y llegar directo.' },
   { q: '¿Qué días atienden?',
-    a: 'Martes, miércoles y viernes de 09:00 a 18:00; jueves de 12:00 a 18:00; sábados de 09:00 a 18:00. Domingos y lunes cerrado. Siempre con turno.' },
+    a: 'Martes, miércoles y viernes de 09:00 a 18:00; jueves de 13:00 a 18:00; sábados de 09:00 a 18:00. Domingos y lunes cerrado. Siempre con turno.' },
   { q: '¿Cuánto sale un color?',
-    a: 'Depende del largo de tu pelo y de cómo esté hoy: no es lo mismo un retoque de raíz que un primer aclarado. Mandanos una foto por WhatsApp con luz de día y te pasamos el valor antes de que vengas.' },
+    a: 'Depende del largo y de la cantidad de pelo. Por teléfono te pasamos un presupuesto estimativo, pero el real lo damos en la visita: las fotos muchas veces no muestran cómo está el pelo en realidad.' },
   { q: 'Tengo el pelo teñido y quiero ser rubia, ¿se puede de una?',
     a: 'A veces sí y a veces no, depende de qué tenga tu pelo de antes. Cuando hay color oscuro acumulado o decoloraciones viejas, lo más cuidadoso es hacerlo en dos veces. Lo vemos juntas antes de empezar y te decimos qué esperar.' },
   { q: '¿Puedo llevar una foto de lo que quiero?',

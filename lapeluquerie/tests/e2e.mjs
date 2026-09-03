@@ -47,8 +47,8 @@ async function nueva(vp){
   await page.waitForTimeout(1200);
   const vacias=await page.$$eval('img',is=>is.filter(i=>i.getAttribute('src')&&i.naturalWidth===0).map(i=>(i.currentSrc||i.src).slice(0,60)));
   ok('Todas las imágenes cargan píxeles', vacias.length===0, vacias.slice(0,3).join(' | '));
-  for(const [sel,min] of [['.serv',8],['.gitem',6],['.ad__item',2],['.paso',6],
-      ['.motivo',3],['.consejo',6],['.resena',3],['.faq__item',8],['.horarios li',6]])
+  for(const [sel,min] of [['.serv',7],['.gitem',6],['.ad__item',2],['.paso',6],
+      ['.motivo',2],['.consejo',6],['.resena',3],['.faq__item',8],['.horarios li',6]])
     ok(`Render ${sel} (≥${min})`, (await page.$$(sel)).length>=min,
        'hay '+(await page.$$(sel)).length);
   await ctx.close();
@@ -339,7 +339,7 @@ for(const [nombre,vp] of Object.entries(V)){
   });
   await page.goto(BASE, { waitUntil: 'load' });
   await page.waitForTimeout(700);
-  ok('Con Intl roto igual se renderizan los servicios', (await page.$$('.serv')).length === 8);
+  ok('Con Intl roto igual se renderizan los servicios', (await page.$$('.serv')).length === 7);
   ok('Con Intl roto igual andan los CTA',
      (await page.$$eval('[data-wa]', as => as.every(a => /wa\.me/.test(a.href)))));
   await page.click('.hamburguesa'); await page.waitForTimeout(400);
