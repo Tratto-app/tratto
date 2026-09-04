@@ -2837,6 +2837,13 @@ async function reservarPago(id, boton){
     const medios = await sdkMP.getPaymentMethods({bin: numero.slice(0,8)});
     const medio  = medios && medios.results && medios.results[0];
     if(!medio) throw new Error('No reconocemos esa tarjeta. Probá con otra.');
+    /* Reservar la plata y cobrarla después es algo que Mercado Pago solo
+       permite en algunos medios de pago: las de débito, por ejemplo, no lo
+       soportan. Preguntamos antes de pedirle los datos a Mercado Pago, así el
+       cliente se entera acá y no con un error en inglés al final. */
+    if(medio.deferred_capture === 'unsupported')
+      throw new Error('Con una tarjeta de débito no podemos reservar el pago hasta que termine el trabajo. ' +
+        'Probá con una tarjeta de crédito.');
 
     const tk = await sdkMP.createCardToken({
       cardNumber: numero,
