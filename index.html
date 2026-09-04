@@ -2587,6 +2587,11 @@ function agregarMensaje(m){
 function actualizarPresu(m){
   const el = document.querySelector('[data-presu="'+m.id+'"]');
   if(!el) return;
+  /* Si el cliente está cargando la tarjeta, no le barremos el formulario: el
+     sondeo repinta cada 4 segundos y se llevaba puesto todo lo que había
+     escrito. Solo dejamos pasar el repintado cuando el pago cambió de estado
+     de verdad, que es justo cuando el formulario ya no hace falta. */
+  if(el.querySelector('[data-pago-panel]') && !m.pago_estado) return;
   const envoltorio = document.createElement('div');
   envoltorio.innerHTML = presuHTML(m);
   el.replaceWith(envoltorio.firstElementChild);
@@ -3526,7 +3531,14 @@ $('ed-pub').addEventListener('click', abrirPublicacion);
    Todo el intercambio de credenciales lo hace un workflow de n8n: acá sólo
    mandamos al proveedor a Mercado Pago y después leemos si quedó guardada. El
    access_token nunca pasa por el navegador. */
-const MP_CLIENT_ID = '2631534334320257';
+/* OJO: este id y el client_secret que tiene el workflow de OAuth en n8n son un
+   par. Si cambiás uno sin el otro, Mercado Pago emite el código para una
+   aplicación y n8n intenta canjearlo con las credenciales de otra: el canje
+   falla y al proveedor le queda una pantalla en blanco.
+   Hoy apunta a la aplicación de PRUEBA, que cuelga de la cuenta Integrador de
+   sandbox. Para producción hay que poner 2631534334320257 acá Y el
+   client_secret de esa misma aplicación en n8n, las dos cosas juntas. */
+const MP_CLIENT_ID = '2729660226133986';
 const MP_REDIRECT  = 'https://marketplace-servicios.app.n8n.cloud/webhook/mp-conectar';
 
 /* El state viaja hasta n8n y vuelve: es cómo sabe a qué proveedor guardarle la
