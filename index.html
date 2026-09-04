@@ -1494,14 +1494,14 @@
             <div class="kpi-eti">Presupuestos enviados</div>
             <div class="kpi-nota">Cuántos llegaste a cotizar</div></div>
           <div class="kpi"><div class="kpi-num" id="k-cerrados">—</div>
-            <div class="kpi-eti">Trabajos cerrados</div>
-            <div class="kpi-nota">Presupuestos aceptados</div></div>
+            <div class="kpi-eti">Cerrados por Tratto</div>
+            <div class="kpi-nota">Trabajos que cobraste por la app</div></div>
           <div class="kpi ancho">
             <div class="kpi-eti" style="margin-top:0">De la visita al trabajo</div>
             <div class="embudo" id="embudo"></div>
           </div>
           <div class="kpi ancho">
-            <div class="kpi-eti" style="margin-top:0">Facturado por la app</div>
+            <div class="kpi-eti" style="margin-top:0">Cobrado por la app</div>
             <div class="kpi-num" id="k-monto" style="margin-top:10px">—</div>
             <div class="kpi-nota" id="k-monto-nota">Suma de los presupuestos que te aceptaron</div>
           </div>
@@ -2533,23 +2533,32 @@ function presuHTML(m){
    aparece cuando el trato ya está cerrado: antes de eso no hay nada que pagar. */
 function pagoHTML(m){
   if(m.estado_presupuesto !== 'aceptado') return '';
+  const terminado = m.trabajo_estado === 'terminado';
+  const firma = s => '<div class="pago-firma"><span class="pago-hilo"></span>' +
+    '<span class="pago-sello">'+s+'</span></div>';
+  const nota  = t => '<div class="pago-nota">'+t+'</div>';
+
+  /* Final del camino: la plata ya es del proveedor y el trabajo cuenta. */
+  if(m.pago_estado === 'cobrado') return firma('Pago liberado');
 
   if(m.pago_estado === 'reservado'){
-    return '<div class="pago-firma"><span class="pago-hilo"></span>' +
-      '<span class="pago-sello">Pago reservado</span></div>' +
-      '<div class="pago-nota">' + (miRol === 'cliente'
-        ? 'Ya está reservado en tu tarjeta. Se le paga al proveedor cuando des el trabajo por terminado.'
-        : 'El cliente ya reservó el pago. Vas a cobrarlo cuando dé el trabajo por terminado.') +
-      '</div>';
+    if(!terminado){
+      return firma('Pago reservado') + (miRol === 'proveedor'
+        ? nota('El cliente ya reservó el pago. Avisale cuando termines para que lo libere.') +
+          '<div class="presu-acciones"><button class="btn lleno" data-terminar-presu="'+m.id+'" ' +
+          'type="button">Marcar trabajo terminado</button></div>'
+        : nota('Ya está reservado en tu tarjeta. Se le paga al proveedor cuando el trabajo esté hecho.'));
+    }
+    /* El proveedor dijo que terminó: la pelota queda del lado del cliente. */
+    return firma('Pago reservado') + (miRol === 'cliente'
+      ? nota('El proveedor dio el trabajo por terminado. Si estás conforme, liberá el pago.') +
+        '<div class="presu-acciones"><button class="btn lleno" data-liberar-presu="'+m.id+'" ' +
+        'type="button">Liberar el pago</button></div>'
+      : nota('Avisaste que terminaste. Falta que el cliente libere el pago.'));
   }
-  if(m.pago_estado === 'cobrado'){
-    return '<div class="pago-firma"><span class="pago-hilo"></span>' +
-      '<span class="pago-sello">Pago liberado</span></div>';
-  }
+
   /* Sin pagar todavía: sólo el cliente puede hacer algo acá. */
-  if(miRol !== 'cliente') {
-    return '<div class="pago-nota">Esperando que el cliente reserve el pago.</div>';
-  }
+  if(miRol !== 'cliente') return nota('Esperando que el cliente reserve el pago.');
   return '<div class="presu-acciones">' +
     '<button class="btn lleno" data-pagar-presu="'+m.id+'" data-monto="'+(m.monto||0)+'" ' +
     'type="button">Pagar con tarjeta</button></div>';
@@ -2716,7 +2725,8 @@ $('ch-hilo').addEventListener('click', async (e) => {
    que sale de acá es ese token. El cobro en sí lo hace n8n, que es el único que
    tiene el access_token del proveedor. */
 const URL_MP_CLAVE = 'https://marketplace-servicios.app.n8n.cloud/webhook/mp-clave';
-const URL_MP_PAGAR = 'https://marketplace-servicios.app.n8n.cloud/webhook/mp-pagar';
+const URL_MP_PAGAR   = 'https://marketplace-servicios.app.n8n.cloud/webhook/mp-pagar';
+const URL_MP_LIBERAR = 'https://marketplace-servicios.app.n8n.cloud/webhook/mp-liberar';
 
 let sdkMP = null, pagando = false;
 
@@ -2794,8 +2804,64 @@ $('ch-hilo').addEventListener('click', async e => {
     return;
   }
   const confirmar = e.target.closest('[data-pago-confirmar]');
-  if(confirmar) await reservarPago(Number(confirmar.dataset.pagoConfirmar), confirmar);
+  if(confirmar){ await reservarPago(Number(confirmar.dataset.pagoConfirmar), confirmar); return; }
+
+  /* El proveedor avisa que terminó. No mueve plata: solo le pasa la pelota al
+     cliente, que es el único que puede soltar el pago. */
+  const terminar = e.target.closest('[data-terminar-presu]');
+  if(terminar){
+    const id = Number(terminar.dataset.terminarPresu);
+    terminar.disabled = true;
+    try{
+      const r = await fetch(SUPABASE_URL+'/rest/v1/mensajes?id=eq.'+id, {
+        method:'PATCH', headers:cab({'Prefer':'return=representation'}),
+        body: JSON.stringify({trabajo_estado:'terminado'})
+      });
+      if(!r.ok){ console.error(await r.text()); terminar.disabled = false; return; }
+      const [msg] = await r.json();
+      if(msg) actualizarPresu(msg);
+    }catch(ex){ console.error(ex); terminar.disabled = false; }
+    return;
+  }
+
+  const liberar = e.target.closest('[data-liberar-presu]');
+  if(liberar) await liberarPago(Number(liberar.dataset.liberarPresu), liberar);
 });
+
+/* Soltar la plata reservada. La captura la hace n8n con el token del
+   proveedor: desde acá solo decimos qué presupuesto y quiénes somos. */
+async function liberarPago(id, boton){
+  if(pagando) return;
+  pagando = true;
+  boton.disabled = true; boton.classList.add('cargando');
+  const textoOriginal = boton.textContent;
+  boton.textContent = 'Liberando…';
+  try{
+    const r = await fetch(URL_MP_LIBERAR, {
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({mensaje_id:id, token: sesion.access_token})
+    });
+    const res = await r.json().catch(() => null);
+    if(!r.ok || !res || res.estado !== 'cobrado')
+      throw new Error((res && res.detalle) || 'No se pudo liberar el pago.');
+    await repintarPresu(id);
+  }catch(ex){
+    console.error(ex);
+    const tarjeta = document.querySelector('[data-presu="'+id+'"] .presu-cuerpo');
+    if(tarjeta){
+      let aviso = tarjeta.querySelector('.pago-error');
+      if(!aviso){
+        aviso = document.createElement('div');
+        aviso.className = 'pago-error visible';
+        boton.closest('.presu-acciones').before(aviso);
+      }
+      aviso.textContent = ex.message;
+      aviso.classList.add('visible');
+    }
+    boton.disabled = false; boton.classList.remove('cargando');
+    boton.textContent = textoOriginal;
+  }finally{ pagando = false; }
+}
 
 async function reservarPago(id, boton){
   if(pagando) return;
@@ -3643,9 +3709,12 @@ async function cargarPanel(){
     leads = ms.length;
     if(ms.length){
       const mids = ms.map(m => m.id);
-      const ps = await api('mensajes?match_id=in.('+mids.join(',')+')&tipo=eq.presupuesto&select=id,estado_presupuesto,monto');
+      const ps = await api('mensajes?match_id=in.('+mids.join(',')+')&tipo=eq.presupuesto&select=id,estado_presupuesto,pago_estado,monto');
       presus = ps.length;
-      const ok = ps.filter(p => p.estado_presupuesto === 'aceptado');
+      /* Solo contamos lo que podemos respaldar: trabajos cobrados por la app.
+         Uno aceptado y arreglado por fuera no lo vimos, así que no afirmamos
+         nada sobre él — ni que se hizo ni que no. */
+      const ok = ps.filter(p => p.pago_estado === 'cobrado');
       cerrados = ok.length;
       monto = ok.reduce((a,p) => a + Number(p.monto||0), 0);
     }
@@ -3657,15 +3726,15 @@ async function cargarPanel(){
   $('k-cerrados').textContent = cerrados;
   $('k-monto').textContent    = monto ? pesos(monto) : '$0';
   $('k-monto-nota').textContent = cerrados
-    ? 'Suma de ' + cerrados + ' presupuesto' + (cerrados===1?'':'s') + ' aceptado' + (cerrados===1?'':'s')
-    : 'Todavía no cerraste ningún trabajo por la app';
+    ? 'Suma de ' + cerrados + ' trabajo' + (cerrados===1?'':'s') + ' cobrado' + (cerrados===1?'':'s') + ' por la app'
+    : 'Todavía no cobraste ningún trabajo por la app';
 
   const tope = Math.max(visitas, leads, presus, cerrados, 1);
   const filas = [
     {t:'Visitas a tu perfil', n:visitas,  c:'gris'},
     {t:'Clientes conectados', n:leads,    c:''},
     {t:'Presupuestos que mandaste', n:presus, c:'oro'},
-    {t:'Trabajos cerrados', n:cerrados, c:''}
+    {t:'Cerrados por Tratto', n:cerrados, c:''}
   ];
   $('embudo').innerHTML = filas.map(f =>
     '<div class="emb"><div class="emb-top"><b>'+f.t+'</b><span>'+f.n+'</span></div>' +
