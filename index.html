@@ -2538,30 +2538,29 @@ function pagoHTML(m){
     '<span class="pago-sello">'+s+'</span></div>';
   const nota  = t => '<div class="pago-nota">'+t+'</div>';
 
-  /* Final del camino: la plata ya es del proveedor y el trabajo cuenta. */
-  if(m.pago_estado === 'cobrado') return firma('Pago liberado');
+  /* Final del camino: la plata ya es del proveedor y el trabajo cuenta.
+     (Cualquier estado de pago cuenta como cobrado: no reservamos nunca, así que
+     si hay algo guardado es porque el cobro salió.) */
+  if(m.pago_estado) return firma('Pago hecho');
 
-  if(m.pago_estado === 'reservado'){
-    if(!terminado){
-      return firma('Pago reservado') + (miRol === 'proveedor'
-        ? nota('El cliente ya reservó el pago. Avisale cuando termines para que lo libere.') +
-          '<div class="presu-acciones"><button class="btn lleno" data-terminar-presu="'+m.id+'" ' +
-          'type="button">Marcar trabajo terminado</button></div>'
-        : nota('Ya está reservado en tu tarjeta. Se le paga al proveedor cuando el trabajo esté hecho.'));
-    }
-    /* El proveedor dijo que terminó: la pelota queda del lado del cliente. */
-    return firma('Pago reservado') + (miRol === 'cliente'
-      ? nota('El proveedor dio el trabajo por terminado. Si estás conforme, liberá el pago.') +
-        '<div class="presu-acciones"><button class="btn lleno" data-liberar-presu="'+m.id+'" ' +
-        'type="button">Liberar el pago</button></div>'
-      : nota('Avisaste que terminaste. Falta que el cliente libere el pago.'));
+  /* Todavía trabajando. El único que puede mover la ficha es el proveedor:
+     nadie paga por adelantado, así que hasta que él no diga que terminó el
+     cliente no tiene nada que hacer. */
+  if(!terminado){
+    return miRol === 'proveedor'
+      ? nota('Cuando termines, avisale al cliente desde acá para que te pague por la app.') +
+        '<div class="presu-acciones"><button class="btn lleno" data-terminar-presu="'+m.id+'" ' +
+        'type="button">Marcar trabajo terminado</button></div>'
+      : nota('Cuando el proveedor dé el trabajo por terminado, vas a poder pagarlo desde acá.');
   }
 
-  /* Sin pagar todavía: sólo el cliente puede hacer algo acá. */
-  if(miRol !== 'cliente') return nota('Esperando que el cliente reserve el pago.');
-  return '<div class="presu-acciones">' +
-    '<button class="btn lleno" data-pagar-presu="'+m.id+'" data-monto="'+(m.monto||0)+'" ' +
-    'type="button">Pagar con tarjeta</button></div>';
+  /* Trabajo terminado y sin cobrar: le toca al cliente. */
+  return miRol === 'cliente'
+    ? nota('El proveedor dio el trabajo por terminado. Si estás conforme, pagalo desde acá.') +
+      '<div class="presu-acciones">' +
+      '<button class="btn lleno" data-pagar-presu="'+m.id+'" data-monto="'+(m.monto||0)+'" ' +
+      'type="button">Pagar con tarjeta</button></div>'
+    : nota('Avisaste que terminaste. Falta que el cliente pague por la app.');
 }
 
 function pintarMensajes(msgs, irAbajo){
@@ -2725,8 +2724,7 @@ $('ch-hilo').addEventListener('click', async (e) => {
    que sale de acá es ese token. El cobro en sí lo hace n8n, que es el único que
    tiene el access_token del proveedor. */
 const URL_MP_CLAVE = 'https://marketplace-servicios.app.n8n.cloud/webhook/mp-clave';
-const URL_MP_PAGAR   = 'https://marketplace-servicios.app.n8n.cloud/webhook/mp-pagar';
-const URL_MP_LIBERAR = 'https://marketplace-servicios.app.n8n.cloud/webhook/mp-liberar';
+const URL_MP_PAGAR = 'https://marketplace-servicios.app.n8n.cloud/webhook/mp-pagar';
 
 let sdkMP = null, pagando = false;
 
@@ -2776,7 +2774,7 @@ function panelPagoHTML(id, monto){
     '<div class="campo"><label>DNI del titular</label>' +
       '<input data-pago="dni" type="text" inputmode="numeric" maxlength="9" placeholder="30123456"></div>' +
     '<button class="btn lleno" data-pago-confirmar="'+id+'" type="button">' +
-      '<span class="rueda"></span><span data-pago-txt>Reservar el pago</span></button>' +
+      '<span class="rueda"></span><span data-pago-txt>Pagar</span></button>' +
     '<button class="btn vacio-b" data-pago-cancelar type="button">Ahora no</button>' +
     '</div>';
 }
@@ -2804,7 +2802,7 @@ $('ch-hilo').addEventListener('click', async e => {
     return;
   }
   const confirmar = e.target.closest('[data-pago-confirmar]');
-  if(confirmar){ await reservarPago(Number(confirmar.dataset.pagoConfirmar), confirmar); return; }
+  if(confirmar){ await cobrarPago(Number(confirmar.dataset.pagoConfirmar), confirmar); return; }
 
   /* El proveedor avisa que terminó. No mueve plata: solo le pasa la pelota al
      cliente, que es el único que puede soltar el pago. */
@@ -2823,47 +2821,9 @@ $('ch-hilo').addEventListener('click', async e => {
     }catch(ex){ console.error(ex); terminar.disabled = false; }
     return;
   }
-
-  const liberar = e.target.closest('[data-liberar-presu]');
-  if(liberar) await liberarPago(Number(liberar.dataset.liberarPresu), liberar);
 });
 
-/* Soltar la plata reservada. La captura la hace n8n con el token del
-   proveedor: desde acá solo decimos qué presupuesto y quiénes somos. */
-async function liberarPago(id, boton){
-  if(pagando) return;
-  pagando = true;
-  boton.disabled = true; boton.classList.add('cargando');
-  const textoOriginal = boton.textContent;
-  boton.textContent = 'Liberando…';
-  try{
-    const r = await fetch(URL_MP_LIBERAR, {
-      method:'POST', headers:{'Content-Type':'application/json'},
-      body: JSON.stringify({mensaje_id:id, token: sesion.access_token})
-    });
-    const res = await r.json().catch(() => null);
-    if(!r.ok || !res || res.estado !== 'cobrado')
-      throw new Error((res && res.detalle) || 'No se pudo liberar el pago.');
-    await repintarPresu(id);
-  }catch(ex){
-    console.error(ex);
-    const tarjeta = document.querySelector('[data-presu="'+id+'"] .presu-cuerpo');
-    if(tarjeta){
-      let aviso = tarjeta.querySelector('.pago-error');
-      if(!aviso){
-        aviso = document.createElement('div');
-        aviso.className = 'pago-error visible';
-        boton.closest('.presu-acciones').before(aviso);
-      }
-      aviso.textContent = ex.message;
-      aviso.classList.add('visible');
-    }
-    boton.disabled = false; boton.classList.remove('cargando');
-    boton.textContent = textoOriginal;
-  }finally{ pagando = false; }
-}
-
-async function reservarPago(id, boton){
+async function cobrarPago(id, boton){
   if(pagando) return;
   const panel = boton.closest('[data-pago-panel]');
   const err   = panel.querySelector('[data-pago-error]');
@@ -2883,7 +2843,7 @@ async function reservarPago(id, boton){
 
   pagando = true;
   boton.disabled = true; boton.classList.add('cargando');
-  panel.querySelector('[data-pago-txt]').textContent = 'Reservando…';
+  panel.querySelector('[data-pago-txt]').textContent = 'Pagando…';
 
   try{
     /* 1. La clave pública del proveedor, que es con la que hay que tokenizar
@@ -2903,13 +2863,6 @@ async function reservarPago(id, boton){
     const medios = await sdkMP.getPaymentMethods({bin: numero.slice(0,8)});
     const medio  = medios && medios.results && medios.results[0];
     if(!medio) throw new Error('No reconocemos esa tarjeta. Probá con otra.');
-    /* Reservar la plata y cobrarla después es algo que Mercado Pago solo
-       permite en algunos medios de pago: las de débito, por ejemplo, no lo
-       soportan. Preguntamos antes de pedirle los datos a Mercado Pago, así el
-       cliente se entera acá y no con un error en inglés al final. */
-    if(medio.deferred_capture === 'unsupported')
-      throw new Error('Con una tarjeta de débito no podemos reservar el pago hasta que termine el trabajo. ' +
-        'Probá con una tarjeta de crédito.');
 
     const tk = await sdkMP.createCardToken({
       cardNumber: numero,
@@ -2932,18 +2885,18 @@ async function reservarPago(id, boton){
       })
     });
     const pago = await rp.json().catch(() => null);
-    if(!rp.ok || !pago || pago.estado !== 'reservado')
-      throw new Error((pago && pago.detalle) || 'No se pudo reservar el pago. Probá con otra tarjeta.');
+    if(!rp.ok || !pago || pago.estado !== 'cobrado')
+      throw new Error((pago && pago.detalle) || 'No se pudo hacer el pago. Probá con otra tarjeta.');
 
     /* La fila ya quedó actualizada del lado del servidor: la releemos para
        pintar el estado real y no una suposición nuestra. */
     await repintarPresu(id);
   }catch(ex){
     console.error(ex);
-    fallar(ex.message || 'No se pudo reservar el pago.');
+    fallar(ex.message || 'No se pudo hacer el pago.');
     boton.disabled = false; boton.classList.remove('cargando');
     const t = panel.querySelector('[data-pago-txt]');
-    if(t) t.textContent = 'Reservar el pago';
+    if(t) t.textContent = 'Pagar';
   }finally{ pagando = false; }
 }
 
