@@ -410,7 +410,7 @@
     -webkit-overflow-scrolling:touch}
   /* Cada mensaje conserva su alto natural y scrollea el hilo: si los dejamos
      encogerse, las tarjetas de presupuesto se cortan por la mitad. */
-  .hilo-msg > *,.asis-hilo > *{flex:none}
+  .hilo-msg > *{flex:none}
   .dia{align-self:center;font-family:'IBM Plex Mono',monospace;font-size:9.5px;
     letter-spacing:.13em;text-transform:uppercase;color:var(--gris);
     background:var(--claro);border:1px solid var(--linea);border-radius:99px;
@@ -582,44 +582,6 @@
     color:#7C2A12;margin-top:14px}
   .peligro b{font-weight:600}
 
-  /* ═══════════ COMPARADOR ═══════════ */
-  /* Elegir entre presupuestos es la decisión más pesada de la app: el comparador
-     no puede parecer un bloque informativo más. Marco de latón y flecha para que
-     se lea como lo que es, algo para tocar. */
-  .comp-btn{background:var(--noche);color:var(--claro);border-radius:var(--r);
-    border:1px solid rgba(201,162,39,.45);
-    padding:17px;width:100%;text-align:left;font:inherit;cursor:pointer;margin-bottom:20px;
-    display:flex;align-items:center;gap:13px;position:relative;overflow:hidden}
-  .comp-btn::after{content:'';position:absolute;inset:0;pointer-events:none;
-    background:radial-gradient(120% 100% at 100% 0%, rgba(201,162,39,.20), transparent 62%)}
-  .comp-btn::before{content:'';order:1;margin-left:auto;flex:none;
-    width:8px;height:8px;transform:rotate(45deg);position:relative;z-index:1;
-    border-right:2px solid var(--laton);border-top:2px solid var(--laton)}
-  .comp-btn > *{position:relative;z-index:1}
-  .comp-btn svg{width:20px;height:20px;color:var(--laton);flex:none;stroke-width:1.9}
-  .comp-btn b{font-family:'IBM Plex Sans Condensed',sans-serif;font-weight:700;font-size:15.5px;display:block}
-  .comp-btn span{font-size:12.5px;color:var(--gris-2);display:block;margin-top:3px}
-  .comp-btn:active{transform:scale(.99)}
-
-  .comp-caja{background:var(--claro);border:1px solid var(--linea);border-radius:var(--r);
-    padding:17px;margin-bottom:16px;box-shadow:var(--sombra)}
-  .comp-resumen{font-size:14.5px;line-height:1.6}
-  .comp-ojo{margin-top:12px;padding:11px 13px;border-radius:var(--r-ch);
-    background:rgba(201,162,39,.09);border:1px solid rgba(201,162,39,.4);
-    font-size:13px;line-height:1.5;color:var(--laton-osc)}
-  .comp-col{border:1px solid var(--linea);border-radius:var(--r-ch);padding:14px;margin-top:11px}
-  .comp-col.mejor{border-color:rgba(30,93,73,.4);background:rgba(30,93,73,.04)}
-  .comp-top{display:flex;align-items:baseline;justify-content:space-between;gap:10px}
-  .comp-nom{font-family:'IBM Plex Sans Condensed',sans-serif;font-weight:700;font-size:15.5px}
-  .comp-monto{font-family:'IBM Plex Sans Condensed',sans-serif;font-weight:700;font-size:19px}
-  .comp-eti{display:inline-block;font-family:'IBM Plex Mono',monospace;font-size:8.5px;
-    letter-spacing:.13em;text-transform:uppercase;font-weight:600;padding:3px 9px;border-radius:99px;
-    background:rgba(30,93,73,.1);color:var(--verde);border:1px solid rgba(30,93,73,.35);margin-top:7px}
-  .comp-lista{margin-top:10px;font-size:13px;line-height:1.65}
-  .comp-si{color:var(--verde);font-weight:600}
-  .comp-no{color:var(--alerta)}
-  .comp-plazo{font-size:12.5px;color:var(--gris);margin-top:8px}
-
   /* ═══════════ CALIFICAR ═══════════ */
   .calificar{background:var(--claro);border:1px solid var(--linea-fuerte);
     border-left:3px solid var(--verde);border-radius:12px;padding:15px;
@@ -646,76 +608,25 @@
   .rep-item .rep-caja{margin-top:8px}
   .rep-fecha{font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--gris-2);margin-top:6px}
 
-  /* ═══════════ TASADOR ═══════════ */
-  .tasar{background:var(--noche);color:var(--claro);border-radius:var(--r);padding:18px;
-    margin-bottom:26px;position:relative;overflow:hidden;cursor:pointer;border:none;
-    width:100%;text-align:left;font:inherit;display:block}
-  .tasar::after{content:'';position:absolute;inset:0;pointer-events:none;
-    background:radial-gradient(120% 100% at 100% 0%, rgba(43,126,98,.30), transparent 60%)}
-  .tasar > *{position:relative;z-index:1}
-  .tasar-top{display:flex;align-items:center;gap:13px}
-  .tasar-ico{width:42px;height:42px;border-radius:11px;background:var(--noche-3);flex:none;
-    display:flex;align-items:center;justify-content:center;border:1px solid var(--noche-4)}
-  .tasar-ico svg{width:21px;height:21px;color:var(--verde-luz);stroke-width:1.8}
-  .tasar-kicker{display:block;font-family:'IBM Plex Mono',monospace;font-size:8.5px;
-    letter-spacing:.19em;text-transform:uppercase;color:var(--laton);margin-bottom:7px}
-  /* display:block porque son <span>: sin esto el título y la bajada se pegan
-     en el mismo renglón y el margen de arriba de la bajada no hace nada. */
-  .tasar-tit{display:block;font-family:'IBM Plex Sans Condensed',sans-serif;font-weight:700;
-    font-size:17px;line-height:1.2}
-  .tasar-txt{display:block;font-size:12.5px;color:var(--gris-2);margin-top:5px;line-height:1.45}
-  .tasar:active{transform:scale(.99)}
-
-  .diag{background:var(--claro);border:1px solid var(--linea-fuerte);border-left:3px solid var(--laton);
-    border-radius:var(--r);padding:17px;margin-bottom:22px;box-shadow:var(--sombra)}
-  .diag-eti{font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:.15em;
-    text-transform:uppercase;color:var(--laton-osc);font-weight:600}
-  .diag-que{font-size:14.5px;line-height:1.5;margin-top:8px}
-  .diag-precio{font-family:'IBM Plex Sans Condensed',sans-serif;font-weight:700;font-size:24px;
-    letter-spacing:-.015em;margin-top:12px}
-  .diag-nota{font-size:12.5px;color:var(--gris);margin-top:7px;line-height:1.45}
-  .diag-foto{width:100%;border-radius:var(--r-ch);margin-top:13px;display:block;
-    max-height:200px;object-fit:cover}
-  .diag-baja{border-left-color:var(--gris-3)}
-  .diag-baja .diag-eti{color:var(--gris)}
-
-  /* ═══════════ ASISTENTE ═══════════ */
-  .asis-hilo{flex:1;min-height:0;overflow-y:auto;padding:18px 16px 8px;background:var(--claro-2);
-    display:flex;flex-direction:column;gap:10px;-webkit-overflow-scrolling:touch}
-  .asis-burb{max-width:86%;padding:12px 15px;border-radius:15px;font-size:14.5px;
-    line-height:1.55;box-shadow:var(--sombra);word-wrap:break-word;overflow-wrap:anywhere;
-    animation:subir .18s ease both;white-space:pre-wrap}
-  .asis-burb.mia{align-self:flex-end;background:var(--verde);color:#fff;border-bottom-right-radius:5px}
-  .asis-burb.suya{align-self:flex-start;background:var(--claro);border:1px solid var(--linea);
-    border-bottom-left-radius:5px}
-  .asis-cab{background:var(--noche);color:var(--claro);padding:16px;flex:none;
-    position:relative;overflow:hidden}
-  .asis-cab::after{content:'';position:absolute;inset:0;pointer-events:none;
-    background:radial-gradient(120% 100% at 100% 0%, rgba(43,126,98,.28), transparent 60%)}
-  .asis-cab > *{position:relative;z-index:1}
-  .asis-tit{font-family:'IBM Plex Sans Condensed',sans-serif;font-weight:700;font-size:18px}
-  .asis-sub{font-size:12.5px;color:var(--gris-2);margin-top:4px;line-height:1.45}
-  .asis-sugerencias{display:flex;flex-wrap:wrap;gap:7px;margin-top:14px}
-  .asis-chip{font:inherit;font-size:12.5px;background:var(--claro);border:1px solid var(--linea-fuerte);
-    border-radius:99px;padding:7px 13px;cursor:pointer;color:var(--tinta);text-align:left}
-  .asis-chip:active{background:var(--claro-2)}
-  .asis-puntos{align-self:flex-start;background:var(--claro);border:1px solid var(--linea);
-    border-radius:15px;border-bottom-left-radius:5px;padding:14px 16px;display:flex;gap:5px}
-  .asis-puntos i{width:7px;height:7px;border-radius:50%;background:var(--gris-3);
-    animation:latido 1.2s ease-in-out infinite}
-  .asis-puntos i:nth-child(2){animation-delay:.15s}
-  .asis-puntos i:nth-child(3){animation-delay:.3s}
-  @keyframes latido{0%,60%,100%{opacity:.3;transform:translateY(0)}30%{opacity:1;transform:translateY(-3px)}}
-
-  .burbuja-asis{position:fixed;right:16px;bottom:calc(var(--tabs) + var(--sb) + 16px);
-    width:52px;height:52px;border-radius:50%;background:var(--noche);border:none;cursor:pointer;
-    display:flex;align-items:center;justify-content:center;z-index:25;
-    box-shadow:0 4px 14px rgba(14,24,21,.28)}
-  .burbuja-asis svg{width:24px;height:24px;color:var(--verde-luz)}
-  .burbuja-asis:active{transform:scale(.94)}
-
-  .oculto{display:none!important}
-  @media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+  /* ═══════════ PREGUNTAS FRECUENTES ═══════════ */
+  /* Agrupadas por quién sos, que es la misma bifurcación que ordena toda la
+     app. Cada pregunta se abre en su lugar: nadie navega a otro lado para
+     leer dos renglones. */
+  .faq-grupo{margin-top:26px}
+  .faq-item{background:var(--claro);border:1px solid var(--linea);border-radius:var(--r);
+    margin-bottom:8px;overflow:hidden;box-shadow:var(--sombra)}
+  .faq-preg{width:100%;background:none;border:none;text-align:left;cursor:pointer;
+    font:inherit;font-family:'IBM Plex Sans Condensed',sans-serif;font-weight:700;
+    font-size:15.5px;color:var(--tinta);padding:15px 16px;display:flex;
+    align-items:center;justify-content:space-between;gap:12px}
+  .faq-preg svg{width:15px;height:15px;flex:none;color:var(--gris-2);
+    transition:transform .2s ease}
+  .faq-item.abierta .faq-preg svg{transform:rotate(90deg);color:var(--verde)}
+  .faq-item.abierta .faq-preg{color:var(--verde)}
+  .faq-resp{display:none;padding:0 16px 16px;font-size:13.5px;line-height:1.55;
+    color:var(--gris)}
+  .faq-item.abierta .faq-resp{display:block}
+  .faq-resp b{color:var(--tinta);font-weight:600}
 
   /* ═══════════ MODO DE INGRESO ═══════════ */
   .roles{display:grid;gap:12px;margin-top:4px}
@@ -1204,18 +1115,7 @@
       <h1>¿Qué necesitás?</h1>
       <p class="bajada">Buscamos proveedores de tu rubro, en tu zona y dentro de tu presupuesto.</p>
 
-      <button class="tasar" id="tasar-abrir" type="button" style="margin-top:22px">
-        <span class="tasar-top">
-          <span class="tasar-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7.5h3l1.5-2h7L17 7.5h3a1 1 0 0 1 1 1v9a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1v-9a1 1 0 0 1 1-1z"/><circle cx="12" cy="13" r="3.4"/></svg></span>
-          <span style="min-width:0">
-            <span class="tasar-kicker">Empezá por acá</span>
-            <span class="tasar-tit">Sacale una foto y te decimos cuánto sale</span>
-            <span class="tasar-txt">Completamos el pedido por vos, con un precio orientativo. Cada proveedor pone el suyo.</span>
-          </span>
-        </span>
-      </button>
-      <input type="file" id="tasar-archivo" accept="image/*" capture="environment" class="oculto">
-      <div id="tasar-resultado"></div>
+
 
       <div class="bifurca"><span>o cargá los datos vos</span></div>
 
@@ -1404,7 +1304,6 @@
           <div class="rd"><dt>Estado</dt><dd id="d-estado">—</dd></div>
         </dl>
       </div>
-      <div id="d-comparador"></div>
       <div class="sec"><span class="sec-tit">Proveedores conectados</span><span class="sec-num" id="d-num"></span></div>
       <div id="d-lista"></div>
     </section>
@@ -1753,24 +1652,21 @@
     </section>
 
 
-    <!-- ══════ ASISTENTE ══════ -->
-    <section class="pantalla" id="p-asistente">
-      <div class="asis-cab">
-        <div class="asis-tit">¿En qué te damos una mano?</div>
-        <div class="asis-sub">Preguntame lo que quieras sobre Tratto. Si no sé, lo pasamos al equipo.</div>
-      </div>
-      <div class="asis-hilo" id="asis-hilo"></div>
-      <div class="barra-envio">
-        <textarea id="asis-texto" rows="1" maxlength="500" placeholder="Escribí tu consulta…"></textarea>
-        <button class="enviar-msg" id="asis-enviar" type="button" aria-label="Enviar">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12h15M13 6l6 6-6 6"/></svg>
-        </button>
-      </div>
+    <!-- ══════ PREGUNTAS FRECUENTES ══════ -->
+    <section class="pantalla" id="p-ayuda">
+      <div class="kicker">Ayuda</div>
+      <h1>Preguntas frecuentes</h1>
+      <p class="bajada">Lo que más nos preguntan. Si no encontrás lo tuyo, escribinos y te contestamos.</p>
+      <div id="faq-lista"></div>
+      <a class="btn vacio-b" id="faq-mail" href="mailto:trattoapp1@gmail.com" style="margin-top:22px">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6.5h18v11H3z"/><path d="M3 7l9 6 9-6"/></svg>
+        Escribinos
+      </a>
     </section>
 
   </main>
 
-  <button class="burbuja-asis oculto" id="burbuja-asis" type="button" aria-label="Ayuda">
+  <button class="burbuja-ayuda oculto" id="burbuja-ayuda" type="button" aria-label="Ayuda">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M20.4 14.6a2 2 0 0 1-2 2H8.4l-4 3.8V4.8a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2z"/><path d="M9.4 8.6a2.6 2.6 0 0 1 5 .9c0 1.7-2.5 2.2-2.5 2.2"/><path d="M12 14.4h.01"/></svg>
   </button>
 
@@ -1919,7 +1815,7 @@ async function api(ruta){
 /* ══════════════════ NAVEGACIÓN ══════════════════ */
 const SUB = {'nuevo-pedido':'Nuevo pedido','nuevo-proveedor':'Nuevo servicio','detalle':'Tu pedido',
   'chat':'Chat','editar-perfil':'Editar perfil','credencial':'Nuevo antecedente',
-  'publicacion':'Nueva publicación','asistente':'Ayuda'};
+  'publicacion':'Nueva publicación','ayuda':'Preguntas frecuentes'};
 const CON_REFRESCO = ['inicio','chats','perfil','panel'];
 let actual='auth', volverA='inicio';
 
@@ -1938,7 +1834,7 @@ function ir(p, efecto){
   if(esSub) $('tb-tit').textContent = SUB[p];
   $('refrescar').classList.toggle('oculto', !CON_REFRESCO.includes(p));
   $('tabs').classList.toggle('oculto', esAuth || esSub);
-  $('burbuja-asis').classList.toggle('oculto', esAuth || esSub || p === 'chat');
+  $('burbuja-ayuda').classList.toggle('oculto', esAuth || esSub || p === 'chat');
   $('vista').classList.toggle('sin-tabs', esAuth || esSub);
   document.querySelectorAll('.tab').forEach(t => t.classList.toggle('activa', t.dataset.ir === p));
   window.scrollTo(0,0);
@@ -1953,7 +1849,7 @@ $('tabs').addEventListener('click', e => {
 });
 $('volver').addEventListener('click', () => ir(volverA, 'entra'));
 $('ir-pedido').addEventListener('click', () => {
-  volverA='inicio'; $('tasar-resultado').innerHTML=''; ir('nuevo-pedido');
+  volverA='inicio'; ir('nuevo-pedido');
 });
 $('ir-proveedor').addEventListener('click', () => { volverA='perfil'; ir('nuevo-proveedor'); });
 
@@ -2231,14 +2127,12 @@ $('s-enviar').addEventListener('click', async () => {
         nombre_cliente:v('s-nombre'), email_cliente:v('s-email'), telefono_cliente:v('s-tel'),
         servicio_necesitado:v('s-servicio'), zona:v('s-zona'),
         presupuesto:num(v('s-presupuesto')), urgencia:v('s-urgencia'),
-        descripcion:v('s-desc'), estado:'pendiente', user_id:sesion.user.id,
-        foto_url: fotoTasador
+        descripcion:v('s-desc'), estado:'pendiente', user_id:sesion.user.id
       })
     });
     if(res.status===401){ avisar('s-aviso','Tu sesión venció. Volvé a entrar.','mal'); return; }
     if(!res.ok){ console.error(await res.text()); avisar('s-aviso','No se pudo enviar (error '+res.status+').','mal'); return; }
     CS.forEach(c => $(c).value=''); $('s-email').value = sesion.user.email;
-    fotoTasador = null; $('tasar-resultado').innerHTML = '';
     resumenPedido(); await cargarPedidos(); ir('inicio','entra');
   }catch(e){ console.error(e); avisar('s-aviso','No se pudo conectar. Probá de nuevo.','mal'); }
   finally{ b.disabled=false; b.classList.remove('cargando'); $('s-txt').textContent='Buscar proveedores'; }
@@ -2957,7 +2851,6 @@ async function abrirDetalle(id){
   $('d-estado').textContent = s.estado === 'vencida' ? 'Vencido'
     : s.estado === 'con_match' ? 'Con proveedores' : 'Buscando';
   $('d-lista').innerHTML = esqueleto(2);
-  $('d-comparador').innerHTML = '';
   $('d-num').textContent = '';
   ir('detalle');
 
@@ -3875,77 +3768,6 @@ $('baja-enviar').addEventListener('click', async () => {
   }
 });
 
-/* ══════════════════ COMPARADOR DE PRESUPUESTOS ══════════════════ */
-const URL_COMPARAR = 'https://marketplace-servicios.app.n8n.cloud/webhook/comparar';
-let comparando = false;
-
-/* muestra el botón si hay presupuestos de dos proveedores distintos */
-async function verSiHayQueComparar(solicitudId, matchIds){
-  const c = $('d-comparador');
-  c.innerHTML = '';
-  if(!matchIds.length || matchIds.length < 2) return;
-  try{
-    const ps = await api('mensajes?match_id=in.('+matchIds.join(',')+')&tipo=eq.presupuesto&select=match_id');
-    const distintos = new Set(ps.map(p => p.match_id));
-    if(distintos.size < 2) return;
-    c.innerHTML =
-      '<button class="comp-btn" data-comparar="'+solicitudId+'" type="button">' +
-      '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20V9M10 20V4M16 20v-7M21 20H3"/></svg>' +
-      '<span style="min-width:0"><b>Comparar los ' + distintos.size + ' presupuestos</b>' +
-      '<span>Te mostramos qué incluye cada uno y en qué se diferencian.</span></span></button>';
-  }catch(e){}
-}
-
-$('d-comparador').addEventListener('click', async e => {
-  const b = e.target.closest('[data-comparar]');
-  if(!b || comparando) return;
-  const solicitudId = b.dataset.comparar;
-  comparando = true;
-  $('d-comparador').innerHTML =
-    '<div class="comp-caja"><div class="comp-resumen">Comparando los presupuestos…</div></div>';
-
-  try{
-    const r = await fetch(URL_COMPARAR, {
-      method:'POST', headers:{'Content-Type':'application/json'},
-      body: JSON.stringify({ token: sesion.access_token, solicitudId: Number(solicitudId) })
-    });
-    const d = await r.json();
-
-    if(!d || !d.ok){
-      const motivos = {sesion:'Volvé a entrar y probá de nuevo.',
-                       permiso:'Este pedido no es tuyo.',
-                       pocos:'Todavía hay un solo presupuesto.',
-                       ia:'No pude compararlos ahora. Probá en un rato.'};
-      $('d-comparador').innerHTML =
-        '<div class="comp-caja"><div class="comp-resumen">' +
-        esc((d && motivos[d.motivo]) || 'No se pudo comparar. Probá de nuevo.') + '</div></div>';
-      return;
-    }
-
-    const barato = Math.min(...d.items.map(x => Number(x.monto)||0));
-    $('d-comparador').innerHTML =
-      '<div class="comp-caja">' +
-      '<div class="comp-resumen">' + esc(d.resumen) + '</div>' +
-      (d.ojo ? '<div class="comp-ojo">' + esc(d.ojo) + '</div>' : '') +
-      d.items.map(x =>
-        '<div class="comp-col' + (Number(x.monto) === barato ? ' mejor' : '') + '">' +
-        '<div class="comp-top"><span class="comp-nom">' + esc(x.nombre) + '</span>' +
-        '<span class="comp-monto">' + pesos(x.monto) + '</span></div>' +
-        (x.etiqueta ? '<span class="comp-eti">' + esc(x.etiqueta) + '</span>' : '') +
-        '<div class="comp-lista">' +
-        x.incluye.map(i => '<div><span class="comp-si">✓</span> ' + esc(i) + '</div>').join('') +
-        x.no_incluye.map(i => '<div><span class="comp-no">✕</span> ' + esc(i) + '</div>').join('') +
-        '</div>' +
-        (x.plazo ? '<div class="comp-plazo">Plazo: ' + esc(x.plazo) + '</div>' : '') +
-        '</div>').join('') +
-      '</div>';
-  }catch(err){
-    console.error(err);
-    $('d-comparador').innerHTML =
-      '<div class="comp-caja"><div class="comp-resumen">No me pude conectar. Probá de nuevo.</div></div>';
-  }finally{ comparando = false; }
-});
-
 /* ══════════════════ CALIFICAR AL PROVEEDOR ══════════════════ */
 const URL_CALIFICAR = 'https://marketplace-servicios.app.n8n.cloud/webhook/calificar';
 let estrellasPuestas = 0;
@@ -4045,273 +3867,76 @@ function htmlReputacion(lista){
       '</div>').join('') + '</div>';
 }
 
-/* ══════════════════ TASADOR POR FOTO ══════════════════ */
-const URL_TASADOR = 'https://marketplace-servicios.app.n8n.cloud/webhook/tasar';
-let tasando = false;
-/* La foto que el cliente saca para pedir el presupuesto queda anotada acá hasta
-   que manda el pedido, para poder guardarla junto a la solicitud. Sin esa
-   referencia la foto queda huérfana en el depósito y no hay forma de borrarla
-   después. */
-let fotoTasador = null;
+/* ══════════════════ PREGUNTAS FRECUENTES ══════════════════ */
+/* Reemplazan al asistente. Las respuestas están escritas y son siempre las
+   mismas: nadie improvisa sobre cómo funciona el dinero de otro. */
+const FAQ = [
+  ['Si buscás un servicio', [
+    ['¿Cuánto me cuesta usar Tratto?',
+     'Nada. Pedir un servicio, hablar con proveedores y recibir presupuestos es gratis. ' +
+     'Tratto le cobra una comisión al proveedor sobre los trabajos que se pagan por la app.'],
+    ['¿Cuándo pago el trabajo?',
+     'Cuando está terminado. El proveedor lo marca como terminado en la app y recién ahí ' +
+     'te aparece el botón para pagar. <b>Aceptar un presupuesto no te cobra nada.</b>'],
+    ['¿Con qué puedo pagar?',
+     'Con tarjeta de crédito, de débito o con saldo de tu cuenta de Mercado Pago.'],
+    ['¿Tratto se queda con mi plata?',
+     'No. El pago va directo del cliente al proveedor por Mercado Pago. ' +
+     'Tratto nunca tiene los fondos: solo se le retiene su comisión al proveedor en el momento del cobro.'],
+    ['¿Tratto verifica a los proveedores?',
+     'No verificamos matrículas ni antecedentes: lo que ves en cada perfil lo declaró el proveedor. ' +
+     'Por eso mismo <b>no admitimos rubros que necesiten matrícula</b>, como gas, electricidad o profesiones de la salud. ' +
+     'Mirá las calificaciones y los trabajos cerrados por la app antes de decidir.'],
+    ['¿Qué pasa si nadie responde mi pedido?',
+     'A los 15 días sin respuesta el pedido se da de baja solo y te avisamos. Podés volver a publicarlo cuando quieras.'],
+    ['El trabajo salió mal, ¿qué hago?',
+     'Escribinos a trattoapp1@gmail.com contándonos qué pasó. Revisamos el caso y, si corresponde, ' +
+     'gestionamos la devolución del pago.']
+  ]],
+  ['Si ofrecés un servicio', [
+    ['¿Cuánto me cobra Tratto?',
+     'El <b>3%</b> de cada trabajo que cobres por la app. Se descuenta automáticamente cuando el cliente paga. ' +
+     'Publicar tu perfil y recibir pedidos no cuesta nada.'],
+    ['¿Cómo cobro?',
+     'Conectás tu cuenta de Mercado Pago una sola vez, desde Panel o desde Cuenta. ' +
+     'Después la plata de cada trabajo te llega directo a esa cuenta.'],
+    ['¿Cuándo me pagan?',
+     'Cuando terminás el trabajo lo marcás como terminado y el cliente paga desde la app. ' +
+     'Conviene que lo hagas estando con el cliente, así cobrás en el momento.'],
+    ['¿Qué pasa si el cliente no paga?',
+     'Escribinos a trattoapp1@gmail.com y lo revisamos. Al cliente que no paga le suspendemos la cuenta.'],
+    ['¿Qué son los trabajos cerrados por Tratto?',
+     'Es la cantidad de trabajos que cobraste por la app. Solo contamos esos porque son los únicos que podemos ' +
+     'respaldar. <b>No quiere decir que no hayas hecho otros</b>, pero es lo que un cliente nuevo puede verificar.'],
+    ['¿Puedo trabajar por fuera de Tratto?',
+     'Sí, siempre. Trabajás por tu cuenta y no tenés ninguna exclusividad con nosotros. ' +
+     'Tené en cuenta que lo que se arregle por fuera no suma a tu reputación en la app.'],
+    ['¿Puedo ofrecer un servicio que necesita matrícula?',
+     'No. Como no verificamos matrículas contra ningún colegio, no admitimos rubros que las exijan: ' +
+     'gas, electricidad, escribanía, arquitectura, ingeniería, agrimensura, profesiones de la salud y veterinaria.']
+  ]]
+];
 
-$('tasar-abrir').addEventListener('click', () => { if(!tasando) $('tasar-archivo').click(); });
+function pintarFAQ(){
+  const c = $('faq-lista');
+  if(!c || c.dataset.listo) return;
+  c.innerHTML = FAQ.map(g =>
+    '<div class="faq-grupo"><div class="sec"><span class="sec-tit">'+esc(g[0])+'</span></div>' +
+    g[1].map(qa =>
+      '<div class="faq-item"><button class="faq-preg" type="button">' + esc(qa[0]) +
+      '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 5l7 7-7 7"/></svg>' +
+      '</button><div class="faq-resp">' + qa[1] + '</div></div>').join('') +
+    '</div>').join('');
+  c.dataset.listo = '1';
+}
 
-$('tasar-archivo').addEventListener('change', async e => {
-  const archivo = e.target.files[0];
-  e.target.value = '';
-  if(!archivo || !archivo.type.startsWith('image/')) return;
-
-  tasando = true;
-  $('tasar-resultado').innerHTML =
-    '<div class="diag"><div class="diag-eti">Mirando la foto</div>' +
-    '<div class="diag-que">Dame unos segundos…</div></div>';
-
-  try{
-    // la subimos a nuestro depósito para poder mostrársela a la IA
-    const url = await subirFoto(archivo);
-    fotoTasador = url;
-    const r = await fetch(URL_TASADOR, {
-      method:'POST', headers:{'Content-Type':'application/json'},
-      body: JSON.stringify({ foto: url, zona: $('s-zona').value || null })
-    });
-    const d = await r.json();
-
-    if(!d || !d.ok){
-      $('tasar-resultado').innerHTML =
-        '<div class="diag diag-baja"><div class="diag-eti">No pude leerla</div>' +
-        '<div class="diag-que">' + esc((d && d.motivo) || 'Probá con otra foto o cargá el pedido a mano.') + '</div></div>';
-      return;
-    }
-
-    // completamos el formulario con lo que entendió
-    if(d.rubro && [...$('s-servicio').options].some(o => o.textContent === d.rubro))
-      $('s-servicio').value = d.rubro;
-    if(d.descripcion) $('s-desc').value = d.descripcion;
-    if(d.urgencia && [...$('s-urgencia').options].some(o => o.textContent === d.urgencia))
-      $('s-urgencia').value = d.urgencia;
-    if(d.sugerido) $('s-presupuesto').value = Number(d.sugerido).toLocaleString('es-AR');
-    resumenPedido();
-
-    const baja = d.confianza === 'baja';
-    $('tasar-resultado').innerHTML =
-      '<div class="diag' + (baja ? ' diag-baja' : '') + '">' +
-      '<div class="diag-eti">' + (baja ? 'No estoy seguro' : 'Esto vimos') + '</div>' +
-      '<div class="diag-que">' + esc(d.detectado) + '</div>' +
-      (d.precio_min && d.precio_max
-        ? '<div class="diag-precio">' + pesos(d.precio_min) + ' – ' + pesos(d.precio_max) + '</div>'
-        : '') +
-      (d.aclaracion ? '<div class="diag-nota">' + esc(d.aclaracion) + '</div>' : '') +
-      '<div class="diag-nota">Es una estimación para orientarte: el precio final lo pone cada proveedor. ' +
-      'Completamos el pedido abajo, revisalo y cambiá lo que haga falta.</div>' +
-      '<img class="diag-foto" src="' + esc(url) + '" alt="">' +
-      '</div>';
-    $('tasar-resultado').scrollIntoView({block:'nearest', behavior:'smooth'});
-
-  }catch(err){
-    console.error(err);
-    $('tasar-resultado').innerHTML =
-      '<div class="diag diag-baja"><div class="diag-eti">No se pudo</div>' +
-      '<div class="diag-que">Revisá tu conexión y probá de nuevo, o cargá el pedido a mano.</div></div>';
-  }finally{ tasando = false; }
+$('faq-lista').addEventListener('click', e => {
+  const b = e.target.closest('.faq-preg');
+  if(b) b.parentElement.classList.toggle('abierta');
 });
 
-/* ══════════════════ ASISTENTE ══════════════════ */
-/* ══════════════════ FILTRO DE DATOS DE CONTACTO ══════════════════ */
-/* Antes de que un texto salga hacia un tercero le sacamos los datos con los
-   que se puede contactar o identificar a alguien fuera de la app. No es
-   anonimizar —con texto libre eso es imposible— es mandar lo mínimo.
+$('burbuja-ayuda').addEventListener('click', () => { volverA = actual; pintarFAQ(); ir('ayuda'); });
 
-   El orden de las reglas no es arbitrario: un +54 con separadores tiene
-   tantos dígitos como una tarjeta, y una tarjeta contiene adentro algo que
-   parece un teléfono. Va de lo más específico a lo más general. El punto
-   queda afuera de los separadores de teléfono a propósito, porque en
-   castellano rioplatense los precios lo usan (1.500.000). */
-function limpiarDatos(texto){
-  let t = String(texto == null ? '' : texto);
-  t = t.replace(/[\w.+-]+@[\w-]+\.[\w.-]{2,}/gi, '[correo]');
-  t = t.replace(/\b\d{22}\b/g, '[cbu]');
-  t = t.replace(/\+\s?54[\s\d()-]{6,}\d/g, '[teléfono]');
-  t = t.replace(/\b(?:\d[ -]?){13,19}\b/g, m =>
-    (m.replace(/\D/g,'').length >= 13 ? '[tarjeta]' : m));
-  t = t.replace(/\b(?:0?\d{2,4}[\s-]?)?(?:15[\s-]?)?\d{3,4}[\s-]\d{4}\b/g, '[teléfono]');
-  t = t.replace(/\b\d{10,11}\b/g, '[teléfono]');
-  t = t.replace(/(?:^|\s)@[\w.]{3,}/g, ' [usuario]');
-  return t;
-}
-
-const URL_ASISTENTE = 'https://marketplace-servicios.app.n8n.cloud/webhook/asistente';
-let charla = [], asisPensando = false;
-
-const SUGERENCIAS = {
-  cliente: ['¿Cómo pido un servicio?', '¿Cuánto me cuesta usar Tratto?',
-            '¿Cómo funcionan los puntos?', 'Mi pedido dice "Buscando" hace rato'],
-  proveedor: ['¿Cómo consigo más clientes?', '¿Cómo mando un presupuesto?',
-              '¿Para qué sirven las medallas?', 'Mi rubro no está en la lista']
-};
-
-function pintarCharla(){
-  const h = $('asis-hilo');
-  if(!charla.length){
-    const s = SUGERENCIAS[modo] || SUGERENCIAS.cliente;
-    h.innerHTML = '<div class="asis-burb suya">Hola. Preguntame lo que necesites sobre Tratto.' +
-      '<div class="asis-sugerencias">' +
-      s.map(x => '<button class="asis-chip" type="button" data-sug="'+esc(x)+'">'+esc(x)+'</button>').join('') +
-      '</div></div>';
-    return;
-  }
-  h.innerHTML = charla.map(m =>
-    '<div class="asis-burb '+(m.rol === 'yo' ? 'mia' : 'suya')+'">'+esc(m.texto)+'</div>').join('') +
-    (asisPensando ? '<div class="asis-puntos"><i></i><i></i><i></i></div>' : '');
-  h.scrollTop = h.scrollHeight;
-}
-
-function abrirAsistente(){
-  volverA = actual === 'asistente' ? volverA : actual;
-  pintarCharla();
-  ir('asistente');
-  $('asis-texto').focus();
-}
-
-async function preguntarAsistente(texto){
-  const t = (texto || '').trim();
-  if(!t || asisPensando) return;
-  charla.push({rol:'yo', texto:t});
-  asisPensando = true;
-  pintarCharla();
-  $('asis-texto').value = '';
-  $('asis-texto').style.height = 'auto';
-
-  try{
-    const r = await fetch(URL_ASISTENTE, {
-      method:'POST', headers:{'Content-Type':'application/json'},
-      body: JSON.stringify({
-        pregunta: limpiarDatos(t),
-        historial: charla.slice(-8).map(m => ({rol: m.rol === 'yo' ? 'usuario' : 'bot',
-                                               texto: limpiarDatos(m.texto)})),
-        userId: sesion ? sesion.user.id : null,
-        modo: modo
-      })
-    });
-    const j = await r.json();
-    charla.push({rol:'bot', texto: (j && j.respuesta) || 'No pude responderte ahora. Probá de nuevo en un rato.'});
-  }catch(e){
-    console.error(e);
-    charla.push({rol:'bot', texto:'No me pude conectar. Revisá tu conexión y probá de nuevo.'});
-  }finally{
-    asisPensando = false;
-    pintarCharla();
-  }
-}
-
-$('burbuja-asis').addEventListener('click', abrirAsistente);
-$('asis-enviar').addEventListener('click', () => preguntarAsistente($('asis-texto').value));
-$('asis-hilo').addEventListener('click', e => {
-  const b = e.target.closest('[data-sug]');
-  if(b) preguntarAsistente(b.dataset.sug);
-});
-$('asis-texto').addEventListener('input', e => {
-  e.target.style.height = 'auto';
-  e.target.style.height = Math.min(e.target.scrollHeight, 120) + 'px';
-});
-$('asis-texto').addEventListener('keydown', e => {
-  if(e.key === 'Enter' && !e.shiftKey && window.innerWidth > 760){
-    e.preventDefault(); $('asis-enviar').click();
-  }
-});
-
-/* ══════════════════ ARRANQUE ══════════════════ */
-/* ══════════════════ ACTUALIZACIÓN AUTOMÁTICA ══════════════════ */
-/* Refresca las listas solas mientras mirás una pantalla, sin recargar la página. */
-let latido = null, ultimaFirma = '';
-
-function firmaDeDatos(){
-  return misPedidos.length + '|' + misPerfiles.length + '|' +
-    Object.keys(conexiones).length + '|' +
-    misPedidos.map(s => s.id + s.estado).join(',');
-}
-
-async function mirarSiHayNovedades(){
-  if(!sesion || actual === 'chat' || actual === 'auth') return;
-  if(document.hidden) return;
-  try{
-    const antes = firmaDeDatos();
-    misPedidos = await api('solicitudes?user_id=eq.'+sesion.user.id+'&order=created_at.desc');
-    misPerfiles = await api('proveedores?user_id=eq.'+sesion.user.id+'&order=created_at.desc');
-    if(firmaDeDatos() === antes) return;   // nada cambió, no repintamos
-
-    if(actual === 'inicio')  await cargarPedidos();
-    if(actual === 'perfil')  await cargarPerfiles();
-    if(actual === 'panel')   await cargarPanel();
-    if(actual === 'premios') await cargarPremios();
-    await cargarConexiones();
-  }catch(e){}
-}
-
-function arrancarLatido(){
-  if(latido) clearInterval(latido);
-  latido = setInterval(mirarSiHayNovedades, 12000);
-}
-function pararLatido(){ if(latido){ clearInterval(latido); latido = null; } }
-
-/* al volver a la app después de tenerla en segundo plano, actualizamos ya */
-document.addEventListener('visibilitychange', () => {
-  if(!document.hidden && sesion) mirarSiHayNovedades();
-});
-
-async function recargarTodo(){
-  await cargarPedidos();
-  await cargarPerfiles();
-  await cargarConexiones();
-  await cargarPerfilProv();
-  pintarModoCuenta();
-  if(modo === 'proveedor') await cargarPanel(); else await cargarPremios();
-}
-
-function pintarModoCuenta(){
-  const prov = modo === 'proveedor';
-  $('modo-actual').textContent = prov ? 'Modo proveedor' : 'Modo cliente';
-  $('modo-sello').textContent  = prov ? 'Proveedor' : 'Cliente';
-  $('modo-sello').className    = 'sello ' + (prov ? 'oro' : 'verde');
-  $('modo-txt').textContent    = prov
-    ? 'Recibís pedidos, mandás presupuestos y armás tu perfil.'
-    : 'Pedís servicios y elegís proveedores.';
-  $('btn-cambiar-txt').textContent = prov ? 'Cambiar a modo cliente' : 'Cambiar a modo proveedor';
-}
-
-function entrarApp(){
-  const u = sesion.user;
-  $('saludo').textContent = 'Hola, ' + (u.email||'').split('@')[0];
-  $('c-mail').textContent = u.email;
-  $('c-inicial').textContent = (u.email||'?').charAt(0).toUpperCase();
-  $('c-uid').textContent = u.id;
-  $('c-alta').textContent = u.created_at ? new Date(u.created_at).toLocaleDateString('es-AR',{day:'2-digit',month:'long',year:'numeric'}) : '—';
-  $('s-email').value = u.email; $('p-email').value = u.email;
-  resumenPedido(); resumenProv();
-  const g = store.leer(); if(g && g.modo) modo = g.modo;
-  aplicarModo();
-  recargarTodo();
-  arrancarLatido();
-}
-
-function bajarTelon(){
-  const a = $('arranque');
-  a.classList.add('fuera');
-  setTimeout(() => a.remove(), 400);
-}
-
-(async function iniciar(){
-  const s = store.leer();
-  if(!s || !s.access_token){ ir('auth','entra'); bajarTelon(); return; }
-  try{
-    const r = await fetch(SUPABASE_URL+'/auth/v1/user',{
-      headers:{'apikey':SUPABASE_ANON,'Authorization':'Bearer '+s.access_token}
-    });
-    if(!r.ok){ store.borrar(); ir('auth','entra'); bajarTelon(); return; }
-    sesion = {access_token:s.access_token, user: await r.json()};
-    entrarApp();
-  }catch(e){ console.error(e); ir('auth','entra'); }
-  finally{ bajarTelon(); }
-})();
 </script>
 </body>
 </html>
