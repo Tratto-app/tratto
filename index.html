@@ -1785,12 +1785,12 @@ const SUPABASE_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFz
 const CLAVE = 'mkt_sesion';
 
 const RUBROS_GRUPOS = {
-  'Hogar y oficios': ['Plomería','Destapaciones','Gas matriculado','Electricidad','Albañilería y refacciones',
+  'Hogar y oficios': ['Plomería','Destapaciones','Albañilería y refacciones',
     'Carpintería','Pintura','Herrería y soldadura','Techos y humedades','Impermeabilización',
     'Durlock y cielorrasos','Pisos y cerámicas','Vidriería','Cerrajería','Aberturas y ventanas',
     'Aire acondicionado','Calefacción y calderas','Service de electrodomésticos','Antenas y redes de TV',
     'Piletas y mantenimiento','Jardinería y parquización','Poda y extracción de árboles',
-    'Control de plagas','Limpieza de tanques','Armado de muebles','Cortinas y toldos',
+    'Limpieza de tanques','Armado de muebles','Cortinas y toldos',
     'Cámaras de seguridad','Portones automáticos','Paneles solares','Pequeños arreglos del hogar'],
   'Limpieza': ['Limpieza de hogar','Limpieza de oficinas','Limpieza de consorcios','Limpieza final de obra',
     'Limpieza de tapizados y alfombras','Lavado a domicilio'],
@@ -1798,17 +1798,14 @@ const RUBROS_GRUPOS = {
     'Lavadero y detailing','Auxilio y remolque','Cerrajería del automotor','Aire acondicionado del automotor',
     'Fletes y mudanzas','Transporte y logística','Chofer particular','Delivery y mensajería'],
   'Profesionales': ['Contabilidad y facturación','Asesoría impositiva','Liquidación de sueldos',
-    'Asesoría legal','Escribanía','Arquitectura','Ingeniería','Maestro mayor de obras','Agrimensura',
-    'Diseño de interiores','Dirección de obra','Seguros','Gestoría y trámites','Despachante de aduana',
-    'Recursos humanos','Consultoría de negocios','Traducción','Traductor público','Martillero e inmobiliaria'],
+    'Diseño de interiores','Gestoría y trámites','Recursos humanos','Consultoría de negocios','Traducción'],
   'Digital y creativo': ['Desarrollo web','Desarrollo de apps','Diseño gráfico','Diseño UX/UI',
     'Marketing digital','Community manager','Publicidad en redes','Posicionamiento en Google (SEO)',
     'Redacción y contenidos','Edición de video','Fotografía','Video y drone','Ilustración',
     'Animación y motion','Locución','Producción musical','Automatización con IA','Soporte técnico',
     'Reparación de PC y notebooks','Reparación de celulares','Redes y cableado','Ciberseguridad','Análisis de datos'],
-  'Salud y bienestar': ['Kinesiología','Fonoaudiología','Nutrición','Psicología','Psicopedagogía',
-    'Enfermería a domicilio','Acompañante terapéutico','Cuidado de adultos mayores','Masajes y terapias',
-    'Entrenador personal','Yoga y pilates','Podología','Terapia ocupacional'],
+  'Salud y bienestar': ['Cuidado de adultos mayores','Masajes y terapias',
+    'Entrenador personal','Yoga y pilates'],
   'Belleza y estética': ['Peluquería','Barbería','Manicura y pedicura','Cosmetología','Maquillaje',
     'Depilación','Estética corporal','Tatuajes y piercings'],
   'Eventos': ['Catering','Chef a domicilio','Pastelería y tortas','Fotografía de eventos','Filmación de eventos',
@@ -1817,7 +1814,7 @@ const RUBROS_GRUPOS = {
   'Educación': ['Clases particulares (primaria)','Clases particulares (secundaria)','Apoyo universitario',
     'Idiomas','Clases de música','Preparación de exámenes','Cursos y capacitación','Clases de manejo',
     'Clases de natación','Clases de computación'],
-  'Mascotas': ['Paseo de perros','Adiestramiento canino','Veterinaria a domicilio','Guardería de mascotas',
+  'Mascotas': ['Paseo de perros','Adiestramiento canino','Guardería de mascotas',
     'Peluquería canina'],
   'Otros servicios': ['Costura y arreglos de ropa','Tapicería','Restauración de muebles','Imprenta y gráfica',
     'Estampado y serigrafía','Cartelería','Asistente virtual','Organización de espacios',
@@ -2234,12 +2231,14 @@ $('s-enviar').addEventListener('click', async () => {
         nombre_cliente:v('s-nombre'), email_cliente:v('s-email'), telefono_cliente:v('s-tel'),
         servicio_necesitado:v('s-servicio'), zona:v('s-zona'),
         presupuesto:num(v('s-presupuesto')), urgencia:v('s-urgencia'),
-        descripcion:v('s-desc'), estado:'pendiente', user_id:sesion.user.id
+        descripcion:v('s-desc'), estado:'pendiente', user_id:sesion.user.id,
+        foto_url: fotoTasador
       })
     });
     if(res.status===401){ avisar('s-aviso','Tu sesión venció. Volvé a entrar.','mal'); return; }
     if(!res.ok){ console.error(await res.text()); avisar('s-aviso','No se pudo enviar (error '+res.status+').','mal'); return; }
     CS.forEach(c => $(c).value=''); $('s-email').value = sesion.user.email;
+    fotoTasador = null; $('tasar-resultado').innerHTML = '';
     resumenPedido(); await cargarPedidos(); ir('inicio','entra');
   }catch(e){ console.error(e); avisar('s-aviso','No se pudo conectar. Probá de nuevo.','mal'); }
   finally{ b.disabled=false; b.classList.remove('cargando'); $('s-txt').textContent='Buscar proveedores'; }
@@ -2326,13 +2325,20 @@ async function cargarPedidos(){
       return;
     }
     $('lista-pedidos').innerHTML = misPedidos.map(s => {
-      const listo = s.estado === 'con_match';
+      const listo   = s.estado === 'con_match';
+      /* A los 15 días sin que ningún proveedor responda, el pedido se da de
+         baja solo y se borra la foto. No lo escondemos: el cliente tiene que
+         entender por qué dejó de buscar y poder pedirlo de nuevo. */
+      const vencido = s.estado === 'vencida';
+      const sello = vencido ? ['gris','Vencido'] : listo ? ['verde','Con proveedores'] : ['gris','Buscando'];
       return '<button class="item" data-pedido="'+s.id+'" type="button"><div class="item-top">' +
         '<span class="item-tit">'+esc(s.servicio_necesitado)+'</span>' +
-        '<span class="sello '+(listo?'verde':'gris')+'">'+(listo?'Con proveedores':'Buscando')+'</span></div>' +
+        '<span class="sello '+sello[0]+'">'+sello[1]+'</span></div>' +
         '<div class="item-meta"><span>'+esc(s.zona)+'</span><span>hasta '+pesos(s.presupuesto)+'</span>' +
         '<span>'+esc(s.urgencia)+'</span></div>' +
-        '<div class="item-pie"><span>'+(listo?'Ver quién te podemos conectar':'Buscando proveedores que calcen')+'</span>' +
+        '<div class="item-pie"><span>'+(vencido
+            ? 'Nadie respondió en 15 días. Podés volver a pedirlo.'
+            : listo ? 'Ver quién te podemos conectar' : 'Buscando proveedores que calcen')+'</span>' +
         '<span class="flecha"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 5l7 7-7 7"/></svg></span></div></button>';
     }).join('');
     document.querySelectorAll('[data-pedido]').forEach(b =>
@@ -2948,7 +2954,8 @@ async function abrirDetalle(id){
   $('d-zona').textContent = s.zona;
   $('d-presu').textContent= pesos(s.presupuesto);
   $('d-urg').textContent  = s.urgencia;
-  $('d-estado').textContent = s.estado === 'con_match' ? 'Con proveedores' : 'Buscando';
+  $('d-estado').textContent = s.estado === 'vencida' ? 'Vencido'
+    : s.estado === 'con_match' ? 'Con proveedores' : 'Buscando';
   $('d-lista').innerHTML = esqueleto(2);
   $('d-comparador').innerHTML = '';
   $('d-num').textContent = '';
@@ -4041,6 +4048,11 @@ function htmlReputacion(lista){
 /* ══════════════════ TASADOR POR FOTO ══════════════════ */
 const URL_TASADOR = 'https://marketplace-servicios.app.n8n.cloud/webhook/tasar';
 let tasando = false;
+/* La foto que el cliente saca para pedir el presupuesto queda anotada acá hasta
+   que manda el pedido, para poder guardarla junto a la solicitud. Sin esa
+   referencia la foto queda huérfana en el depósito y no hay forma de borrarla
+   después. */
+let fotoTasador = null;
 
 $('tasar-abrir').addEventListener('click', () => { if(!tasando) $('tasar-archivo').click(); });
 
@@ -4057,6 +4069,7 @@ $('tasar-archivo').addEventListener('change', async e => {
   try{
     // la subimos a nuestro depósito para poder mostrársela a la IA
     const url = await subirFoto(archivo);
+    fotoTasador = url;
     const r = await fetch(URL_TASADOR, {
       method:'POST', headers:{'Content-Type':'application/json'},
       body: JSON.stringify({ foto: url, zona: $('s-zona').value || null })
