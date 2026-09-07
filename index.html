@@ -4116,6 +4116,29 @@ $('tasar-archivo').addEventListener('change', async e => {
 });
 
 /* ══════════════════ ASISTENTE ══════════════════ */
+/* ══════════════════ FILTRO DE DATOS DE CONTACTO ══════════════════ */
+/* Antes de que un texto salga hacia un tercero le sacamos los datos con los
+   que se puede contactar o identificar a alguien fuera de la app. No es
+   anonimizar —con texto libre eso es imposible— es mandar lo mínimo.
+
+   El orden de las reglas no es arbitrario: un +54 con separadores tiene
+   tantos dígitos como una tarjeta, y una tarjeta contiene adentro algo que
+   parece un teléfono. Va de lo más específico a lo más general. El punto
+   queda afuera de los separadores de teléfono a propósito, porque en
+   castellano rioplatense los precios lo usan (1.500.000). */
+function limpiarDatos(texto){
+  let t = String(texto == null ? '' : texto);
+  t = t.replace(/[\w.+-]+@[\w-]+\.[\w.-]{2,}/gi, '[correo]');
+  t = t.replace(/\b\d{22}\b/g, '[cbu]');
+  t = t.replace(/\+\s?54[\s\d()-]{6,}\d/g, '[teléfono]');
+  t = t.replace(/\b(?:\d[ -]?){13,19}\b/g, m =>
+    (m.replace(/\D/g,'').length >= 13 ? '[tarjeta]' : m));
+  t = t.replace(/\b(?:0?\d{2,4}[\s-]?)?(?:15[\s-]?)?\d{3,4}[\s-]\d{4}\b/g, '[teléfono]');
+  t = t.replace(/\b\d{10,11}\b/g, '[teléfono]');
+  t = t.replace(/(?:^|\s)@[\w.]{3,}/g, ' [usuario]');
+  return t;
+}
+
 const URL_ASISTENTE = 'https://marketplace-servicios.app.n8n.cloud/webhook/asistente';
 let charla = [], asisPensando = false;
 
@@ -4162,8 +4185,9 @@ async function preguntarAsistente(texto){
     const r = await fetch(URL_ASISTENTE, {
       method:'POST', headers:{'Content-Type':'application/json'},
       body: JSON.stringify({
-        pregunta: t,
-        historial: charla.slice(-8).map(m => ({rol: m.rol === 'yo' ? 'usuario' : 'bot', texto: m.texto})),
+        pregunta: limpiarDatos(t),
+        historial: charla.slice(-8).map(m => ({rol: m.rol === 'yo' ? 'usuario' : 'bot',
+                                               texto: limpiarDatos(m.texto)})),
         userId: sesion ? sesion.user.id : null,
         modo: modo
       })
