@@ -733,6 +733,26 @@
   .burbuja-asis svg{width:24px;height:24px;color:var(--verde-luz)}
   .burbuja-asis:active{transform:scale(.94)}
 
+  /* ═══════════ PEDIDOS ABIERTOS ═══════════ */
+  /* La tarjeta del pedido tiene que poder leerse de un vistazo desde una obra:
+     rubro grande, la foto ocupando ancho completo, y el cupo como dato duro
+     en mono, que es como el sistema muestra todo lo que es un número. */
+  .pedido{background:var(--claro);border:1px solid var(--linea);border-radius:var(--r);
+    margin-bottom:11px;overflow:hidden;box-shadow:var(--sombra)}
+  .pedido-foto{width:100%;height:150px;object-fit:cover;display:block;background:var(--claro-2)}
+  .pedido-cuerpo{padding:15px 16px}
+  .pedido-top{display:flex;align-items:baseline;justify-content:space-between;gap:11px}
+  .pedido-rubro{font-family:'IBM Plex Sans Condensed',sans-serif;font-weight:700;font-size:16.5px}
+  .pedido-cupo{font-family:'IBM Plex Mono',monospace;font-size:8.5px;letter-spacing:.14em;
+    text-transform:uppercase;font-weight:600;color:var(--laton-osc);flex:none;
+    border:1px solid rgba(201,162,39,.5);border-radius:99px;padding:3px 9px}
+  .pedido-desc{font-size:13.5px;line-height:1.5;color:var(--gris);margin-top:7px}
+  .pedido-datos{display:flex;flex-wrap:wrap;gap:7px;margin-top:11px}
+  .pedido-dato{font-family:'IBM Plex Mono',monospace;font-size:8.5px;letter-spacing:.12em;
+    text-transform:uppercase;font-weight:600;background:var(--claro-2);color:var(--gris);
+    border:1px solid var(--linea-fuerte);border-radius:99px;padding:4px 9px}
+  .pedido .btn{margin-top:13px}
+
   /* ═══════════ PERMISO DE TRANSFERENCIA ═══════════ */
   .tildar a{color:var(--verde);text-decoration:underline;text-underline-offset:2px}
   .legales-estado{font-family:'IBM Plex Mono',monospace;font-size:9.5px;letter-spacing:.1em;
@@ -1442,7 +1462,7 @@
       <button class="btn riesgo" id="salir" type="button">Cerrar sesión</button>
       <button class="btn vacio-b" id="ir-baja" type="button">Borrar mi cuenta</button>
       <p style="text-align:center;margin-top:18px;font-family:'IBM Plex Mono',monospace;
-        font-size:10px;letter-spacing:.14em;color:var(--gris-3)">VERSIÓN F-27 · PEDIDO CON FOTO</p>
+        font-size:10px;letter-spacing:.14em;color:var(--gris-3)">VERSIÓN F-28 · PEDIDOS PARA VOS</p>
     </section>
 
     <!-- ══════ NUEVO PEDIDO ══════ -->
@@ -1747,6 +1767,15 @@
       <p class="bajada">Cómo viene tu trabajo en la app. Se actualiza solo.</p>
 
       <div id="panel-sin-perfil"></div>
+
+      <!-- Va arriba de los números: cuando el proveedor abre la app, lo primero
+           que tiene que ver es trabajo disponible, no sus estadísticas. -->
+      <div id="panel-abiertos-sec" class="oculto">
+        <div class="sec"><span class="sec-tit">Pedidos para vos</span><span class="sec-num" id="n-abiertos"></span></div>
+        <p class="bajada" style="margin-top:-4px">De tu rubro y todavía sin cubrir. Si te interesa uno,
+          decilo y se abre el chat con el cliente.</p>
+        <div id="lista-abiertos"></div>
+      </div>
 
       <div id="panel-datos" class="oculto">
         <div class="kpis">
@@ -4205,6 +4234,85 @@ function chapaZona(rel){
 
 
 
+/* ══════════════════ PEDIDOS ABIERTOS ══════════════════ */
+/* El proveedor ve pedidos de su rubro que todavía nadie cubrió y decide si le
+   interesan. Lo que ve viene de la vista pedidos_abiertos, que expone rubro,
+   zona, urgencia, descripción, foto y presupuesto --y nada de contacto--. El
+   nombre, el mail y el teléfono del cliente recién aparecen en el chat.
+
+   Si la vista todavía no existe en la base, esto no rompe nada: la sección
+   queda oculta y el resto del panel funciona igual. */
+let tomandoPedido = false;
+
+async function cargarPedidosAbiertos(){
+  const sec = $('panel-abiertos-sec');
+  if(modo !== 'proveedor' || !misPerfiles.length){ sec.classList.add('oculto'); return; }
+  let lista;
+  try{
+    lista = await api('pedidos_abiertos?order=created_at.desc&limit=20');
+  }catch(e){
+    sec.classList.add('oculto');   // la vista todavía no está creada
+    return;
+  }
+  if(!Array.isArray(lista) || !lista.length){ sec.classList.add('oculto'); return; }
+  sec.classList.remove('oculto');
+  $('n-abiertos').textContent = lista.length;
+  $('lista-abiertos').innerHTML = lista.map(x => {
+    const quedan = Math.max(0, Number(x.cupo||5) - Number(x.tomados||0));
+    return '<div class="pedido">' +
+      (x.foto_url ? '<img class="pedido-foto" src="'+esc(x.foto_url)+'" alt="" loading="lazy">' : '') +
+      '<div class="pedido-cuerpo">' +
+      '<div class="pedido-top"><span class="pedido-rubro">'+esc(x.servicio_necesitado)+'</span>' +
+      '<span class="pedido-cupo">'+quedan+' '+(quedan===1?'lugar':'lugares')+'</span></div>' +
+      '<div class="pedido-desc">'+esc(x.descripcion||'')+'</div>' +
+      '<div class="pedido-datos">' +
+      '<span class="pedido-dato">'+esc(x.zona)+'</span>' +
+      '<span class="pedido-dato">'+esc(x.urgencia||'Sin apuro')+'</span>' +
+      (x.presupuesto ? '<span class="pedido-dato">Tiene en mente '+pesos(x.presupuesto)+'</span>' : '') +
+      '</div>' +
+      '<button class="btn lleno" data-tomar="'+x.id+'" data-rubro="'+esc(x.servicio_necesitado)+'" ' +
+      'type="button">Me interesa</button>' +
+      '</div></div>';
+  }).join('');
+}
+
+$('lista-abiertos').addEventListener('click', async e => {
+  const b = e.target.closest('[data-tomar]');
+  if(!b || tomandoPedido) return;
+  /* Con qué perfil se anota: el que tiene ese rubro. Un proveedor puede tener
+     varios servicios publicados y sólo uno corresponde a este pedido. */
+  const perfil = misPerfiles.find(p => p.rubro === b.dataset.rubro);
+  if(!perfil){ b.textContent = 'No tenés un servicio de ese rubro'; return; }
+
+  tomandoPedido = true;
+  b.disabled = true; b.classList.add('cargando');
+  const txt = b.textContent; b.textContent = 'Avisando…';
+  try{
+    const r = await fetch(SUPABASE_URL + '/rest/v1/interesados', {
+      method:'POST', headers:cab({'Prefer':'return=representation'}),
+      body: JSON.stringify({ solicitud_id: Number(b.dataset.tomar), proveedor_id: perfil.id })
+    });
+    if(!r.ok){
+      const crudo = await r.text();
+      console.error(crudo);
+      b.textContent = crudo.includes('cupo completo')
+        ? 'Ya se completó'
+        : 'No se pudo. Probá de nuevo.';
+      setTimeout(cargarPedidosAbiertos, 1600);
+      return;
+    }
+    await cargarPedidosAbiertos();
+    await cargarConexiones();
+  }catch(err){
+    console.error(err);
+    b.textContent = 'No se pudo conectar';
+  }finally{
+    tomandoPedido = false;
+    b.disabled = false; b.classList.remove('cargando');
+    if(b.isConnected && b.textContent === 'Avisando…') b.textContent = txt;
+  }
+});
+
 /* ══════════════════ REPORTAR CONTENIDO ══════════════════ */
 const BANDERA_REP = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M5 21V4"/><path d="M5 4.5h11l-2 3.5 2 3.5H5"/></svg>';
 let repDestino = null;
@@ -4922,7 +5030,8 @@ async function recargarTodo(){
   await cargarConexiones();
   await cargarPerfilProv();
   pintarModoCuenta();
-  if(modo === 'proveedor') await cargarPanel(); else await cargarPremios();
+  if(modo === 'proveedor'){ await cargarPanel(); await cargarPedidosAbiertos(); }
+  else await cargarPremios();
 }
 
 function pintarModoCuenta(){
