@@ -538,7 +538,18 @@
   .declara ul{margin:11px 0 0;padding-left:17px;font-size:13px;color:var(--gris);line-height:1.7}
   .declara-pie{font-size:12.5px;color:var(--gris);margin-top:12px;line-height:1.5}
   .tildar{display:flex;gap:11px;align-items:flex-start;margin-top:14px;cursor:pointer}
-  .tildar input{width:20px;height:20px;flex:none;margin-top:1px;accent-color:var(--verde)}
+  /* La regla general de input le pone appearance:none a todo para poder estilar
+     los campos de texto, y de paso le borra a la casilla su dibujo nativo: queda
+     un rectangulito vacío que nunca muestra tilde aunque esté marcada. Así que
+     el tilde lo dibujamos nosotros, y de paso queda del verde de la casa en vez
+     del azul del sistema. */
+  .tildar input{width:20px;height:20px;flex:none;margin-top:1px;padding:0;
+    border:1.5px solid var(--linea-fuerte);border-radius:6px;background:var(--claro);
+    cursor:pointer;transition:background-color .12s,border-color .12s}
+  .tildar input:checked{background-color:var(--verde);border-color:var(--verde);
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23FCFBF8' stroke-width='3.4' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M5 12.6l4.6 4.6L19 7.4'/%3E%3C/svg%3E");
+    background-repeat:no-repeat;background-position:center;background-size:14px}
+  .tildar input:focus-visible{outline:2px solid var(--verde-vivo);outline-offset:2px}
   .tildar span{font-size:13.5px;line-height:1.45;font-weight:500}
 
   /* ═══════════ PUBLICAR UN SERVICIO: EL MISMO FORMULARIO, EN CLAVE LATÓN ═══════════ */
@@ -551,7 +562,9 @@
   #p-nuevo-proveedor select:focus,
   #p-nuevo-proveedor textarea:focus{border-color:var(--laton-osc);
     box-shadow:0 0 0 3px rgba(201,162,39,.16)}
-  #p-nuevo-proveedor .tildar input{accent-color:var(--laton-osc)}
+  #p-nuevo-proveedor .tildar input:checked{background-color:var(--laton-osc);
+    border-color:var(--laton-osc)}
+  #p-nuevo-proveedor .tildar input:focus-visible{outline-color:var(--laton)}
   #p-nuevo-proveedor .btn.lleno{background:var(--laton-osc)}
   #p-nuevo-proveedor .btn.lleno:active:not(:disabled){background:#755D0D}
 
@@ -573,7 +586,13 @@
   .opcion{display:flex;gap:11px;align-items:flex-start;padding:13px 0;
     border-bottom:1px solid var(--linea);cursor:pointer}
   .opcion:last-of-type{border-bottom:none}
-  .opcion input{width:19px;height:19px;flex:none;margin-top:2px;accent-color:var(--verde)}
+  /* Mismo problema que la casilla: appearance:none le borra el dibujo nativo,
+     así que el punto del redondel también lo ponemos nosotros. */
+  .opcion input{width:19px;height:19px;flex:none;margin-top:2px;padding:0;
+    border:1.5px solid var(--linea-fuerte);border-radius:50%;background:var(--claro);
+    cursor:pointer;transition:border-color .12s,box-shadow .12s}
+  .opcion input:checked{border-color:var(--verde);border-width:6px}
+  .opcion input:focus-visible{outline:2px solid var(--verde-vivo);outline-offset:2px}
   .opcion b{font-weight:600;font-size:14.5px;display:block}
   .opcion span{font-size:12.5px;color:var(--gris);display:block;margin-top:2px}
 
@@ -730,7 +749,10 @@
   /* Un error en una casilla no se ve si solo se pinta el cuadradito: es de
      20px. Se marca el renglón entero. */
   .tildar.mal span{color:var(--alerta)}
-  .tildar.mal input{outline:2px solid var(--alerta);outline-offset:2px}
+  .tildar.mal input{border-color:var(--alerta);box-shadow:0 0 0 3px var(--alerta-luz)}
+  /* El foco salta acá cuando falta tildar, así que el aro tiene que ser del
+     mismo color que el error: uno verde sobre un borde rojo se contradice. */
+  .tildar.mal input:focus-visible{outline-color:var(--alerta)}
 
   /* El mismo tratamiento de dato técnico que el resto del sistema: mono, en
      versalitas, para lo que abre detalle en vez de ejecutar algo. */
@@ -1409,7 +1431,7 @@
       <button class="btn riesgo" id="salir" type="button">Cerrar sesión</button>
       <button class="btn vacio-b" id="ir-baja" type="button">Borrar mi cuenta</button>
       <p style="text-align:center;margin-top:18px;font-family:'IBM Plex Mono',monospace;
-        font-size:10px;letter-spacing:.14em;color:var(--gris-3)">VERSIÓN F-24 · CASILLAS QUE TILDAN</p>
+        font-size:10px;letter-spacing:.14em;color:var(--gris-3)">VERSIÓN F-25 · TILDE VISIBLE</p>
     </section>
 
     <!-- ══════ NUEVO PEDIDO ══════ -->
