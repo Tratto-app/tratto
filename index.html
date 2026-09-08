@@ -715,8 +715,9 @@
   .burbuja-asis:active{transform:scale(.94)}
 
   /* ═══════════ PERMISO DE TRANSFERENCIA ═══════════ */
-  .legales-pie{font-size:12px;line-height:1.5;color:var(--gris-2);margin:12px 0 0 31px}
-  .legales-pie a{color:var(--verde);text-decoration:underline;text-underline-offset:2px}
+  .tildar a{color:var(--verde);text-decoration:underline;text-underline-offset:2px}
+  .legales-estado{font-family:'IBM Plex Mono',monospace;font-size:9.5px;letter-spacing:.1em;
+    color:var(--gris-2);margin-top:10px;line-height:1.5}
   /* Los documentos abren afuera, asi que se leen como referencia, no como
      acciones de la app: mismo tratamiento mono que el resto de los datos. */
   .legales-fila{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px}
@@ -1251,9 +1252,13 @@
             Ver qué va a cada lugar
           </button>
           <div class="err" id="e-a-transfer">Sin este permiso no podemos crear la cuenta.</div>
-          <p class="legales-pie">Al crear la cuenta aceptás nuestros
-            <a href="/terminos.html" target="_blank" rel="noopener">términos y condiciones</a> y la
-            <a href="/privacidad.html" target="_blank" rel="noopener">política de privacidad</a>.</p>
+          <label class="tildar" id="a-legales-fila">
+            <input type="checkbox" id="a-legales">
+            <span>Leí y acepto los
+              <a href="/terminos.html" target="_blank" rel="noopener">términos y condiciones</a> y la
+              <a href="/privacidad.html" target="_blank" rel="noopener">política de privacidad</a>.</span>
+          </label>
+          <div class="err" id="e-a-legales">Tenés que aceptar los términos para crear la cuenta.</div>
         </div>
       </div>
 
@@ -1398,12 +1403,13 @@
         <a class="legales-btn" href="/terminos.html" target="_blank" rel="noopener">Términos y condiciones</a>
         <a class="legales-btn" href="/privacidad.html" target="_blank" rel="noopener">Política de privacidad</a>
       </div>
+      <div class="legales-estado" id="legales-estado"></div>
 
       <div class="sec"><span class="sec-tit">Sesión</span></div>
       <button class="btn riesgo" id="salir" type="button">Cerrar sesión</button>
       <button class="btn vacio-b" id="ir-baja" type="button">Borrar mi cuenta</button>
       <p style="text-align:center;margin-top:18px;font-family:'IBM Plex Mono',monospace;
-        font-size:10px;letter-spacing:.14em;color:var(--gris-3)">VERSIÓN F-22 · LEGALES PUBLICADOS</p>
+        font-size:10px;letter-spacing:.14em;color:var(--gris-3)">VERSIÓN F-23 · ACEPTACION REGISTRADA</p>
     </section>
 
     <!-- ══════ NUEVO PEDIDO ══════ -->
@@ -2227,6 +2233,11 @@ if(!matchMedia('(prefers-reduced-motion: reduce)').matches){
   }, 4600);
 }
 
+/* La fecha que llevan impresa las páginas publicadas. Se guarda con la
+   aceptación porque importa QUÉ versión se aceptó, no solo que se aceptó: si
+   los documentos cambian, esto es lo que dice quién aceptó cuál. */
+const VERSION_LEGALES = '2026-09-08';
+
 let modoAuth = 'entrar';
 function cambiarAuth(m){
   modoAuth = m;
@@ -2246,8 +2257,14 @@ function cambiarAuth(m){
 function limpiarTransfer(){
   $('a-transfer-fila').classList.remove('mal');
   $('e-a-transfer').classList.remove('visible');
+  $('a-legales-fila').classList.remove('mal');
+  $('e-a-legales').classList.remove('visible');
 }
 $('a-transfer').addEventListener('change', limpiarTransfer);
+$('a-legales').addEventListener('change', limpiarTransfer);
+/* Los enlaces viven adentro de la etiqueta, así que un toque sobre ellos
+   tildaría la casilla además de abrir el documento. Leer no es aceptar. */
+$('a-legales-fila').addEventListener('click', e => { if(e.target.closest('a')) e.stopPropagation(); });
 $('a-transfer-ver').addEventListener('click', () => $('telon-infra').classList.add('abierto'));
 $('infra-cerrar').addEventListener('click', () => $('telon-infra').classList.remove('abierto'));
 $('telon-infra').addEventListener('click', e => {
@@ -2291,6 +2308,11 @@ $('a-enviar').addEventListener('click', async () => {
     $('e-a-transfer').classList.add('visible');
     if(!r.p) r.p = 'a-transfer';
   }
+  if(modoAuth === 'crear' && !$('a-legales').checked){
+    $('a-legales-fila').classList.add('mal');
+    $('e-a-legales').classList.add('visible');
+    if(!r.p) r.p = 'a-legales';
+  }
   if(enfocar(r)) return;
 
   const b=$('a-enviar'); b.disabled=true; b.classList.add('cargando');
@@ -2303,7 +2325,9 @@ $('a-enviar').addEventListener('click', async () => {
          eso no hay forma de acreditar cuándo se dio. */
       body: JSON.stringify(modoAuth === 'crear'
         ? {email, password:pass,
-           data:{ transfer_permiso:true, transfer_permiso_fecha:new Date().toISOString() }}
+           data:{ transfer_permiso:true, transfer_permiso_fecha:new Date().toISOString(),
+                  legales_aceptados:true, legales_fecha:new Date().toISOString(),
+                  legales_version:VERSION_LEGALES }}
         : {email, password:pass})
     });
     const j = await res.json();
@@ -4237,6 +4261,18 @@ function pintarTransfer(){
 
 $('transfer-ver-cuenta').addEventListener('click', () => $('telon-infra').classList.add('abierto'));
 
+/* Qué versión aceptó cada uno y cuándo. Si los documentos cambian, esto es lo
+   que permite saber a quién hay que volver a pedirle la aceptación. */
+function pintarLegales(){
+  if(!sesion) return;
+  const m = sesion.user.user_metadata || {};
+  $('legales-estado').textContent = m.legales_aceptados
+    ? 'Aceptados el ' + new Date(m.legales_fecha).toLocaleDateString('es-AR',
+        {day:'2-digit',month:'2-digit',year:'numeric'}) +
+      (m.legales_version ? ' · versión ' + m.legales_version : '')
+    : 'Tu cuenta es anterior a este registro.';
+}
+
 $('ia-cambiar').addEventListener('click', async () => {
   if(guardandoPermiso) return;
   if(!permisoIA()){ pedirPermisoIA(null); return; }
@@ -4527,11 +4563,11 @@ function limpiarDatos(texto){
   t = t.replace(/[\w.+-]+@[\w-]+\.[\w.-]{2,}/gi, '[correo]');
   t = t.replace(/\b\d{22}\b/g, '[cbu]');
   t = t.replace(/\+\s?54[\s\d()-]{6,}\d/g, '[teléfono]');
-  t = t.replace(/\b(?:\d[ -]?){13,19}\b/g, m =>
+  t = t.replace(/\b\d(?:[ -]?\d){12,18}\b/g, m =>
     (m.replace(/\D/g,'').length >= 13 ? '[tarjeta]' : m));
   t = t.replace(/\b(?:0?\d{2,4}[\s-]?)?(?:15[\s-]?)?\d{3,4}[\s-]\d{4}\b/g, '[teléfono]');
   t = t.replace(/\b\d{10,11}\b/g, '[teléfono]');
-  t = t.replace(/(?:^|\s)@[\w.]{3,}/g, ' [usuario]');
+  t = t.replace(/(?:^|\s)@[\w.]{2,}\w/g, ' [usuario]');
   return t;
 }
 
@@ -4771,6 +4807,7 @@ function entrarApp(){
   const g = store.leer(); if(g && g.modo) modo = g.modo;
   pintarPermisoIA();
   pintarTransfer();
+  pintarLegales();
   aplicarModo();
   recargarTodo();
   arrancarLatido();
