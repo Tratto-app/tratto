@@ -1462,7 +1462,7 @@
       <button class="btn riesgo" id="salir" type="button">Cerrar sesión</button>
       <button class="btn vacio-b" id="ir-baja" type="button">Borrar mi cuenta</button>
       <p style="text-align:center;margin-top:18px;font-family:'IBM Plex Mono',monospace;
-        font-size:10px;letter-spacing:.14em;color:var(--gris-3)">VERSIÓN F-28 · PEDIDOS PARA VOS</p>
+        font-size:10px;letter-spacing:.14em;color:var(--gris-3)">VERSIÓN F-29 · SE OFRECIO</p>
     </section>
 
     <!-- ══════ NUEVO PEDIDO ══════ -->
@@ -2788,7 +2788,8 @@ async function cargarPedidos(){
       return '<button class="item" data-pedido="'+s.id+'" type="button"><div class="item-top">' +
         '<span class="item-tit">'+esc(s.servicio_necesitado)+'</span>' +
         '<span class="sello '+sello[0]+'">'+sello[1]+'</span></div>' +
-        '<div class="item-meta"><span>'+esc(s.zona)+'</span><span>hasta '+pesos(s.presupuesto)+'</span>' +
+        '<div class="item-meta"><span>'+esc(s.zona)+'</span>' +
+        (s.presupuesto ? '<span>tiene en mente '+pesos(s.presupuesto)+'</span>' : '') +
         '<span>'+esc(s.urgencia)+'</span></div>' +
         '<div class="item-pie"><span>'+(vencido
             ? 'Nadie respondió en 15 días. Podés volver a pedirlo.'
@@ -2857,7 +2858,12 @@ async function cargarConexiones(){
   $('lista-proveedor').innerHTML = comoProv.length
     ? comoProv.map(m => filaConexion(m,
         m.solicitudes ? m.solicitudes.nombre_cliente : 'Cliente',
-        (m.solicitudes ? m.solicitudes.servicio_necesitado + ' · hasta ' + pesos(m.solicitudes.presupuesto) : ''))).join('')
+        (m.solicitudes
+          ? m.solicitudes.servicio_necesitado +
+            /* Sin presupuesto no se escribe "hasta $0", que se lee como que el
+               cliente no quiere pagar nada. Simplemente no se menciona. */
+            (m.solicitudes.presupuesto ? ' · tiene en mente ' + pesos(m.solicitudes.presupuesto) : '')
+          : ''))).join('')
     : cajaVacia('Sin pedidos todavía', 'Cuando alguien busque lo que ofrecés en tu zona, te avisamos acá.','chat');
 
   document.querySelectorAll('[data-match]').forEach(b =>
@@ -2873,11 +2879,16 @@ function filaConexion(m, titulo, meta){
   /* El sello mostraba el estado tal cual viene de la base ("sugerido"), que es
      una palabra de sistema. El color ya trataba igual a todo lo que no está
      aceptado, así que el texto sigue la misma división en palabras de persona. */
-  const aceptado = m.estado === 'aceptado';
+  /* Tres estados distintos, y conviene no mezclarlos: "sugerido" lo armó la
+     app, "interesado" lo pidió el proveedor por su cuenta, y "aceptado" ya es
+     una conversación abierta. Decirle "te lo recomendamos" a alguien que se
+     ofreció solo sería falso. */
+  const sello = m.estado === 'aceptado'   ? ['verde','Conectados']
+              : m.estado === 'interesado' ? ['oro','Se ofreció']
+              :                             ['oro','Te lo recomendamos'];
   return '<button class="item" data-match="'+m.id+'" type="button"><div class="item-top">' +
     '<span class="item-tit">'+esc(titulo)+'</span>' +
-    '<span class="sello '+(aceptado?'verde':'oro')+'">' +
-    (aceptado ? 'Conectados' : 'Te lo recomendamos') + '</span></div>' +
+    '<span class="sello '+sello[0]+'">'+sello[1]+'</span></div>' +
     '<div class="item-meta"><span>'+esc(meta)+'</span></div>' +
     '<div class="item-pie"><span>Abrir conversación</span>' +
     '<span class="flecha"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 5l7 7-7 7"/></svg></span></div></button>';
