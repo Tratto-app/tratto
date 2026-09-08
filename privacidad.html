@@ -1,0 +1,456 @@
+<!DOCTYPE html>
+<html lang="es-AR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="robots" content="index,follow">
+<title>Política de privacidad · Tratto</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=IBM+Plex+Sans+Condensed:wght@600;700&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --noche:#0C2620; --claro:#FCFBF8; --claro-2:#F2F0E9;
+    --tinta:#0E1815; --gris:#68766F; --gris-2:#94A19B;
+    --verde:#1E5D49; --verde-luz:#8FD9BC;
+    --laton:#C9A227; --laton-osc:#8A6E10;
+    --linea:#E0DCD0; --linea-fuerte:#CFC9BA;
+    --r:10px; --st:env(safe-area-inset-top,0px); --sb:env(safe-area-inset-bottom,0px);
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{background:var(--claro-2);color:var(--tinta);
+    font-family:'IBM Plex Sans',system-ui,sans-serif;font-size:15px;line-height:1.6;
+    -webkit-text-size-adjust:100%}
+
+  /* La cabecera repite el glifo de la app: dos nodos unidos, el segundo en
+     latón. Es lo mismo que ve el usuario al abrir Tratto. */
+  .barra{background:var(--noche);color:var(--claro);padding:calc(14px + var(--st)) 18px 14px;
+    display:flex;align-items:center;gap:11px;position:sticky;top:0;z-index:5}
+  .barra svg{width:22px;height:22px;flex:none}
+  .barra-marca{font-family:'IBM Plex Sans Condensed',sans-serif;font-weight:700;font-size:17px}
+  .barra a{margin-left:auto;color:var(--verde-luz);text-decoration:none;
+    font-family:'IBM Plex Mono',monospace;font-size:9.5px;letter-spacing:.15em;
+    text-transform:uppercase;font-weight:600}
+
+  .hoja{max-width:720px;margin:0 auto;padding:26px 18px calc(60px + var(--sb));
+    background:var(--claro);min-height:100vh}
+  @media(min-width:760px){ .hoja{margin:26px auto;min-height:0;
+    border:1px solid var(--linea);border-radius:var(--r)} }
+
+  .kicker{font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:.19em;
+    text-transform:uppercase;color:var(--laton-osc);font-weight:600}
+
+  /* El hilo con remate en latón: el mismo sello que en la app marca lo que
+     quedó firme. Acá cierra el título del documento. */
+  .hilo{height:1px;background:linear-gradient(90deg,var(--verde),var(--laton));
+    margin:14px 0 20px}
+
+  .preliminar{background:rgba(201,162,39,.09);border:1px solid rgba(201,162,39,.45);
+    border-radius:var(--r);padding:13px 15px;font-size:13px;line-height:1.5;
+    color:var(--laton-osc);margin-bottom:26px}
+  .preliminar b{font-weight:600}
+
+  h1{font-family:'IBM Plex Sans Condensed',sans-serif;font-weight:700;
+    font-size:29px;line-height:1.12;letter-spacing:-.02em;margin-top:7px}
+  /* El primer h2 no lleva raya: ya viene el hilo del título. */
+  h2:first-of-type{border-top:none;padding-top:0;margin-top:26px}
+  h2{font-family:'IBM Plex Sans Condensed',sans-serif;font-weight:700;
+    font-size:20px;margin:34px 0 10px;padding-top:20px;border-top:1px solid var(--linea);
+    letter-spacing:-.01em}
+  h3{font-family:'IBM Plex Sans Condensed',sans-serif;font-weight:700;
+    font-size:16.5px;margin:22px 0 8px}
+  h4{font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:.15em;
+    text-transform:uppercase;color:var(--laton-osc);margin:20px 0 8px;font-weight:600}
+  p{margin:11px 0;color:var(--gris)}
+  p strong,li strong,td strong{color:var(--tinta);font-weight:600}
+  ul,ol{margin:11px 0 11px 20px;color:var(--gris)}
+  li{margin:6px 0}
+  a{color:var(--verde);text-decoration:underline;text-underline-offset:2px}
+  code{font-family:'IBM Plex Mono',monospace;font-size:.88em;background:var(--claro-2);
+    border:1px solid var(--linea);border-radius:4px;padding:1px 5px}
+  hr{border:none;border-top:1px solid var(--linea);margin:30px 0}
+
+  /* Las tablas son anchas y el teléfono es angosto: scrollean solas en vez de
+     desbordar la página. La sombra del borde derecho aparece sola cuando queda
+     tabla por ver y se apaga al llegar al final: sin eso, en el teléfono la
+     columna cortada parece que no existe. */
+  .tabla{overflow-x:auto;-webkit-overflow-scrolling:touch;margin:16px 0;
+    border:1px solid var(--linea);border-radius:var(--r);
+    background:
+      linear-gradient(90deg, var(--claro) 30%, rgba(252,251,248,0)) left / 26px 100% no-repeat local,
+      linear-gradient(90deg, rgba(252,251,248,0), var(--claro) 70%) right / 26px 100% no-repeat local,
+      radial-gradient(farthest-side at 0 50%, rgba(14,24,21,.13), transparent) left / 11px 100% no-repeat scroll,
+      radial-gradient(farthest-side at 100% 50%, rgba(14,24,21,.13), transparent) right / 11px 100% no-repeat scroll}
+  table{border-collapse:collapse;width:100%;min-width:460px;font-size:13.5px}
+  th,td{text-align:left;padding:10px 13px;border-bottom:1px solid var(--linea);
+    vertical-align:top;color:var(--gris)}
+  th{background:var(--claro-2);color:var(--tinta);font-weight:600;
+    font-family:'IBM Plex Sans Condensed',sans-serif;white-space:nowrap}
+  tr:last-child td{border-bottom:none}
+
+  .pie{margin-top:38px;padding-top:20px;border-top:1px solid var(--linea);
+    display:flex;flex-wrap:wrap;gap:10px}
+  .pie a{font-family:'IBM Plex Mono',monospace;font-size:9.5px;letter-spacing:.14em;
+    text-transform:uppercase;font-weight:600;color:var(--laton-osc);text-decoration:none;
+    border:1px solid var(--linea-fuerte);border-radius:99px;padding:8px 14px}
+</style>
+</head>
+<body>
+
+<div class="barra">
+  <svg viewBox="0 0 32 32" fill="none" aria-hidden="true">
+    <circle cx="8" cy="8" r="4.6" stroke="#8FD9BC" stroke-width="1.8"/>
+    <circle cx="24" cy="24" r="4.6" stroke="#C9A227" stroke-width="1.8"/>
+    <path d="M11.4 11.4 L20.6 20.6" stroke="#4E7A6E" stroke-width="1.8" stroke-linecap="round"/>
+  </svg>
+  <span class="barra-marca">Tratto</span>
+  <a href="/">Volver a la app</a>
+</div>
+
+<main class="hoja">
+  <div class="kicker">Legales</div>
+  <h1>Política de privacidad</h1>
+  <div class="hilo"></div>
+  <div class="preliminar"><b>Versión preliminar.</b> Este documento está pendiente de revisión
+    por asesor letrado. Última actualización: 8 de septiembre de 2026.</div>
+  
+  
+  <h2>1. Quién es responsable de tus datos</h2>
+  <p>El responsable del tratamiento de tus datos personales es <strong>Agustín Mathias Omelenicki</strong>, DNI 47.254.863, CUIT <strong>20-47254863-9</strong>, con domicilio en <strong>Remedios de Escalada 7646, Martín Coronado, Partido de Tres de Febrero (B1682), Provincia de Buenos Aires</strong> (en adelante, "Tratto").</p>
+  <p>Para cualquier consulta sobre tus datos: <strong>trattoapp1@gmail.com</strong></p>
+  <p>Esta política se rige por la <strong>Ley 25.326 de Protección de los Datos Personales</strong> y su reglamentación.</p>
+  <h2>2. Qué datos recolectamos</h2>
+  <h3>2.1. Los que nos das vos</h3>
+  <p><strong>Al crear tu cuenta:</strong> correo electrónico y contraseña. La contraseña se guarda cifrada; nadie en Tratto puede verla.</p>
+  <p><strong>Si pedís un servicio:</strong> nombre, correo, teléfono, qué servicio necesitás, zona, presupuesto, urgencia, descripción del trabajo y, si la cargás, una <strong>foto</strong> del problema a resolver.</p>
+  <p><strong>Si ofrecés un servicio:</strong> nombre o razón social, correo, teléfono, rubro, zona, rango de precios, disponibilidad y descripción de tu trabajo. Opcionalmente, estudios, matrículas, experiencia y logros que quieras publicar, y fotos de trabajos realizados.</p>
+  <p><strong>Cuando conversás:</strong> el contenido de los mensajes que intercambiás con la otra parte por el chat de la aplicación.</p>
+  <p><strong>Cuando calificás:</strong> la puntuación y el comentario que dejás sobre un trabajo.</p>
+  <h3>2.2. Los que se generan usando la aplicación</h3>
+  <ul>
+  <li><strong>Visitas a perfiles</strong>: registramos qué perfiles de proveedor se visitan, para mostrarle a cada proveedor cuánta gente vio el suyo.</li>
+  <li><strong>Actividad de trabajos</strong>: presupuestos enviados, aceptados y trabajos cobrados por la plataforma.</li>
+  <li><strong>Puntos</strong> acumulados por el uso de la aplicación.</li>
+  </ul>
+  <h3>2.3. Si conectás Mercado Pago</h3>
+  <p>Si sos proveedor y conectás tu cuenta de Mercado Pago para cobrar, guardamos las <strong>credenciales de acceso que Mercado Pago nos entrega</strong> para poder generar cobros en tu nombre, junto con tu identificador de usuario de Mercado Pago.</p>
+  <p><strong>Nunca vemos ni guardamos los datos de las tarjetas.</strong> Cuando un cliente paga, los datos de su tarjeta viajan directamente a Mercado Pago sin pasar por nuestros servidores.</p>
+  <h3>2.4. Datos técnicos</h3>
+  <p>Nuestros proveedores de infraestructura registran automáticamente datos técnicos de conexión, como la dirección IP y el tipo de navegador, con fines de seguridad y funcionamiento.</p>
+  <h2>3. Para qué usamos tus datos</h2>
+  <div class="tabla"><table>
+  <thead>
+  <tr>
+  <th>Para qué</th>
+  <th>Qué usamos</th>
+  </tr>
+  </thead>
+  <tbody>
+  <tr>
+  <td>Crear y mantener tu cuenta</td>
+  <td>Correo y contraseña</td>
+  </tr>
+  <tr>
+  <td>Conectarte con la otra parte</td>
+  <td>Rubro, zona, precios, disponibilidad</td>
+  </tr>
+  <tr>
+  <td>Que se comuniquen entre ustedes</td>
+  <td>Mensajes del chat</td>
+  </tr>
+  <tr>
+  <td>Estimar un precio orientativo a partir de una foto</td>
+  <td>La foto del pedido</td>
+  </tr>
+  <tr>
+  <td>Ayudarte a comparar presupuestos y redactar calificaciones</td>
+  <td>Contenido de la conversación</td>
+  </tr>
+  <tr>
+  <td>Procesar los cobros y retener nuestra comisión</td>
+  <td>Credenciales de Mercado Pago, monto del trabajo</td>
+  </tr>
+  <tr>
+  <td>Mostrar reputación y trayectoria verificable</td>
+  <td>Calificaciones, trabajos cobrados por la app</td>
+  </tr>
+  <tr>
+  <td>Avisarte por correo</td>
+  <td>Correo electrónico</td>
+  </tr>
+  <tr>
+  <td>Seguridad, prevención de fraude y cumplimiento legal</td>
+  <td>Datos técnicos y de actividad</td>
+  </tr>
+  </tbody>
+  </table></div>
+  <p><strong>No usamos tus datos para publicidad, ni los vendemos, ni los cedemos a terceros con fines comerciales.</strong></p>
+  <h2>4. Con quién los compartimos</h2>
+  <h3>4.1. Con la otra parte de la operación</h3>
+  <p>Cuando se produce una conexión, <strong>el cliente y el proveedor ven mutuamente los datos necesarios</strong> para coordinar el trabajo: nombre, datos de contacto y lo que cada uno haya publicado en su perfil o escrito en el pedido.</p>
+  <h3>4.2. Con proveedores de servicios (encargados de tratamiento)</h3>
+  <p>Para que la aplicación funcione, algunos terceros procesan datos por cuenta de Tratto:</p>
+  <div class="tabla"><table>
+  <thead>
+  <tr>
+  <th>Proveedor</th>
+  <th>Para qué</th>
+  <th>Dónde se procesa</th>
+  </tr>
+  </thead>
+  <tbody>
+  <tr>
+  <td><strong>Supabase</strong></td>
+  <td>Base de datos, cuentas y almacenamiento de fotos</td>
+  <td><strong>Brasil</strong> (región São Paulo)</td>
+  </tr>
+  <tr>
+  <td><strong>n8n Cloud</strong></td>
+  <td>Automatizaciones y orquestación de las funciones de IA</td>
+  <td><strong>Alemania (Unión Europea)</strong></td>
+  </tr>
+  <tr>
+  <td><strong>OpenAI, L.L.C.</strong></td>
+  <td>Procesamiento de las funciones de inteligencia artificial (modelo <code>gpt-4o-mini</code>). <strong>Solo si diste tu permiso</strong> — ver punto 5</td>
+  <td><strong>Estados Unidos</strong></td>
+  </tr>
+  <tr>
+  <td><strong>Mercado Pago</strong></td>
+  <td>Procesamiento de pagos</td>
+  <td>Argentina</td>
+  </tr>
+  <tr>
+  <td><strong>Vercel</strong></td>
+  <td>Alojamiento de la aplicación</td>
+  <td>Estados Unidos y red global</td>
+  </tr>
+  <tr>
+  <td><strong>Brevo (Sendinblue SAS)</strong></td>
+  <td>Envío de los correos de la aplicación</td>
+  <td><strong>Francia (Unión Europea)</strong></td>
+  </tr>
+  <tr>
+  <td><strong>Google Fonts / jsDelivr</strong></td>
+  <td>Tipografías y librerías del sitio; reciben la dirección IP del visitante</td>
+  <td>Estados Unidos y red global</td>
+  </tr>
+  </tbody>
+  </table></div>
+  <h3>4.3. Transferencia de datos fuera de la Argentina</h3>
+  <p>Parte de tus datos se procesa fuera del país. La Ley 25.326, en su artículo 12, prohíbe la
+  transferencia de datos personales a países que no ofrezcan un nivel de protección adecuado,
+  salvo que exista una base que la habilite.</p>
+  <div class="tabla"><table>
+  <thead>
+  <tr>
+  <th>A dónde va</th>
+  <th>Quién</th>
+  <th>¿País con nivel adecuado reconocido por la Argentina?</th>
+  <th>Qué habilita la transferencia</th>
+  </tr>
+  </thead>
+  <tbody>
+  <tr>
+  <td>Francia</td>
+  <td>Brevo (Sendinblue SAS)</td>
+  <td><strong>Sí</strong> — la Unión Europea integra la nómina</td>
+  <td>No requiere base adicional</td>
+  </tr>
+  <tr>
+  <td>Estados Unidos</td>
+  <td><strong>OpenAI, L.L.C.</strong></td>
+  <td><strong>No</strong></td>
+  <td><strong>Tu permiso expreso</strong> (ver punto 5)</td>
+  </tr>
+  <tr>
+  <td>Estados Unidos y red global</td>
+  <td>Vercel, jsDelivr, Google Fonts</td>
+  <td><strong>No</strong></td>
+  <td><strong>Tu permiso expreso en el alta</strong></td>
+  </tr>
+  <tr>
+  <td><strong>Brasil</strong></td>
+  <td><strong>Supabase</strong> — la base de datos completa</td>
+  <td><strong>No</strong> — Brasil no integra la nómina argentina</td>
+  <td><strong>Tu permiso expreso en el alta</strong></td>
+  </tr>
+  <tr>
+  <td>Alemania</td>
+  <td>n8n Cloud</td>
+  <td><strong>Sí</strong> — la Unión Europea integra la nómina</td>
+  <td>No requiere base adicional</td>
+  </tr>
+  </tbody>
+  </table></div>
+  <h4>Las funciones de inteligencia artificial: tu permiso expreso</h4>
+  <p>Los datos que se envían a OpenAI <strong>solo salen si vos diste permiso</strong>. Ese permiso:</p>
+  <ul>
+  <li><strong>Se pide aparte.</strong> No está dentro de estos documentos ni en una casilla escondida. La
+    aplicación te muestra una pantalla propia que dice qué sale, a dónde va, qué no sale y qué
+    hacen con eso, y recién ahí te pregunta.</li>
+  <li><strong>Es opcional de verdad.</strong> Si decís que no, la aplicación funciona igual: pedís servicios,
+    recibís presupuestos, chateás, contratás y cobrás exactamente lo mismo. Lo único que no vas
+    a tener son las cuatro funciones del punto 5.</li>
+  <li><strong>Queda registrado con fecha.</strong> Guardamos la fecha y hora en que lo diste, asociada a tu
+    cuenta.</li>
+  <li><strong>Se puede retirar cuando quieras</strong>, desde <strong>Cuenta → Funciones con inteligencia
+    artificial</strong>. Desde ese momento no se envía nada más. El retiro no alcanza a lo que ya se
+    envió antes.</li>
+  </ul>
+  <h4>El alojamiento de la aplicación y la base de datos</h4>
+  <p>La aplicación se sirve desde Vercel, y el navegador descarga tipografías y librerías de redes
+  de distribución de contenido, que reciben tu dirección IP. Esa transferencia es distinta de la
+  anterior: no depende de ninguna función opcional, ocurre por el solo hecho de abrir la
+  aplicación.</p>
+  <p><strong>La base de datos (Supabase) está alojada en Brasil</strong>, en la región de São Paulo. Ahí vive
+  todo: tu cuenta, tus pedidos, tus conversaciones, tus calificaciones y tus fotos.</p>
+  <p>Brasil cuenta desde 2020 con una ley general de protección de datos personales —la <strong>Ley
+  13.709, "LGPD"</strong>— y con una autoridad de control propia, la ANPD, con un estándar comparable al
+  argentino y al europeo. Sin embargo, <strong>Brasil no integra hoy la nómina de países que la
+  autoridad argentina reconoce como de nivel adecuado</strong>, de modo que esa transferencia también
+  necesita una base que la habilite.</p>
+  <p>Las automatizaciones (n8n Cloud) corren en <strong>Fráncfort, Alemania</strong>, dentro de la Unión Europea,
+  que la autoridad argentina sí reconoce como territorio con nivel de protección adecuado. Esa
+  transferencia no requiere ninguna base adicional.</p>
+  <p><strong>Por eso te lo pedimos al crear la cuenta.</strong> Antes de crearla, la aplicación te muestra una
+  pantalla que dice qué va a cada país y te pide un permiso expreso para esas dos transferencias
+  —la base de datos en Brasil y el alojamiento en Estados Unidos—, que queda registrado con
+  fecha. Es un permiso distinto del de las funciones de inteligencia artificial, y se pide por
+  separado.</p>
+  <p><strong>Este permiso, a diferencia del de IA, no es opcional</strong>, y la aplicación te lo dice con esas
+  palabras: sin base de datos y sin alojamiento Tratto no existe. Si no estás de acuerdo, no
+  crees la cuenta. Si ya la tenés y cambiás de idea, la única forma de retirarlo es <strong>darte de
+  baja</strong>, y se va todo con ella. Preferimos decírtelo así antes que ofrecerte un interruptor que
+  en realidad borraría tu cuenta.</p>
+  <h3>4.4. Con autoridades</h3>
+  <p>Cuando una autoridad judicial o administrativa competente lo requiera legalmente.</p>
+  <h2>5. Las funciones de inteligencia artificial</h2>
+  <p>Tratto usa inteligencia artificial en cuatro funciones. <strong>Ninguna se activa sin tu permiso
+  expreso</strong>, que se pide aparte y se puede retirar cuando quieras (punto 4.3).</p>
+  <p>Dentro de la aplicación, todo lugar donde interviene una máquina lleva un sello <strong>"Con IA"</strong>,
+  para que sepas sin tener que leer nada cuándo lo que estás mirando lo escribió un programa.</p>
+  <h3>5.1. Qué se envía en cada función</h3>
+  <div class="tabla"><table>
+  <thead>
+  <tr>
+  <th>Función</th>
+  <th>Quién la usa</th>
+  <th>Qué se envía</th>
+  </tr>
+  </thead>
+  <tbody>
+  <tr>
+  <td><strong>Estimador de precios por foto</strong></td>
+  <td>El cliente, al pedir un servicio</td>
+  <td>La foto que sacaste y la zona</td>
+  </tr>
+  <tr>
+  <td><strong>Comparador de presupuestos</strong></td>
+  <td>El cliente, cuando tiene dos o más</td>
+  <td>Los presupuestos recibidos y el nombre de cada proveedor</td>
+  </tr>
+  <tr>
+  <td><strong>Etiquetas de reputación</strong></td>
+  <td>El cliente, al calificar</td>
+  <td>El contenido de la conversación de ese trabajo, <strong>una sola vez</strong></td>
+  </tr>
+  <tr>
+  <td><strong>Asistente de ayuda</strong></td>
+  <td>Cualquiera</td>
+  <td>Tu consulta y las últimas ocho respuestas de esa charla</td>
+  </tr>
+  </tbody>
+  </table></div>
+  <h3>5.2. Qué no se envía</h3>
+  <p>Antes de que cualquier texto salga hacia el proveedor de inteligencia artificial, la aplicación
+  le quita automáticamente los datos con los que se podría contactar o identificar a alguien
+  fuera de Tratto: <strong>direcciones de correo, teléfonos, CBU y CVU, números de tarjeta y usuarios
+  de redes sociales.</strong> En su lugar viaja una marca genérica (<code>[teléfono]</code>, <code>[correo]</code>).</p>
+  <p>Esto reduce lo que sale, pero <strong>no lo convierte en anónimo</strong>: en un texto libre siempre puede
+  quedar algo que identifique a una persona. Por eso el permiso del punto 4.3 sigue siendo
+  necesario.</p>
+  <h3>5.3. Quién procesa y bajo qué condiciones</h3>
+  <p>El procesamiento lo realiza <strong>OpenAI, L.L.C.</strong> (Estados Unidos), con el modelo <code>gpt-4o-mini</code>,
+  invocado desde n8n. Según la documentación pública de ese proveedor, vigente a la fecha de este
+  documento:</p>
+  <ul>
+  <li><strong>Los datos enviados por la interfaz de programación no se usan para entrenar sus modelos.</strong></li>
+  <li>Se conservan <strong>hasta 30 días</strong> para prestar el servicio y detectar usos abusivos, y después
+    se eliminan, salvo obligación legal de conservarlos.</li>
+  </ul>
+  <h3>5.4. Los resultados son orientativos</h3>
+  <p><strong>Las respuestas de estas funciones pueden contener errores.</strong> En particular:</p>
+  <ul>
+  <li>El rango de precios de una foto <strong>no es un presupuesto</strong> y no obliga a nadie. El precio real
+    lo pone cada proveedor.</li>
+  <li>La comparación de presupuestos es un resumen, no una recomendación de contratación.</li>
+  <li>Las etiquetas de reputación son un resumen de lo que dice una conversación, no una
+    evaluación profesional del proveedor.</li>
+  </ul>
+  <p><strong>Ninguna decisión que te afecte se toma automáticamente.</strong> Quién contrata a quién, qué precio
+  se acuerda, si un trabajo se da por terminado y cuántas estrellas recibe un proveedor lo
+  deciden siempre las personas. La inteligencia artificial no puntúa, no ordena resultados de
+  búsqueda, no acepta ni rechaza usuarios y no interviene en ningún pago.</p>
+  <h3>5.5. Si una etiqueta sobre vos es injusta</h3>
+  <p>Las etiquetas de reputación describen a una persona identificable —el proveedor— y las escribe
+  un programa a partir de una conversación en la que esa persona participó. Por eso:</p>
+  <ul>
+  <li>El proveedor <strong>ve las etiquetas en su propio perfil</strong>, igual que cualquier visitante.</li>
+  <li>Puede <strong>reportarlas desde la aplicación</strong>. Un reporte lo revisa una persona, no un programa.</li>
+  <li>Si una etiqueta es inexacta, <strong>se corrige o se elimina</strong>, en ejercicio del derecho de
+    rectificación del art. 16 de la Ley 25.326.</li>
+  </ul>
+  <h2>6. Cuánto tiempo guardamos tus datos</h2>
+  <p><strong>Fotos de pedidos sin respuesta:</strong> si a los <strong>15 días corridos</strong> ningún proveedor respondió tu pedido, el pedido vence y <strong>la foto se elimina de forma permanente</strong> de nuestro almacenamiento.</p>
+  <p><strong>Datos de tu cuenta:</strong> mientras tu cuenta esté activa.</p>
+  <p><strong>Datos de operaciones cobradas:</strong> conservamos la información de los trabajos cobrados por el plazo que exige la normativa fiscal y comercial.</p>
+  <p><strong>Datos enviados a la inteligencia artificial:</strong> los conserva el proveedor por hasta 30 días
+  (punto 5.3). Nosotros no guardamos copia de lo que se le envía; sí guardamos el resultado que
+  devuelve, porque forma parte de tu pedido o del perfil del proveedor.</p>
+  <p><strong>El registro de tu permiso de IA:</strong> la fecha y hora en que lo diste o lo retiraste, mientras
+  tu cuenta esté activa. Es lo que nos permite acreditar que la transferencia tuvo base legal.</p>
+  <h2>7. Tus derechos</h2>
+  <p>Como titular de los datos, la Ley 25.326 te reconoce el derecho a:</p>
+  <ul>
+  <li><strong>Acceder</strong> a los datos que tenemos sobre vos.</li>
+  <li><strong>Rectificarlos</strong> si son inexactos o están desactualizados.</li>
+  <li><strong>Suprimirlos</strong>, dentro de los límites legales.</li>
+  <li><strong>Actualizarlos</strong>.</li>
+  </ul>
+  <p>Escribinos a <strong>trattoapp1@gmail.com</strong> y te respondemos dentro de los plazos legales: <strong>10 días corridos</strong> para el acceso y <strong>5 días hábiles</strong> para la rectificación o supresión.</p>
+  <p>El ejercicio del derecho de acceso es <strong>gratuito a intervalos no menores a seis meses</strong>, salvo interés legítimo (art. 14, inc. 3, Ley 25.326).</p>
+  <p>Además, sin necesidad de escribirnos, la aplicación te deja ejercer estos dos por tu cuenta:</p>
+  <ul>
+  <li><strong>Revocar tu permiso</strong> para las funciones de inteligencia artificial, en cualquier momento y
+    sin dar explicaciones, desde <strong>Cuenta → Funciones con inteligencia artificial</strong>. Retirarlo no
+    afecta tu cuenta ni ninguna otra parte de la aplicación, y desde ese momento no se envía nada
+    más al proveedor de inteligencia artificial.</li>
+  <li><strong>Darte de baja</strong> en cualquier momento, desde la misma sección Cuenta.</li>
+  </ul>
+  <p><strong>La AGENCIA DE ACCESO A LA INFORMACIÓN PÚBLICA</strong>, órgano de control de la Ley 25.326, tiene la atribución de atender denuncias y reclamos de quienes vean afectados sus derechos.</p>
+  <h2>8. Seguridad</h2>
+  <p>Tomamos medidas técnicas para proteger tus datos: las comunicaciones viajan cifradas, las contraseñas se almacenan cifradas y el acceso a la base está restringido por reglas por usuario.</p>
+  <p>Ningún sistema es completamente seguro. Si ocurriera un incidente que afecte tus datos, te lo notificaremos.</p>
+  <h2>9. Menores de edad</h2>
+  <p>Tratto no está dirigida a menores de 18 años y no recolectamos datos de menores de forma consciente. Si detectamos una cuenta de un menor, la damos de baja.</p>
+  <h2>10. Almacenamiento en tu navegador</h2>
+  <p><strong>Tratto no utiliza cookies ni herramientas de análisis o publicidad de terceros.</strong></p>
+  <p>Guardamos un único dato en el <strong>almacenamiento local de tu navegador</strong>: la sesión iniciada, para que no tengas que ingresar tu contraseña cada vez. Se borra cuando cerrás sesión o limpiás los datos del navegador.</p>
+  <h2>11. Cambios en esta política</h2>
+  <p>Si modificamos esta política, te avisamos por correo y mediante un aviso en la aplicación con <strong>10 días corridos</strong> de anticipación.</p>
+  <h2>12. Contacto</h2>
+  <p><strong>trattoapp1@gmail.com</strong>
+  Remedios de Escalada 7646, Martín Coronado, Tres de Febrero (B1682), Provincia de Buenos Aires.</p>
+  
+  <p><strong>Última actualización:</strong> 8 de septiembre de 2026
+  <strong>Vigencia:</strong> 8 de septiembre de 2026</p>
+  
+  <div class="pie">
+    <a href="/terminos.html">Términos y condiciones</a>
+    <a href="/privacidad.html">Política de privacidad</a>
+    <a href="mailto:trattoapp1@gmail.com">Escribinos</a>
+  </div>
+</main>
+
+</body>
+</html>

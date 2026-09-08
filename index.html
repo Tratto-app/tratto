@@ -715,6 +715,17 @@
   .burbuja-asis:active{transform:scale(.94)}
 
   /* ═══════════ PERMISO DE TRANSFERENCIA ═══════════ */
+  .legales-pie{font-size:12px;line-height:1.5;color:var(--gris-2);margin:12px 0 0 31px}
+  .legales-pie a{color:var(--verde);text-decoration:underline;text-underline-offset:2px}
+  /* Los documentos abren afuera, asi que se leen como referencia, no como
+     acciones de la app: mismo tratamiento mono que el resto de los datos. */
+  .legales-fila{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px}
+  .legales-btn{font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:.14em;
+    text-transform:uppercase;font-weight:600;color:var(--laton-osc);text-decoration:none;
+    border:1px solid var(--linea-fuerte);border-radius:99px;padding:8px 13px}
+  .legales-btn:active{background:var(--claro-2)}
+
+
   /* Un error en una casilla no se ve si solo se pinta el cuadradito: es de
      20px. Se marca el renglón entero. */
   .tildar.mal span{color:var(--alerta)}
@@ -1240,6 +1251,9 @@
             Ver qué va a cada lugar
           </button>
           <div class="err" id="e-a-transfer">Sin este permiso no podemos crear la cuenta.</div>
+          <p class="legales-pie">Al crear la cuenta aceptás nuestros
+            <a href="/terminos.html" target="_blank" rel="noopener">términos y condiciones</a> y la
+            <a href="/privacidad.html" target="_blank" rel="noopener">política de privacidad</a>.</p>
         </div>
       </div>
 
@@ -1380,11 +1394,16 @@
         </div>
       </div>
 
+      <div class="legales-fila">
+        <a class="legales-btn" href="/terminos.html" target="_blank" rel="noopener">Términos y condiciones</a>
+        <a class="legales-btn" href="/privacidad.html" target="_blank" rel="noopener">Política de privacidad</a>
+      </div>
+
       <div class="sec"><span class="sec-tit">Sesión</span></div>
       <button class="btn riesgo" id="salir" type="button">Cerrar sesión</button>
       <button class="btn vacio-b" id="ir-baja" type="button">Borrar mi cuenta</button>
       <p style="text-align:center;margin-top:18px;font-family:'IBM Plex Mono',monospace;
-        font-size:10px;letter-spacing:.14em;color:var(--gris-3)">VERSIÓN F-21 · TRANSFERENCIAS DECLARADAS</p>
+        font-size:10px;letter-spacing:.14em;color:var(--gris-3)">VERSIÓN F-22 · LEGALES PUBLICADOS</p>
     </section>
 
     <!-- ══════ NUEVO PEDIDO ══════ -->
