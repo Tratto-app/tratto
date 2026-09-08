@@ -1046,6 +1046,18 @@
   .chip-zona{font-family:'IBM Plex Mono',monospace;font-size:8.5px;letter-spacing:.12em;
     text-transform:uppercase;border-radius:99px;padding:3px 8px;font-weight:600;
     background:var(--claro-2);color:var(--gris);border:1px solid var(--linea-fuerte);white-space:nowrap}
+  .opcional{font-family:'IBM Plex Mono',monospace;font-size:8.5px;letter-spacing:.15em;
+    text-transform:uppercase;color:var(--gris-2);font-weight:600;margin-left:7px}
+
+  /* La miniatura del pedido usa el mismo marco que la foto del tasador, para
+     que se lea como la misma cosa: lo que el proveedor va a mirar. */
+  .s-previa{position:relative;margin-top:11px;border-radius:var(--r-ch);overflow:hidden;
+    border:1px solid var(--linea-fuerte)}
+  .s-previa img{width:100%;max-height:190px;object-fit:cover;display:block}
+  .s-previa button{position:absolute;top:8px;right:8px;width:30px;height:30px;border-radius:50%;
+    background:rgba(12,38,32,.72);border:none;color:var(--claro);cursor:pointer;
+    font-size:17px;line-height:1;display:flex;align-items:center;justify-content:center}
+
   .nota{background:var(--claro-2);border:1px solid var(--linea);border-radius:var(--r-ch);
     padding:12px 14px;font-size:12.5px;color:var(--gris);line-height:1.5;margin-top:12px}
   .nota b{color:var(--tinta);font-weight:600}
@@ -1430,7 +1442,7 @@
       <button class="btn riesgo" id="salir" type="button">Cerrar sesión</button>
       <button class="btn vacio-b" id="ir-baja" type="button">Borrar mi cuenta</button>
       <p style="text-align:center;margin-top:18px;font-family:'IBM Plex Mono',monospace;
-        font-size:10px;letter-spacing:.14em;color:var(--gris-3)">VERSIÓN F-26 · CUENTA CON ROL FIJO</p>
+        font-size:10px;letter-spacing:.14em;color:var(--gris-3)">VERSIÓN F-27 · PEDIDO CON FOTO</p>
     </section>
 
     <!-- ══════ NUEVO PEDIDO ══════ -->
@@ -1444,8 +1456,8 @@
           <span class="tasar-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7.5h3l1.5-2h7L17 7.5h3a1 1 0 0 1 1 1v9a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1v-9a1 1 0 0 1 1-1z"/><circle cx="12" cy="13" r="3.4"/></svg></span>
           <span style="min-width:0">
             <span class="tasar-kicker">Empezá por acá &nbsp;<span class="ia-sello"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v3M12 18v3M3 12h3M18 12h3M6.3 6.3l2.1 2.1M15.6 15.6l2.1 2.1M17.7 6.3l-2.1 2.1M8.4 15.6l-2.1 2.1"/><circle cx="12" cy="12" r="3.2"/></svg>Con IA</span></span>
-            <span class="tasar-tit">Sacale una foto y te decimos cuánto sale</span>
-            <span class="tasar-txt">Completamos el pedido por vos, con un precio orientativo. Cada proveedor pone el suyo.</span>
+            <span class="tasar-tit">Sacale una foto y te damos una idea del precio</span>
+            <span class="tasar-txt">Una IA mira la foto y estima cuánto suele salir ese trabajo en el mercado. No son precios de esta app.</span>
           </span>
         </span>
       </button>
@@ -1482,19 +1494,37 @@
           <div class="err" id="e-s-zona">Elegí dónde necesitás el servicio.</div>
         </div>
         <div class="campo">
-          <label for="s-presupuesto"><span class="indice">06</span>Presupuesto</label>
+          <label for="s-presupuesto"><span class="indice">06</span>Presupuesto <span class="opcional">opcional</span></label>
           <div class="caja-monto"><span class="signo">$</span>
             <input id="s-presupuesto" type="text" inputmode="numeric" placeholder="30.000"></div>
+          <div class="ayuda">Si tenés una idea de cuánto querés gastar, ponela. Si no, dejalo vacío:
+            <b>no filtra proveedores</b>, solo les da contexto.</div>
           <div class="ayuda">Después lo negociás con el proveedor.</div>
-          <div class="err" id="e-s-presupuesto">Cargá un monto mayor a cero.</div>
+
         </div>
         <div class="campo">
           <label for="s-urgencia"><span class="indice">07</span>Para cuándo</label>
           <select id="s-urgencia"><option value="">Elegí la urgencia</option></select>
           <div class="err" id="e-s-urgencia">Indicá para cuándo lo necesitás.</div>
         </div>
+        <!-- Hasta ahora la unica foto que existia era la del tasador. Quien
+             cargaba el pedido a mano lo mandaba sin ninguna, y un techo roto
+             descrito en un parrafo no lo puede cotizar nadie. -->
         <div class="campo">
-          <label for="s-desc"><span class="indice">08</span>Contanos el detalle</label>
+          <label><span class="indice">08</span>Una foto <span class="opcional">opcional</span></label>
+          <div id="s-foto-caja">
+            <button class="btn vacio-b" id="s-foto-elegir" type="button">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7.5h3l1.5-2h7L17 7.5h3a1 1 0 0 1 1 1v9a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1v-9a1 1 0 0 1 1-1z"/><circle cx="12" cy="13" r="3.4"/></svg>
+              <span id="s-foto-txt">Sacar o elegir una foto</span>
+            </button>
+            <input type="file" id="s-foto-archivo" accept="image/*" class="oculto">
+          </div>
+          <div class="ayuda">Es lo que más ayuda a que te coticen bien. Un proveedor que ve el
+            trabajo puede darte un precio; uno que lee un párrafo, no.</div>
+        </div>
+
+        <div class="campo">
+          <label for="s-desc"><span class="indice">09</span>Contanos el detalle</label>
           <textarea id="s-desc" maxlength="500" placeholder="Ej: Necesito facturas B todos los meses. Monotributista categoría D, unas 15 por mes."></textarea>
           <div class="ayuda"><span id="s-cont">0</span>/500</div>
           <div class="err" id="e-s-desc">Contá en una o dos líneas qué necesitás.</div>
@@ -2230,9 +2260,56 @@ $('refrescar').addEventListener('click', async () => {
   setTimeout(() => b.classList.remove('girando'), 500);
 });
 
+/* ══════════════════ FOTO DEL PEDIDO ══════════════════ */
+/* Independiente del tasador: el tasador la usa para estimar, esta va con el
+   pedido para que el proveedor vea el trabajo antes de cotizar. Si el cliente
+   uso el tasador, esa misma foto queda cargada acá y no se sube dos veces. */
+let fotoPedido = null, subiendoFoto = false;
+
+function pintarFotoPedido(){
+  const caja = $('s-foto-caja');
+  const previa = caja.querySelector('.s-previa');
+  if(previa) previa.remove();
+  $('s-foto-elegir').classList.toggle('oculto', !!fotoPedido);
+  if(!fotoPedido) return;
+  caja.insertAdjacentHTML('beforeend',
+    '<div class="s-previa"><img src="'+esc(fotoPedido)+'" alt="">' +
+    '<button type="button" id="s-foto-sacar" aria-label="Sacar la foto">&times;</button></div>');
+  $('s-foto-sacar').addEventListener('click', () => { fotoPedido = null; pintarFotoPedido(); });
+}
+
+$('s-foto-elegir').addEventListener('click', () => { if(!subiendoFoto) $('s-foto-archivo').click(); });
+
+$('s-foto-archivo').addEventListener('change', async e => {
+  const archivo = e.target.files[0];
+  e.target.value = '';
+  if(!archivo || !archivo.type.startsWith('image/')) return;
+  subiendoFoto = true;
+  $('s-foto-txt').textContent = 'Subiendo…';
+  try{
+    fotoPedido = await subirFoto(archivo);
+    pintarFotoPedido();
+  }catch(err){
+    console.error(err);
+    avisar('s-aviso','No se pudo subir la foto. Probá de nuevo.','mal');
+  }finally{
+    subiendoFoto = false;
+    $('s-foto-txt').textContent = 'Sacar o elegir una foto';
+  }
+});
+
 /* ══════════════════ VALIDACIÓN ══════════════════ */
-const limpiar = ids => ids.forEach(c => { $(c).classList.remove('mal'); $('e-'+c).classList.remove('visible'); });
-const fallar = (c,r) => { $(c).classList.add('mal'); $('e-'+c).classList.add('visible'); if(!r.p) r.p=c; };
+/* Un campo puede no tener mensaje de error --el presupuesto dejó de ser
+   obligatorio y se quedó sin él-- así que no se da por sentado que exista. */
+const limpiar = ids => ids.forEach(c => {
+  $(c).classList.remove('mal');
+  const e = $('e-'+c); if(e) e.classList.remove('visible');
+});
+const fallar = (c,r) => {
+  $(c).classList.add('mal');
+  const e = $('e-'+c); if(e) e.classList.add('visible');
+  if(!r.p) r.p=c;
+};
 function enfocar(r){ if(!r.p) return false; $(r.p).focus(); $(r.p).scrollIntoView({block:'center',behavior:'smooth'}); return true; }
 const avisar = (id,t,tipo) => { const a=$(id); a.textContent=t; a.className='aviso visible '+tipo; };
 const mailOk = v => /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(v);
@@ -2546,7 +2623,9 @@ function resumenPedido(){
   const v = id => $(id).value.trim();
   const t = (x,h) => x ? '<span class="lleno">'+esc(x)+'</span>' : '<span class="hueco">'+h+'</span>';
   $('s-frase').innerHTML = 'Buscamos ' + t(v('s-servicio'),'un servicio') + ' en ' + t(v('s-zona'),'tu zona') +
-    ' por hasta ' + (num(v('s-presupuesto')) ? '<span class="lleno">'+pesos(num(v('s-presupuesto')))+'</span>' : '<span class="hueco">tu presupuesto</span>') + '.';
+    (num(v('s-presupuesto'))
+      ? '. Tenés en mente <span class="lleno">'+pesos(num(v('s-presupuesto')))+'</span>.'
+      : '.');
   const set=(e,x)=> $(e).innerHTML = x ? esc(x) : '<span class="hueco">Sin definir</span>';
   set('rv-rubro',v('s-servicio')); set('rv-zona',v('s-zona')); set('rv-urg',v('s-urgencia'));
   $('s-cont').textContent = $('s-desc').value.length;
@@ -2561,7 +2640,6 @@ $('s-enviar').addEventListener('click', async () => {
   if(v('s-tel').replace(/\D/g,'').length<6) fallar('s-tel',r);
   if(!v('s-servicio')) fallar('s-servicio',r);
   if(!v('s-zona')) fallar('s-zona',r);
-  if(num(v('s-presupuesto'))<=0) fallar('s-presupuesto',r);
   if(!v('s-urgencia')) fallar('s-urgencia',r);
   if(v('s-desc').length<10) fallar('s-desc',r);
   if(enfocar(r)){ avisar('s-aviso','Faltan datos. Revisá los campos marcados.','mal'); return; }
@@ -2574,15 +2652,18 @@ $('s-enviar').addEventListener('click', async () => {
       body: JSON.stringify({
         nombre_cliente:v('s-nombre'), email_cliente:v('s-email'), telefono_cliente:v('s-tel'),
         servicio_necesitado:v('s-servicio'), zona:v('s-zona'),
-        presupuesto:num(v('s-presupuesto')), urgencia:v('s-urgencia'),
+        /* Vacío es null, no cero: un presupuesto de cero es un dato, y "no dijo
+           nada" es la ausencia de dato. Confundirlos hace que el proveedor lea
+           que el cliente no quiere pagar. */
+        presupuesto: num(v('s-presupuesto')) || null, urgencia:v('s-urgencia'),
         descripcion:v('s-desc'), estado:'pendiente', user_id:sesion.user.id,
-        foto_url: fotoTasador
+        foto_url: fotoPedido
       })
     });
     if(res.status===401){ avisar('s-aviso','Tu sesión venció. Volvé a entrar.','mal'); return; }
     if(!res.ok){ console.error(await res.text()); avisar('s-aviso','No se pudo enviar (error '+res.status+').','mal'); return; }
     CS.forEach(c => $(c).value=''); $('s-email').value = sesion.user.email;
-    fotoTasador = null; $('tasar-resultado').innerHTML = '';
+    fotoPedido = null; pintarFotoPedido(); $('tasar-resultado').innerHTML = '';
     resumenPedido(); await cargarPedidos(); ir('inicio','entra');
   }catch(e){ console.error(e); avisar('s-aviso','No se pudo conectar. Probá de nuevo.','mal'); }
   finally{ b.disabled=false; b.classList.remove('cargando'); $('s-txt').textContent='Buscar proveedores'; }
@@ -3315,13 +3396,10 @@ async function abrirDetalle(id){
     }
     $('d-lista').innerHTML = ms.map(m => {
       const p = m.proveedores; if(!p) return '';
-      const sobre = Number(p.precio_desde) > Number(s.presupuesto);
-      const exc = sobre ? Math.round((Number(p.precio_desde)/Number(s.presupuesto)-1)*100) : 0;
       const rel = relacionZona(s.zona, p.zona);
       conexiones[m.id] = Object.assign({}, m, {solicitudes: s});
-      return '<div class="prov '+(sobre?'oro':'verde')+'"><div class="prov-cuerpo">' +
-        '<div class="prov-top"><span class="prov-nom">'+esc(p.nombre)+'</span>' +
-        '<span class="sello '+(sobre?'oro':'verde')+'">'+(sobre? exc+'% sobre presupuesto':'Entra en presupuesto')+'</span></div>' +
+      return '<div class="prov verde"><div class="prov-cuerpo">' +
+        '<div class="prov-top"><span class="prov-nom">'+esc(p.nombre)+'</span></div>' +
         '<div class="prov-desc">'+esc(p.descripcion)+'</div>' +
         '<div class="prov-datos"><span><b>Zona:</b> '+esc(p.zona)+' '+chapaZona(rel)+'</span>' +
         '<span><b>Precio:</b> '+pesos(p.precio_desde)+' – '+pesos(p.precio_hasta)+'</span>' +
@@ -4533,12 +4611,6 @@ function htmlReputacion(lista){
 /* ══════════════════ TASADOR POR FOTO ══════════════════ */
 const URL_TASADOR = 'https://marketplace-servicios.app.n8n.cloud/webhook/tasar';
 let tasando = false;
-/* La foto que el cliente saca para pedir el presupuesto queda anotada acá hasta
-   que manda el pedido, para poder guardarla junto a la solicitud. Sin esa
-   referencia la foto queda huérfana en el depósito y no hay forma de borrarla
-   después. */
-let fotoTasador = null;
-
 $('tasar-abrir').addEventListener('click', () => {
   if(tasando) return;
   /* El navegador solo abre el selector de archivos si el toque viene del
@@ -4565,7 +4637,10 @@ $('tasar-archivo').addEventListener('change', async e => {
   try{
     // la subimos a nuestro depósito para poder mostrársela a la IA
     const url = await subirFoto(archivo);
-    fotoTasador = url;
+    /* La misma foto queda cargada en el pedido: el proveedor la va a necesitar
+       para cotizar, y así no se sube dos veces ni queda huérfana en el depósito. */
+    fotoPedido = url;
+    pintarFotoPedido();
     const r = await fetch(URL_TASADOR, {
       method:'POST', headers:{'Content-Type':'application/json'},
       body: JSON.stringify({ foto: url, zona: $('s-zona').value || null })
@@ -4597,8 +4672,10 @@ $('tasar-archivo').addEventListener('change', async e => {
         ? '<div class="diag-precio">' + pesos(d.precio_min) + ' – ' + pesos(d.precio_max) + '</div>'
         : '') +
       (d.aclaracion ? '<div class="diag-nota">' + esc(d.aclaracion) + '</div>' : '') +
-      '<div class="diag-nota">Es una estimación para orientarte: el precio final lo pone cada proveedor. ' +
-      'Completamos el pedido abajo, revisalo y cambiá lo que haga falta.</div>' +
+      '<div class="diag-nota">Es una referencia de mercado que estima una inteligencia artificial ' +
+      'mirando la foto, <b>no un precio de esta app ni un presupuesto</b>. Puede estar equivocada. ' +
+      'El precio real lo pone cada proveedor después de ver el trabajo.</div>' +
+      '<div class="diag-nota">Completamos el pedido abajo con lo que entendimos: revisalo y cambiá lo que haga falta.</div>' +
       '<img class="diag-foto" src="' + esc(url) + '" alt="">' +
       '</div>';
     $('tasar-resultado').scrollIntoView({block:'nearest', behavior:'smooth'});
