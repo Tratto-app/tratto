@@ -714,6 +714,28 @@
   .burbuja-asis svg{width:24px;height:24px;color:var(--verde-luz)}
   .burbuja-asis:active{transform:scale(.94)}
 
+  /* ═══════════ PERMISO DE TRANSFERENCIA ═══════════ */
+  /* Un error en una casilla no se ve si solo se pinta el cuadradito: es de
+     20px. Se marca el renglón entero. */
+  .tildar.mal span{color:var(--alerta)}
+  .tildar.mal input{outline:2px solid var(--alerta);outline-offset:2px}
+
+  /* El mismo tratamiento de dato técnico que el resto del sistema: mono, en
+     versalitas, para lo que abre detalle en vez de ejecutar algo. */
+  .ver-detalle{display:inline-flex;align-items:center;gap:6px;margin:10px 0 0 31px;
+    font:inherit;font-family:'IBM Plex Mono',monospace;font-size:9px;
+    letter-spacing:.15em;text-transform:uppercase;font-weight:600;
+    background:none;border:1px solid var(--linea-fuerte);border-radius:99px;
+    padding:6px 12px;color:var(--laton-osc);cursor:pointer}
+  .ver-detalle:active{background:var(--claro-2)}
+  .ver-detalle svg{width:11px;height:11px;stroke-width:2.4}
+
+  /* Cada destino con su bandera de país en versalitas: lo primero que hay que
+     poder leer de un vistazo es a qué país va cada cosa. */
+  .destino-pais{font-family:'IBM Plex Mono',monospace;font-size:8.5px;
+    letter-spacing:.17em;text-transform:uppercase;font-weight:600;
+    color:var(--laton-osc);display:block;margin-bottom:3px}
+
   /* ═══════════ PERMISO DE INTELIGENCIA ARTIFICIAL ═══════════ */
   /* Cada superficie donde interviene una máquina lleva el mismo sello, siempre
      igual y siempre visible. No es decoración: es lo que le permite a alguien
@@ -1043,6 +1065,37 @@
   </div>
 </div>
 
+<!-- ═══════════ A DÓNDE VAN LOS DATOS ═══════════ -->
+<!-- Este permiso no es opcional como el de la IA: sin estos servicios la app no
+     existe. Por eso la hoja no ofrece un "ahora no" que seria mentira; dice que
+     es condición para tener cuenta y que la salida es no crearla o borrarla. -->
+<div class="telon" id="telon-infra">
+  <div class="hoja">
+    <div class="hoja-tit">A dónde van tus datos</div>
+    <div class="hoja-txt">Tratto no tiene servidores propios. Para funcionar se apoya en tres
+      servicios, y cada uno está en un país distinto.</div>
+    <ul class="ia-que">
+      <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6.5h16v11H4z"/><path d="M4 10h16"/><path d="M7.5 13.5h5"/></svg>
+        <span><span class="destino-pais">Brasil · São Paulo</span><b>La base de datos</b>
+        Tu cuenta, tus pedidos, tus conversaciones, tus calificaciones y tus fotos.</span></li>
+      <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M4.5 12a7.5 7.5 0 1 0 15 0 7.5 7.5 0 1 0-15 0M4.5 12h15M12 4.5c3.6 3.9 3.6 11.1 0 15M12 4.5c-3.6 3.9-3.6 11.1 0 15"/></svg>
+        <span><span class="destino-pais">Estados Unidos</span><b>La página y las tipografías</b>
+        Reciben tu dirección IP cada vez que abrís Tratto.</span></li>
+      <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6.5h18v11H3z"/><path d="M3 7l9 6 9-6"/></svg>
+        <span><span class="destino-pais">Francia</span><b>Los mails que te mandamos</b>
+        El de confirmación y los avisos de la aplicación.</span></li>
+    </ul>
+    <div class="nota">Argentina reconoce a <b>Francia</b> como país con nivel de protección
+      adecuado. A <b>Brasil</b> y a <b>Estados Unidos</b> no, aunque Brasil tiene desde 2020 su
+      propia ley general de protección de datos. Por eso te lo pedimos expresamente en vez de
+      darlo por sentado.</div>
+    <div class="peligro"><b>Esto no es opcional.</b> Sin estos servicios la aplicación no
+      existe. Si no estás de acuerdo, no crees la cuenta. Y si más adelante cambiás de idea,
+      podés borrarla desde Cuenta y se va todo con ella.</div>
+    <button class="btn vacio-b" id="infra-cerrar" type="button" style="margin-top:16px">Entendido</button>
+  </div>
+</div>
+
 <!-- ═══════════ PERMISO DE INTELIGENCIA ARTIFICIAL ═══════════ -->
 <!-- La ley 25.326 no deja mandar datos personales a un país sin nivel de
      protección adecuado, y Estados Unidos no está en la nómina que reconoce la
@@ -1173,6 +1226,21 @@
           <div class="ayuda">Al menos 8 caracteres.</div>
           <div class="err" id="e-a-pass">La contraseña tiene que tener al menos 8 caracteres.</div>
         </div>
+
+        <!-- Solo al crear la cuenta. La transferencia ocurre en el mismo momento
+             en que se crea, así que el permiso tiene que estar antes, no después. -->
+        <div class="oculto" id="a-transfer-caja">
+          <label class="tildar" id="a-transfer-fila">
+            <input type="checkbox" id="a-transfer">
+            <span>Doy mi permiso para que mis datos se guarden en <b>Brasil</b> y para que la
+              aplicación se sirva desde <b>Estados Unidos</b>.</span>
+          </label>
+          <button class="ver-detalle" id="a-transfer-ver" type="button">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8.5"/><path d="M12 11v5.5M12 7.8h.01"/></svg>
+            Ver qué va a cada lugar
+          </button>
+          <div class="err" id="e-a-transfer">Sin este permiso no podemos crear la cuenta.</div>
+        </div>
       </div>
 
       <div class="oculto" id="a-codigo-caja">
@@ -1297,11 +1365,26 @@
         </div>
       </div>
 
+      <div class="item" id="transfer-item">
+        <div class="item-top">
+          <span class="item-tit">Dónde se guardan tus datos</span>
+          <span id="transfer-sello"></span>
+        </div>
+        <div class="item-meta"><span id="transfer-txt">—</span></div>
+        <div id="transfer-firma-caja"></div>
+        <div class="item-pie">
+          <button class="cambiar-modo" id="transfer-ver-cuenta" type="button">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8.5"/><path d="M12 11v5.5M12 7.8h.01"/></svg>
+            <span>Ver qué va a cada lugar</span>
+          </button>
+        </div>
+      </div>
+
       <div class="sec"><span class="sec-tit">Sesión</span></div>
       <button class="btn riesgo" id="salir" type="button">Cerrar sesión</button>
       <button class="btn vacio-b" id="ir-baja" type="button">Borrar mi cuenta</button>
       <p style="text-align:center;margin-top:18px;font-family:'IBM Plex Mono',monospace;
-        font-size:10px;letter-spacing:.14em;color:var(--gris-3)">VERSIÓN F-20 · IA CON PERMISO</p>
+        font-size:10px;letter-spacing:.14em;color:var(--gris-3)">VERSIÓN F-21 · TRANSFERENCIAS DECLARADAS</p>
     </section>
 
     <!-- ══════ NUEVO PEDIDO ══════ -->
@@ -2134,8 +2217,23 @@ function cambiarAuth(m){
   $('a-txt').textContent = c ? 'Crear cuenta' : 'Iniciar sesión';
   $('a-pass').setAttribute('autocomplete', c ? 'new-password' : 'current-password');
   limpiar(['a-email','a-pass']); $('a-aviso').className='aviso';
+  /* La transferencia arranca cuando se crea la cuenta, no cuando se inicia
+     sesión: quien ya la tiene, ya la consintió. */
+  $('a-transfer-caja').classList.toggle('oculto', !c);
+  limpiarTransfer();
   if(pasoAuth === 'codigo') volverAPasoDatos();
 }
+
+function limpiarTransfer(){
+  $('a-transfer-fila').classList.remove('mal');
+  $('e-a-transfer').classList.remove('visible');
+}
+$('a-transfer').addEventListener('change', limpiarTransfer);
+$('a-transfer-ver').addEventListener('click', () => $('telon-infra').classList.add('abierto'));
+$('infra-cerrar').addEventListener('click', () => $('telon-infra').classList.remove('abierto'));
+$('telon-infra').addEventListener('click', e => {
+  if(e.target.id === 'telon-infra') $('telon-infra').classList.remove('abierto');
+});
 $('tab-entrar').addEventListener('click', () => cambiarAuth('entrar'));
 $('tab-crear').addEventListener('click', () => cambiarAuth('crear'));
 $('ver-pass').addEventListener('click', () => {
@@ -2163,9 +2261,17 @@ function traducir(t){
 $('a-enviar').addEventListener('click', async () => {
   if(pasoAuth === 'codigo') return confirmarCodigo();
   limpiar(['a-email','a-pass']);
+  limpiarTransfer();
   const r={p:null}, email=$('a-email').value.trim(), pass=$('a-pass').value;
   if(!mailOk(email)) fallar('a-email',r);
   if(pass.length<8) fallar('a-pass',r);
+  /* El cuadradito es de 20px: si el error se marcara solo ahí no se vería.
+     Se pinta el renglón entero. */
+  if(modoAuth === 'crear' && !$('a-transfer').checked){
+    $('a-transfer-fila').classList.add('mal');
+    $('e-a-transfer').classList.add('visible');
+    if(!r.p) r.p = 'a-transfer';
+  }
   if(enfocar(r)) return;
 
   const b=$('a-enviar'); b.disabled=true; b.classList.add('cargando');
@@ -2173,7 +2279,13 @@ $('a-enviar').addEventListener('click', async () => {
   try{
     const res = await fetch(SUPABASE_URL + (modoAuth==='crear' ? '/auth/v1/signup':'/auth/v1/token?grant_type=password'), {
       method:'POST', headers:{'apikey':SUPABASE_ANON,'Content-Type':'application/json'},
-      body: JSON.stringify({email, password:pass})
+      /* El permiso viaja en el mismo alta que lo necesita, no en una llamada
+         posterior que podría no llegar. Queda en user_metadata con fecha: sin
+         eso no hay forma de acreditar cuándo se dio. */
+      body: JSON.stringify(modoAuth === 'crear'
+        ? {email, password:pass,
+           data:{ transfer_permiso:true, transfer_permiso_fecha:new Date().toISOString() }}
+        : {email, password:pass})
     });
     const j = await res.json();
     if(!res.ok){
@@ -4081,6 +4193,31 @@ function pintarPermisoIA(){
   $('ia-cambiar-txt').textContent = dado ? 'Retirar el permiso' : 'Dar el permiso';
 }
 
+/* Registro de la transferencia de infraestructura. A diferencia del permiso de
+   IA no lleva interruptor, y no por descuido: sin la base de datos y sin el
+   alojamiento la aplicación no existe, así que retirarlo es dar de baja la
+   cuenta. Decirlo es más honesto que ofrecer un botón que en realidad borraría
+   todo. */
+function pintarTransfer(){
+  if(!sesion) return;
+  const m = sesion.user.user_metadata || {};
+  const dado = m.transfer_permiso === true;
+  const sello = $('transfer-sello');
+  sello.className = 'sello ' + (dado ? 'oro' : 'gris');
+  sello.textContent = dado ? 'Registrado' : 'Sin registro';
+  $('transfer-txt').textContent = (dado
+    ? 'La base de datos está en Brasil y el alojamiento en Estados Unidos. '
+    : 'Tu cuenta es anterior a este registro. La base de datos está en Brasil y el alojamiento en Estados Unidos. ')
+    + 'Retirar este permiso es dar de baja la cuenta, porque sin esos servicios la app no funciona.';
+  $('transfer-firma-caja').innerHTML = dado && m.transfer_permiso_fecha
+    ? '<div class="ia-firma"><span class="ia-hilo"></span><span class="ia-fecha">Permiso dado el ' +
+      new Date(m.transfer_permiso_fecha).toLocaleDateString('es-AR',{day:'2-digit',month:'2-digit',year:'numeric'}) +
+      '</span></div>'
+    : '';
+}
+
+$('transfer-ver-cuenta').addEventListener('click', () => $('telon-infra').classList.add('abierto'));
+
 $('ia-cambiar').addEventListener('click', async () => {
   if(guardandoPermiso) return;
   if(!permisoIA()){ pedirPermisoIA(null); return; }
@@ -4614,6 +4751,7 @@ function entrarApp(){
   resumenPedido(); resumenProv();
   const g = store.leer(); if(g && g.modo) modo = g.modo;
   pintarPermisoIA();
+  pintarTransfer();
   aplicarModo();
   recargarTodo();
   arrancarLatido();
