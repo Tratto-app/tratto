@@ -1368,12 +1368,17 @@
         <div id="perfil-cobros"></div>
       </div>
 
-      <div class="sec"><span class="sec-tit">Servicios que ofrecés</span><span class="sec-num" id="n-perfiles"></span></div>
-      <div id="lista-perfiles"></div>
-      <button class="btn vacio-b" id="ir-proveedor" type="button" style="margin-top:12px">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>
-        Ofrecer un servicio
-      </button>
+      <!-- Cuenta es la única pantalla que comparten los dos roles, así que es
+           la única por donde alguien podría publicar un servicio sin haber
+           aceptado el contrato de proveedor. Se muestra solo si lo es. -->
+      <div id="perfil-servicios-sec">
+        <div class="sec"><span class="sec-tit">Servicios que ofrecés</span><span class="sec-num" id="n-perfiles"></span></div>
+        <div id="lista-perfiles"></div>
+        <button class="btn vacio-b" id="ir-proveedor" type="button" style="margin-top:12px">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>
+          Ofrecer un servicio
+        </button>
+      </div>
 
       <div class="sec"><span class="sec-tit">Tu tipo de cuenta</span></div>
       <div class="item">
@@ -2171,7 +2176,21 @@ const SUB = {'nuevo-pedido':'Nuevo pedido','nuevo-proveedor':'Nuevo servicio','d
 const CON_REFRESCO = ['inicio','chats','perfil','panel'];
 let actual='auth', volverA='inicio';
 
+/* Pantallas que pertenecen a un rol. El rol se fija al crear la cuenta y cada
+   uno acepta un contrato distinto, así que llegar a la pantalla del otro
+   --por un enlace viejo, por el historial, por un botón que se nos escape--
+   no puede terminar en publicar algo que esa persona no firmó. */
+const DEL_ROL = {
+  'nuevo-pedido':'cliente', 'inicio':'cliente', 'premios':'cliente', 'detalle':'cliente',
+  'nuevo-proveedor':'proveedor', 'panel':'proveedor', 'ficha':'proveedor',
+  'publicacion':'proveedor', 'credencial':'proveedor'
+};
+
 function ir(p, efecto){
+  if(DEL_ROL[p] && DEL_ROL[p] !== modo){
+    p = modo === 'proveedor' ? 'panel' : 'inicio';
+    efecto = 'entra';
+  }
   if(actual === 'chat' && p !== 'chat') cerrarChat();
   document.querySelectorAll('.pantalla').forEach(x => x.classList.remove('activa','entra','desliza'));
   const el = $('p-'+p);
@@ -3696,7 +3715,7 @@ function abrirPublicacion(){
   fotosPub = []; pintarPrevias(); $('e-pb-fotos').classList.remove('visible');
   $('pb-cont').textContent = '0'; limpiar(PB); $('pb-aviso').className='aviso';
   $('caja-pb-precio').classList.add('oculto'); $('caja-pb-vence').classList.add('oculto');
-  volverA = modo === 'proveedor' ? 'ficha' : 'perfil'; ir('publicacion');
+  volverA = 'ficha'; ir('publicacion');   // solo se llega desde Panel y Mi perfil
 }
 
 $('pb-guardar').addEventListener('click', async () => {
@@ -4831,6 +4850,7 @@ async function recargarTodo(){
 
 function pintarModoCuenta(){
   const prov = modo === 'proveedor';
+  $('perfil-servicios-sec').classList.toggle('oculto', !prov);
   $('modo-actual').textContent = prov ? 'Cuenta de proveedor' : 'Cuenta de cliente';
   $('modo-sello').textContent  = prov ? 'Proveedor' : 'Cliente';
   $('modo-sello').className    = 'sello ' + (prov ? 'oro' : 'verde');
