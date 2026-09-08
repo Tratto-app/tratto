@@ -1462,7 +1462,7 @@
       <button class="btn riesgo" id="salir" type="button">Cerrar sesión</button>
       <button class="btn vacio-b" id="ir-baja" type="button">Borrar mi cuenta</button>
       <p style="text-align:center;margin-top:18px;font-family:'IBM Plex Mono',monospace;
-        font-size:10px;letter-spacing:.14em;color:var(--gris-3)">VERSIÓN F-29 · SE OFRECIO</p>
+        font-size:10px;letter-spacing:.14em;color:var(--gris-3)">VERSIÓN F-30 · FEED QUE SE ACTUALIZA</p>
     </section>
 
     <!-- ══════ NUEVO PEDIDO ══════ -->
@@ -5014,7 +5014,15 @@ async function mirarSiHayNovedades(){
     const antes = firmaDeDatos();
     misPedidos = await api('solicitudes?user_id=eq.'+sesion.user.id+'&order=created_at.desc');
     misPerfiles = await api('proveedores?user_id=eq.'+sesion.user.id+'&order=created_at.desc');
-    if(firmaDeDatos() === antes) return;   // nada cambió, no repintamos
+
+    /* Los pedidos abiertos van ANTES del corte, y no es un descuido: la firma
+       se calcula sobre lo tuyo --tus pedidos, tus servicios-- y el feed
+       depende de lo que publican otros. Si esperara a que algo tuyo cambie,
+       un proveedor podría tener el Panel abierto toda la tarde sin enterarse
+       de un pedido nuevo, que es justo lo contrario de para qué está. */
+    if(actual === 'panel' && modo === 'proveedor') await cargarPedidosAbiertos();
+
+    if(firmaDeDatos() === antes) return;   // de lo tuyo no cambió nada, no repintamos
 
     if(actual === 'inicio')  await cargarPedidos();
     if(actual === 'perfil')  await cargarPerfiles();
