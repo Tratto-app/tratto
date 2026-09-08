@@ -410,7 +410,7 @@
     -webkit-overflow-scrolling:touch}
   /* Cada mensaje conserva su alto natural y scrollea el hilo: si los dejamos
      encogerse, las tarjetas de presupuesto se cortan por la mitad. */
-  .hilo-msg > *{flex:none}
+  .hilo-msg > *,.asis-hilo > *{flex:none}
   .dia{align-self:center;font-family:'IBM Plex Mono',monospace;font-size:9.5px;
     letter-spacing:.13em;text-transform:uppercase;color:var(--gris);
     background:var(--claro);border:1px solid var(--linea);border-radius:99px;
@@ -582,6 +582,44 @@
     color:#7C2A12;margin-top:14px}
   .peligro b{font-weight:600}
 
+  /* ═══════════ COMPARADOR ═══════════ */
+  /* Elegir entre presupuestos es la decisión más pesada de la app: el comparador
+     no puede parecer un bloque informativo más. Marco de latón y flecha para que
+     se lea como lo que es, algo para tocar. */
+  .comp-btn{background:var(--noche);color:var(--claro);border-radius:var(--r);
+    border:1px solid rgba(201,162,39,.45);
+    padding:17px;width:100%;text-align:left;font:inherit;cursor:pointer;margin-bottom:20px;
+    display:flex;align-items:center;gap:13px;position:relative;overflow:hidden}
+  .comp-btn::after{content:'';position:absolute;inset:0;pointer-events:none;
+    background:radial-gradient(120% 100% at 100% 0%, rgba(201,162,39,.20), transparent 62%)}
+  .comp-btn::before{content:'';order:1;margin-left:auto;flex:none;
+    width:8px;height:8px;transform:rotate(45deg);position:relative;z-index:1;
+    border-right:2px solid var(--laton);border-top:2px solid var(--laton)}
+  .comp-btn > *{position:relative;z-index:1}
+  .comp-btn svg{width:20px;height:20px;color:var(--laton);flex:none;stroke-width:1.9}
+  .comp-btn b{font-family:'IBM Plex Sans Condensed',sans-serif;font-weight:700;font-size:15.5px;display:block}
+  .comp-btn span{font-size:12.5px;color:var(--gris-2);display:block;margin-top:3px}
+  .comp-btn:active{transform:scale(.99)}
+
+  .comp-caja{background:var(--claro);border:1px solid var(--linea);border-radius:var(--r);
+    padding:17px;margin-bottom:16px;box-shadow:var(--sombra)}
+  .comp-resumen{font-size:14.5px;line-height:1.6}
+  .comp-ojo{margin-top:12px;padding:11px 13px;border-radius:var(--r-ch);
+    background:rgba(201,162,39,.09);border:1px solid rgba(201,162,39,.4);
+    font-size:13px;line-height:1.5;color:var(--laton-osc)}
+  .comp-col{border:1px solid var(--linea);border-radius:var(--r-ch);padding:14px;margin-top:11px}
+  .comp-col.mejor{border-color:rgba(30,93,73,.4);background:rgba(30,93,73,.04)}
+  .comp-top{display:flex;align-items:baseline;justify-content:space-between;gap:10px}
+  .comp-nom{font-family:'IBM Plex Sans Condensed',sans-serif;font-weight:700;font-size:15.5px}
+  .comp-monto{font-family:'IBM Plex Sans Condensed',sans-serif;font-weight:700;font-size:19px}
+  .comp-eti{display:inline-block;font-family:'IBM Plex Mono',monospace;font-size:8.5px;
+    letter-spacing:.13em;text-transform:uppercase;font-weight:600;padding:3px 9px;border-radius:99px;
+    background:rgba(30,93,73,.1);color:var(--verde);border:1px solid rgba(30,93,73,.35);margin-top:7px}
+  .comp-lista{margin-top:10px;font-size:13px;line-height:1.65}
+  .comp-si{color:var(--verde);font-weight:600}
+  .comp-no{color:var(--alerta)}
+  .comp-plazo{font-size:12.5px;color:var(--gris);margin-top:8px}
+
   /* ═══════════ CALIFICAR ═══════════ */
   .calificar{background:var(--claro);border:1px solid var(--linea-fuerte);
     border-left:3px solid var(--verde);border-radius:12px;padding:15px;
@@ -608,6 +646,103 @@
   .rep-item .rep-caja{margin-top:8px}
   .rep-fecha{font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--gris-2);margin-top:6px}
 
+  /* ═══════════ TASADOR ═══════════ */
+  .tasar{background:var(--noche);color:var(--claro);border-radius:var(--r);padding:18px;
+    margin-bottom:26px;position:relative;overflow:hidden;cursor:pointer;border:none;
+    width:100%;text-align:left;font:inherit;display:block}
+  .tasar::after{content:'';position:absolute;inset:0;pointer-events:none;
+    background:radial-gradient(120% 100% at 100% 0%, rgba(43,126,98,.30), transparent 60%)}
+  .tasar > *{position:relative;z-index:1}
+  .tasar-top{display:flex;align-items:center;gap:13px}
+  .tasar-ico{width:42px;height:42px;border-radius:11px;background:var(--noche-3);flex:none;
+    display:flex;align-items:center;justify-content:center;border:1px solid var(--noche-4)}
+  .tasar-ico svg{width:21px;height:21px;color:var(--verde-luz);stroke-width:1.8}
+  .tasar-kicker{display:block;font-family:'IBM Plex Mono',monospace;font-size:8.5px;
+    letter-spacing:.19em;text-transform:uppercase;color:var(--laton);margin-bottom:7px}
+  /* display:block porque son <span>: sin esto el título y la bajada se pegan
+     en el mismo renglón y el margen de arriba de la bajada no hace nada. */
+  .tasar-tit{display:block;font-family:'IBM Plex Sans Condensed',sans-serif;font-weight:700;
+    font-size:17px;line-height:1.2}
+  .tasar-txt{display:block;font-size:12.5px;color:var(--gris-2);margin-top:5px;line-height:1.45}
+  .tasar:active{transform:scale(.99)}
+
+  .diag{background:var(--claro);border:1px solid var(--linea-fuerte);border-left:3px solid var(--laton);
+    border-radius:var(--r);padding:17px;margin-bottom:22px;box-shadow:var(--sombra)}
+  .diag-eti{font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:.15em;
+    text-transform:uppercase;color:var(--laton-osc);font-weight:600}
+  .diag-que{font-size:14.5px;line-height:1.5;margin-top:8px}
+  .diag-precio{font-family:'IBM Plex Sans Condensed',sans-serif;font-weight:700;font-size:24px;
+    letter-spacing:-.015em;margin-top:12px}
+  .diag-nota{font-size:12.5px;color:var(--gris);margin-top:7px;line-height:1.45}
+  .diag-foto{width:100%;border-radius:var(--r-ch);margin-top:13px;display:block;
+    max-height:200px;object-fit:cover}
+  .diag-baja{border-left-color:var(--gris-3)}
+  .diag-baja .diag-eti{color:var(--gris)}
+
+  /* ═══════════ ASISTENTE ═══════════ */
+  .asis-hilo{flex:1;min-height:0;overflow-y:auto;padding:18px 16px 8px;background:var(--claro-2);
+    display:flex;flex-direction:column;gap:10px;-webkit-overflow-scrolling:touch}
+  .asis-burb{max-width:86%;padding:12px 15px;border-radius:15px;font-size:14.5px;
+    line-height:1.55;box-shadow:var(--sombra);word-wrap:break-word;overflow-wrap:anywhere;
+    animation:subir .18s ease both;white-space:pre-wrap}
+  .asis-burb.mia{align-self:flex-end;background:var(--verde);color:#fff;border-bottom-right-radius:5px}
+  .asis-burb.suya{align-self:flex-start;background:var(--claro);border:1px solid var(--linea);
+    border-bottom-left-radius:5px}
+  .asis-cab{background:var(--noche);color:var(--claro);padding:16px;flex:none;
+    position:relative;overflow:hidden}
+  .asis-cab::after{content:'';position:absolute;inset:0;pointer-events:none;
+    background:radial-gradient(120% 100% at 100% 0%, rgba(43,126,98,.28), transparent 60%)}
+  .asis-cab > *{position:relative;z-index:1}
+  .asis-tit{font-family:'IBM Plex Sans Condensed',sans-serif;font-weight:700;font-size:18px}
+  .asis-sub{font-size:12.5px;color:var(--gris-2);margin-top:4px;line-height:1.45}
+  .asis-sugerencias{display:flex;flex-wrap:wrap;gap:7px;margin-top:14px}
+  .asis-chip{font:inherit;font-size:12.5px;background:var(--claro);border:1px solid var(--linea-fuerte);
+    border-radius:99px;padding:7px 13px;cursor:pointer;color:var(--tinta);text-align:left}
+  .asis-chip:active{background:var(--claro-2)}
+  .asis-puntos{align-self:flex-start;background:var(--claro);border:1px solid var(--linea);
+    border-radius:15px;border-bottom-left-radius:5px;padding:14px 16px;display:flex;gap:5px}
+  .asis-puntos i{width:7px;height:7px;border-radius:50%;background:var(--gris-3);
+    animation:latido 1.2s ease-in-out infinite}
+  .asis-puntos i:nth-child(2){animation-delay:.15s}
+  .asis-puntos i:nth-child(3){animation-delay:.3s}
+  @keyframes latido{0%,60%,100%{opacity:.3;transform:translateY(0)}30%{opacity:1;transform:translateY(-3px)}}
+
+  .burbuja-asis{position:fixed;right:16px;bottom:calc(var(--tabs) + var(--sb) + 16px);
+    width:52px;height:52px;border-radius:50%;background:var(--noche);border:none;cursor:pointer;
+    display:flex;align-items:center;justify-content:center;z-index:25;
+    box-shadow:0 4px 14px rgba(14,24,21,.28)}
+  .burbuja-asis svg{width:24px;height:24px;color:var(--verde-luz)}
+  .burbuja-asis:active{transform:scale(.94)}
+
+  /* ═══════════ PERMISO DE INTELIGENCIA ARTIFICIAL ═══════════ */
+  /* Cada superficie donde interviene una máquina lleva el mismo sello, siempre
+     igual y siempre visible. No es decoración: es lo que le permite a alguien
+     saber, sin leer nada, cuándo lo que está mirando lo escribió un programa. */
+  .ia-sello{display:inline-flex;align-items:center;gap:5px;
+    font-family:'IBM Plex Mono',monospace;font-size:8px;letter-spacing:.17em;
+    text-transform:uppercase;font-weight:600;border-radius:99px;padding:3px 9px;
+    background:rgba(201,162,39,.09);color:var(--laton-osc);
+    border:1px solid rgba(201,162,39,.45);white-space:nowrap;vertical-align:middle}
+  .ia-sello svg{width:10px;height:10px;stroke-width:2.4}
+  /* Sobre fondo noche el latón claro rinde mejor que el oscuro. */
+  .tasar .ia-sello,.comp-btn .ia-sello{background:rgba(201,162,39,.14);color:var(--laton)}
+
+  .ia-que{list-style:none;margin:15px 0 0;padding:0}
+  .ia-que li{display:flex;gap:10px;align-items:flex-start;padding:10px 0;
+    border-bottom:1px solid var(--linea);font-size:13.5px;line-height:1.5}
+  .ia-que li:last-child{border-bottom:none}
+  .ia-que b{font-weight:600;display:block;font-size:14px;color:var(--tinta)}
+  .ia-que span{color:var(--gris)}
+  .ia-que svg{width:17px;height:17px;flex:none;margin-top:2px;color:var(--laton);stroke-width:1.9}
+
+  /* Mismo hilo con sello que cierra un presupuesto o un cobro: cada vez que algo
+     queda firme en la app aparece esta misma firma. Dar un permiso también lo es. */
+  .ia-firma{display:flex;align-items:center;gap:11px;margin-top:16px}
+  .ia-hilo{flex:1;height:1px;background:linear-gradient(90deg,var(--linea-fuerte),var(--laton))}
+  .ia-fecha{font-family:'IBM Plex Mono',monospace;font-size:8.5px;letter-spacing:.16em;
+    text-transform:uppercase;color:var(--laton-osc);font-weight:600;
+    border:1px solid rgba(201,162,39,.5);border-radius:99px;padding:4px 10px;flex:none}
+
   /* ═══════════ PREGUNTAS FRECUENTES ═══════════ */
   /* Agrupadas por quién sos, que es la misma bifurcación que ordena toda la
      app. Cada pregunta se abre en su lugar: nadie navega a otro lado para
@@ -627,6 +762,19 @@
     color:var(--gris)}
   .faq-item.abierta .faq-resp{display:block}
   .faq-resp b{color:var(--tinta);font-weight:600}
+
+  /* Puente entre el asistente y las respuestas escritas: quien prefiere leer
+     no tiene que preguntarle a nadie. */
+  .asis-link{display:inline-flex;align-items:center;gap:6px;margin-top:12px;
+    font:inherit;font-family:'IBM Plex Mono',monospace;font-size:9.5px;
+    letter-spacing:.13em;text-transform:uppercase;font-weight:600;
+    background:none;border:1px solid var(--noche-4);border-radius:99px;
+    padding:7px 13px;color:var(--laton);cursor:pointer}
+  .asis-link:active{background:var(--noche-3)}
+  .asis-link svg{width:12px;height:12px;stroke-width:2.4}
+
+  .oculto{display:none!important}
+  @media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
 
   /* ═══════════ MODO DE INGRESO ═══════════ */
   .roles{display:grid;gap:12px;margin-top:4px}
@@ -895,6 +1043,37 @@
   </div>
 </div>
 
+<!-- ═══════════ PERMISO DE INTELIGENCIA ARTIFICIAL ═══════════ -->
+<!-- La ley 25.326 no deja mandar datos personales a un país sin nivel de
+     protección adecuado, y Estados Unidos no está en la nómina que reconoce la
+     Agencia argentina. El permiso expreso del titular es lo que habilita la
+     transferencia, así que tiene que pedirse aparte, decir qué sale y a dónde,
+     y poder revocarse. Por eso no está escondido dentro de los términos. -->
+<div class="telon" id="telon-ia">
+  <div class="hoja">
+    <div class="hoja-tit">Funciones con inteligencia artificial</div>
+    <div class="hoja-txt">Para tasar una foto, comparar presupuestos, responderte en el chat de
+      ayuda y resumir cómo trabajó un proveedor, Tratto usa un servicio de inteligencia
+      artificial de <b>OpenAI</b>, que procesa la información <b>en Estados Unidos</b>.</div>
+    <ul class="ia-que">
+      <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7.5h3l1.5-2h7L17 7.5h3a1 1 0 0 1 1 1v9a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1v-9a1 1 0 0 1 1-1z"/><circle cx="12" cy="13" r="3.4"/></svg>
+        <span><b>Qué sale de la app</b>La foto que saques, el texto de tus consultas y, cuando
+        calificás, la conversación de ese trabajo.</span></li>
+      <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M4.5 12a7.5 7.5 0 1 0 15 0 7.5 7.5 0 1 0-15 0M4.5 12h15M12 4.5c3.6 3.9 3.6 11.1 0 15M12 4.5c-3.6 3.9-3.6 11.1 0 15"/></svg>
+        <span><b>Qué no sale</b>Antes de mandar cualquier texto le sacamos correos, teléfonos,
+        CBU, tarjetas y usuarios de redes.</span></li>
+      <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3.5l7 3v5.5c0 4-3 7-7 8.5-4-1.5-7-4.5-7-8.5V6.5z"/><path d="M9.2 12.2l2 2 3.6-4"/></svg>
+        <span><b>Qué hacen con eso</b>OpenAI no lo usa para entrenar sus modelos y lo borra a
+        los 30 días. Nosotros guardamos la foto hasta 15 días.</span></li>
+    </ul>
+    <div class="nota">Es opcional. Si decís que no, la app funciona igual: pedís, cotizás, chateás
+      y cobrás lo mismo. Podés cambiar de idea cuando quieras desde <b>Cuenta</b>.</div>
+    <button class="btn lleno" id="ia-acepto" type="button" style="margin-top:16px">
+      <span class="rueda"></span><span id="ia-acepto-txt">Doy mi permiso</span></button>
+    <button class="btn vacio-b" id="ia-ahora-no" type="button">Ahora no</button>
+  </div>
+</div>
+
 <div class="telon" id="telon-baja">
   <div class="hoja">
     <div class="hoja-tit">Borrar mi cuenta</div>
@@ -1102,11 +1281,27 @@
         </div>
       </div>
 
+      <div class="sec"><span class="sec-tit">Tus datos</span></div>
+      <div class="item" id="ia-caja">
+        <div class="item-top">
+          <span class="item-tit">Funciones con inteligencia artificial</span>
+          <span id="ia-sello-estado"></span>
+        </div>
+        <div class="item-meta"><span id="ia-txt">—</span></div>
+        <div id="ia-firma-caja"></div>
+        <div class="item-pie">
+          <button class="cambiar-modo" id="ia-cambiar" type="button">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 3.5 21 7l-4 3.5M21 7H8.5M7 20.5 3 17l4-3.5M3 17h12.5"/></svg>
+            <span id="ia-cambiar-txt">—</span>
+          </button>
+        </div>
+      </div>
+
       <div class="sec"><span class="sec-tit">Sesión</span></div>
       <button class="btn riesgo" id="salir" type="button">Cerrar sesión</button>
       <button class="btn vacio-b" id="ir-baja" type="button">Borrar mi cuenta</button>
       <p style="text-align:center;margin-top:18px;font-family:'IBM Plex Mono',monospace;
-        font-size:10px;letter-spacing:.14em;color:var(--gris-3)">VERSIÓN F-19 · COBROS POR LA APP</p>
+        font-size:10px;letter-spacing:.14em;color:var(--gris-3)">VERSIÓN F-20 · IA CON PERMISO</p>
     </section>
 
     <!-- ══════ NUEVO PEDIDO ══════ -->
@@ -1115,7 +1310,18 @@
       <h1>¿Qué necesitás?</h1>
       <p class="bajada">Buscamos proveedores de tu rubro, en tu zona y dentro de tu presupuesto.</p>
 
-
+      <button class="tasar" id="tasar-abrir" type="button" style="margin-top:22px">
+        <span class="tasar-top">
+          <span class="tasar-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7.5h3l1.5-2h7L17 7.5h3a1 1 0 0 1 1 1v9a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1v-9a1 1 0 0 1 1-1z"/><circle cx="12" cy="13" r="3.4"/></svg></span>
+          <span style="min-width:0">
+            <span class="tasar-kicker">Empezá por acá &nbsp;<span class="ia-sello"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v3M12 18v3M3 12h3M18 12h3M6.3 6.3l2.1 2.1M15.6 15.6l2.1 2.1M17.7 6.3l-2.1 2.1M8.4 15.6l-2.1 2.1"/><circle cx="12" cy="12" r="3.2"/></svg>Con IA</span></span>
+            <span class="tasar-tit">Sacale una foto y te decimos cuánto sale</span>
+            <span class="tasar-txt">Completamos el pedido por vos, con un precio orientativo. Cada proveedor pone el suyo.</span>
+          </span>
+        </span>
+      </button>
+      <input type="file" id="tasar-archivo" accept="image/*" capture="environment" class="oculto">
+      <div id="tasar-resultado"></div>
 
       <div class="bifurca"><span>o cargá los datos vos</span></div>
 
@@ -1304,6 +1510,7 @@
           <div class="rd"><dt>Estado</dt><dd id="d-estado">—</dd></div>
         </dl>
       </div>
+      <div id="d-comparador"></div>
       <div class="sec"><span class="sec-tit">Proveedores conectados</span><span class="sec-num" id="d-num"></span></div>
       <div id="d-lista"></div>
     </section>
@@ -1652,11 +1859,31 @@
     </section>
 
 
+    <!-- ══════ ASISTENTE ══════ -->
+    <section class="pantalla" id="p-asistente">
+      <div class="asis-cab">
+        <div class="asis-tit">¿En qué te damos una mano? <span class="ia-sello"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v3M12 18v3M3 12h3M18 12h3M6.3 6.3l2.1 2.1M15.6 15.6l2.1 2.1M17.7 6.3l-2.1 2.1M8.4 15.6l-2.1 2.1"/><circle cx="12" cy="12" r="3.2"/></svg>Con IA</span></div>
+        <div class="asis-sub">Preguntame lo que quieras sobre Tratto. Si no sé, lo pasamos al equipo.</div>
+        <button class="asis-link" id="asis-a-faq" type="button">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M5 4.5h14v15H5z"/><path d="M8.5 8.5h7M8.5 12h7M8.5 15.5h4"/></svg>
+          Preguntas frecuentes
+        </button>
+      </div>
+      <div class="asis-hilo" id="asis-hilo"></div>
+      <div class="barra-envio">
+        <textarea id="asis-texto" rows="1" maxlength="500" placeholder="Escribí tu consulta…"></textarea>
+        <button class="enviar-msg" id="asis-enviar" type="button" aria-label="Enviar">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12h15M13 6l6 6-6 6"/></svg>
+        </button>
+      </div>
+    </section>
+
+
     <!-- ══════ PREGUNTAS FRECUENTES ══════ -->
     <section class="pantalla" id="p-ayuda">
       <div class="kicker">Ayuda</div>
       <h1>Preguntas frecuentes</h1>
-      <p class="bajada">Lo que más nos preguntan. Si no encontrás lo tuyo, escribinos y te contestamos.</p>
+      <p class="bajada">Lo que más nos preguntan. Si no encontrás lo tuyo, preguntale al asistente o escribinos.</p>
       <div id="faq-lista"></div>
       <a class="btn vacio-b" id="faq-mail" href="mailto:trattoapp1@gmail.com" style="margin-top:22px">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6.5h18v11H3z"/><path d="M3 7l9 6 9-6"/></svg>
@@ -1666,7 +1893,7 @@
 
   </main>
 
-  <button class="burbuja-ayuda oculto" id="burbuja-ayuda" type="button" aria-label="Ayuda">
+  <button class="burbuja-asis oculto" id="burbuja-asis" type="button" aria-label="Ayuda">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M20.4 14.6a2 2 0 0 1-2 2H8.4l-4 3.8V4.8a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2z"/><path d="M9.4 8.6a2.6 2.6 0 0 1 5 .9c0 1.7-2.5 2.2-2.5 2.2"/><path d="M12 14.4h.01"/></svg>
   </button>
 
@@ -1815,7 +2042,7 @@ async function api(ruta){
 /* ══════════════════ NAVEGACIÓN ══════════════════ */
 const SUB = {'nuevo-pedido':'Nuevo pedido','nuevo-proveedor':'Nuevo servicio','detalle':'Tu pedido',
   'chat':'Chat','editar-perfil':'Editar perfil','credencial':'Nuevo antecedente',
-  'publicacion':'Nueva publicación','ayuda':'Preguntas frecuentes'};
+  'publicacion':'Nueva publicación','asistente':'Ayuda','ayuda':'Preguntas frecuentes'};
 const CON_REFRESCO = ['inicio','chats','perfil','panel'];
 let actual='auth', volverA='inicio';
 
@@ -1834,7 +2061,7 @@ function ir(p, efecto){
   if(esSub) $('tb-tit').textContent = SUB[p];
   $('refrescar').classList.toggle('oculto', !CON_REFRESCO.includes(p));
   $('tabs').classList.toggle('oculto', esAuth || esSub);
-  $('burbuja-ayuda').classList.toggle('oculto', esAuth || esSub || p === 'chat');
+  $('burbuja-asis').classList.toggle('oculto', esAuth || esSub || p === 'chat');
   $('vista').classList.toggle('sin-tabs', esAuth || esSub);
   document.querySelectorAll('.tab').forEach(t => t.classList.toggle('activa', t.dataset.ir === p));
   window.scrollTo(0,0);
@@ -1849,7 +2076,7 @@ $('tabs').addEventListener('click', e => {
 });
 $('volver').addEventListener('click', () => ir(volverA, 'entra'));
 $('ir-pedido').addEventListener('click', () => {
-  volverA='inicio'; ir('nuevo-pedido');
+  volverA='inicio'; $('tasar-resultado').innerHTML=''; ir('nuevo-pedido');
 });
 $('ir-proveedor').addEventListener('click', () => { volverA='perfil'; ir('nuevo-proveedor'); });
 
@@ -2127,12 +2354,14 @@ $('s-enviar').addEventListener('click', async () => {
         nombre_cliente:v('s-nombre'), email_cliente:v('s-email'), telefono_cliente:v('s-tel'),
         servicio_necesitado:v('s-servicio'), zona:v('s-zona'),
         presupuesto:num(v('s-presupuesto')), urgencia:v('s-urgencia'),
-        descripcion:v('s-desc'), estado:'pendiente', user_id:sesion.user.id
+        descripcion:v('s-desc'), estado:'pendiente', user_id:sesion.user.id,
+        foto_url: fotoTasador
       })
     });
     if(res.status===401){ avisar('s-aviso','Tu sesión venció. Volvé a entrar.','mal'); return; }
     if(!res.ok){ console.error(await res.text()); avisar('s-aviso','No se pudo enviar (error '+res.status+').','mal'); return; }
     CS.forEach(c => $(c).value=''); $('s-email').value = sesion.user.email;
+    fotoTasador = null; $('tasar-resultado').innerHTML = '';
     resumenPedido(); await cargarPedidos(); ir('inicio','entra');
   }catch(e){ console.error(e); avisar('s-aviso','No se pudo conectar. Probá de nuevo.','mal'); }
   finally{ b.disabled=false; b.classList.remove('cargando'); $('s-txt').textContent='Buscar proveedores'; }
@@ -2851,6 +3080,7 @@ async function abrirDetalle(id){
   $('d-estado').textContent = s.estado === 'vencida' ? 'Vencido'
     : s.estado === 'con_match' ? 'Con proveedores' : 'Buscando';
   $('d-lista').innerHTML = esqueleto(2);
+  $('d-comparador').innerHTML = '';
   $('d-num').textContent = '';
   ir('detalle');
 
@@ -3768,6 +3998,175 @@ $('baja-enviar').addEventListener('click', async () => {
   }
 });
 
+/* ══════════════════ PERMISO PARA LAS FUNCIONES CON IA ══════════════════ */
+/* La ley 25.326 prohíbe mandar datos personales a un país sin nivel de
+   protección adecuado, y Estados Unidos no está en la nómina que reconoce la
+   Agencia argentina. Lo que habilita la transferencia es el permiso expreso del
+   titular, así que se pide aparte de los términos, se guarda con fecha en el
+   propio usuario de Supabase —un permiso que no se puede probar cuándo se dio
+   no sirve de nada— y se puede retirar desde Cuenta.
+
+   Regla de oro de este archivo: ningún dato sale hacia OpenAI sin pasar antes
+   por conPermisoIA(). */
+function permisoIA(){
+  const m = sesion && sesion.user ? (sesion.user.user_metadata || {}) : {};
+  return m.ia_permiso === true;
+}
+
+let alDarPermiso = null, guardandoPermiso = false;
+
+function pedirPermisoIA(seguir){
+  alDarPermiso = seguir || null;
+  $('ia-acepto-txt').textContent = 'Doy mi permiso';
+  $('telon-ia').classList.add('abierto');
+}
+function cerrarPermisoIA(){
+  $('telon-ia').classList.remove('abierto');
+  alDarPermiso = null;
+}
+
+/* Envuelve cualquier acción que mande datos afuera: si todavía no hay permiso,
+   primero se pide y recién después se hace. */
+function conPermisoIA(hacer){
+  if(permisoIA()){ hacer(); return; }
+  pedirPermisoIA(hacer);
+}
+
+async function guardarPermisoIA(valor){
+  const r = await fetch(SUPABASE_URL + '/auth/v1/user', {
+    method:'PUT',
+    headers:{'apikey':SUPABASE_ANON, 'Authorization':'Bearer ' + sesion.access_token,
+             'Content-Type':'application/json'},
+    body: JSON.stringify({ data:{ ia_permiso: valor, ia_permiso_fecha: new Date().toISOString() } })
+  });
+  if(!r.ok){ console.error(await r.text()); throw new Error('permiso'); }
+  sesion.user = await r.json();
+  pintarPermisoIA();
+}
+
+$('ia-acepto').addEventListener('click', async () => {
+  if(guardandoPermiso) return;
+  const b = $('ia-acepto');
+  guardandoPermiso = true; b.disabled = true; b.classList.add('cargando');
+  $('ia-acepto-txt').textContent = 'Guardando…';
+  try{
+    await guardarPermisoIA(true);
+    const seguir = alDarPermiso;
+    cerrarPermisoIA();
+    if(seguir) seguir();
+  }catch(e){
+    $('ia-acepto-txt').textContent = 'No se pudo guardar. Probá de nuevo.';
+  }finally{
+    guardandoPermiso = false; b.disabled = false; b.classList.remove('cargando');
+  }
+});
+$('ia-ahora-no').addEventListener('click', cerrarPermisoIA);
+$('telon-ia').addEventListener('click', e => { if(e.target.id === 'telon-ia') cerrarPermisoIA(); });
+
+function pintarPermisoIA(){
+  if(!sesion) return;
+  const dado = permisoIA();
+  const m = sesion.user.user_metadata || {};
+  const sello = $('ia-sello-estado');
+  sello.className = 'sello ' + (dado ? 'oro' : 'gris');
+  sello.textContent = dado ? 'Con permiso' : 'Apagadas';
+  $('ia-txt').textContent = dado
+    ? 'Podés tasar por foto, comparar presupuestos y preguntarle al asistente. Para eso, esos datos se procesan en Estados Unidos.'
+    : 'Están apagadas. La app funciona igual: pedís, cotizás, chateás y cobrás lo mismo.';
+  $('ia-firma-caja').innerHTML = dado && m.ia_permiso_fecha
+    ? '<div class="ia-firma"><span class="ia-hilo"></span><span class="ia-fecha">Permiso dado el ' +
+      new Date(m.ia_permiso_fecha).toLocaleDateString('es-AR',{day:'2-digit',month:'2-digit',year:'numeric'}) +
+      '</span></div>'
+    : '';
+  $('ia-cambiar-txt').textContent = dado ? 'Retirar el permiso' : 'Dar el permiso';
+}
+
+$('ia-cambiar').addEventListener('click', async () => {
+  if(guardandoPermiso) return;
+  if(!permisoIA()){ pedirPermisoIA(null); return; }
+  guardandoPermiso = true;
+  try{ await guardarPermisoIA(false); }
+  catch(e){ $('ia-txt').textContent = 'No se pudo guardar el cambio. Probá de nuevo.'; }
+  finally{ guardandoPermiso = false; }
+});
+
+/* ══════════════════ COMPARADOR DE PRESUPUESTOS ══════════════════ */
+const URL_COMPARAR = 'https://marketplace-servicios.app.n8n.cloud/webhook/comparar';
+let comparando = false;
+
+/* muestra el botón si hay presupuestos de dos proveedores distintos */
+async function verSiHayQueComparar(solicitudId, matchIds){
+  const c = $('d-comparador');
+  c.innerHTML = '';
+  if(!matchIds.length || matchIds.length < 2) return;
+  try{
+    const ps = await api('mensajes?match_id=in.('+matchIds.join(',')+')&tipo=eq.presupuesto&select=match_id');
+    const distintos = new Set(ps.map(p => p.match_id));
+    if(distintos.size < 2) return;
+    c.innerHTML =
+      '<button class="comp-btn" data-comparar="'+solicitudId+'" type="button">' +
+      '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20V9M10 20V4M16 20v-7M21 20H3"/></svg>' +
+      '<span style="min-width:0"><b>Comparar los ' + distintos.size + ' presupuestos</b>' +
+      '<span>Te mostramos qué incluye cada uno y en qué se diferencian. ' +
+      '<span class="ia-sello"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v3M12 18v3M3 12h3M18 12h3M6.3 6.3l2.1 2.1M15.6 15.6l2.1 2.1M17.7 6.3l-2.1 2.1M8.4 15.6l-2.1 2.1"/><circle cx="12" cy="12" r="3.2"/></svg>Con IA</span></span></span></button>';
+  }catch(e){}
+}
+
+$('d-comparador').addEventListener('click', e => {
+  const b = e.target.closest('[data-comparar]');
+  if(!b || comparando) return;
+  conPermisoIA(() => compararPresupuestos(b.dataset.comparar));
+});
+
+async function compararPresupuestos(solicitudId){
+  comparando = true;
+  $('d-comparador').innerHTML =
+    '<div class="comp-caja"><div class="comp-resumen">Comparando los presupuestos…</div></div>';
+
+  try{
+    const r = await fetch(URL_COMPARAR, {
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({ token: sesion.access_token, solicitudId: Number(solicitudId) })
+    });
+    const d = await r.json();
+
+    if(!d || !d.ok){
+      const motivos = {sesion:'Volvé a entrar y probá de nuevo.',
+                       permiso:'Este pedido no es tuyo.',
+                       pocos:'Todavía hay un solo presupuesto.',
+                       ia:'No pude compararlos ahora. Probá en un rato.'};
+      $('d-comparador').innerHTML =
+        '<div class="comp-caja"><div class="comp-resumen">' +
+        esc((d && motivos[d.motivo]) || 'No se pudo comparar. Probá de nuevo.') + '</div></div>';
+      return;
+    }
+
+    const barato = Math.min(...d.items.map(x => Number(x.monto)||0));
+    $('d-comparador').innerHTML =
+      '<div class="comp-caja">' +
+      '<div class="comp-resumen">' + esc(d.resumen) + '</div>' +
+      (d.ojo ? '<div class="comp-ojo">' + esc(d.ojo) + '</div>' : '') +
+      d.items.map(x =>
+        '<div class="comp-col' + (Number(x.monto) === barato ? ' mejor' : '') + '">' +
+        '<div class="comp-top"><span class="comp-nom">' + esc(x.nombre) + '</span>' +
+        '<span class="comp-monto">' + pesos(x.monto) + '</span></div>' +
+        (x.etiqueta ? '<span class="comp-eti">' + esc(x.etiqueta) + '</span>' : '') +
+        '<div class="comp-lista">' +
+        x.incluye.map(i => '<div><span class="comp-si">✓</span> ' + esc(i) + '</div>').join('') +
+        x.no_incluye.map(i => '<div><span class="comp-no">✕</span> ' + esc(i) + '</div>').join('') +
+        '</div>' +
+        (x.plazo ? '<div class="comp-plazo">Plazo: ' + esc(x.plazo) + '</div>' : '') +
+        '</div>').join('') +
+      '<div class="comp-ojo">Esta comparación la arma una inteligencia artificial leyendo los ' +
+      'presupuestos. Es para orientarte: revisá igual cada uno antes de elegir.</div>' +
+      '</div>';
+  }catch(err){
+    console.error(err);
+    $('d-comparador').innerHTML =
+      '<div class="comp-caja"><div class="comp-resumen">No me pude conectar. Probá de nuevo.</div></div>';
+  }finally{ comparando = false; }
+}
+
 /* ══════════════════ CALIFICAR AL PROVEEDOR ══════════════════ */
 const URL_CALIFICAR = 'https://marketplace-servicios.app.n8n.cloud/webhook/calificar';
 let estrellasPuestas = 0;
@@ -3781,9 +4180,11 @@ function mostrarCalificar(){
   estrellasPuestas = 0;
   h.insertAdjacentHTML('beforeend',
     '<div class="calificar" id="caja-calificar">' +
-    '<div class="calificar-tit">¿Cómo fue trabajar con ' + esc((nombre||'').split(" ")[0]) + '?</div>' +
+    '<div class="calificar-tit">¿Cómo fue trabajar con ' + esc((nombre||'').split(" ")[0]) + '? ' +
+    '<span class="ia-sello"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v3M12 18v3M3 12h3M18 12h3M6.3 6.3l2.1 2.1M15.6 15.6l2.1 2.1M17.7 6.3l-2.1 2.1M8.4 15.6l-2.1 2.1"/><circle cx="12" cy="12" r="3.2"/></svg>Con IA</span></div>' +
     '<div class="calificar-txt">Tu calificación ayuda a otros clientes a elegir. ' +
-    'Para escribirla, leemos esta conversación una sola vez.</div>' +
+    'Para resumir en pocas palabras cómo trabajó, una inteligencia artificial lee ' +
+    'esta conversación una sola vez.</div>' +
     '<div class="estrellas" id="estrellas">' +
     [1,2,3,4,5].map(n => '<button class="estrella" type="button" data-estrella="'+n+'" aria-label="'+n+'">'+ESTRELLA+'</button>').join('') +
     '</div>' +
@@ -3814,6 +4215,9 @@ $('ch-hilo').addEventListener('click', async e => {
     setTimeout(() => { if($('cal-txt')) $('cal-txt').textContent = 'Calificar'; }, 2200);
     return;
   }
+  /* La conversación que se lee es de dos personas, no de una: sin el permiso
+     del que califica no sale nada hacia afuera. */
+  if(!permisoIA()){ pedirPermisoIA(() => $('cal-enviar').click()); return; }
   env.disabled = true; env.classList.add('cargando'); $('cal-txt').textContent = 'Enviando…';
   try{
     const r = await fetch(URL_CALIFICAR, {
@@ -3822,7 +4226,8 @@ $('ch-hilo').addEventListener('click', async e => {
         token: sesion.access_token,
         matchId: chatActual.id,
         puntaje: estrellasPuestas,
-        comentario: $('cal-comentario').value.trim()
+        comentario: limpiarDatos($('cal-comentario').value.trim()),
+        permiso_ia: true
       })
     });
     const d = await r.json();
@@ -3857,7 +4262,9 @@ function htmlReputacion(lista){
   return '<div class="rep-puntaje"><b>' + prom.toFixed(1) + '</b>' +
     '<span class="rep-estrellas">' + estrellas + '</span>' +
     '<span>' + lista.length + ' calificaci' + (lista.length===1?'ón':'ones') + '</span></div>' +
-    (top.length ? '<div class="rep-caja">' + top.map(a => '<span class="rep-tag">'+esc(a)+'</span>').join('') + '</div>' : '') +
+    (top.length ? '<div class="rep-caja">' + top.map(a => '<span class="rep-tag">'+esc(a)+'</span>').join('') + '</div>' +
+      '<div class="rep-fecha" style="margin-top:9px">Estas etiquetas las resume una inteligencia ' +
+      'artificial a partir de cada conversación calificada. Si alguna es injusta, reportala y la revisamos.</div>' : '') +
     '<div style="margin-top:14px">' +
     lista.slice(0,5).map(x =>
       '<div class="rep-item">' +
@@ -3867,9 +4274,199 @@ function htmlReputacion(lista){
       '</div>').join('') + '</div>';
 }
 
+/* ══════════════════ TASADOR POR FOTO ══════════════════ */
+const URL_TASADOR = 'https://marketplace-servicios.app.n8n.cloud/webhook/tasar';
+let tasando = false;
+/* La foto que el cliente saca para pedir el presupuesto queda anotada acá hasta
+   que manda el pedido, para poder guardarla junto a la solicitud. Sin esa
+   referencia la foto queda huérfana en el depósito y no hay forma de borrarla
+   después. */
+let fotoTasador = null;
+
+$('tasar-abrir').addEventListener('click', () => {
+  if(tasando) return;
+  /* El navegador solo abre el selector de archivos si el toque viene del
+     usuario, y guardar el permiso corta esa cadena. Así que después de darlo
+     no lo abrimos solos: le pedimos que toque de nuevo. */
+  if(permisoIA()){ $('tasar-archivo').click(); return; }
+  pedirPermisoIA(() => {
+    $('tasar-resultado').innerHTML =
+      '<div class="diag"><div class="diag-eti">Listo</div>' +
+      '<div class="diag-que">Ya tenemos tu permiso. Tocá otra vez el recuadro de arriba para elegir la foto.</div></div>';
+  });
+});
+
+$('tasar-archivo').addEventListener('change', async e => {
+  const archivo = e.target.files[0];
+  e.target.value = '';
+  if(!archivo || !archivo.type.startsWith('image/')) return;
+
+  tasando = true;
+  $('tasar-resultado').innerHTML =
+    '<div class="diag"><div class="diag-eti">Mirando la foto</div>' +
+    '<div class="diag-que">Dame unos segundos…</div></div>';
+
+  try{
+    // la subimos a nuestro depósito para poder mostrársela a la IA
+    const url = await subirFoto(archivo);
+    fotoTasador = url;
+    const r = await fetch(URL_TASADOR, {
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({ foto: url, zona: $('s-zona').value || null })
+    });
+    const d = await r.json();
+
+    if(!d || !d.ok){
+      $('tasar-resultado').innerHTML =
+        '<div class="diag diag-baja"><div class="diag-eti">No pude leerla</div>' +
+        '<div class="diag-que">' + esc((d && d.motivo) || 'Probá con otra foto o cargá el pedido a mano.') + '</div></div>';
+      return;
+    }
+
+    // completamos el formulario con lo que entendió
+    if(d.rubro && [...$('s-servicio').options].some(o => o.textContent === d.rubro))
+      $('s-servicio').value = d.rubro;
+    if(d.descripcion) $('s-desc').value = d.descripcion;
+    if(d.urgencia && [...$('s-urgencia').options].some(o => o.textContent === d.urgencia))
+      $('s-urgencia').value = d.urgencia;
+    if(d.sugerido) $('s-presupuesto').value = Number(d.sugerido).toLocaleString('es-AR');
+    resumenPedido();
+
+    const baja = d.confianza === 'baja';
+    $('tasar-resultado').innerHTML =
+      '<div class="diag' + (baja ? ' diag-baja' : '') + '">' +
+      '<div class="diag-eti">' + (baja ? 'No estoy seguro' : 'Esto vimos') + '</div>' +
+      '<div class="diag-que">' + esc(d.detectado) + '</div>' +
+      (d.precio_min && d.precio_max
+        ? '<div class="diag-precio">' + pesos(d.precio_min) + ' – ' + pesos(d.precio_max) + '</div>'
+        : '') +
+      (d.aclaracion ? '<div class="diag-nota">' + esc(d.aclaracion) + '</div>' : '') +
+      '<div class="diag-nota">Es una estimación para orientarte: el precio final lo pone cada proveedor. ' +
+      'Completamos el pedido abajo, revisalo y cambiá lo que haga falta.</div>' +
+      '<img class="diag-foto" src="' + esc(url) + '" alt="">' +
+      '</div>';
+    $('tasar-resultado').scrollIntoView({block:'nearest', behavior:'smooth'});
+
+  }catch(err){
+    console.error(err);
+    $('tasar-resultado').innerHTML =
+      '<div class="diag diag-baja"><div class="diag-eti">No se pudo</div>' +
+      '<div class="diag-que">Revisá tu conexión y probá de nuevo, o cargá el pedido a mano.</div></div>';
+  }finally{ tasando = false; }
+});
+
+/* ══════════════════ ASISTENTE ══════════════════ */
+/* ══════════════════ FILTRO DE DATOS DE CONTACTO ══════════════════ */
+/* Antes de que un texto salga hacia un tercero le sacamos los datos con los
+   que se puede contactar o identificar a alguien fuera de la app. No es
+   anonimizar —con texto libre eso es imposible— es mandar lo mínimo.
+
+   El orden de las reglas no es arbitrario: un +54 con separadores tiene
+   tantos dígitos como una tarjeta, y una tarjeta contiene adentro algo que
+   parece un teléfono. Va de lo más específico a lo más general. El punto
+   queda afuera de los separadores de teléfono a propósito, porque en
+   castellano rioplatense los precios lo usan (1.500.000). */
+function limpiarDatos(texto){
+  let t = String(texto == null ? '' : texto);
+  t = t.replace(/[\w.+-]+@[\w-]+\.[\w.-]{2,}/gi, '[correo]');
+  t = t.replace(/\b\d{22}\b/g, '[cbu]');
+  t = t.replace(/\+\s?54[\s\d()-]{6,}\d/g, '[teléfono]');
+  t = t.replace(/\b(?:\d[ -]?){13,19}\b/g, m =>
+    (m.replace(/\D/g,'').length >= 13 ? '[tarjeta]' : m));
+  t = t.replace(/\b(?:0?\d{2,4}[\s-]?)?(?:15[\s-]?)?\d{3,4}[\s-]\d{4}\b/g, '[teléfono]');
+  t = t.replace(/\b\d{10,11}\b/g, '[teléfono]');
+  t = t.replace(/(?:^|\s)@[\w.]{3,}/g, ' [usuario]');
+  return t;
+}
+
+const URL_ASISTENTE = 'https://marketplace-servicios.app.n8n.cloud/webhook/asistente';
+let charla = [], asisPensando = false;
+
+const SUGERENCIAS = {
+  cliente: ['¿Cómo pido un servicio?', '¿Cuánto me cuesta usar Tratto?',
+            '¿Cómo funcionan los puntos?', 'Mi pedido dice "Buscando" hace rato'],
+  proveedor: ['¿Cómo consigo más clientes?', '¿Cómo mando un presupuesto?',
+              '¿Para qué sirven las medallas?', 'Mi rubro no está en la lista']
+};
+
+function pintarCharla(){
+  const h = $('asis-hilo');
+  if(!charla.length){
+    const s = SUGERENCIAS[modo] || SUGERENCIAS.cliente;
+    h.innerHTML = '<div class="asis-burb suya">Hola. Preguntame lo que necesites sobre Tratto.' +
+      '<div class="asis-sugerencias">' +
+      s.map(x => '<button class="asis-chip" type="button" data-sug="'+esc(x)+'">'+esc(x)+'</button>').join('') +
+      '</div></div>';
+    return;
+  }
+  h.innerHTML = charla.map(m =>
+    '<div class="asis-burb '+(m.rol === 'yo' ? 'mia' : 'suya')+'">'+esc(m.texto)+'</div>').join('') +
+    (asisPensando ? '<div class="asis-puntos"><i></i><i></i><i></i></div>' : '');
+  h.scrollTop = h.scrollHeight;
+}
+
+function abrirAsistente(){
+  volverA = actual === 'asistente' ? volverA : actual;
+  pintarCharla();
+  ir('asistente');
+  $('asis-texto').focus();
+}
+
+async function preguntarAsistente(texto){
+  const t = (texto || '').trim();
+  if(!t || asisPensando) return;
+  /* Recién acá sale algo hacia afuera, así que recién acá se pide el permiso.
+     Abrir la pantalla y leer las preguntas frecuentes no manda nada. */
+  if(!permisoIA()){ pedirPermisoIA(() => preguntarAsistente(t)); return; }
+  charla.push({rol:'yo', texto:t});
+  asisPensando = true;
+  pintarCharla();
+  $('asis-texto').value = '';
+  $('asis-texto').style.height = 'auto';
+
+  try{
+    const r = await fetch(URL_ASISTENTE, {
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({
+        pregunta: limpiarDatos(t),
+        historial: charla.slice(-8).map(m => ({rol: m.rol === 'yo' ? 'usuario' : 'bot',
+                                               texto: limpiarDatos(m.texto)})),
+        userId: sesion ? sesion.user.id : null,
+        modo: modo
+      })
+    });
+    const j = await r.json();
+    charla.push({rol:'bot', texto: (j && j.respuesta) || 'No pude responderte ahora. Probá de nuevo en un rato.'});
+  }catch(e){
+    console.error(e);
+    charla.push({rol:'bot', texto:'No me pude conectar. Revisá tu conexión y probá de nuevo.'});
+  }finally{
+    asisPensando = false;
+    pintarCharla();
+  }
+}
+
+$('burbuja-asis').addEventListener('click', abrirAsistente);
+$('asis-enviar').addEventListener('click', () => preguntarAsistente($('asis-texto').value));
+$('asis-hilo').addEventListener('click', e => {
+  const b = e.target.closest('[data-sug]');
+  if(b) preguntarAsistente(b.dataset.sug);
+});
+$('asis-texto').addEventListener('input', e => {
+  e.target.style.height = 'auto';
+  e.target.style.height = Math.min(e.target.scrollHeight, 120) + 'px';
+});
+$('asis-texto').addEventListener('keydown', e => {
+  if(e.key === 'Enter' && !e.shiftKey && window.innerWidth > 760){
+    e.preventDefault(); $('asis-enviar').click();
+  }
+});
+
+
 /* ══════════════════ PREGUNTAS FRECUENTES ══════════════════ */
-/* Reemplazan al asistente. Las respuestas están escritas y son siempre las
-   mismas: nadie improvisa sobre cómo funciona el dinero de otro. */
+/* Conviven con el asistente: son las respuestas que no queremos que nadie
+   improvise —cómo se cobra, cuándo se paga, qué no verificamos— escritas de
+   una vez y siempre iguales. El asistente está para lo demás. */
 const FAQ = [
   ['Si buscás un servicio', [
     ['¿Cuánto me cuesta usar Tratto?',
@@ -3887,6 +4484,10 @@ const FAQ = [
      'No verificamos matrículas ni antecedentes: lo que ves en cada perfil lo declaró el proveedor. ' +
      'Por eso mismo <b>no admitimos rubros que necesiten matrícula</b>, como gas, electricidad o profesiones de la salud. ' +
      'Mirá las calificaciones y los trabajos cerrados por la app antes de decidir.'],
+    ['¿El precio que me da la foto es el que voy a pagar?',
+     'No. Es una estimación que arma una inteligencia artificial mirando la foto, para que sepas ' +
+     'más o menos en qué rango estás parado. <b>El precio real lo pone cada proveedor</b> en su presupuesto, ' +
+     'y puede ser distinto.'],
     ['¿Qué pasa si nadie responde mi pedido?',
      'A los 15 días sin respuesta el pedido se da de baja solo y te avisamos. Podés volver a publicarlo cuando quieras.'],
     ['El trabajo salió mal, ¿qué hago?',
@@ -3905,6 +4506,10 @@ const FAQ = [
      'Conviene que lo hagas estando con el cliente, así cobrás en el momento.'],
     ['¿Qué pasa si el cliente no paga?',
      'Escribinos a trattoapp1@gmail.com y lo revisamos. Al cliente que no paga le suspendemos la cuenta.'],
+    ['¿Quién escribe las etiquetas de mi reputación?',
+     'Cuando un cliente te califica, una inteligencia artificial lee esa conversación y resume en pocas ' +
+     'palabras cómo trabajaste (por ejemplo "puntual" o "presupuesto claro"). ' +
+     '<b>Si alguna etiqueta te parece injusta, reportala y la revisamos a mano.</b>'],
     ['¿Qué son los trabajos cerrados por Tratto?',
      'Es la cantidad de trabajos que cobraste por la app. Solo contamos esos porque son los únicos que podemos ' +
      'respaldar. <b>No quiere decir que no hayas hecho otros</b>, pero es lo que un cliente nuevo puede verificar.'],
@@ -3935,8 +4540,104 @@ $('faq-lista').addEventListener('click', e => {
   if(b) b.parentElement.classList.toggle('abierta');
 });
 
-$('burbuja-ayuda').addEventListener('click', () => { volverA = actual; pintarFAQ(); ir('ayuda'); });
+/* Se entra desde el asistente. volverA no se toca: "volver" tiene que devolver
+   a la pantalla desde la que se pidió ayuda, no al asistente. */
+$('asis-a-faq').addEventListener('click', () => { pintarFAQ(); ir('ayuda'); });
 
+/* ══════════════════ ARRANQUE ══════════════════ */
+/* ══════════════════ ACTUALIZACIÓN AUTOMÁTICA ══════════════════ */
+/* Refresca las listas solas mientras mirás una pantalla, sin recargar la página. */
+let latido = null, ultimaFirma = '';
+
+function firmaDeDatos(){
+  return misPedidos.length + '|' + misPerfiles.length + '|' +
+    Object.keys(conexiones).length + '|' +
+    misPedidos.map(s => s.id + s.estado).join(',');
+}
+
+async function mirarSiHayNovedades(){
+  if(!sesion || actual === 'chat' || actual === 'auth') return;
+  if(document.hidden) return;
+  try{
+    const antes = firmaDeDatos();
+    misPedidos = await api('solicitudes?user_id=eq.'+sesion.user.id+'&order=created_at.desc');
+    misPerfiles = await api('proveedores?user_id=eq.'+sesion.user.id+'&order=created_at.desc');
+    if(firmaDeDatos() === antes) return;   // nada cambió, no repintamos
+
+    if(actual === 'inicio')  await cargarPedidos();
+    if(actual === 'perfil')  await cargarPerfiles();
+    if(actual === 'panel')   await cargarPanel();
+    if(actual === 'premios') await cargarPremios();
+    await cargarConexiones();
+  }catch(e){}
+}
+
+function arrancarLatido(){
+  if(latido) clearInterval(latido);
+  latido = setInterval(mirarSiHayNovedades, 12000);
+}
+function pararLatido(){ if(latido){ clearInterval(latido); latido = null; } }
+
+/* al volver a la app después de tenerla en segundo plano, actualizamos ya */
+document.addEventListener('visibilitychange', () => {
+  if(!document.hidden && sesion) mirarSiHayNovedades();
+});
+
+async function recargarTodo(){
+  await cargarPedidos();
+  await cargarPerfiles();
+  await cargarConexiones();
+  await cargarPerfilProv();
+  pintarModoCuenta();
+  if(modo === 'proveedor') await cargarPanel(); else await cargarPremios();
+}
+
+function pintarModoCuenta(){
+  const prov = modo === 'proveedor';
+  $('modo-actual').textContent = prov ? 'Modo proveedor' : 'Modo cliente';
+  $('modo-sello').textContent  = prov ? 'Proveedor' : 'Cliente';
+  $('modo-sello').className    = 'sello ' + (prov ? 'oro' : 'verde');
+  $('modo-txt').textContent    = prov
+    ? 'Recibís pedidos, mandás presupuestos y armás tu perfil.'
+    : 'Pedís servicios y elegís proveedores.';
+  $('btn-cambiar-txt').textContent = prov ? 'Cambiar a modo cliente' : 'Cambiar a modo proveedor';
+}
+
+function entrarApp(){
+  const u = sesion.user;
+  $('saludo').textContent = 'Hola, ' + (u.email||'').split('@')[0];
+  $('c-mail').textContent = u.email;
+  $('c-inicial').textContent = (u.email||'?').charAt(0).toUpperCase();
+  $('c-uid').textContent = u.id;
+  $('c-alta').textContent = u.created_at ? new Date(u.created_at).toLocaleDateString('es-AR',{day:'2-digit',month:'long',year:'numeric'}) : '—';
+  $('s-email').value = u.email; $('p-email').value = u.email;
+  resumenPedido(); resumenProv();
+  const g = store.leer(); if(g && g.modo) modo = g.modo;
+  pintarPermisoIA();
+  aplicarModo();
+  recargarTodo();
+  arrancarLatido();
+}
+
+function bajarTelon(){
+  const a = $('arranque');
+  a.classList.add('fuera');
+  setTimeout(() => a.remove(), 400);
+}
+
+(async function iniciar(){
+  const s = store.leer();
+  if(!s || !s.access_token){ ir('auth','entra'); bajarTelon(); return; }
+  try{
+    const r = await fetch(SUPABASE_URL+'/auth/v1/user',{
+      headers:{'apikey':SUPABASE_ANON,'Authorization':'Bearer '+s.access_token}
+    });
+    if(!r.ok){ store.borrar(); ir('auth','entra'); bajarTelon(); return; }
+    sesion = {access_token:s.access_token, user: await r.json()};
+    entrarApp();
+  }catch(e){ console.error(e); ir('auth','entra'); }
+  finally{ bajarTelon(); }
+})();
 </script>
 </body>
 </html>
