@@ -1242,22 +1242,22 @@
         <!-- Solo al crear la cuenta. La transferencia ocurre en el mismo momento
              en que se crea, así que el permiso tiene que estar antes, no después. -->
         <div class="oculto" id="a-transfer-caja">
-          <label class="tildar" id="a-transfer-fila">
-            <input type="checkbox" id="a-transfer">
-            <span>Doy mi permiso para que mis datos se guarden en <b>Brasil</b> y para que la
+          <div class="tildar" id="a-transfer-fila">
+            <input type="checkbox" id="a-transfer" aria-labelledby="a-transfer-txt">
+            <span id="a-transfer-txt">Doy mi permiso para que mis datos se guarden en <b>Brasil</b> y para que la
               aplicación se sirva desde <b>Estados Unidos</b>.</span>
-          </label>
+          </div>
           <button class="ver-detalle" id="a-transfer-ver" type="button">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8.5"/><path d="M12 11v5.5M12 7.8h.01"/></svg>
             Ver qué va a cada lugar
           </button>
           <div class="err" id="e-a-transfer">Sin este permiso no podemos crear la cuenta.</div>
-          <label class="tildar" id="a-legales-fila">
-            <input type="checkbox" id="a-legales">
-            <span>Leí y acepto los
+          <div class="tildar" id="a-legales-fila">
+            <input type="checkbox" id="a-legales" aria-labelledby="a-legales-txt">
+            <span id="a-legales-txt">Leí y acepto los
               <a href="/terminos.html" target="_blank" rel="noopener">términos y condiciones</a> y la
               <a href="/privacidad.html" target="_blank" rel="noopener">política de privacidad</a>.</span>
-          </label>
+          </div>
           <div class="err" id="e-a-legales">Tenés que aceptar los términos para crear la cuenta.</div>
         </div>
       </div>
@@ -1409,7 +1409,7 @@
       <button class="btn riesgo" id="salir" type="button">Cerrar sesión</button>
       <button class="btn vacio-b" id="ir-baja" type="button">Borrar mi cuenta</button>
       <p style="text-align:center;margin-top:18px;font-family:'IBM Plex Mono',monospace;
-        font-size:10px;letter-spacing:.14em;color:var(--gris-3)">VERSIÓN F-23 · ACEPTACION REGISTRADA</p>
+        font-size:10px;letter-spacing:.14em;color:var(--gris-3)">VERSIÓN F-24 · CASILLAS QUE TILDAN</p>
     </section>
 
     <!-- ══════ NUEVO PEDIDO ══════ -->
@@ -1580,11 +1580,12 @@
           <div class="declara-pie">Tratto cobra una comisión por usar la aplicación cuando cerrás un trabajo.</div>
           <!-- Sin "for": el input ya está adentro del label, así que la
                asociación existe sola. Ponerle además el for hace que Safari de
-               iPhone procese el toque dos veces y el tilde no quede nunca. -->
-          <label class="tildar">
-            <input type="checkbox" id="p-declara">
-            <span>Leí esto y estoy de acuerdo</span>
-          </label>
+               iPhone procese el toque dos veces y el tilde no quede nunca.
+               Ver el comentario de tildable(): al final sacamos el label. -->
+          <div class="tildar" id="p-declara-fila">
+            <input type="checkbox" id="p-declara" aria-labelledby="p-declara-txt">
+            <span id="p-declara-txt">Leí esto y estoy de acuerdo</span>
+          </div>
           <div class="err" id="e-p-declara">Tenés que estar de acuerdo para publicar tu servicio.</div>
         </div>
 
@@ -2254,6 +2255,34 @@ function cambiarAuth(m){
   if(pasoAuth === 'codigo') volverAPasoDatos();
 }
 
+/* ── Filas tildables ──────────────────────────────────────────────────
+   Estas filas eran <label> con el <input> adentro, que es la forma correcta y
+   la que funciona en todos lados menos donde importa. En Safari de iPhone el
+   toque sobre el texto se procesa dos veces --una por el toque y otra por el
+   reenvío que hace la etiqueta-- y la casilla queda como estaba. Ya nos había
+   pasado con la declaración del formulario de proveedor.
+
+   Sacar el for no alcanzó, así que sacamos la etiqueta entera: ahora es un
+   div y el tildado lo maneja este código. Sin etiqueta no hay reenvío, y sin
+   reenvío no hay doble toque. El aria-labelledby mantiene el nombre accesible
+   que daba el label.
+
+   Tres casos, en este orden:
+     · sobre un enlace  → abre el documento y no tilda. Leer no es aceptar.
+     · sobre el cuadrado → el navegador ya lo tildó solo, no lo tocamos.
+     · en cualquier otro lado de la fila → lo tildamos nosotros. */
+function tildable(idFila, idCasilla){
+  const fila = $(idFila), casilla = $(idCasilla);
+  fila.addEventListener('click', e => {
+    if(e.target.closest('a') || e.target === casilla) return;
+    casilla.checked = !casilla.checked;
+    casilla.dispatchEvent(new Event('change', {bubbles:true}));
+  });
+}
+tildable('a-transfer-fila', 'a-transfer');
+tildable('a-legales-fila',  'a-legales');
+tildable('p-declara-fila',  'p-declara');
+
 function limpiarTransfer(){
   $('a-transfer-fila').classList.remove('mal');
   $('e-a-transfer').classList.remove('visible');
@@ -2262,9 +2291,6 @@ function limpiarTransfer(){
 }
 $('a-transfer').addEventListener('change', limpiarTransfer);
 $('a-legales').addEventListener('change', limpiarTransfer);
-/* Los enlaces viven adentro de la etiqueta, así que un toque sobre ellos
-   tildaría la casilla además de abrir el documento. Leer no es aceptar. */
-$('a-legales-fila').addEventListener('click', e => { if(e.target.closest('a')) e.stopPropagation(); });
 $('a-transfer-ver').addEventListener('click', () => $('telon-infra').classList.add('abierto'));
 $('infra-cerrar').addEventListener('click', () => $('telon-infra').classList.remove('abierto'));
 $('telon-infra').addEventListener('click', e => {
