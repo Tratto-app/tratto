@@ -1066,6 +1066,18 @@
   .chip-zona{font-family:'IBM Plex Mono',monospace;font-size:8.5px;letter-spacing:.12em;
     text-transform:uppercase;border-radius:99px;padding:3px 8px;font-weight:600;
     background:var(--claro-2);color:var(--gris);border:1px solid var(--linea-fuerte);white-space:nowrap}
+  /* El nombre manda sobre el correo: es lo que la persona reconoce como suyo.
+     El oficio va en mono, como todo lo que en esta app es un dato duro. */
+  /* Un dato que la persona no puede cambiar acá no puede parecer un campo:
+     sin borde de caja, sin fondo blanco, y en el latón del proveedor. */
+  .dato-fijo{font-family:'IBM Plex Sans Condensed',sans-serif;font-weight:700;font-size:17px;
+    color:var(--laton-osc);padding:2px 0 0}
+
+  .placa-nom{font-family:'IBM Plex Sans Condensed',sans-serif;font-weight:700;
+    font-size:16px;line-height:1.2;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .placa-oficio{font-family:'IBM Plex Mono',monospace;font-size:8.5px;letter-spacing:.16em;
+    text-transform:uppercase;font-weight:600;color:var(--laton);margin-top:3px}
+
   .opcional{font-family:'IBM Plex Mono',monospace;font-size:8.5px;letter-spacing:.15em;
     text-transform:uppercase;color:var(--gris-2);font-weight:600;margin-left:7px}
 
@@ -1278,6 +1290,35 @@
           <button class="pest" id="tab-crear" type="button">Crear cuenta</button>
         </div>
 
+        <!-- El nombre y el oficio son de la persona, no del pedido ni del
+             servicio: se preguntan una vez acá y se reusan en todos lados. -->
+        <div class="campo oculto" id="a-nombre-caja">
+          <label for="a-nombre">Tu nombre</label>
+          <input id="a-nombre" type="text" autocomplete="name" maxlength="60" placeholder="Ej: Raúl Gómez">
+          <div class="ayuda" id="a-nombre-ayuda">Es como te van a ver los proveedores.</div>
+          <div class="err" id="e-a-nombre">Escribí tu nombre.</div>
+        </div>
+
+        <div class="campo oculto" id="a-rubro-caja">
+          <label for="a-rubro">Tu oficio</label>
+          <select id="a-rubro"><option value="">Elegí tu oficio</option></select>
+          <div class="ayuda">Se elige una sola vez. Después publicás los servicios que quieras
+            dentro de tu oficio, sin volver a cargarlo.</div>
+          <div class="err" id="e-a-rubro">Elegí tu oficio para poder mostrarte en las búsquedas.</div>
+        </div>
+
+        <div class="campo oculto" id="a-otro-rubro-caja">
+          <label for="a-otro-rubro">¿Cómo se llama tu oficio?</label>
+          <input id="a-otro-rubro" type="text" maxlength="45" placeholder="Ej: Restauración de instrumentos">
+          <div class="err" id="e-a-otro-rubro">Escribí cómo se llama.</div>
+          <div class="campo" style="margin-top:12px">
+            <label for="a-rubro-padre">¿A qué rubro se parece más?</label>
+            <select id="a-rubro-padre"><option value="">Elegí el más parecido</option></select>
+            <div class="ayuda">Nos sirve para que los clientes de ese rubro te encuentren.</div>
+            <div class="err" id="e-a-rubro-padre">Elegí el rubro más parecido.</div>
+          </div>
+        </div>
+
         <div class="campo">
           <label for="a-email">Email</label>
           <input id="a-email" type="email" autocomplete="email" placeholder="tucorreo@ejemplo.com">
@@ -1381,6 +1422,7 @@
           <div class="placa-id">
             <div class="avatar" id="c-inicial">—</div>
             <div style="min-width:0">
+              <div class="placa-nom" id="c-nombre">—</div>
               <div class="placa-mail" id="c-mail">—</div>
               <div class="placa-estado"><span class="pulso"></span>Sesión activa</div>
             </div>
@@ -1462,7 +1504,7 @@
       <button class="btn riesgo" id="salir" type="button">Cerrar sesión</button>
       <button class="btn vacio-b" id="ir-baja" type="button">Borrar mi cuenta</button>
       <p style="text-align:center;margin-top:18px;font-family:'IBM Plex Mono',monospace;
-        font-size:10px;letter-spacing:.14em;color:var(--gris-3)">VERSIÓN F-30 · FEED QUE SE ACTUALIZA</p>
+        font-size:10px;letter-spacing:.14em;color:var(--gris-3)">VERSIÓN F-31 · NOMBRE Y OFICIO</p>
     </section>
 
     <!-- ══════ NUEVO PEDIDO ══════ -->
@@ -1590,7 +1632,17 @@
           <input id="p-tel" type="tel" autocomplete="tel" placeholder="11 5555-5555">
           <div class="err" id="e-p-tel">Cargá un teléfono de contacto.</div>
         </div>
-        <div class="campo">
+        <!-- El oficio se eligió al crear la cuenta y no se vuelve a preguntar:
+             un pintor no pasa a ser electricista. Se muestra como dato. Las
+             cuentas creadas antes de que se pidiera todavía ven el selector. -->
+        <div class="campo" id="p-rubro-fijo-caja">
+          <label><span class="indice">04</span>Tu oficio</label>
+          <div class="dato-fijo" id="p-rubro-fijo">—</div>
+          <div class="ayuda">Se eligió al crear tu cuenta. Podés publicar todos los servicios que
+            quieras dentro de tu oficio.</div>
+        </div>
+
+        <div class="campo" id="p-rubro-caja">
           <label for="p-rubro"><span class="indice">04</span>Rubro</label>
           <select id="p-rubro"><option value="">Elegí tu rubro</option></select>
           <div class="err" id="e-p-rubro">Elegí un rubro para poder mostrarte en las búsquedas.</div>
@@ -1764,6 +1816,7 @@
     <section class="pantalla" id="p-panel">
       <div class="kicker">Tu actividad</div>
       <h1 id="panel-saludo">Panel</h1>
+      <div class="placa-oficio" id="panel-oficio" style="margin:-4px 0 0"></div>
       <p class="bajada">Cómo viene tu trabajo en la app. Se actualiza solo.</p>
 
       <div id="panel-sin-perfil"></div>
@@ -2197,6 +2250,7 @@ const num = v => Number(String(v).replace(/\./g,'').replace(/[^\d]/g,'')) || 0;
 llenarGrupos('s-servicio',RUBROS_GRUPOS); llenar('s-zona',ZONAS); llenar('s-urgencia',URGENCIAS);
 llenarGrupos('p-rubro',RUBROS_GRUPOS);    llenar('p-zona',ZONAS);  llenar('p-disp',DISPONIBILIDADES);
 llenarGrupos('p-rubro-padre', RUBROS_GRUPOS);
+llenarGrupos('a-rubro', RUBROS_GRUPOS);   llenarGrupos('a-rubro-padre', RUBROS_GRUPOS);
 
 /* montos con separador de miles mientras se escribe */
 ['s-presupuesto','p-desde','p-hasta','cp-monto','pb-precio'].forEach(id => {
@@ -2281,7 +2335,24 @@ $('volver').addEventListener('click', () => ir(volverA, 'entra'));
 $('ir-pedido').addEventListener('click', () => {
   volverA='inicio'; $('tasar-resultado').innerHTML=''; ir('nuevo-pedido');
 });
-$('ir-proveedor').addEventListener('click', () => { volverA='perfil'; ir('nuevo-proveedor'); });
+$('ir-proveedor').addEventListener('click', () => {
+  volverA='perfil';
+  prepararFormProveedor();
+  ir('nuevo-proveedor');
+});
+
+/* Nombre y oficio vienen de la cuenta. El nombre queda editable --puede
+   publicar como "Raúl Gómez" o como "Pinturería Gómez"-- y el oficio no,
+   porque es lo que define con qué pedidos matchea. */
+function prepararFormProveedor(){
+  const oficio = miOficio(), rubro = (sesion.user.user_metadata || {}).rubro;
+  const tiene = !!rubro;
+  $('p-rubro-fijo-caja').classList.toggle('oculto', !tiene);
+  $('p-rubro-caja').classList.toggle('oculto', tiene);
+  $('caja-otro-rubro').classList.add('oculto');
+  if(tiene) $('p-rubro-fijo').textContent = oficio;
+  if(!$('p-nombre').value) $('p-nombre').value = miNombre();
+}
 
 $('refrescar').addEventListener('click', async () => {
   const b = $('refrescar'); b.classList.add('girando');
@@ -2396,6 +2467,8 @@ function cambiarAuth(m){
      vuelve a preguntar. Al iniciar sesión lo decide la cuenta, así que el
      selector no tiene nada que hacer ahí. */
   $('sel-rol').classList.toggle('oculto', !c);
+  $('a-nombre-caja').classList.toggle('oculto', !c);
+  pintarCamposDeRol();
   limpiarTransfer();
   if(pasoAuth === 'codigo') volverAPasoDatos();
 }
@@ -2427,6 +2500,24 @@ function tildable(idFila, idCasilla){
 tildable('a-transfer-fila', 'a-transfer');
 tildable('a-legales-fila',  'a-legales');
 tildable('p-declara-fila',  'p-declara');
+
+/* El oficio solo se le pregunta al proveedor, y el subcampo del oficio propio
+   solo si eligió "Otro". Se recalcula cuando cambia la pestaña o el rol. */
+function pintarCamposDeRol(){
+  const creando = modoAuth === 'crear', prov = rolElegido === 'proveedor';
+  $('a-rubro-caja').classList.toggle('oculto', !(creando && prov));
+  $('a-otro-rubro-caja').classList.toggle('oculto',
+    !(creando && prov && $('a-rubro').value === RUBRO_OTRO));
+  $('a-nombre-ayuda').textContent = prov
+    ? 'Es como te van a ver los clientes. Puede ser tu nombre o el de tu negocio.'
+    : 'Es como te van a ver los proveedores.';
+  $('a-nombre').placeholder = prov ? 'Ej: Raúl Gómez / Pinturería Gómez' : 'Ej: Raúl Gómez';
+}
+$('a-rubro').addEventListener('change', () => {
+  pintarCamposDeRol();
+  if($('a-rubro').value !== RUBRO_OTRO){ $('a-otro-rubro').value=''; $('a-rubro-padre').value=''; }
+  limpiar(['a-rubro']);
+});
 
 function limpiarTransfer(){
   $('a-transfer-fila').classList.remove('mal');
@@ -2469,7 +2560,18 @@ $('a-enviar').addEventListener('click', async () => {
   if(pasoAuth === 'codigo') return confirmarCodigo();
   limpiar(['a-email','a-pass']);
   limpiarTransfer();
+  limpiar(['a-nombre','a-rubro','a-otro-rubro','a-rubro-padre']);
   const r={p:null}, email=$('a-email').value.trim(), pass=$('a-pass').value;
+  if(modoAuth === 'crear'){
+    if($('a-nombre').value.trim().length < 2) fallar('a-nombre',r);
+    if(rolElegido === 'proveedor'){
+      if(!$('a-rubro').value) fallar('a-rubro',r);
+      else if($('a-rubro').value === RUBRO_OTRO){
+        if($('a-otro-rubro').value.trim().length < 3) fallar('a-otro-rubro',r);
+        if(!$('a-rubro-padre').value) fallar('a-rubro-padre',r);
+      }
+    }
+  }
   if(!mailOk(email)) fallar('a-email',r);
   if(pass.length<8) fallar('a-pass',r);
   /* El cuadradito es de 20px: si el error se marcara solo ahí no se vería.
@@ -2497,6 +2599,14 @@ $('a-enviar').addEventListener('click', async () => {
       body: JSON.stringify(modoAuth === 'crear'
         ? {email, password:pass,
            data:{ rol: rolElegido,
+                  nombre: $('a-nombre').value.trim(),
+                  /* Igual que en el formulario de servicio: si el oficio es
+                     propio, se guarda el nombre lindo aparte y el rubro
+                     parecido es el que usa el matching. */
+                  rubro: rolElegido !== 'proveedor' ? null
+                       : ($('a-rubro').value === RUBRO_OTRO ? $('a-rubro-padre').value : $('a-rubro').value),
+                  rubro_personalizado: (rolElegido === 'proveedor' && $('a-rubro').value === RUBRO_OTRO)
+                       ? $('a-otro-rubro').value.trim() : null,
                   transfer_permiso:true, transfer_permiso_fecha:new Date().toISOString(),
                   legales_aceptados:true, legales_fecha:new Date().toISOString(),
                   legales_version:VERSION_LEGALES, legales_rol:rolElegido }}
@@ -2716,14 +2826,19 @@ $('p-declara').addEventListener('change', () => limpiar(['p-declara']));
 $('p-enviar').addEventListener('click', async () => {
   limpiar(CP);
   const r={p:null}, v=id=>$(id).value.trim();
+  /* Si la cuenta trae oficio, el selector ni se muestra: no se valida algo que
+     la persona no puede completar. */
+  const deCuenta = sesion.user.user_metadata || {};
   if(!v('p-nombre')) fallar('p-nombre',r);
   if(!mailOk(v('p-email'))) fallar('p-email',r);
   if(v('p-tel').replace(/\D/g,'').length<6) fallar('p-tel',r);
-  if(!v('p-rubro')) fallar('p-rubro',r);
-  if(v('p-rubro') === RUBRO_OTRO){
-    const ro = revisarTexto(v('p-otro-rubro'), {min:4});
-    if(!ro.ok){ fallar('p-otro-rubro',r); $('e-p-otro-rubro').textContent = ro.motivo; }
-    if(!v('p-rubro-padre')) fallar('p-rubro-padre',r);
+  if(!deCuenta.rubro){
+    if(!v('p-rubro')) fallar('p-rubro',r);
+    if(v('p-rubro') === RUBRO_OTRO){
+      const ro = revisarTexto(v('p-otro-rubro'), {min:4});
+      if(!ro.ok){ fallar('p-otro-rubro',r); $('e-p-otro-rubro').textContent = ro.motivo; }
+      if(!v('p-rubro-padre')) fallar('p-rubro-padre',r);
+    }
   }
   if(!v('p-zona')) fallar('p-zona',r);
   if(num(v('p-desde'))<=0) fallar('p-desde',r);
@@ -2742,8 +2857,10 @@ $('p-enviar').addEventListener('click', async () => {
         nombre:v('p-nombre'), email:v('p-email'), telefono:v('p-tel'),
         /* si es un rubro propio, guardamos el nombre lindo aparte y usamos
            el rubro parecido para que el matching lo siga encontrando */
-        rubro: v('p-rubro') === RUBRO_OTRO ? v('p-rubro-padre') : v('p-rubro'),
-        rubro_personalizado: v('p-rubro') === RUBRO_OTRO ? v('p-otro-rubro') : null,
+        rubro: deCuenta.rubro || (v('p-rubro') === RUBRO_OTRO ? v('p-rubro-padre') : v('p-rubro')),
+        rubro_personalizado: deCuenta.rubro
+          ? (deCuenta.rubro_personalizado || null)
+          : (v('p-rubro') === RUBRO_OTRO ? v('p-otro-rubro') : null),
         zona:v('p-zona'),
         precio_desde:num(v('p-desde')), precio_hasta:num(v('p-hasta')),
         disponibilidad:v('p-disp'), descripcion:v('p-desc'), user_id:sesion.user.id
@@ -3600,6 +3717,7 @@ function elegirRol(r){
   rolElegido = r;
   $('rol-cliente').classList.toggle('elegido', r === 'cliente');
   $('rol-proveedor').classList.toggle('elegido', r === 'proveedor');
+  pintarCamposDeRol();
   /* Cada rol acepta su propio contrato: el del cliente es una relación de
      consumo, el del proveedor una relación entre independientes. El enlace
      tiene que llevar al que la persona va a firmar, no a uno genérico. */
@@ -5056,6 +5174,13 @@ async function recargarTodo(){
 function pintarModoCuenta(){
   const prov = modo === 'proveedor';
   $('perfil-servicios-sec').classList.toggle('oculto', !prov);
+  const vieja = $('c-nombre').querySelector('.placa-oficio');
+  if(vieja) vieja.remove();
+  if(prov && miOficio())
+    $('c-nombre').insertAdjacentHTML('beforeend',
+      '<div class="placa-oficio">'+esc(miOficio())+'</div>');
+  $('panel-saludo').textContent = prov ? 'Hola, ' + miPrimerNombre() : 'Panel';
+  $('panel-oficio').textContent = prov ? miOficio() : '';
   $('modo-actual').textContent = prov ? 'Cuenta de proveedor' : 'Cuenta de cliente';
   $('modo-sello').textContent  = prov ? 'Proveedor' : 'Cliente';
   $('modo-sello').className    = 'sello ' + (prov ? 'oro' : 'verde');
@@ -5064,14 +5189,35 @@ function pintarModoCuenta(){
     : 'Pedís servicios y elegís proveedores. Se eligió al crear la cuenta y no se cambia.';
 }
 
+/* El nombre y el oficio de la cuenta, con respaldo para las cuentas creadas
+   antes de que se pidieran: el prefijo del correo no es un nombre, pero es
+   mejor que un hueco. */
+function miNombre(){
+  const m = (sesion && sesion.user && sesion.user.user_metadata) || {};
+  return (m.nombre || '').trim() || (sesion.user.email || '').split('@')[0];
+}
+/* Para saludar alcanza el primer nombre: "Hola, Raúl" suena a persona,
+   "Hola, Raúl Gómez" suena a formulario. El nombre completo queda en la placa
+   de la cuenta y en el perfil que ve el cliente. */
+function miPrimerNombre(){ return miNombre().split(' ')[0]; }
+
+function miOficio(){
+  const m = (sesion && sesion.user && sesion.user.user_metadata) || {};
+  return (m.rubro_personalizado || m.rubro || '').trim();
+}
+
 function entrarApp(){
   const u = sesion.user;
-  $('saludo').textContent = 'Hola, ' + (u.email||'').split('@')[0];
+  $('saludo').textContent = 'Hola, ' + miPrimerNombre();
+  $('c-nombre').textContent = miNombre();
   $('c-mail').textContent = u.email;
-  $('c-inicial').textContent = (u.email||'?').charAt(0).toUpperCase();
+  $('c-inicial').textContent = (miNombre()||'?').charAt(0).toUpperCase();
   $('c-uid').textContent = u.id;
   $('c-alta').textContent = u.created_at ? new Date(u.created_at).toLocaleDateString('es-AR',{day:'2-digit',month:'long',year:'numeric'}) : '—';
   $('s-email').value = u.email; $('p-email').value = u.email;
+  /* Precargado, no bloqueado: alguien puede pedir un servicio para la casa de
+     la madre y querer poner otro nombre. */
+  if(!$('s-nombre').value) $('s-nombre').value = miNombre();
   resumenPedido(); resumenProv();
   /* El rol lo fija la cuenta. Lo guardado en el teléfono es solo un respaldo
      para las cuentas creadas antes de este cambio: si mandara el teléfono,
