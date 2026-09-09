@@ -1613,6 +1613,11 @@ const DISPONIBILIDADES = ['Inmediata','Esta semana','Este mes','A coordinar'];
 const $ = id => document.getElementById(id);
 const pesos = n => '$' + Number(n).toLocaleString('es-AR');
 const esc = t => { const d=document.createElement('div'); d.textContent=(t==null?'':t); return d.innerHTML; };
+/* esc() sirve para texto entre etiquetas, pero no escapa comillas: dentro de un
+   atributo el valor se puede escapar del mismo y agregar un onerror/onmouseover. */
+const escAtr = t => esc(t).replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+/* Solo http(s) en src/href. Devuelve '' para javascript:, data:, vbscript: y basura. */
+const urlSegura = u => { const s=String(u==null?'':u).trim(); return /^https?:\/\//i.test(s) ? s : ''; };
 const llenar = (sel,l) => l.forEach(v => { const o=document.createElement('option'); o.textContent=v; $(sel).appendChild(o); });
 function llenarGrupos(sel, grupos){
   Object.keys(grupos).forEach(g => {
@@ -2708,7 +2713,7 @@ function pintarPrevias(){
   const c = $('pb-previas');
   c.classList.toggle('oculto', !fotosPub.length);
   c.innerHTML = fotosPub.map((u,i) =>
-    '<div class="previa"><img src="'+esc(u)+'" alt="">' +
+    '<div class="previa"><img src="'+escAtr(urlSegura(u))+'" alt="">' +
     '<button type="button" data-quita-foto="'+i+'" aria-label="Quitar">&#10005;</button></div>').join('');
   $('pb-subir').classList.toggle('oculto', fotosPub.length >= MAX_FOTOS);
 }
@@ -2833,8 +2838,9 @@ async function abrirFicha(userId, propia){
   $('ed-pub').classList.toggle('oculto', !fichaPropia);
 
   if(perfil && perfil.bio){
+    const webUrl = perfil.web ? urlSegura(perfil.web.startsWith('http') ? perfil.web : 'https://'+perfil.web) : '';
     $('pf-bio').innerHTML = esc(perfil.bio) +
-      (perfil.web ? '<div style="margin-top:12px"><a href="'+esc(perfil.web.startsWith('http')?perfil.web:'https://'+perfil.web)+
+      (webUrl ? '<div style="margin-top:12px"><a href="'+escAtr(webUrl)+
         '" target="_blank" rel="noopener" style="color:var(--verde);font-weight:600;font-size:13.5px">'+esc(perfil.web)+'</a></div>' : '');
   }else{
     $('pf-bio').innerHTML = fichaPropia
@@ -2872,7 +2878,8 @@ async function abrirFicha(userId, propia){
     '<div class="pub-cuerpo">'+esc(p.cuerpo)+'</div>' +
     (Array.isArray(p.fotos) && p.fotos.length
       ? '<div class="pub-fotos n'+Math.min(p.fotos.length,4)+'">' +
-        p.fotos.slice(0,4).map(u => '<img src="'+esc(u)+'" alt="" loading="lazy" data-foto="'+esc(u)+'">').join('') +
+        p.fotos.slice(0,4).map(u => urlSegura(u)).filter(Boolean)
+          .map(u => '<img src="'+escAtr(u)+'" alt="" loading="lazy" data-foto="'+escAtr(u)+'">').join('') +
         '</div>'
       : '') +
     ((p.precio || p.vence || fichaPropia) ?
