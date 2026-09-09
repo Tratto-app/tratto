@@ -1299,6 +1299,13 @@
           <div class="err" id="e-a-nombre">Escribí tu nombre.</div>
         </div>
 
+        <div class="campo oculto" id="a-tel-caja">
+          <label for="a-tel">Tu teléfono</label>
+          <input id="a-tel" type="tel" autocomplete="tel" maxlength="25" placeholder="11 5555-5555">
+          <div class="ayuda" id="a-tel-ayuda">Es el que va a ver la otra parte para coordinar el trabajo.</div>
+          <div class="err" id="e-a-tel">Cargá un teléfono de contacto.</div>
+        </div>
+
         <div class="campo oculto" id="a-rubro-caja">
           <label for="a-rubro">Tu oficio</label>
           <select id="a-rubro"><option value="">Elegí tu oficio</option></select>
@@ -1504,7 +1511,7 @@
       <button class="btn riesgo" id="salir" type="button">Cerrar sesión</button>
       <button class="btn vacio-b" id="ir-baja" type="button">Borrar mi cuenta</button>
       <p style="text-align:center;margin-top:18px;font-family:'IBM Plex Mono',monospace;
-        font-size:10px;letter-spacing:.14em;color:var(--gris-3)">VERSIÓN F-32 · LEGALES AL DIA</p>
+        font-size:10px;letter-spacing:.14em;color:var(--gris-3)">VERSIÓN F-33 · TELEFONO EN EL ALTA</p>
     </section>
 
     <!-- ══════ NUEVO PEDIDO ══════ -->
@@ -2352,6 +2359,7 @@ function prepararFormProveedor(){
   $('caja-otro-rubro').classList.add('oculto');
   if(tiene) $('p-rubro-fijo').textContent = oficio;
   if(!$('p-nombre').value) $('p-nombre').value = miNombre();
+  if(!$('p-tel').value)    $('p-tel').value    = miTelefono();
 }
 
 $('refrescar').addEventListener('click', async () => {
@@ -2468,6 +2476,7 @@ function cambiarAuth(m){
      selector no tiene nada que hacer ahí. */
   $('sel-rol').classList.toggle('oculto', !c);
   $('a-nombre-caja').classList.toggle('oculto', !c);
+  $('a-tel-caja').classList.toggle('oculto', !c);
   pintarCamposDeRol();
   limpiarTransfer();
   if(pasoAuth === 'codigo') volverAPasoDatos();
@@ -2512,6 +2521,9 @@ function pintarCamposDeRol(){
     ? 'Es como te van a ver los clientes. Puede ser tu nombre o el de tu negocio.'
     : 'Es como te van a ver los proveedores.';
   $('a-nombre').placeholder = prov ? 'Ej: Raúl Gómez / Pinturería Gómez' : 'Ej: Raúl Gómez';
+  $('a-tel-ayuda').textContent = prov
+    ? 'Es el que van a ver los clientes con los que trabajes.'
+    : 'Es el que van a ver los proveedores con los que trabajes.';
 }
 $('a-rubro').addEventListener('change', () => {
   pintarCamposDeRol();
@@ -2560,10 +2572,11 @@ $('a-enviar').addEventListener('click', async () => {
   if(pasoAuth === 'codigo') return confirmarCodigo();
   limpiar(['a-email','a-pass']);
   limpiarTransfer();
-  limpiar(['a-nombre','a-rubro','a-otro-rubro','a-rubro-padre']);
+  limpiar(['a-nombre','a-tel','a-rubro','a-otro-rubro','a-rubro-padre']);
   const r={p:null}, email=$('a-email').value.trim(), pass=$('a-pass').value;
   if(modoAuth === 'crear'){
     if($('a-nombre').value.trim().length < 2) fallar('a-nombre',r);
+    if($('a-tel').value.replace(/\D/g,'').length < 6) fallar('a-tel',r);
     if(rolElegido === 'proveedor'){
       if(!$('a-rubro').value) fallar('a-rubro',r);
       else if($('a-rubro').value === RUBRO_OTRO){
@@ -2600,6 +2613,7 @@ $('a-enviar').addEventListener('click', async () => {
         ? {email, password:pass,
            data:{ rol: rolElegido,
                   nombre: $('a-nombre').value.trim(),
+                  telefono: $('a-tel').value.trim(),
                   /* Igual que en el formulario de servicio: si el oficio es
                      propio, se guarda el nombre lindo aparte y el rubro
                      parecido es el que usa el matching. */
@@ -5201,6 +5215,11 @@ function miNombre(){
    de la cuenta y en el perfil que ve el cliente. */
 function miPrimerNombre(){ return miNombre().split(' ')[0]; }
 
+function miTelefono(){
+  const m = (sesion && sesion.user && sesion.user.user_metadata) || {};
+  return (m.telefono || '').trim();
+}
+
 function miOficio(){
   const m = (sesion && sesion.user && sesion.user.user_metadata) || {};
   return (m.rubro_personalizado || m.rubro || '').trim();
@@ -5218,6 +5237,7 @@ function entrarApp(){
   /* Precargado, no bloqueado: alguien puede pedir un servicio para la casa de
      la madre y querer poner otro nombre. */
   if(!$('s-nombre').value) $('s-nombre').value = miNombre();
+  if(!$('s-tel').value)    $('s-tel').value    = miTelefono();
   resumenPedido(); resumenProv();
   /* El rol lo fija la cuenta. Lo guardado en el teléfono es solo un respaldo
      para las cuentas creadas antes de este cambio: si mandara el teléfono,
