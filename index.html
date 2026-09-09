@@ -2176,7 +2176,12 @@ const RUBROS_GRUPOS = {
     'Redacción y contenidos','Edición de video','Fotografía','Video y drone','Ilustración',
     'Animación y motion','Locución','Producción musical','Automatización con IA','Soporte técnico',
     'Reparación de PC y notebooks','Reparación de celulares','Redes y cableado','Ciberseguridad','Análisis de datos'],
-  'Salud y bienestar': ['Cuidado de adultos mayores','Masajes y terapias',
+  /* Se llama "Bienestar" y no "Salud": el punto 6.2 de los contratos no admite
+     profesiones de la salud, así que el nombre del grupo no puede prometerlas.
+     Por lo mismo "Masajes" va sin "y terapias" —terapia ocupacional, psicología y
+     fonoaudiología son matriculadas— y el cuidado de adultos mayores es
+     acompañamiento, no acompañamiento terapéutico, que también lo es. */
+  'Bienestar': ['Cuidado de adultos mayores','Masajes',
     'Entrenador personal','Yoga y pilates'],
   'Belleza y estética': ['Peluquería','Barbería','Manicura y pedicura','Cosmetología','Maquillaje',
     'Depilación','Estética corporal','Tatuajes y piercings'],
