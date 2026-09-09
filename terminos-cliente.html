@@ -145,10 +145,16 @@
   <h2>3. Cómo funciona</h2>
   <h3>3.1. Del pedido al trabajo</h3>
   <ol>
-  <li>El Cliente publica un pedido: qué necesita, en qué zona, con qué presupuesto y con qué urgencia.</li>
-  <li>Tratto le muestra Proveedores cuyo rubro, zona y rango de precios se correspondan con el pedido.</li>
+  <li>El Cliente publica un pedido: qué necesita, en qué zona, para cuándo, con una descripción y,
+     si quiere, una foto. <strong>El presupuesto es opcional</strong>: sirve para dar contexto, no para filtrar
+     Proveedores.</li>
+  <li>El pedido llega a los Proveedores de ese oficio y esa zona por dos caminos, que conviven:
+     Tratto le muestra Proveedores al Cliente, y el pedido aparece en el panel de los Proveedores
+     del rubro, que pueden ofrecerse. Un mismo pedido lo puede tomar <strong>un número limitado</strong> de
+     Proveedores; después se cierra.</li>
   <li>Cliente y Proveedor conversan por el chat de la aplicación.</li>
-  <li>El Proveedor envía un presupuesto con monto, alcance y plazo.</li>
+  <li>El Proveedor envía un presupuesto con monto, alcance y plazo. <strong>Ese es el único precio que
+     obliga</strong>: nada de lo anterior lo es.</li>
   <li>El Cliente lo acepta o lo rechaza. <strong>Aceptar un presupuesto no genera ningún cobro</strong>: es únicamente el acuerdo entre las partes.</li>
   <li>El Proveedor realiza el trabajo.</li>
   <li>Al terminar, el Proveedor lo marca como terminado en la aplicación.</li>
@@ -180,7 +186,8 @@
   <p>Tratto pone a disposición cuatro funciones que se apoyan en un servicio de inteligencia
   artificial de un tercero: un estimador de precios a partir de una foto, un comparador de
   presupuestos, las etiquetas de reputación que resumen cómo trabajó un Proveedor, y un
-  asistente de ayuda. Cada una lleva un sello visible <strong>"Con IA"</strong> en la aplicación.</p>
+  asistente de ayuda. El estimador da una <strong>referencia de precios de mercado</strong>: no surge de los
+  precios cargados por los Proveedores de Tratto ni los representa. Cada una lleva un sello visible <strong>"Con IA"</strong> en la aplicación.</p>
   <h3>5.2. Son opcionales y requieren tu permiso</h3>
   <p><strong>Ninguna se activa sin el permiso expreso del usuario</strong>, que la aplicación pide por separado
   explicando qué información sale, hacia dónde y para qué. Ese permiso se puede <strong>retirar en

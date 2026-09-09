@@ -121,10 +121,16 @@
   <p>Esta política se rige por la <strong>Ley 25.326 de Protección de los Datos Personales</strong> y su reglamentación.</p>
   <h2>2. Qué datos recolectamos</h2>
   <h3>2.1. Los que nos das vos</h3>
-  <p><strong>Al crear tu cuenta:</strong> correo electrónico, contraseña y <strong>el tipo de cuenta que elegís</strong>
-  —Cliente o Proveedor—, que queda fijado y determina cuál de los dos contratos aceptás. La contraseña se guarda cifrada; nadie en Tratto puede verla.</p>
-  <p><strong>Si pedís un servicio:</strong> nombre, correo, teléfono, qué servicio necesitás, zona, presupuesto, urgencia, descripción del trabajo y, si la cargás, una <strong>foto</strong> del problema a resolver.</p>
-  <p><strong>Si ofrecés un servicio:</strong> nombre o razón social, correo, teléfono, rubro, zona, rango de precios, disponibilidad y descripción de tu trabajo. Opcionalmente, estudios, matrículas, experiencia y logros que quieras publicar, y fotos de trabajos realizados.</p>
+  <p><strong>Al crear tu cuenta:</strong> correo electrónico, contraseña, <strong>tu nombre</strong> y <strong>el tipo de cuenta que
+  elegís</strong> —Cliente o Proveedor—, que queda fijado y determina cuál de los dos contratos aceptás.
+  Si te registrás como Proveedor, además <strong>tu oficio</strong>, que también queda fijado. La contraseña se
+  guarda cifrada; nadie en Tratto puede verla.</p>
+  <p><strong>Si pedís un servicio:</strong> nombre, correo, teléfono, qué servicio necesitás, zona, urgencia,
+  descripción del trabajo y, si querés, una <strong>foto</strong> y un <strong>presupuesto orientativo</strong>. Los dos
+  últimos son opcionales: el presupuesto no filtra proveedores, solo les da contexto.</p>
+  <p><strong>Si ofrecés un servicio:</strong> nombre o razón social, correo, teléfono, zona, rango de precios,
+  disponibilidad y descripción de tu trabajo. El rubro no se vuelve a pedir: es el oficio que
+  elegiste al crear la cuenta. Opcionalmente, estudios, matrículas, experiencia y logros que quieras publicar, y fotos de trabajos realizados.</p>
   <p><strong>Cuando conversás:</strong> el contenido de los mensajes que intercambiás con la otra parte por el chat de la aplicación.</p>
   <p><strong>Cuando calificás:</strong> la puntuación y el comentario que dejás sobre un trabajo.</p>
   <h3>2.2. Los que se generan usando la aplicación</h3>
@@ -132,6 +138,7 @@
   <li><strong>Visitas a perfiles</strong>: registramos qué perfiles de proveedor se visitan, para mostrarle a cada proveedor cuánta gente vio el suyo.</li>
   <li><strong>Actividad de trabajos</strong>: presupuestos enviados, aceptados y trabajos cobrados por la plataforma.</li>
   <li><strong>Puntos</strong> acumulados por el uso de la aplicación.</li>
+  <li><strong>Pedidos que tomaste</strong>: si sos Proveedor, qué pedidos abiertos marcaste como "Me interesa".</li>
   </ul>
   <h3>2.3. Si conectás Mercado Pago</h3>
   <p>Si sos proveedor y conectás tu cuenta de Mercado Pago para cobrar, guardamos las <strong>credenciales de acceso que Mercado Pago nos entrega</strong> para poder generar cobros en tu nombre, junto con tu identificador de usuario de Mercado Pago.</p>
@@ -189,7 +196,42 @@
   <h2>4. Con quién los compartimos</h2>
   <h3>4.1. Con la otra parte de la operación</h3>
   <p>Cuando se produce una conexión, <strong>el cliente y el proveedor ven mutuamente los datos necesarios</strong> para coordinar el trabajo: nombre, datos de contacto y lo que cada uno haya publicado en su perfil o escrito en el pedido.</p>
-  <h3>4.2. Con proveedores de servicios (encargados de tratamiento)</h3>
+  <h3>4.2. Con Proveedores del rubro, antes de que haya conexión</h3>
+  <p>Un Proveedor ve, en su Panel, los pedidos <strong>de su mismo oficio y todavía sin cubrir</strong>, para poder
+  decidir si le interesan. De cada pedido ve únicamente:</p>
+  <div class="tabla"><table>
+  <thead>
+  <tr>
+  <th>Ve</th>
+  <th>No ve</th>
+  </tr>
+  </thead>
+  <tbody>
+  <tr>
+  <td>Rubro, zona y urgencia</td>
+  <td><strong>Tu nombre</strong></td>
+  </tr>
+  <tr>
+  <td>La descripción del trabajo</td>
+  <td><strong>Tu correo</strong></td>
+  </tr>
+  <tr>
+  <td>La foto, si la cargaste</td>
+  <td><strong>Tu teléfono</strong></td>
+  </tr>
+  <tr>
+  <td>El presupuesto orientativo, si lo pusiste</td>
+  <td></td>
+  </tr>
+  </tbody>
+  </table></div>
+  <p><strong>Tus datos de contacto no viajan en esa lista.</strong> Recién aparecen cuando el Proveedor se ofrece y
+  se abre la conversación —lo del punto 4.1—, que es el momento en que vos también lo ves a él.</p>
+  <p>Técnicamente esto no es una decisión de criterio: los datos de contacto <strong>no están</strong> en lo que la
+  base le entrega al Proveedor en esa pantalla. No es que la aplicación elija no mostrarlos.</p>
+  <p>Un mismo pedido lo puede tomar un número limitado de Proveedores; después se cierra. Eso también
+  te protege a vos: evita que un pedido termine en veinte conversaciones abiertas.</p>
+  <h3>4.3. Con proveedores de servicios (encargados de tratamiento)</h3>
   <p>Para que la aplicación funcione, algunos terceros procesan datos por cuenta de Tratto:</p>
   <div class="tabla"><table>
   <thead>
@@ -237,7 +279,7 @@
   </tr>
   </tbody>
   </table></div>
-  <h3>4.3. Transferencia de datos fuera de la Argentina</h3>
+  <h3>4.4. Transferencia de datos fuera de la Argentina</h3>
   <p>Parte de tus datos se procesa fuera del país. La Ley 25.326, en su artículo 12, prohíbe la
   transferencia de datos personales a países que no ofrezcan un nivel de protección adecuado,
   salvo que exista una base que la habilite.</p>
@@ -323,11 +365,11 @@
   crees la cuenta. Si ya la tenés y cambiás de idea, la única forma de retirarlo es <strong>darte de
   baja</strong>, y se va todo con ella. Preferimos decírtelo así antes que ofrecerte un interruptor que
   en realidad borraría tu cuenta.</p>
-  <h3>4.4. Con autoridades</h3>
+  <h3>4.5. Con autoridades</h3>
   <p>Cuando una autoridad judicial o administrativa competente lo requiera legalmente.</p>
   <h2>5. Las funciones de inteligencia artificial</h2>
   <p>Tratto usa inteligencia artificial en cuatro funciones. <strong>Ninguna se activa sin tu permiso
-  expreso</strong>, que se pide aparte y se puede retirar cuando quieras (punto 4.3).</p>
+  expreso</strong>, que se pide aparte y se puede retirar cuando quieras (punto 4.4).</p>
   <p>Dentro de la aplicación, todo lugar donde interviene una máquina lleva un sello <strong>"Con IA"</strong>,
   para que sepas sin tener que leer nada cuándo lo que estás mirando lo escribió un programa.</p>
   <h3>5.1. Qué se envía en cada función</h3>
@@ -368,7 +410,7 @@
   fuera de Tratto: <strong>direcciones de correo, teléfonos, CBU y CVU, números de tarjeta y usuarios
   de redes sociales.</strong> En su lugar viaja una marca genérica (<code>[teléfono]</code>, <code>[correo]</code>).</p>
   <p>Esto reduce lo que sale, pero <strong>no lo convierte en anónimo</strong>: en un texto libre siempre puede
-  quedar algo que identifique a una persona. Por eso el permiso del punto 4.3 sigue siendo
+  quedar algo que identifique a una persona. Por eso el permiso del punto 4.4 sigue siendo
   necesario.</p>
   <h3>5.3. Quién procesa y bajo qué condiciones</h3>
   <p>El procesamiento lo realiza <strong>OpenAI, L.L.C.</strong> (Estados Unidos), con el modelo <code>gpt-4o-mini</code>,
@@ -435,8 +477,13 @@
   <h2>9. Menores de edad</h2>
   <p>Tratto no está dirigida a menores de 18 años y no recolectamos datos de menores de forma consciente. Si detectamos una cuenta de un menor, la damos de baja.</p>
   <h2>10. Almacenamiento en tu navegador</h2>
-  <p><strong>Tratto no utiliza cookies ni herramientas de análisis o publicidad de terceros.</strong></p>
-  <p>Guardamos un único dato en el <strong>almacenamiento local de tu navegador</strong>: la sesión iniciada, para que no tengas que ingresar tu contraseña cada vez. Se borra cuando cerrás sesión o limpiás los datos del navegador.</p>
+  <p><strong>Tratto no utiliza cookies, ni herramientas de análisis, ni píxeles de publicidad de terceros.</strong>
+  Ni propias ni ajenas. No hay banner de cookies porque no hay cookies que consentir.</p>
+  <p>Guardamos un único dato en el <strong>almacenamiento local de tu navegador</strong>: la sesión iniciada, para
+  que no tengas que ingresar tu contraseña cada vez. Se borra cuando cerrás sesión o limpiás los
+  datos del navegador.</p>
+  <p>Eso es lo único que la aplicación deja en tu dispositivo, y es lo estrictamente necesario para
+  mantenerte adentro: sin eso, tendrías que escribir tu contraseña en cada pantalla.</p>
   <h2>11. Cambios en esta política</h2>
   <p>Si modificamos esta política, te avisamos por correo y mediante un aviso en la aplicación con <strong>10 días corridos</strong> de anticipación.</p>
   <h2>12. Contacto</h2>
