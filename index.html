@@ -1041,27 +1041,6 @@
     border:1px solid rgba(201,162,39,.5);border-radius:99px;padding:4px 10px;flex:none}
 
   /* ═══════════ XP DEL CLIENTE ═══════════ */
-  .xp-caja{background:var(--noche);color:var(--claro);border-radius:var(--r);padding:20px;
-    margin-top:20px;position:relative;overflow:hidden}
-  .xp-caja::after{content:'';position:absolute;inset:0;pointer-events:none;
-    background:radial-gradient(120% 100% at 100% 0%, rgba(201,162,39,.20), transparent 62%)}
-  .xp-caja > *{position:relative;z-index:1}
-  .xp-num{font-family:'IBM Plex Sans Condensed',sans-serif;font-weight:700;font-size:38px;
-    line-height:1;letter-spacing:-.02em;color:var(--laton)}
-  .xp-eti{font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:.19em;
-    text-transform:uppercase;color:var(--gris-2);margin-bottom:9px}
-  .xp-barra{height:7px;border-radius:4px;background:var(--noche-3);overflow:hidden;margin-top:16px}
-  .xp-relleno{height:100%;border-radius:4px;background:linear-gradient(90deg,var(--verde-vivo),var(--laton));
-    transition:width .6s ease}
-  .xp-falta{font-size:12.5px;color:var(--gris-2);margin-top:9px}
-  .canje{background:var(--claro);border:1px solid var(--linea);border-radius:var(--r);
-    padding:15px 16px;margin-bottom:10px;display:flex;align-items:center;gap:13px;box-shadow:var(--sombra)}
-  .canje.listo{border-color:rgba(201,162,39,.55);background:rgba(201,162,39,.05)}
-  .canje-cuerpo{flex:1;min-width:0}
-  .canje-tit{font-family:'IBM Plex Sans Condensed',sans-serif;font-weight:700;font-size:16px}
-  .canje-txt{font-size:12.5px;color:var(--gris);margin-top:4px;line-height:1.45}
-  .canje .btn{width:auto;flex:none;padding:10px 15px;font-size:13.5px;margin-top:0}
-
   /* ═══════════ VARIOS ═══════════ */
   .chip-zona{font-family:'IBM Plex Mono',monospace;font-size:8.5px;letter-spacing:.12em;
     text-transform:uppercase;border-radius:99px;padding:3px 8px;font-weight:600;
@@ -1511,7 +1490,7 @@
       <button class="btn riesgo" id="salir" type="button">Cerrar sesión</button>
       <button class="btn vacio-b" id="ir-baja" type="button">Borrar mi cuenta</button>
       <p style="text-align:center;margin-top:18px;font-family:'IBM Plex Mono',monospace;
-        font-size:10px;letter-spacing:.14em;color:var(--gris-3)">VERSIÓN F-33 · TELEFONO EN EL ALTA</p>
+        font-size:10px;letter-spacing:.14em;color:var(--gris-3)">VERSIÓN F-34 · REVISION LEGAL Y FISCAL</p>
     </section>
 
     <!-- ══════ NUEVO PEDIDO ══════ -->
@@ -2085,29 +2064,6 @@
     </section>
 
     <!-- ══════ PREMIOS Y XP DEL CLIENTE ══════ -->
-    <section class="pantalla" id="p-premios">
-      <div class="kicker">Tus puntos</div>
-      <h1>Premios</h1>
-      <p class="bajada">Cada trabajo que cerrás por la app suma puntos. Los canjeás por descuentos.</p>
-
-      <div class="xp-caja">
-        <div class="xp-eti">Puntos disponibles</div>
-        <div class="xp-num" id="xp-num">0</div>
-        <div class="xp-barra"><div class="xp-relleno" id="xp-relleno" style="width:0%"></div></div>
-        <div class="xp-falta" id="xp-falta"></div>
-      </div>
-
-      <div class="sec"><span class="sec-tit">Canjear</span></div>
-      <div id="lista-canjes"></div>
-
-      <div class="sec"><span class="sec-tit">Cómo se ganan</span></div>
-      <div class="nota">
-        <b>100 puntos</b> por cada trabajo que cerrás con un proveedor por la app.
-        El descuento sale de la comisión de la app: <b>el proveedor cobra igual lo que presupuestó.</b>
-      </div>
-    </section>
-
-
     <!-- ══════ ASISTENTE ══════ -->
     <section class="pantalla" id="p-asistente">
       <div class="asis-cab">
@@ -2204,11 +2160,7 @@ const CATEGORIAS = Object.keys(RUBROS_GRUPOS);
 /* zonas que se consideran cercanas entre sí para el matching flexible */
 const REGIONES = {
   'AMBA': ['CABA','GBA Norte','GBA Oeste','GBA Sur'],
-  'Centro': ['Buenos Aires (interior)','Córdoba','Santa Fe','Entre Ríos'],
-  'Cuyo': ['Mendoza'],
-  'NOA': ['Tucumán','Salta'],
-  'NEA': ['Chaco','Corrientes','Misiones'],
-  'Patagonia': ['Neuquén','Río Negro','Chubut','Santa Cruz']
+  'Interior bonaerense': ['Buenos Aires (interior)']
 };
 function regionDe(z){
   for(const r in REGIONES) if(REGIONES[r].includes(z)) return r;
@@ -2223,7 +2175,7 @@ function relacionZona(zonaCliente, zonaProv){
   return 'lejos';
 }
 
-/* ══════ MEDALLAS Y PUNTOS ══════ */
+/* ══════ MEDALLAS ══════ */
 /* Niveles de trayectoria. Muestran cuánto trabajó, no son un premio de la app. */
 const MEDALLAS = [
   {min:100, nombre:'100+ trabajos', clase:'dia'},
@@ -2234,15 +2186,13 @@ const MEDALLAS = [
 const medallaDe = n => MEDALLAS.find(m => Number(n||0) >= m.min) || null;
 const PROXIMA_MEDALLA = n => [...MEDALLAS].reverse().find(m => Number(n||0) < m.min) || null;
 
-const XP_POR_TRABAJO = 100;
-const CANJES = [
-  {xp:500,  pct:5,  tope:5000,  tit:'5% de descuento',  txt:'Hasta $5.000 en tu próximo trabajo.'},
-  {xp:1200, pct:10, tope:12000, tit:'10% de descuento', txt:'Hasta $12.000 en tu próximo trabajo.'},
-  {xp:2500, pct:15, tope:30000, tit:'15% de descuento', txt:'Hasta $30.000 en tu próximo trabajo.'}
-];
-const ZONAS = ['CABA','GBA Norte','GBA Oeste','GBA Sur','Buenos Aires (interior)','Córdoba','Santa Fe',
-  'Mendoza','Tucumán','Salta','Entre Ríos','Chaco','Corrientes','Misiones','Neuquén','Río Negro','Chubut',
-  'Santa Cruz','Otra provincia','Todo el país (remoto)'];
+/* Solo CABA y Provincia de Buenos Aires, y no es una decisión de mercado.
+   Ofrecerle el servicio a alguien de Córdoba configura presencia digital en
+   Córdoba (RG 5/2021 de la Comisión Arbitral), y eso arrastra una jurisdicción
+   más de Ingresos Brutos: inscripción, alícuota, padrón y declaración mensual.
+   Cada provincia que se agregue acá es una jurisdicción fiscal nueva, así que
+   se abre cuando se decide abrirla, no por descuido. */
+const ZONAS = ['CABA','GBA Norte','GBA Oeste','GBA Sur','Buenos Aires (interior)'];
 const URGENCIAS = ['Urgente (hoy o mañana)','Esta semana','Este mes','Sin apuro'];
 const DISPONIBILIDADES = ['Inmediata','Esta semana','Este mes','A coordinar'];
 
@@ -2306,12 +2256,21 @@ let actual='auth', volverA='inicio';
    --por un enlace viejo, por el historial, por un botón que se nos escape--
    no puede terminar en publicar algo que esa persona no firmó. */
 const DEL_ROL = {
-  'nuevo-pedido':'cliente', 'inicio':'cliente', 'premios':'cliente', 'detalle':'cliente',
+  'nuevo-pedido':'cliente', 'inicio':'cliente', 'detalle':'cliente',
   'nuevo-proveedor':'proveedor', 'panel':'proveedor', 'ficha':'proveedor',
   'publicacion':'proveedor', 'credencial':'proveedor'
 };
 
 function ir(p, efecto){
+  /* Una pantalla que no existe no puede tumbar la aplicación. Pasa cuando se
+     retira una pantalla y queda un enlace viejo, o una sesión guardada que
+     apunta a ella: antes reventaba con "classList of null" y el usuario se
+     quedaba mirando la pantalla anterior sin saber por qué. */
+  if(!$('p-'+p)){
+    console.warn('Pantalla inexistente:', p);
+    p = modo === 'proveedor' ? 'panel' : 'inicio';
+    efecto = 'entra';
+  }
   if(DEL_ROL[p] && DEL_ROL[p] !== modo){
     p = modo === 'proveedor' ? 'panel' : 'inicio';
     efecto = 'entra';
@@ -2341,7 +2300,6 @@ $('tabs').addEventListener('click', e => {
   if(p === 'ficha'){ abrirFicha(sesion.user.id, true); return; }
   ir(p);
   if(p === 'panel')   cargarPanel();
-  if(p === 'premios') cargarPremios();
 });
 $('volver').addEventListener('click', () => ir(volverA, 'entra'));
 $('ir-pedido').addEventListener('click', () => {
@@ -3697,14 +3655,12 @@ const ICO = {
   chat:'<path d="M20.4 14.6a2 2 0 0 1-2 2H8.4l-4 3.8V4.8a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2z"/>',
   persona:'<circle cx="12" cy="8" r="3.7"/><path d="M4.6 20.2c0-3.7 3.4-6.1 7.4-6.1s7.4 2.4 7.4 6.1"/>',
   grafico:'<path d="M4 20V10.5M10 20V4M16 20v-7M21.5 20h-19"/>',
-  ficha:'<rect x="3" y="4.5" width="18" height="15" rx="2"/><circle cx="9" cy="10.6" r="2.1"/><path d="M5.7 16.5c.5-1.6 1.8-2.5 3.3-2.5s2.8.9 3.3 2.5M15 9.6h3.4M15 13h3.4"/>',
-  premio:'<circle cx="12" cy="9" r="5.1"/><path d="M8.6 13.3 7.2 21l4.8-2.3L16.8 21l-1.4-7.7"/>'
+  ficha:'<rect x="3" y="4.5" width="18" height="15" rx="2"/><circle cx="9" cy="10.6" r="2.1"/><path d="M5.7 16.5c.5-1.6 1.8-2.5 3.3-2.5s2.8.9 3.3 2.5M15 9.6h3.4M15 13h3.4"/>'
 };
 const TABS = {
   cliente: [
     {ir:'inicio',  txt:'Inicio',  ico:'casa'},
     {ir:'chats',   txt:'Chats',   ico:'chat', globo:true},
-    {ir:'premios', txt:'Premios', ico:'premio'},
     {ir:'perfil',  txt:'Cuenta',  ico:'persona'}
   ],
   proveedor: [
@@ -4314,60 +4270,6 @@ $('panel-ver-perfil').addEventListener('click', () => abrirFicha(sesion.user.id,
 $('panel-publicar').addEventListener('click', abrirPublicacion);
 
 /* ══════════════════ PREMIOS DEL CLIENTE ══════════════════ */
-async function cargarPremios(){
-  let ganados = 0, gastados = 0;
-  try{
-    const ids = misPedidos.map(s => s.id);
-    if(ids.length){
-      const ms = await api('matches?solicitud_id=in.('+ids.join(',')+')&select=id');
-      if(ms.length){
-        const ps = await api('mensajes?match_id=in.('+ms.map(m=>m.id).join(',')+')&tipo=eq.presupuesto&estado_presupuesto=eq.aceptado&select=id');
-        ganados = ps.length * XP_POR_TRABAJO;
-      }
-    }
-  }catch(e){ console.error(e); }
-  let mios = [];
-  try{ mios = await api('canjes?user_id=eq.'+sesion.user.id+'&order=created_at.desc'); }catch(e){}
-  gastados = mios.reduce((a,c) => a + Number(c.xp_usado||0), 0);
-
-  const libres = Math.max(0, ganados - gastados);
-  $('xp-num').textContent = libres.toLocaleString('es-AR');
-
-  const prox = CANJES.find(c => c.xp > libres);
-  const meta = prox ? prox.xp : CANJES[CANJES.length-1].xp;
-  $('xp-relleno').style.width = Math.min(100, Math.round(libres/meta*100)) + '%';
-  $('xp-falta').textContent = prox
-    ? 'Te faltan ' + (prox.xp - libres).toLocaleString('es-AR') + ' puntos para ' + prox.tit
-    : 'Tenés puntos para el mejor beneficio disponible.';
-
-  $('lista-canjes').innerHTML = CANJES.map(c => {
-    const listo = libres >= c.xp;
-    return '<div class="canje '+(listo?'listo':'')+'">' +
-      '<div class="canje-cuerpo"><div class="canje-tit">'+esc(c.tit)+'</div>' +
-      '<div class="canje-txt">'+esc(c.txt)+' · '+c.xp.toLocaleString('es-AR')+' puntos</div></div>' +
-      (listo ? '<button class="btn lleno" data-canje="'+c.xp+'" type="button">Canjear</button>'
-             : '<span class="sello gris">Faltan '+(c.xp-libres).toLocaleString('es-AR')+'</span>') +
-      '</div>';
-  }).join('') +
-  (mios.length ? '<div class="sec"><span class="sec-tit">Ya canjeaste</span></div>' + mios.map(c =>
-    '<div class="item"><div class="item-top"><span class="item-tit">'+esc(c.beneficio)+'</span>' +
-    '<span class="sello '+(c.estado==='usado'?'gris':'verde')+'">'+(c.estado==='usado'?'Usado':'Disponible')+'</span></div>' +
-    '<div class="item-meta"><span>'+Number(c.xp_usado).toLocaleString('es-AR')+' puntos</span>' +
-    '<span>'+new Date(c.created_at).toLocaleDateString('es-AR')+'</span></div></div>').join('') : '');
-}
-
-$('lista-canjes').addEventListener('click', async e => {
-  const b = e.target.closest('[data-canje]'); if(!b) return;
-  const c = CANJES.find(x => x.xp === Number(b.dataset.canje)); if(!c) return;
-  b.disabled = true;
-  try{
-    await apiEnviar('canjes','POST',{
-      user_id: sesion.user.id, xp_usado: c.xp, beneficio: c.tit,
-      porcentaje: c.pct, estado: 'disponible'
-    });
-    await cargarPremios();
-  }catch(e){ console.error(e); b.disabled = false; }
-});
 
 /* ══════════════════ CHAPA DE ZONA ══════════════════ */
 function chapaZona(rel){
@@ -4973,7 +4875,7 @@ let charla = [], asisPensando = false;
 
 const SUGERENCIAS = {
   cliente: ['¿Cómo pido un servicio?', '¿Cuánto me cuesta usar Tratto?',
-            '¿Cómo funcionan los puntos?', 'Mi pedido dice "Buscando" hace rato'],
+            'Mi pedido dice "Buscando" hace rato'],
   proveedor: ['¿Cómo consigo más clientes?', '¿Cómo mando un presupuesto?',
               '¿Para qué sirven las medallas?', 'Mi rubro no está en la lista']
 };
@@ -5164,7 +5066,6 @@ async function mirarSiHayNovedades(){
     if(actual === 'inicio')  await cargarPedidos();
     if(actual === 'perfil')  await cargarPerfiles();
     if(actual === 'panel')   await cargarPanel();
-    if(actual === 'premios') await cargarPremios();
     await cargarConexiones();
   }catch(e){}
 }
@@ -5187,7 +5088,6 @@ async function recargarTodo(){
   await cargarPerfilProv();
   pintarModoCuenta();
   if(modo === 'proveedor'){ await cargarPanel(); await cargarPedidosAbiertos(); }
-  else await cargarPremios();
 }
 
 function pintarModoCuenta(){
