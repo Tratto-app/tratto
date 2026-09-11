@@ -124,6 +124,35 @@
   .flecha{color:var(--gris-3);flex:none}
   .flecha svg{width:16px;height:16px;display:block}
 
+  /* Hilo de match en miniatura dentro de una tarjeta: dos nodos unidos por el
+     hilo. La geometría es común; cada lista define quién es cada nodo, así el
+     mismo dibujo significa siempre lo mismo — verde el cliente, latón el
+     proveedor — y el estado se entiende sin leer el sello. */
+  #lista-pedidos .item-pie,#lista-cliente .item-pie,#lista-proveedor .item-pie{
+    --nodo-a:var(--verde);--nodo-b:var(--laton)}
+  #lista-proveedor .item-pie{--nodo-a:var(--laton);--nodo-b:var(--verde)}
+  #lista-pedidos .item-pie > span:first-of-type,
+  #lista-cliente .item-pie > span:first-of-type,
+  #lista-proveedor .item-pie > span:first-of-type{margin-right:auto}
+  #lista-pedidos .item-pie::before,
+  #lista-cliente .item-pie::before,
+  #lista-proveedor .item-pie::before{content:'';flex:none;width:32px;height:8px;
+    background:
+      radial-gradient(circle at 4px 4px, var(--nodo-a) 3.5px, transparent 4px),
+      radial-gradient(circle at 28px 4px, var(--nodo-b) 3.5px, transparent 4px),
+      linear-gradient(90deg,var(--nodo-a),var(--nodo-b)) no-repeat 4px 3.5px/24px 1px}
+  /* pedido que todavía no tiene proveedores: el otro extremo queda sin encender */
+  #lista-pedidos .item:not(:has(.sello.verde)) .item-pie::before{
+    background:
+      radial-gradient(circle at 4px 4px, var(--verde) 3.5px, transparent 4px),
+      radial-gradient(circle at 28px 4px, transparent 2.3px,
+        var(--linea-fuerte) 2.4px, var(--linea-fuerte) 3.5px, transparent 4px),
+      linear-gradient(90deg,var(--verde),var(--linea-fuerte)) no-repeat 4px 3.5px/24px 1px}
+  /* En conexiones el sello ya usa el latón para "sugerido", así que el rol se
+     marca con el filete lateral y no con el sello. */
+  #lista-cliente .item{border-left:3px solid var(--verde)}
+  #lista-proveedor .item{border-left:3px solid var(--laton-osc)}
+
   .sello{font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:.11em;
     text-transform:uppercase;border-radius:99px;padding:4px 9px;white-space:nowrap;flex:none;font-weight:500}
   .sello.gris{color:var(--gris);border:1px solid var(--linea-fuerte);background:var(--claro-2)}
@@ -168,6 +197,13 @@
   label{display:block;font-weight:600;font-size:13.5px;margin-bottom:7px}
   .indice{font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--laton-osc);
     margin-right:9px;font-weight:600}
+  /* Bifurcación: la foto es el camino corto y los campos numerados el largo.
+     Decirlo con todas las letras evita que la pantalla arranque como un muro
+     de formulario, que es lo que espanta a quien no es técnico. */
+  .bifurca{display:flex;align-items:center;gap:12px;margin:0;
+    font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:.17em;
+    text-transform:uppercase;color:var(--gris-2)}
+  .bifurca::before,.bifurca::after{content:'';flex:1;height:1px;background:var(--linea)}
   .caja-monto{position:relative}
   .caja-monto .signo{position:absolute;left:14px;top:50%;transform:translateY(-50%);
     color:var(--gris-2);font-size:16px;pointer-events:none}
@@ -243,17 +279,40 @@
     color:var(--gris);padding:10px 6px;border-radius:5px;transition:background .17s,color .17s}
   .pest.activa{background:var(--claro);color:var(--tinta);font-weight:600;box-shadow:0 1px 2px rgba(14,24,21,.11)}
 
+  /* ── Confirmación por código ──
+     El código es un dato, no una frase: va en Mono, grande y bien separado
+     para poder compararlo de un vistazo con el que llegó al mail. */
+  .codigo-cab{margin-top:24px;margin-bottom:20px}
+  .codigo-tit{font-family:'IBM Plex Sans Condensed',sans-serif;font-weight:700;font-size:21px;
+    line-height:1.2;letter-spacing:-.015em}
+  .codigo-txt{font-size:13.5px;color:var(--gris);line-height:1.55;margin-top:9px}
+  .codigo-txt b{color:var(--tinta);font-weight:600;overflow-wrap:anywhere}
+  #a-codigo{font-family:'IBM Plex Mono',monospace;font-size:26px;font-weight:500;
+    letter-spacing:.34em;text-indent:.34em;text-align:center;padding:16px 13px}
+  #a-codigo::placeholder{color:var(--gris-3)}
+  #a-codigo-acciones{margin-top:18px;text-align:center}
+  #a-codigo-acciones .ver{margin-top:15px}
+
   /* ═══════════ CUENTA ═══════════ */
-  .placa{background:var(--claro);border:1px solid var(--linea);border-radius:var(--r);
-    box-shadow:var(--sombra);overflow:hidden}
-  .placa-top{background:var(--noche);color:var(--claro);padding:20px;display:flex;align-items:center;gap:14px;
+  /* La placa ya insinuaba una credencial: acá se termina la idea. Radio de
+     tarjeta física, marca de quién la emite arriba, y el hilo de match como
+     banda al pie del encabezado — la seña de identidad haciendo de banda de
+     seguridad, que es justo lo que se espera de un carnet. */
+  .placa{background:var(--claro);border:1px solid var(--linea);border-radius:14px;
+    box-shadow:var(--sombra-alta);overflow:hidden}
+  .placa-top{background:var(--noche);color:var(--claro);padding:18px 20px 20px;
     position:relative;overflow:hidden}
   .placa-top::after{content:'';position:absolute;inset:0;pointer-events:none;
     background:radial-gradient(110% 100% at 100% 0%, rgba(43,126,98,.30), transparent 60%)}
+  .placa-top::before{content:'';position:absolute;left:0;right:0;bottom:0;height:2px;z-index:2;
+    background:linear-gradient(90deg,var(--verde-luz),var(--laton))}
   .placa-top > *{position:relative;z-index:1}
-  .avatar{width:46px;height:46px;border-radius:50%;background:var(--noche-3);flex:none;
+  .placa-marca{font-family:'IBM Plex Mono',monospace;font-size:8.5px;letter-spacing:.19em;
+    text-transform:uppercase;color:var(--gris-2);margin-bottom:15px}
+  .placa-id{display:flex;align-items:center;gap:14px}
+  .avatar{width:48px;height:48px;border-radius:13px;background:var(--noche-3);flex:none;
     display:flex;align-items:center;justify-content:center;border:1px solid var(--noche-4);
-    font-family:'IBM Plex Sans Condensed',sans-serif;font-weight:700;font-size:20px;color:var(--laton)}
+    font-family:'IBM Plex Sans Condensed',sans-serif;font-weight:700;font-size:21px;color:var(--laton)}
   .placa-mail{font-weight:600;font-size:15px;word-break:break-all;line-height:1.3}
   .placa-estado{font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:.15em;
     text-transform:uppercase;color:var(--verde-luz);margin-top:4px;display:flex;align-items:center;gap:6px}
@@ -263,7 +322,9 @@
   .dato:last-child{border-bottom:none}
   .dato dt{font-size:10px;color:var(--gris);text-transform:uppercase;letter-spacing:.12em;
     font-family:'IBM Plex Mono',monospace;margin-bottom:6px}
-  .dato dd{font-family:'IBM Plex Mono',monospace;font-size:12px;word-break:break-all;line-height:1.5}
+  /* anywhere en vez de break-all: el identificador corta en los guiones y se lee
+     como un número de documento, no partido en cualquier lado. */
+  .dato dd{font-family:'IBM Plex Mono',monospace;font-size:12px;overflow-wrap:anywhere;line-height:1.5}
   .fila-copia{display:flex;gap:10px;align-items:flex-start}
   .copiar{font-family:'IBM Plex Sans',sans-serif;font-size:11.5px;font-weight:600;color:var(--verde);
     background:var(--claro-2);border:1px solid var(--linea);border-radius:5px;cursor:pointer;
@@ -289,16 +350,31 @@
   .prov-top{display:flex;align-items:flex-start;justify-content:space-between;gap:10px}
   .prov-nom{font-family:'IBM Plex Sans Condensed',sans-serif;font-weight:700;font-size:17.5px;line-height:1.2}
   .prov-desc{margin-top:8px;font-size:13.5px;color:var(--gris);line-height:1.5}
-  .prov-datos{margin-top:12px;padding-top:11px;border-top:1px solid var(--linea);
-    display:flex;flex-wrap:wrap;gap:4px 16px;font-size:13px}
-  .prov-datos b{font-weight:600}
-  .prov-datos span{color:var(--gris)}
+  /* Un dato por renglón, con la etiqueta en Mono como en el presupuesto: en una
+     pantalla donde se compara, conviene poder leer el mismo dato de todos los
+     proveedores bajando con la vista, no buscarlo dentro de un párrafo. */
+  .prov-datos{margin-top:13px;padding-top:12px;border-top:1px solid var(--linea);
+    display:grid;gap:10px;font-size:13.5px}
+  .prov-datos b{display:block;font-family:'IBM Plex Mono',monospace;font-size:8.5px;
+    letter-spacing:.17em;text-transform:uppercase;color:var(--gris-2);font-weight:600;
+    margin-bottom:3px}
+  .prov-datos > span{color:var(--tinta);line-height:1.45}
   .prov-pie{padding:12px 16px;background:var(--claro-2);border-top:1px solid var(--linea);
     font-size:12.5px;color:var(--gris);display:flex;align-items:center;gap:8px}
 
   /* ═══════════ CHAT ═══════════ */
-  .vista.chat{padding:0;display:flex;flex-direction:column;
-    height:calc(100dvh - 54px - var(--st));max-width:640px}
+  /* flex:none + min-height:0 hacen que se respete este alto fijo; si no, .vista
+     es flex:1 y crece con el contenido en vez de dejar scrollear el hilo. */
+  .vista.chat{padding:0;display:flex;flex-direction:column;flex:none;min-height:0;
+    height:calc(100dvh - 56px - var(--st));max-width:640px}
+  /* Mejor que descontar el alto de la topbar a mano: que la app ocupe la pantalla
+     y el chat se quede con lo que sobra. Así no se desfasa si cambia la topbar. */
+  .app:has(> .vista.chat){height:100dvh}
+  .app:has(> .vista.chat) > .vista.chat{flex:1;height:auto}
+  /* La pantalla activa es la que tiene que llenar ese alto y ordenar en columna
+     ficha / hilo / barra. Sin esto queda como bloque suelto y, en charlas largas,
+     la barra de envío termina abajo del borde de la pantalla. */
+  .vista.chat > .pantalla.activa{flex:1;min-height:0;display:flex;flex-direction:column}
   .chat-ficha{background:var(--noche);color:var(--claro);padding:15px 16px;flex:none;
     position:relative;overflow:hidden}
   .chat-ficha::after{content:'';position:absolute;inset:0;pointer-events:none;
@@ -317,10 +393,24 @@
   .cf-detalle.cerrada{display:none}
   .cf-datos{margin-top:10px;display:flex;flex-wrap:wrap;gap:5px 16px;font-size:12.5px}
   .cf-datos b{color:var(--claro);font-weight:600}
+  /* Conector: recuerda que esta conversación salió de un match real. */
+  .cf-vinculo{display:flex;align-items:center;gap:9px;margin-top:11px}
+  .cfv-motivo{display:flex;align-items:center;flex:none}
+  .cfv-punto{width:6px;height:6px;border-radius:50%;flex:none}
+  .cfv-punto.cliente{background:var(--verde-luz)}
+  .cfv-punto.proveedor{background:var(--laton)}
+  .cfv-hilo{width:26px;height:1px;background:linear-gradient(90deg,var(--verde-luz),var(--laton))}
+  .cfv-txt{font-family:'IBM Plex Mono',monospace;font-size:8.5px;letter-spacing:.16em;
+    text-transform:uppercase;color:var(--gris-2)}
 
-  .hilo-msg{flex:1;overflow-y:auto;padding:18px 16px 8px;
+  /* min-height:0 es lo que hace que scrollee el hilo y no la pantalla entera:
+     sin eso la barra de envío se va abajo del borde en charlas largas. */
+  .hilo-msg{flex:1;min-height:0;overflow-y:auto;padding:18px 16px 8px;
     background:var(--claro-2);display:flex;flex-direction:column;gap:9px;
     -webkit-overflow-scrolling:touch}
+  /* Cada mensaje conserva su alto natural y scrollea el hilo: si los dejamos
+     encogerse, las tarjetas de presupuesto se cortan por la mitad. */
+  .hilo-msg > *,.asis-hilo > *{flex:none}
   .dia{align-self:center;font-family:'IBM Plex Mono',monospace;font-size:9.5px;
     letter-spacing:.13em;text-transform:uppercase;color:var(--gris);
     background:var(--claro);border:1px solid var(--linea);border-radius:99px;
@@ -353,33 +443,93 @@
   .aviso-chat.visible{display:block}
 
   /* ═══════════ PRESUPUESTO EN EL CHAT ═══════════ */
-  .presu{max-width:86%;align-self:flex-start;background:var(--claro);
-    border:1px solid var(--linea-fuerte);border-left:3px solid var(--laton);
-    border-radius:12px;padding:14px 15px;box-shadow:var(--sombra);animation:subir .18s ease both}
-  .presu.mia{align-self:flex-end;border-left:1px solid var(--linea-fuerte);border-right:3px solid var(--laton)}
-  .presu-top{display:flex;align-items:center;justify-content:space-between;gap:10px}
+  /* El presupuesto sale de la conversación: ocupa el ancho completo y no se
+     alinea a ningún lado, así se lee como documento y no como un mensaje más.
+     Ojo: la tarjeta se vuelve a renderizar en cada sondeo (~4s), así que no
+     lleva animaciones largas — se verían en loop. */
+  .presu{align-self:stretch;background:var(--claro);margin:7px 0;overflow:hidden;
+    border:1px solid rgba(201,162,39,.5);border-top:3px solid var(--laton);
+    border-radius:var(--r);box-shadow:var(--sombra-alta);animation:subir .18s ease both}
+  .presu-top{display:flex;align-items:center;justify-content:space-between;gap:10px;
+    padding:10px 15px;background:rgba(201,162,39,.08);
+    border-bottom:1px solid rgba(201,162,39,.26)}
   .presu-tag{font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:.15em;
     text-transform:uppercase;color:var(--laton-osc);font-weight:600}
-  .presu-monto{font-family:'IBM Plex Sans Condensed',sans-serif;font-weight:700;font-size:22px;
-    letter-spacing:-.01em;margin-top:8px}
-  .presu-incluye{font-size:13.5px;color:var(--gris);line-height:1.5;margin-top:6px}
-  .presu-plazo{font-size:12.5px;color:var(--gris);margin-top:6px}
-  .presu-acciones{display:flex;gap:8px;margin-top:13px}
+  .presu-cuerpo{padding:15px}
+  .presu-monto{font-family:'IBM Plex Sans Condensed',sans-serif;font-weight:700;font-size:30px;
+    letter-spacing:-.02em;line-height:1}
+  .presu-datos{margin:15px 0 0;display:grid;gap:12px}
+  .presu-datos dt{font-family:'IBM Plex Mono',monospace;font-size:8.5px;letter-spacing:.17em;
+    text-transform:uppercase;color:var(--gris-2);margin-bottom:4px}
+  .presu-datos dd{margin:0;font-size:13.5px;line-height:1.5}
+  .presu-acciones{display:flex;gap:8px;margin-top:16px}
   .presu-acciones .btn{margin-top:0;padding:10px 14px;font-size:14px}
-  .presu .hora{display:block;margin-top:10px;font-size:10.5px;
+  .presu .hora{display:block;margin-top:12px;font-size:10.5px;
     font-family:'IBM Plex Mono',monospace;color:var(--gris-2)}
   .sello.alerta{color:var(--alerta);border:1px solid rgba(166,58,28,.4);background:var(--alerta-luz)}
 
-  .presu-abrir{flex:none;width:100%;background:var(--claro);border:none;border-top:1px solid var(--linea);
-    color:var(--verde);font:inherit;font-size:13.5px;font-weight:600;padding:11px 16px;cursor:pointer;
+  /* Estado aceptado: marco verde (todo bien) + el sello de match en latón,
+     el mismo motivo del ingreso. Es el momento en que el match se cumple. */
+  .presu[data-estado="aceptado"]{border-color:rgba(30,93,73,.45);border-top-color:var(--verde)}
+  .presu[data-estado="aceptado"] .presu-top{background:rgba(30,93,73,.07);
+    border-bottom-color:rgba(30,93,73,.22)}
+  .presu[data-estado="aceptado"] .presu-tag{color:var(--verde)}
+  .presu-firma{display:none;align-items:center;gap:11px;margin-top:20px}
+  .presu[data-estado="aceptado"] .presu-firma{display:flex}
+  .presu-hilo{flex:1;height:1px;background:linear-gradient(90deg,var(--linea-fuerte),var(--laton))}
+  .presu-sello{font-family:'IBM Plex Mono',monospace;font-size:8.5px;letter-spacing:.16em;
+    text-transform:uppercase;color:var(--laton-osc);font-weight:600;
+    border:1px solid rgba(201,162,39,.5);border-radius:99px;padding:4px 10px;flex:none}
+
+  /* Estado rechazado: sigue consultable, pero deja de pedir atención. */
+  .presu[data-estado="rechazado"]{border-color:var(--linea);border-top-color:var(--linea-fuerte);
+    box-shadow:var(--sombra)}
+  .presu[data-estado="rechazado"] .presu-top{background:var(--claro-2);border-bottom-color:var(--linea)}
+  .presu[data-estado="rechazado"] .presu-tag{color:var(--gris-2)}
+  .presu[data-estado="rechazado"] .presu-monto{color:var(--gris-2)}
+
+  /* Mandar el presupuesto es la acción de más valor del proveedor: va en latón
+     para que no se pierda como un renglón de texto más. */
+  .presu-abrir{flex:none;width:100%;background:rgba(201,162,39,.10);border:none;
+    border-top:1px solid rgba(201,162,39,.32);
+    color:var(--laton-osc);font:inherit;font-size:13.5px;font-weight:600;padding:12px 16px;cursor:pointer;
     display:flex;align-items:center;justify-content:center;gap:7px}
   .presu-abrir svg{width:16px;height:16px}
-  .presu-abrir:active{background:var(--claro-2)}
+  .presu-abrir:active{background:rgba(201,162,39,.2)}
 
   .presu-panel{flex:none;background:var(--claro);border-top:1px solid var(--linea);
     padding:16px 16px 6px}
   .presu-panel .campo{margin-bottom:14px}
   .presu-panel textarea{min-height:72px}
+  .presu-panel .btn.lleno{background:var(--laton-osc)}
+  .presu-panel .btn.lleno:active:not(:disabled){background:#755D0D}
+
+  /* ═══════════ PAGAR EL PRESUPUESTO ═══════════ */
+  /* El pago se abre dentro de la misma tarjeta del presupuesto: la plata no se
+     despega del documento que la justifica. Es el espejo del panel con el que
+     el proveedor manda el presupuesto, pero en verde, que es el color del
+     cliente. */
+  .pago-panel{border-top:1px solid var(--linea);margin:16px -15px 0;padding:16px 15px 2px}
+  .pago-tit{font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:.17em;
+    text-transform:uppercase;color:var(--gris-2);margin-bottom:13px}
+  .pago-panel .campo{margin-bottom:12px}
+  /* Vencimiento y código van juntos: son un solo gesto al copiar de la tarjeta. */
+  .pago-fila{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+  /* Decir dónde viaja el dato de la tarjeta es lo que sostiene la confianza en
+     el momento más delicado de toda la app. */
+  .pago-seguro{display:flex;align-items:flex-start;gap:8px;font-size:11.5px;
+    line-height:1.45;color:var(--gris);margin:2px 0 14px}
+  .pago-seguro svg{width:13px;height:13px;flex:none;margin-top:2px;stroke:var(--verde)}
+  .pago-error{display:none;background:var(--alerta-luz);color:var(--alerta);
+    border-radius:var(--r-ch);padding:10px 12px;font-size:12.5px;line-height:1.45;margin-bottom:12px}
+  .pago-error.visible{display:block}
+  /* El segundo sello: el trato cerrado arriba, la plata firme abajo. */
+  .pago-firma{display:flex;align-items:center;gap:11px;margin-top:12px}
+  .pago-hilo{flex:1;height:1px;background:linear-gradient(90deg,var(--linea-fuerte),var(--laton))}
+  .pago-sello{font-family:'IBM Plex Mono',monospace;font-size:8.5px;letter-spacing:.16em;
+    text-transform:uppercase;color:var(--laton-osc);font-weight:600;
+    border:1px solid rgba(201,162,39,.5);border-radius:99px;padding:4px 10px;flex:none}
+  .pago-nota{font-size:11.5px;color:var(--gris);line-height:1.45;margin-top:10px}
 
   /* ═══════════ DECLARACIÓN ═══════════ */
   .declara{border:1px solid var(--linea-fuerte);border-radius:var(--r);padding:16px;
@@ -388,8 +538,35 @@
   .declara ul{margin:11px 0 0;padding-left:17px;font-size:13px;color:var(--gris);line-height:1.7}
   .declara-pie{font-size:12.5px;color:var(--gris);margin-top:12px;line-height:1.5}
   .tildar{display:flex;gap:11px;align-items:flex-start;margin-top:14px;cursor:pointer}
-  .tildar input{width:20px;height:20px;flex:none;margin-top:1px;accent-color:var(--verde)}
+  /* La regla general de input le pone appearance:none a todo para poder estilar
+     los campos de texto, y de paso le borra a la casilla su dibujo nativo: queda
+     un rectangulito vacío que nunca muestra tilde aunque esté marcada. Así que
+     el tilde lo dibujamos nosotros, y de paso queda del verde de la casa en vez
+     del azul del sistema. */
+  .tildar input{width:20px;height:20px;flex:none;margin-top:1px;padding:0;
+    border:1.5px solid var(--linea-fuerte);border-radius:6px;background:var(--claro);
+    cursor:pointer;transition:background-color .12s,border-color .12s}
+  .tildar input:checked{background-color:var(--verde);border-color:var(--verde);
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23FCFBF8' stroke-width='3.4' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M5 12.6l4.6 4.6L19 7.4'/%3E%3C/svg%3E");
+    background-repeat:no-repeat;background-position:center;background-size:14px}
+  .tildar input:focus-visible{outline:2px solid var(--verde-vivo);outline-offset:2px}
   .tildar span{font-size:13.5px;line-height:1.45;font-weight:500}
+
+  /* ═══════════ PUBLICAR UN SERVICIO: EL MISMO FORMULARIO, EN CLAVE LATÓN ═══════════ */
+  /* Es el espejo de "nuevo pedido": misma estructura de campos numerados, pero
+     acá estás del lado del que ofrece. El cambio de color avisa el cambio de rol
+     sin tener que releer nada. Los índices ya son latón en todos los
+     formularios, así que lo que cambia es todo lo que estaba en verde. */
+  #p-nuevo-proveedor .kicker{color:var(--laton-osc)}
+  #p-nuevo-proveedor input:focus,
+  #p-nuevo-proveedor select:focus,
+  #p-nuevo-proveedor textarea:focus{border-color:var(--laton-osc);
+    box-shadow:0 0 0 3px rgba(201,162,39,.16)}
+  #p-nuevo-proveedor .tildar input:checked{background-color:var(--laton-osc);
+    border-color:var(--laton-osc)}
+  #p-nuevo-proveedor .tildar input:focus-visible{outline-color:var(--laton)}
+  #p-nuevo-proveedor .btn.lleno{background:var(--laton-osc)}
+  #p-nuevo-proveedor .btn.lleno:active:not(:disabled){background:#755D0D}
 
   /* ═══════════ REPORTAR Y BAJA ═══════════ */
   .reportar{background:none;border:none;font:inherit;font-size:11.5px;color:var(--gris-2);
@@ -409,7 +586,13 @@
   .opcion{display:flex;gap:11px;align-items:flex-start;padding:13px 0;
     border-bottom:1px solid var(--linea);cursor:pointer}
   .opcion:last-of-type{border-bottom:none}
-  .opcion input{width:19px;height:19px;flex:none;margin-top:2px;accent-color:var(--verde)}
+  /* Mismo problema que la casilla: appearance:none le borra el dibujo nativo,
+     así que el punto del redondel también lo ponemos nosotros. */
+  .opcion input{width:19px;height:19px;flex:none;margin-top:2px;padding:0;
+    border:1.5px solid var(--linea-fuerte);border-radius:50%;background:var(--claro);
+    cursor:pointer;transition:border-color .12s,box-shadow .12s}
+  .opcion input:checked{border-color:var(--verde);border-width:6px}
+  .opcion input:focus-visible{outline:2px solid var(--verde-vivo);outline-offset:2px}
   .opcion b{font-weight:600;font-size:14.5px;display:block}
   .opcion span{font-size:12.5px;color:var(--gris);display:block;margin-top:2px}
 
@@ -419,11 +602,18 @@
   .peligro b{font-weight:600}
 
   /* ═══════════ COMPARADOR ═══════════ */
-  .comp-btn{background:var(--noche);color:var(--claro);border:none;border-radius:var(--r);
-    padding:15px 17px;width:100%;text-align:left;font:inherit;cursor:pointer;margin-bottom:14px;
+  /* Elegir entre presupuestos es la decisión más pesada de la app: el comparador
+     no puede parecer un bloque informativo más. Marco de latón y flecha para que
+     se lea como lo que es, algo para tocar. */
+  .comp-btn{background:var(--noche);color:var(--claro);border-radius:var(--r);
+    border:1px solid rgba(201,162,39,.45);
+    padding:17px;width:100%;text-align:left;font:inherit;cursor:pointer;margin-bottom:20px;
     display:flex;align-items:center;gap:13px;position:relative;overflow:hidden}
   .comp-btn::after{content:'';position:absolute;inset:0;pointer-events:none;
     background:radial-gradient(120% 100% at 100% 0%, rgba(201,162,39,.20), transparent 62%)}
+  .comp-btn::before{content:'';order:1;margin-left:auto;flex:none;
+    width:8px;height:8px;transform:rotate(45deg);position:relative;z-index:1;
+    border-right:2px solid var(--laton);border-top:2px solid var(--laton)}
   .comp-btn > *{position:relative;z-index:1}
   .comp-btn svg{width:20px;height:20px;color:var(--laton);flex:none;stroke-width:1.9}
   .comp-btn b{font-family:'IBM Plex Sans Condensed',sans-serif;font-weight:700;font-size:15.5px;display:block}
@@ -486,8 +676,13 @@
   .tasar-ico{width:42px;height:42px;border-radius:11px;background:var(--noche-3);flex:none;
     display:flex;align-items:center;justify-content:center;border:1px solid var(--noche-4)}
   .tasar-ico svg{width:21px;height:21px;color:var(--verde-luz);stroke-width:1.8}
-  .tasar-tit{font-family:'IBM Plex Sans Condensed',sans-serif;font-weight:700;font-size:17px;line-height:1.2}
-  .tasar-txt{font-size:12.5px;color:var(--gris-2);margin-top:4px;line-height:1.45}
+  .tasar-kicker{display:block;font-family:'IBM Plex Mono',monospace;font-size:8.5px;
+    letter-spacing:.19em;text-transform:uppercase;color:var(--laton);margin-bottom:7px}
+  /* display:block porque son <span>: sin esto el título y la bajada se pegan
+     en el mismo renglón y el margen de arriba de la bajada no hace nada. */
+  .tasar-tit{display:block;font-family:'IBM Plex Sans Condensed',sans-serif;font-weight:700;
+    font-size:17px;line-height:1.2}
+  .tasar-txt{display:block;font-size:12.5px;color:var(--gris-2);margin-top:5px;line-height:1.45}
   .tasar:active{transform:scale(.99)}
 
   .diag{background:var(--claro);border:1px solid var(--linea-fuerte);border-left:3px solid var(--laton);
@@ -504,7 +699,7 @@
   .diag-baja .diag-eti{color:var(--gris)}
 
   /* ═══════════ ASISTENTE ═══════════ */
-  .asis-hilo{flex:1;overflow-y:auto;padding:18px 16px 8px;background:var(--claro-2);
+  .asis-hilo{flex:1;min-height:0;overflow-y:auto;padding:18px 16px 8px;background:var(--claro-2);
     display:flex;flex-direction:column;gap:10px;-webkit-overflow-scrolling:touch}
   .asis-burb{max-width:86%;padding:12px 15px;border-radius:15px;font-size:14.5px;
     line-height:1.55;box-shadow:var(--sombra);word-wrap:break-word;overflow-wrap:anywhere;
@@ -537,6 +732,122 @@
     box-shadow:0 4px 14px rgba(14,24,21,.28)}
   .burbuja-asis svg{width:24px;height:24px;color:var(--verde-luz)}
   .burbuja-asis:active{transform:scale(.94)}
+
+  /* ═══════════ PEDIDOS ABIERTOS ═══════════ */
+  /* La tarjeta del pedido tiene que poder leerse de un vistazo desde una obra:
+     rubro grande, la foto ocupando ancho completo, y el cupo como dato duro
+     en mono, que es como el sistema muestra todo lo que es un número. */
+  .pedido{background:var(--claro);border:1px solid var(--linea);border-radius:var(--r);
+    margin-bottom:11px;overflow:hidden;box-shadow:var(--sombra)}
+  .pedido-foto{width:100%;height:150px;object-fit:cover;display:block;background:var(--claro-2)}
+  .pedido-cuerpo{padding:15px 16px}
+  .pedido-top{display:flex;align-items:baseline;justify-content:space-between;gap:11px}
+  .pedido-rubro{font-family:'IBM Plex Sans Condensed',sans-serif;font-weight:700;font-size:16.5px}
+  .pedido-cupo{font-family:'IBM Plex Mono',monospace;font-size:8.5px;letter-spacing:.14em;
+    text-transform:uppercase;font-weight:600;color:var(--laton-osc);flex:none;
+    border:1px solid rgba(201,162,39,.5);border-radius:99px;padding:3px 9px}
+  .pedido-desc{font-size:13.5px;line-height:1.5;color:var(--gris);margin-top:7px}
+  .pedido-datos{display:flex;flex-wrap:wrap;gap:7px;margin-top:11px}
+  .pedido-dato{font-family:'IBM Plex Mono',monospace;font-size:8.5px;letter-spacing:.12em;
+    text-transform:uppercase;font-weight:600;background:var(--claro-2);color:var(--gris);
+    border:1px solid var(--linea-fuerte);border-radius:99px;padding:4px 9px}
+  .pedido .btn{margin-top:13px}
+
+  /* ═══════════ PERMISO DE TRANSFERENCIA ═══════════ */
+  .tildar a{color:var(--verde);text-decoration:underline;text-underline-offset:2px}
+  .legales-estado{font-family:'IBM Plex Mono',monospace;font-size:9.5px;letter-spacing:.1em;
+    color:var(--gris-2);margin-top:10px;line-height:1.5}
+  /* Los documentos abren afuera, asi que se leen como referencia, no como
+     acciones de la app: mismo tratamiento mono que el resto de los datos. */
+  .legales-fila{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px}
+  .legales-btn{font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:.14em;
+    text-transform:uppercase;font-weight:600;color:var(--laton-osc);text-decoration:none;
+    border:1px solid var(--linea-fuerte);border-radius:99px;padding:8px 13px}
+  .legales-btn:active{background:var(--claro-2)}
+
+
+  /* Un error en una casilla no se ve si solo se pinta el cuadradito: es de
+     20px. Se marca el renglón entero. */
+  .tildar.mal span{color:var(--alerta)}
+  .tildar.mal input{border-color:var(--alerta);box-shadow:0 0 0 3px var(--alerta-luz)}
+  /* El foco salta acá cuando falta tildar, así que el aro tiene que ser del
+     mismo color que el error: uno verde sobre un borde rojo se contradice. */
+  .tildar.mal input:focus-visible{outline-color:var(--alerta)}
+
+  /* El mismo tratamiento de dato técnico que el resto del sistema: mono, en
+     versalitas, para lo que abre detalle en vez de ejecutar algo. */
+  .ver-detalle{display:inline-flex;align-items:center;gap:6px;margin:10px 0 0 31px;
+    font:inherit;font-family:'IBM Plex Mono',monospace;font-size:9px;
+    letter-spacing:.15em;text-transform:uppercase;font-weight:600;
+    background:none;border:1px solid var(--linea-fuerte);border-radius:99px;
+    padding:6px 12px;color:var(--laton-osc);cursor:pointer}
+  .ver-detalle:active{background:var(--claro-2)}
+  .ver-detalle svg{width:11px;height:11px;stroke-width:2.4}
+
+  /* Cada destino con su bandera de país en versalitas: lo primero que hay que
+     poder leer de un vistazo es a qué país va cada cosa. */
+  .destino-pais{font-family:'IBM Plex Mono',monospace;font-size:8.5px;
+    letter-spacing:.17em;text-transform:uppercase;font-weight:600;
+    color:var(--laton-osc);display:block;margin-bottom:3px}
+
+  /* ═══════════ PERMISO DE INTELIGENCIA ARTIFICIAL ═══════════ */
+  /* Cada superficie donde interviene una máquina lleva el mismo sello, siempre
+     igual y siempre visible. No es decoración: es lo que le permite a alguien
+     saber, sin leer nada, cuándo lo que está mirando lo escribió un programa. */
+  .ia-sello{display:inline-flex;align-items:center;gap:5px;
+    font-family:'IBM Plex Mono',monospace;font-size:8px;letter-spacing:.17em;
+    text-transform:uppercase;font-weight:600;border-radius:99px;padding:3px 9px;
+    background:rgba(201,162,39,.09);color:var(--laton-osc);
+    border:1px solid rgba(201,162,39,.45);white-space:nowrap;vertical-align:middle}
+  .ia-sello svg{width:10px;height:10px;stroke-width:2.4}
+  /* Sobre fondo noche el latón claro rinde mejor que el oscuro. */
+  .tasar .ia-sello,.comp-btn .ia-sello{background:rgba(201,162,39,.14);color:var(--laton)}
+
+  .ia-que{list-style:none;margin:15px 0 0;padding:0}
+  .ia-que li{display:flex;gap:10px;align-items:flex-start;padding:10px 0;
+    border-bottom:1px solid var(--linea);font-size:13.5px;line-height:1.5}
+  .ia-que li:last-child{border-bottom:none}
+  .ia-que b{font-weight:600;display:block;font-size:14px;color:var(--tinta)}
+  .ia-que span{color:var(--gris)}
+  .ia-que svg{width:17px;height:17px;flex:none;margin-top:2px;color:var(--laton);stroke-width:1.9}
+
+  /* Mismo hilo con sello que cierra un presupuesto o un cobro: cada vez que algo
+     queda firme en la app aparece esta misma firma. Dar un permiso también lo es. */
+  .ia-firma{display:flex;align-items:center;gap:11px;margin-top:16px}
+  .ia-hilo{flex:1;height:1px;background:linear-gradient(90deg,var(--linea-fuerte),var(--laton))}
+  .ia-fecha{font-family:'IBM Plex Mono',monospace;font-size:8.5px;letter-spacing:.16em;
+    text-transform:uppercase;color:var(--laton-osc);font-weight:600;
+    border:1px solid rgba(201,162,39,.5);border-radius:99px;padding:4px 10px;flex:none}
+
+  /* ═══════════ PREGUNTAS FRECUENTES ═══════════ */
+  /* Agrupadas por quién sos, que es la misma bifurcación que ordena toda la
+     app. Cada pregunta se abre en su lugar: nadie navega a otro lado para
+     leer dos renglones. */
+  .faq-grupo{margin-top:26px}
+  .faq-item{background:var(--claro);border:1px solid var(--linea);border-radius:var(--r);
+    margin-bottom:8px;overflow:hidden;box-shadow:var(--sombra)}
+  .faq-preg{width:100%;background:none;border:none;text-align:left;cursor:pointer;
+    font:inherit;font-family:'IBM Plex Sans Condensed',sans-serif;font-weight:700;
+    font-size:15.5px;color:var(--tinta);padding:15px 16px;display:flex;
+    align-items:center;justify-content:space-between;gap:12px}
+  .faq-preg svg{width:15px;height:15px;flex:none;color:var(--gris-2);
+    transition:transform .2s ease}
+  .faq-item.abierta .faq-preg svg{transform:rotate(90deg);color:var(--verde)}
+  .faq-item.abierta .faq-preg{color:var(--verde)}
+  .faq-resp{display:none;padding:0 16px 16px;font-size:13.5px;line-height:1.55;
+    color:var(--gris)}
+  .faq-item.abierta .faq-resp{display:block}
+  .faq-resp b{color:var(--tinta);font-weight:600}
+
+  /* Puente entre el asistente y las respuestas escritas: quien prefiere leer
+     no tiene que preguntarle a nadie. */
+  .asis-link{display:inline-flex;align-items:center;gap:6px;margin-top:12px;
+    font:inherit;font-family:'IBM Plex Mono',monospace;font-size:9.5px;
+    letter-spacing:.13em;text-transform:uppercase;font-weight:600;
+    background:none;border:1px solid var(--noche-4);border-radius:99px;
+    padding:7px 13px;color:var(--laton);cursor:pointer}
+  .asis-link:active{background:var(--noche-3)}
+  .asis-link svg{width:12px;height:12px;stroke-width:2.4}
 
   .oculto{display:none!important}
   @media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
@@ -681,42 +992,83 @@
     text-transform:uppercase;color:var(--gris);margin-top:9px}
   .kpi-nota{font-size:11.5px;color:var(--gris-2);margin-top:6px;line-height:1.4}
   .kpi.ancho{grid-column:1/-1}
-  .embudo{margin-top:14px}
-  .emb{margin-bottom:13px}
-  .emb-top{display:flex;justify-content:space-between;align-items:baseline;font-size:13px;margin-bottom:6px}
+  /* El embudo es el hilo de match en vertical: cada etapa no es una métrica
+     suelta sino la misma relación avanzando, por eso los nodos van encadenados
+     por un hilo y el largo de cada tramo muestra cuánta gente llegó hasta ahí.
+     El nodo final va en latón, igual que el sello de trato cerrado del chat. */
+  .embudo{margin-top:16px}
+  .emb{margin-bottom:17px;padding-left:17px;position:relative}
+  .emb:last-child{margin-bottom:2px}
+  .emb::before{content:'';position:absolute;left:0;top:4px;width:7px;height:7px;
+    border-radius:50%;background:var(--verde);z-index:1}
+  .emb:last-child::before{background:var(--laton)}
+  .emb:not(:last-child)::after{content:'';position:absolute;left:3px;top:11px;bottom:-17px;
+    width:1px;background:var(--linea-fuerte)}
+  .emb-top{display:flex;justify-content:space-between;align-items:baseline;gap:12px;
+    font-size:13px;margin-bottom:8px}
   .emb-top b{font-weight:600}
-  .emb-top span{color:var(--gris);font-size:12px}
-  .emb-barra{height:9px;border-radius:5px;background:var(--claro-3);overflow:hidden}
-  .emb-relleno{height:100%;border-radius:5px;background:var(--verde);transition:width .5s ease}
-  .emb-relleno.oro{background:var(--laton)}
-  .emb-relleno.gris{background:var(--gris-3)}
+  .emb-top span{color:var(--gris);font-size:12px;font-family:'IBM Plex Mono',monospace}
+  .emb-barra{height:2px;border-radius:2px;background:var(--linea);overflow:hidden}
+  .emb-relleno{height:100%;border-radius:2px;background:var(--verde);transition:width .5s ease}
+  /* un solo hilo para todas las etapas: el dato es el largo, no el color */
+  .emb-relleno.oro,.emb-relleno.gris{background:var(--verde)}
+  .emb:last-child .emb-relleno{background:var(--laton)}
+
+  /* ═══════════ COBROS POR LA APP ═══════════ */
+  /* Una sola tarjeta que cambia de estado sin moverse de lugar: sin conectar es
+     una invitación, conectada es un comprobante sellado. Que no cambie de sitio
+     hace que conectar se sienta como algo que se completó, no como navegar. */
+  .cobros{background:var(--claro);border:1px solid var(--linea);border-radius:var(--r);
+    padding:19px 18px;box-shadow:var(--sombra)}
+  .cobros.puesta{border-color:rgba(30,93,73,.42);background:rgba(30,93,73,.045)}
+  .cobros-tit{font-family:'IBM Plex Sans Condensed',sans-serif;font-weight:700;
+    font-size:17px;letter-spacing:-.01em}
+  .cobros-txt{font-size:13px;color:var(--gris);margin-top:6px;line-height:1.5}
+  .cobros .btn{margin-top:15px}
+  /* Los datos de la cuenta van en Mono, como toda la metadata de la app. */
+  .cobros-datos{margin:16px 0 0;display:grid;gap:9px}
+  .cobros-dato{display:flex;justify-content:space-between;align-items:baseline;gap:14px}
+  .cobros-dato dt{font-family:'IBM Plex Mono',monospace;font-size:8.5px;letter-spacing:.17em;
+    text-transform:uppercase;color:var(--gris-2);flex:none}
+  .cobros-dato dd{margin:0;font-family:'IBM Plex Mono',monospace;font-size:11.5px;
+    color:var(--tinta);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  /* El mismo hilo con sello que cierra un presupuesto aceptado: cada vez que
+     algo de plata queda firme en la app, aparece esta misma firma. */
+  .cobros-firma{display:flex;align-items:center;gap:11px;margin-top:19px}
+  .cobros-hilo{flex:1;height:1px;background:linear-gradient(90deg,var(--linea-fuerte),var(--laton))}
+  .cobros-sello{font-family:'IBM Plex Mono',monospace;font-size:8.5px;letter-spacing:.16em;
+    text-transform:uppercase;color:var(--laton-osc);font-weight:600;
+    border:1px solid rgba(201,162,39,.5);border-radius:99px;padding:4px 10px;flex:none}
 
   /* ═══════════ XP DEL CLIENTE ═══════════ */
-  .xp-caja{background:var(--noche);color:var(--claro);border-radius:var(--r);padding:20px;
-    margin-top:20px;position:relative;overflow:hidden}
-  .xp-caja::after{content:'';position:absolute;inset:0;pointer-events:none;
-    background:radial-gradient(120% 100% at 100% 0%, rgba(201,162,39,.20), transparent 62%)}
-  .xp-caja > *{position:relative;z-index:1}
-  .xp-num{font-family:'IBM Plex Sans Condensed',sans-serif;font-weight:700;font-size:38px;
-    line-height:1;letter-spacing:-.02em;color:var(--laton)}
-  .xp-eti{font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:.19em;
-    text-transform:uppercase;color:var(--gris-2);margin-bottom:9px}
-  .xp-barra{height:7px;border-radius:4px;background:var(--noche-3);overflow:hidden;margin-top:16px}
-  .xp-relleno{height:100%;border-radius:4px;background:linear-gradient(90deg,var(--verde-vivo),var(--laton));
-    transition:width .6s ease}
-  .xp-falta{font-size:12.5px;color:var(--gris-2);margin-top:9px}
-  .canje{background:var(--claro);border:1px solid var(--linea);border-radius:var(--r);
-    padding:15px 16px;margin-bottom:10px;display:flex;align-items:center;gap:13px;box-shadow:var(--sombra)}
-  .canje.listo{border-color:rgba(201,162,39,.55);background:rgba(201,162,39,.05)}
-  .canje-cuerpo{flex:1;min-width:0}
-  .canje-tit{font-family:'IBM Plex Sans Condensed',sans-serif;font-weight:700;font-size:16px}
-  .canje-txt{font-size:12.5px;color:var(--gris);margin-top:4px;line-height:1.45}
-  .canje .btn{width:auto;flex:none;padding:10px 15px;font-size:13.5px;margin-top:0}
-
   /* ═══════════ VARIOS ═══════════ */
   .chip-zona{font-family:'IBM Plex Mono',monospace;font-size:8.5px;letter-spacing:.12em;
     text-transform:uppercase;border-radius:99px;padding:3px 8px;font-weight:600;
     background:var(--claro-2);color:var(--gris);border:1px solid var(--linea-fuerte);white-space:nowrap}
+  /* El nombre manda sobre el correo: es lo que la persona reconoce como suyo.
+     El oficio va en mono, como todo lo que en esta app es un dato duro. */
+  /* Un dato que la persona no puede cambiar acá no puede parecer un campo:
+     sin borde de caja, sin fondo blanco, y en el latón del proveedor. */
+  .dato-fijo{font-family:'IBM Plex Sans Condensed',sans-serif;font-weight:700;font-size:17px;
+    color:var(--laton-osc);padding:2px 0 0}
+
+  .placa-nom{font-family:'IBM Plex Sans Condensed',sans-serif;font-weight:700;
+    font-size:16px;line-height:1.2;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .placa-oficio{font-family:'IBM Plex Mono',monospace;font-size:8.5px;letter-spacing:.16em;
+    text-transform:uppercase;font-weight:600;color:var(--laton);margin-top:3px}
+
+  .opcional{font-family:'IBM Plex Mono',monospace;font-size:8.5px;letter-spacing:.15em;
+    text-transform:uppercase;color:var(--gris-2);font-weight:600;margin-left:7px}
+
+  /* La miniatura del pedido usa el mismo marco que la foto del tasador, para
+     que se lea como la misma cosa: lo que el proveedor va a mirar. */
+  .s-previa{position:relative;margin-top:11px;border-radius:var(--r-ch);overflow:hidden;
+    border:1px solid var(--linea-fuerte)}
+  .s-previa img{width:100%;max-height:190px;object-fit:cover;display:block}
+  .s-previa button{position:absolute;top:8px;right:8px;width:30px;height:30px;border-radius:50%;
+    background:rgba(12,38,32,.72);border:none;color:var(--claro);cursor:pointer;
+    font-size:17px;line-height:1;display:flex;align-items:center;justify-content:center}
+
   .nota{background:var(--claro-2);border:1px solid var(--linea);border-radius:var(--r-ch);
     padding:12px 14px;font-size:12.5px;color:var(--gris);line-height:1.5;margin-top:12px}
   .nota b{color:var(--tinta);font-weight:600}
@@ -767,6 +1119,68 @@
     <button class="btn lleno" id="rep-enviar" type="button">
       <span class="rueda"></span><span id="rep-txt">Enviar reporte</span></button>
     <button class="btn vacio-b" id="rep-cerrar" type="button">Cancelar</button>
+  </div>
+</div>
+
+<!-- ═══════════ A DÓNDE VAN LOS DATOS ═══════════ -->
+<!-- Este permiso no es opcional como el de la IA: sin estos servicios la app no
+     existe. Por eso la hoja no ofrece un "ahora no" que seria mentira; dice que
+     es condición para tener cuenta y que la salida es no crearla o borrarla. -->
+<div class="telon" id="telon-infra">
+  <div class="hoja">
+    <div class="hoja-tit">A dónde van tus datos</div>
+    <div class="hoja-txt">Tratto no tiene servidores propios. Para funcionar se apoya en tres
+      servicios, y cada uno está en un país distinto.</div>
+    <ul class="ia-que">
+      <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6.5h16v11H4z"/><path d="M4 10h16"/><path d="M7.5 13.5h5"/></svg>
+        <span><span class="destino-pais">Brasil · São Paulo</span><b>La base de datos</b>
+        Tu cuenta, tus pedidos, tus conversaciones, tus calificaciones y tus fotos.</span></li>
+      <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M4.5 12a7.5 7.5 0 1 0 15 0 7.5 7.5 0 1 0-15 0M4.5 12h15M12 4.5c3.6 3.9 3.6 11.1 0 15M12 4.5c-3.6 3.9-3.6 11.1 0 15"/></svg>
+        <span><span class="destino-pais">Estados Unidos</span><b>La página y las tipografías</b>
+        Reciben tu dirección IP cada vez que abrís Tratto.</span></li>
+      <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6.5h18v11H3z"/><path d="M3 7l9 6 9-6"/></svg>
+        <span><span class="destino-pais">Francia</span><b>Los mails que te mandamos</b>
+        El de confirmación y los avisos de la aplicación.</span></li>
+    </ul>
+    <div class="nota">Argentina reconoce a <b>Francia</b> como país con nivel de protección
+      adecuado. A <b>Brasil</b> y a <b>Estados Unidos</b> no, aunque Brasil tiene desde 2020 su
+      propia ley general de protección de datos. Por eso te lo pedimos expresamente en vez de
+      darlo por sentado.</div>
+    <div class="peligro"><b>Esto no es opcional.</b> Sin estos servicios la aplicación no
+      existe. Si no estás de acuerdo, no crees la cuenta. Y si más adelante cambiás de idea,
+      podés borrarla desde Cuenta y se va todo con ella.</div>
+    <button class="btn vacio-b" id="infra-cerrar" type="button" style="margin-top:16px">Entendido</button>
+  </div>
+</div>
+
+<!-- ═══════════ PERMISO DE INTELIGENCIA ARTIFICIAL ═══════════ -->
+<!-- La ley 25.326 no deja mandar datos personales a un país sin nivel de
+     protección adecuado, y Estados Unidos no está en la nómina que reconoce la
+     Agencia argentina. El permiso expreso del titular es lo que habilita la
+     transferencia, así que tiene que pedirse aparte, decir qué sale y a dónde,
+     y poder revocarse. Por eso no está escondido dentro de los términos. -->
+<div class="telon" id="telon-ia">
+  <div class="hoja">
+    <div class="hoja-tit">Funciones con inteligencia artificial</div>
+    <div class="hoja-txt">Para tasar una foto, comparar presupuestos, responderte en el chat de
+      ayuda y resumir cómo trabajó un proveedor, Tratto usa un servicio de inteligencia
+      artificial de <b>OpenAI</b>, que procesa la información <b>en Estados Unidos</b>.</div>
+    <ul class="ia-que">
+      <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7.5h3l1.5-2h7L17 7.5h3a1 1 0 0 1 1 1v9a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1v-9a1 1 0 0 1 1-1z"/><circle cx="12" cy="13" r="3.4"/></svg>
+        <span><b>Qué sale de la app</b>La foto que saques, el texto de tus consultas y, cuando
+        calificás, la conversación de ese trabajo.</span></li>
+      <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M4.5 12a7.5 7.5 0 1 0 15 0 7.5 7.5 0 1 0-15 0M4.5 12h15M12 4.5c3.6 3.9 3.6 11.1 0 15M12 4.5c-3.6 3.9-3.6 11.1 0 15"/></svg>
+        <span><b>Qué no sale</b>Antes de mandar cualquier texto le sacamos correos, teléfonos,
+        CBU, tarjetas y usuarios de redes.</span></li>
+      <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3.5l7 3v5.5c0 4-3 7-7 8.5-4-1.5-7-4.5-7-8.5V6.5z"/><path d="M9.2 12.2l2 2 3.6-4"/></svg>
+        <span><b>Qué hacen con eso</b>OpenAI no lo usa para entrenar sus modelos y lo borra a
+        los 30 días. Nosotros guardamos la foto hasta 15 días.</span></li>
+    </ul>
+    <div class="nota">Es opcional. Si decís que no, la app funciona igual: pedís, cotizás, chateás
+      y cobrás lo mismo. Podés cambiar de idea cuando quieras desde <b>Cuenta</b>.</div>
+    <button class="btn lleno" id="ia-acepto" type="button" style="margin-top:16px">
+      <span class="rueda"></span><span id="ia-acepto-txt">Doy mi permiso</span></button>
+    <button class="btn vacio-b" id="ia-ahora-no" type="button">Ahora no</button>
   </div>
 </div>
 
@@ -832,7 +1246,7 @@
         </div>
       </div>
 
-      <div class="roles" id="sel-rol">
+      <div class="roles oculto" id="sel-rol">
         <button class="rol elegido" id="rol-cliente" type="button">
           <span class="rol-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4.5 3.5 8.2v7.6L11 19.5l7.5-3.7V8.2z"/><path d="M3.5 8.2 11 12l7.5-3.8M11 12v7.5"/></svg></span>
           <span style="min-width:0">
@@ -849,29 +1263,110 @@
         </button>
       </div>
 
-      <div class="pestanas" style="margin-top:24px">
-        <button class="pest activa" id="tab-entrar" type="button">Iniciar sesión</button>
-        <button class="pest" id="tab-crear" type="button">Crear cuenta</button>
+      <div id="a-datos">
+        <div class="pestanas" style="margin-top:24px">
+          <button class="pest activa" id="tab-entrar" type="button">Iniciar sesión</button>
+          <button class="pest" id="tab-crear" type="button">Crear cuenta</button>
+        </div>
+
+        <!-- El nombre y el oficio son de la persona, no del pedido ni del
+             servicio: se preguntan una vez acá y se reusan en todos lados. -->
+        <div class="campo oculto" id="a-nombre-caja">
+          <label for="a-nombre">Tu nombre</label>
+          <input id="a-nombre" type="text" autocomplete="name" maxlength="60" placeholder="Ej: Raúl Gómez">
+          <div class="ayuda" id="a-nombre-ayuda">Es como te van a ver los proveedores.</div>
+          <div class="err" id="e-a-nombre">Escribí tu nombre.</div>
+        </div>
+
+        <div class="campo oculto" id="a-tel-caja">
+          <label for="a-tel">Tu teléfono</label>
+          <input id="a-tel" type="tel" autocomplete="tel" maxlength="25" placeholder="11 5555-5555">
+          <div class="ayuda" id="a-tel-ayuda">Es el que va a ver la otra parte para coordinar el trabajo.</div>
+          <div class="err" id="e-a-tel">Cargá un teléfono de contacto.</div>
+        </div>
+
+        <div class="campo oculto" id="a-rubro-caja">
+          <label for="a-rubro">Tu oficio</label>
+          <select id="a-rubro"><option value="">Elegí tu oficio</option></select>
+          <div class="ayuda">Se elige una sola vez. Después publicás los servicios que quieras
+            dentro de tu oficio, sin volver a cargarlo.</div>
+          <div class="err" id="e-a-rubro">Elegí tu oficio para poder mostrarte en las búsquedas.</div>
+        </div>
+
+        <div class="campo oculto" id="a-otro-rubro-caja">
+          <label for="a-otro-rubro">¿Cómo se llama tu oficio?</label>
+          <input id="a-otro-rubro" type="text" maxlength="45" placeholder="Ej: Restauración de instrumentos">
+          <div class="err" id="e-a-otro-rubro">Escribí cómo se llama.</div>
+          <div class="campo" style="margin-top:12px">
+            <label for="a-rubro-padre">¿A qué rubro se parece más?</label>
+            <select id="a-rubro-padre"><option value="">Elegí el más parecido</option></select>
+            <div class="ayuda">Nos sirve para que los clientes de ese rubro te encuentren.</div>
+            <div class="err" id="e-a-rubro-padre">Elegí el rubro más parecido.</div>
+          </div>
+        </div>
+
+        <div class="campo">
+          <label for="a-email">Email</label>
+          <input id="a-email" type="email" autocomplete="email" placeholder="tucorreo@ejemplo.com">
+          <div class="err" id="e-a-email">Revisá el email: falta el @ o el dominio.</div>
+        </div>
+        <div class="campo">
+          <div class="campo-top">
+            <label for="a-pass">Contraseña</label>
+            <button class="ver" id="ver-pass" type="button">Mostrar</button>
+          </div>
+          <input id="a-pass" type="password" autocomplete="current-password" placeholder="••••••••">
+          <div class="ayuda">Al menos 8 caracteres.</div>
+          <div class="err" id="e-a-pass">La contraseña tiene que tener al menos 8 caracteres.</div>
+        </div>
+
+        <!-- Solo al crear la cuenta. La transferencia ocurre en el mismo momento
+             en que se crea, así que el permiso tiene que estar antes, no después. -->
+        <div class="oculto" id="a-transfer-caja">
+          <div class="tildar" id="a-transfer-fila">
+            <input type="checkbox" id="a-transfer" aria-labelledby="a-transfer-txt">
+            <span id="a-transfer-txt">Doy mi permiso para que mis datos se guarden en <b>Brasil</b> y para que la
+              aplicación se sirva desde <b>Estados Unidos</b>.</span>
+          </div>
+          <button class="ver-detalle" id="a-transfer-ver" type="button">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8.5"/><path d="M12 11v5.5M12 7.8h.01"/></svg>
+            Ver qué va a cada lugar
+          </button>
+          <div class="err" id="e-a-transfer">Sin este permiso no podemos crear la cuenta.</div>
+          <div class="tildar" id="a-legales-fila">
+            <input type="checkbox" id="a-legales" aria-labelledby="a-legales-txt">
+            <span id="a-legales-txt">Leí y acepto los
+              <a id="a-terminos-link" href="/terminos-cliente.html" target="_blank" rel="noopener">términos y condiciones para clientes</a> y la
+              <a href="/privacidad.html" target="_blank" rel="noopener">política de privacidad</a>.</span>
+          </div>
+          <div class="err" id="e-a-legales">Tenés que aceptar los términos para crear la cuenta.</div>
+        </div>
       </div>
 
-      <div class="campo">
-        <label for="a-email">Email</label>
-        <input id="a-email" type="email" autocomplete="email" placeholder="tucorreo@ejemplo.com">
-        <div class="err" id="e-a-email">Revisá el email: falta el @ o el dominio.</div>
-      </div>
-      <div class="campo">
-        <div class="campo-top">
-          <label for="a-pass">Contraseña</label>
-          <button class="ver" id="ver-pass" type="button">Mostrar</button>
+      <div class="oculto" id="a-codigo-caja">
+        <div class="codigo-cab">
+          <div class="codigo-tit">Confirmá tu email</div>
+          <p class="codigo-txt">Te mandamos un código de 6 números a <b id="a-codigo-dest">—</b>.
+            Escribilo acá y entrás.</p>
         </div>
-        <input id="a-pass" type="password" autocomplete="current-password" placeholder="••••••••">
-        <div class="ayuda">Al menos 8 caracteres.</div>
-        <div class="err" id="e-a-pass">La contraseña tiene que tener al menos 8 caracteres.</div>
+        <div class="campo">
+          <label for="a-codigo">Código</label>
+          <input id="a-codigo" type="text" inputmode="numeric" autocomplete="one-time-code"
+                 maxlength="6" placeholder="000000">
+          <div class="ayuda">Puede tardar un minuto. Fijate también en el correo no deseado.</div>
+          <div class="err" id="e-a-codigo">Son 6 números. Revisá el código del mail.</div>
+        </div>
       </div>
+
       <button class="btn lleno" id="a-enviar" type="button">
         <span class="rueda"></span><span id="a-txt">Iniciar sesión</span>
       </button>
       <div class="aviso" id="a-aviso" role="status"></div>
+
+      <div class="oculto" id="a-codigo-acciones">
+        <button class="btn vacio-b" id="a-reenviar" type="button">Reenviame el código</button>
+        <button class="ver" id="a-otro-email" type="button">Usar otro email</button>
+      </div>
     </section>
 
     <!-- ══════ INICIO ══════ -->
@@ -909,10 +1404,14 @@
 
       <div class="placa" style="margin-top:20px">
         <div class="placa-top">
-          <div class="avatar" id="c-inicial">—</div>
-          <div style="min-width:0">
-            <div class="placa-mail" id="c-mail">—</div>
-            <div class="placa-estado"><span class="pulso"></span>Sesión activa</div>
+          <div class="placa-marca">Cuenta Tratto</div>
+          <div class="placa-id">
+            <div class="avatar" id="c-inicial">—</div>
+            <div style="min-width:0">
+              <div class="placa-nom" id="c-nombre">—</div>
+              <div class="placa-mail" id="c-mail">—</div>
+              <div class="placa-estado"><span class="pulso"></span>Sesión activa</div>
+            </div>
           </div>
         </div>
         <div class="placa-cuerpo">
@@ -924,33 +1423,74 @@
         </div>
       </div>
 
-      <div class="sec"><span class="sec-tit">Servicios que ofrecés</span><span class="sec-num" id="n-perfiles"></span></div>
-      <div id="lista-perfiles"></div>
-      <button class="btn vacio-b" id="ir-proveedor" type="button" style="margin-top:12px">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>
-        Ofrecer un servicio
-      </button>
+      <div id="perfil-cobros-sec" class="oculto">
+        <div class="sec"><span class="sec-tit">Cobros</span></div>
+        <div id="perfil-cobros"></div>
+      </div>
 
-      <div class="sec"><span class="sec-tit">Cómo estás usando la app</span></div>
+      <!-- Cuenta es la única pantalla que comparten los dos roles, así que es
+           la única por donde alguien podría publicar un servicio sin haber
+           aceptado el contrato de proveedor. Se muestra solo si lo es. -->
+      <div id="perfil-servicios-sec">
+        <div class="sec"><span class="sec-tit">Servicios que ofrecés</span><span class="sec-num" id="n-perfiles"></span></div>
+        <div id="lista-perfiles"></div>
+        <button class="btn vacio-b" id="ir-proveedor" type="button" style="margin-top:12px">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>
+          Ofrecer un servicio
+        </button>
+      </div>
+
+      <div class="sec"><span class="sec-tit">Tu tipo de cuenta</span></div>
       <div class="item">
         <div class="item-top">
-          <span class="item-tit" id="modo-actual">Modo cliente</span>
+          <span class="item-tit" id="modo-actual">Cuenta de cliente</span>
           <span class="sello verde" id="modo-sello">Cliente</span>
         </div>
         <div class="item-meta"><span id="modo-txt">Pedís servicios y elegís proveedores.</span></div>
+      </div>
+
+      <div class="sec"><span class="sec-tit">Tus datos</span></div>
+      <div class="item" id="ia-caja">
+        <div class="item-top">
+          <span class="item-tit">Funciones con inteligencia artificial</span>
+          <span id="ia-sello-estado"></span>
+        </div>
+        <div class="item-meta"><span id="ia-txt">—</span></div>
+        <div id="ia-firma-caja"></div>
         <div class="item-pie">
-          <button class="cambiar-modo" id="btn-cambiar-modo" type="button">
+          <button class="cambiar-modo" id="ia-cambiar" type="button">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 3.5 21 7l-4 3.5M21 7H8.5M7 20.5 3 17l4-3.5M3 17h12.5"/></svg>
-            <span id="btn-cambiar-txt">Cambiar a modo proveedor</span>
+            <span id="ia-cambiar-txt">—</span>
           </button>
         </div>
       </div>
+
+      <div class="item" id="transfer-item">
+        <div class="item-top">
+          <span class="item-tit">Dónde se guardan tus datos</span>
+          <span id="transfer-sello"></span>
+        </div>
+        <div class="item-meta"><span id="transfer-txt">—</span></div>
+        <div id="transfer-firma-caja"></div>
+        <div class="item-pie">
+          <button class="cambiar-modo" id="transfer-ver-cuenta" type="button">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8.5"/><path d="M12 11v5.5M12 7.8h.01"/></svg>
+            <span>Ver qué va a cada lugar</span>
+          </button>
+        </div>
+      </div>
+
+      <div class="legales-fila">
+        <a class="legales-btn" id="legales-terminos" href="/terminos-cliente.html" target="_blank" rel="noopener">Términos y condiciones</a>
+        <a class="legales-btn" href="/privacidad.html" target="_blank" rel="noopener">Política de privacidad</a>
+      </div>
+      <div class="legales-estado" id="legales-estado"></div>
 
       <div class="sec"><span class="sec-tit">Sesión</span></div>
       <button class="btn riesgo" id="salir" type="button">Cerrar sesión</button>
       <button class="btn vacio-b" id="ir-baja" type="button">Borrar mi cuenta</button>
       <p style="text-align:center;margin-top:18px;font-family:'IBM Plex Mono',monospace;
-        font-size:10px;letter-spacing:.14em;color:var(--gris-3)">VERSIÓN F-18 · REPORTES Y BAJA</p>
+        font-size:10px;letter-spacing:.14em;color:var(--gris-3)">VERSIÓN F-34 · REVISION LEGAL Y FISCAL</p>
     </section>
 
     <!-- ══════ NUEVO PEDIDO ══════ -->
@@ -963,13 +1503,16 @@
         <span class="tasar-top">
           <span class="tasar-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7.5h3l1.5-2h7L17 7.5h3a1 1 0 0 1 1 1v9a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1v-9a1 1 0 0 1 1-1z"/><circle cx="12" cy="13" r="3.4"/></svg></span>
           <span style="min-width:0">
-            <span class="tasar-tit">Sacale una foto y te decimos cuánto sale</span>
-            <span class="tasar-txt">Completamos el pedido por vos, con un precio orientativo. Cada proveedor pone el suyo.</span>
+            <span class="tasar-kicker">Empezá por acá &nbsp;<span class="ia-sello"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v3M12 18v3M3 12h3M18 12h3M6.3 6.3l2.1 2.1M15.6 15.6l2.1 2.1M17.7 6.3l-2.1 2.1M8.4 15.6l-2.1 2.1"/><circle cx="12" cy="12" r="3.2"/></svg>Con IA</span></span>
+            <span class="tasar-tit">Sacale una foto y te damos una idea del precio</span>
+            <span class="tasar-txt">Una IA mira la foto y estima cuánto suele salir ese trabajo en el mercado. No son precios de esta app.</span>
           </span>
         </span>
       </button>
       <input type="file" id="tasar-archivo" accept="image/*" capture="environment" class="oculto">
       <div id="tasar-resultado"></div>
+
+      <div class="bifurca"><span>o cargá los datos vos</span></div>
 
       <div style="margin-top:26px">
         <div class="campo">
@@ -999,19 +1542,37 @@
           <div class="err" id="e-s-zona">Elegí dónde necesitás el servicio.</div>
         </div>
         <div class="campo">
-          <label for="s-presupuesto"><span class="indice">06</span>Presupuesto</label>
+          <label for="s-presupuesto"><span class="indice">06</span>Presupuesto <span class="opcional">opcional</span></label>
           <div class="caja-monto"><span class="signo">$</span>
             <input id="s-presupuesto" type="text" inputmode="numeric" placeholder="30.000"></div>
+          <div class="ayuda">Si tenés una idea de cuánto querés gastar, ponela. Si no, dejalo vacío:
+            <b>no filtra proveedores</b>, solo les da contexto.</div>
           <div class="ayuda">Después lo negociás con el proveedor.</div>
-          <div class="err" id="e-s-presupuesto">Cargá un monto mayor a cero.</div>
+
         </div>
         <div class="campo">
           <label for="s-urgencia"><span class="indice">07</span>Para cuándo</label>
           <select id="s-urgencia"><option value="">Elegí la urgencia</option></select>
           <div class="err" id="e-s-urgencia">Indicá para cuándo lo necesitás.</div>
         </div>
+        <!-- Hasta ahora la unica foto que existia era la del tasador. Quien
+             cargaba el pedido a mano lo mandaba sin ninguna, y un techo roto
+             descrito en un parrafo no lo puede cotizar nadie. -->
         <div class="campo">
-          <label for="s-desc"><span class="indice">08</span>Contanos el detalle</label>
+          <label><span class="indice">08</span>Una foto <span class="opcional">opcional</span></label>
+          <div id="s-foto-caja">
+            <button class="btn vacio-b" id="s-foto-elegir" type="button">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7.5h3l1.5-2h7L17 7.5h3a1 1 0 0 1 1 1v9a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1v-9a1 1 0 0 1 1-1z"/><circle cx="12" cy="13" r="3.4"/></svg>
+              <span id="s-foto-txt">Sacar o elegir una foto</span>
+            </button>
+            <input type="file" id="s-foto-archivo" accept="image/*" class="oculto">
+          </div>
+          <div class="ayuda">Es lo que más ayuda a que te coticen bien. Un proveedor que ve el
+            trabajo puede darte un precio; uno que lee un párrafo, no.</div>
+        </div>
+
+        <div class="campo">
+          <label for="s-desc"><span class="indice">09</span>Contanos el detalle</label>
           <textarea id="s-desc" maxlength="500" placeholder="Ej: Necesito facturas B todos los meses. Monotributista categoría D, unas 15 por mes."></textarea>
           <div class="ayuda"><span id="s-cont">0</span>/500</div>
           <div class="err" id="e-s-desc">Contá en una o dos líneas qué necesitás.</div>
@@ -1057,7 +1618,17 @@
           <input id="p-tel" type="tel" autocomplete="tel" placeholder="11 5555-5555">
           <div class="err" id="e-p-tel">Cargá un teléfono de contacto.</div>
         </div>
-        <div class="campo">
+        <!-- El oficio se eligió al crear la cuenta y no se vuelve a preguntar:
+             un pintor no pasa a ser electricista. Se muestra como dato. Las
+             cuentas creadas antes de que se pidiera todavía ven el selector. -->
+        <div class="campo" id="p-rubro-fijo-caja">
+          <label><span class="indice">04</span>Tu oficio</label>
+          <div class="dato-fijo" id="p-rubro-fijo">—</div>
+          <div class="ayuda">Se eligió al crear tu cuenta. Podés publicar todos los servicios que
+            quieras dentro de tu oficio.</div>
+        </div>
+
+        <div class="campo" id="p-rubro-caja">
           <label for="p-rubro"><span class="indice">04</span>Rubro</label>
           <select id="p-rubro"><option value="">Elegí tu rubro</option></select>
           <div class="err" id="e-p-rubro">Elegí un rubro para poder mostrarte en las búsquedas.</div>
@@ -1116,10 +1687,14 @@
             <li>Sos responsable del trabajo que hacés.</li>
           </ul>
           <div class="declara-pie">Tratto cobra una comisión por usar la aplicación cuando cerrás un trabajo.</div>
-          <label class="tildar" for="p-declara">
-            <input type="checkbox" id="p-declara">
-            <span>Leí esto y estoy de acuerdo</span>
-          </label>
+          <!-- Sin "for": el input ya está adentro del label, así que la
+               asociación existe sola. Ponerle además el for hace que Safari de
+               iPhone procese el toque dos veces y el tilde no quede nunca.
+               Ver el comentario de tildable(): al final sacamos el label. -->
+          <div class="tildar" id="p-declara-fila">
+            <input type="checkbox" id="p-declara" aria-labelledby="p-declara-txt">
+            <span id="p-declara-txt">Leí esto y estoy de acuerdo</span>
+          </div>
           <div class="err" id="e-p-declara">Tenés que estar de acuerdo para publicar tu servicio.</div>
         </div>
 
@@ -1167,6 +1742,14 @@
             <div class="cf-rol" id="ch-rol">—</div>
           </div>
           <button class="cf-abrir" id="ch-abrir" type="button">Ver ficha</button>
+        </div>
+        <div class="cf-vinculo" aria-hidden="true">
+          <span class="cfv-motivo">
+            <span class="cfv-punto cliente"></span>
+            <span class="cfv-hilo"></span>
+            <span class="cfv-punto proveedor"></span>
+          </span>
+          <span class="cfv-txt">Conectados por Tratto</span>
         </div>
         <div class="cf-detalle cerrada" id="ch-detalle">
           <div id="ch-desc">—</div>
@@ -1219,9 +1802,19 @@
     <section class="pantalla" id="p-panel">
       <div class="kicker">Tu actividad</div>
       <h1 id="panel-saludo">Panel</h1>
+      <div class="placa-oficio" id="panel-oficio" style="margin:-4px 0 0"></div>
       <p class="bajada">Cómo viene tu trabajo en la app. Se actualiza solo.</p>
 
       <div id="panel-sin-perfil"></div>
+
+      <!-- Va arriba de los números: cuando el proveedor abre la app, lo primero
+           que tiene que ver es trabajo disponible, no sus estadísticas. -->
+      <div id="panel-abiertos-sec" class="oculto">
+        <div class="sec"><span class="sec-tit">Pedidos para vos</span><span class="sec-num" id="n-abiertos"></span></div>
+        <p class="bajada" style="margin-top:-4px">De tu rubro y todavía sin cubrir. Si te interesa uno,
+          decilo y se abre el chat con el cliente.</p>
+        <div id="lista-abiertos"></div>
+      </div>
 
       <div id="panel-datos" class="oculto">
         <div class="kpis">
@@ -1235,18 +1828,21 @@
             <div class="kpi-eti">Presupuestos enviados</div>
             <div class="kpi-nota">Cuántos llegaste a cotizar</div></div>
           <div class="kpi"><div class="kpi-num" id="k-cerrados">—</div>
-            <div class="kpi-eti">Trabajos cerrados</div>
-            <div class="kpi-nota">Presupuestos aceptados</div></div>
+            <div class="kpi-eti">Cerrados por Tratto</div>
+            <div class="kpi-nota">Trabajos que cobraste por la app</div></div>
           <div class="kpi ancho">
             <div class="kpi-eti" style="margin-top:0">De la visita al trabajo</div>
             <div class="embudo" id="embudo"></div>
           </div>
           <div class="kpi ancho">
-            <div class="kpi-eti" style="margin-top:0">Facturado por la app</div>
+            <div class="kpi-eti" style="margin-top:0">Cobrado por la app</div>
             <div class="kpi-num" id="k-monto" style="margin-top:10px">—</div>
             <div class="kpi-nota" id="k-monto-nota">Suma de los presupuestos que te aceptaron</div>
           </div>
         </div>
+
+        <div class="sec"><span class="sec-tit">Cobros</span></div>
+        <div id="panel-cobros"></div>
 
         <div class="sec"><span class="sec-tit">Tu trayectoria</span></div>
         <div id="panel-medallas"></div>
@@ -1468,34 +2064,15 @@
     </section>
 
     <!-- ══════ PREMIOS Y XP DEL CLIENTE ══════ -->
-    <section class="pantalla" id="p-premios">
-      <div class="kicker">Tus puntos</div>
-      <h1>Premios</h1>
-      <p class="bajada">Cada trabajo que cerrás por la app suma puntos. Los canjeás por descuentos.</p>
-
-      <div class="xp-caja">
-        <div class="xp-eti">Puntos disponibles</div>
-        <div class="xp-num" id="xp-num">0</div>
-        <div class="xp-barra"><div class="xp-relleno" id="xp-relleno" style="width:0%"></div></div>
-        <div class="xp-falta" id="xp-falta"></div>
-      </div>
-
-      <div class="sec"><span class="sec-tit">Canjear</span></div>
-      <div id="lista-canjes"></div>
-
-      <div class="sec"><span class="sec-tit">Cómo se ganan</span></div>
-      <div class="nota">
-        <b>100 puntos</b> por cada trabajo que cerrás con un proveedor por la app.
-        El descuento sale de la comisión de la app: <b>el proveedor cobra igual lo que presupuestó.</b>
-      </div>
-    </section>
-
-
     <!-- ══════ ASISTENTE ══════ -->
     <section class="pantalla" id="p-asistente">
       <div class="asis-cab">
-        <div class="asis-tit">¿En qué te damos una mano?</div>
+        <div class="asis-tit">¿En qué te damos una mano? <span class="ia-sello"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v3M12 18v3M3 12h3M18 12h3M6.3 6.3l2.1 2.1M15.6 15.6l2.1 2.1M17.7 6.3l-2.1 2.1M8.4 15.6l-2.1 2.1"/><circle cx="12" cy="12" r="3.2"/></svg>Con IA</span></div>
         <div class="asis-sub">Preguntame lo que quieras sobre Tratto. Si no sé, lo pasamos al equipo.</div>
+        <button class="asis-link" id="asis-a-faq" type="button">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M5 4.5h14v15H5z"/><path d="M8.5 8.5h7M8.5 12h7M8.5 15.5h4"/></svg>
+          Preguntas frecuentes
+        </button>
       </div>
       <div class="asis-hilo" id="asis-hilo"></div>
       <div class="barra-envio">
@@ -1504,6 +2081,19 @@
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12h15M13 6l6 6-6 6"/></svg>
         </button>
       </div>
+    </section>
+
+
+    <!-- ══════ PREGUNTAS FRECUENTES ══════ -->
+    <section class="pantalla" id="p-ayuda">
+      <div class="kicker">Ayuda</div>
+      <h1>Preguntas frecuentes</h1>
+      <p class="bajada">Lo que más nos preguntan. Si no encontrás lo tuyo, preguntale al asistente o escribinos.</p>
+      <div id="faq-lista"></div>
+      <a class="btn vacio-b" id="faq-mail" href="mailto:trattoapp1@gmail.com" style="margin-top:22px">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6.5h18v11H3z"/><path d="M3 7l9 6 9-6"/></svg>
+        Escribinos
+      </a>
     </section>
 
   </main>
@@ -1523,12 +2113,12 @@ const SUPABASE_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFz
 const CLAVE = 'mkt_sesion';
 
 const RUBROS_GRUPOS = {
-  'Hogar y oficios': ['Plomería','Destapaciones','Gas matriculado','Electricidad','Albañilería y refacciones',
+  'Hogar y oficios': ['Plomería','Destapaciones','Albañilería y refacciones',
     'Carpintería','Pintura','Herrería y soldadura','Techos y humedades','Impermeabilización',
     'Durlock y cielorrasos','Pisos y cerámicas','Vidriería','Cerrajería','Aberturas y ventanas',
     'Aire acondicionado','Calefacción y calderas','Service de electrodomésticos','Antenas y redes de TV',
     'Piletas y mantenimiento','Jardinería y parquización','Poda y extracción de árboles',
-    'Control de plagas','Limpieza de tanques','Armado de muebles','Cortinas y toldos',
+    'Limpieza de tanques','Armado de muebles','Cortinas y toldos',
     'Cámaras de seguridad','Portones automáticos','Paneles solares','Pequeños arreglos del hogar'],
   'Limpieza': ['Limpieza de hogar','Limpieza de oficinas','Limpieza de consorcios','Limpieza final de obra',
     'Limpieza de tapizados y alfombras','Lavado a domicilio'],
@@ -1536,17 +2126,19 @@ const RUBROS_GRUPOS = {
     'Lavadero y detailing','Auxilio y remolque','Cerrajería del automotor','Aire acondicionado del automotor',
     'Fletes y mudanzas','Transporte y logística','Chofer particular','Delivery y mensajería'],
   'Profesionales': ['Contabilidad y facturación','Asesoría impositiva','Liquidación de sueldos',
-    'Asesoría legal','Escribanía','Arquitectura','Ingeniería','Maestro mayor de obras','Agrimensura',
-    'Diseño de interiores','Dirección de obra','Seguros','Gestoría y trámites','Despachante de aduana',
-    'Recursos humanos','Consultoría de negocios','Traducción','Traductor público','Martillero e inmobiliaria'],
+    'Diseño de interiores','Gestoría y trámites','Recursos humanos','Consultoría de negocios','Traducción'],
   'Digital y creativo': ['Desarrollo web','Desarrollo de apps','Diseño gráfico','Diseño UX/UI',
     'Marketing digital','Community manager','Publicidad en redes','Posicionamiento en Google (SEO)',
     'Redacción y contenidos','Edición de video','Fotografía','Video y drone','Ilustración',
     'Animación y motion','Locución','Producción musical','Automatización con IA','Soporte técnico',
     'Reparación de PC y notebooks','Reparación de celulares','Redes y cableado','Ciberseguridad','Análisis de datos'],
-  'Salud y bienestar': ['Kinesiología','Fonoaudiología','Nutrición','Psicología','Psicopedagogía',
-    'Enfermería a domicilio','Acompañante terapéutico','Cuidado de adultos mayores','Masajes y terapias',
-    'Entrenador personal','Yoga y pilates','Podología','Terapia ocupacional'],
+  /* Se llama "Bienestar" y no "Salud": el punto 6.2 de los contratos no admite
+     profesiones de la salud, así que el nombre del grupo no puede prometerlas.
+     Por lo mismo "Masajes" va sin "y terapias" —terapia ocupacional, psicología y
+     fonoaudiología son matriculadas— y el cuidado de adultos mayores es
+     acompañamiento, no acompañamiento terapéutico, que también lo es. */
+  'Bienestar': ['Cuidado de adultos mayores','Masajes',
+    'Entrenador personal','Yoga y pilates'],
   'Belleza y estética': ['Peluquería','Barbería','Manicura y pedicura','Cosmetología','Maquillaje',
     'Depilación','Estética corporal','Tatuajes y piercings'],
   'Eventos': ['Catering','Chef a domicilio','Pastelería y tortas','Fotografía de eventos','Filmación de eventos',
@@ -1555,7 +2147,7 @@ const RUBROS_GRUPOS = {
   'Educación': ['Clases particulares (primaria)','Clases particulares (secundaria)','Apoyo universitario',
     'Idiomas','Clases de música','Preparación de exámenes','Cursos y capacitación','Clases de manejo',
     'Clases de natación','Clases de computación'],
-  'Mascotas': ['Paseo de perros','Adiestramiento canino','Veterinaria a domicilio','Guardería de mascotas',
+  'Mascotas': ['Paseo de perros','Adiestramiento canino','Guardería de mascotas',
     'Peluquería canina'],
   'Otros servicios': ['Costura y arreglos de ropa','Tapicería','Restauración de muebles','Imprenta y gráfica',
     'Estampado y serigrafía','Cartelería','Asistente virtual','Organización de espacios',
@@ -1568,11 +2160,7 @@ const CATEGORIAS = Object.keys(RUBROS_GRUPOS);
 /* zonas que se consideran cercanas entre sí para el matching flexible */
 const REGIONES = {
   'AMBA': ['CABA','GBA Norte','GBA Oeste','GBA Sur'],
-  'Centro': ['Buenos Aires (interior)','Córdoba','Santa Fe','Entre Ríos'],
-  'Cuyo': ['Mendoza'],
-  'NOA': ['Tucumán','Salta'],
-  'NEA': ['Chaco','Corrientes','Misiones'],
-  'Patagonia': ['Neuquén','Río Negro','Chubut','Santa Cruz']
+  'Interior bonaerense': ['Buenos Aires (interior)']
 };
 function regionDe(z){
   for(const r in REGIONES) if(REGIONES[r].includes(z)) return r;
@@ -1587,7 +2175,7 @@ function relacionZona(zonaCliente, zonaProv){
   return 'lejos';
 }
 
-/* ══════ MEDALLAS Y PUNTOS ══════ */
+/* ══════ MEDALLAS ══════ */
 /* Niveles de trayectoria. Muestran cuánto trabajó, no son un premio de la app. */
 const MEDALLAS = [
   {min:100, nombre:'100+ trabajos', clase:'dia'},
@@ -1598,15 +2186,13 @@ const MEDALLAS = [
 const medallaDe = n => MEDALLAS.find(m => Number(n||0) >= m.min) || null;
 const PROXIMA_MEDALLA = n => [...MEDALLAS].reverse().find(m => Number(n||0) < m.min) || null;
 
-const XP_POR_TRABAJO = 100;
-const CANJES = [
-  {xp:500,  pct:5,  tope:5000,  tit:'5% de descuento',  txt:'Hasta $5.000 en tu próximo trabajo.'},
-  {xp:1200, pct:10, tope:12000, tit:'10% de descuento', txt:'Hasta $12.000 en tu próximo trabajo.'},
-  {xp:2500, pct:15, tope:30000, tit:'15% de descuento', txt:'Hasta $30.000 en tu próximo trabajo.'}
-];
-const ZONAS = ['CABA','GBA Norte','GBA Oeste','GBA Sur','Buenos Aires (interior)','Córdoba','Santa Fe',
-  'Mendoza','Tucumán','Salta','Entre Ríos','Chaco','Corrientes','Misiones','Neuquén','Río Negro','Chubut',
-  'Santa Cruz','Otra provincia','Todo el país (remoto)'];
+/* Solo CABA y Provincia de Buenos Aires, y no es una decisión de mercado.
+   Ofrecerle el servicio a alguien de Córdoba configura presencia digital en
+   Córdoba (RG 5/2021 de la Comisión Arbitral), y eso arrastra una jurisdicción
+   más de Ingresos Brutos: inscripción, alícuota, padrón y declaración mensual.
+   Cada provincia que se agregue acá es una jurisdicción fiscal nueva, así que
+   se abre cuando se decide abrirla, no por descuido. */
+const ZONAS = ['CABA','GBA Norte','GBA Oeste','GBA Sur','Buenos Aires (interior)'];
 const URGENCIAS = ['Urgente (hoy o mañana)','Esta semana','Este mes','Sin apuro'];
 const DISPONIBILIDADES = ['Inmediata','Esta semana','Este mes','A coordinar'];
 
@@ -1626,6 +2212,7 @@ const num = v => Number(String(v).replace(/\./g,'').replace(/[^\d]/g,'')) || 0;
 llenarGrupos('s-servicio',RUBROS_GRUPOS); llenar('s-zona',ZONAS); llenar('s-urgencia',URGENCIAS);
 llenarGrupos('p-rubro',RUBROS_GRUPOS);    llenar('p-zona',ZONAS);  llenar('p-disp',DISPONIBILIDADES);
 llenarGrupos('p-rubro-padre', RUBROS_GRUPOS);
+llenarGrupos('a-rubro', RUBROS_GRUPOS);   llenarGrupos('a-rubro-padre', RUBROS_GRUPOS);
 
 /* montos con separador de miles mientras se escribe */
 ['s-presupuesto','p-desde','p-hasta','cp-monto','pb-precio'].forEach(id => {
@@ -1660,11 +2247,34 @@ async function api(ruta){
 /* ══════════════════ NAVEGACIÓN ══════════════════ */
 const SUB = {'nuevo-pedido':'Nuevo pedido','nuevo-proveedor':'Nuevo servicio','detalle':'Tu pedido',
   'chat':'Chat','editar-perfil':'Editar perfil','credencial':'Nuevo antecedente',
-  'publicacion':'Nueva publicación','asistente':'Ayuda'};
+  'publicacion':'Nueva publicación','asistente':'Ayuda','ayuda':'Preguntas frecuentes'};
 const CON_REFRESCO = ['inicio','chats','perfil','panel'];
 let actual='auth', volverA='inicio';
 
+/* Pantallas que pertenecen a un rol. El rol se fija al crear la cuenta y cada
+   uno acepta un contrato distinto, así que llegar a la pantalla del otro
+   --por un enlace viejo, por el historial, por un botón que se nos escape--
+   no puede terminar en publicar algo que esa persona no firmó. */
+const DEL_ROL = {
+  'nuevo-pedido':'cliente', 'inicio':'cliente', 'detalle':'cliente',
+  'nuevo-proveedor':'proveedor', 'panel':'proveedor', 'ficha':'proveedor',
+  'publicacion':'proveedor', 'credencial':'proveedor'
+};
+
 function ir(p, efecto){
+  /* Una pantalla que no existe no puede tumbar la aplicación. Pasa cuando se
+     retira una pantalla y queda un enlace viejo, o una sesión guardada que
+     apunta a ella: antes reventaba con "classList of null" y el usuario se
+     quedaba mirando la pantalla anterior sin saber por qué. */
+  if(!$('p-'+p)){
+    console.warn('Pantalla inexistente:', p);
+    p = modo === 'proveedor' ? 'panel' : 'inicio';
+    efecto = 'entra';
+  }
+  if(DEL_ROL[p] && DEL_ROL[p] !== modo){
+    p = modo === 'proveedor' ? 'panel' : 'inicio';
+    efecto = 'entra';
+  }
   if(actual === 'chat' && p !== 'chat') cerrarChat();
   document.querySelectorAll('.pantalla').forEach(x => x.classList.remove('activa','entra','desliza'));
   const el = $('p-'+p);
@@ -1690,13 +2300,30 @@ $('tabs').addEventListener('click', e => {
   if(p === 'ficha'){ abrirFicha(sesion.user.id, true); return; }
   ir(p);
   if(p === 'panel')   cargarPanel();
-  if(p === 'premios') cargarPremios();
 });
 $('volver').addEventListener('click', () => ir(volverA, 'entra'));
 $('ir-pedido').addEventListener('click', () => {
   volverA='inicio'; $('tasar-resultado').innerHTML=''; ir('nuevo-pedido');
 });
-$('ir-proveedor').addEventListener('click', () => { volverA='perfil'; ir('nuevo-proveedor'); });
+$('ir-proveedor').addEventListener('click', () => {
+  volverA='perfil';
+  prepararFormProveedor();
+  ir('nuevo-proveedor');
+});
+
+/* Nombre y oficio vienen de la cuenta. El nombre queda editable --puede
+   publicar como "Raúl Gómez" o como "Pinturería Gómez"-- y el oficio no,
+   porque es lo que define con qué pedidos matchea. */
+function prepararFormProveedor(){
+  const oficio = miOficio(), rubro = (sesion.user.user_metadata || {}).rubro;
+  const tiene = !!rubro;
+  $('p-rubro-fijo-caja').classList.toggle('oculto', !tiene);
+  $('p-rubro-caja').classList.toggle('oculto', tiene);
+  $('caja-otro-rubro').classList.add('oculto');
+  if(tiene) $('p-rubro-fijo').textContent = oficio;
+  if(!$('p-nombre').value) $('p-nombre').value = miNombre();
+  if(!$('p-tel').value)    $('p-tel').value    = miTelefono();
+}
 
 $('refrescar').addEventListener('click', async () => {
   const b = $('refrescar'); b.classList.add('girando');
@@ -1704,9 +2331,56 @@ $('refrescar').addEventListener('click', async () => {
   setTimeout(() => b.classList.remove('girando'), 500);
 });
 
+/* ══════════════════ FOTO DEL PEDIDO ══════════════════ */
+/* Independiente del tasador: el tasador la usa para estimar, esta va con el
+   pedido para que el proveedor vea el trabajo antes de cotizar. Si el cliente
+   uso el tasador, esa misma foto queda cargada acá y no se sube dos veces. */
+let fotoPedido = null, subiendoFoto = false;
+
+function pintarFotoPedido(){
+  const caja = $('s-foto-caja');
+  const previa = caja.querySelector('.s-previa');
+  if(previa) previa.remove();
+  $('s-foto-elegir').classList.toggle('oculto', !!fotoPedido);
+  if(!fotoPedido) return;
+  caja.insertAdjacentHTML('beforeend',
+    '<div class="s-previa"><img src="'+esc(fotoPedido)+'" alt="">' +
+    '<button type="button" id="s-foto-sacar" aria-label="Sacar la foto">&times;</button></div>');
+  $('s-foto-sacar').addEventListener('click', () => { fotoPedido = null; pintarFotoPedido(); });
+}
+
+$('s-foto-elegir').addEventListener('click', () => { if(!subiendoFoto) $('s-foto-archivo').click(); });
+
+$('s-foto-archivo').addEventListener('change', async e => {
+  const archivo = e.target.files[0];
+  e.target.value = '';
+  if(!archivo || !archivo.type.startsWith('image/')) return;
+  subiendoFoto = true;
+  $('s-foto-txt').textContent = 'Subiendo…';
+  try{
+    fotoPedido = await subirFoto(archivo);
+    pintarFotoPedido();
+  }catch(err){
+    console.error(err);
+    avisar('s-aviso','No se pudo subir la foto. Probá de nuevo.','mal');
+  }finally{
+    subiendoFoto = false;
+    $('s-foto-txt').textContent = 'Sacar o elegir una foto';
+  }
+});
+
 /* ══════════════════ VALIDACIÓN ══════════════════ */
-const limpiar = ids => ids.forEach(c => { $(c).classList.remove('mal'); $('e-'+c).classList.remove('visible'); });
-const fallar = (c,r) => { $(c).classList.add('mal'); $('e-'+c).classList.add('visible'); if(!r.p) r.p=c; };
+/* Un campo puede no tener mensaje de error --el presupuesto dejó de ser
+   obligatorio y se quedó sin él-- así que no se da por sentado que exista. */
+const limpiar = ids => ids.forEach(c => {
+  $(c).classList.remove('mal');
+  const e = $('e-'+c); if(e) e.classList.remove('visible');
+});
+const fallar = (c,r) => {
+  $(c).classList.add('mal');
+  const e = $('e-'+c); if(e) e.classList.add('visible');
+  if(!r.p) r.p=c;
+};
 function enfocar(r){ if(!r.p) return false; $(r.p).focus(); $(r.p).scrollIntoView({block:'center',behavior:'smooth'}); return true; }
 const avisar = (id,t,tipo) => { const a=$(id); a.textContent=t; a.className='aviso visible '+tipo; };
 const mailOk = v => /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(v);
@@ -1743,6 +2417,11 @@ if(!matchMedia('(prefers-reduced-motion: reduce)').matches){
   }, 4600);
 }
 
+/* La fecha que llevan impresa las páginas publicadas. Se guarda con la
+   aceptación porque importa QUÉ versión se aceptó, no solo que se aceptó: si
+   los documentos cambian, esto es lo que dice quién aceptó cuál. */
+const VERSION_LEGALES = '2026-09-08';
+
 let modoAuth = 'entrar';
 function cambiarAuth(m){
   modoAuth = m;
@@ -1752,7 +2431,82 @@ function cambiarAuth(m){
   $('a-txt').textContent = c ? 'Crear cuenta' : 'Iniciar sesión';
   $('a-pass').setAttribute('autocomplete', c ? 'new-password' : 'current-password');
   limpiar(['a-email','a-pass']); $('a-aviso').className='aviso';
+  /* La transferencia arranca cuando se crea la cuenta, no cuando se inicia
+     sesión: quien ya la tiene, ya la consintió. */
+  $('a-transfer-caja').classList.toggle('oculto', !c);
+  /* El rol es de la cuenta, no del teléfono: se elige al crearla y no se
+     vuelve a preguntar. Al iniciar sesión lo decide la cuenta, así que el
+     selector no tiene nada que hacer ahí. */
+  $('sel-rol').classList.toggle('oculto', !c);
+  $('a-nombre-caja').classList.toggle('oculto', !c);
+  $('a-tel-caja').classList.toggle('oculto', !c);
+  pintarCamposDeRol();
+  limpiarTransfer();
+  if(pasoAuth === 'codigo') volverAPasoDatos();
 }
+
+/* ── Filas tildables ──────────────────────────────────────────────────
+   Estas filas eran <label> con el <input> adentro, que es la forma correcta y
+   la que funciona en todos lados menos donde importa. En Safari de iPhone el
+   toque sobre el texto se procesa dos veces --una por el toque y otra por el
+   reenvío que hace la etiqueta-- y la casilla queda como estaba. Ya nos había
+   pasado con la declaración del formulario de proveedor.
+
+   Sacar el for no alcanzó, así que sacamos la etiqueta entera: ahora es un
+   div y el tildado lo maneja este código. Sin etiqueta no hay reenvío, y sin
+   reenvío no hay doble toque. El aria-labelledby mantiene el nombre accesible
+   que daba el label.
+
+   Tres casos, en este orden:
+     · sobre un enlace  → abre el documento y no tilda. Leer no es aceptar.
+     · sobre el cuadrado → el navegador ya lo tildó solo, no lo tocamos.
+     · en cualquier otro lado de la fila → lo tildamos nosotros. */
+function tildable(idFila, idCasilla){
+  const fila = $(idFila), casilla = $(idCasilla);
+  fila.addEventListener('click', e => {
+    if(e.target.closest('a') || e.target === casilla) return;
+    casilla.checked = !casilla.checked;
+    casilla.dispatchEvent(new Event('change', {bubbles:true}));
+  });
+}
+tildable('a-transfer-fila', 'a-transfer');
+tildable('a-legales-fila',  'a-legales');
+tildable('p-declara-fila',  'p-declara');
+
+/* El oficio solo se le pregunta al proveedor, y el subcampo del oficio propio
+   solo si eligió "Otro". Se recalcula cuando cambia la pestaña o el rol. */
+function pintarCamposDeRol(){
+  const creando = modoAuth === 'crear', prov = rolElegido === 'proveedor';
+  $('a-rubro-caja').classList.toggle('oculto', !(creando && prov));
+  $('a-otro-rubro-caja').classList.toggle('oculto',
+    !(creando && prov && $('a-rubro').value === RUBRO_OTRO));
+  $('a-nombre-ayuda').textContent = prov
+    ? 'Es como te van a ver los clientes. Puede ser tu nombre o el de tu negocio.'
+    : 'Es como te van a ver los proveedores.';
+  $('a-nombre').placeholder = prov ? 'Ej: Raúl Gómez / Pinturería Gómez' : 'Ej: Raúl Gómez';
+  $('a-tel-ayuda').textContent = prov
+    ? 'Es el que van a ver los clientes con los que trabajes.'
+    : 'Es el que van a ver los proveedores con los que trabajes.';
+}
+$('a-rubro').addEventListener('change', () => {
+  pintarCamposDeRol();
+  if($('a-rubro').value !== RUBRO_OTRO){ $('a-otro-rubro').value=''; $('a-rubro-padre').value=''; }
+  limpiar(['a-rubro']);
+});
+
+function limpiarTransfer(){
+  $('a-transfer-fila').classList.remove('mal');
+  $('e-a-transfer').classList.remove('visible');
+  $('a-legales-fila').classList.remove('mal');
+  $('e-a-legales').classList.remove('visible');
+}
+$('a-transfer').addEventListener('change', limpiarTransfer);
+$('a-legales').addEventListener('change', limpiarTransfer);
+$('a-transfer-ver').addEventListener('click', () => $('telon-infra').classList.add('abierto'));
+$('infra-cerrar').addEventListener('click', () => $('telon-infra').classList.remove('abierto'));
+$('telon-infra').addEventListener('click', e => {
+  if(e.target.id === 'telon-infra') $('telon-infra').classList.remove('abierto');
+});
 $('tab-entrar').addEventListener('click', () => cambiarAuth('entrar'));
 $('tab-crear').addEventListener('click', () => cambiarAuth('crear'));
 $('ver-pass').addEventListener('click', () => {
@@ -1769,16 +2523,45 @@ function traducir(t){
   if(t.includes('already registered')||t.includes('already been registered')) return 'Ese email ya tiene una cuenta. Probá iniciando sesión.';
   if(t.includes('invalid login credentials')) return 'Email o contraseña incorrectos.';
   if(t.includes('password should be')) return 'La contraseña es muy corta. Usá al menos 8 caracteres.';
-  if(t.includes('email not confirmed')) return 'Falta confirmar el email. Revisá la configuración de Supabase.';
+  if(t.includes('email not confirmed')) return 'Todavía no confirmaste el email. Poné el código que te mandamos.';
+  if(t.includes('expired')||t.includes('otp_expired')||(t.includes('token')&&t.includes('invalid')))
+    return 'Ese código no coincide o ya venció. Revisalo, o pedí uno nuevo.';
+  if(t.includes('for security purposes')) return 'Esperá unos segundos antes de pedir otro código.';
   if(t.includes('rate limit')||t.includes('too many')) return 'Demasiados intentos seguidos. Esperá un minuto.';
   return 'No se pudo completar: ' + (t || 'error desconocido');
 }
 
 $('a-enviar').addEventListener('click', async () => {
+  if(pasoAuth === 'codigo') return confirmarCodigo();
   limpiar(['a-email','a-pass']);
+  limpiarTransfer();
+  limpiar(['a-nombre','a-tel','a-rubro','a-otro-rubro','a-rubro-padre']);
   const r={p:null}, email=$('a-email').value.trim(), pass=$('a-pass').value;
+  if(modoAuth === 'crear'){
+    if($('a-nombre').value.trim().length < 2) fallar('a-nombre',r);
+    if($('a-tel').value.replace(/\D/g,'').length < 6) fallar('a-tel',r);
+    if(rolElegido === 'proveedor'){
+      if(!$('a-rubro').value) fallar('a-rubro',r);
+      else if($('a-rubro').value === RUBRO_OTRO){
+        if($('a-otro-rubro').value.trim().length < 3) fallar('a-otro-rubro',r);
+        if(!$('a-rubro-padre').value) fallar('a-rubro-padre',r);
+      }
+    }
+  }
   if(!mailOk(email)) fallar('a-email',r);
   if(pass.length<8) fallar('a-pass',r);
+  /* El cuadradito es de 20px: si el error se marcara solo ahí no se vería.
+     Se pinta el renglón entero. */
+  if(modoAuth === 'crear' && !$('a-transfer').checked){
+    $('a-transfer-fila').classList.add('mal');
+    $('e-a-transfer').classList.add('visible');
+    if(!r.p) r.p = 'a-transfer';
+  }
+  if(modoAuth === 'crear' && !$('a-legales').checked){
+    $('a-legales-fila').classList.add('mal');
+    $('e-a-legales').classList.add('visible');
+    if(!r.p) r.p = 'a-legales';
+  }
   if(enfocar(r)) return;
 
   const b=$('a-enviar'); b.disabled=true; b.classList.add('cargando');
@@ -1786,11 +2569,36 @@ $('a-enviar').addEventListener('click', async () => {
   try{
     const res = await fetch(SUPABASE_URL + (modoAuth==='crear' ? '/auth/v1/signup':'/auth/v1/token?grant_type=password'), {
       method:'POST', headers:{'apikey':SUPABASE_ANON,'Content-Type':'application/json'},
-      body: JSON.stringify({email, password:pass})
+      /* El permiso viaja en el mismo alta que lo necesita, no en una llamada
+         posterior que podría no llegar. Queda en user_metadata con fecha: sin
+         eso no hay forma de acreditar cuándo se dio. */
+      body: JSON.stringify(modoAuth === 'crear'
+        ? {email, password:pass,
+           data:{ rol: rolElegido,
+                  nombre: $('a-nombre').value.trim(),
+                  telefono: $('a-tel').value.trim(),
+                  /* Igual que en el formulario de servicio: si el oficio es
+                     propio, se guarda el nombre lindo aparte y el rubro
+                     parecido es el que usa el matching. */
+                  rubro: rolElegido !== 'proveedor' ? null
+                       : ($('a-rubro').value === RUBRO_OTRO ? $('a-rubro-padre').value : $('a-rubro').value),
+                  rubro_personalizado: (rolElegido === 'proveedor' && $('a-rubro').value === RUBRO_OTRO)
+                       ? $('a-otro-rubro').value.trim() : null,
+                  transfer_permiso:true, transfer_permiso_fecha:new Date().toISOString(),
+                  legales_aceptados:true, legales_fecha:new Date().toISOString(),
+                  legales_version:VERSION_LEGALES, legales_rol:rolElegido }}
+        : {email, password:pass})
     });
     const j = await res.json();
-    if(!res.ok){ avisar('a-aviso', traducir(j.msg||j.error_description||j.message),'mal'); return; }
-    if(!j.access_token){ avisar('a-aviso','Listo. Te mandamos un mail para confirmar tu cuenta. Revisá tu casilla y la carpeta de spam.','ok'); return; }
+    if(!res.ok){
+      const crudo = (j.msg||j.error_description||j.message||'').toLowerCase();
+      avisar('a-aviso', traducir(j.msg||j.error_description||j.message),'mal');
+      /* cuenta creada pero sin confirmar: en vez de dejarlo trabado, lo llevamos
+         al paso del código, que es justo lo que le falta hacer. */
+      if(crudo.includes('email not confirmed')) irAPasoCodigo(email);
+      return;
+    }
+    if(!j.access_token){ irAPasoCodigo(email); return; }
     store.escribir({access_token:j.access_token, refresh_token:j.refresh_token, modo:rolElegido});
     sesion = {access_token:j.access_token, user:j.user};
     modo = rolElegido;
@@ -1799,8 +2607,116 @@ $('a-enviar').addEventListener('click', async () => {
   }catch(e){ console.error(e); avisar('a-aviso','No se pudo conectar. Revisá tu conexión.','mal'); }
   finally{
     b.disabled=false; b.classList.remove('cargando');
-    $('a-txt').textContent = modoAuth==='crear' ? 'Crear cuenta':'Iniciar sesión';
+    /* si pasamos al paso del código, ese texto ya lo puso irAPasoCodigo */
+    if(pasoAuth !== 'codigo') $('a-txt').textContent = modoAuth==='crear' ? 'Crear cuenta':'Iniciar sesión';
   }
+});
+
+/* ══════════════════ CONFIRMACIÓN POR CÓDIGO ══════════════════ */
+/* Supabase manda el código de 6 números en el mismo mail de confirmación: el
+   template de "Confirm signup" tiene que mostrar {{ .Token }} en vez del enlace.
+   El código se valida contra /auth/v1/verify, que devuelve la sesión igual que
+   un login, así que a partir de ahí el resto del flujo no cambia. */
+let pasoAuth = 'datos', emailPendiente = '';
+
+function irAPasoCodigo(email){
+  pasoAuth = 'codigo'; emailPendiente = email;
+  $('a-datos').classList.add('oculto');
+  $('a-codigo-caja').classList.remove('oculto');
+  $('a-codigo-acciones').classList.remove('oculto');
+  $('a-codigo-dest').textContent = email;
+  $('a-txt').textContent = 'Confirmar y entrar';
+  $('a-codigo').value = '';
+  limpiar(['a-codigo']);
+  $('a-codigo').focus();
+}
+
+function volverAPasoDatos(){
+  pasoAuth = 'datos'; emailPendiente = '';
+  $('a-datos').classList.remove('oculto');
+  $('a-codigo-caja').classList.add('oculto');
+  $('a-codigo-acciones').classList.add('oculto');
+  $('a-codigo').value = '';
+  limpiar(['a-codigo']);
+  $('a-txt').textContent = modoAuth === 'crear' ? 'Crear cuenta' : 'Iniciar sesión';
+}
+
+/* sólo números, y si ya escribió los 6 no lo hacemos buscar el botón */
+$('a-codigo').addEventListener('input', () => {
+  const i = $('a-codigo');
+  const limpio = i.value.replace(/\D/g,'').slice(0,6);
+  if(i.value !== limpio) i.value = limpio;
+  limpiar(['a-codigo']); $('a-aviso').className = 'aviso';
+  if(limpio.length === 6) confirmarCodigo();
+});
+$('a-codigo').addEventListener('keydown', e => { if(e.key === 'Enter') confirmarCodigo(); });
+
+let confirmando = false;
+async function confirmarCodigo(){
+  if(confirmando) return;
+  limpiar(['a-codigo']);
+  const r = {p:null}, codigo = $('a-codigo').value.replace(/\D/g,'');
+  if(codigo.length !== 6) fallar('a-codigo', r);
+  if(enfocar(r)) return;
+
+  confirmando = true;
+  const b = $('a-enviar'); b.disabled = true; b.classList.add('cargando');
+  $('a-txt').textContent = 'Confirmando…';
+  try{
+    const res = await fetch(SUPABASE_URL + '/auth/v1/verify', {
+      method:'POST', headers:{'apikey':SUPABASE_ANON,'Content-Type':'application/json'},
+      body: JSON.stringify({type:'signup', email:emailPendiente, token:codigo})
+    });
+    const j = await res.json();
+    if(!res.ok || !j.access_token){
+      avisar('a-aviso', traducir(j.msg||j.error_description||j.message), 'mal');
+      $('a-codigo').select();
+      return;
+    }
+    store.escribir({access_token:j.access_token, refresh_token:j.refresh_token, modo:rolElegido});
+    sesion = {access_token:j.access_token, user:j.user};
+    modo = rolElegido;
+    $('a-pass').value = '';
+    volverAPasoDatos();
+    $('a-aviso').className = 'aviso';
+    entrarApp();
+  }catch(e){ console.error(e); avisar('a-aviso','No se pudo conectar. Revisá tu conexión.','mal'); }
+  finally{
+    confirmando = false;
+    b.disabled = false; b.classList.remove('cargando');
+    if(pasoAuth === 'codigo') $('a-txt').textContent = 'Confirmar y entrar';
+  }
+}
+
+/* Supabase no deja mandar dos mails seguidos, así que el botón se toma un
+   minuto y lo dice, en vez de fallar con un error que nadie entiende. */
+$('a-reenviar').addEventListener('click', async () => {
+  const b = $('a-reenviar');
+  if(b.disabled || !emailPendiente) return;
+  b.disabled = true; b.textContent = 'Mandando…';
+  try{
+    const res = await fetch(SUPABASE_URL + '/auth/v1/resend', {
+      method:'POST', headers:{'apikey':SUPABASE_ANON,'Content-Type':'application/json'},
+      body: JSON.stringify({type:'signup', email:emailPendiente})
+    });
+    const j = await res.json().catch(() => ({}));
+    if(!res.ok) avisar('a-aviso', traducir(j.msg||j.error_description||j.message), 'mal');
+    else avisar('a-aviso','Listo, va en camino un código nuevo.','ok');
+  }catch(e){ avisar('a-aviso','No se pudo conectar. Revisá tu conexión.','mal'); }
+  let quedan = 60;
+  b.textContent = 'Reenviame el código (' + quedan + ')';
+  const reloj = setInterval(() => {
+    quedan--;
+    if(quedan <= 0 || pasoAuth !== 'codigo'){
+      clearInterval(reloj); b.disabled = false; b.textContent = 'Reenviame el código';
+    } else b.textContent = 'Reenviame el código (' + quedan + ')';
+  }, 1000);
+});
+
+$('a-otro-email').addEventListener('click', () => {
+  volverAPasoDatos();
+  $('a-aviso').className = 'aviso';
+  $('a-email').focus();
 });
 
 $('salir').addEventListener('click', async () => {
@@ -1823,7 +2739,9 @@ function resumenPedido(){
   const v = id => $(id).value.trim();
   const t = (x,h) => x ? '<span class="lleno">'+esc(x)+'</span>' : '<span class="hueco">'+h+'</span>';
   $('s-frase').innerHTML = 'Buscamos ' + t(v('s-servicio'),'un servicio') + ' en ' + t(v('s-zona'),'tu zona') +
-    ' por hasta ' + (num(v('s-presupuesto')) ? '<span class="lleno">'+pesos(num(v('s-presupuesto')))+'</span>' : '<span class="hueco">tu presupuesto</span>') + '.';
+    (num(v('s-presupuesto'))
+      ? '. Tenés en mente <span class="lleno">'+pesos(num(v('s-presupuesto')))+'</span>.'
+      : '.');
   const set=(e,x)=> $(e).innerHTML = x ? esc(x) : '<span class="hueco">Sin definir</span>';
   set('rv-rubro',v('s-servicio')); set('rv-zona',v('s-zona')); set('rv-urg',v('s-urgencia'));
   $('s-cont').textContent = $('s-desc').value.length;
@@ -1838,7 +2756,6 @@ $('s-enviar').addEventListener('click', async () => {
   if(v('s-tel').replace(/\D/g,'').length<6) fallar('s-tel',r);
   if(!v('s-servicio')) fallar('s-servicio',r);
   if(!v('s-zona')) fallar('s-zona',r);
-  if(num(v('s-presupuesto'))<=0) fallar('s-presupuesto',r);
   if(!v('s-urgencia')) fallar('s-urgencia',r);
   if(v('s-desc').length<10) fallar('s-desc',r);
   if(enfocar(r)){ avisar('s-aviso','Faltan datos. Revisá los campos marcados.','mal'); return; }
@@ -1851,13 +2768,18 @@ $('s-enviar').addEventListener('click', async () => {
       body: JSON.stringify({
         nombre_cliente:v('s-nombre'), email_cliente:v('s-email'), telefono_cliente:v('s-tel'),
         servicio_necesitado:v('s-servicio'), zona:v('s-zona'),
-        presupuesto:num(v('s-presupuesto')), urgencia:v('s-urgencia'),
-        descripcion:v('s-desc'), estado:'pendiente', user_id:sesion.user.id
+        /* Vacío es null, no cero: un presupuesto de cero es un dato, y "no dijo
+           nada" es la ausencia de dato. Confundirlos hace que el proveedor lea
+           que el cliente no quiere pagar. */
+        presupuesto: num(v('s-presupuesto')) || null, urgencia:v('s-urgencia'),
+        descripcion:v('s-desc'), estado:'pendiente', user_id:sesion.user.id,
+        foto_url: fotoPedido
       })
     });
     if(res.status===401){ avisar('s-aviso','Tu sesión venció. Volvé a entrar.','mal'); return; }
     if(!res.ok){ console.error(await res.text()); avisar('s-aviso','No se pudo enviar (error '+res.status+').','mal'); return; }
     CS.forEach(c => $(c).value=''); $('s-email').value = sesion.user.email;
+    fotoPedido = null; pintarFotoPedido(); $('tasar-resultado').innerHTML = '';
     resumenPedido(); await cargarPedidos(); ir('inicio','entra');
   }catch(e){ console.error(e); avisar('s-aviso','No se pudo conectar. Probá de nuevo.','mal'); }
   finally{ b.disabled=false; b.classList.remove('cargando'); $('s-txt').textContent='Buscar proveedores'; }
@@ -1881,14 +2803,19 @@ $('p-declara').addEventListener('change', () => limpiar(['p-declara']));
 $('p-enviar').addEventListener('click', async () => {
   limpiar(CP);
   const r={p:null}, v=id=>$(id).value.trim();
+  /* Si la cuenta trae oficio, el selector ni se muestra: no se valida algo que
+     la persona no puede completar. */
+  const deCuenta = sesion.user.user_metadata || {};
   if(!v('p-nombre')) fallar('p-nombre',r);
   if(!mailOk(v('p-email'))) fallar('p-email',r);
   if(v('p-tel').replace(/\D/g,'').length<6) fallar('p-tel',r);
-  if(!v('p-rubro')) fallar('p-rubro',r);
-  if(v('p-rubro') === RUBRO_OTRO){
-    const ro = revisarTexto(v('p-otro-rubro'), {min:4});
-    if(!ro.ok){ fallar('p-otro-rubro',r); $('e-p-otro-rubro').textContent = ro.motivo; }
-    if(!v('p-rubro-padre')) fallar('p-rubro-padre',r);
+  if(!deCuenta.rubro){
+    if(!v('p-rubro')) fallar('p-rubro',r);
+    if(v('p-rubro') === RUBRO_OTRO){
+      const ro = revisarTexto(v('p-otro-rubro'), {min:4});
+      if(!ro.ok){ fallar('p-otro-rubro',r); $('e-p-otro-rubro').textContent = ro.motivo; }
+      if(!v('p-rubro-padre')) fallar('p-rubro-padre',r);
+    }
   }
   if(!v('p-zona')) fallar('p-zona',r);
   if(num(v('p-desde'))<=0) fallar('p-desde',r);
@@ -1907,8 +2834,10 @@ $('p-enviar').addEventListener('click', async () => {
         nombre:v('p-nombre'), email:v('p-email'), telefono:v('p-tel'),
         /* si es un rubro propio, guardamos el nombre lindo aparte y usamos
            el rubro parecido para que el matching lo siga encontrando */
-        rubro: v('p-rubro') === RUBRO_OTRO ? v('p-rubro-padre') : v('p-rubro'),
-        rubro_personalizado: v('p-rubro') === RUBRO_OTRO ? v('p-otro-rubro') : null,
+        rubro: deCuenta.rubro || (v('p-rubro') === RUBRO_OTRO ? v('p-rubro-padre') : v('p-rubro')),
+        rubro_personalizado: deCuenta.rubro
+          ? (deCuenta.rubro_personalizado || null)
+          : (v('p-rubro') === RUBRO_OTRO ? v('p-otro-rubro') : null),
         zona:v('p-zona'),
         precio_desde:num(v('p-desde')), precio_hasta:num(v('p-hasta')),
         disponibilidad:v('p-disp'), descripcion:v('p-desc'), user_id:sesion.user.id
@@ -1944,13 +2873,21 @@ async function cargarPedidos(){
       return;
     }
     $('lista-pedidos').innerHTML = misPedidos.map(s => {
-      const listo = s.estado === 'con_match';
+      const listo   = s.estado === 'con_match';
+      /* A los 15 días sin que ningún proveedor responda, el pedido se da de
+         baja solo y se borra la foto. No lo escondemos: el cliente tiene que
+         entender por qué dejó de buscar y poder pedirlo de nuevo. */
+      const vencido = s.estado === 'vencida';
+      const sello = vencido ? ['gris','Vencido'] : listo ? ['verde','Con proveedores'] : ['gris','Buscando'];
       return '<button class="item" data-pedido="'+s.id+'" type="button"><div class="item-top">' +
         '<span class="item-tit">'+esc(s.servicio_necesitado)+'</span>' +
-        '<span class="sello '+(listo?'verde':'gris')+'">'+(listo?'Con proveedores':'Buscando')+'</span></div>' +
-        '<div class="item-meta"><span>'+esc(s.zona)+'</span><span>hasta '+pesos(s.presupuesto)+'</span>' +
+        '<span class="sello '+sello[0]+'">'+sello[1]+'</span></div>' +
+        '<div class="item-meta"><span>'+esc(s.zona)+'</span>' +
+        (s.presupuesto ? '<span>tiene en mente '+pesos(s.presupuesto)+'</span>' : '') +
         '<span>'+esc(s.urgencia)+'</span></div>' +
-        '<div class="item-pie"><span>'+(listo?'Ver quién te podemos conectar':'Buscando proveedores que calcen')+'</span>' +
+        '<div class="item-pie"><span>'+(vencido
+            ? 'Nadie respondió en 15 días. Podés volver a pedirlo.'
+            : listo ? 'Ver quién te podemos conectar' : 'Buscando proveedores que calcen')+'</span>' +
         '<span class="flecha"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 5l7 7-7 7"/></svg></span></div></button>';
     }).join('');
     document.querySelectorAll('[data-pedido]').forEach(b =>
@@ -1982,6 +2919,7 @@ async function cargarPerfiles(){
     console.error(e);
     $('lista-perfiles').innerHTML = cajaVacia('No se pudieron cargar','Tocá el botón de actualizar arriba a la derecha.','maleta');
   }
+  cargarCobros();
 }
 
 async function cargarConexiones(){
@@ -2014,7 +2952,12 @@ async function cargarConexiones(){
   $('lista-proveedor').innerHTML = comoProv.length
     ? comoProv.map(m => filaConexion(m,
         m.solicitudes ? m.solicitudes.nombre_cliente : 'Cliente',
-        (m.solicitudes ? m.solicitudes.servicio_necesitado + ' · hasta ' + pesos(m.solicitudes.presupuesto) : ''))).join('')
+        (m.solicitudes
+          ? m.solicitudes.servicio_necesitado +
+            /* Sin presupuesto no se escribe "hasta $0", que se lee como que el
+               cliente no quiere pagar nada. Simplemente no se menciona. */
+            (m.solicitudes.presupuesto ? ' · tiene en mente ' + pesos(m.solicitudes.presupuesto) : '')
+          : ''))).join('')
     : cajaVacia('Sin pedidos todavía', 'Cuando alguien busque lo que ofrecés en tu zona, te avisamos acá.','chat');
 
   document.querySelectorAll('[data-match]').forEach(b =>
@@ -2027,9 +2970,19 @@ async function cargarConexiones(){
 }
 
 function filaConexion(m, titulo, meta){
+  /* El sello mostraba el estado tal cual viene de la base ("sugerido"), que es
+     una palabra de sistema. El color ya trataba igual a todo lo que no está
+     aceptado, así que el texto sigue la misma división en palabras de persona. */
+  /* Tres estados distintos, y conviene no mezclarlos: "sugerido" lo armó la
+     app, "interesado" lo pidió el proveedor por su cuenta, y "aceptado" ya es
+     una conversación abierta. Decirle "te lo recomendamos" a alguien que se
+     ofreció solo sería falso. */
+  const sello = m.estado === 'aceptado'   ? ['verde','Conectados']
+              : m.estado === 'interesado' ? ['oro','Se ofreció']
+              :                             ['oro','Te lo recomendamos'];
   return '<button class="item" data-match="'+m.id+'" type="button"><div class="item-top">' +
     '<span class="item-tit">'+esc(titulo)+'</span>' +
-    '<span class="sello '+(m.estado==='aceptado'?'verde':'oro')+'">'+esc(m.estado||'sugerido')+'</span></div>' +
+    '<span class="sello '+sello[0]+'">'+sello[1]+'</span></div>' +
     '<div class="item-meta"><span>'+esc(meta)+'</span></div>' +
     '<div class="item-pie"><span>Abrir conversación</span>' +
     '<span class="flecha"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 5l7 7-7 7"/></svg></span></div></button>';
@@ -2124,13 +3077,55 @@ function presuHTML(m){
       '<button class="btn vacio-b" data-rechazar-presu="'+m.id+'" type="button">Rechazar</button>' +
       '<button class="btn lleno" data-aceptar-presu="'+m.id+'" type="button">Aceptar</button></div>'
     : '';
-  return '<div class="presu '+(mia?'mia':'')+'" data-presu="'+m.id+'">' +
+  const estado = (est === 'aceptado' || est === 'rechazado') ? est : 'pendiente';
+  return '<div class="presu '+(mia?'mia':'')+'" data-estado="'+estado+'" data-presu="'+m.id+'">' +
     '<div class="presu-top"><span class="presu-tag">Presupuesto</span>'+badge+'</div>' +
-    '<div class="presu-monto">'+pesos(m.monto)+'</div>' +
-    '<div class="presu-incluye">'+esc(m.incluye)+'</div>' +
-    '<div class="presu-plazo">Plazo: '+esc(m.plazo)+'</div>' +
-    acciones +
-    '<span class="hora">'+hora(m.created_at)+'</span></div>';
+    '<div class="presu-cuerpo">' +
+      '<div class="presu-monto">'+pesos(m.monto)+'</div>' +
+      '<dl class="presu-datos">' +
+        '<div><dt>Qué incluye</dt><dd>'+esc(m.incluye)+'</dd></div>' +
+        '<div><dt>Plazo</dt><dd>'+esc(m.plazo)+'</dd></div>' +
+      '</dl>' +
+      acciones +
+      '<div class="presu-firma"><span class="presu-hilo"></span>' +
+        '<span class="presu-sello">Trato cerrado</span></div>' +
+      pagoHTML(m) +
+      '<span class="hora">'+hora(m.created_at)+'</span>' +
+    '</div></div>';
+}
+
+/* Lo que se ve del pago dentro del presupuesto, según en qué punto esté. Sólo
+   aparece cuando el trato ya está cerrado: antes de eso no hay nada que pagar. */
+function pagoHTML(m){
+  if(m.estado_presupuesto !== 'aceptado') return '';
+  const terminado = m.trabajo_estado === 'terminado';
+  const firma = s => '<div class="pago-firma"><span class="pago-hilo"></span>' +
+    '<span class="pago-sello">'+s+'</span></div>';
+  const nota  = t => '<div class="pago-nota">'+t+'</div>';
+
+  /* Final del camino: la plata ya es del proveedor y el trabajo cuenta.
+     (Cualquier estado de pago cuenta como cobrado: no reservamos nunca, así que
+     si hay algo guardado es porque el cobro salió.) */
+  if(m.pago_estado) return firma('Pago hecho');
+
+  /* Todavía trabajando. El único que puede mover la ficha es el proveedor:
+     nadie paga por adelantado, así que hasta que él no diga que terminó el
+     cliente no tiene nada que hacer. */
+  if(!terminado){
+    return miRol === 'proveedor'
+      ? nota('Cuando termines, avisale al cliente desde acá para que te pague por la app.') +
+        '<div class="presu-acciones"><button class="btn lleno" data-terminar-presu="'+m.id+'" ' +
+        'type="button">Marcar trabajo terminado</button></div>'
+      : nota('Cuando el proveedor dé el trabajo por terminado, vas a poder pagarlo desde acá.');
+  }
+
+  /* Trabajo terminado y sin cobrar: le toca al cliente. */
+  return miRol === 'cliente'
+    ? nota('El proveedor dio el trabajo por terminado. Si estás conforme, pagalo desde acá.') +
+      '<div class="presu-acciones">' +
+      '<button class="btn lleno" data-pagar-presu="'+m.id+'" data-monto="'+(m.monto||0)+'" ' +
+      'type="button">Pagar con tarjeta</button></div>'
+    : nota('Avisaste que terminaste. Falta que el cliente pague por la app.');
 }
 
 function pintarMensajes(msgs, irAbajo){
@@ -2165,6 +3160,11 @@ function agregarMensaje(m){
 function actualizarPresu(m){
   const el = document.querySelector('[data-presu="'+m.id+'"]');
   if(!el) return;
+  /* Si el cliente está cargando la tarjeta, no le barremos el formulario: el
+     sondeo repinta cada 4 segundos y se llevaba puesto todo lo que había
+     escrito. Solo dejamos pasar el repintado cuando el pago cambió de estado
+     de verdad, que es justo cuando el formulario ya no hace falta. */
+  if(el.querySelector('[data-pago-panel]') && !m.pago_estado) return;
   const envoltorio = document.createElement('div');
   envoltorio.innerHTML = presuHTML(m);
   el.replaceWith(envoltorio.firstElementChild);
@@ -2283,6 +3283,188 @@ $('ch-hilo').addEventListener('click', async (e) => {
   }catch(e){ console.error(e); }
 });
 
+/* ══════════════════ PAGAR EL PRESUPUESTO ══════════════════ */
+/* Los datos de la tarjeta no pasan por Tratto: el SDK de Mercado Pago los
+   cambia por un token de un solo uso contra sus propios servidores, y lo único
+   que sale de acá es ese token. El cobro en sí lo hace n8n, que es el único que
+   tiene el access_token del proveedor. */
+const URL_MP_CLAVE = 'https://marketplace-servicios.app.n8n.cloud/webhook/mp-clave';
+const URL_MP_PAGAR = 'https://marketplace-servicios.app.n8n.cloud/webhook/mp-pagar';
+
+let sdkMP = null, pagando = false;
+
+/* Volver a leer un presupuesto de la base y repintarlo. Lo usamos al cancelar y
+   al terminar de pagar, para que la tarjeta muestre lo que quedó guardado de
+   verdad y no lo que nosotros creemos que pasó. */
+async function repintarPresu(id){
+  try{
+    const [msg] = await api('mensajes?id=eq.'+id);
+    if(msg) actualizarPresu(msg);
+  }catch(e){ console.error(e); }
+}
+
+function cargarSdkMP(){
+  if(window.MercadoPago) return Promise.resolve();
+  return new Promise((ok, mal) => {
+    const s = document.createElement('script');
+    s.src = 'https://sdk.mercadopago.com/js/v2';
+    s.onload = ok;
+    s.onerror = () => mal(new Error('No se pudo cargar Mercado Pago'));
+    document.head.appendChild(s);
+  });
+}
+
+function panelPagoHTML(id, monto){
+  return '<div class="pago-panel" data-pago-panel="'+id+'">' +
+    '<div class="pago-tit">Pagar '+pesos(monto)+'</div>' +
+    '<div class="pago-seguro">' +
+      '<svg viewBox="0 0 24 24" fill="none" stroke-linecap="round" stroke-linejoin="round">' +
+      '<rect x="4" y="10.5" width="16" height="10" rx="2"/><path d="M8 10.5V7a4 4 0 0 1 8 0v3.5"/></svg>' +
+      '<span>Los datos de tu tarjeta viajan directo a Mercado Pago. Tratto no los ve ni los guarda.</span>' +
+    '</div>' +
+    '<div class="pago-error" data-pago-error></div>' +
+    '<div class="campo"><label>Número de la tarjeta</label>' +
+      '<input data-pago="numero" type="text" inputmode="numeric" autocomplete="cc-number" ' +
+      'maxlength="19" placeholder="1234 5678 9012 3456"></div>' +
+    '<div class="campo"><label>Nombre como figura en la tarjeta</label>' +
+      '<input data-pago="nombre" type="text" autocomplete="cc-name" placeholder="JUAN PEREZ"></div>' +
+    '<div class="pago-fila">' +
+      '<div class="campo"><label>Vencimiento</label>' +
+        '<input data-pago="vence" type="text" inputmode="numeric" autocomplete="cc-exp" ' +
+        'maxlength="5" placeholder="MM/AA"></div>' +
+      '<div class="campo"><label>Código</label>' +
+        '<input data-pago="cvv" type="text" inputmode="numeric" autocomplete="cc-csc" ' +
+        'maxlength="4" placeholder="123"></div>' +
+    '</div>' +
+    '<div class="campo"><label>DNI del titular</label>' +
+      '<input data-pago="dni" type="text" inputmode="numeric" maxlength="9" placeholder="30123456"></div>' +
+    '<button class="btn lleno" data-pago-confirmar="'+id+'" type="button">' +
+      '<span class="rueda"></span><span data-pago-txt>Pagar</span></button>' +
+    '<button class="btn vacio-b" data-pago-cancelar type="button">Ahora no</button>' +
+    '</div>';
+}
+
+/* Abrir el formulario, cancelarlo y confirmarlo. Todo cuelga del hilo del chat
+   porque las tarjetas de presupuesto se repintan solas cuando llega un cambio. */
+$('ch-hilo').addEventListener('click', async e => {
+  const abrir = e.target.closest('[data-pagar-presu]');
+  if(abrir){
+    const id = Number(abrir.dataset.pagarPresu);
+    const tarjeta = document.querySelector('[data-presu="'+id+'"]');
+    if(!tarjeta || tarjeta.querySelector('[data-pago-panel]')) return;
+    const monto = Number(abrir.dataset.monto || 0);
+    abrir.closest('.presu-acciones').remove();
+    /* Antes de la hora, para que el pie de la tarjeta siga siendo el pie. */
+    tarjeta.querySelector('.presu-cuerpo .hora')
+      .insertAdjacentHTML('beforebegin', panelPagoHTML(id, monto));
+    $('ch-hilo').scrollTop = $('ch-hilo').scrollHeight;
+    return;
+  }
+  const cancelar = e.target.closest('[data-pago-cancelar]');
+  if(cancelar){
+    const id = Number(cancelar.closest('[data-pago-panel]').dataset.pagoPanel);
+    await repintarPresu(id);
+    return;
+  }
+  const confirmar = e.target.closest('[data-pago-confirmar]');
+  if(confirmar){ await cobrarPago(Number(confirmar.dataset.pagoConfirmar), confirmar); return; }
+
+  /* El proveedor avisa que terminó. No mueve plata: solo le pasa la pelota al
+     cliente, que es el único que puede soltar el pago. */
+  const terminar = e.target.closest('[data-terminar-presu]');
+  if(terminar){
+    const id = Number(terminar.dataset.terminarPresu);
+    terminar.disabled = true;
+    try{
+      const r = await fetch(SUPABASE_URL+'/rest/v1/mensajes?id=eq.'+id, {
+        method:'PATCH', headers:cab({'Prefer':'return=representation'}),
+        body: JSON.stringify({trabajo_estado:'terminado'})
+      });
+      if(!r.ok){ console.error(await r.text()); terminar.disabled = false; return; }
+      const [msg] = await r.json();
+      if(msg) actualizarPresu(msg);
+    }catch(ex){ console.error(ex); terminar.disabled = false; }
+    return;
+  }
+});
+
+async function cobrarPago(id, boton){
+  if(pagando) return;
+  const panel = boton.closest('[data-pago-panel]');
+  const err   = panel.querySelector('[data-pago-error]');
+  const dato  = n => (panel.querySelector('[data-pago="'+n+'"]').value || '').trim();
+  const fallar = t => { err.textContent = t; err.classList.add('visible'); };
+
+  err.classList.remove('visible');
+  const numero = dato('numero').replace(/\D/g,'');
+  const vence  = dato('vence').replace(/\D/g,'');
+  const cvv    = dato('cvv'), nombre = dato('nombre'), dni = dato('dni').replace(/\D/g,'');
+
+  if(numero.length < 13)          return fallar('Revisá el número de la tarjeta.');
+  if(!nombre)                     return fallar('Poné el nombre como figura en la tarjeta.');
+  if(vence.length !== 4)          return fallar('El vencimiento va como MM/AA.');
+  if(cvv.length < 3)              return fallar('Revisá el código de seguridad.');
+  if(dni.length < 7)              return fallar('Revisá el DNI del titular.');
+
+  pagando = true;
+  boton.disabled = true; boton.classList.add('cargando');
+  panel.querySelector('[data-pago-txt]').textContent = 'Pagando…';
+
+  try{
+    /* 1. La clave pública del proveedor, que es con la que hay que tokenizar
+          para que la tarjeta quede a nombre de la cuenta que va a cobrar. */
+    const rc = await fetch(URL_MP_CLAVE, {
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({mensaje_id:id, token: sesion.access_token})
+    });
+    const clave = await rc.json().catch(() => null);
+    if(!rc.ok || !clave || !clave.public_key)
+      throw new Error((clave && clave.error) || 'El proveedor todavía no conectó su cuenta de Mercado Pago.');
+
+    /* 2. El SDK cambia la tarjeta por un token contra los servidores de
+          Mercado Pago. Los números nunca salen del navegador hacia nosotros. */
+    await cargarSdkMP();
+    if(!sdkMP) sdkMP = new window.MercadoPago(clave.public_key);
+    const medios = await sdkMP.getPaymentMethods({bin: numero.slice(0,8)});
+    const medio  = medios && medios.results && medios.results[0];
+    if(!medio) throw new Error('No reconocemos esa tarjeta. Probá con otra.');
+
+    const tk = await sdkMP.createCardToken({
+      cardNumber: numero,
+      cardholderName: nombre,
+      cardExpirationMonth: vence.slice(0,2),
+      cardExpirationYear: '20' + vence.slice(2,4),
+      securityCode: cvv,
+      identificationType: 'DNI',
+      identificationNumber: dni
+    });
+    if(!tk || !tk.id) throw new Error('Mercado Pago rechazó los datos de la tarjeta.');
+
+    /* 3. El cobro lo hace n8n: es el único lado con el access_token del
+          proveedor y el que calcula la comisión. */
+    const rp = await fetch(URL_MP_PAGAR, {
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({
+        mensaje_id: id, token: sesion.access_token,
+        card_token: tk.id, payment_method_id: medio.id
+      })
+    });
+    const pago = await rp.json().catch(() => null);
+    if(!rp.ok || !pago || pago.estado !== 'cobrado')
+      throw new Error((pago && pago.detalle) || 'No se pudo hacer el pago. Probá con otra tarjeta.');
+
+    /* La fila ya quedó actualizada del lado del servidor: la releemos para
+       pintar el estado real y no una suposición nuestra. */
+    await repintarPresu(id);
+  }catch(ex){
+    console.error(ex);
+    fallar(ex.message || 'No se pudo hacer el pago.');
+    boton.disabled = false; boton.classList.remove('cargando');
+    const t = panel.querySelector('[data-pago-txt]');
+    if(t) t.textContent = 'Pagar';
+  }finally{ pagando = false; }
+}
+
 $('ch-texto').addEventListener('input', e => {
   e.target.style.height = 'auto';
   e.target.style.height = Math.min(e.target.scrollHeight, 120) + 'px';
@@ -2331,7 +3513,8 @@ async function abrirDetalle(id){
   $('d-zona').textContent = s.zona;
   $('d-presu').textContent= pesos(s.presupuesto);
   $('d-urg').textContent  = s.urgencia;
-  $('d-estado').textContent = s.estado === 'con_match' ? 'Con proveedores' : 'Buscando';
+  $('d-estado').textContent = s.estado === 'vencida' ? 'Vencido'
+    : s.estado === 'con_match' ? 'Con proveedores' : 'Buscando';
   $('d-lista').innerHTML = esqueleto(2);
   $('d-comparador').innerHTML = '';
   $('d-num').textContent = '';
@@ -2347,13 +3530,10 @@ async function abrirDetalle(id){
     }
     $('d-lista').innerHTML = ms.map(m => {
       const p = m.proveedores; if(!p) return '';
-      const sobre = Number(p.precio_desde) > Number(s.presupuesto);
-      const exc = sobre ? Math.round((Number(p.precio_desde)/Number(s.presupuesto)-1)*100) : 0;
       const rel = relacionZona(s.zona, p.zona);
       conexiones[m.id] = Object.assign({}, m, {solicitudes: s});
-      return '<div class="prov '+(sobre?'oro':'verde')+'"><div class="prov-cuerpo">' +
-        '<div class="prov-top"><span class="prov-nom">'+esc(p.nombre)+'</span>' +
-        '<span class="sello '+(sobre?'oro':'verde')+'">'+(sobre? exc+'% sobre presupuesto':'Entra en presupuesto')+'</span></div>' +
+      return '<div class="prov verde"><div class="prov-cuerpo">' +
+        '<div class="prov-top"><span class="prov-nom">'+esc(p.nombre)+'</span></div>' +
         '<div class="prov-desc">'+esc(p.descripcion)+'</div>' +
         '<div class="prov-datos"><span><b>Zona:</b> '+esc(p.zona)+' '+chapaZona(rel)+'</span>' +
         '<span><b>Precio:</b> '+pesos(p.precio_desde)+' – '+pesos(p.precio_hasta)+'</span>' +
@@ -2466,6 +3646,7 @@ function revisarTexto(txt, opciones){
 
 /* ══════════════════ MODO CLIENTE / PROVEEDOR ══════════════════ */
 let modo = 'cliente', rolElegido = 'cliente';
+const TERMINOS = {cliente:'/terminos-cliente.html', proveedor:'/terminos-proveedor.html'};
 let miPerfilProv = null, misCredenciales = [], misPublicaciones = [];
 let fichaActual = null, fichaPropia = false;
 
@@ -2474,14 +3655,12 @@ const ICO = {
   chat:'<path d="M20.4 14.6a2 2 0 0 1-2 2H8.4l-4 3.8V4.8a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2z"/>',
   persona:'<circle cx="12" cy="8" r="3.7"/><path d="M4.6 20.2c0-3.7 3.4-6.1 7.4-6.1s7.4 2.4 7.4 6.1"/>',
   grafico:'<path d="M4 20V10.5M10 20V4M16 20v-7M21.5 20h-19"/>',
-  ficha:'<rect x="3" y="4.5" width="18" height="15" rx="2"/><circle cx="9" cy="10.6" r="2.1"/><path d="M5.7 16.5c.5-1.6 1.8-2.5 3.3-2.5s2.8.9 3.3 2.5M15 9.6h3.4M15 13h3.4"/>',
-  premio:'<circle cx="12" cy="9" r="5.1"/><path d="M8.6 13.3 7.2 21l4.8-2.3L16.8 21l-1.4-7.7"/>'
+  ficha:'<rect x="3" y="4.5" width="18" height="15" rx="2"/><circle cx="9" cy="10.6" r="2.1"/><path d="M5.7 16.5c.5-1.6 1.8-2.5 3.3-2.5s2.8.9 3.3 2.5M15 9.6h3.4M15 13h3.4"/>'
 };
 const TABS = {
   cliente: [
     {ir:'inicio',  txt:'Inicio',  ico:'casa'},
     {ir:'chats',   txt:'Chats',   ico:'chat', globo:true},
-    {ir:'premios', txt:'Premios', ico:'premio'},
     {ir:'perfil',  txt:'Cuenta',  ico:'persona'}
   ],
   proveedor: [
@@ -2508,19 +3687,20 @@ function aplicarModo(){
   ir(modo === 'proveedor' ? 'panel' : 'inicio', 'entra');
 }
 
-function cambiarModo(nuevo){
-  modo = nuevo;
-  const g = store.leer() || {};
-  g.modo = nuevo; store.escribir(g);
-  aplicarModo();
-  recargarTodo();
-}
-
 /* selector de rol en la pantalla de entrada */
 function elegirRol(r){
   rolElegido = r;
   $('rol-cliente').classList.toggle('elegido', r === 'cliente');
   $('rol-proveedor').classList.toggle('elegido', r === 'proveedor');
+  pintarCamposDeRol();
+  /* Cada rol acepta su propio contrato: el del cliente es una relación de
+     consumo, el del proveedor una relación entre independientes. El enlace
+     tiene que llevar al que la persona va a firmar, no a uno genérico. */
+  const a = $('a-terminos-link');
+  a.href = TERMINOS[r];
+  a.textContent = r === 'proveedor'
+    ? 'términos y condiciones para proveedores'
+    : 'términos y condiciones para clientes';
 }
 $('rol-cliente').addEventListener('click', () => elegirRol('cliente'));
 $('rol-proveedor').addEventListener('click', () => elegirRol('proveedor'));
@@ -2746,7 +3926,7 @@ function abrirPublicacion(){
   fotosPub = []; pintarPrevias(); $('e-pb-fotos').classList.remove('visible');
   $('pb-cont').textContent = '0'; limpiar(PB); $('pb-aviso').className='aviso';
   $('caja-pb-precio').classList.add('oculto'); $('caja-pb-vence').classList.add('oculto');
-  volverA = modo === 'proveedor' ? 'ficha' : 'perfil'; ir('publicacion');
+  volverA = 'ficha'; ir('publicacion');   // solo se llega desde Panel y Mi perfil
 }
 
 $('pb-guardar').addEventListener('click', async () => {
@@ -2934,6 +4114,90 @@ $('ed-cred').addEventListener('click', abrirCredencial);
 $('ed-pub').addEventListener('click', abrirPublicacion);
 
 /* ══════════════════ PANEL DEL PROVEEDOR ══════════════════ */
+/* ══════════════════ COBROS POR LA APP ══════════════════ */
+/* El proveedor conecta su cuenta de Mercado Pago una sola vez. Desde ahí la app
+   puede cobrarle al cliente en su nombre y quedarse con la comisión de Tratto.
+   Todo el intercambio de credenciales lo hace un workflow de n8n: acá sólo
+   mandamos al proveedor a Mercado Pago y después leemos si quedó guardada. El
+   access_token nunca pasa por el navegador. */
+/* OJO: este id y el client_secret que tiene el workflow de OAuth en n8n son un
+   par. Si cambiás uno sin el otro, Mercado Pago emite el código para una
+   aplicación y n8n intenta canjearlo con las credenciales de otra: el canje
+   falla y al proveedor le queda una pantalla en blanco.
+   Hoy apunta a la aplicación de PRUEBA, que cuelga de la cuenta Integrador de
+   sandbox. Para producción hay que poner 2631534334320257 acá Y el
+   client_secret de esa misma aplicación en n8n, las dos cosas juntas. */
+const MP_CLIENT_ID = '2729660226133986';
+const MP_REDIRECT  = 'https://marketplace-servicios.app.n8n.cloud/webhook/mp-conectar';
+
+/* El state viaja hasta n8n y vuelve: es cómo sabe a qué proveedor guardarle la
+   cuenta. Por eso mandamos el id del usuario de Supabase. */
+function urlConectarMP(){
+  return 'https://auth.mercadopago.com.ar/authorization?client_id=' + MP_CLIENT_ID +
+    '&response_type=code&platform_id=mp' +
+    '&redirect_uri=' + encodeURIComponent(MP_REDIRECT) +
+    '&state=' + encodeURIComponent(sesion.user.id);
+}
+
+function cobrosHTML(cuenta){
+  if(!cuenta){
+    return '<div class="cobros">' +
+      '<div class="cobros-tit">Cobrá por la app</div>' +
+      '<div class="cobros-txt">Conectá tu cuenta de Mercado Pago y el cliente va a poder ' +
+        'pagarte desde el chat, con tarjeta. La plata queda reservada cuando te acepta el ' +
+        'presupuesto y se te acredita cuando el trabajo está terminado.</div>' +
+      '<button class="btn lleno" data-cobros-conectar type="button">Conectar Mercado Pago</button>' +
+      '</div>';
+  }
+  const desde = cuenta.created_at
+    ? new Date(cuenta.created_at).toLocaleDateString('es-AR',{day:'2-digit',month:'long',year:'numeric'})
+    : '—';
+  return '<div class="cobros puesta">' +
+    '<div class="cobros-tit">Ya podés cobrar por la app</div>' +
+    '<div class="cobros-txt">Tu cuenta está conectada. Cuando un cliente te acepte un ' +
+      'presupuesto, va a poder pagarlo desde el chat.</div>' +
+    '<dl class="cobros-datos">' +
+      '<div class="cobros-dato"><dt>Cuenta</dt><dd>'+esc(String(cuenta.mp_user_id||'—'))+'</dd></div>' +
+      '<div class="cobros-dato"><dt>Conectada</dt><dd>'+esc(desde)+'</dd></div>' +
+    '</dl>' +
+    '<div class="cobros-firma"><span class="cobros-hilo"></span>' +
+      '<span class="cobros-sello">Cobros habilitados</span></div>' +
+    '</div>';
+}
+
+/* La tarjeta vive en dos lados a propósito: en el Panel, que es donde el
+   proveedor mira cómo le va, y en Cuenta, que es donde uno espera encontrar la
+   configuración de la plata. Es la misma tarjeta pintada dos veces, no dos
+   componentes que se puedan desincronizar. */
+async function cargarCobros(){
+  const destinos = ['panel-cobros','perfil-cobros'].map($).filter(Boolean);
+  if(!destinos.length) return;
+  let cuenta = null;
+  try{
+    const filas = await api('cuentas_mp?user_id=eq.'+sesion.user.id+'&select=mp_user_id,created_at');
+    cuenta = filas[0] || null;
+  }catch(e){ console.error(e); }
+  const html = cobrosHTML(cuenta);
+  destinos.forEach(d => { d.innerHTML = html; });
+  /* En Cuenta la sección solo tiene sentido si la persona ofrece algo, igual
+     que "Servicios que ofrecés" justo debajo. */
+  const sec = $('perfil-cobros-sec');
+  if(sec) sec.classList.toggle('oculto', !misPerfiles.length);
+}
+
+/* La conexión se abre en otra pestaña y termina en una pantalla de Mercado Pago,
+   así que no hay forma de que nos avise cuando volvió: relemos el estado cuando
+   el proveedor vuelve a mirar la app. */
+['panel-cobros','perfil-cobros'].forEach(id => {
+  $(id).addEventListener('click', e => {
+    if(!e.target.closest('[data-cobros-conectar]')) return;
+    window.open(urlConectarMP(), '_blank', 'noopener');
+  });
+});
+document.addEventListener('visibilitychange', () => {
+  if(!document.hidden && sesion && (actual === 'panel' || actual === 'perfil')) cargarCobros();
+});
+
 async function cargarPanel(){
   $('panel-saludo').textContent = 'Hola, ' + ((sesion.user.email||'').split('@')[0]);
 
@@ -2948,6 +4212,7 @@ async function cargarPanel(){
   }
   $('panel-sin-perfil').innerHTML = '';
   $('panel-datos').classList.remove('oculto');
+  cargarCobros();
 
   let visitas = 0, leads = 0, presus = 0, cerrados = 0, monto = 0;
   try{
@@ -2960,9 +4225,12 @@ async function cargarPanel(){
     leads = ms.length;
     if(ms.length){
       const mids = ms.map(m => m.id);
-      const ps = await api('mensajes?match_id=in.('+mids.join(',')+')&tipo=eq.presupuesto&select=id,estado_presupuesto,monto');
+      const ps = await api('mensajes?match_id=in.('+mids.join(',')+')&tipo=eq.presupuesto&select=id,estado_presupuesto,pago_estado,monto');
       presus = ps.length;
-      const ok = ps.filter(p => p.estado_presupuesto === 'aceptado');
+      /* Solo contamos lo que podemos respaldar: trabajos cobrados por la app.
+         Uno aceptado y arreglado por fuera no lo vimos, así que no afirmamos
+         nada sobre él — ni que se hizo ni que no. */
+      const ok = ps.filter(p => p.pago_estado === 'cobrado');
       cerrados = ok.length;
       monto = ok.reduce((a,p) => a + Number(p.monto||0), 0);
     }
@@ -2974,15 +4242,15 @@ async function cargarPanel(){
   $('k-cerrados').textContent = cerrados;
   $('k-monto').textContent    = monto ? pesos(monto) : '$0';
   $('k-monto-nota').textContent = cerrados
-    ? 'Suma de ' + cerrados + ' presupuesto' + (cerrados===1?'':'s') + ' aceptado' + (cerrados===1?'':'s')
-    : 'Todavía no cerraste ningún trabajo por la app';
+    ? 'Suma de ' + cerrados + ' trabajo' + (cerrados===1?'':'s') + ' cobrado' + (cerrados===1?'':'s') + ' por la app'
+    : 'Todavía no cobraste ningún trabajo por la app';
 
   const tope = Math.max(visitas, leads, presus, cerrados, 1);
   const filas = [
     {t:'Visitas a tu perfil', n:visitas,  c:'gris'},
     {t:'Clientes conectados', n:leads,    c:''},
     {t:'Presupuestos que mandaste', n:presus, c:'oro'},
-    {t:'Trabajos cerrados', n:cerrados, c:''}
+    {t:'Cerrados por Tratto', n:cerrados, c:''}
   ];
   $('embudo').innerHTML = filas.map(f =>
     '<div class="emb"><div class="emb-top"><b>'+f.t+'</b><span>'+f.n+'</span></div>' +
@@ -3002,60 +4270,6 @@ $('panel-ver-perfil').addEventListener('click', () => abrirFicha(sesion.user.id,
 $('panel-publicar').addEventListener('click', abrirPublicacion);
 
 /* ══════════════════ PREMIOS DEL CLIENTE ══════════════════ */
-async function cargarPremios(){
-  let ganados = 0, gastados = 0;
-  try{
-    const ids = misPedidos.map(s => s.id);
-    if(ids.length){
-      const ms = await api('matches?solicitud_id=in.('+ids.join(',')+')&select=id');
-      if(ms.length){
-        const ps = await api('mensajes?match_id=in.('+ms.map(m=>m.id).join(',')+')&tipo=eq.presupuesto&estado_presupuesto=eq.aceptado&select=id');
-        ganados = ps.length * XP_POR_TRABAJO;
-      }
-    }
-  }catch(e){ console.error(e); }
-  let mios = [];
-  try{ mios = await api('canjes?user_id=eq.'+sesion.user.id+'&order=created_at.desc'); }catch(e){}
-  gastados = mios.reduce((a,c) => a + Number(c.xp_usado||0), 0);
-
-  const libres = Math.max(0, ganados - gastados);
-  $('xp-num').textContent = libres.toLocaleString('es-AR');
-
-  const prox = CANJES.find(c => c.xp > libres);
-  const meta = prox ? prox.xp : CANJES[CANJES.length-1].xp;
-  $('xp-relleno').style.width = Math.min(100, Math.round(libres/meta*100)) + '%';
-  $('xp-falta').textContent = prox
-    ? 'Te faltan ' + (prox.xp - libres).toLocaleString('es-AR') + ' puntos para ' + prox.tit
-    : 'Tenés puntos para el mejor beneficio disponible.';
-
-  $('lista-canjes').innerHTML = CANJES.map(c => {
-    const listo = libres >= c.xp;
-    return '<div class="canje '+(listo?'listo':'')+'">' +
-      '<div class="canje-cuerpo"><div class="canje-tit">'+esc(c.tit)+'</div>' +
-      '<div class="canje-txt">'+esc(c.txt)+' · '+c.xp.toLocaleString('es-AR')+' puntos</div></div>' +
-      (listo ? '<button class="btn lleno" data-canje="'+c.xp+'" type="button">Canjear</button>'
-             : '<span class="sello gris">Faltan '+(c.xp-libres).toLocaleString('es-AR')+'</span>') +
-      '</div>';
-  }).join('') +
-  (mios.length ? '<div class="sec"><span class="sec-tit">Ya canjeaste</span></div>' + mios.map(c =>
-    '<div class="item"><div class="item-top"><span class="item-tit">'+esc(c.beneficio)+'</span>' +
-    '<span class="sello '+(c.estado==='usado'?'gris':'verde')+'">'+(c.estado==='usado'?'Usado':'Disponible')+'</span></div>' +
-    '<div class="item-meta"><span>'+Number(c.xp_usado).toLocaleString('es-AR')+' puntos</span>' +
-    '<span>'+new Date(c.created_at).toLocaleDateString('es-AR')+'</span></div></div>').join('') : '');
-}
-
-$('lista-canjes').addEventListener('click', async e => {
-  const b = e.target.closest('[data-canje]'); if(!b) return;
-  const c = CANJES.find(x => x.xp === Number(b.dataset.canje)); if(!c) return;
-  b.disabled = true;
-  try{
-    await apiEnviar('canjes','POST',{
-      user_id: sesion.user.id, xp_usado: c.xp, beneficio: c.tit,
-      porcentaje: c.pct, estado: 'disponible'
-    });
-    await cargarPremios();
-  }catch(e){ console.error(e); b.disabled = false; }
-});
 
 /* ══════════════════ CHAPA DE ZONA ══════════════════ */
 function chapaZona(rel){
@@ -3065,15 +4279,89 @@ function chapaZona(rel){
   return '<span class="chip-zona">Otra zona</span>';
 }
 
-/* ══════════════════ CAMBIO DE MODO ══════════════════ */
-$('btn-cambiar-modo').addEventListener('click', () => {
-  cambiarModo(modo === 'proveedor' ? 'cliente' : 'proveedor');
+
+
+
+
+
+/* ══════════════════ PEDIDOS ABIERTOS ══════════════════ */
+/* El proveedor ve pedidos de su rubro que todavía nadie cubrió y decide si le
+   interesan. Lo que ve viene de la vista pedidos_abiertos, que expone rubro,
+   zona, urgencia, descripción, foto y presupuesto --y nada de contacto--. El
+   nombre, el mail y el teléfono del cliente recién aparecen en el chat.
+
+   Si la vista todavía no existe en la base, esto no rompe nada: la sección
+   queda oculta y el resto del panel funciona igual. */
+let tomandoPedido = false;
+
+async function cargarPedidosAbiertos(){
+  const sec = $('panel-abiertos-sec');
+  if(modo !== 'proveedor' || !misPerfiles.length){ sec.classList.add('oculto'); return; }
+  let lista;
+  try{
+    lista = await api('pedidos_abiertos?order=created_at.desc&limit=20');
+  }catch(e){
+    sec.classList.add('oculto');   // la vista todavía no está creada
+    return;
+  }
+  if(!Array.isArray(lista) || !lista.length){ sec.classList.add('oculto'); return; }
+  sec.classList.remove('oculto');
+  $('n-abiertos').textContent = lista.length;
+  $('lista-abiertos').innerHTML = lista.map(x => {
+    const quedan = Math.max(0, Number(x.cupo||5) - Number(x.tomados||0));
+    return '<div class="pedido">' +
+      (x.foto_url ? '<img class="pedido-foto" src="'+esc(x.foto_url)+'" alt="" loading="lazy">' : '') +
+      '<div class="pedido-cuerpo">' +
+      '<div class="pedido-top"><span class="pedido-rubro">'+esc(x.servicio_necesitado)+'</span>' +
+      '<span class="pedido-cupo">'+quedan+' '+(quedan===1?'lugar':'lugares')+'</span></div>' +
+      '<div class="pedido-desc">'+esc(x.descripcion||'')+'</div>' +
+      '<div class="pedido-datos">' +
+      '<span class="pedido-dato">'+esc(x.zona)+'</span>' +
+      '<span class="pedido-dato">'+esc(x.urgencia||'Sin apuro')+'</span>' +
+      (x.presupuesto ? '<span class="pedido-dato">Tiene en mente '+pesos(x.presupuesto)+'</span>' : '') +
+      '</div>' +
+      '<button class="btn lleno" data-tomar="'+x.id+'" data-rubro="'+esc(x.servicio_necesitado)+'" ' +
+      'type="button">Me interesa</button>' +
+      '</div></div>';
+  }).join('');
+}
+
+$('lista-abiertos').addEventListener('click', async e => {
+  const b = e.target.closest('[data-tomar]');
+  if(!b || tomandoPedido) return;
+  /* Con qué perfil se anota: el que tiene ese rubro. Un proveedor puede tener
+     varios servicios publicados y sólo uno corresponde a este pedido. */
+  const perfil = misPerfiles.find(p => p.rubro === b.dataset.rubro);
+  if(!perfil){ b.textContent = 'No tenés un servicio de ese rubro'; return; }
+
+  tomandoPedido = true;
+  b.disabled = true; b.classList.add('cargando');
+  const txt = b.textContent; b.textContent = 'Avisando…';
+  try{
+    const r = await fetch(SUPABASE_URL + '/rest/v1/interesados', {
+      method:'POST', headers:cab({'Prefer':'return=representation'}),
+      body: JSON.stringify({ solicitud_id: Number(b.dataset.tomar), proveedor_id: perfil.id })
+    });
+    if(!r.ok){
+      const crudo = await r.text();
+      console.error(crudo);
+      b.textContent = crudo.includes('cupo completo')
+        ? 'Ya se completó'
+        : 'No se pudo. Probá de nuevo.';
+      setTimeout(cargarPedidosAbiertos, 1600);
+      return;
+    }
+    await cargarPedidosAbiertos();
+    await cargarConexiones();
+  }catch(err){
+    console.error(err);
+    b.textContent = 'No se pudo conectar';
+  }finally{
+    tomandoPedido = false;
+    b.disabled = false; b.classList.remove('cargando');
+    if(b.isConnected && b.textContent === 'Avisando…') b.textContent = txt;
+  }
 });
-
-
-
-
-
 
 /* ══════════════════ REPORTAR CONTENIDO ══════════════════ */
 const BANDERA_REP = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M5 21V4"/><path d="M5 4.5h11l-2 3.5 2 3.5H5"/></svg>';
@@ -3163,6 +4451,137 @@ $('baja-enviar').addEventListener('click', async () => {
   }
 });
 
+/* ══════════════════ PERMISO PARA LAS FUNCIONES CON IA ══════════════════ */
+/* La ley 25.326 prohíbe mandar datos personales a un país sin nivel de
+   protección adecuado, y Estados Unidos no está en la nómina que reconoce la
+   Agencia argentina. Lo que habilita la transferencia es el permiso expreso del
+   titular, así que se pide aparte de los términos, se guarda con fecha en el
+   propio usuario de Supabase —un permiso que no se puede probar cuándo se dio
+   no sirve de nada— y se puede retirar desde Cuenta.
+
+   Regla de oro de este archivo: ningún dato sale hacia OpenAI sin pasar antes
+   por conPermisoIA(). */
+function permisoIA(){
+  const m = sesion && sesion.user ? (sesion.user.user_metadata || {}) : {};
+  return m.ia_permiso === true;
+}
+
+let alDarPermiso = null, guardandoPermiso = false;
+
+function pedirPermisoIA(seguir){
+  alDarPermiso = seguir || null;
+  $('ia-acepto-txt').textContent = 'Doy mi permiso';
+  $('telon-ia').classList.add('abierto');
+}
+function cerrarPermisoIA(){
+  $('telon-ia').classList.remove('abierto');
+  alDarPermiso = null;
+}
+
+/* Envuelve cualquier acción que mande datos afuera: si todavía no hay permiso,
+   primero se pide y recién después se hace. */
+function conPermisoIA(hacer){
+  if(permisoIA()){ hacer(); return; }
+  pedirPermisoIA(hacer);
+}
+
+async function guardarPermisoIA(valor){
+  const r = await fetch(SUPABASE_URL + '/auth/v1/user', {
+    method:'PUT',
+    headers:{'apikey':SUPABASE_ANON, 'Authorization':'Bearer ' + sesion.access_token,
+             'Content-Type':'application/json'},
+    body: JSON.stringify({ data:{ ia_permiso: valor, ia_permiso_fecha: new Date().toISOString() } })
+  });
+  if(!r.ok){ console.error(await r.text()); throw new Error('permiso'); }
+  sesion.user = await r.json();
+  pintarPermisoIA();
+}
+
+$('ia-acepto').addEventListener('click', async () => {
+  if(guardandoPermiso) return;
+  const b = $('ia-acepto');
+  guardandoPermiso = true; b.disabled = true; b.classList.add('cargando');
+  $('ia-acepto-txt').textContent = 'Guardando…';
+  try{
+    await guardarPermisoIA(true);
+    const seguir = alDarPermiso;
+    cerrarPermisoIA();
+    if(seguir) seguir();
+  }catch(e){
+    $('ia-acepto-txt').textContent = 'No se pudo guardar. Probá de nuevo.';
+  }finally{
+    guardandoPermiso = false; b.disabled = false; b.classList.remove('cargando');
+  }
+});
+$('ia-ahora-no').addEventListener('click', cerrarPermisoIA);
+$('telon-ia').addEventListener('click', e => { if(e.target.id === 'telon-ia') cerrarPermisoIA(); });
+
+function pintarPermisoIA(){
+  if(!sesion) return;
+  const dado = permisoIA();
+  const m = sesion.user.user_metadata || {};
+  const sello = $('ia-sello-estado');
+  sello.className = 'sello ' + (dado ? 'oro' : 'gris');
+  sello.textContent = dado ? 'Con permiso' : 'Apagadas';
+  $('ia-txt').textContent = dado
+    ? 'Podés tasar por foto, comparar presupuestos y preguntarle al asistente. Para eso, esos datos se procesan en Estados Unidos.'
+    : 'Están apagadas. La app funciona igual: pedís, cotizás, chateás y cobrás lo mismo.';
+  $('ia-firma-caja').innerHTML = dado && m.ia_permiso_fecha
+    ? '<div class="ia-firma"><span class="ia-hilo"></span><span class="ia-fecha">Permiso dado el ' +
+      new Date(m.ia_permiso_fecha).toLocaleDateString('es-AR',{day:'2-digit',month:'2-digit',year:'numeric'}) +
+      '</span></div>'
+    : '';
+  $('ia-cambiar-txt').textContent = dado ? 'Retirar el permiso' : 'Dar el permiso';
+}
+
+/* Registro de la transferencia de infraestructura. A diferencia del permiso de
+   IA no lleva interruptor, y no por descuido: sin la base de datos y sin el
+   alojamiento la aplicación no existe, así que retirarlo es dar de baja la
+   cuenta. Decirlo es más honesto que ofrecer un botón que en realidad borraría
+   todo. */
+function pintarTransfer(){
+  if(!sesion) return;
+  const m = sesion.user.user_metadata || {};
+  const dado = m.transfer_permiso === true;
+  const sello = $('transfer-sello');
+  sello.className = 'sello ' + (dado ? 'oro' : 'gris');
+  sello.textContent = dado ? 'Registrado' : 'Sin registro';
+  $('transfer-txt').textContent = (dado
+    ? 'La base de datos está en Brasil y el alojamiento en Estados Unidos. '
+    : 'Tu cuenta es anterior a este registro. La base de datos está en Brasil y el alojamiento en Estados Unidos. ')
+    + 'Retirar este permiso es dar de baja la cuenta, porque sin esos servicios la app no funciona.';
+  $('transfer-firma-caja').innerHTML = dado && m.transfer_permiso_fecha
+    ? '<div class="ia-firma"><span class="ia-hilo"></span><span class="ia-fecha">Permiso dado el ' +
+      new Date(m.transfer_permiso_fecha).toLocaleDateString('es-AR',{day:'2-digit',month:'2-digit',year:'numeric'}) +
+      '</span></div>'
+    : '';
+}
+
+$('transfer-ver-cuenta').addEventListener('click', () => $('telon-infra').classList.add('abierto'));
+
+/* Qué versión aceptó cada uno y cuándo. Si los documentos cambian, esto es lo
+   que permite saber a quién hay que volver a pedirle la aceptación. */
+function pintarLegales(){
+  if(!sesion) return;
+  const m = sesion.user.user_metadata || {};
+  /* Al contrato que firmó, no al del otro rol. */
+  $('legales-terminos').href = TERMINOS[m.legales_rol || modo] || TERMINOS.cliente;
+  $('legales-estado').textContent = m.legales_aceptados
+    ? 'Aceptados el ' + new Date(m.legales_fecha).toLocaleDateString('es-AR',
+        {day:'2-digit',month:'2-digit',year:'numeric'}) +
+      (m.legales_version ? ' · versión ' + m.legales_version : '')
+    : 'Tu cuenta es anterior a este registro.';
+}
+
+$('ia-cambiar').addEventListener('click', async () => {
+  if(guardandoPermiso) return;
+  if(!permisoIA()){ pedirPermisoIA(null); return; }
+  guardandoPermiso = true;
+  try{ await guardarPermisoIA(false); }
+  catch(e){ $('ia-txt').textContent = 'No se pudo guardar el cambio. Probá de nuevo.'; }
+  finally{ guardandoPermiso = false; }
+});
+
 /* ══════════════════ COMPARADOR DE PRESUPUESTOS ══════════════════ */
 const URL_COMPARAR = 'https://marketplace-servicios.app.n8n.cloud/webhook/comparar';
 let comparando = false;
@@ -3180,14 +4599,18 @@ async function verSiHayQueComparar(solicitudId, matchIds){
       '<button class="comp-btn" data-comparar="'+solicitudId+'" type="button">' +
       '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20V9M10 20V4M16 20v-7M21 20H3"/></svg>' +
       '<span style="min-width:0"><b>Comparar los ' + distintos.size + ' presupuestos</b>' +
-      '<span>Te mostramos qué incluye cada uno y en qué se diferencian.</span></span></button>';
+      '<span>Te mostramos qué incluye cada uno y en qué se diferencian. ' +
+      '<span class="ia-sello"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v3M12 18v3M3 12h3M18 12h3M6.3 6.3l2.1 2.1M15.6 15.6l2.1 2.1M17.7 6.3l-2.1 2.1M8.4 15.6l-2.1 2.1"/><circle cx="12" cy="12" r="3.2"/></svg>Con IA</span></span></span></button>';
   }catch(e){}
 }
 
-$('d-comparador').addEventListener('click', async e => {
+$('d-comparador').addEventListener('click', e => {
   const b = e.target.closest('[data-comparar]');
   if(!b || comparando) return;
-  const solicitudId = b.dataset.comparar;
+  conPermisoIA(() => compararPresupuestos(b.dataset.comparar));
+});
+
+async function compararPresupuestos(solicitudId){
   comparando = true;
   $('d-comparador').innerHTML =
     '<div class="comp-caja"><div class="comp-resumen">Comparando los presupuestos…</div></div>';
@@ -3226,13 +4649,15 @@ $('d-comparador').addEventListener('click', async e => {
         '</div>' +
         (x.plazo ? '<div class="comp-plazo">Plazo: ' + esc(x.plazo) + '</div>' : '') +
         '</div>').join('') +
+      '<div class="comp-ojo">Esta comparación la arma una inteligencia artificial leyendo los ' +
+      'presupuestos. Es para orientarte: revisá igual cada uno antes de elegir.</div>' +
       '</div>';
   }catch(err){
     console.error(err);
     $('d-comparador').innerHTML =
       '<div class="comp-caja"><div class="comp-resumen">No me pude conectar. Probá de nuevo.</div></div>';
   }finally{ comparando = false; }
-});
+}
 
 /* ══════════════════ CALIFICAR AL PROVEEDOR ══════════════════ */
 const URL_CALIFICAR = 'https://marketplace-servicios.app.n8n.cloud/webhook/calificar';
@@ -3247,9 +4672,11 @@ function mostrarCalificar(){
   estrellasPuestas = 0;
   h.insertAdjacentHTML('beforeend',
     '<div class="calificar" id="caja-calificar">' +
-    '<div class="calificar-tit">¿Cómo fue trabajar con ' + esc((nombre||'').split(" ")[0]) + '?</div>' +
+    '<div class="calificar-tit">¿Cómo fue trabajar con ' + esc((nombre||'').split(" ")[0]) + '? ' +
+    '<span class="ia-sello"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v3M12 18v3M3 12h3M18 12h3M6.3 6.3l2.1 2.1M15.6 15.6l2.1 2.1M17.7 6.3l-2.1 2.1M8.4 15.6l-2.1 2.1"/><circle cx="12" cy="12" r="3.2"/></svg>Con IA</span></div>' +
     '<div class="calificar-txt">Tu calificación ayuda a otros clientes a elegir. ' +
-    'Para escribirla, leemos esta conversación una sola vez.</div>' +
+    'Para resumir en pocas palabras cómo trabajó, una inteligencia artificial lee ' +
+    'esta conversación una sola vez.</div>' +
     '<div class="estrellas" id="estrellas">' +
     [1,2,3,4,5].map(n => '<button class="estrella" type="button" data-estrella="'+n+'" aria-label="'+n+'">'+ESTRELLA+'</button>').join('') +
     '</div>' +
@@ -3280,6 +4707,9 @@ $('ch-hilo').addEventListener('click', async e => {
     setTimeout(() => { if($('cal-txt')) $('cal-txt').textContent = 'Calificar'; }, 2200);
     return;
   }
+  /* La conversación que se lee es de dos personas, no de una: sin el permiso
+     del que califica no sale nada hacia afuera. */
+  if(!permisoIA()){ pedirPermisoIA(() => $('cal-enviar').click()); return; }
   env.disabled = true; env.classList.add('cargando'); $('cal-txt').textContent = 'Enviando…';
   try{
     const r = await fetch(URL_CALIFICAR, {
@@ -3288,7 +4718,8 @@ $('ch-hilo').addEventListener('click', async e => {
         token: sesion.access_token,
         matchId: chatActual.id,
         puntaje: estrellasPuestas,
-        comentario: $('cal-comentario').value.trim()
+        comentario: limpiarDatos($('cal-comentario').value.trim()),
+        permiso_ia: true
       })
     });
     const d = await r.json();
@@ -3323,7 +4754,9 @@ function htmlReputacion(lista){
   return '<div class="rep-puntaje"><b>' + prom.toFixed(1) + '</b>' +
     '<span class="rep-estrellas">' + estrellas + '</span>' +
     '<span>' + lista.length + ' calificaci' + (lista.length===1?'ón':'ones') + '</span></div>' +
-    (top.length ? '<div class="rep-caja">' + top.map(a => '<span class="rep-tag">'+esc(a)+'</span>').join('') + '</div>' : '') +
+    (top.length ? '<div class="rep-caja">' + top.map(a => '<span class="rep-tag">'+esc(a)+'</span>').join('') + '</div>' +
+      '<div class="rep-fecha" style="margin-top:9px">Estas etiquetas las resume una inteligencia ' +
+      'artificial a partir de cada conversación calificada. Si alguna es injusta, reportala y la revisamos.</div>' : '') +
     '<div style="margin-top:14px">' +
     lista.slice(0,5).map(x =>
       '<div class="rep-item">' +
@@ -3336,8 +4769,18 @@ function htmlReputacion(lista){
 /* ══════════════════ TASADOR POR FOTO ══════════════════ */
 const URL_TASADOR = 'https://marketplace-servicios.app.n8n.cloud/webhook/tasar';
 let tasando = false;
-
-$('tasar-abrir').addEventListener('click', () => { if(!tasando) $('tasar-archivo').click(); });
+$('tasar-abrir').addEventListener('click', () => {
+  if(tasando) return;
+  /* El navegador solo abre el selector de archivos si el toque viene del
+     usuario, y guardar el permiso corta esa cadena. Así que después de darlo
+     no lo abrimos solos: le pedimos que toque de nuevo. */
+  if(permisoIA()){ $('tasar-archivo').click(); return; }
+  pedirPermisoIA(() => {
+    $('tasar-resultado').innerHTML =
+      '<div class="diag"><div class="diag-eti">Listo</div>' +
+      '<div class="diag-que">Ya tenemos tu permiso. Tocá otra vez el recuadro de arriba para elegir la foto.</div></div>';
+  });
+});
 
 $('tasar-archivo').addEventListener('change', async e => {
   const archivo = e.target.files[0];
@@ -3352,6 +4795,10 @@ $('tasar-archivo').addEventListener('change', async e => {
   try{
     // la subimos a nuestro depósito para poder mostrársela a la IA
     const url = await subirFoto(archivo);
+    /* La misma foto queda cargada en el pedido: el proveedor la va a necesitar
+       para cotizar, y así no se sube dos veces ni queda huérfana en el depósito. */
+    fotoPedido = url;
+    pintarFotoPedido();
     const r = await fetch(URL_TASADOR, {
       method:'POST', headers:{'Content-Type':'application/json'},
       body: JSON.stringify({ foto: url, zona: $('s-zona').value || null })
@@ -3383,8 +4830,10 @@ $('tasar-archivo').addEventListener('change', async e => {
         ? '<div class="diag-precio">' + pesos(d.precio_min) + ' – ' + pesos(d.precio_max) + '</div>'
         : '') +
       (d.aclaracion ? '<div class="diag-nota">' + esc(d.aclaracion) + '</div>' : '') +
-      '<div class="diag-nota">Es una estimación para orientarte: el precio final lo pone cada proveedor. ' +
-      'Completamos el pedido abajo, revisalo y cambiá lo que haga falta.</div>' +
+      '<div class="diag-nota">Es una referencia de mercado que estima una inteligencia artificial ' +
+      'mirando la foto, <b>no un precio de esta app ni un presupuesto</b>. Puede estar equivocada. ' +
+      'El precio real lo pone cada proveedor después de ver el trabajo.</div>' +
+      '<div class="diag-nota">Completamos el pedido abajo con lo que entendimos: revisalo y cambiá lo que haga falta.</div>' +
       '<img class="diag-foto" src="' + esc(url) + '" alt="">' +
       '</div>';
     $('tasar-resultado').scrollIntoView({block:'nearest', behavior:'smooth'});
@@ -3398,12 +4847,35 @@ $('tasar-archivo').addEventListener('change', async e => {
 });
 
 /* ══════════════════ ASISTENTE ══════════════════ */
+/* ══════════════════ FILTRO DE DATOS DE CONTACTO ══════════════════ */
+/* Antes de que un texto salga hacia un tercero le sacamos los datos con los
+   que se puede contactar o identificar a alguien fuera de la app. No es
+   anonimizar —con texto libre eso es imposible— es mandar lo mínimo.
+
+   El orden de las reglas no es arbitrario: un +54 con separadores tiene
+   tantos dígitos como una tarjeta, y una tarjeta contiene adentro algo que
+   parece un teléfono. Va de lo más específico a lo más general. El punto
+   queda afuera de los separadores de teléfono a propósito, porque en
+   castellano rioplatense los precios lo usan (1.500.000). */
+function limpiarDatos(texto){
+  let t = String(texto == null ? '' : texto);
+  t = t.replace(/[\w.+-]+@[\w-]+\.[\w.-]{2,}/gi, '[correo]');
+  t = t.replace(/\b\d{22}\b/g, '[cbu]');
+  t = t.replace(/\+\s?54[\s\d()-]{6,}\d/g, '[teléfono]');
+  t = t.replace(/\b\d(?:[ -]?\d){12,18}\b/g, m =>
+    (m.replace(/\D/g,'').length >= 13 ? '[tarjeta]' : m));
+  t = t.replace(/\b(?:0?\d{2,4}[\s-]?)?(?:15[\s-]?)?\d{3,4}[\s-]\d{4}\b/g, '[teléfono]');
+  t = t.replace(/\b\d{10,11}\b/g, '[teléfono]');
+  t = t.replace(/(?:^|\s)@[\w.]{2,}\w/g, ' [usuario]');
+  return t;
+}
+
 const URL_ASISTENTE = 'https://marketplace-servicios.app.n8n.cloud/webhook/asistente';
 let charla = [], asisPensando = false;
 
 const SUGERENCIAS = {
   cliente: ['¿Cómo pido un servicio?', '¿Cuánto me cuesta usar Tratto?',
-            '¿Cómo funcionan los puntos?', 'Mi pedido dice "Buscando" hace rato'],
+            'Mi pedido dice "Buscando" hace rato'],
   proveedor: ['¿Cómo consigo más clientes?', '¿Cómo mando un presupuesto?',
               '¿Para qué sirven las medallas?', 'Mi rubro no está en la lista']
 };
@@ -3434,6 +4906,9 @@ function abrirAsistente(){
 async function preguntarAsistente(texto){
   const t = (texto || '').trim();
   if(!t || asisPensando) return;
+  /* Recién acá sale algo hacia afuera, así que recién acá se pide el permiso.
+     Abrir la pantalla y leer las preguntas frecuentes no manda nada. */
+  if(!permisoIA()){ pedirPermisoIA(() => preguntarAsistente(t)); return; }
   charla.push({rol:'yo', texto:t});
   asisPensando = true;
   pintarCharla();
@@ -3444,8 +4919,9 @@ async function preguntarAsistente(texto){
     const r = await fetch(URL_ASISTENTE, {
       method:'POST', headers:{'Content-Type':'application/json'},
       body: JSON.stringify({
-        pregunta: t,
-        historial: charla.slice(-8).map(m => ({rol: m.rol === 'yo' ? 'usuario' : 'bot', texto: m.texto})),
+        pregunta: limpiarDatos(t),
+        historial: charla.slice(-8).map(m => ({rol: m.rol === 'yo' ? 'usuario' : 'bot',
+                                               texto: limpiarDatos(m.texto)})),
         userId: sesion ? sesion.user.id : null,
         modo: modo
       })
@@ -3477,6 +4953,88 @@ $('asis-texto').addEventListener('keydown', e => {
   }
 });
 
+
+/* ══════════════════ PREGUNTAS FRECUENTES ══════════════════ */
+/* Conviven con el asistente: son las respuestas que no queremos que nadie
+   improvise —cómo se cobra, cuándo se paga, qué no verificamos— escritas de
+   una vez y siempre iguales. El asistente está para lo demás. */
+const FAQ = [
+  ['Si buscás un servicio', [
+    ['¿Cuánto me cuesta usar Tratto?',
+     'Nada. Pedir un servicio, hablar con proveedores y recibir presupuestos es gratis. ' +
+     'Tratto le cobra una comisión al proveedor sobre los trabajos que se pagan por la app.'],
+    ['¿Cuándo pago el trabajo?',
+     'Cuando está terminado. El proveedor lo marca como terminado en la app y recién ahí ' +
+     'te aparece el botón para pagar. <b>Aceptar un presupuesto no te cobra nada.</b>'],
+    ['¿Con qué puedo pagar?',
+     'Con tarjeta de crédito, de débito o con saldo de tu cuenta de Mercado Pago.'],
+    ['¿Tratto se queda con mi plata?',
+     'No. El pago va directo del cliente al proveedor por Mercado Pago. ' +
+     'Tratto nunca tiene los fondos: solo se le retiene su comisión al proveedor en el momento del cobro.'],
+    ['¿Tratto verifica a los proveedores?',
+     'No verificamos matrículas ni antecedentes: lo que ves en cada perfil lo declaró el proveedor. ' +
+     'Por eso mismo <b>no admitimos rubros que necesiten matrícula</b>, como gas, electricidad o profesiones de la salud. ' +
+     'Mirá las calificaciones y los trabajos cerrados por la app antes de decidir.'],
+    ['¿El precio que me da la foto es el que voy a pagar?',
+     'No. Es una estimación que arma una inteligencia artificial mirando la foto, para que sepas ' +
+     'más o menos en qué rango estás parado. <b>El precio real lo pone cada proveedor</b> en su presupuesto, ' +
+     'y puede ser distinto.'],
+    ['¿Qué pasa si nadie responde mi pedido?',
+     'A los 15 días sin respuesta el pedido se da de baja solo y te avisamos. Podés volver a publicarlo cuando quieras.'],
+    ['El trabajo salió mal, ¿qué hago?',
+     'Escribinos a trattoapp1@gmail.com contándonos qué pasó. Revisamos el caso y, si corresponde, ' +
+     'gestionamos la devolución del pago.']
+  ]],
+  ['Si ofrecés un servicio', [
+    ['¿Cuánto me cobra Tratto?',
+     'El <b>3%</b> de cada trabajo que cobres por la app. Se descuenta automáticamente cuando el cliente paga. ' +
+     'Publicar tu perfil y recibir pedidos no cuesta nada.'],
+    ['¿Cómo cobro?',
+     'Conectás tu cuenta de Mercado Pago una sola vez, desde Panel o desde Cuenta. ' +
+     'Después la plata de cada trabajo te llega directo a esa cuenta.'],
+    ['¿Cuándo me pagan?',
+     'Cuando terminás el trabajo lo marcás como terminado y el cliente paga desde la app. ' +
+     'Conviene que lo hagas estando con el cliente, así cobrás en el momento.'],
+    ['¿Qué pasa si el cliente no paga?',
+     'Escribinos a trattoapp1@gmail.com y lo revisamos. Al cliente que no paga le suspendemos la cuenta.'],
+    ['¿Quién escribe las etiquetas de mi reputación?',
+     'Cuando un cliente te califica, una inteligencia artificial lee esa conversación y resume en pocas ' +
+     'palabras cómo trabajaste (por ejemplo "puntual" o "presupuesto claro"). ' +
+     '<b>Si alguna etiqueta te parece injusta, reportala y la revisamos a mano.</b>'],
+    ['¿Qué son los trabajos cerrados por Tratto?',
+     'Es la cantidad de trabajos que cobraste por la app. Solo contamos esos porque son los únicos que podemos ' +
+     'respaldar. <b>No quiere decir que no hayas hecho otros</b>, pero es lo que un cliente nuevo puede verificar.'],
+    ['¿Puedo trabajar por fuera de Tratto?',
+     'Sí, siempre. Trabajás por tu cuenta y no tenés ninguna exclusividad con nosotros. ' +
+     'Tené en cuenta que lo que se arregle por fuera no suma a tu reputación en la app.'],
+    ['¿Puedo ofrecer un servicio que necesita matrícula?',
+     'No. Como no verificamos matrículas contra ningún colegio, no admitimos rubros que las exijan: ' +
+     'gas, electricidad, escribanía, arquitectura, ingeniería, agrimensura, profesiones de la salud y veterinaria.']
+  ]]
+];
+
+function pintarFAQ(){
+  const c = $('faq-lista');
+  if(!c || c.dataset.listo) return;
+  c.innerHTML = FAQ.map(g =>
+    '<div class="faq-grupo"><div class="sec"><span class="sec-tit">'+esc(g[0])+'</span></div>' +
+    g[1].map(qa =>
+      '<div class="faq-item"><button class="faq-preg" type="button">' + esc(qa[0]) +
+      '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 5l7 7-7 7"/></svg>' +
+      '</button><div class="faq-resp">' + qa[1] + '</div></div>').join('') +
+    '</div>').join('');
+  c.dataset.listo = '1';
+}
+
+$('faq-lista').addEventListener('click', e => {
+  const b = e.target.closest('.faq-preg');
+  if(b) b.parentElement.classList.toggle('abierta');
+});
+
+/* Se entra desde el asistente. volverA no se toca: "volver" tiene que devolver
+   a la pantalla desde la que se pidió ayuda, no al asistente. */
+$('asis-a-faq').addEventListener('click', () => { pintarFAQ(); ir('ayuda'); });
+
 /* ══════════════════ ARRANQUE ══════════════════ */
 /* ══════════════════ ACTUALIZACIÓN AUTOMÁTICA ══════════════════ */
 /* Refresca las listas solas mientras mirás una pantalla, sin recargar la página. */
@@ -3495,12 +5053,19 @@ async function mirarSiHayNovedades(){
     const antes = firmaDeDatos();
     misPedidos = await api('solicitudes?user_id=eq.'+sesion.user.id+'&order=created_at.desc');
     misPerfiles = await api('proveedores?user_id=eq.'+sesion.user.id+'&order=created_at.desc');
-    if(firmaDeDatos() === antes) return;   // nada cambió, no repintamos
+
+    /* Los pedidos abiertos van ANTES del corte, y no es un descuido: la firma
+       se calcula sobre lo tuyo --tus pedidos, tus servicios-- y el feed
+       depende de lo que publican otros. Si esperara a que algo tuyo cambie,
+       un proveedor podría tener el Panel abierto toda la tarde sin enterarse
+       de un pedido nuevo, que es justo lo contrario de para qué está. */
+    if(actual === 'panel' && modo === 'proveedor') await cargarPedidosAbiertos();
+
+    if(firmaDeDatos() === antes) return;   // de lo tuyo no cambió nada, no repintamos
 
     if(actual === 'inicio')  await cargarPedidos();
     if(actual === 'perfil')  await cargarPerfiles();
     if(actual === 'panel')   await cargarPanel();
-    if(actual === 'premios') await cargarPremios();
     await cargarConexiones();
   }catch(e){}
 }
@@ -3522,30 +5087,77 @@ async function recargarTodo(){
   await cargarConexiones();
   await cargarPerfilProv();
   pintarModoCuenta();
-  if(modo === 'proveedor') await cargarPanel(); else await cargarPremios();
+  if(modo === 'proveedor'){ await cargarPanel(); await cargarPedidosAbiertos(); }
 }
 
 function pintarModoCuenta(){
   const prov = modo === 'proveedor';
-  $('modo-actual').textContent = prov ? 'Modo proveedor' : 'Modo cliente';
+  $('perfil-servicios-sec').classList.toggle('oculto', !prov);
+  const vieja = $('c-nombre').querySelector('.placa-oficio');
+  if(vieja) vieja.remove();
+  if(prov && miOficio())
+    $('c-nombre').insertAdjacentHTML('beforeend',
+      '<div class="placa-oficio">'+esc(miOficio())+'</div>');
+  $('panel-saludo').textContent = prov ? 'Hola, ' + miPrimerNombre() : 'Panel';
+  $('panel-oficio').textContent = prov ? miOficio() : '';
+  $('modo-actual').textContent = prov ? 'Cuenta de proveedor' : 'Cuenta de cliente';
   $('modo-sello').textContent  = prov ? 'Proveedor' : 'Cliente';
   $('modo-sello').className    = 'sello ' + (prov ? 'oro' : 'verde');
   $('modo-txt').textContent    = prov
-    ? 'Recibís pedidos, mandás presupuestos y armás tu perfil.'
-    : 'Pedís servicios y elegís proveedores.';
-  $('btn-cambiar-txt').textContent = prov ? 'Cambiar a modo cliente' : 'Cambiar a modo proveedor';
+    ? 'Recibís pedidos, mandás presupuestos y armás tu perfil. Se eligió al crear la cuenta y no se cambia.'
+    : 'Pedís servicios y elegís proveedores. Se eligió al crear la cuenta y no se cambia.';
+}
+
+/* El nombre y el oficio de la cuenta, con respaldo para las cuentas creadas
+   antes de que se pidieran: el prefijo del correo no es un nombre, pero es
+   mejor que un hueco. */
+function miNombre(){
+  const m = (sesion && sesion.user && sesion.user.user_metadata) || {};
+  return (m.nombre || '').trim() || (sesion.user.email || '').split('@')[0];
+}
+/* Para saludar alcanza el primer nombre: "Hola, Raúl" suena a persona,
+   "Hola, Raúl Gómez" suena a formulario. El nombre completo queda en la placa
+   de la cuenta y en el perfil que ve el cliente. */
+function miPrimerNombre(){ return miNombre().split(' ')[0]; }
+
+function miTelefono(){
+  const m = (sesion && sesion.user && sesion.user.user_metadata) || {};
+  return (m.telefono || '').trim();
+}
+
+function miOficio(){
+  const m = (sesion && sesion.user && sesion.user.user_metadata) || {};
+  return (m.rubro_personalizado || m.rubro || '').trim();
 }
 
 function entrarApp(){
   const u = sesion.user;
-  $('saludo').textContent = 'Hola, ' + (u.email||'').split('@')[0];
+  $('saludo').textContent = 'Hola, ' + miPrimerNombre();
+  $('c-nombre').textContent = miNombre();
   $('c-mail').textContent = u.email;
-  $('c-inicial').textContent = (u.email||'?').charAt(0).toUpperCase();
+  $('c-inicial').textContent = (miNombre()||'?').charAt(0).toUpperCase();
   $('c-uid').textContent = u.id;
   $('c-alta').textContent = u.created_at ? new Date(u.created_at).toLocaleDateString('es-AR',{day:'2-digit',month:'long',year:'numeric'}) : '—';
   $('s-email').value = u.email; $('p-email').value = u.email;
+  /* Precargado, no bloqueado: alguien puede pedir un servicio para la casa de
+     la madre y querer poner otro nombre. */
+  if(!$('s-nombre').value) $('s-nombre').value = miNombre();
+  if(!$('s-tel').value)    $('s-tel').value    = miTelefono();
   resumenPedido(); resumenProv();
-  const g = store.leer(); if(g && g.modo) modo = g.modo;
+  /* El rol lo fija la cuenta. Lo guardado en el teléfono es solo un respaldo
+     para las cuentas creadas antes de este cambio: si mandara el teléfono,
+     bastaría con entrar desde otro para elegir el otro rol. */
+  modo = u.user_metadata && u.user_metadata.rol
+    ? u.user_metadata.rol
+    : ((store.leer() || {}).modo || 'cliente');
+  /* Y lo devolvemos al almacenamiento ya resuelto. Las dos pantallas de
+     entrada guardan el rol del selector, que al iniciar sesión no significa
+     nada; esto lo corrige en el acto en vez de dejar el dato mentiroso. */
+  const g = store.leer() || {}; g.modo = modo; store.escribir(g);
+  pintarModoCuenta();
+  pintarPermisoIA();
+  pintarTransfer();
+  pintarLegales();
   aplicarModo();
   recargarTodo();
   arrancarLatido();

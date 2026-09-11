@@ -1,0 +1,578 @@
+<!DOCTYPE html>
+<html lang="es-AR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="robots" content="index,follow">
+<title>Términos · proveedores · Tratto</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=IBM+Plex+Sans+Condensed:wght@600;700&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --noche:#0C2620; --claro:#FCFBF8; --claro-2:#F2F0E9;
+    --tinta:#0E1815; --gris:#68766F; --gris-2:#94A19B;
+    --verde:#1E5D49; --verde-luz:#8FD9BC;
+    --laton:#C9A227; --laton-osc:#8A6E10;
+    --linea:#E0DCD0; --linea-fuerte:#CFC9BA;
+    --r:10px; --st:env(safe-area-inset-top,0px); --sb:env(safe-area-inset-bottom,0px);
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{background:var(--claro-2);color:var(--tinta);
+    font-family:'IBM Plex Sans',system-ui,sans-serif;font-size:15px;line-height:1.6;
+    -webkit-text-size-adjust:100%}
+
+  /* La cabecera repite el glifo de la app: dos nodos unidos, el segundo en
+     latón. Es lo mismo que ve el usuario al abrir Tratto. */
+  .barra{background:var(--noche);color:var(--claro);padding:calc(14px + var(--st)) 18px 14px;
+    display:flex;align-items:center;gap:11px;position:sticky;top:0;z-index:5}
+  .barra svg{width:22px;height:22px;flex:none}
+  .barra-marca{font-family:'IBM Plex Sans Condensed',sans-serif;font-weight:700;font-size:17px}
+  .barra a{margin-left:auto;color:var(--verde-luz);text-decoration:none;
+    font-family:'IBM Plex Mono',monospace;font-size:9.5px;letter-spacing:.15em;
+    text-transform:uppercase;font-weight:600}
+
+  .hoja{max-width:720px;margin:0 auto;padding:26px 18px calc(60px + var(--sb));
+    background:var(--claro);min-height:100vh}
+  @media(min-width:760px){ .hoja{margin:26px auto;min-height:0;
+    border:1px solid var(--linea);border-radius:var(--r)} }
+
+  .kicker{font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:.19em;
+    text-transform:uppercase;color:var(--laton-osc);font-weight:600}
+
+  /* El hilo con remate en latón: el mismo sello que en la app marca lo que
+     quedó firme. Acá cierra el título del documento. */
+  .hilo{height:1px;background:linear-gradient(90deg,var(--verde),var(--laton));
+    margin:14px 0 20px}
+
+  .preliminar{background:rgba(201,162,39,.09);border:1px solid rgba(201,162,39,.45);
+    border-radius:var(--r);padding:13px 15px;font-size:13px;line-height:1.5;
+    color:var(--laton-osc);margin-bottom:26px}
+  .preliminar b{font-weight:600}
+
+  h1{font-family:'IBM Plex Sans Condensed',sans-serif;font-weight:700;
+    font-size:29px;line-height:1.12;letter-spacing:-.02em;margin-top:7px}
+  /* El primer h2 no lleva raya: ya viene el hilo del título. */
+  h2:first-of-type{border-top:none;padding-top:0;margin-top:26px}
+  h2{font-family:'IBM Plex Sans Condensed',sans-serif;font-weight:700;
+    font-size:20px;margin:34px 0 10px;padding-top:20px;border-top:1px solid var(--linea);
+    letter-spacing:-.01em}
+  h3{font-family:'IBM Plex Sans Condensed',sans-serif;font-weight:700;
+    font-size:16.5px;margin:22px 0 8px}
+  h4{font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:.15em;
+    text-transform:uppercase;color:var(--laton-osc);margin:20px 0 8px;font-weight:600}
+  p{margin:11px 0;color:var(--gris)}
+  p strong,li strong,td strong{color:var(--tinta);font-weight:600}
+  ul,ol{margin:11px 0 11px 20px;color:var(--gris)}
+  li{margin:6px 0}
+  a{color:var(--verde);text-decoration:underline;text-underline-offset:2px}
+  code{font-family:'IBM Plex Mono',monospace;font-size:.88em;background:var(--claro-2);
+    border:1px solid var(--linea);border-radius:4px;padding:1px 5px}
+  hr{border:none;border-top:1px solid var(--linea);margin:30px 0}
+
+  /* Las tablas son anchas y el teléfono es angosto: scrollean solas en vez de
+     desbordar la página. La sombra del borde derecho aparece sola cuando queda
+     tabla por ver y se apaga al llegar al final: sin eso, en el teléfono la
+     columna cortada parece que no existe. */
+  .tabla{overflow-x:auto;-webkit-overflow-scrolling:touch;margin:16px 0;
+    border:1px solid var(--linea);border-radius:var(--r);
+    background:
+      linear-gradient(90deg, var(--claro) 30%, rgba(252,251,248,0)) left / 26px 100% no-repeat local,
+      linear-gradient(90deg, rgba(252,251,248,0), var(--claro) 70%) right / 26px 100% no-repeat local,
+      radial-gradient(farthest-side at 0 50%, rgba(14,24,21,.13), transparent) left / 11px 100% no-repeat scroll,
+      radial-gradient(farthest-side at 100% 50%, rgba(14,24,21,.13), transparent) right / 11px 100% no-repeat scroll}
+  table{border-collapse:collapse;width:100%;min-width:460px;font-size:13.5px}
+  th,td{text-align:left;padding:10px 13px;border-bottom:1px solid var(--linea);
+    vertical-align:top;color:var(--gris)}
+  th{background:var(--claro-2);color:var(--tinta);font-weight:600;
+    font-family:'IBM Plex Sans Condensed',sans-serif;white-space:nowrap}
+  tr:last-child td{border-bottom:none}
+
+  .pie{margin-top:38px;padding-top:20px;border-top:1px solid var(--linea);
+    display:flex;flex-wrap:wrap;gap:10px}
+  .pie a{font-family:'IBM Plex Mono',monospace;font-size:9.5px;letter-spacing:.14em;
+    text-transform:uppercase;font-weight:600;color:var(--laton-osc);text-decoration:none;
+    border:1px solid var(--linea-fuerte);border-radius:99px;padding:8px 14px}
+</style>
+</head>
+<body>
+
+<div class="barra">
+  <svg viewBox="0 0 32 32" fill="none" aria-hidden="true">
+    <circle cx="8" cy="8" r="4.6" stroke="#8FD9BC" stroke-width="1.8"/>
+    <circle cx="24" cy="24" r="4.6" stroke="#C9A227" stroke-width="1.8"/>
+    <path d="M11.4 11.4 L20.6 20.6" stroke="#4E7A6E" stroke-width="1.8" stroke-linecap="round"/>
+  </svg>
+  <span class="barra-marca">Tratto</span>
+  <a href="/">Volver a la app</a>
+</div>
+
+<main class="hoja">
+  <div class="kicker">Legales · Proveedores</div>
+  <h1>Términos y condiciones para Proveedores</h1>
+  <div class="hilo"></div>
+  <div class="preliminar"><b>Versión preliminar.</b> Este documento está pendiente de revisión
+    por asesor letrado. Última actualización: 10 de septiembre de 2026.</div>
+  
+  <blockquote>
+  <p><strong>Cuándo entra en vigencia.</strong> Este contrato <strong>no rige todavía</strong>. Entra en vigencia el día en
+  que Tratto abra al público, y solo después de que se hayan verificado y documentado las
+  medidas técnicas que este contrato y la Política de Privacidad describen. La fecha de vigencia
+  se publicará en esta misma página.</p>
+  <p><strong>Por qué hay dos contratos.</strong> Hasta la versión 0.5 había un solo documento para
+  todos. Se separó en dos porque son dos relaciones jurídicas distintas: con el Cliente
+  es una relación de consumo, regida por la Ley 24.240; con el Proveedor es una relación
+  comercial entre independientes. Es la misma estructura que usan las plataformas
+  comparables del mercado argentino. La <strong>Política de Privacidad sigue siendo una sola</strong>,
+  porque la Ley 25.326 no distingue por rol.</p>
+  <p><strong>Este contrato es para Proveedores</strong>, es decir para quien ofrece y presta un servicio a
+  través de Tratto. Si además querés <strong>contratar</strong> un servicio, eso se rige por un contrato
+  distinto: los <a href="/terminos-cliente.html">Términos y Condiciones para Clientes</a>.</p>
+  </blockquote>
+  
+  <h2>1. Quiénes somos y qué es Tratto</h2>
+  <p>Tratto es una plataforma digital operada por <strong>Agustín Mathias Omelenicki</strong>, DNI 47.254.863, CUIT <strong>20-47254863-9</strong>, con domicilio en <strong>Remedios de Escalada 7646, Martín Coronado, Partido de Tres de Febrero (B1682), Provincia de Buenos Aires, República Argentina</strong> (en adelante, "Tratto", "la Plataforma" o "nosotros").</p>
+  <p>Correo de contacto: <strong>trattoapp1@gmail.com</strong></p>
+  <p>Tratto es un <strong>punto de encuentro entre personas que necesitan un servicio y personas que lo prestan de forma independiente</strong>. Nuestra única función es conectar a las partes y poner a disposición herramientas para que se comuniquen, coticen y cobren.</p>
+  <h3>1.1. Qué NO es Tratto</h3>
+  <ul>
+  <li><strong>Tratto no presta los servicios</strong> que se contratan a través de la aplicación. No somos plomeros, ni pintores, ni contadores. Los servicios los presta cada Proveedor por su cuenta y riesgo.</li>
+  <li><strong>Tratto no es empleador de los Proveedores.</strong> No existe relación laboral, de dependencia, societaria ni de agencia entre Tratto y los Proveedores.</li>
+  <li><strong>Tratto no es parte del contrato</strong> que celebran el Cliente y el Proveedor. Ese acuerdo es exclusivamente entre ellos dos.</li>
+  <li><strong>Tratto no administra el precio del trabajo.</strong> El pago lo procesa <strong>Mercado Pago</strong>, que lo
+    divide en el mismo acto: te acredita a vos el precio del trabajo menos las comisiones, y a
+    Tratto <strong>únicamente su comisión</strong>. El precio del trabajo no pasa por ninguna cuenta de Tratto
+    ni queda a su disposición. Lo que Tratto sí recibe es su comisión, acreditada directamente por
+    Mercado Pago.</li>
+  <li><strong>Tratto no verifica títulos, matrículas ni antecedentes</strong> de los Proveedores.</li>
+  </ul>
+  <h2>2. Sos independiente</h2>
+  <p>Este es el punto más importante de este contrato y por eso va primero.</p>
+  <p><strong>Entre vos y Tratto no existe relación laboral, de dependencia, societaria, de agencia ni de
+  exclusividad de ningún tipo.</strong> Tratto no es tu empleador ni tu cliente: es el lugar donde te
+  encontrás con clientes.</p>
+  <p>En concreto, y esto describe cómo funciona realmente la plataforma:</p>
+  <ul>
+  <li><strong>Ponés vos el precio.</strong> Tratto no fija, sugiere ni impone tarifas. El rango que publicás y el
+    monto de cada presupuesto los definís vos.</li>
+  <li><strong>Ponés vos la zona y la disponibilidad</strong>, y las cambiás cuando quieras.</li>
+  <li><strong>Aceptás o rechazás cualquier pedido, sin dar explicaciones</strong> y sin ninguna consecuencia.
+    Tratto no te asigna trabajos ni te penaliza por rechazarlos.</li>
+  <li><strong>No tenés horario, ni cupo mínimo, ni obligación de conectarte.</strong></li>
+  <li><strong>Trabajás para quien quieras, dentro y fuera de Tratto</strong>, incluidas plataformas competidoras.
+    No hay exclusividad.</li>
+  <li><strong>Ponés vos tus herramientas, materiales, insumos y traslado</strong>, y asumís el riesgo económico
+    de tu actividad.</li>
+  <li><strong>Tenés a cargo tus impuestos</strong> y las habilitaciones que tu actividad requiera.</li>
+  <li><strong>Sos responsable del trabajo que hacés</strong> y de los daños que tu prestación pudiera ocasionar.</li>
+  </ul>
+  <h3>2.1. Qué son y qué no son las reglas de la plataforma</h3>
+  <p>Tratto tiene reglas de funcionamiento: cómo se publican los pedidos, quién ve cuál, cómo se
+  abre una conversación, cómo se cobra. <strong>Esas reglas ordenan técnicamente la plataforma. No son
+  órdenes sobre tu trabajo.</strong></p>
+  <p>Se limitan a organizar la publicación de pedidos, preservar la seguridad, proteger los datos
+  personales y facilitar la comunicación entre las partes. <strong>No constituyen instrucciones sobre la
+  forma, el tiempo, el lugar, los medios ni el modo en que prestás tus servicios.</strong></p>
+  <p><strong>Tratto se obliga expresamente a no:</strong></p>
+  <ul>
+  <li>establecer jornadas, turnos ni horarios;</li>
+  <li>exigirte disponibilidad mínima ni tiempo de conexión;</li>
+  <li>imponerte una tasa de aceptación de pedidos;</li>
+  <li>aplicarte ninguna consecuencia desfavorable por rechazar un pedido, por desconectarte o por
+    trabajar en otras plataformas;</li>
+  <li>fijarte precios, ni mínimos ni máximos;</li>
+  <li>darte instrucciones sobre cómo ejecutar el trabajo, ni exigirte capacitación, protocolos,
+    uniformes, herramientas o materiales determinados;</li>
+  <li>monitorear tu ubicación mientras trabajás.</li>
+  </ul>
+  <p><strong>Qué significa "sin ninguna consecuencia".</strong> Cuando este contrato dice que podés rechazar un
+  pedido sin consecuencias, quiere decir exactamente eso: rechazar no reduce tu visibilidad, no
+  te hace recibir menos pedidos, no baja tu posición en ninguna lista, no te quita beneficios y
+  no puede motivar una suspensión. Si alguna vez la aplicación funcionara de otro modo, sería un
+  incumplimiento de Tratto, no una regla nueva.</p>
+  <h3>2.2. La prestación es tuya, y podés delegarla</h3>
+  <p>Podés prestar el servicio personalmente o <strong>valerte de dependientes, colaboradores o
+  subcontratistas</strong> para ejecutarlo, siempre que se lo informes al Cliente y sigas siendo
+  responsable frente a él. Tratto no exige que trabajes en persona.</p>
+  <p>Si delegás, seguís siendo vos quien responde por el trabajo y por las obligaciones laborales y
+  fiscales de quien lo ejecute.</p>
+  <p>Al aceptar este contrato declarás que entendés y estás de acuerdo con todo lo anterior.</p>
+  <h2>3. Tu cuenta</h2>
+  <p>Para usar la plataforma tenés que:</p>
+  <ul>
+  <li>Tener <strong>18 años cumplidos</strong> y capacidad legal para contratar.</li>
+  <li>Registrarte con datos <strong>reales, completos y actualizados</strong>.</li>
+  <li>Usar una sola cuenta. No se permite crear cuentas múltiples para la misma persona.</li>
+  </ul>
+  <h3>3.1. Cada cuenta es de un solo tipo</h3>
+  <p>Al crear tu cuenta elegís si vas a usar Tratto <strong>como Cliente</strong> o <strong>como Proveedor</strong>, y esa
+  elección <strong>queda fija</strong>: no se puede cambiar desde la aplicación.</p>
+  <p>El motivo es este mismo documento. Cliente y Proveedor aceptan contratos distintos, con
+  obligaciones distintas, y una cuenta que cambiara de rol quedaría sin saber cuál firmó.</p>
+  <p>Si necesitás los dos usos, podés abrir una segunda cuenta con otro correo. Cada una acepta
+  su propio contrato y tiene su propio historial.</p>
+  <p>Al crear tu cuenta y aceptar estos Términos, declarás que cumplís con todo lo anterior.</p>
+  <h3>3.2. Un oficio por cuenta</h3>
+  <p>Al crear tu cuenta elegís <strong>tu oficio</strong>, y esa elección <strong>queda fija</strong>, igual que el tipo de
+  cuenta. Después publicás todos los servicios que quieras dentro de ese oficio, sin volver a
+  cargarlo.</p>
+  <p>El oficio es lo que determina qué pedidos ves y con cuáles te conecta la plataforma. Si ejercés
+  dos oficios distintos, necesitás una cuenta para cada uno.</p>
+  <h3>3.3. Qué necesitás para cobrar</h3>
+  <p>Para recibir pagos por la aplicación tenés que <strong>conectar una cuenta de Mercado Pago</strong> a tu
+  nombre, una sola vez, desde Panel o desde Cuenta. Sin esa conexión podés recibir pedidos y
+  presupuestar, pero no cobrar por la plataforma.</p>
+  <h2>4. Cómo funciona</h2>
+  <h3>4.1. Del pedido al trabajo</h3>
+  <ol>
+  <li>El Cliente publica un pedido: qué necesita, en qué zona, para cuándo, con una descripción y,
+     si quiere, una foto. <strong>El presupuesto es opcional</strong>: sirve para dar contexto, no para filtrar
+     Proveedores.</li>
+  <li>El pedido llega a los Proveedores de ese oficio y esa zona por dos caminos, que conviven:
+     Tratto le muestra Proveedores al Cliente, y el pedido aparece en el panel de los Proveedores
+     del rubro, que pueden ofrecerse. Un mismo pedido lo puede tomar <strong>un número limitado</strong> de
+     Proveedores; después se cierra.</li>
+  <li>Cliente y Proveedor conversan por el chat de la aplicación.</li>
+  <li>El Proveedor envía un presupuesto con monto, alcance y plazo. <strong>Ese es el único precio que
+     obliga</strong>: nada de lo anterior lo es.</li>
+  <li>El Cliente lo acepta o lo rechaza. <strong>Aceptar un presupuesto no genera ningún cobro</strong>: es únicamente el acuerdo entre las partes.</li>
+  <li>El Proveedor realiza el trabajo.</li>
+  <li>Al terminar, el Proveedor lo marca como terminado en la aplicación.</li>
+  <li><strong>Recién entonces</strong> el Cliente paga a través de la plataforma.</li>
+  </ol>
+  <p><strong>Sobre el filtro por oficio y zona, y sobre el límite de Proveedores por pedido.</strong> Los criterios
+  técnicos con los que la plataforma decide qué pedidos ves y cuándo se cierra un pedido <strong>no
+  constituyen asignación de trabajo ni generan deber de aceptación</strong>. Existen para que veas
+  pedidos que tengan que ver con lo que hacés y con dónde trabajás, y para que un Cliente no reciba
+  veinte ofertas que no va a poder leer.</p>
+  <p>Esos criterios:</p>
+  <ul>
+  <li>son <strong>objetivos y los mismos para todos</strong> los Proveedores del rubro y la zona;</li>
+  <li>funcionan por <strong>orden de llegada</strong>, no por preferencia ni por historial;</li>
+  <li><strong>no se usan</strong> para imponerte jornadas, para penalizar que te desconectes, ni para reducir tus
+    derechos por rechazar pedidos o por trabajar en otra plataforma;</li>
+  <li><strong>no dependen</strong> de tu tasa de aceptación, de tu tiempo de respuesta ni de tu calificación.</li>
+  </ul>
+  <p>Que un pedido se cierre no te impide acceder a todos los demás pedidos abiertos de tu rubro y
+  tu zona.</p>
+  <h3>4.2. Pedidos sin respuesta</h3>
+  <p>Si a los <strong>15 días corridos</strong> de publicado un pedido ningún Proveedor respondió, el pedido <strong>vence automáticamente</strong> y las fotos que el Cliente haya cargado para ese pedido <strong>se eliminan de forma permanente</strong>. El Cliente puede volver a publicarlo cuando quiera.</p>
+  <h2>5. Comisión, cobro y facturación</h2>
+  <h3>5.1. Cómo cobrás</h3>
+  <p>Cuando terminás un trabajo lo marcás como terminado en la aplicación y el Cliente paga desde
+  ahí. <strong>Mercado Pago procesa el pago y lo divide en el mismo acto</strong>: te acredita el precio del
+  trabajo menos las comisiones, y le acredita a Tratto su comisión. El precio del trabajo no pasa
+  por ninguna cuenta de Tratto.</p>
+  <p><strong>Cuándo tenés la plata disponible.</strong> Tratto configura el cobro con <strong>acreditación a 14 días
+  corridos</strong> desde la aprobación del pago. No es un capricho: la acreditación inmediata de Mercado
+  Pago cuesta bastante más, y ese costo lo pagarías vos. Con 14 días, la comisión de Mercado Pago
+  baja aproximadamente a la mitad.</p>
+  <p>Si preferís cobrar antes, Mercado Pago ofrece adelantar el dinero por su cuenta y con su costo.
+  Esa es una decisión tuya con Mercado Pago, en la que Tratto no interviene.</p>
+  <p>Publicar tu perfil y recibir pedidos <strong>no tiene costo</strong>.</p>
+  <h3>5.2. La comisión de Tratto</h3>
+  <p>Tratto percibe una comisión del <strong>3% (tres por ciento) más IVA, de corresponder según la
+  condición fiscal de Tratto</strong>, sobre el monto de cada trabajo cobrado a través de la plataforma.</p>
+  <p><strong>Por qué dice "más IVA de corresponder".</strong> Hoy Tratto tributa bajo el régimen simplificado y no
+  discrimina IVA, así que pagás 3% y nada más. Si en el futuro Tratto pasara al régimen general,
+  la comisión pasaría a llevar el IVA que la ley imponga. Se dice ahora para que ese cambio no te
+  llegue como un aumento sorpresivo: está previsto desde el principio y depende de una norma, no
+  de una decisión comercial de Tratto.</p>
+  <p>La comisión:</p>
+  <ul>
+  <li>Es <strong>a tu cargo</strong>, no del Cliente.</li>
+  <li>La <strong>retiene Mercado Pago</strong> al procesar el pago, mediante su mecanismo de división de pagos.
+    Tratto no la cobra por su cuenta ni la descuenta de ningún dinero tuyo.</li>
+  <li><strong>Se calcula sobre el monto neto</strong>, una vez descontadas las comisiones que cobra Mercado Pago
+    por procesar el pago.</li>
+  <li>Tiene un <strong>mínimo de $1.500 por operación cobrada</strong>. Aplica solo a trabajos de monto muy bajo,
+    donde el 3% no cubre el costo de sostener el servicio.</li>
+  <li><strong>Se factura por operación</strong>, en el momento en que el pago se aprueba. Vas a recibir un
+    comprobante por cada trabajo cobrado, no un resumen mensual.</li>
+  </ul>
+  <p>Tratto puede modificar el porcentaje notificando con <strong>30 días corridos de anticipación</strong>. Los
+  trabajos ya presupuestados mantienen la comisión vigente al momento del presupuesto.</p>
+  <h3>5.3. Comisiones de Mercado Pago</h3>
+  <p>Mercado Pago cobra sus propias comisiones por procesar los pagos, según su tarifario vigente.
+  Son ajenas a Tratto y están a tu cargo. Tratto no percibe ninguna parte de ellas.</p>
+  <h3>5.4. Impuestos y facturación</h3>
+  <p><strong>Lo tuyo.</strong> Tenés que estar <strong>inscripto ante los organismos fiscales que correspondan</strong> y emitir
+  la documentación fiscal exigible por los trabajos que prestás. Al registrarte te vamos a pedir
+  tu <strong>CUIT o CUIL y tu condición fiscal</strong>, y podemos verificarlos contra los registros públicos
+  del organismo recaudador.</p>
+  <p>Que estés inscripto en un régimen fiscal <strong>no modifica en nada lo que dice el punto 2 de este
+  contrato</strong>, ni en un sentido ni en el otro: tu independencia surge de cómo trabajás, no de cómo
+  tributás.</p>
+  <p><strong>Lo de Tratto.</strong> Tratto te emite un comprobante por su comisión, por cada operación cobrada.</p>
+  <p><strong>Lo que Tratto no hace.</strong> Tratto <strong>no actúa como agente de retención ni de percepción</strong> de tus
+  impuestos, no te asesora sobre ellos, y <strong>no es responsable de que le factures o no al Cliente</strong>:
+  esa es una obligación tuya, derivada de un contrato del que Tratto no es parte.</p>
+  <p>Si en el futuro una norma designara a Tratto agente de retención o percepción, te lo vamos a
+  avisar con la anticipación que la norma permita, y lo que se retenga o perciba va a figurar en
+  el comprobante de cada operación.</p>
+  <h3>5.5. Trabajos cobrados por fuera</h3>
+  <p>Sos libre de acordar el cobro por el medio que prefieras. Tené en cuenta que <strong>los trabajos que
+  no se cobren a través de Tratto no se registran en tu historial</strong> ni suman a tu contador de
+  trabajos cerrados, y <strong>quedan fuera de toda cobertura o mediación</strong> de la plataforma.</p>
+  <h2>6. Si el Cliente no paga</h2>
+  <p>Podés presentar un reclamo escribiendo a <strong>trattoapp1@gmail.com</strong> dentro de los <strong>30 días
+  corridos</strong> de terminado el trabajo, adjuntando la información que lo respalde.</p>
+  <p>Tratto revisará el reclamo y podrá mediar entre las partes, y suspender la cuenta del Cliente
+  que no abona. <strong>Tratto no garantiza el cobro del trabajo ni asume responsabilidad por el
+  incumplimiento del Cliente.</strong> La deuda es entre vos y el Cliente.</p>
+  <h2>7. Funciones con inteligencia artificial</h2>
+  <h3>7.1. Cuáles son</h3>
+  <p>Tratto pone a disposición cuatro funciones que se apoyan en un servicio de inteligencia
+  artificial de un tercero: un estimador de precios a partir de una foto, un comparador de
+  presupuestos, las etiquetas de reputación que resumen cómo trabajó un Proveedor, y un
+  asistente de ayuda. El estimador da una <strong>referencia de precios de mercado</strong>: no surge de los
+  precios cargados por los Proveedores de Tratto ni los representa. Cada una lleva un sello visible <strong>"Con IA"</strong> en la aplicación.</p>
+  <h3>7.2. Son opcionales y requieren tu permiso</h3>
+  <p><strong>Ninguna se activa sin el permiso expreso del usuario</strong>, que la aplicación pide por separado
+  explicando qué información sale, hacia dónde y para qué. Ese permiso se puede <strong>retirar en
+  cualquier momento</strong> desde la sección Cuenta.</p>
+  <p><strong>Sin ese permiso la plataforma funciona igual</strong>: se pueden publicar pedidos, recibir y aceptar
+  presupuestos, conversar, contratar, cobrar y calificar exactamente lo mismo.</p>
+  <p>Las condiciones del tratamiento están detalladas en la <strong>Política de Privacidad</strong>.</p>
+  <h3>7.3. Los resultados son orientativos y no obligan a nadie</h3>
+  <p><strong>Los resultados de estas funciones pueden ser incorrectos.</strong> En particular:</p>
+  <ul>
+  <li><strong>El rango de precios estimado a partir de una foto no es un presupuesto</strong>, no obliga a
+    ninguna de las partes y puede estar equivocado. El precio real lo define exclusivamente cada
+    Proveedor en su presupuesto.</li>
+  <li><strong>La comparación de presupuestos es un resumen, no una recomendación</strong> de contratación.</li>
+  <li><strong>Ninguna de estas funciones constituye asesoramiento técnico, profesional, legal, contable
+    ni de ninguna otra especialidad.</strong></li>
+  </ul>
+  <p><strong>Tratto no toma decisiones automatizadas sobre los usuarios.</strong> La inteligencia artificial no
+  puntúa proveedores, no ordena los resultados de búsqueda, no acepta ni rechaza usuarios, no
+  suspende cuentas y no interviene en ningún pago. Todas esas decisiones las toman personas.</p>
+  <h2>8. Qué podés ofrecer</h2>
+  <h3>8.1. Tratto no verifica tus credenciales</h3>
+  <p><strong>Los datos de formación, matrícula, experiencia y antecedentes que publicás son declarados por
+  vos y NO son verificados por Tratto</strong> contra ningún colegio profesional, registro ni organismo
+  público. Publicar información falsa da lugar a la baja del perfil.</p>
+  <h3>8.2. Actividades no admitidas</h3>
+  <p><strong>Por esa misma razón, Tratto no admite la oferta de servicios que requieran matrícula habilitante, colegiación o título habilitante</strong>, incluyendo sin limitación: instalaciones de gas, instalaciones eléctricas, control de plagas, escribanía, arquitectura, ingeniería, agrimensura, dirección de obra, maestro mayor de obras, servicios jurídicos, traducción pública, martillero, despachante de aduana, productor de seguros, y todas las profesiones de la salud y la veterinaria.</p>
+  <p>Ofrecerlos a través de Tratto está prohibido y da lugar a la <strong>baja inmediata del perfil</strong>.</p>
+  <h2>9. Tu reputación</h2>
+  <h3>9.1. Las calificaciones</h3>
+  <p>Al terminar un trabajo, el Cliente puede calificarte. Las calificaciones son públicas y forman parte de tu perfil.</p>
+  <ul>
+  <li><strong>Las estrellas y el comentario los escribe el Cliente.</strong> Son su opinión.</li>
+  <li><strong>Las etiquetas</strong> que aparecen resumidas en tu perfil <strong>las redacta una función de inteligencia artificial</strong> leyendo la conversación de ese trabajo, si el Cliente dio el permiso correspondiente. No son una evaluación de Tratto ni una certificación de idoneidad, y pueden ser inexactas.</li>
+  </ul>
+  <p><strong>Si una etiqueta sobre vos es injusta, reportala desde la aplicación.</strong> El reporte lo revisa
+  una persona, no un programa, y si la etiqueta es inexacta se corrige o se elimina. Es el
+  derecho de rectificación del art. 16 de la Ley 25.326.</p>
+  <p>Tratto puede eliminar calificaciones que contengan insultos, datos personales de terceros, contenido discriminatorio o manifiestamente falso, o que no se refieran a un trabajo real.</p>
+  <h3>9.1.1. Qué NO hace tu reputación</h3>
+  <p>Esto es importante y por eso está escrito aparte. <strong>Ni las calificaciones ni las etiquetas de
+  inteligencia artificial</strong> —ni ninguna otra métrica de la plataforma—:</p>
+  <ul>
+  <li>reducen tu visibilidad ni tu posición frente a los Clientes;</li>
+  <li>limitan la cantidad de pedidos que ves o que podés tomar;</li>
+  <li>te dan ni te quitan prioridad sobre otros Proveedores;</li>
+  <li>modifican tu comisión;</li>
+  <li>generan ninguna sanción automática;</li>
+  <li>pueden ser el motivo de una suspensión o de una baja.</li>
+  </ul>
+  <p>Son información para que el Cliente decida, no una herramienta de Tratto para premiarte o
+  castigarte. <strong>Ninguna decisión sobre tu cuenta se toma automáticamente a partir de una
+  calificación o de una etiqueta.</strong></p>
+  <p>Y siempre podés impugnarlas: el reporte lo revisa una persona, y si el contenido es inexacto se
+  corrige o se elimina.</p>
+  <h3>9.2. El contador de trabajos cerrados</h3>
+  <p>Tu perfil muestra la cantidad de <strong>trabajos cerrados a través de Tratto</strong>: únicamente los
+  cobrados mediante la plataforma, porque son los únicos que Tratto puede constatar.</p>
+  <p><strong>No significa que no hayas hecho otros trabajos.</strong> Es una medida de la actividad verificable
+  dentro de la plataforma, no de tu trayectoria total.</p>
+  <h2>10. Tus obligaciones como Proveedor</h2>
+  <p>Te obligás a:</p>
+  <ul>
+  <li>Prestar los servicios <strong>por cuenta propia</strong>, con tus propias herramientas, materiales y organización.</li>
+  <li>Publicar información <strong>veraz</strong> sobre tu experiencia, formación y antecedentes.</li>
+  <li>Cumplir los presupuestos que enviás, en el alcance, precio y plazo acordados.</li>
+  <li>Responder por la calidad del trabajo y por los daños que tu prestación pudiera ocasionar.</li>
+  <li>No ofrecer servicios que requieran matrícula habilitante.</li>
+  <li>Tratar respetuosamente al Cliente.</li>
+  <li>No usar la plataforma para obtener datos de contacto con fines ajenos a la prestación del servicio.</li>
+  </ul>
+  <h2>11. Devoluciones</h2>
+  <p>Si un Cliente reclama que el trabajo <strong>no fue prestado, fue prestado parcialmente o presentó
+  defectos sustanciales</strong>, Tratto analizará el reclamo, podrá solicitarte documentación y mediar
+  entre las partes.</p>
+  <p><strong>Si el reclamo resulta procedente, Tratto podrá gestionar la devolución total o parcial del
+  pago a través de Mercado Pago</strong>, junto con la restitución proporcional de su comisión.</p>
+  <p>Se deja constancia de que <strong>los fondos a devolver provienen de tu cuenta</strong>, que fue quien los
+  recibió; Tratto solo gestiona la operación. La decisión de Tratto no impide que acudas a la vía
+  judicial o administrativa.</p>
+  <h2>12. Cómo te contactamos</h2>
+  <p>Hay dos clases de mensajes, y no se manejan igual.</p>
+  <h3>12.1. Los del servicio</h3>
+  <p>Te avisamos por correo y, si lo habilitás, en el teléfono, cuando pasa algo de tu cuenta: te
+  llegó un presupuesto, te aceptaron uno, se pagó un trabajo, se confirmó tu alta.</p>
+  <p><strong>Estos no se pueden desactivar</strong> mientras tengas cuenta, porque sin ellos la plataforma no
+  funciona: son parte del servicio, no publicidad.</p>
+  <h3>12.2. Los de publicidad</h3>
+  <p>Novedades, promociones y beneficios de Tratto.</p>
+  <p><strong>Estos son opcionales y separados.</strong> Aceptar los del servicio no te suscribe a estos: hay que
+  decir que sí, aparte, y podés decir que no en cualquier momento, desde Cuenta o desde el mismo
+  mensaje. Cada comunicación publicitaria lleva escrito cómo darte de baja.</p>
+  <p>Cuando decís que no, dejás de recibirlos <strong>sin costo y sin trámite</strong>. No afecta en nada tu cuenta
+  ni el resto del servicio.</p>
+  <p><strong>Nunca cedemos tus datos a terceros para que ellos te hagan publicidad.</strong> Lo que te llegue,
+  llega de Tratto.</p>
+  <h2>13. Conducta prohibida</h2>
+  <p>Está prohibido:</p>
+  <ul>
+  <li>Publicar información falsa sobre identidad, matrículas o antecedentes.</li>
+  <li>Ofrecer servicios ilegales o que requieran matrícula habilitante.</li>
+  <li>Acosar, amenazar, discriminar o agredir a otros usuarios.</li>
+  <li>Usar la plataforma para publicidad no solicitada o captación de usuarios hacia otros servicios.</li>
+  <li>Intentar vulnerar la seguridad de la plataforma o acceder a datos de otros usuarios.</li>
+  <li>Manipular calificaciones mediante trabajos simulados.</li>
+  </ul>
+  <h2>14. Reclamos, suspensión y baja de cuentas</h2>
+  <h3>14.1. Cómo se tramita un reclamo</h3>
+  <p>Tanto el Cliente como el Proveedor pueden abrir un reclamo escribiendo a
+  <strong>trattoapp1@gmail.com</strong>. Tratto se lo traslada a la otra parte y media entre las dos.</p>
+  <p><strong>Si la otra parte no responde en 30 días corridos, el reclamo se cierra.</strong> Cerrarlo no
+  significa dar la razón a nadie: significa que Tratto deja de mediar. Las partes conservan
+  íntegras las acciones judiciales o administrativas que les correspondan.</p>
+  <h3>14.2. Suspensión y baja</h3>
+  <p>Esta cláusula está escrita con cuidado por una razón concreta: <strong>una facultad amplia de dar de
+  baja, sin procedimiento ni revisión, se parece al poder disciplinario de un empleador.</strong> Tratto
+  no lo tiene y no quiere tenerlo.</p>
+  <p><strong>Ninguna suspensión ni baja se dispone sin procedimiento.</strong> Salvo el caso urgente, antes de
+  suspender o dar de baja tu cuenta Tratto:</p>
+  <ol>
+  <li>Te <strong>notifica el motivo</strong> al correo registrado, con los hechos concretos.</li>
+  <li>Te da <strong>10 días corridos</strong> para responder y aportar prueba.</li>
+  <li><strong>Lee</strong> lo que contestás.</li>
+  <li>Toma una <strong>decisión fundada por escrito, revisada por una persona</strong>, nunca por un sistema
+     automático, y te la comunica con sus motivos.</li>
+  <li>Te habilita a <strong>pedir su revisión</strong> una vez, dentro de los 10 días corridos.</li>
+  </ol>
+  <p>La medida es <strong>proporcional</strong> al hecho y dura <strong>lo mínimo necesario</strong>. Tratto conserva el
+  registro de la decisión y de su fundamento.</p>
+  <p><strong>El caso urgente.</strong> Ante riesgo para otras personas, fraude o actividad ilegal manifiesta —tal
+  como se definen en el punto 21— la suspensión puede ser inmediata. Pero el procedimiento de
+  arriba <strong>se cumple igual, enseguida</strong>, y la medida se levanta si el descargo lo justifica.</p>
+  <p><strong>Lo que Tratto no puede hacer, en ningún caso, es suspenderte o darte de baja por:</strong></p>
+  <ul>
+  <li>rechazar pedidos, o rechazar muchos;</li>
+  <li>no conectarte durante un tiempo, o no tomar trabajos;</li>
+  <li>tu calificación o tus etiquetas de reputación;</li>
+  <li>trabajar en otras plataformas;</li>
+  <li>haber reclamado, o haber ejercido cualquier derecho de este contrato.</li>
+  </ul>
+  <p><strong>Baja voluntaria.</strong> Podés darte de baja cuando quieras desde la aplicación. La baja <strong>borra tu
+  cuenta y tus datos personales</strong>. Lo único que se conserva es lo que la ley obliga: los registros
+  de las operaciones cobradas, detallados en la tabla de plazos de la Política de Privacidad, por
+  <strong>10 años</strong> desde la operación.</p>
+  <p>La baja <strong>no extingue</strong> las obligaciones pendientes: trabajos no pagados, comisiones adeudadas o
+  reclamos en curso.</p>
+  <h2>15. Responsabilidad</h2>
+  <p><strong>Lo que Tratto no garantiza.</strong> Tratto no garantiza un volumen de pedidos, una cantidad de
+  contactos ni ingreso alguno, ni la disponibilidad ininterrumpida de la plataforma. Tampoco
+  responde por el incumplimiento del Cliente, incluido el impago de un trabajo prestado.</p>
+  <p><strong>Lo que Tratto sí responde.</strong> Tratto responde por su propia actuación: por la información que
+  publique, por el funcionamiento de la aplicación y de sus funciones, por la gestión del circuito
+  de pago, por la mediación que asuma y por el tratamiento de los datos personales.</p>
+  <p><strong>Lo que vos respondés.</strong> Respondés por la calidad, la seguridad y la legalidad de los servicios
+  que prestás, y por los daños que tu prestación pudiera ocasionar al Cliente o a terceros.</p>
+  <h3>15.1. Si Tratto tiene que responder por algo que hiciste vos</h3>
+  <p>La ley de defensa del consumidor puede hacer que Tratto responda frente a un Cliente por un daño
+  originado en tu prestación, aunque Tratto no la haya ejecutado.</p>
+  <p><strong>Si eso ocurre y Tratto termina pagando, podrá reclamarte lo que haya pagado</strong>, siempre que:</p>
+  <ul>
+  <li>el daño se haya originado en tu prestación, en tu incumplimiento o en tu dolo o culpa;</li>
+  <li>Tratto te haya <strong>notificado el reclamo apenas lo recibió</strong>, para que pudieras participar de su
+    defensa y aportar tu versión y tu prueba;</li>
+  <li>el monto reclamado sea el efectivamente pagado, acreditado con documentación.</li>
+  </ul>
+  <p><strong>Esto no funciona al revés.</strong> Tratto no puede trasladarte lo que deba por sus propios actos: por
+  fallas de la plataforma, por su manejo de los datos, por la información que publique o por cómo
+  condujo una mediación.</p>
+  <h2>16. Datos personales</h2>
+  <p>El tratamiento de datos personales se rige por la <strong>Política de Privacidad</strong>, que forma parte de estos Términos y está disponible en <strong><a href="/privacidad.html">/privacidad.html</a></strong>. Es única para Clientes y Proveedores.</p>
+  <h2>17. Propiedad intelectual</h2>
+  <p>La marca Tratto, el software, el diseño y los contenidos de la plataforma son propiedad de Tratto. El contenido que publica cada usuario (textos, fotos) sigue siendo suyo, pero al publicarlo autoriza a Tratto a mostrarlo dentro de la plataforma con el fin de prestar el servicio.</p>
+  <h2>18. Cambios en estos Términos</h2>
+  <p>Tratto puede modificar estos Términos notificando con <strong>10 días corridos</strong> de anticipación al correo registrado y mediante un aviso en la aplicación. Si no estás de acuerdo, podés darte de baja. El uso posterior a la entrada en vigencia implica aceptación.</p>
+  <h2>19. Ley aplicable y jurisdicción</h2>
+  <p>Estos Términos se rigen por las leyes de la <strong>República Argentina</strong>.</p>
+  <p><strong>Si en el caso concreto revestís la condición de consumidor o usuario</strong> respecto del servicio
+  de intermediación que Tratto te presta, se aplican las normas imperativas de protección del
+  consumidor y la jurisdicción que ellas determinen —que es la de tu domicilio real—, sin que este
+  contrato pueda alterarlo.</p>
+  <p><strong>En los demás casos</strong> serán competentes los tribunales ordinarios del <strong>Partido de Tres de
+  Febrero, Provincia de Buenos Aires</strong>.</p>
+  <p>Tratto no invoca esta cláusula para desconocer una protección legal que te corresponda.</p>
+  <h2>21. Qué quiere decir cada término</h2>
+  <p><strong>Trabajo terminado.</strong> Un trabajo está terminado cuando lo marcás como tal en la aplicación <strong>y</strong>
+  el Cliente lo confirma, o bien cuando pasan <strong>7 días corridos</strong> desde que lo marcaste sin que el
+  Cliente lo objete. La objeción abre el reclamo del punto 11 y suspende el plazo de pago hasta
+  que se resuelva.</p>
+  <p><strong>Defecto sustancial.</strong> Un apartamiento de lo presupuestado que impide usar el resultado del
+  trabajo para su finalidad, o que exigiría rehacer una parte relevante. No lo son las diferencias
+  estéticas menores ni los desacuerdos de gusto que no se hayan pactado por escrito.</p>
+  <p><strong>Operación cobrada.</strong> Un trabajo cuyo pago fue aprobado por Mercado Pago a través de la
+  aplicación. Es la unidad que cuenta para tu historial y para la comisión.</p>
+  <p><strong>Riesgo para otras personas.</strong> Una situación concreta y verificable en la que la conducta de un
+  usuario puede causar un daño a la integridad física, a la salud, al patrimonio o a los datos
+  personales de otro usuario o de un tercero. No alcanza una sospecha genérica ni una mala
+  calificación.</p>
+  <p><strong>Fraude.</strong> El uso de la plataforma para obtener un beneficio mediante engaño: identidad falsa,
+  medios de pago ajenos o adulterados, trabajos o calificaciones simulados, o cualquier maniobra
+  dirigida a eludir el circuito de cobro o el procedimiento de reclamos.</p>
+  <h2>22. Cómo te notificamos y cómo nos notificás</h2>
+  <p><strong>Tratto te notifica</strong> al <strong>correo electrónico registrado</strong>, y además con un aviso dentro de la
+  aplicación cuando se trate de una suspensión, una baja, un reclamo, un cambio de comisión o un
+  cambio de estos Términos. Mantené ese correo actualizado.</p>
+  <p>Una notificación se considera recibida <strong>al día hábil siguiente</strong> de su envío, salvo que el
+  sistema informe que no pudo entregarse, en cuyo caso Tratto reintenta y deja constancia.</p>
+  <p><strong>Vos nos notificás</strong> a <strong>trattoapp1@gmail.com</strong> o por el canal de reclamos de la aplicación.
+  Tratto acusa recibo dentro de los <strong>3 días hábiles</strong> y conserva el registro.</p>
+  <p>Cuando la ley exija una forma fehaciente para un acto determinado, esa forma prevalece.</p>
+  <h2>23. Confidencialidad</h2>
+  <p>Distinta de la Política de Privacidad: aquella regula los datos personales, ésta la información
+  del vínculo.</p>
+  <p><strong>Lo que Tratto conoce de vos</strong> —tus precios, tus conversaciones, tus reclamos, tu volumen de
+  trabajo— <strong>no se comparte</strong> fuera de lo que la Política de Privacidad describe, de lo que
+  necesite el Cliente para contratarte, y de lo que exija una autoridad competente por vía legal.
+  En particular, <strong>Tratto no comparte tus precios ni tu volumen con otros Proveedores</strong>.</p>
+  <p><strong>Lo que vos conocés del Cliente a través de Tratto</strong> es para prestarle el servicio. No podés
+  usarlo para publicarlo, para armar bases de datos, para ofrecerle servicios no solicitados ni
+  para ningún fin ajeno a la contratación.</p>
+  <p>Estas obligaciones siguen vigentes después de la baja de la cuenta.</p>
+  <h2>24. Si hay un incidente de seguridad</h2>
+  <p>Si se produce un acceso no autorizado, una pérdida o una divulgación indebida de datos personales
+  que pueda afectarte, Tratto:</p>
+  <ol>
+  <li>Lo <strong>contiene</strong> y toma las medidas para que no siga ocurriendo.</li>
+  <li><strong>Te avisa</strong> al correo registrado, sin demora injustificada, contándote qué pasó, qué datos
+     estuvieron involucrados, qué consecuencias pueden tener y qué podés hacer.</li>
+  <li><strong>Lo informa a la Agencia de Acceso a la Información Pública</strong> en la forma y el plazo que la
+     normativa exija.</li>
+  <li><strong>Deja registro</strong> del incidente, de las medidas y de las notificaciones.</li>
+  </ol>
+  <p>Tratto no condiciona ese aviso a que el incidente esté completamente investigado.</p>
+  <h2>25. Contacto</h2>
+  <p><strong>trattoapp1@gmail.com</strong>
+  Remedios de Escalada 7646, Martín Coronado, Tres de Febrero (B1682), Provincia de Buenos Aires.</p>
+  
+  <p><strong>Última actualización:</strong> 10 de septiembre de 2026
+  <strong>Vigencia:</strong> 10 de septiembre de 2026</p>
+  
+  <div class="pie">
+    <a href="/terminos-cliente.html">Términos · clientes</a>
+    <a href="/terminos-proveedor.html">Términos · proveedores</a>
+    <a href="/privacidad.html">Política de privacidad</a>
+    <a href="mailto:trattoapp1@gmail.com">Escribinos</a>
+  </div>
+</main>
+
+</body>
+</html>
