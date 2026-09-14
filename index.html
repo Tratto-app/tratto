@@ -1465,6 +1465,31 @@
         </div>
       </div>
 
+      <div class="item" id="publi-item">
+        <div class="item-top">
+          <span class="item-tit">Novedades y promociones</span>
+          <span id="publi-sello"></span>
+        </div>
+        <div class="item-meta"><span id="publi-txt">—</span></div>
+        <div id="publi-firma-caja"></div>
+        <div class="item-pie">
+          <button class="cambiar-modo" id="publi-cambiar" type="button">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 3.5 21 7l-4 3.5M21 7H8.5M7 20.5 3 17l4-3.5M3 17h12.5"/></svg>
+            <span id="publi-cambiar-txt">—</span>
+          </button>
+        </div>
+      </div>
+
+      <div class="item" id="avisos-item">
+        <div class="item-top">
+          <span class="item-tit">Avisos de tus pedidos</span>
+          <span class="sello verde">Siempre activos</span>
+        </div>
+        <div class="item-meta"><span>Te escribimos cuando te llega un presupuesto, te aceptan
+          uno o se paga un trabajo. Son parte del servicio y no se apagan: sin ellos no te
+          enterarías de lo que pasa con tus propios pedidos. No son publicidad.</span></div>
+      </div>
+
       <div class="item" id="transfer-item">
         <div class="item-top">
           <span class="item-tit">Dónde se guardan tus datos</span>
@@ -1490,7 +1515,7 @@
       <button class="btn riesgo" id="salir" type="button">Cerrar sesión</button>
       <button class="btn vacio-b" id="ir-baja" type="button">Borrar mi cuenta</button>
       <p style="text-align:center;margin-top:18px;font-family:'IBM Plex Mono',monospace;
-        font-size:10px;letter-spacing:.14em;color:var(--gris-3)">VERSIÓN F-34 · REVISION LEGAL Y FISCAL</p>
+        font-size:10px;letter-spacing:.14em;color:var(--gris-3)">VERSIÓN F-35 · PERMISO DE PUBLICIDAD</p>
     </section>
 
     <!-- ══════ NUEVO PEDIDO ══════ -->
@@ -2112,21 +2137,27 @@ const SUPABASE_URL  = 'https://qglsonbcsncgekzbfafk.supabase.co';
 const SUPABASE_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFnbHNvbmJjc25jZ2VremJmYWZrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODU3MDU2NzksImV4cCI6MjEwMTI4MTY3OX0.bdToh3Rt3XQaFOvHZmO0t1bHIlSKPv-YOVLHe3ljXiA';
 const CLAVE = 'mkt_sesion';
 
+/* Lo que NO está acá y podría parecer un olvido: el punto 6.2 de ambos
+   contratos no admite rubros que requieran matrícula, así que quedaron fuera
+   a propósito la electricidad y el gas —de ahí que no haya "Calefacción y
+   calderas"—, los paneles solares (su conexión a la red es instalación
+   eléctrica), la traducción (la pública es matriculada) y las profesiones de
+   la salud. Reponer cualquiera de estos contradice el contrato publicado. */
 const RUBROS_GRUPOS = {
   'Hogar y oficios': ['Plomería','Destapaciones','Albañilería y refacciones',
     'Carpintería','Pintura','Herrería y soldadura','Techos y humedades','Impermeabilización',
     'Durlock y cielorrasos','Pisos y cerámicas','Vidriería','Cerrajería','Aberturas y ventanas',
-    'Aire acondicionado','Calefacción y calderas','Service de electrodomésticos','Antenas y redes de TV',
+    'Aire acondicionado','Service de electrodomésticos','Antenas y redes de TV',
     'Piletas y mantenimiento','Jardinería y parquización','Poda y extracción de árboles',
     'Limpieza de tanques','Armado de muebles','Cortinas y toldos',
-    'Cámaras de seguridad','Portones automáticos','Paneles solares','Pequeños arreglos del hogar'],
+    'Cámaras de seguridad','Portones automáticos','Pequeños arreglos del hogar'],
   'Limpieza': ['Limpieza de hogar','Limpieza de oficinas','Limpieza de consorcios','Limpieza final de obra',
     'Limpieza de tapizados y alfombras','Lavado a domicilio'],
   'Autos y transporte': ['Mecánica general','Chapa y pintura','Gomería','Electricidad del automotor',
     'Lavadero y detailing','Auxilio y remolque','Cerrajería del automotor','Aire acondicionado del automotor',
     'Fletes y mudanzas','Transporte y logística','Chofer particular','Delivery y mensajería'],
   'Profesionales': ['Contabilidad y facturación','Asesoría impositiva','Liquidación de sueldos',
-    'Diseño de interiores','Gestoría y trámites','Recursos humanos','Consultoría de negocios','Traducción'],
+    'Diseño de interiores','Gestoría y trámites','Recursos humanos','Consultoría de negocios'],
   'Digital y creativo': ['Desarrollo web','Desarrollo de apps','Diseño gráfico','Diseño UX/UI',
     'Marketing digital','Community manager','Publicidad en redes','Posicionamiento en Google (SEO)',
     'Redacción y contenidos','Edición de video','Fotografía','Video y drone','Ilustración',
@@ -4539,6 +4570,61 @@ function pintarPermisoIA(){
    alojamiento la aplicación no existe, así que retirarlo es dar de baja la
    cuenta. Decirlo es más honesto que ofrecer un botón que en realidad borraría
    todo. */
+/* ══════ COMUNICACIONES PUBLICITARIAS ══════
+   Separado del permiso de IA y del de infraestructura a propósito: el art. 27
+   de la Ley 25.326 exige consentimiento propio para publicidad, y un permiso
+   único para varias cosas es justamente el vicio que la norma evita. Los
+   avisos del servicio no llevan interruptor porque no son publicidad: son la
+   prestación. Mientras nadie dé este permiso, no sale ninguna comunicación. */
+function permisoPublicidad(){
+  const m = sesion && sesion.user ? (sesion.user.user_metadata || {}) : {};
+  return m.publicidad_permiso === true;
+}
+
+async function guardarPermisoPublicidad(valor){
+  const r = await fetch(SUPABASE_URL + '/auth/v1/user', {
+    method:'PUT',
+    headers:{'apikey':SUPABASE_ANON, 'Authorization':'Bearer ' + sesion.access_token,
+             'Content-Type':'application/json'},
+    body: JSON.stringify({ data:{ publicidad_permiso: valor,
+                                  publicidad_permiso_fecha: new Date().toISOString() } })
+  });
+  if(!r.ok){ console.error(await r.text()); throw new Error('publicidad'); }
+  sesion.user = await r.json();
+  pintarPermisoPublicidad();
+}
+
+function pintarPermisoPublicidad(){
+  if(!sesion) return;
+  const dado = permisoPublicidad();
+  const m = sesion.user.user_metadata || {};
+  const sello = $('publi-sello');
+  sello.className = 'sello ' + (dado ? 'oro' : 'gris');
+  sello.textContent = dado ? 'Activadas' : 'Apagadas';
+  $('publi-txt').textContent = dado
+    ? 'Recibís novedades y promociones de Tratto. Podés darte de baja acá o desde cualquier mensaje, gratis y al instante.'
+    : 'No recibís ninguna. Activarlas no cambia nada de tu cuenta ni de los avisos de tus pedidos.';
+  $('publi-firma-caja').innerHTML = dado && m.publicidad_permiso_fecha
+    ? '<div class="ia-firma"><span class="ia-hilo"></span><span class="ia-fecha">Permiso dado el ' +
+      new Date(m.publicidad_permiso_fecha).toLocaleDateString('es-AR',{day:'2-digit',month:'2-digit',year:'numeric'}) +
+      '</span></div>'
+    : '';
+  $('publi-cambiar-txt').textContent = dado ? 'Darme de baja' : 'Quiero recibirlas';
+}
+
+let guardandoPubli = false;
+$('publi-cambiar').addEventListener('click', async () => {
+  if(guardandoPubli || !sesion) return;
+  const b = $('publi-cambiar');
+  guardandoPubli = true; b.disabled = true;
+  const antes = $('publi-cambiar-txt').textContent;
+  $('publi-cambiar-txt').textContent = 'Guardando…';
+  try{ await guardarPermisoPublicidad(!permisoPublicidad()); }
+  catch(e){ $('publi-cambiar-txt').textContent = 'No se pudo. Probá de nuevo.';
+            setTimeout(() => { $('publi-cambiar-txt').textContent = antes; }, 2200); }
+  finally{ guardandoPubli = false; b.disabled = false; }
+});
+
 function pintarTransfer(){
   if(!sesion) return;
   const m = sesion.user.user_metadata || {};
@@ -5156,6 +5242,7 @@ function entrarApp(){
   const g = store.leer() || {}; g.modo = modo; store.escribir(g);
   pintarModoCuenta();
   pintarPermisoIA();
+  pintarPermisoPublicidad();
   pintarTransfer();
   pintarLegales();
   aplicarModo();
