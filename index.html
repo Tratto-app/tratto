@@ -1540,7 +1540,7 @@
       <button class="btn riesgo" id="salir" type="button">Cerrar sesión</button>
       <button class="btn vacio-b" id="ir-baja" type="button">Borrar mi cuenta</button>
       <p style="text-align:center;margin-top:18px;font-family:'IBM Plex Mono',monospace;
-        font-size:10px;letter-spacing:.14em;color:var(--gris-3)">VERSIÓN F-39 · SIN TABLERO FISCAL</p>
+        font-size:10px;letter-spacing:.14em;color:var(--gris-3)">VERSIÓN F-40 · PLAZO DE ACREDITACIÓN REAL</p>
     </section>
 
     <!-- ══════ NUEVO PEDIDO ══════ -->
@@ -4235,10 +4235,13 @@ function cobrosHTML(cuenta){
       '<div class="cobros-txt">Conectá tu cuenta de Mercado Pago y el cliente va a poder ' +
         'pagarte desde el chat, con tarjeta. <b>El cobro ocurre cuando marcás el trabajo como ' +
         'terminado y el cliente paga</b>, no antes: aceptar un presupuesto no mueve plata. ' +
-        'El dinero se te acredita <b>a los 14 días</b> de aprobado el pago.</div>' +
-      '<div class="cobros-nota">Los 14 días no son un capricho: con acreditación inmediata ' +
-        'Mercado Pago cobra bastante más, y ese costo lo pagarías vos. Si igual la querés ' +
-        'antes, Mercado Pago te ofrece adelantarla por su cuenta.</div>' +
+        'El dinero va directo a tu cuenta de Mercado Pago.</div>' +
+      /* El plazo NO lo fija Tratto: el cobro se hace con el token del proveedor,
+         asi que rige lo que el tenga configurado en su cuenta. Decir un numero
+         acá seria prometer algo que no controlamos. */
+      '<div class="cobros-nota">Cuándo lo tenés disponible lo define tu cuenta de Mercado ' +
+        'Pago, no Tratto. Ojo que el plazo tiene precio: cuanto más corto, más alta es la ' +
+        'comisión que te cobra Mercado Pago por procesar, y esa comisión es tuya.</div>' +
       '<button class="btn lleno" data-cobros-conectar type="button">Conectar Mercado Pago</button>' +
       '</div>';
   }
@@ -5141,9 +5144,10 @@ const FAQ = [
      'solo si en el futuro cambia la condición fiscal de Tratto, y está escrito de antemano para ' +
      'que ese día no te llegue como un aumento sorpresivo.'],
     ['¿Cuándo tengo la plata disponible?',
-     'A los <b>14 días</b> de que el cliente paga. Elegimos ese plazo porque la acreditación ' +
-     'inmediata de Mercado Pago cuesta bastante más, y ese costo saldría de lo tuyo. Si la ' +
-     'necesitás antes, Mercado Pago te ofrece adelantártela con su propio costo.'],
+     'Lo define <b>tu cuenta de Mercado Pago</b>, no Tratto: el cobro se procesa con tus ' +
+     'credenciales, así que rige el plazo que tengas elegido ahí. Tené en cuenta que el ' +
+     'plazo tiene precio: cuanto más corto, más alta es la comisión que Mercado Pago te ' +
+     'cobra por procesar el pago. Tratto no recibe nada de esa diferencia.'],
     ['¿Cómo cobro?',
      'Conectás tu cuenta de Mercado Pago una sola vez, desde Panel o desde Cuenta. ' +
      'Después la plata de cada trabajo te llega directo a esa cuenta.'],
