@@ -1305,6 +1305,29 @@
           </div>
         </div>
 
+        <!-- Solo el Proveedor. Tratto le factura su comisión por cada trabajo
+             cobrado, y para emitir esa factura necesita su identificación
+             fiscal. Al Cliente no le factura nada, así que no se lo pide.
+             Es el punto 5.4 del contrato de Proveedores. -->
+        <div class="campo oculto" id="a-cuit-caja">
+          <label for="a-cuit">Tu CUIT o CUIL</label>
+          <input id="a-cuit" type="text" inputmode="numeric" maxlength="13" placeholder="20-12345678-3">
+          <div class="ayuda">Lo necesitamos para facturarte la comisión de cada trabajo que cobres.</div>
+          <div class="err" id="e-a-cuit">Revisá el CUIT: son 11 números.</div>
+        </div>
+        <div class="campo oculto" id="a-fiscal-caja">
+          <label for="a-fiscal">Tu condición frente al IVA</label>
+          <select id="a-fiscal">
+            <option value="">Elegí tu condición</option>
+            <option value="monotributo">Monotributo</option>
+            <option value="responsable_inscripto">Responsable inscripto</option>
+            <option value="exento">Exento</option>
+            <option value="consumidor_final">Consumidor final</option>
+          </select>
+          <div class="ayuda">Si no estás seguro, elegí la que figura en tu constancia de ARCA.</div>
+          <div class="err" id="e-a-fiscal">Elegí tu condición frente al IVA.</div>
+        </div>
+
         <div class="campo">
           <label for="a-email">Email</label>
           <input id="a-email" type="email" autocomplete="email" placeholder="tucorreo@ejemplo.com">
@@ -1515,7 +1538,7 @@
       <button class="btn riesgo" id="salir" type="button">Cerrar sesión</button>
       <button class="btn vacio-b" id="ir-baja" type="button">Borrar mi cuenta</button>
       <p style="text-align:center;margin-top:18px;font-family:'IBM Plex Mono',monospace;
-        font-size:10px;letter-spacing:.14em;color:var(--gris-3)">VERSIÓN F-35 · PERMISO DE PUBLICIDAD</p>
+        font-size:10px;letter-spacing:.14em;color:var(--gris-3)">VERSIÓN F-36 · DATOS FISCALES</p>
     </section>
 
     <!-- ══════ NUEVO PEDIDO ══════ -->
@@ -2224,6 +2247,21 @@ const PROXIMA_MEDALLA = n => [...MEDALLAS].reverse().find(m => Number(n||0) < m.
    Cada provincia que se agregue acá es una jurisdicción fiscal nueva, así que
    se abre cuando se decide abrirla, no por descuido. */
 const ZONAS = ['CABA','GBA Norte','GBA Oeste','GBA Sur','Buenos Aires (interior)'];
+/* A qué jurisdicción de Ingresos Brutos pertenece cada zona. Durante el
+   primer año la liquidación se hace por atribución directa —artículo 14 del
+   Convenio Multilateral, régimen de iniciación de actividades— así que cada
+   operación se asigna a la provincia donde se generó, sin coeficientes.
+
+   Esto hay que guardarlo en el momento del cobro: después no se reconstruye.
+   Si una zona no está mapeada devuelve null a propósito, para que se vea el
+   agujero en vez de imputar la operación a la jurisdicción equivocada. */
+const JURISDICCION = {
+  'CABA':'CABA',
+  'GBA Norte':'PBA', 'GBA Oeste':'PBA', 'GBA Sur':'PBA',
+  'Buenos Aires (interior)':'PBA'
+};
+const jurisdiccionDe = zona => JURISDICCION[zona] || null;
+
 const URGENCIAS = ['Urgente (hoy o mañana)','Esta semana','Este mes','Sin apuro'];
 const DISPONIBILIDADES = ['Inmediata','Esta semana','Este mes','A coordinar'];
 
@@ -2511,6 +2549,8 @@ function pintarCamposDeRol(){
   $('a-rubro-caja').classList.toggle('oculto', !(creando && prov));
   $('a-otro-rubro-caja').classList.toggle('oculto',
     !(creando && prov && $('a-rubro').value === RUBRO_OTRO));
+  $('a-cuit-caja').classList.toggle('oculto',   !(creando && prov));
+  $('a-fiscal-caja').classList.toggle('oculto', !(creando && prov));
   $('a-nombre-ayuda').textContent = prov
     ? 'Es como te van a ver los clientes. Puede ser tu nombre o el de tu negocio.'
     : 'Es como te van a ver los proveedores.';
@@ -2566,7 +2606,7 @@ $('a-enviar').addEventListener('click', async () => {
   if(pasoAuth === 'codigo') return confirmarCodigo();
   limpiar(['a-email','a-pass']);
   limpiarTransfer();
-  limpiar(['a-nombre','a-tel','a-rubro','a-otro-rubro','a-rubro-padre']);
+  limpiar(['a-nombre','a-tel','a-rubro','a-otro-rubro','a-rubro-padre','a-cuit','a-fiscal']);
   const r={p:null}, email=$('a-email').value.trim(), pass=$('a-pass').value;
   if(modoAuth === 'crear'){
     if($('a-nombre').value.trim().length < 2) fallar('a-nombre',r);
@@ -2577,6 +2617,8 @@ $('a-enviar').addEventListener('click', async () => {
         if($('a-otro-rubro').value.trim().length < 3) fallar('a-otro-rubro',r);
         if(!$('a-rubro-padre').value) fallar('a-rubro-padre',r);
       }
+      if(!cuitValido($('a-cuit').value)) fallar('a-cuit',r);
+      if(!$('a-fiscal').value) fallar('a-fiscal',r);
     }
   }
   if(!mailOk(email)) fallar('a-email',r);
@@ -2615,6 +2657,12 @@ $('a-enviar').addEventListener('click', async () => {
                        : ($('a-rubro').value === RUBRO_OTRO ? $('a-rubro-padre').value : $('a-rubro').value),
                   rubro_personalizado: (rolElegido === 'proveedor' && $('a-rubro').value === RUBRO_OTRO)
                        ? $('a-otro-rubro').value.trim() : null,
+                  /* Tratto le factura al Proveedor su comisión por cada trabajo
+                     cobrado, y para eso necesita su identificación fiscal. Al
+                     Cliente no le factura nada, así que no se lo pide. Es el
+                     punto 5.4 del contrato de Proveedores. */
+                  cuit: rolElegido === 'proveedor' ? soloNumeros($('a-cuit').value) : null,
+                  condicion_fiscal: rolElegido === 'proveedor' ? $('a-fiscal').value : null,
                   transfer_permiso:true, transfer_permiso_fecha:new Date().toISOString(),
                   legales_aceptados:true, legales_fecha:new Date().toISOString(),
                   legales_version:VERSION_LEGALES, legales_rol:rolElegido }}
@@ -3477,7 +3525,15 @@ async function cobrarPago(id, boton){
       method:'POST', headers:{'Content-Type':'application/json'},
       body: JSON.stringify({
         mensaje_id: id, token: sesion.access_token,
-        card_token: tk.id, payment_method_id: medio.id
+        card_token: tk.id, payment_method_id: medio.id,
+        /* Las dos jurisdicciones van separadas porque son dos cosas distintas:
+           dónde está radicado el proveedor y dónde se hizo el trabajo. La
+           atribución de Ingresos Brutos mira la segunda. Se mandan en el cobro
+           porque es el único momento en que las dos están a la vista. */
+        jurisdiccion_proveedor: jurisdiccionDe(chatActual && chatActual.proveedores && chatActual.proveedores.zona),
+        jurisdiccion_trabajo:   jurisdiccionDe(chatActual && chatActual.solicitudes && chatActual.solicitudes.zona),
+        zona_proveedor: (chatActual && chatActual.proveedores && chatActual.proveedores.zona) || null,
+        zona_trabajo:   (chatActual && chatActual.solicitudes && chatActual.solicitudes.zona) || null
       })
     });
     const pago = await rp.json().catch(() => null);
@@ -5209,6 +5265,29 @@ function miPrimerNombre(){ return miNombre().split(' ')[0]; }
 function miTelefono(){
   const m = (sesion && sesion.user && sesion.user.user_metadata) || {};
   return (m.telefono || '').trim();
+}
+
+/* El CUIT tiene dígito verificador, así que se puede comprobar de verdad en
+   vez de contar caracteres. No prueba que el CUIT sea de quien lo escribe
+   —eso lo verifica ARCA contra su padrón— pero descarta los tipeados mal,
+   que es la mitad del problema y la mitad que podemos resolver acá. */
+const soloNumeros = s => (s || '').replace(/\D/g, '');
+
+function cuitValido(v){
+  const n = soloNumeros(v);
+  if(n.length !== 11) return false;
+  const peso = [5,4,3,2,7,6,5,4,3,2];
+  let suma = 0;
+  for(let i = 0; i < 10; i++) suma += Number(n[i]) * peso[i];
+  let dv = 11 - (suma % 11);
+  if(dv === 11) dv = 0;
+  if(dv === 10) dv = 9;
+  return dv === Number(n[10]);
+}
+
+function miCuit(){
+  const m = (sesion && sesion.user && sesion.user.user_metadata) || {};
+  return (m.cuit || '').trim();
 }
 
 function miOficio(){
