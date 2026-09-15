@@ -1043,51 +1043,6 @@
     border:1px solid rgba(201,162,39,.5);border-radius:99px;padding:4px 10px;flex:none}
 
   /* ═══════════ XP DEL CLIENTE ═══════════ */
-  /* ═══════════ TABLERO FISCAL ═══════════ */
-  /* El hilo, que en el resto de la app significa conexión, acá significa
-     recorrido: se llena de verde a latón a medida que el acumulado se acerca
-     al tope de la categoría. Es el mismo motivo, con otro trabajo. */
-  .fis-caja{background:var(--noche);color:var(--claro);border-radius:var(--r);
-    padding:22px 20px;margin-top:16px;position:relative;overflow:hidden}
-  .fis-caja::after{content:'';position:absolute;inset:0;pointer-events:none;
-    background:radial-gradient(130% 110% at 100% 0%, rgba(201,162,39,.18), transparent 60%)}
-  .fis-caja > *{position:relative;z-index:1}
-  .fis-eti{font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:.19em;
-    text-transform:uppercase;color:var(--gris-2)}
-  .fis-num{font-family:'IBM Plex Sans Condensed',sans-serif;font-weight:700;
-    font-size:40px;line-height:1.02;letter-spacing:-.025em;margin-top:8px;
-    color:var(--verde-luz);word-break:break-word}
-  .fis-num.cerca{color:var(--laton)}
-  .fis-num.pasado{color:#F0A08A}
-  .fis-bajada{font-size:13px;color:var(--gris-3);margin-top:8px;line-height:1.45}
-
-  .fis-hilo{height:6px;border-radius:3px;background:var(--noche-3);
-    margin-top:18px;overflow:hidden;position:relative}
-  .fis-hilo i{display:block;height:100%;border-radius:3px;
-    background:linear-gradient(90deg,var(--verde-vivo),var(--verde-luz));
-    transition:width .7s cubic-bezier(.32,.72,.35,1)}
-  .fis-hilo.cerca i{background:linear-gradient(90deg,var(--verde-luz),var(--laton))}
-  .fis-hilo.pasado i{background:linear-gradient(90deg,var(--laton),var(--alerta))}
-  .fis-pie{display:flex;justify-content:space-between;gap:12px;margin-top:10px;
-    font-family:'IBM Plex Mono',monospace;font-size:9.5px;letter-spacing:.1em;
-    color:var(--gris-2)}
-
-  /* Doce meses, uno por barra. No es un gráfico: es el ritmo. */
-  .fis-meses{display:flex;align-items:flex-end;gap:4px;height:44px;margin-top:20px}
-  .fis-mes{flex:1;background:var(--noche-3);border-radius:2px;min-height:2px;
-    transition:height .5s ease}
-  .fis-mes.vivo{background:var(--verde-luz)}
-  .fis-meses-eti{display:flex;justify-content:space-between;margin-top:7px;
-    font-family:'IBM Plex Mono',monospace;font-size:8.5px;letter-spacing:.1em;
-    color:var(--gris-2)}
-
-  /* Cuando el tope no está cargado, o quedó viejo, la pantalla lo dice en vez
-     de mostrar un medidor contra un número inventado. */
-  .fis-aviso{margin-top:14px;padding:11px 13px;border-radius:var(--r-ch);
-    background:rgba(201,162,39,.13);border:1px solid rgba(201,162,39,.4);
-    font-size:12.5px;line-height:1.45;color:#EBD68F}
-  .fis-aviso b{font-weight:600;color:var(--laton)}
-
   /* ═══════════ VARIOS ═══════════ */
   .chip-zona{font-family:'IBM Plex Mono',monospace;font-size:8.5px;letter-spacing:.12em;
     text-transform:uppercase;border-radius:99px;padding:3px 8px;font-weight:600;
@@ -1581,37 +1536,11 @@
       </div>
       <div class="legales-estado" id="legales-estado"></div>
 
-      <!-- Solo lo ve el titular. El filtro de acá es de interfaz; quien
-           decide de verdad es la función de Supabase, que valida el correo
-           de quien la llama y devuelve solo agregados. -->
-      <div class="oculto" id="fiscal-sec">
-        <div class="sec"><span class="sec-tit">Control fiscal</span></div>
-        <div class="fis-caja">
-          <div class="fis-eti" id="fis-eti">Margen hasta el tope</div>
-          <div class="fis-num" id="fis-num">—</div>
-          <div class="fis-bajada" id="fis-bajada">Cargando…</div>
-
-          <div class="fis-hilo" id="fis-hilo"><i id="fis-relleno" style="width:0%"></i></div>
-          <div class="fis-pie">
-            <span id="fis-pie-izq">—</span>
-            <span id="fis-pie-der">—</span>
-          </div>
-
-          <div class="fis-meses" id="fis-meses"></div>
-          <div class="fis-meses-eti">
-            <span id="fis-mes-primero">—</span>
-            <span id="fis-mes-ultimo">—</span>
-          </div>
-
-          <div id="fis-avisos"></div>
-        </div>
-      </div>
-
       <div class="sec"><span class="sec-tit">Sesión</span></div>
       <button class="btn riesgo" id="salir" type="button">Cerrar sesión</button>
       <button class="btn vacio-b" id="ir-baja" type="button">Borrar mi cuenta</button>
       <p style="text-align:center;margin-top:18px;font-family:'IBM Plex Mono',monospace;
-        font-size:10px;letter-spacing:.14em;color:var(--gris-3)">VERSIÓN F-38 · COBROS SIN PROMESAS FALSAS</p>
+        font-size:10px;letter-spacing:.14em;color:var(--gris-3)">VERSIÓN F-39 · SIN TABLERO FISCAL</p>
     </section>
 
     <!-- ══════ NUEVO PEDIDO ══════ -->
@@ -4758,128 +4687,6 @@ $('publi-cambiar').addEventListener('click', async () => {
   finally{ guardandoPubli = false; b.disabled = false; }
 });
 
-/* ══════ TABLERO FISCAL ══════
-   El número que manda no es cuánto facturaste: es cuánto te queda antes del
-   tope. Ese es el que hace tomar una decisión.
-
-   Todo lo que la pantalla no sabe, lo dice. Si el tope no está cargado no
-   dibuja un medidor contra un número inventado; si el tope quedó viejo, avisa;
-   si la comisión real todavía no se guarda y el total es una estimación sobre
-   el bruto, lo aclara. */
-const MESES_VIEJO = 4;   // a partir de acá el tope cargado es sospechoso
-
-async function cargarTableroFiscal(){
-  const sec = $('fiscal-sec');
-  let d = null;
-  try{
-    const r = await fetch(SUPABASE_URL + '/rest/v1/rpc/tablero_fiscal', {
-      method:'POST', headers:cab(), body:'{}'
-    });
-    if(!r.ok) throw new Error('sin acceso');
-    d = await r.json();
-  }catch(e){
-    /* No sos el titular, o la función todavía no existe. En los dos casos la
-       sección no va: no es un error que tengas que ver. */
-    sec.classList.add('oculto');
-    return;
-  }
-  /* Tiene que ser un objeto con forma de tablero. Si viene otra cosa —una
-     lista vacía, un error en JSON, una respuesta de otro endpoint— la sección
-     no se dibuja. Dibujarla con datos que no entendemos es peor que no
-     dibujarla: muestra ceros que parecen reales. */
-  if(!d || typeof d !== 'object' || Array.isArray(d) || !('acumulado_12m' in d)){
-    sec.classList.add('oculto');
-    return;
-  }
-  sec.classList.remove('oculto');
-
-  const acum  = Number(d.acumulado_12m || 0);
-  const tope  = Number(d.tope_anual || 0);
-  const avisos = [];
-
-  if(tope > 0){
-    const resto = Math.max(0, tope - acum);
-    const usado = Math.min(100, Math.round(acum / tope * 100));
-    const cerca = usado >= 80, pasado = usado >= 100;
-
-    $('fis-eti').textContent = pasado ? 'Tope superado' : 'Margen hasta el tope';
-    $('fis-num').textContent = pasado ? pesos(acum - tope) + ' de más' : pesos(resto);
-    $('fis-num').className = 'fis-num' + (pasado ? ' pasado' : cerca ? ' cerca' : '');
-    $('fis-bajada').textContent = pasado
-      ? 'Cruzaste el tope de la categoría ' + (d.categoria || '') + '. Hablá con tu contador: puede corresponder recategorización o pase a responsable inscripto.'
-      : cerca
-        ? 'Vas usando el ' + usado + '% del tope de la categoría ' + (d.categoria || '') + '. Conviene avisarle al contador antes de cruzarlo.'
-        : 'Llevás ' + pesos(acum) + ' de comisión en los últimos 12 meses, sobre un tope de ' + pesos(tope) + '.';
-
-    $('fis-hilo').className = 'fis-hilo' + (pasado ? ' pasado' : cerca ? ' cerca' : '');
-    $('fis-relleno').style.width = usado + '%';
-    $('fis-pie-izq').textContent = usado + '% USADO';
-    $('fis-pie-der').textContent = 'CATEGORÍA ' + (d.categoria || '—');
-  }else{
-    $('fis-eti').textContent = 'Comisión acumulada';
-    $('fis-num').textContent = pesos(acum);
-    $('fis-num').className = 'fis-num';
-    $('fis-bajada').textContent = 'Últimos 12 meses, sobre ' + (d.operaciones_12m || 0) +
-      (Number(d.operaciones_12m) === 1 ? ' operación cobrada.' : ' operaciones cobradas.');
-    $('fis-hilo').className = 'fis-hilo';
-    $('fis-relleno').style.width = '0%';
-    $('fis-pie-izq').textContent = (d.operaciones_12m || 0) + ' OPERACIONES';
-    $('fis-pie-der').textContent = 'SIN TOPE CARGADO';
-    avisos.push('<b>Falta cargar el tope de tu categoría.</b> Sin eso puedo mostrarte cuánto llevás, pero no cuánto te queda. Se carga en <code>config_fiscal</code>, con la escala vigente verificada en ARCA.');
-  }
-
-  // Los doce meses, como ritmo y no como gráfico
-  const meses = Array.isArray(d.por_mes) ? d.por_mes : [];
-  const ultimos = ultimosDoceMeses();
-  const mapa = {};
-  meses.forEach(m => { mapa[m.mes] = Number(m.comision || 0); });
-  const pico = Math.max(1, ...ultimos.map(k => mapa[k] || 0));
-  $('fis-meses').innerHTML = ultimos.map(k => {
-    const v = mapa[k] || 0;
-    const alto = v ? Math.max(4, Math.round(v / pico * 44)) : 2;
-    return '<div class="fis-mes' + (v ? ' vivo' : '') + '" style="height:' + alto + 'px" title="' +
-           k + ': ' + pesos(v) + '"></div>';
-  }).join('');
-  $('fis-mes-primero').textContent = etiquetaMes(ultimos[0]);
-  $('fis-mes-ultimo').textContent  = etiquetaMes(ultimos[ultimos.length - 1]);
-
-  if(d.es_estimado)
-    avisos.push('<b>El total es una estimación.</b> Se calcula como ' +
-      Math.round(Number(d.comision_pct || 0.03) * 10000) / 100 +
-      '% sobre el monto bruto, pero la comisión real se cobra sobre el neto, después de las comisiones de Mercado Pago. O sea que el número que ves es un poco más alto que el real, no más bajo.');
-
-  if(tope > 0 && d.tope_cargado_el){
-    const meses_desde = mesesDesde(d.tope_cargado_el);
-    if(meses_desde >= MESES_VIEJO)
-      avisos.push('<b>El tope se cargó hace ' + meses_desde + ' meses.</b> Las escalas del monotributo se actualizan varias veces al año, así que este número puede estar viejo. Verificalo en ARCA y actualizalo.');
-  }else if(tope > 0){
-    avisos.push('<b>No sabemos de cuándo es el tope cargado.</b> Cargale la fecha para poder avisarte cuando quede viejo.');
-  }
-
-  $('fis-avisos').innerHTML = avisos.map(a => '<div class="fis-aviso">' + a + '</div>').join('');
-}
-
-/* Las doce claves 'YYYY-MM' terminando en el mes actual. Se arma acá y no en
-   la base para que los meses sin ninguna operación también aparezcan: un mes
-   vacío es información. */
-function ultimosDoceMeses(){
-  const hoy = new Date(), out = [];
-  for(let i = 11; i >= 0; i--){
-    const d = new Date(hoy.getFullYear(), hoy.getMonth() - i, 1);
-    out.push(d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0'));
-  }
-  return out;
-}
-const etiquetaMes = k => {
-  if(!k) return '—';
-  const [a, m] = k.split('-');
-  return ['ENE','FEB','MAR','ABR','MAY','JUN','JUL','AGO','SEP','OCT','NOV','DIC'][Number(m)-1] + ' ' + a.slice(2);
-};
-function mesesDesde(fecha){
-  const d = new Date(fecha), hoy = new Date();
-  return (hoy.getFullYear() - d.getFullYear()) * 12 + (hoy.getMonth() - d.getMonth());
-}
-
 function pintarTransfer(){
   if(!sesion) return;
   const m = sesion.user.user_metadata || {};
@@ -5529,7 +5336,6 @@ function entrarApp(){
   pintarPermisoIA();
   pintarPermisoPublicidad();
   pintarTransfer();
-  cargarTableroFiscal();
   pintarLegales();
   aplicarModo();
   recargarTodo();
