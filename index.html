@@ -1024,6 +1024,8 @@
   .cobros-tit{font-family:'IBM Plex Sans Condensed',sans-serif;font-weight:700;
     font-size:17px;letter-spacing:-.01em}
   .cobros-txt{font-size:13px;color:var(--gris);margin-top:6px;line-height:1.5}
+  .cobros-nota{font-size:12px;line-height:1.45;color:var(--gris-2);margin-top:9px;
+    padding-top:9px;border-top:1px solid rgba(255,255,255,.12)}
   .cobros .btn{margin-top:15px}
   /* Los datos de la cuenta van en Mono, como toda la metadata de la app. */
   .cobros-datos{margin:16px 0 0;display:grid;gap:9px}
@@ -1609,7 +1611,7 @@
       <button class="btn riesgo" id="salir" type="button">Cerrar sesión</button>
       <button class="btn vacio-b" id="ir-baja" type="button">Borrar mi cuenta</button>
       <p style="text-align:center;margin-top:18px;font-family:'IBM Plex Mono',monospace;
-        font-size:10px;letter-spacing:.14em;color:var(--gris-3)">VERSIÓN F-37 · TABLERO FISCAL</p>
+        font-size:10px;letter-spacing:.14em;color:var(--gris-3)">VERSIÓN F-38 · COBROS SIN PROMESAS FALSAS</p>
     </section>
 
     <!-- ══════ NUEVO PEDIDO ══════ -->
@@ -4302,8 +4304,12 @@ function cobrosHTML(cuenta){
     return '<div class="cobros">' +
       '<div class="cobros-tit">Cobrá por la app</div>' +
       '<div class="cobros-txt">Conectá tu cuenta de Mercado Pago y el cliente va a poder ' +
-        'pagarte desde el chat, con tarjeta. La plata queda reservada cuando te acepta el ' +
-        'presupuesto y se te acredita cuando el trabajo está terminado.</div>' +
+        'pagarte desde el chat, con tarjeta. <b>El cobro ocurre cuando marcás el trabajo como ' +
+        'terminado y el cliente paga</b>, no antes: aceptar un presupuesto no mueve plata. ' +
+        'El dinero se te acredita <b>a los 14 días</b> de aprobado el pago.</div>' +
+      '<div class="cobros-nota">Los 14 días no son un capricho: con acreditación inmediata ' +
+        'Mercado Pago cobra bastante más, y ese costo lo pagarías vos. Si igual la querés ' +
+        'antes, Mercado Pago te ofrece adelantarla por su cuenta.</div>' +
       '<button class="btn lleno" data-cobros-conectar type="button">Conectar Mercado Pago</button>' +
       '</div>';
   }
@@ -5322,8 +5328,15 @@ const FAQ = [
   ]],
   ['Si ofrecés un servicio', [
     ['¿Cuánto me cobra Tratto?',
-     'El <b>3%</b> de cada trabajo que cobres por la app. Se descuenta automáticamente cuando el cliente paga. ' +
-     'Publicar tu perfil y recibir pedidos no cuesta nada.'],
+     'El <b>3%</b> de cada trabajo que cobres por la app, con un mínimo de <b>$1.500</b> por trabajo. ' +
+     'Se descuenta solo, cuando el cliente paga. Publicar tu perfil y recibir pedidos no cuesta nada.<br><br>' +
+     'En el contrato dice "3% más IVA de corresponder". Hoy es 3% y nada más: el IVA aparecería ' +
+     'solo si en el futuro cambia la condición fiscal de Tratto, y está escrito de antemano para ' +
+     'que ese día no te llegue como un aumento sorpresivo.'],
+    ['¿Cuándo tengo la plata disponible?',
+     'A los <b>14 días</b> de que el cliente paga. Elegimos ese plazo porque la acreditación ' +
+     'inmediata de Mercado Pago cuesta bastante más, y ese costo saldría de lo tuyo. Si la ' +
+     'necesitás antes, Mercado Pago te ofrece adelantártela con su propio costo.'],
     ['¿Cómo cobro?',
      'Conectás tu cuenta de Mercado Pago una sola vez, desde Panel o desde Cuenta. ' +
      'Después la plata de cada trabajo te llega directo a esa cuenta.'],
