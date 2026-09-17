@@ -5,6 +5,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, maximum-scale=1">
 <meta name="theme-color" content="#0D2721">
 <title>Tratto</title>
+<link rel="manifest" href="/manifest.json">
+<link rel="apple-touch-icon" href="/icon-192.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans+Condensed:wght@600;700&family=IBM+Plex+Sans:wght@400;450;500;600&display=swap" rel="stylesheet">
@@ -1505,6 +1507,20 @@
         </div>
       </div>
 
+      <div class="item" id="push-item">
+        <div class="item-top">
+          <span class="item-tit">Notificaciones en este dispositivo</span>
+          <span id="push-sello"></span>
+        </div>
+        <div class="item-meta"><span id="push-txt">—</span></div>
+        <div class="item-pie">
+          <button class="cambiar-modo" id="push-cambiar" type="button">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 3.5 21 7l-4 3.5M21 7H8.5M7 20.5 3 17l4-3.5M3 17h12.5"/></svg>
+            <span id="push-cambiar-txt">—</span>
+          </button>
+        </div>
+      </div>
+
       <div class="item" id="avisos-item">
         <div class="item-top">
           <span class="item-tit">Avisos de tus pedidos</span>
@@ -1512,7 +1528,9 @@
         </div>
         <div class="item-meta"><span>Te escribimos cuando te llega un presupuesto, te aceptan
           uno o se paga un trabajo. Son parte del servicio y no se apagan: sin ellos no te
-          enterarías de lo que pasa con tus propios pedidos. No son publicidad.</span></div>
+          enterarías de lo que pasa con tus propios pedidos. No son publicidad. Para que te
+          lleguen a la pantalla del celular y no solo dentro de la app, activá las
+          notificaciones del dispositivo, arriba.</span></div>
       </div>
 
       <div class="item" id="transfer-item">
@@ -1540,7 +1558,7 @@
       <button class="btn riesgo" id="salir" type="button">Cerrar sesión</button>
       <button class="btn vacio-b" id="ir-baja" type="button">Borrar mi cuenta</button>
       <p style="text-align:center;margin-top:18px;font-family:'IBM Plex Mono',monospace;
-        font-size:10px;letter-spacing:.14em;color:var(--gris-3)">VERSIÓN F-40 · PLAZO DE ACREDITACIÓN REAL</p>
+        font-size:10px;letter-spacing:.14em;color:var(--gris-3)">VERSIÓN F-41 · NOTIFICACIONES PUSH</p>
     </section>
 
     <!-- ══════ NUEVO PEDIDO ══════ -->
@@ -4690,6 +4708,119 @@ $('publi-cambiar').addEventListener('click', async () => {
   finally{ guardandoPubli = false; b.disabled = false; }
 });
 
+/* ══════ NOTIFICACIONES PUSH EN ESTE DISPOSITIVO ══════
+   Separado a propósito de los dos permisos de arriba: esos dicen QUÉ se
+   puede mandar (según la ley); esto dice si ESTE navegador, en este
+   celular, las puede mostrar. Los avisos de servicio se generan igual sin
+   esto —viven en la base y aparecen al abrir la app— pero no llegan a la
+   pantalla de bloqueo si el dispositivo no está suscripto. */
+const VAPID_PUBLIC_KEY = 'BEdS7DAJLwT_-di-EEfo9OFpLry_Db-Keemi4Rh9cBDstDEsEPelOKmxdxhv32kbg8lwsr3djTKMfi_60fJfJAI';
+const SW_SOPORTADO = 'serviceWorker' in navigator && 'PushManager' in window;
+let swReg = null;
+
+async function registrarSW(){
+  if(!SW_SOPORTADO) return null;
+  try{ swReg = swReg || await navigator.serviceWorker.register('/sw.js'); return swReg; }
+  catch(e){ console.error(e); return null; }
+}
+
+/* Web Push exige la clave del servidor en bytes, y el navegador la da en
+   base64 con guiones/subrayados en vez de +/. Sin este paso, subscribe()
+   rechaza la clave entera. */
+function base64UrlABuffer(base64){
+  const pad = '='.repeat((4 - base64.length % 4) % 4);
+  const b64 = (base64 + pad).replace(/-/g,'+').replace(/_/g,'/');
+  const cruda = atob(b64);
+  const out = new Uint8Array(cruda.length);
+  for(let i=0;i<cruda.length;i++) out[i] = cruda.charCodeAt(i);
+  return out;
+}
+
+async function suscripcionActual(){
+  const reg = await registrarSW();
+  return reg ? reg.pushManager.getSubscription() : null;
+}
+
+async function activarPush(){
+  const reg = await registrarSW();
+  if(!reg) throw new Error('no_soportado');
+  const permiso = await Notification.requestPermission();
+  if(permiso !== 'granted') throw new Error(permiso);
+  let sub = await reg.pushManager.getSubscription();
+  if(!sub){
+    sub = await reg.pushManager.subscribe({
+      userVisibleOnly: true,
+      applicationServerKey: base64UrlABuffer(VAPID_PUBLIC_KEY)
+    });
+  }
+  const claves = sub.toJSON().keys;
+  const r = await fetch(SUPABASE_URL + '/rest/v1/rpc/registrar_push_subscripcion', {
+    method:'POST', headers:cab(),
+    body: JSON.stringify({
+      p_endpoint: sub.endpoint, p_p256dh: claves.p256dh, p_auth_clave: claves.auth,
+      p_user_agent: navigator.userAgent
+    })
+  });
+  if(!r.ok){ console.error(await r.text()); throw new Error('no_guardado'); }
+  return sub;
+}
+
+async function desactivarPush(){
+  const reg = await registrarSW();
+  const sub = reg ? await reg.pushManager.getSubscription() : null;
+  if(!sub) return;
+  const endpoint = sub.endpoint;
+  await sub.unsubscribe();
+  try{
+    await fetch(SUPABASE_URL + '/rest/v1/push_subscripciones?endpoint=eq.' + encodeURIComponent(endpoint),
+      { method:'DELETE', headers:cab() });
+  }catch(e){ console.error(e); }
+}
+
+async function pintarPush(){
+  const sello = $('push-sello'), txt = $('push-txt'), boton = $('push-cambiar'), botonTxt = $('push-cambiar-txt');
+  if(!SW_SOPORTADO){
+    sello.className = 'sello gris'; sello.textContent = 'No disponible';
+    txt.textContent = 'Este navegador no soporta notificaciones. Probá desde Chrome en Android, ' +
+      'o agregando Tratto a la pantalla de inicio en iPhone (Safari 16.4 o más nuevo).';
+    boton.disabled = true; botonTxt.textContent = 'No disponible';
+    return;
+  }
+  const permiso = Notification.permission;
+  if(permiso === 'denied'){
+    sello.className = 'sello alerta'; sello.textContent = 'Bloqueadas';
+    txt.textContent = 'Las bloqueaste en el navegador. Para reactivarlas, abrí la configuración ' +
+      'del sitio (el candado en la barra de direcciones) y permitilas de nuevo.';
+    boton.disabled = true; botonTxt.textContent = 'Bloqueadas por el navegador';
+    return;
+  }
+  boton.disabled = false;
+  const sub = permiso === 'granted' ? await suscripcionActual() : null;
+  if(sub){
+    sello.className = 'sello verde'; sello.textContent = 'Activadas';
+    txt.textContent = 'Vas a recibir en este dispositivo los avisos de tus pedidos, y las novedades ' +
+      'si las activaste arriba.';
+    botonTxt.textContent = 'Desactivar en este dispositivo';
+  }else{
+    sello.className = 'sello gris'; sello.textContent = 'Desactivadas';
+    txt.textContent = 'Activalas para que los avisos de tus pedidos te aparezcan en la pantalla del ' +
+      'celular. En iPhone, primero agregá Tratto a la pantalla de inicio desde Safari.';
+    botonTxt.textContent = 'Activar en este dispositivo';
+  }
+}
+
+let cambiandoPush = false;
+$('push-cambiar').addEventListener('click', async () => {
+  if(cambiandoPush || !sesion) return;
+  cambiandoPush = true; $('push-cambiar').disabled = true;
+  $('push-cambiar-txt').textContent = 'Un momento…';
+  try{
+    const sub = await suscripcionActual();
+    if(sub) await desactivarPush(); else await activarPush();
+  }catch(e){ console.error(e); }
+  finally{ cambiandoPush = false; await pintarPush(); }
+});
+
 function pintarTransfer(){
   if(!sesion) return;
   const m = sesion.user.user_metadata || {};
@@ -5339,6 +5470,7 @@ function entrarApp(){
   pintarModoCuenta();
   pintarPermisoIA();
   pintarPermisoPublicidad();
+  pintarPush();
   pintarTransfer();
   pintarLegales();
   aplicarModo();
