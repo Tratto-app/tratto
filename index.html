@@ -1190,6 +1190,30 @@
   </div>
 </div>
 
+<!-- Aparece una sola vez, apenas se crea la cuenta. Antes esto vivía en
+     Ajustes, donde nadie lo iba a buscar nunca. -->
+<div class="telon" id="telon-avisos">
+  <div class="hoja">
+    <div class="hoja-tit">Que no se te pase ningún trabajo</div>
+    <div class="hoja-txt">Te avisamos en el celular cuando pasa algo con lo tuyo, sin que
+      tengas que estar entrando a mirar.</div>
+    <ul class="ia-que">
+      <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8.5a6 6 0 1 0-12 0c0 6-2.5 7.5-2.5 7.5h17S18 14.5 18 8.5"/><path d="M13.7 19.5a2 2 0 0 1-3.4 0"/></svg>
+        <span><b>Cuándo te avisamos</b>Cuando te llega un presupuesto, cuando te lo aceptan y
+        cuando se paga un trabajo. Nada más que eso.</span></li>
+      <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="6.5" y="2.8" width="11" height="18.4" rx="2.4"/><path d="M10.6 5.6h2.8"/></svg>
+        <span><b>Aunque tengas la app cerrada</b>El aviso aparece en la pantalla del celular,
+        como el de cualquier otra aplicación.</span></li>
+    </ul>
+    <div class="nota">Tu teléfono te va a preguntar si los permitís: ahí decidís vos. Si decís
+      que no, no pasa nada — te seguimos avisando por mail igual. Podés cambiarlo cuando
+      quieras desde <b>Cuenta</b>.</div>
+    <button class="btn lleno" id="avisos-si" type="button" style="margin-top:16px">
+      <span class="rueda"></span><span id="avisos-si-txt">Quiero que me avisen</span></button>
+    <button class="btn vacio-b" id="avisos-no" type="button">Ahora no</button>
+  </div>
+</div>
+
 <div class="telon" id="telon-baja">
   <div class="hoja">
     <div class="hoja-tit">Borrar mi cuenta</div>
@@ -1562,7 +1586,7 @@
       <button class="btn riesgo" id="salir" type="button">Cerrar sesión</button>
       <button class="btn vacio-b" id="ir-baja" type="button">Borrar mi cuenta</button>
       <p style="text-align:center;margin-top:18px;font-family:'IBM Plex Mono',monospace;
-        font-size:10px;letter-spacing:.14em;color:var(--gris-3)">VERSIÓN F-42 · LAS DOS T</p>
+        font-size:10px;letter-spacing:.14em;color:var(--gris-3)">VERSIÓN F-43 · LOS AVISOS SE PIDEN AL ENTRAR</p>
     </section>
 
     <!-- ══════ NUEVO PEDIDO ══════ -->
@@ -2783,6 +2807,10 @@ async function confirmarCodigo(){
     volverAPasoDatos();
     $('a-aviso').className = 'aviso';
     entrarApp();
+    /* Recién creó la cuenta: es el momento de ofrecerle los avisos, no un
+       rincón de Ajustes al que no va a entrar. Va con retraso para que la
+       app termine de pintarse y no le aparezca encima de la pantalla vacía. */
+    setTimeout(ofrecerAvisos, 900);
   }catch(e){ console.error(e); avisar('a-aviso','No se pudo conectar. Revisá tu conexión.','mal'); }
   finally{
     confirmando = false;
@@ -4812,6 +4840,43 @@ async function pintarPush(){
     botonTxt.textContent = 'Activar en este dispositivo';
   }
 }
+
+/* El pedido de permiso apenas se crea la cuenta.
+   Por qué hay una pantalla nuestra antes del cartel del sistema: el navegador
+   solo deja pedir el permiso si lo dispara un toque de la persona, así que no
+   se puede mostrar solo. Y además conviene: el cartel del sistema se puede
+   contestar una sola vez en la vida de ese navegador, y si contestan que no,
+   no hay forma de volver a preguntar. Mejor explicar primero y preguntar
+   después, a quien ya dijo que le interesa. */
+function ofrecerAvisos(){
+  if(!SW_SOPORTADO) return;                      // iPhone sin instalar: no hay nada que pedir
+  if(Notification.permission !== 'default') return; // ya contestó alguna vez
+  $('telon-avisos').classList.add('abierto');
+}
+
+function cerrarOfertaAvisos(){
+  $('telon-avisos').classList.remove('abierto');
+}
+
+let pidiendoAvisos = false;
+$('avisos-si').addEventListener('click', async () => {
+  if(pidiendoAvisos) return;
+  pidiendoAvisos = true;
+  const b = $('avisos-si'); b.disabled = true; b.classList.add('cargando');
+  $('avisos-si-txt').textContent = 'Un momento…';
+  try{ await activarPush(); }
+  catch(e){ console.error(e); }
+  finally{
+    pidiendoAvisos = false; b.disabled = false; b.classList.remove('cargando');
+    $('avisos-si-txt').textContent = 'Quiero que me avisen';
+    cerrarOfertaAvisos();
+    pintarPush();
+  }
+});
+$('avisos-no').addEventListener('click', cerrarOfertaAvisos);
+$('telon-avisos').addEventListener('click', e => {
+  if(e.target.id === 'telon-avisos') cerrarOfertaAvisos();
+});
 
 let cambiandoPush = false;
 $('push-cambiar').addEventListener('click', async () => {
