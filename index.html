@@ -1586,7 +1586,7 @@
       <button class="btn riesgo" id="salir" type="button">Cerrar sesión</button>
       <button class="btn vacio-b" id="ir-baja" type="button">Borrar mi cuenta</button>
       <p style="text-align:center;margin-top:18px;font-family:'IBM Plex Mono',monospace;
-        font-size:10px;letter-spacing:.14em;color:var(--gris-3)">VERSIÓN F-43 · LOS AVISOS SE PIDEN AL ENTRAR</p>
+        font-size:10px;letter-spacing:.14em;color:var(--gris-3)">VERSIÓN F-44 · AVISAR SI EL MAIL YA TIENE CUENTA</p>
     </section>
 
     <!-- ══════ NUEVO PEDIDO ══════ -->
@@ -2725,7 +2725,19 @@ $('a-enviar').addEventListener('click', async () => {
       if(crudo.includes('email not confirmed')) irAPasoCodigo(email);
       return;
     }
-    if(!j.access_token){ irAPasoCodigo(email); return; }
+    if(!j.access_token){
+      /* Supabase no distingue "cuenta nueva" de "ese mail ya existe" con un
+         error: por seguridad, contra un mail ya confirmado responde 200 con
+         un usuario sin identities. Sin este chequeo, a quien ya tiene cuenta
+         se lo mandaba al paso del código igual, y ese código nunca llegaba. */
+      if(modoAuth === 'crear' && Array.isArray(j.identities) && j.identities.length === 0){
+        cambiarAuth('entrar');
+        $('a-email').value = email;
+        avisar('a-aviso','Ya existe una cuenta con ese email. Iniciá sesión acá abajo.','mal');
+        return;
+      }
+      irAPasoCodigo(email); return;
+    }
     store.escribir({access_token:j.access_token, refresh_token:j.refresh_token, modo:rolElegido});
     sesion = {access_token:j.access_token, user:j.user};
     modo = rolElegido;
