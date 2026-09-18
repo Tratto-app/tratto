@@ -57,7 +57,7 @@
     },
     {
       "parameters": {
-        "jsCode": "const texto = $json.content[0].text;\nconst guion = JSON.parse(texto);\nconst prompt = `${guion.descripcion_visual}. Estilo cinematografico, luz natural, camara estable con leve movimiento, sin texto en pantalla. Una voz en off dice en espanol argentino, tono cercano y directo: \"${guion.narracion} ${guion.cta}\"`;\nreturn [{ json: { guion, veoPrompt: prompt } }];"
+        "jsCode": "let texto = $json.content[0].text.trim();\ntexto = texto.replace(/^```(?:json)?\\s*/i, '').replace(/```\\s*$/, '');\nconst guion = JSON.parse(texto);\nconst prompt = `${guion.descripcion_visual}. Estilo cinematografico, luz natural, camara estable con leve movimiento, sin texto en pantalla. Una voz en off dice en espanol argentino, tono cercano y directo: \"${guion.narracion} ${guion.cta}\"`;\nreturn [{ json: { guion, veoPrompt: prompt } }];"
       },
       "id": "n4",
       "name": "Parsear guion",
