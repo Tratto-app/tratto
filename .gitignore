@@ -1,0 +1,8 @@
+tools/video-pipeline/input/*
+!tools/video-pipeline/input/.gitkeep
+tools/video-pipeline/output/*
+!tools/video-pipeline/output/.gitkeep
+tools/video-pipeline/**/*.mp4
+tools/video-pipeline/**/*.mov
+tools/video-pipeline/**/*.mkv
+tools/video-pipeline/**/*.avi
