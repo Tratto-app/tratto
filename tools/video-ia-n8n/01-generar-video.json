@@ -1,0 +1,147 @@
+{
+  "name": "VIDEO IA - 01 Generar guion y enviar a Veo",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": { "interval": [{ "field": "days", "daysInterval": 1, "triggerAtHour": 10 }] }
+      },
+      "id": "n1",
+      "name": "Todos los dias a las 10",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [-1120, 0]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            { "id": "c1", "name": "supabaseUrl", "value": "https://qglsonbcsncgekzbfafk.supabase.co", "type": "string" },
+            { "id": "c2", "name": "serviceRole", "value": "PEGA_ACA_TU_SERVICE_ROLE", "type": "string" },
+            { "id": "c3", "name": "anthropicApiKey", "value": "PEGA_ACA_TU_ANTHROPIC_API_KEY", "type": "string" },
+            { "id": "c4", "name": "geminiApiKey", "value": "PEGA_ACA_TU_GEMINI_API_KEY", "type": "string" },
+            { "id": "c5", "name": "tema", "value": "Cotizar un servicio con inteligencia artificial en Tratto, antes de pedirlo", "type": "string" },
+            { "id": "c6", "name": "aspectRatio", "value": "9:16", "type": "string" },
+            { "id": "c7", "name": "duracionSeg", "value": "8", "type": "string" }
+          ]
+        },
+        "options": {}
+      },
+      "id": "n2",
+      "name": "Configuracion",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [-900, 0]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.anthropic.com/v1/messages",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            { "name": "x-api-key", "value": "={{ $('Configuracion').first().json.anthropicApiKey }}" },
+            { "name": "anthropic-version", "value": "2023-06-01" },
+            { "name": "content-type", "value": "application/json" }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ model: 'claude-sonnet-4-5', max_tokens: 700, messages: [{ role: 'user', content: 'Sos el redactor de Tratto, un marketplace de servicios argentino. Tu voz es honesta y directa, sin exagerar ni inventar estadisticas, coherente con este texto real de la marca: \"Del pedido al presupuesto, sin vueltas.\". Tema de hoy: ' + $(\"Configuracion\").first().json.tema + '. Devolve SOLO un JSON valido (sin texto extra, sin markdown) con esta forma exacta: {\"titulo\": string, \"hook\": string (primera frase, para enganchar en 2 segundos), \"narracion\": string (lo que se dice en el video, hablado, tono cercano, en espanol argentino, no mas de 35 palabras porque el video dura 8 segundos), \"descripcion_visual\": string (que se ve en pantalla, ambientacion, sin texto en pantalla), \"cta\": string (llamado a la accion final, corto)}' }] }) }}",
+        "options": {}
+      },
+      "id": "n3",
+      "name": "Generar guion (Claude)",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [-680, 0]
+    },
+    {
+      "parameters": {
+        "jsCode": "const texto = $json.content[0].text;\nconst guion = JSON.parse(texto);\nconst prompt = `${guion.descripcion_visual}. Estilo cinematografico, luz natural, camara estable con leve movimiento, sin texto en pantalla. Una voz en off dice en espanol argentino, tono cercano y directo: \"${guion.narracion} ${guion.cta}\"`;\nreturn [{ json: { guion, veoPrompt: prompt } }];"
+      },
+      "id": "n4",
+      "name": "Parsear guion",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [-460, 0]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $('Configuracion').first().json.supabaseUrl }}/rest/v1/video_jobs",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            { "name": "apikey", "value": "={{ $('Configuracion').first().json.serviceRole }}" },
+            { "name": "Authorization", "value": "=Bearer {{ $('Configuracion').first().json.serviceRole }}" },
+            { "name": "Content-Type", "value": "application/json" },
+            { "name": "Prefer", "value": "return=representation" }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ tema: $('Configuracion').first().json.tema, guion: $json.guion, estado: 'guion_listo' }) }}",
+        "options": {}
+      },
+      "id": "n5",
+      "name": "Guardar guion en Supabase",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [-240, 0]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://generativelanguage.googleapis.com/v1beta/models/veo-3.1-generate-preview:predictLongRunning",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            { "name": "x-goog-api-key", "value": "={{ $('Configuracion').first().json.geminiApiKey }}" },
+            { "name": "Content-Type", "value": "application/json" }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ instances: [{ prompt: $('Parsear guion').first().json.veoPrompt }], parameters: { aspectRatio: $('Configuracion').first().json.aspectRatio, durationSeconds: $('Configuracion').first().json.duracionSeg, resolution: '720p', generateAudio: true, numberOfVideos: 1 } }) }}",
+        "options": {}
+      },
+      "id": "n6",
+      "name": "Enviar a Veo",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [0, 0]
+    },
+    {
+      "parameters": {
+        "method": "PATCH",
+        "url": "={{ $('Configuracion').first().json.supabaseUrl }}/rest/v1/video_jobs?id=eq.{{ $('Guardar guion en Supabase').first().json.id }}",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            { "name": "apikey", "value": "={{ $('Configuracion').first().json.serviceRole }}" },
+            { "name": "Authorization", "value": "=Bearer {{ $('Configuracion').first().json.serviceRole }}" },
+            { "name": "Content-Type", "value": "application/json" }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ veo_operation_name: $json.name, estado: 'veo_enviado' }) }}",
+        "options": {}
+      },
+      "id": "n7",
+      "name": "Guardar operation_name",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [220, 0]
+    }
+  ],
+  "connections": {
+    "Todos los dias a las 10": { "main": [[{ "node": "Configuracion", "type": "main", "index": 0 }]] },
+    "Configuracion": { "main": [[{ "node": "Generar guion (Claude)", "type": "main", "index": 0 }]] },
+    "Generar guion (Claude)": { "main": [[{ "node": "Parsear guion", "type": "main", "index": 0 }]] },
+    "Parsear guion": { "main": [[{ "node": "Guardar guion en Supabase", "type": "main", "index": 0 }]] },
+    "Guardar guion en Supabase": { "main": [[{ "node": "Enviar a Veo", "type": "main", "index": 0 }]] },
+    "Enviar a Veo": { "main": [[{ "node": "Guardar operation_name", "type": "main", "index": 0 }]] }
+  },
+  "settings": { "executionOrder": "v1" }
+}

@@ -1,0 +1,157 @@
+{
+  "name": "VIDEO IA - 03 Publicar en Facebook y TikTok",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": { "interval": [{ "field": "minutes", "minutesInterval": 15 }] }
+      },
+      "id": "n1",
+      "name": "Cada 15 minutos",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [-1120, 0]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            { "id": "c1", "name": "supabaseUrl", "value": "https://qglsonbcsncgekzbfafk.supabase.co", "type": "string" },
+            { "id": "c2", "name": "serviceRole", "value": "PEGA_ACA_TU_SERVICE_ROLE", "type": "string" },
+            { "id": "c3", "name": "facebookPageId", "value": "PEGA_ACA_EL_ID_DE_TU_PAGINA", "type": "string" },
+            { "id": "c4", "name": "facebookPageToken", "value": "PEGA_ACA_EL_PAGE_ACCESS_TOKEN", "type": "string" },
+            { "id": "c5", "name": "tiktokAccessToken", "value": "PEGA_ACA_EL_TIKTOK_ACCESS_TOKEN", "type": "string" }
+          ]
+        },
+        "options": {}
+      },
+      "id": "n2",
+      "name": "Configuracion",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [-900, 0]
+    },
+    {
+      "parameters": {
+        "method": "GET",
+        "url": "={{ $json.supabaseUrl }}/rest/v1/video_jobs?estado=eq.veo_listo&select=id,video_local_url,guion",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            { "name": "apikey", "value": "={{ $json.serviceRole }}" },
+            { "name": "Authorization", "value": "=Bearer {{ $json.serviceRole }}" }
+          ]
+        },
+        "options": {}
+      },
+      "id": "n3",
+      "name": "Buscar videos listos",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [-680, 0]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "=https://graph.facebook.com/v21.0/{{ $('Configuracion').first().json.facebookPageId }}/videos",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            { "name": "Authorization", "value": "=Bearer {{ $('Configuracion').first().json.facebookPageToken }}" }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ file_url: $json.video_local_url, description: ($json.guion && $json.guion.cta) || '' }) }}",
+        "options": { "response": { "response": { "neverError": true } } }
+      },
+      "id": "n4",
+      "name": "Publicar en Facebook",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [-460, -100]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://open.tiktokapis.com/v2/post/publish/video/init/",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            { "name": "Authorization", "value": "=Bearer {{ $('Configuracion').first().json.tiktokAccessToken }}" },
+            { "name": "Content-Type", "value": "application/json; charset=UTF-8" }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ post_info: { title: ($json.guion && $json.guion.titulo) || 'Tratto', privacy_level: 'SELF_ONLY', disable_duet: false, disable_comment: false, disable_stitch: false }, source_info: { source: 'PULL_FROM_URL', video_url: $json.video_local_url } }) }}",
+        "options": { "response": { "response": { "neverError": true } } }
+      },
+      "id": "n5",
+      "name": "Publicar en TikTok",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [-460, 100]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $('Configuracion').first().json.supabaseUrl }}/rest/v1/rpc/marcar_publicacion",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            { "name": "apikey", "value": "={{ $('Configuracion').first().json.serviceRole }}" },
+            { "name": "Authorization", "value": "=Bearer {{ $('Configuracion').first().json.serviceRole }}" },
+            { "name": "Content-Type", "value": "application/json" }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ p_id: $('Buscar videos listos').item.json.id, p_plataforma: 'facebook', p_resultado: $json }) }}",
+        "options": {}
+      },
+      "id": "n6",
+      "name": "Guardar resultado Facebook",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [-240, -100]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $('Configuracion').first().json.supabaseUrl }}/rest/v1/rpc/marcar_publicacion",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            { "name": "apikey", "value": "={{ $('Configuracion').first().json.serviceRole }}" },
+            { "name": "Authorization", "value": "=Bearer {{ $('Configuracion').first().json.serviceRole }}" },
+            { "name": "Content-Type", "value": "application/json" }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ p_id: $('Buscar videos listos').item.json.id, p_plataforma: 'tiktok', p_resultado: $json }) }}",
+        "options": {}
+      },
+      "id": "n7",
+      "name": "Guardar resultado TikTok",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [-240, 100]
+    }
+  ],
+  "connections": {
+    "Cada 15 minutos": { "main": [[{ "node": "Configuracion", "type": "main", "index": 0 }]] },
+    "Configuracion": { "main": [[{ "node": "Buscar videos listos", "type": "main", "index": 0 }]] },
+    "Buscar videos listos": {
+      "main": [
+        [
+          { "node": "Publicar en Facebook", "type": "main", "index": 0 },
+          { "node": "Publicar en TikTok", "type": "main", "index": 0 }
+        ]
+      ]
+    },
+    "Publicar en Facebook": { "main": [[{ "node": "Guardar resultado Facebook", "type": "main", "index": 0 }]] },
+    "Publicar en TikTok": { "main": [[{ "node": "Guardar resultado TikTok", "type": "main", "index": 0 }]] }
+  },
+  "settings": { "executionOrder": "v1" }
+}
