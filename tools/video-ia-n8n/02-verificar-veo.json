@@ -166,7 +166,7 @@
         },
         "sendBody": true,
         "specifyBody": "json",
-        "jsonBody": "={{ (() => { const fallo = $json.response && $json.response.error; const intentos = ($('Buscar jobs pendientes').item.json.intentos_veo || 0) + 1; const agotado = intentos >= 20; return JSON.stringify({ intentos_veo: intentos, estado: (fallo || agotado) ? 'veo_fallido' : 'veo_enviado', error: fallo ? (fallo.message || JSON.stringify(fallo)) : (agotado ? 'Veo no termino despues de 20 consultas (~100 min)' : null) }); })() }}",
+        "jsonBody": "={{ (() => { const fallo = $json.error; const intentos = ($('Buscar jobs pendientes').item.json.intentos_veo || 0) + 1; const agotado = intentos >= 20; return JSON.stringify({ intentos_veo: intentos, estado: (fallo || agotado) ? 'veo_fallido' : 'veo_enviado', error: fallo ? (fallo.message || JSON.stringify(fallo)) : (agotado ? 'Veo no termino despues de 20 consultas (~100 min)' : null) }); })() }}",
         "options": {}
       },
       "id": "n9",
