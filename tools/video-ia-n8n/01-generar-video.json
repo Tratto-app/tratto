@@ -21,7 +21,8 @@
             { "id": "c4", "name": "geminiApiKey", "value": "PEGA_ACA_TU_GEMINI_API_KEY", "type": "string" },
             { "id": "c5", "name": "tema", "value": "Cotizar un servicio con inteligencia artificial en Tratto, antes de pedirlo", "type": "string" },
             { "id": "c6", "name": "aspectRatio", "value": "9:16", "type": "string" },
-            { "id": "c7", "name": "duracionSeg", "value": "8", "type": "string" }
+            { "id": "c7", "name": "duracionSeg", "value": "8", "type": "string" },
+            { "id": "c8", "name": "capturaUrl", "value": "https://www.trattoapp.com.ar/marketing/captura-inicio.png", "type": "string" }
           ]
         },
         "options": {}
@@ -31,6 +32,18 @@
       "type": "n8n-nodes-base.set",
       "typeVersion": 3.4,
       "position": [-900, 0]
+    },
+    {
+      "parameters": {
+        "method": "GET",
+        "url": "={{ $json.capturaUrl }}",
+        "options": { "response": { "response": { "responseFormat": "file" } } }
+      },
+      "id": "n2b",
+      "name": "Descargar captura real",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [-790, 0]
     },
     {
       "parameters": {
@@ -46,7 +59,7 @@
         },
         "sendBody": true,
         "specifyBody": "json",
-        "jsonBody": "={{ JSON.stringify({ model: 'claude-sonnet-4-5', max_tokens: 700, messages: [{ role: 'user', content: 'Sos el redactor de Tratto, un marketplace de servicios argentino. Tu voz es honesta y directa, sin exagerar ni inventar estadisticas, coherente con este texto real de la marca: \"Del pedido al presupuesto, sin vueltas.\". Tema de hoy: ' + $(\"Configuracion\").first().json.tema + '. Devolve SOLO un JSON valido (sin texto extra, sin markdown) con esta forma exacta: {\"titulo\": string, \"hook\": string (primera frase, para enganchar en 2 segundos), \"narracion\": string (lo que se dice en el video, hablado, tono cercano, en espanol argentino, no mas de 35 palabras porque el video dura 8 segundos), \"descripcion_visual\": string (que se ve en pantalla, ambientacion, sin texto en pantalla), \"cta\": string (llamado a la accion final, corto)}' }] }) }}",
+        "jsonBody": "={{ JSON.stringify({ model: 'claude-sonnet-4-5', max_tokens: 700, messages: [{ role: 'user', content: 'Sos el redactor de Tratto, un marketplace de servicios argentino. Tu voz es honesta y directa, sin exagerar ni inventar estadisticas, coherente con este texto real de la marca: \"Del pedido al presupuesto, sin vueltas.\". Tema de hoy: ' + $(\"Configuracion\").first().json.tema + '. El video parte de una captura real de la app (pantalla de inicio con login y una tarjeta de ejemplo tipo match), asi que descripcion_visual tiene que describir un movimiento de camara SOBRE esa pantalla ya existente (zoom suave, scroll, un dedo tocando un boton) - nunca describas personas, caras ni una escena nueva. Devolve SOLO un JSON valido (sin texto extra, sin markdown) con esta forma exacta: {\"titulo\": string, \"hook\": string (primera frase, para enganchar en 2 segundos), \"narracion\": string (lo que se dice en el video, hablado, tono cercano, en espanol argentino, MAXIMO 12 palabras), \"descripcion_visual\": string (movimiento de camara sobre la pantalla de la app, sin personas ni texto en pantalla), \"cta\": string (llamado a la accion final, MAXIMO 4 palabras)}. Narracion + cta juntos tienen que poder decirse hablando en menos de 8 segundos, asi que se muy breve.' }] }) }}",
         "options": {}
       },
       "id": "n3",
@@ -102,7 +115,7 @@
         },
         "sendBody": true,
         "specifyBody": "json",
-        "jsonBody": "={{ JSON.stringify({ instances: [{ prompt: $('Parsear guion').first().json.veoPrompt }], parameters: { aspectRatio: $('Configuracion').first().json.aspectRatio, durationSeconds: Number($('Configuracion').first().json.duracionSeg), resolution: '720p' } }) }}",
+        "jsonBody": "={{ JSON.stringify({ instances: [{ prompt: $('Parsear guion').first().json.veoPrompt, image: { inlineData: { mimeType: 'image/png', data: $('Descargar captura real').first().binary.data.data } } }], parameters: { aspectRatio: $('Configuracion').first().json.aspectRatio, durationSeconds: Number($('Configuracion').first().json.duracionSeg), resolution: '720p' } }) }}",
         "options": {}
       },
       "id": "n6",
@@ -137,7 +150,8 @@
   ],
   "connections": {
     "Todos los dias a las 10": { "main": [[{ "node": "Configuracion", "type": "main", "index": 0 }]] },
-    "Configuracion": { "main": [[{ "node": "Generar guion (Claude)", "type": "main", "index": 0 }]] },
+    "Configuracion": { "main": [[{ "node": "Descargar captura real", "type": "main", "index": 0 }]] },
+    "Descargar captura real": { "main": [[{ "node": "Generar guion (Claude)", "type": "main", "index": 0 }]] },
     "Generar guion (Claude)": { "main": [[{ "node": "Parsear guion", "type": "main", "index": 0 }]] },
     "Parsear guion": { "main": [[{ "node": "Guardar guion en Supabase", "type": "main", "index": 0 }]] },
     "Guardar guion en Supabase": { "main": [[{ "node": "Enviar a Veo", "type": "main", "index": 0 }]] },
