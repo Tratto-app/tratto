@@ -102,7 +102,7 @@
         },
         "sendBody": true,
         "specifyBody": "json",
-        "jsonBody": "={{ JSON.stringify({ instances: [{ prompt: $('Parsear guion').first().json.veoPrompt }], parameters: { aspectRatio: $('Configuracion').first().json.aspectRatio, durationSeconds: $('Configuracion').first().json.duracionSeg, resolution: '720p', numberOfVideos: 1 } }) }}",
+        "jsonBody": "={{ JSON.stringify({ instances: [{ prompt: $('Parsear guion').first().json.veoPrompt }], parameters: { aspectRatio: $('Configuracion').first().json.aspectRatio, durationSeconds: $('Configuracion').first().json.duracionSeg, resolution: '720p' } }) }}",
         "options": {}
       },
       "id": "n6",
