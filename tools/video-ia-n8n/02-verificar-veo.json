@@ -73,7 +73,7 @@
           "conditions": [
             {
               "id": "cond1",
-              "leftValue": "={{ $json.done }}",
+              "leftValue": "={{ !!($json.response && $json.response.generateVideoResponse && $json.response.generateVideoResponse.generatedSamples && $json.response.generateVideoResponse.generatedSamples[0] && $json.response.generateVideoResponse.generatedSamples[0].video && $json.response.generateVideoResponse.generatedSamples[0].video.uri) }}",
               "rightValue": true,
               "operator": { "type": "boolean", "operation": "true", "singleValue": true }
             }
@@ -166,7 +166,7 @@
         },
         "sendBody": true,
         "specifyBody": "json",
-        "jsonBody": "={{ JSON.stringify({ intentos_veo: ($('Buscar jobs pendientes').item.json.intentos_veo || 0) + 1, estado: (($('Buscar jobs pendientes').item.json.intentos_veo || 0) + 1) >= 20 ? 'veo_fallido' : 'veo_enviado', error: (($('Buscar jobs pendientes').item.json.intentos_veo || 0) + 1) >= 20 ? 'Veo no termino despues de 20 consultas (~100 min)' : null }) }}",
+        "jsonBody": "={{ (() => { const fallo = $json.response && $json.response.error; const intentos = ($('Buscar jobs pendientes').item.json.intentos_veo || 0) + 1; const agotado = intentos >= 20; return JSON.stringify({ intentos_veo: intentos, estado: (fallo || agotado) ? 'veo_fallido' : 'veo_enviado', error: fallo ? (fallo.message || JSON.stringify(fallo)) : (agotado ? 'Veo no termino despues de 20 consultas (~100 min)' : null) }); })() }}",
         "options": {}
       },
       "id": "n9",
