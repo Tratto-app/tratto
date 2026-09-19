@@ -191,12 +191,13 @@
     "max_opciones_horarios": 6
   },
   "recordatorios": {
-    "activos": true,
+    "activos": false,
+    "_comentario": "Apagados a pedido: el bot no manda recordatorios. Poner en true los reactiva; ojo que los mensajes fuera de la ventana de 24 h de WhatsApp necesitan una plantilla aprobada y se cobran.",
     "avisos": [
       {
         "id": "24h",
         "horas_antes": 24,
-        "activo": true
+        "activo": false
       },
       {
         "id": "2h",
@@ -204,7 +205,6 @@
         "activo": false
       }
     ],
-    "_comentario": "Los recordatorios salen solo dentro del horario permitido para no molestar de madrugada.",
     "no_enviar_antes_de": "09:00",
     "no_enviar_despues_de": "21:00"
   },
@@ -220,5 +220,10 @@
     "tono": "argentino rioplatense, cercano, breve, amable. Tuteo con 'vos'. Emojis con moderacion (0 a 2 por mensaje).",
     "nombre_bot": "el asistente de la barberia",
     "max_caracteres_respuesta": 600
+  },
+  "limpieza": {
+    "activa": true,
+    "conservar_dias": 7,
+    "_comentario": "Cada día se borran los turnos que ya pasaron hace más de conservar_dias. La base arranca la semana limpia. NUNCA se tocan los turnos futuros ni la ficha de los clientes."
   }
 }

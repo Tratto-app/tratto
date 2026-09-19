@@ -95,13 +95,14 @@ function opcionDeMenu(texto: string): 'reservar' | 'consultar' | 'cancelar' | 'm
   const t = normalizar(texto);
   if (/^3\b/.test(t) || /\b(cancelar|anular|dar de baja|no voy a poder ir)\b/.test(t)) return 'cancelar';
   if (/\b(cambiar|mover|reprogramar|correr el turno|pasar el turno|pasar mi turno|otro horario|otro dia)\b/.test(t)) return 'modificar';
-  if (
-    /^2\b/.test(t) ||
-    t === 'menu_mis_turnos' ||
-    /\b(mi turno|mis turnos|consultar|cuando tengo|que hora tengo|a que hora|tengo turno|tengo algo|confirmar mi turno)\b/.test(t)
-  ) {
-    return 'consultar';
-  }
+  const preguntaPorSuTurno =
+    /\b(mi turno|mis turnos|consultar|cuando tengo|que hora tengo|a que hora|tengo turno|tengo algo|confirmar mi turno)\b/.test(t) ||
+    /\bturno tengo\b/.test(t) ||
+    /\btengo (un|algun|algún) turno\b/.test(t) ||
+    // "¿cuándo es mi turno?", "¿qué día tengo?", "¿a qué hora era?"
+    /\b(que|cual|cuando|a que)\b[^?]{0,24}\b(turno|dia|hora)\b.{0,12}\b(tengo|es|era|tenia)\b/.test(t) ||
+    /\bcuando es\b/.test(t);
+  if (/^2\b/.test(t) || t === 'menu_mis_turnos' || preguntaPorSuTurno) return 'consultar';
   if (/^4\b/.test(t) || /\b(precio|precios|cuanto sale|cuanto cuesta|cuanto esta|servicios|lista de precios)\b/.test(t)) return 'precios';
   if (/^1\b/.test(t) || t === 'menu_reservar' || /\b(turno|reservar|sacar|agendar|cortar|corte|pelo|barba)\b/.test(t)) return 'reservar';
   if (/^5\b/.test(t) || /\b(persona|humano|barbero|hablar con)\b/.test(t)) return 'persona';

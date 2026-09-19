@@ -84,6 +84,12 @@ const negocioSchema = z.object({
     derivacion_humana: z.string(),
     despedida: z.string(),
   }),
+  limpieza: z
+    .object({
+      activa: z.boolean().default(true),
+      conservar_dias: z.number().int().min(1).max(3650).default(7),
+    })
+    .default({ activa: true, conservar_dias: 7 }),
   agente: z.object({
     tono: z.string(),
     nombre_bot: z.string(),

@@ -10,7 +10,7 @@ import { crearBaseDeDatos } from './database/index.js';
 import { crearContexto } from './booking/servicio.js';
 import { crearServidor, escuchar } from './backend/servidor.js';
 import { arrancarWorkerDeSheets } from './google/sync.js';
-import { arrancarWorkerDeRecordatorios } from './reminders/scheduler.js';
+import { arrancarWorkerDeMantenimiento } from './mantenimiento/tareas.js';
 import { log } from './shared/log.js';
 
 async function arrancar(): Promise<void> {
@@ -39,7 +39,7 @@ async function arrancar(): Promise<void> {
 
   // 4. Workers en segundo plano.
   const workers = env.WORKERS_HABILITADOS
-    ? [arrancarWorkerDeSheets(ctx), arrancarWorkerDeRecordatorios(ctx)]
+    ? [arrancarWorkerDeSheets(ctx), arrancarWorkerDeMantenimiento(ctx)]
     : [];
 
   // 5. Servidor HTTP.

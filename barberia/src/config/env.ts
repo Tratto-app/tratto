@@ -47,7 +47,7 @@ const envSchema = z.object({
   GOOGLE_REFRESH_TOKEN: z.string().optional(),
   GOOGLE_SERVICE_ACCOUNT_JSON: z.string().optional(),
   SHEETS_HABILITADO: bool(true),
-  SHEETS_INTERVALO_MS: z.coerce.number().int().positive().default(15000),
+  SHEETS_INTERVALO_MS: z.coerce.number().int().positive().default(5000),
 
   // --- Panel del barbero ---
   DASHBOARD_PASSWORD: z.string().optional(),
@@ -58,7 +58,8 @@ const envSchema = z.object({
   SIMULADOR_HABILITADO: bool(true),
 
   // --- Workers ---
-  RECORDATORIOS_HABILITADOS: bool(true),
+  // Apagados a pedido del negocio: el bot no manda recordatorios.
+  RECORDATORIOS_HABILITADOS: bool(false),
   WORKERS_HABILITADOS: bool(true),
 });
 

@@ -11,6 +11,7 @@ import {
   bloquearHorario,
   agendaSemanal,
 } from '../src/booking/servicio.js';
+import { limpiarTurnosViejos } from '../src/mantenimiento/tareas.js';
 import { ErrorDeNegocio } from '../src/shared/errores.js';
 import {
   contextoDePrueba,
@@ -465,6 +466,65 @@ describe('agenda', () => {
       const dom = semana.find((d) => d.fecha === DOMINGO)!;
       assert.equal(dom.abierto, false);
       assert.equal(dom.turnos.length, 0);
+    });
+  });
+});
+
+describe('limpieza semanal de la base', () => {
+  test('borra los turnos que ya pasaron y deja los futuros', async () => {
+    await conContexto(async (ctx) => {
+      // Uno de hace dos semanas y uno de la semana que viene.
+      const viejo = await crearTurno(ctx, {
+        telefono: TELEFONO_B, nombre: 'Viejo', servicioId: 'corte', fecha: '2026-09-02', hora: '11:00',
+        origen: 'panel', forzar: true,
+      });
+      const futuro = await crearTurno(ctx, {
+        telefono: TELEFONO_A, nombre: 'Futuro', servicioId: 'corte', fecha: SABADO, hora: '17:00', origen: 'whatsapp',
+      });
+
+      const borrados = await limpiarTurnosViejos(ctx);
+      assert.equal(borrados, 1);
+
+      const quedan = await ctx.db.query<{ id: string }>('SELECT id FROM turnos ORDER BY id');
+      assert.deepEqual(quedan.map((f) => f.id), [futuro.id]);
+      assert.notEqual(futuro.id, viejo.id);
+    });
+  });
+
+  test('no toca un turno de ayer: la ventana es de una semana', async () => {
+    await conContexto(async (ctx) => {
+      // conservar_dias = 7 y "hoy" es el 16/09, así que el 15/09 se conserva.
+      await crearTurno(ctx, {
+        telefono: TELEFONO_B, nombre: 'Ayer', servicioId: 'corte', fecha: '2026-09-15', hora: '11:00',
+        origen: 'panel', forzar: true,
+      });
+      assert.equal(await limpiarTurnosViejos(ctx), 0);
+    });
+  });
+
+  test('el cliente sigue siendo reconocido después de la limpieza', async () => {
+    await conContexto(async (ctx) => {
+      await crearTurno(ctx, {
+        telefono: TELEFONO_B, nombre: 'Roberto', servicioId: 'corte', fecha: '2026-09-02', hora: '11:00',
+        origen: 'panel', forzar: true,
+      });
+      await limpiarTurnosViejos(ctx);
+      const cliente = await ctx.db.query<{ nombre: string; total_turnos: number }>(
+        'SELECT nombre, total_turnos FROM clientes WHERE telefono = ?', [TELEFONO_B],
+      );
+      assert.equal(cliente[0]?.nombre, 'Roberto');
+      assert.equal(Number(cliente[0]?.total_turnos), 1);
+    });
+  });
+
+  test('se puede apagar desde la configuración', async () => {
+    await conContexto(async (ctx) => {
+      await crearTurno(ctx, {
+        telefono: TELEFONO_B, nombre: 'Viejo', servicioId: 'corte', fecha: '2026-09-02', hora: '11:00',
+        origen: 'panel', forzar: true,
+      });
+      const sinLimpieza = { ...ctx, cfg: { ...ctx.cfg, limpieza: { activa: false, conservar_dias: 7 } } };
+      assert.equal(await limpiarTurnosViejos(sinLimpieza), 0);
     });
   });
 });

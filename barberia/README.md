@@ -34,7 +34,7 @@ CLIENTE ──WhatsApp──▶ Webhook ──▶ Orquestador ──▶ Agente I
 10. [Configurar la IA](#configurar-la-ia)
 11. [Probar sin WhatsApp: el simulador](#probar-sin-whatsapp-el-simulador)
 12. [Panel del barbero](#panel-del-barbero)
-13. [Recordatorios](#recordatorios)
+13. [Limpieza semanal](#limpieza-semanal)
 14. [Tests](#tests)
 15. [Despliegue](#despliegue)
 16. [Costos](#costos)
@@ -60,7 +60,10 @@ CLIENTE ──WhatsApp──▶ Webhook ──▶ Orquestador ──▶ Agente I
 - **Deriva a una persona** cuando el cliente lo pide, y pausa el bot en esa charla.
 - **Sigue funcionando sin IA.** Si el modelo no responde, entra un menú con
   botones que permite reservar igual.
-- **Sincroniza con Google Sheets** sin que la planilla pueda frenar una reserva.
+- **Escribe solo en Google Drive.** Cada turno aparece en la planilla a los
+  pocos segundos de reservarse, sin que la planilla pueda frenar una reserva.
+- **La base arranca limpia cada semana.** Los turnos viejos se borran solos;
+  en Drive queda el historial completo.
 - **Panel web** para ver la agenda, cargar turnos a mano, bloquear horarios y
   cambiar precios y horarios sin tocar código.
 
@@ -143,11 +146,11 @@ barberia/
 │   ├── whatsapp/              Cliente de la Cloud API y verificación del webhook
 │   ├── conversation/          Orquestador: idempotencia, contexto, derivación a persona
 │   ├── google/                Autenticación, API de Sheets, proyección y worker de sincronización
-│   ├── reminders/             Recordatorios y mantenimiento
+│   ├── mantenimiento/         Liberar reservas abandonadas y limpieza semanal
 │   ├── backend/               Servidor HTTP, rutas y middlewares
 │   └── main.ts                Arranque
 ├── public/                    Panel del barbero y simulador de chat
-└── tests/                     136 tests
+└── tests/                     163 tests
 ```
 
 **El flujo de un mensaje:**
@@ -313,8 +316,11 @@ Crea y deja listas: **Hoy**, **Agenda semanal**, **Turnos**, **Clientes** y
 | **Clientes** | Quiénes son, cuántas veces vinieron, última visita |
 | **Configuración** | Servicios, precios y horarios vigentes (informativa) |
 
-Para reconstruir la planilla entera desde la base: `npm run sheets:sync`
-(o el botón **Resincronizar** del panel).
+**Cada turno que alguien reserva por WhatsApp aparece en la hoja "Turnos" a los
+pocos segundos, solo.** No hay que hacer nada.
+
+Si algo se desincronizó: `npm run sheets:sync` (o el botón **Resincronizar** del
+panel). Es seguro apretarlo: actualiza y agrega filas, nunca borra.
 
 ---
 
@@ -422,37 +428,57 @@ En producción el simulador queda detrás del login del panel.
 
 ---
 
-## Recordatorios
+## Limpieza semanal
 
-Se configuran en `negocio.json`:
+La base de datos guarda **la semana en curso**, no el historial completo. Todos
+los días se borran los turnos que ya terminaron hace más de `conservar_dias`:
 
 ```json
-"recordatorios": {
-  "activos": true,
-  "avisos": [
-    { "id": "24h", "horas_antes": 24, "activo": true },
-    { "id": "2h",  "horas_antes": 2,  "activo": false }
-  ],
-  "no_enviar_antes_de": "09:00",
-  "no_enviar_despues_de": "21:00"
+"limpieza": {
+  "activa": true,
+  "conservar_dias": 7
 }
 ```
 
-Se programan al confirmar el turno y se cancelan solos si el turno se cancela o
-se mueve. Cada aviso se toma de forma atómica, así que aunque corran dos
-instancias del backend el cliente recibe uno solo. Nunca salen de madrugada.
+Qué se borra y qué no:
 
-La arquitectura deja lugar para mensajes post-turno, pedido de reseña,
-promociones y recuperación de clientes: se agregan como nuevos avisos.
-**No implementa spam:** los avisos son pocos, configurables y respetan las
-reglas de WhatsApp Business.
+| | Se borra | Se conserva |
+|---|---|---|
+| Turnos que ya pasaron hace más de una semana | ✅ de la base | ✅ **en Google Drive, para siempre** |
+| Turnos futuros | ❌ nunca | ✅ |
+| Ficha de clientes (nombre, cuántas veces vino) | ❌ nunca | ✅ |
 
----
+> **La planilla de Drive es el archivo del negocio.** La sincronización nunca
+> borra filas: actualiza las que ya están y agrega las nuevas. Aunque la base se
+> limpie, o aunque apretés "Resincronizar", el historial de Drive queda intacto.
+
+Para desactivarla: `"activa": false`. Para guardar un mes: `"conservar_dias": 30`.
+
+### Recordatorios: apagados
+
+El bot **no manda recordatorios**. Está apagado en `negocio.json`
+(`recordatorios.activos: false`) y en el entorno (`RECORDATORIOS_HABILITADOS=false`).
+Además de la decisión del negocio, esto evita el único costo real de WhatsApp:
+los mensajes fuera de la ventana de 24 h necesitan una plantilla aprobada y se
+cobran.
+
+El código quedó por si algún día los querés: se prenden cambiando esas dos
+opciones y cargando una plantilla aprobada en `WHATSAPP_PLANTILLA_RECORDATORIO`.
+
+### Lo que sí corre solo
+
+El worker de mantenimiento **no es opcional** y anda siempre:
+
+1. Libera los horarios que alguien empezó a reservar y abandonó a mitad de camino.
+   Sin esto, la agenda se tapa sola con reservas fantasma.
+2. Cierra los turnos que ya pasaron (a las 12 h, para darte tiempo a marcar
+   "no vino").
+3. Hace la limpieza semanal.
 
 ## Tests
 
 ```bash
-npm test          # 136 tests (SQLite, sin dependencias externas)
+npm test          # 163 tests (SQLite, sin dependencias externas)
 npm run typecheck
 
 # Opcional: los mismos candados contra la doble reserva, contra un PostgreSQL real
@@ -482,6 +508,8 @@ Cubren lo que pide el enunciado y algo más:
 | 14 | Mensaje ambiguo | `conversacion.test.ts` |
 | 15 | Interpretación de fechas | `fechas.test.ts` |
 | 16 | Bloqueo de horario | `turnos.test.ts` |
+| + | **Turno por WhatsApp → fila en Google Drive**, de punta a punta | `sheets.test.ts` |
+| + | Limpieza semanal: borra lo pasado, respeta lo futuro y los clientes | `turnos.test.ts`, `sheets.test.ts` |
 | + | Firma del webhook, idempotencia, derivación a persona, límites del agente, caída de la IA | `webhook.test.ts`, `agente.test.ts` |
 
 ### Sobre PostgreSQL
@@ -505,9 +533,11 @@ Conviene decirlo claro antes de conectar el número real:
   se pudo ejecutar sin un número y credenciales. La verificación del webhook, la
   firma HMAC y el parseo de los payloads sí están testeados con payloads reales
   de Meta; lo que falta probar es la red.
-- **La sincronización real con Google Sheets**: la lógica de cola, reintentos y
-  proyección está testeada, pero las llamadas a la API de Google no se
-  ejecutaron sin credenciales.
+- **Google Sheets** se prueba contra un servidor que imita la API de Google
+  (`tests/google-falso.ts`): se verifica que la fila llegue con los datos
+  correctos, que se actualice al cancelar, que la cola aguante a Google caído y
+  que el historial sobreviva a la limpieza. Lo que no se ejecutó es la red real
+  contra Google, por falta de credenciales.
 
 ---
 

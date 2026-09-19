@@ -8,7 +8,7 @@ try {
   await db.migrar();
   const ctx = crearContexto(db);
   const r = await resincronizarTodo(ctx);
-  console.log(`✅ Planilla reconstruida: ${r.turnos} turno(s) volcados.`);
+  console.log(`✅ Planilla al día: ${r.turnos} turno(s) en la hoja (${r.nuevos} agregados ahora).`);
 } catch (e) {
   console.error('❌ No se pudo sincronizar:', e instanceof Error ? e.message : e);
   process.exitCode = 1;

@@ -15,13 +15,13 @@ Supuesto: **300 conversaciones por mes**, ~8 mensajes por conversación,
 
 | Servicio | Qué cobra | Estimado mensual (USD) |
 |---|---|---|
-| WhatsApp Cloud API | Por conversación de servicio, con un mínimo gratis | 0 – 5 |
+| WhatsApp Cloud API | Solo cobra las plantillas, y no se usan | **0** |
 | API de IA (Claude) | Por token de entrada y salida | 3 – 12 |
 | Hosting (Render/Railway) | Instancia siempre prendida | 5 – 10 |
 | Base de datos PostgreSQL | Instancia gestionada | 0 – 7 |
 | Google Sheets / Drive | Gratis en este volumen | 0 |
 | Dominio (opcional) | Anual | ~1 (prorrateado) |
-| **Total** | | **≈ 8 – 35 USD/mes** |
+| **Total** | | **≈ 5 – 30 USD/mes** |
 
 El rango depende sobre todo de cuánto se usa la IA y de si el Postgres es de
 capa gratuita o pago.
@@ -37,11 +37,14 @@ cliente— son **gratis**.
 Para este sistema:
 
 - Un cliente escribe para sacar turno → **conversación de servicio → gratis.**
-- El sistema manda un **recordatorio** con plantilla fuera de las 24 h →
-  **plantilla de utilidad → se cobra** (centavos de dólar por mensaje en Argentina).
+- El sistema **no manda recordatorios** (están apagados), que era lo único que
+  iba a costar plata.
 
-**Estimado:** con recordatorios de 24 h activos sobre ~150 turnos/mes, unos
-**2 a 5 USD**. Sin recordatorios: **0**.
+**Estimado: 0 USD.** Todo el ida y vuelta de turnos entra en las conversaciones
+que inicia el cliente, que no se cobran.
+
+Si algún día prendés los recordatorios: una plantilla de utilidad cuesta
+centavos por mensaje, y sobre ~150 turnos/mes serían 2 a 5 USD.
 
 También hay que tener en cuenta:
 - El número de WhatsApp Business no puede ser el mismo que ya usa el barbero
@@ -135,8 +138,7 @@ viejos: la base de datos igual los guarda todos.
 ## Cómo bajar el costo a casi cero para probar
 
 1. `AI_HABILITADA=false` → sin costo de IA, el bot atiende por menú.
-2. `recordatorios.activos: false` → sin costo de WhatsApp (solo conversaciones
-   de servicio, que son gratis).
+2. Los recordatorios ya vienen apagados → sin costo de WhatsApp.
 3. SQLite + un VPS de 5 USD, o directamente la notebook con ngrok.
 
 Con eso el sistema completo se prueba **sin gastar nada más que el hosting**.

@@ -13,6 +13,7 @@ export type TipoEvento =
   | 'bloqueo_borrado'
   | 'derivacion_humana'
   | 'bot_reactivado'
+  | 'limpieza'
   | 'error';
 
 /** Bitacora de auditoria. Nunca guarda el texto completo del cliente, solo el hecho. */

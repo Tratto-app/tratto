@@ -1,11 +1,19 @@
 /**
- * Recordatorios y tareas de mantenimiento.
+ * Tareas de mantenimiento que corren solas en segundo plano.
  *
- * Sobre la "ventana de 24 horas" de WhatsApp: Meta solo permite escribirle a un
- * cliente con texto libre dentro de las 24 h desde su ultimo mensaje. Para un
- * recordatorio del dia anterior eso casi nunca se cumple, asi que hay que usar
- * una PLANTILLA aprobada. Si se configura WHATSAPP_PLANTILLA_RECORDATORIO se usa
- * esa; si no, se manda texto y puede rebotar (queda registrado en el log).
+ * Son tres, y ninguna le escribe al cliente:
+ *
+ *  1. Liberar reservas temporales vencidas. Es la mas importante: sin esto, un
+ *     cliente que abandona la conversacion a mitad de camino dejaria el horario
+ *     bloqueado para siempre.
+ *  2. Cerrar turnos que ya pasaron (pasan a "completado").
+ *  3. Limpieza semanal: borrar de la base los turnos viejos, para que arranque
+ *     la semana liviana. Solo borra lo que YA PASO; los turnos futuros y la
+ *     ficha de los clientes no se tocan nunca.
+ *
+ * Los recordatorios por WhatsApp estan APAGADOS por decision del negocio
+ * (`recordatorios.activos: false`). El codigo quedo por si algun dia se quieren
+ * volver a prender, pero tal como esta la configuracion no se envia nada.
  */
 import { DateTime } from 'luxon';
 import type { Contexto } from '../booking/servicio.js';
@@ -81,6 +89,32 @@ export async function enviarRecordatoriosPendientes(ctx: Contexto): Promise<{ en
   return salida;
 }
 
+/**
+ * Limpieza semanal: saca de la base los turnos que ya terminaron hace mas de
+ * `limpieza.conservar_dias`.
+ *
+ * La planilla de Google NO se toca: ahi queda el historial completo. La base de
+ * datos es la semana en curso; Drive es el archivo.
+ */
+export async function limpiarTurnosViejos(ctx: Contexto): Promise<number> {
+  if (!ctx.cfg.limpieza.activa) return 0;
+  const limite = ctx.ahora().minus({ days: ctx.cfg.limpieza.conservar_dias });
+  const borrados = await ctx.db.transaccion(async (tx) => {
+    await tx.bloquearAgenda();
+    // Primero los avisos asociados, para no dejar filas huerfanas.
+    await tx.exec('DELETE FROM recordatorios WHERE turno_id IN (SELECT id FROM turnos WHERE fin_ms < ?)', [limite.toMillis()]);
+    return turnosRepo.borrarPasadosAnterioresA(tx, limite.toMillis());
+  });
+  if (borrados > 0) {
+    log.info({ borrados, anterioresA: limite.toISODate() }, 'limpieza: turnos viejos borrados de la base');
+    await eventosRepo.registrar(ctx.db, 'limpieza', {
+      detalle: `${borrados} turno(s) anteriores al ${limite.toISODate()}`,
+      ahoraMs: ctx.ahora().toMillis(),
+    });
+  }
+  return borrados;
+}
+
 /** Tareas de limpieza: holds vencidos, turnos pasados, tablas de control. */
 export async function mantenimiento(ctx: Contexto): Promise<void> {
   const ahora = ctx.ahora();
@@ -96,6 +130,8 @@ export async function mantenimiento(ctx: Contexto): Promise<void> {
     const cerrados = await cerrarTurnosPasados(ctx);
     if (cerrados > 0) log.info({ cerrados }, 'turnos pasados marcados como completados');
 
+    await limpiarTurnosViejos(ctx);
+
     // Las tablas de control no crecen para siempre.
     await mensajesRepo.limpiarViejos(ctx.db, ahora.minus({ days: 7 }).toMillis());
     await eventosRepo.limpiarViejos(ctx.db, ahora.minus({ days: 180 }).toMillis());
@@ -104,12 +140,13 @@ export async function mantenimiento(ctx: Contexto): Promise<void> {
   }
 }
 
-export function arrancarWorkerDeRecordatorios(ctx: Contexto): { detener: () => void } {
-  if (!env.RECORDATORIOS_HABILITADOS) {
-    log.warn('recordatorios deshabilitados por configuración');
-    return { detener: () => {} };
-  }
-
+/**
+ * Arranca el worker de mantenimiento.
+ *
+ * Corre SIEMPRE, incluso con los recordatorios apagados: liberar las reservas
+ * temporales vencidas no es opcional, sin eso la agenda se tapa sola.
+ */
+export function arrancarWorkerDeMantenimiento(ctx: Contexto): { detener: () => void } {
   let corriendo = false;
   let ultimoMantenimientoMs = 0;
 
@@ -117,14 +154,16 @@ export function arrancarWorkerDeRecordatorios(ctx: Contexto): { detener: () => v
     if (corriendo) return;
     corriendo = true;
     try {
-      await enviarRecordatoriosPendientes(ctx);
+      if (env.RECORDATORIOS_HABILITADOS && ctx.cfg.recordatorios.activos) {
+        await enviarRecordatoriosPendientes(ctx);
+      }
       const ahoraMs = Date.now();
       if (ahoraMs - ultimoMantenimientoMs > 10 * 60_000) {
         ultimoMantenimientoMs = ahoraMs;
         await mantenimiento(ctx);
       }
     } catch (e) {
-      log.error({ err: e instanceof Error ? e.message : e }, 'fallo el ciclo de recordatorios');
+      log.error({ err: e instanceof Error ? e.message : e }, 'fallo el ciclo de mantenimiento');
     } finally {
       corriendo = false;
     }
@@ -132,6 +171,10 @@ export function arrancarWorkerDeRecordatorios(ctx: Contexto): { detener: () => v
 
   const intervalo = setInterval(() => void tick(), 60_000);
   intervalo.unref?.();
-  log.info('worker de recordatorios iniciado');
+  void tick();
+  log.info(
+    { recordatorios: env.RECORDATORIOS_HABILITADOS && ctx.cfg.recordatorios.activos, limpiezaCada: `${ctx.cfg.limpieza.conservar_dias} días` },
+    'worker de mantenimiento iniciado',
+  );
   return { detener: () => clearInterval(intervalo) };
 }

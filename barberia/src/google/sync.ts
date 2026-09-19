@@ -23,6 +23,24 @@ function proximoIntento(intentos: number, ahoraMs: number): number {
   return ahoraMs + Math.min(BACKOFF_BASE_MS * 2 ** intentos, BACKOFF_TOPE_MS);
 }
 
+/**
+ * Crear las hojas cuesta llamadas a la API, asi que se hace una sola vez por
+ * proceso, antes de la primera escritura. Si alguien borra una pestaña a mano,
+ * se recupera reiniciando el servicio o con el boton "Resincronizar".
+ */
+let estructuraVerificada = false;
+
+async function asegurarEstructuraUnaVez(spreadsheetId: string): Promise<void> {
+  if (estructuraVerificada) return;
+  await asegurarEstructura(spreadsheetId);
+  estructuraVerificada = true;
+}
+
+/** Solo para tests: olvida que ya verifico la estructura. */
+export function reiniciarCacheDeEstructura(): void {
+  estructuraVerificada = false;
+}
+
 export interface ResultadoSync {
   procesados: number;
   fallados: number;
@@ -54,6 +72,14 @@ export async function sincronizarPendientes(ctx: Contexto): Promise<ResultadoSyn
     return base;
   }
 
+  try {
+    await asegurarEstructuraUnaVez(spreadsheetId);
+  } catch (e) {
+    log.warn({ err: e instanceof Error ? e.message : e }, 'no se pudo preparar la planilla; se reintenta en el proximo ciclo');
+    base.pendientes = await outboxRepo.contar(ctx.db);
+    return base;
+  }
+
   let huboCambios = false;
   for (const ev of eventos) {
     try {
@@ -81,6 +107,9 @@ export async function sincronizarPendientes(ctx: Contexto): Promise<ResultadoSyn
     try {
       await refrescarHoy(spreadsheetId, ctx);
       await refrescarSemana(spreadsheetId, ctx);
+      // La ficha de clientes tambien: si no, un cliente nuevo no aparece hasta
+      // que alguien apriete "Resincronizar" a mano.
+      await refrescarClientes(spreadsheetId, ctx);
       base.vistasRefrescadas = true;
     } catch (e) {
       log.warn({ err: e instanceof Error ? e.message : e }, 'no se pudieron refrescar las vistas de la planilla');
@@ -92,13 +121,11 @@ export async function sincronizarPendientes(ctx: Contexto): Promise<ResultadoSyn
 }
 
 /** Reconstruye la planilla entera desde la base. Lo usa el CLI y el boton del panel. */
-export async function resincronizarTodo(ctx: Contexto): Promise<{ turnos: number }> {
+export async function resincronizarTodo(ctx: Contexto): Promise<{ turnos: number; nuevos: number }> {
   if (!sheetsConfigurado || !env.GOOGLE_SPREADSHEET_ID) {
     throw new Error('Google Sheets no esta configurado (falta GOOGLE_SPREADSHEET_ID o las credenciales)');
   }
-  const turnos = await volcarTodo(env.GOOGLE_SPREADSHEET_ID, ctx);
-  await refrescarClientes(env.GOOGLE_SPREADSHEET_ID, ctx);
-  return { turnos };
+  return volcarTodo(env.GOOGLE_SPREADSHEET_ID, ctx);
 }
 
 export function arrancarWorkerDeSheets(ctx: Contexto): { detener: () => void } {
@@ -108,16 +135,11 @@ export function arrancarWorkerDeSheets(ctx: Contexto): { detener: () => void } {
   }
 
   let corriendo = false;
-  let listo = false;
 
   const tick = async () => {
     if (corriendo) return;
     corriendo = true;
     try {
-      if (!listo) {
-        await asegurarEstructura(env.GOOGLE_SPREADSHEET_ID!);
-        listo = true;
-      }
       const r = await sincronizarPendientes(ctx);
       if (r.procesados > 0) log.info({ ...r }, 'sincronizacion con Sheets');
     } catch (e) {

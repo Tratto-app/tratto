@@ -228,6 +228,19 @@ export const turnosRepo = {
     return Number(filas[0]?.n ?? 0);
   },
 
+  /**
+   * Borra turnos que ya terminaron hace rato. Es la limpieza semanal: deja la
+   * base liviana con la semana en curso.
+   *
+   * Solo toca turnos PASADOS: la condicion es sobre `fin_ms`, asi que un turno
+   * futuro no puede caer nunca, por vieja que sea la fecha de creacion.
+   * Los clientes y su historial viven en otra tabla y no se tocan.
+   */
+  async borrarPasadosAnterioresA(ex: Ejecutor, limiteMs: number): Promise<number> {
+    const r = await ex.exec('DELETE FROM turnos WHERE fin_ms < ?', [limiteMs]);
+    return r.filas;
+  },
+
   /** Turnos que ya pasaron y siguen como reservados: candidatos a "completado". */
   async pasadosSinCerrar(ex: Ejecutor, ahoraMs: number, limite = 200): Promise<Turno[]> {
     const filas = await ex.query<FilaTurno>(

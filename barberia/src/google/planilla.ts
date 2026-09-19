@@ -234,24 +234,58 @@ export async function refrescarConfig(spreadsheetId: string, ctx: Contexto): Pro
   await sheets.escribir(spreadsheetId, `${HOJA_CONFIG}!A1:E${filas.length}`, filas);
 }
 
-/** Vuelca de cero todos los turnos. Se usa en la primera sincronizacion. */
-export async function volcarTodo(spreadsheetId: string, ctx: Contexto): Promise<number> {
+/**
+ * Vuelca a la planilla todos los turnos que hay en la base y refresca las vistas.
+ *
+ * IMPORTANTE: no borra filas. La hoja "Turnos" es el ARCHIVO del negocio y
+ * sobrevive a la limpieza semanal de la base de datos: los turnos viejos se
+ * borran de la base para que arranque liviana, pero en Drive quedan para
+ * siempre. Por eso esto hace merge (actualiza los que ya estan por ID y agrega
+ * los nuevos) en vez de reconstruir desde cero.
+ */
+export async function volcarTodo(spreadsheetId: string, ctx: Contexto): Promise<{ turnos: number; nuevos: number }> {
   const zona = ctx.cfg.negocio.timezone;
-  const desde = fechaDe(ctx.ahora().minus({ days: 90 }));
-  const hasta = fechaDe(ctx.ahora().plus({ days: 180 }));
-  const turnos = await turnosRepo.porRangoDeFechas(ctx.db, desde, hasta);
+  const desde = fechaDe(ctx.ahora().minus({ days: 365 }));
+  const hasta = fechaDe(ctx.ahora().plus({ days: 365 }));
+  const enLaBase = await turnosRepo.porRangoDeFechas(ctx.db, desde, hasta);
+
   await asegurarEstructura(spreadsheetId);
-  await sheets.limpiar(spreadsheetId, `${HOJA_TURNOS}!A2:N`);
-  if (turnos.length) {
+
+  // Una sola lectura de la hoja y una sola escritura.
+  const filasActuales = await sheets.leer(spreadsheetId, `${HOJA_TURNOS}!A2:N`);
+  const indicePorId = new Map<string, number>();
+  filasActuales.forEach((fila, i) => {
+    if (fila[0]) indicePorId.set(fila[0], i);
+  });
+
+  let nuevos = 0;
+  const filas = filasActuales.map((f) => [...f]);
+  for (const turno of enLaBase) {
+    const fila = filaDeTurno(turno, zona);
+    const posicion = indicePorId.get(turno.id);
+    if (posicion === undefined) {
+      filas.push(fila);
+      nuevos++;
+    } else {
+      filas[posicion] = fila;
+    }
+  }
+
+  // Se ordenan por fecha y hora para que el barbero lea la hoja de corrido.
+  filas.sort((a, b) => `${a[1] ?? ''}${a[3] ?? ''}`.localeCompare(`${b[1] ?? ''}${b[3] ?? ''}`));
+
+  if (filas.length) {
+    const ancho = ENCABEZADOS_TURNOS.length;
     await sheets.escribir(
       spreadsheetId,
-      `${HOJA_TURNOS}!A2:N${turnos.length + 1}`,
-      turnos.map((t) => filaDeTurno(t, zona)),
+      `${HOJA_TURNOS}!A2:N${filas.length + 1}`,
+      filas.map((f) => Array.from({ length: ancho }, (_, i) => f[i] ?? '')),
     );
   }
+
   await refrescarHoy(spreadsheetId, ctx);
   await refrescarSemana(spreadsheetId, ctx);
   await refrescarClientes(spreadsheetId, ctx);
   await refrescarConfig(spreadsheetId, ctx);
-  return turnos.length;
+  return { turnos: filas.length, nuevos };
 }

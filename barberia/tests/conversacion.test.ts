@@ -285,3 +285,39 @@ describe('respaldo cuando la IA no está disponible (requisito crítico)', () =>
     });
   });
 });
+
+describe('el menú entiende cómo habla la gente', () => {
+  const casos: Array<[string, RegExp]> = [
+    ['quiero sacar turno', /qué te querés hacer/i],
+    ['hola, quiero un turno', /qué te querés hacer/i],
+    ['quiero cortarme el pelo', /qué te querés hacer/i],
+    ['que turno tengo', /no tenés ningún turno/i],
+    ['¿a qué hora tengo turno?', /no tenés ningún turno/i],
+    ['cuándo es mi turno', /no tenés ningún turno/i],
+    ['qué día tengo el turno', /no tenés ningún turno/i],
+    ['quiero cancelar el turno', /no tenés turnos para cancelar/i],
+    ['no voy a poder ir', /no tenés turnos para cancelar/i],
+    ['quiero cambiar mi turno', /no encuentro ningún turno/i],
+    ['¿puedo pasar mi turno para las 18?', /no encuentro ningún turno/i],
+    ['cuánto sale el corte', /estos son los servicios/i],
+    ['quiero hablar con una persona', /le aviso al barbero/i],
+  ];
+
+  for (const [frase, esperado] of casos) {
+    test(`"${frase}"`, async () => {
+      await conContexto(async (ctx) => {
+        // Cliente sin turnos: así la respuesta revela qué intención se detectó.
+        const r = await decir(ctx, frase);
+        assert.match(r, esperado, `"${frase}" se interpretó mal: "${r.split('\n')[0]}"`);
+      });
+    });
+  }
+
+  test('"quiero cancelar" con un turno vivo ofrece cancelar ese turno', async () => {
+    await conContexto(async (ctx) => {
+      for (const m of ['1', 'srv_corte', `dia_${SABADO}`, 'hora_17:30', 'Agustín', 'sí']) await decir(ctx, m);
+      const r = await decir(ctx, 'no voy a poder ir');
+      assert.match(r, /cancelar este turno/i);
+    });
+  });
+});

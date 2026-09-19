@@ -28,7 +28,7 @@ try {
   const ctx = crearContexto(db);
   const r = await resincronizarTodo(ctx);
   await db.cerrar();
-  console.log(`✅ Datos volcados: ${r.turnos} turno(s).`);
+  console.log(`✅ Datos volcados: ${r.turnos} turno(s) en la hoja.`);
   console.log(`🔗 https://docs.google.com/spreadsheets/d/${id}/edit`);
 } catch (e) {
   console.error('❌ Error preparando la planilla:', e instanceof Error ? e.message : e);

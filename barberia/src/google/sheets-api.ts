@@ -2,7 +2,8 @@
 import { tokenDeAcceso, limpiarCacheDeToken } from './auth.js';
 import { log } from '../shared/log.js';
 
-const BASE = 'https://sheets.googleapis.com/v4/spreadsheets';
+// Igual que en auth.ts: la variable existe para los tests, no para produccion.
+const BASE = process.env.GOOGLE_SHEETS_API_URL || 'https://sheets.googleapis.com/v4/spreadsheets';
 
 export class ErrorSheets extends Error {
   readonly status: number;

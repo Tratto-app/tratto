@@ -11,7 +11,9 @@
 import { createSign } from 'node:crypto';
 import { env } from '../config/env.js';
 
-const TOKEN_URL = 'https://oauth2.googleapis.com/token';
+// El endpoint es fijo; la variable de entorno existe solo para poder apuntar a
+// un servidor falso en los tests y verificar el circuito sin credenciales reales.
+const TOKEN_URL = process.env.GOOGLE_OAUTH_TOKEN_URL || 'https://oauth2.googleapis.com/token';
 const SCOPE = 'https://www.googleapis.com/auth/spreadsheets';
 
 let cache: { token: string; venceMs: number } | null = null;
