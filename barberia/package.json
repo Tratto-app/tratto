@@ -16,7 +16,8 @@
     "db:migrate": "tsx src/database/migrate.ts",
     "sheets:setup": "tsx src/google/setup-cli.ts",
     "sheets:sync": "tsx src/google/sync-cli.ts",
-    "test:watch": "NODE_ENV=test node --import tsx --test --watch tests/**/*.test.ts"
+    "test:watch": "NODE_ENV=test node --import tsx --test --watch tests/**/*.test.ts",
+    "test:postgres": "NODE_ENV=test node --import tsx --test tests/postgres.test.ts"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.127.0",

@@ -452,9 +452,15 @@ reglas de WhatsApp Business.
 ## Tests
 
 ```bash
-npm test          # 136 tests
+npm test          # 136 tests (SQLite, sin dependencias externas)
 npm run typecheck
+
+# Opcional: los mismos candados contra la doble reserva, contra un PostgreSQL real
+DATABASE_URL_TEST=postgresql://usuario@localhost:5432/barberia_test npm run test:postgres
 ```
+
+`npm test` corre sobre SQLite en memoria y no necesita ningún servicio externo.
+La suite de PostgreSQL se saltea sola si no le pasás `DATABASE_URL_TEST`.
 
 Cubren lo que pide el enunciado y algo más:
 
@@ -478,11 +484,30 @@ Cubren lo que pide el enunciado y algo más:
 | 16 | Bloqueo de horario | `turnos.test.ts` |
 | + | Firma del webhook, idempotencia, derivación a persona, límites del agente, caída de la IA | `webhook.test.ts`, `agente.test.ts` |
 
-> **Nota honesta:** los tests del agente usan un modelo simulado (se inyecta un
-> doble del cliente de Anthropic). Prueban el loop de herramientas, el manejo de
-> errores y el armado del prompt sin gastar tokens, pero **no reemplazan una
-> prueba contra el modelo real**: hacé un par de conversaciones en `/test-chat`
-> con `AI_API_KEY` configurada antes de conectar el número.
+### Sobre PostgreSQL
+
+`tests/postgres.test.ts` corre contra un servidor real y verifica lo que SQLite
+no puede verificar: que exista la restricción de exclusión, que **seis reservas
+simultáneas del mismo horario dejen exactamente una**, y que el motor rechace un
+solapamiento incluso si alguien lo inserta por SQL directo saltándose la
+aplicación. Se ejecutó contra PostgreSQL 16 y pasa.
+
+### Qué NO está probado
+
+Conviene decirlo claro antes de conectar el número real:
+
+- **Los tests del agente usan un modelo simulado** (se inyecta un doble del
+  cliente de Anthropic). Prueban el loop de herramientas, el manejo de errores y
+  el armado del prompt sin gastar tokens, pero **no reemplazan una prueba contra
+  el modelo real**: hacé un par de conversaciones en `/test-chat` con
+  `AI_API_KEY` configurada antes de salir a producción.
+- **El ida y vuelta real con WhatsApp** (webhook de Meta y envío de mensajes) no
+  se pudo ejecutar sin un número y credenciales. La verificación del webhook, la
+  firma HMAC y el parseo de los payloads sí están testeados con payloads reales
+  de Meta; lo que falta probar es la red.
+- **La sincronización real con Google Sheets**: la lógica de cola, reintentos y
+  proyección está testeada, pero las llamadas a la API de Google no se
+  ejecutaron sin credenciales.
 
 ---
 
@@ -588,6 +613,6 @@ barbero real:
 2. **Señas o pagos.** Ningún cobro está implementado.
 3. **Backups automáticos** de la base (lo resuelve el Postgres gestionado).
 4. **Métricas** (turnos por semana, ausencias, servicios más pedidos).
-5. **Prueba de carga real** contra PostgreSQL: la concurrencia está probada con
-   SQLite y con el diseño del esquema de Postgres, pero no se ejecutó contra una
-   instancia real (no había una disponible en el entorno de desarrollo).
+5. **Prueba de carga.** La concurrencia está verificada contra PostgreSQL real
+   (`npm run test:postgres`), pero con decenas de reservas simultáneas, no con
+   miles. Para una barbería sobra; si algún día son diez sucursales, medir.
