@@ -120,6 +120,15 @@ CREATE TABLE IF NOT EXISTS recordatorios (
 
 CREATE INDEX IF NOT EXISTS idx_recordatorios_programado ON recordatorios (estado, programado_ms);
 
+-- Resumen de cada semana cerrada. Se guarda ANTES de la limpieza, asi que
+-- sobrevive al borrado de los turnos y sirve para comparar semana contra semana.
+CREATE TABLE IF NOT EXISTS resumenes_semanales (
+  semana_desde  TEXT PRIMARY KEY,
+  semana_hasta  TEXT NOT NULL,
+  datos_json    TEXT NOT NULL,
+  creado_en     TEXT NOT NULL
+);
+
 -- Bitacora de auditoria: quien hizo que y cuando. Sirve para soporte y para
 -- reconstruir que paso si un cliente reclama.
 CREATE TABLE IF NOT EXISTS eventos (

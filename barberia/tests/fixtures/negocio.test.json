@@ -221,9 +221,12 @@
     "nombre_bot": "el asistente de la barberia",
     "max_caracteres_respuesta": 600
   },
-  "limpieza": {
-    "activa": true,
-    "conservar_dias": 7,
-    "_comentario": "Cada día se borran los turnos que ya pasaron hace más de conservar_dias. La base arranca la semana limpia. NUNCA se tocan los turnos futuros ni la ficha de los clientes."
+  "cierre_semanal": {
+    "activo": true,
+    "dia": 7,
+    "hora": "20:00",
+    "conservar_dias": 0,
+    "avisar_al_barbero": true,
+    "_comentario": "Cada domingo a las 20:00 el sistema arma el balance de la semana (turnos, clientes, facturado, ocupación), lo guarda en Google Sheets y recién después borra de la base los turnos que ya pasaron, así la semana arranca limpia. conservar_dias: 0 borra todo lo pasado; poné 30 si querés tener el último mes en la base. Los turnos futuros y los clientes NO se tocan nunca. dia: 1=lunes ... 7=domingo."
   }
 }

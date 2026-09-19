@@ -5,6 +5,10 @@ const $ = (sel) => document.querySelector(sel);
 const $$ = (sel) => Array.from(document.querySelectorAll(sel));
 
 const DIAS = ['lunes', 'martes', 'miércoles', 'jueves', 'viernes', 'sábado', 'domingo'];
+// Los que ocupan (o ya ocuparon) la agenda. Un turno marcado como "vino" no
+// desaparece: el barbero quiere ver a quién atendió.
+const EN_AGENDA = ['pendiente', 'reservado', 'confirmado', 'completado', 'no_show'];
+const EDITABLES = ['pendiente', 'reservado', 'confirmado'];
 let CONFIG = null;
 let SEMANA_DESDE = null;
 
@@ -113,12 +117,14 @@ function tarjetaDeTurno(turno, recargar) {
   datos.append(elemento('div', 'nombre', turno.nombreCliente || '(sin nombre)'));
   const detalle = `${turno.servicioNombre} · ${turno.duracionMin} min · hasta ${turno.horaFin}`;
   datos.append(elemento('div', 'detalle', detalle));
-  const estado = elemento('span', `chip${turno.estado === 'cancelado' ? ' mal' : turno.estado === 'completado' ? ' ok' : ''}`, turno.estado);
+  const etiquetas = { completado: 'vino ✓', no_show: 'no vino', pendiente: 'sin confirmar', reservado: 'reservado', confirmado: 'confirmado', cancelado: 'cancelado' };
+  const claseChip = turno.estado === 'completado' ? ' ok' : ['cancelado', 'no_show'].includes(turno.estado) ? ' mal' : '';
+  const estado = elemento('span', `chip${claseChip}`, etiquetas[turno.estado] ?? turno.estado);
   datos.append(estado);
   fila.append(datos);
   card.append(fila);
 
-  if (turno.estado === 'reservado' || turno.estado === 'confirmado' || turno.estado === 'pendiente') {
+  if (EDITABLES.includes(turno.estado)) {
     const acciones = elemento('div', 'acciones');
 
     const wa = elemento('a', 'boton', 'WhatsApp');
@@ -169,8 +175,8 @@ function pintarDia(contenedor, dia, recargar) {
     contenedor.append(elemento('div', 'vacio', `Cerrado${dia.motivo_cerrado ? ` — ${dia.motivo_cerrado}` : ''}`));
     return;
   }
-  const vivos = dia.turnos.filter((t) => ['pendiente', 'reservado', 'confirmado'].includes(t.estado));
-  const otros = dia.turnos.filter((t) => !['pendiente', 'reservado', 'confirmado'].includes(t.estado));
+  const vivos = dia.turnos.filter((t) => EN_AGENDA.includes(t.estado));
+  const otros = dia.turnos.filter((t) => t.estado === 'cancelado');
 
   if (vivos.length === 0 && dia.bloqueos.length === 0) {
     contenedor.append(elemento('div', 'vacio', 'Sin turnos por ahora.'));
@@ -220,6 +226,49 @@ async function cargarHoy() {
 
 // --- Semana -----------------------------------------------------------------
 
+function tarjetaDeNumero(valor, etiqueta, delta) {
+  const caja = elemento('div', 'numero');
+  caja.append(elemento('div', 'valor', valor));
+  caja.append(elemento('div', 'etiqueta', etiqueta));
+  if (delta !== undefined && delta !== null && delta !== 0) {
+    caja.append(elemento('div', `delta ${delta > 0 ? 'sube' : 'baja'}`, `${delta > 0 ? '▲' : '▼'} ${Math.abs(delta)} vs. semana pasada`));
+  }
+  return caja;
+}
+
+function pesos(n) {
+  return `$${Number(n || 0).toLocaleString('es-AR')}`;
+}
+
+async function cargarResumen() {
+  const cont = $('#resumen-semana');
+  limpiar(cont);
+  try {
+    const q = SEMANA_DESDE ? `?desde=${SEMANA_DESDE}` : '';
+    const { resumen: r } = await api(`/resumen${q}`);
+    const caja = elemento('div', 'balance');
+    caja.append(elemento('h3', '', 'Cómo viene la semana'));
+
+    const numeros = elemento('div', 'numeros');
+    numeros.append(tarjetaDeNumero(String(r.atendidos), 'turnos atendidos', r.comparacion?.atendidos));
+    numeros.append(tarjetaDeNumero(String(r.clientes), `clientes${r.clientesNuevos ? ` · ${r.clientesNuevos} nuevos` : ''}`, r.comparacion?.clientes));
+    numeros.append(tarjetaDeNumero(r.facturado > 0 ? pesos(r.facturado) : '—', 'facturado', null));
+    numeros.append(tarjetaDeNumero(`${r.ocupacion}%`, 'agenda ocupada', null));
+    caja.append(numeros);
+
+    const detalles = [];
+    if (r.facturado === 0 && r.preciosIncompletos) detalles.push('Cargá los precios en Ajustes para ver la facturación.');
+    if (r.porServicio && r.porServicio[0]) detalles.push(`Lo más pedido: ${r.porServicio[0].servicio} (${r.porServicio[0].cantidad}).`);
+    if (r.diaMasFuerte) detalles.push(`Día más fuerte: ${r.diaMasFuerte.dia} (${r.diaMasFuerte.cantidad}).`);
+    if (r.cancelados || r.noShow) detalles.push(`${r.cancelados} cancelado(s), ${r.noShow} no vino/vinieron.`);
+    if (detalles.length) caja.append(elemento('div', 'detalle', detalles.join(' ')));
+
+    cont.append(caja);
+  } catch (e) {
+    cont.append(elemento('div', 'vacio', `No se pudo calcular el balance: ${e.message}`));
+  }
+}
+
 async function cargarSemana() {
   const cont = $('#agenda-semana');
   limpiar(cont);
@@ -230,7 +279,7 @@ async function cargarSemana() {
     datos.dias.forEach((dia) => {
       const bloque = elemento('div', `dia-semana${dia.fecha === hoy ? ' hoy' : ''}`);
       bloque.append(elemento('h3', '', nombreDeFecha(dia.fecha)));
-      const vivos = dia.turnos.filter((t) => ['pendiente', 'reservado', 'confirmado'].includes(t.estado));
+      const vivos = dia.turnos.filter((t) => EN_AGENDA.includes(t.estado));
       const cancelados = dia.turnos.filter((t) => t.estado === 'cancelado');
       bloque.append(
         elemento(
@@ -250,6 +299,7 @@ async function cargarSemana() {
       cont.append(bloque);
     });
     SEMANA_DESDE = datos.dias[0] ? datos.dias[0].fecha : SEMANA_DESDE;
+    await cargarResumen();
   } catch (e) {
     avisar(e.message, 'error');
   }

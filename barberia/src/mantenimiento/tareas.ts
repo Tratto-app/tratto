@@ -7,9 +7,10 @@
  *     cliente que abandona la conversacion a mitad de camino dejaria el horario
  *     bloqueado para siempre.
  *  2. Cerrar turnos que ya pasaron (pasan a "completado").
- *  3. Limpieza semanal: borrar de la base los turnos viejos, para que arranque
- *     la semana liviana. Solo borra lo que YA PASO; los turnos futuros y la
- *     ficha de los clientes no se tocan nunca.
+ *  3. Cierre semanal (los domingos): arma el balance de la semana y recien
+ *     despues borra los turnos viejos. Ese orden no es casual: si se limpiara
+ *     primero, no habria datos para contar. Solo borra lo que YA PASO; los
+ *     turnos futuros y la ficha de los clientes no se tocan nunca.
  *
  * Los recordatorios por WhatsApp estan APAGADOS por decision del negocio
  * (`recordatorios.activos: false`). El codigo quedo por si algun dia se quieren
@@ -26,7 +27,11 @@ import { ESTADOS_VIGENTES } from '../booking/tipos.js';
 import { env } from '../config/env.js';
 import { log, enmascararTelefono } from '../shared/log.js';
 import { whatsapp } from '../whatsapp/cliente.js';
-import { fechaHumana, hhmmAMinutos } from '../shared/tiempo.js';
+import { fechaDe, fechaHumana, hhmmAMinutos, lunesDeLaSemana } from '../shared/tiempo.js';
+import { calcularResumenSemanal, resumenComoTexto, type ResumenSemanal } from '../reportes/semanal.js';
+import { resumenesRepo } from '../database/repositories/resumenes.js';
+import { guardarResumenEnPlanilla } from '../google/planilla.js';
+import { avisarAlBarbero } from '../whatsapp/avisos.js';
 
 const PLANTILLA = process.env.WHATSAPP_PLANTILLA_RECORDATORIO ?? '';
 const IDIOMA_PLANTILLA = process.env.WHATSAPP_PLANTILLA_IDIOMA ?? 'es_AR';
@@ -90,15 +95,15 @@ export async function enviarRecordatoriosPendientes(ctx: Contexto): Promise<{ en
 }
 
 /**
- * Limpieza semanal: saca de la base los turnos que ya terminaron hace mas de
- * `limpieza.conservar_dias`.
+ * Borra de la base los turnos que ya terminaron hace mas de
+ * `cierre_semanal.conservar_dias`.
  *
  * La planilla de Google NO se toca: ahi queda el historial completo. La base de
  * datos es la semana en curso; Drive es el archivo.
  */
 export async function limpiarTurnosViejos(ctx: Contexto): Promise<number> {
-  if (!ctx.cfg.limpieza.activa) return 0;
-  const limite = ctx.ahora().minus({ days: ctx.cfg.limpieza.conservar_dias });
+  if (!ctx.cfg.cierre_semanal.activo) return 0;
+  const limite = ctx.ahora().minus({ days: ctx.cfg.cierre_semanal.conservar_dias });
   const borrados = await ctx.db.transaccion(async (tx) => {
     await tx.bloquearAgenda();
     // Primero los avisos asociados, para no dejar filas huerfanas.
@@ -113,6 +118,73 @@ export async function limpiarTurnosViejos(ctx: Contexto): Promise<number> {
     });
   }
   return borrados;
+}
+
+export interface ResultadoCierre {
+  corrio: boolean;
+  motivo?: string;
+  resumen?: ResumenSemanal;
+  turnosBorrados?: number;
+  avisado?: boolean;
+}
+
+/**
+ * Cierre de semana.
+ *
+ * El orden importa y es el unico posible:
+ *   1. calcular el balance con los turnos todavia en la base;
+ *   2. guardarlo (en la base y en Google Sheets, que es lo permanente);
+ *   3. avisarle al barbero;
+ *   4. recien ahi borrar los turnos viejos.
+ *
+ * Es idempotente: si el proceso se reinicia el domingo a la noche, no vuelve a
+ * mandar el resumen, porque ya quedo guardado el de esa semana.
+ */
+export async function cierreSemanal(ctx: Contexto, opciones: { forzar?: boolean } = {}): Promise<ResultadoCierre> {
+  const cfg = ctx.cfg.cierre_semanal;
+  if (!cfg.activo) return { corrio: false, motivo: 'desactivado' };
+
+  const ahora = ctx.ahora();
+  if (!opciones.forzar) {
+    if (ahora.weekday !== cfg.dia) return { corrio: false, motivo: 'no es el dia del cierre' };
+    const minutosAhora = ahora.hour * 60 + ahora.minute;
+    if (minutosAhora < hhmmAMinutos(cfg.hora)) return { corrio: false, motivo: 'todavia es temprano' };
+  }
+
+  const semana = lunesDeLaSemana(fechaDe(ahora), ctx.cfg.negocio.timezone);
+  if (!opciones.forzar && (await resumenesRepo.porSemana(ctx.db, semana))) {
+    return { corrio: false, motivo: 'el cierre de esta semana ya se hizo' };
+  }
+
+  // 1 y 2: calcular y guardar, antes de borrar nada.
+  const resumen = await calcularResumenSemanal(ctx, { desde: semana });
+  await resumenesRepo.guardar(ctx.db, resumen, ahora.toUTC().toISO()!);
+  await eventosRepo.registrar(ctx.db, 'cierre_semanal', {
+    detalle: `${resumen.desde}: ${resumen.atendidos} turnos, ${resumen.clientes} clientes`,
+    ahoraMs: ahora.toMillis(),
+  });
+
+  try {
+    await guardarResumenEnPlanilla(ctx, resumen);
+  } catch (e) {
+    // Que falle Google no puede frenar el cierre: el resumen ya esta guardado.
+    log.warn({ err: e instanceof Error ? e.message : e }, 'no se pudo escribir el resumen en la planilla');
+  }
+
+  // 3: avisarle al barbero.
+  let avisado = false;
+  if (cfg.avisar_al_barbero) {
+    avisado = await avisarAlBarbero(resumenComoTexto(resumen, ctx.cfg.negocio.moneda));
+  }
+
+  // 4: ahora si, la limpieza.
+  const turnosBorrados = await limpiarTurnosViejos(ctx);
+
+  log.info(
+    { semana: resumen.desde, atendidos: resumen.atendidos, clientes: resumen.clientes, turnosBorrados, avisado },
+    'cierre semanal hecho',
+  );
+  return { corrio: true, resumen, turnosBorrados, avisado };
 }
 
 /** Tareas de limpieza: holds vencidos, turnos pasados, tablas de control. */
@@ -130,7 +202,7 @@ export async function mantenimiento(ctx: Contexto): Promise<void> {
     const cerrados = await cerrarTurnosPasados(ctx);
     if (cerrados > 0) log.info({ cerrados }, 'turnos pasados marcados como completados');
 
-    await limpiarTurnosViejos(ctx);
+    await cierreSemanal(ctx);
 
     // Las tablas de control no crecen para siempre.
     await mensajesRepo.limpiarViejos(ctx.db, ahora.minus({ days: 7 }).toMillis());
@@ -173,7 +245,12 @@ export function arrancarWorkerDeMantenimiento(ctx: Contexto): { detener: () => v
   intervalo.unref?.();
   void tick();
   log.info(
-    { recordatorios: env.RECORDATORIOS_HABILITADOS && ctx.cfg.recordatorios.activos, limpiezaCada: `${ctx.cfg.limpieza.conservar_dias} días` },
+    {
+      recordatorios: env.RECORDATORIOS_HABILITADOS && ctx.cfg.recordatorios.activos,
+      cierreSemanal: ctx.cfg.cierre_semanal.activo
+        ? `${['lunes', 'martes', 'miércoles', 'jueves', 'viernes', 'sábado', 'domingo'][ctx.cfg.cierre_semanal.dia - 1]} ${ctx.cfg.cierre_semanal.hora}`
+        : 'desactivado',
+    },
     'worker de mantenimiento iniciado',
   );
   return { detener: () => clearInterval(intervalo) };

@@ -130,6 +130,31 @@ describe('un turno reservado termina en la planilla', () => {
   });
 });
 
+describe('los turnos ya atendidos siguen a la vista', () => {
+  test('marcar "vino" no borra el turno de la agenda de la planilla', async () => {
+    const { marcarEstadoTurno } = await import('../src/booking/servicio.js');
+    const t = await crearTurno(ctx, {
+      telefono: TELEFONO_A, nombre: 'Ana', servicioId: 'corte', fecha: SABADO, hora: '17:00', origen: 'whatsapp',
+    });
+    await marcarEstadoTurno(ctx, t.id, 'completado');
+    await sincronizarPendientes(ctx);
+
+    const semana = google.filas('Agenda semanal').flat().join(' | ');
+    assert.match(semana, /Ana ✓/, 'el turno atendido tiene que seguir en la agenda, con su marca');
+    assert.match(google.filas('Turnos').find((f) => f[0] === t.id)![10]!, /completado/);
+  });
+
+  test('el que no vino también queda anotado', async () => {
+    const { marcarEstadoTurno } = await import('../src/booking/servicio.js');
+    const t = await crearTurno(ctx, {
+      telefono: TELEFONO_B, nombre: 'Beto', servicioId: 'corte', fecha: SABADO, hora: '18:00', origen: 'whatsapp',
+    });
+    await marcarEstadoTurno(ctx, t.id, 'no_show');
+    await sincronizarPendientes(ctx);
+    assert.match(google.filas('Agenda semanal').flat().join(' | '), /Beto \(no vino\)/);
+  });
+});
+
 describe('si Google falla, la reserva no se cae', () => {
   test('el turno se crea igual y el evento queda en la cola', async () => {
     google.fallarProximas = 50; // Google caído
@@ -197,5 +222,56 @@ describe('la planilla es el archivo: sobrevive a la limpieza semanal', () => {
     const clientes = await ctx.db.query<{ nombre: string; total_turnos: number }>('SELECT nombre, total_turnos FROM clientes WHERE telefono = ?', [TELEFONO_B]);
     assert.equal(clientes[0]?.nombre, 'Cliente Viejo', 'el bot tiene que seguir reconociendo al cliente');
     assert.equal(Number(clientes[0]?.total_turnos), 1);
+  });
+});
+
+describe('el balance semanal queda en Drive', () => {
+  test('el cierre del domingo escribe una fila en "Balance semanal"', async () => {
+    const { DateTime } = await import('luxon');
+    const { cierreSemanal } = await import('../src/mantenimiento/tareas.js');
+    const domingo = DateTime.fromISO('2026-09-20T20:30:00', { zone: 'America/Argentina/Buenos_Aires' });
+    const ctxDomingo = Object.assign(ctx, { ahora: () => domingo });
+
+    await crearTurno(ctxDomingo, {
+      telefono: TELEFONO_A, nombre: 'Ana', servicioId: 'corte', fecha: '2026-09-15', hora: '10:00',
+      origen: 'panel', forzar: true,
+    });
+    await crearTurno(ctxDomingo, {
+      telefono: TELEFONO_B, nombre: 'Beto', servicioId: 'corte_barba', fecha: '2026-09-18', hora: '16:00',
+      origen: 'panel', forzar: true,
+    });
+
+    const r = await cierreSemanal(ctxDomingo);
+    assert.equal(r.corrio, true);
+
+    const balance = google.filas('Balance semanal');
+    assert.equal(balance[0]?.[0], 'Semana', 'falta el encabezado');
+    const fila = balance.find((f) => f[0] === '2026-09-14 al 2026-09-20');
+    assert.ok(fila, 'no se escribió la fila de la semana');
+    assert.equal(fila[1], '2', 'turnos atendidos');
+    assert.equal(fila[2], '2', 'clientes');
+    assert.equal(fila[5], String(8000 + 12000), 'facturado');
+
+    // Y los turnos ya no están en la base, pero el balance sí.
+    const enLaBase = await ctxDomingo.db.query<{ n: number }>('SELECT COUNT(*) AS n FROM turnos');
+    assert.equal(Number(enLaBase[0]!.n), 0);
+    assert.ok(google.filas('Balance semanal').length >= 2);
+  });
+
+  test('cerrar dos veces la misma semana no duplica la fila', async () => {
+    const { DateTime } = await import('luxon');
+    const { cierreSemanal } = await import('../src/mantenimiento/tareas.js');
+    const domingo = DateTime.fromISO('2026-09-20T20:30:00', { zone: 'America/Argentina/Buenos_Aires' });
+    const ctxDomingo = Object.assign(ctx, { ahora: () => domingo });
+
+    await crearTurno(ctxDomingo, {
+      telefono: TELEFONO_A, nombre: 'Ana', servicioId: 'corte', fecha: '2026-09-15', hora: '10:00',
+      origen: 'panel', forzar: true,
+    });
+    await cierreSemanal(ctxDomingo);
+    await cierreSemanal(ctxDomingo, { forzar: true });
+
+    const filas = google.filas('Balance semanal').filter((f) => f[0] === '2026-09-14 al 2026-09-20');
+    assert.equal(filas.length, 1, 'la semana tiene que figurar una sola vez');
   });
 });

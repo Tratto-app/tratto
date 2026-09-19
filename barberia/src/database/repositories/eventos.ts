@@ -14,6 +14,7 @@ export type TipoEvento =
   | 'derivacion_humana'
   | 'bot_reactivado'
   | 'limpieza'
+  | 'cierre_semanal'
   | 'error';
 
 /** Bitacora de auditoria. Nunca guarda el texto completo del cliente, solo el hecho. */

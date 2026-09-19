@@ -491,14 +491,15 @@ describe('limpieza semanal de la base', () => {
     });
   });
 
-  test('no toca un turno de ayer: la ventana es de una semana', async () => {
+  test('se puede pedir que conserve los últimos días en la base', async () => {
     await conContexto(async (ctx) => {
-      // conservar_dias = 7 y "hoy" es el 16/09, así que el 15/09 se conserva.
       await crearTurno(ctx, {
         telefono: TELEFONO_B, nombre: 'Ayer', servicioId: 'corte', fecha: '2026-09-15', hora: '11:00',
         origen: 'panel', forzar: true,
       });
-      assert.equal(await limpiarTurnosViejos(ctx), 0);
+      const conHistorial = { ...ctx, cfg: { ...ctx.cfg, cierre_semanal: { ...ctx.cfg.cierre_semanal, conservar_dias: 7 } } };
+      assert.equal(await limpiarTurnosViejos(conHistorial), 0, 'con una ventana de 7 días, el de ayer se conserva');
+      assert.equal(await limpiarTurnosViejos(ctx), 1, 'con la configuración por defecto, lo pasado se borra');
     });
   });
 
@@ -523,7 +524,7 @@ describe('limpieza semanal de la base', () => {
         telefono: TELEFONO_B, nombre: 'Viejo', servicioId: 'corte', fecha: '2026-09-02', hora: '11:00',
         origen: 'panel', forzar: true,
       });
-      const sinLimpieza = { ...ctx, cfg: { ...ctx.cfg, limpieza: { activa: false, conservar_dias: 7 } } };
+      const sinLimpieza = { ...ctx, cfg: { ...ctx.cfg, cierre_semanal: { ...ctx.cfg.cierre_semanal, activo: false } } };
       assert.equal(await limpiarTurnosViejos(sinLimpieza), 0);
     });
   });

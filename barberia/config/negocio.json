@@ -1,5 +1,4 @@
 {
-  "_comentario": "Configuracion central del negocio. Cambiar estos valores NO requiere tocar codigo. Todo lo que dice PLACEHOLDER hay que completarlo con datos reales antes de salir a produccion.",
   "negocio": {
     "nombre": "PLACEHOLDER - Nombre de la Barberia",
     "direccion": "PLACEHOLDER - Calle 1234, Ciudad, Provincia",
@@ -12,12 +11,11 @@
       "transferencia",
       "tarjeta de debito"
     ],
+    "codigo_pais": "54",
     "timezone": "America/Argentina/Buenos_Aires",
-    "moneda": "ARS",
-    "codigo_pais": "54"
+    "moneda": "ARS"
   },
   "horarios": {
-    "_comentario": "dias: 1=lunes ... 7=domingo. Cada tramo es un bloque continuo de atencion. La pausa del mediodia es simplemente el hueco entre dos tramos.",
     "dias": {
       "1": {
         "abierto": false,
@@ -95,7 +93,6 @@
     },
     "horarios_especiales": [
       {
-        "_ejemplo": "Un dia puntual con horario distinto al habitual. Borrar los ejemplos cuando cargues los reales.",
         "fecha": "2026-12-24",
         "tramos": [
           [
@@ -118,7 +115,6 @@
     ],
     "vacaciones": [
       {
-        "_ejemplo": "Rango cerrado, incluye desde y hasta. Borrar cuando cargues las reales.",
         "desde": "2027-01-10",
         "hasta": "2027-01-20",
         "motivo": "Vacaciones"
@@ -130,7 +126,7 @@
       "id": "corte",
       "nombre": "Corte",
       "descripcion": "Corte de pelo con maquina y tijera, incluye lavado.",
-      "precio": 0,
+      "precio": 9000,
       "duracion_min": 45,
       "activo": true,
       "alias": [
@@ -145,7 +141,7 @@
       "id": "corte_barba",
       "nombre": "Corte + Barba",
       "descripcion": "Corte de pelo completo mas perfilado y arreglo de barba.",
-      "precio": 0,
+      "precio": 14000,
       "duracion_min": 75,
       "activo": true,
       "alias": [
@@ -159,7 +155,7 @@
       "id": "barba",
       "nombre": "Barba",
       "descripcion": "Perfilado y arreglo de barba con toalla caliente.",
-      "precio": 0,
+      "precio": 6000,
       "duracion_min": 30,
       "activo": true,
       "alias": [
@@ -172,7 +168,7 @@
       "id": "corte_ninos",
       "nombre": "Corte niños",
       "descripcion": "Corte para chicos hasta 12 años.",
-      "precio": 0,
+      "precio": 7000,
       "duracion_min": 30,
       "activo": true,
       "alias": [
@@ -182,7 +178,6 @@
       ]
     }
   ],
-  "_nota_precios": "precio en 0 significa 'a confirmar': el bot NO inventa precios, dice que el precio lo confirma el barbero. Cargá los precios reales acá y el bot los empieza a informar solo.",
   "reglas": {
     "anticipacion_minima_min": 60,
     "anticipacion_maxima_dias": 45,
@@ -193,12 +188,10 @@
     "cancelacion_minima_horas": 2,
     "politica_cancelacion": "Podés cancelar o reprogramar hasta 2 horas antes del turno escribiendo por acá.",
     "hold_minutos": 10,
-    "_comentario_hold": "minutos que el sistema reserva un horario mientras el cliente confirma. Pasado ese tiempo el horario se libera solo.",
     "max_opciones_horarios": 6
   },
   "recordatorios": {
     "activos": false,
-    "_comentario": "Apagados a pedido: el bot no manda recordatorios. Poner en true los reactiva; ojo que los mensajes fuera de la ventana de 24 h de WhatsApp necesitan una plantilla aprobada y se cobran.",
     "avisos": [
       {
         "id": "24h",
@@ -222,14 +215,16 @@
     "derivacion_humana": "Listo, le aviso al barbero para que te escriba por acá. Puede demorar un rato en responder 🙌",
     "despedida": "¡Gracias! Cualquier cosa escribime por acá ✂️"
   },
+  "cierre_semanal": {
+    "activo": true,
+    "dia": 7,
+    "hora": "20:00",
+    "conservar_dias": 0,
+    "avisar_al_barbero": true
+  },
   "agente": {
     "tono": "argentino rioplatense, cercano, breve, amable. Tuteo con 'vos'. Emojis con moderacion (0 a 2 por mensaje).",
     "nombre_bot": "el asistente de la barberia",
     "max_caracteres_respuesta": 600
-  },
-  "limpieza": {
-    "activa": true,
-    "conservar_dias": 7,
-    "_comentario": "Cada día se borran los turnos que ya pasaron hace más de conservar_dias. La base arranca la semana limpia. NUNCA se tocan los turnos futuros ni la ficha de los clientes."
   }
 }

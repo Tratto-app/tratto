@@ -169,3 +169,16 @@ form.enviar input { flex: 1; }
 .sugerencias { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 10px; }
 .sugerencias button { font-size: 12px; padding: 6px 10px; min-height: 34px; }
 .ayuda { font-size: 13px; color: var(--texto-suave); margin: 8px 0 0; }
+
+/* Balance de la semana */
+.balance { background: var(--superficie); border: 1px solid var(--borde); border-radius: var(--radio); padding: 14px; margin-bottom: 16px; }
+.balance h3 { margin: 0 0 12px; font-size: 14px; text-transform: uppercase; letter-spacing: 0.06em; color: var(--texto-suave); }
+.numeros { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; }
+@media (min-width: 520px) { .numeros { grid-template-columns: repeat(4, 1fr); } }
+.numero { }
+.numero .valor { font-size: 24px; font-weight: 700; line-height: 1.1; color: var(--acento); font-variant-numeric: tabular-nums; }
+.numero .etiqueta { font-size: 12px; color: var(--texto-suave); }
+.numero .delta { font-size: 11px; }
+.numero .delta.sube { color: var(--ok); }
+.numero .delta.baja { color: var(--alerta); }
+.balance .detalle { margin-top: 12px; font-size: 13px; color: var(--texto-suave); }

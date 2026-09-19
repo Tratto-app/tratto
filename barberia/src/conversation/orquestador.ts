@@ -14,7 +14,7 @@ import { turnosDeCliente } from '../booking/servicio.js';
 import { clientesRepo } from '../database/repositories/clientes.js';
 import { conversacionesRepo, mensajesRepo, type MensajeHistorial } from '../database/repositories/conversaciones.js';
 import { eventosRepo } from '../database/repositories/eventos.js';
-import { iaConfigurada } from '../config/env.js';
+import { env, iaConfigurada } from '../config/env.js';
 import { log, logConTelefono } from '../shared/log.js';
 import { sanearMensaje } from '../shared/texto.js';
 import { ErrorIA, responder as responderConIA, type ClienteIA } from '../ai/agente.js';
@@ -78,7 +78,22 @@ export async function procesarMensaje(
 
   if (!texto) return VACIA;
 
-  // 2. Estado de la conversacion.
+  // 2. Atajo para el barbero: si pide el balance, se lo damos al instante.
+  //    Funciona siempre porque el la ventana de 24 h la abre el mismo con su
+  //    mensaje, asi que no depende de plantillas aprobadas.
+  if (env.BARBERO_WHATSAPP && entrada.telefono === env.BARBERO_WHATSAPP && pideElBalance(texto)) {
+    const { calcularResumenSemanal, resumenComoTexto } = await import('../reportes/semanal.js');
+    const resumen = await calcularResumenSemanal(ctx);
+    registro.info('el barbero pidió el balance de la semana');
+    return {
+      texto: resumenComoTexto(resumen, ctx.cfg.negocio.moneda),
+      avisarAlBarbero: false,
+      usoIA: false,
+      herramientas: ['resumen_semanal'],
+    };
+  }
+
+  // 3. Estado de la conversacion.
   const conv = await conversacionesRepo.obtener(ctx.db, entrada.telefono);
   const estado = conv.estado as Record<string, unknown>;
 
@@ -97,7 +112,7 @@ export async function procesarMensaje(
     await eventosRepo.registrar(ctx.db, 'bot_reactivado', { telefono: entrada.telefono, detalle: 'venció la pausa', ahoraMs });
   }
 
-  // 3. Datos del cliente para personalizar la respuesta.
+  // 4. Datos del cliente para personalizar la respuesta.
   const cliente = await clientesRepo.porTelefono(ctx.db, entrada.telefono);
   if (cliente?.bloqueado) {
     registro.warn('cliente bloqueado: no se responde');
@@ -115,7 +130,7 @@ export async function procesarMensaje(
 
   let respuesta: RespuestaConversacion;
 
-  // 4. Primero la IA; si no esta disponible o falla, el menu.
+  // 5. Primero la IA; si no esta disponible o falla, el menu.
   if (iaConfigurada || opciones.clienteIA) {
     try {
       const r = await responderConIA(
@@ -150,7 +165,7 @@ export async function procesarMensaje(
     respuesta = await conMenu(ctx, entrada, texto, llamador, estado);
   }
 
-  // 5. Derivacion a persona: se pausa el bot.
+  // 6. Derivacion a persona: se pausa el bot.
   if (respuesta.avisarAlBarbero) {
     conv.modo = 'humano';
     estado.derivadoEnMs = ahoraMs;
@@ -163,7 +178,7 @@ export async function procesarMensaje(
     if (!respuesta.texto) respuesta.texto = ctx.cfg.mensajes.derivacion_humana;
   }
 
-  // 6. Persistencia del contexto.
+  // 7. Persistencia del contexto.
   conv.estado = estado;
   conv.ultimoMensajeMs = ahoraMs;
   conv.historial = recortarHistorial([
@@ -204,6 +219,16 @@ async function conMenu(
     log.error({ err: e instanceof Error ? e.message : e }, 'fallo tambien el flujo de menú');
     return { texto: ctx.cfg.mensajes.error_generico, avisarAlBarbero: false, usoIA: false, herramientas: [] };
   }
+}
+
+/** ¿El barbero está pidiendo el balance de la semana? */
+function pideElBalance(texto: string): boolean {
+  const t = texto
+    .toLowerCase()
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .trim();
+  return /^(resumen|balance|reporte|estadisticas)\b/.test(t) || /\bcomo (venimos|vengo|vamos|fue la semana|viene la semana)\b/.test(t);
 }
 
 /** Devuelve la conversacion al bot (lo usa el panel del barbero). */

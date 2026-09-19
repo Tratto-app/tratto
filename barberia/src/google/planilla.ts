@@ -14,19 +14,24 @@ import { clientesRepo } from '../database/repositories/clientes.js';
 import { fechaDe, nombreDia } from '../shared/tiempo.js';
 import { formatearPrecio } from '../shared/texto.js';
 import type { Turno } from '../booking/tipos.js';
+import { ENCABEZADOS_RESUMEN, resumenComoFila, type ResumenSemanal } from '../reportes/semanal.js';
 
 export const HOJA_TURNOS = 'Turnos';
 export const HOJA_HOY = 'Hoy';
 export const HOJA_SEMANA = 'Agenda semanal';
 export const HOJA_CLIENTES = 'Clientes';
 export const HOJA_CONFIG = 'Configuración';
+export const HOJA_BALANCE = 'Balance semanal';
 
-export const HOJAS = [HOJA_HOY, HOJA_SEMANA, HOJA_TURNOS, HOJA_CLIENTES, HOJA_CONFIG];
+export const HOJAS = [HOJA_HOY, HOJA_SEMANA, HOJA_BALANCE, HOJA_TURNOS, HOJA_CLIENTES, HOJA_CONFIG];
 
 export const ENCABEZADOS_TURNOS = [
   'ID', 'Fecha', 'Día', 'Hora', 'Hora fin', 'Cliente', 'WhatsApp', 'Servicio',
   'Precio', 'Duración', 'Estado', 'Fecha de creación', 'Última modificación', 'Observaciones',
 ];
+
+/** Turnos que ocupan (u ocuparon) la agenda: todo menos cancelado y expirado. */
+const EN_AGENDA = ['pendiente', 'reservado', 'confirmado', 'completado', 'no_show'];
 
 const ETIQUETA_ESTADO: Record<string, string> = {
   pendiente: '⏳ sin confirmar',
@@ -121,13 +126,14 @@ function bloqueDeDia(dia: { fecha: string; abierto: boolean; motivo_cerrado: str
     filas.push(['Cerrado', dia.motivo_cerrado, '', '']);
     return filas;
   }
-  const vivos = dia.turnos.filter((t) => ['pendiente', 'reservado', 'confirmado'].includes(t.estado));
+  const vivos = dia.turnos.filter((t) => EN_AGENDA.includes(t.estado));
   const cancelados = dia.turnos.filter((t) => t.estado === 'cancelado');
   if (vivos.length === 0 && dia.bloqueos.length === 0) {
     filas.push(['— sin turnos —', '', '', '']);
   }
   for (const t of vivos) {
-    filas.push([t.horaInicio, t.nombreCliente || '(sin nombre)', t.servicioNombre, t.telefono]);
+    const marca = t.estado === 'completado' ? ' ✓' : t.estado === 'no_show' ? ' (no vino)' : '';
+    filas.push([t.horaInicio, `${t.nombreCliente || '(sin nombre)'}${marca}`, t.servicioNombre, t.telefono]);
   }
   for (const b of dia.bloqueos) {
     filas.push([`${b.horaInicio}-${b.horaFin}`, '🔒 BLOQUEADO', b.motivo, '']);
@@ -166,9 +172,12 @@ export async function refrescarSemana(spreadsheetId: string, ctx: Contexto, desd
       celdas.push(`Cerrado${dia.motivo_cerrado ? ` (${dia.motivo_cerrado})` : ''}`);
       return celdas;
     }
-    const vivos = dia.turnos.filter((t) => ['pendiente', 'reservado', 'confirmado'].includes(t.estado));
+    const vivos = dia.turnos.filter((t) => EN_AGENDA.includes(t.estado));
     celdas.push(`${vivos.length} turno(s) · ${dia.huecos_libres.length} lugar(es) libre(s)`);
-    for (const t of vivos) celdas.push(`${t.horaInicio} ${t.nombreCliente || '(sin nombre)'} — ${t.servicioNombre}`);
+    for (const t of vivos) {
+      const marca = t.estado === 'completado' ? ' ✓' : t.estado === 'no_show' ? ' (no vino)' : '';
+      celdas.push(`${t.horaInicio} ${t.nombreCliente || '(sin nombre)'}${marca} — ${t.servicioNombre}`);
+    }
     for (const b of dia.bloqueos) celdas.push(`${b.horaInicio}-${b.horaFin} 🔒 ${b.motivo || 'bloqueado'}`);
     const cancelados = dia.turnos.filter((t) => t.estado === 'cancelado');
     for (const c of cancelados) celdas.push(`❌ ${c.horaInicio} ${c.nombreCliente}`);
@@ -288,4 +297,34 @@ export async function volcarTodo(spreadsheetId: string, ctx: Contexto): Promise<
   await refrescarClientes(spreadsheetId, ctx);
   await refrescarConfig(spreadsheetId, ctx);
   return { turnos: filas.length, nuevos };
+}
+
+/**
+ * Escribe el balance de una semana en la hoja "Balance semanal".
+ *
+ * Es la copia permanente: la base de datos se limpia todas las semanas, pero
+ * acá queda el historial completo, una fila por semana, para comparar meses.
+ * Si la semana ya estaba escrita, se actualiza esa fila en vez de duplicarla.
+ */
+export async function guardarResumenEnPlanilla(ctx: Contexto, resumen: ResumenSemanal): Promise<void> {
+  const { env, sheetsConfigurado } = await import('../config/env.js');
+  if (!sheetsConfigurado || !env.GOOGLE_SPREADSHEET_ID) return;
+  const spreadsheetId = env.GOOGLE_SPREADSHEET_ID;
+
+  await sheets.asegurarHojas(spreadsheetId, [HOJA_BALANCE]);
+
+  const encabezado = await sheets.leer(spreadsheetId, `${HOJA_BALANCE}!A1:K1`);
+  if (encabezado.length === 0 || encabezado[0]?.[0] !== ENCABEZADOS_RESUMEN[0]) {
+    await sheets.escribir(spreadsheetId, `${HOJA_BALANCE}!A1:K1`, [ENCABEZADOS_RESUMEN]);
+  }
+
+  const fila = resumenComoFila(resumen);
+  const existentes = await sheets.leer(spreadsheetId, `${HOJA_BALANCE}!A2:A`);
+  const posicion = existentes.findIndex((f) => f[0] === fila[0]);
+  if (posicion === -1) {
+    await sheets.agregar(spreadsheetId, `${HOJA_BALANCE}!A:K`, [fila]);
+  } else {
+    const numeroDeFila = posicion + 2;
+    await sheets.escribir(spreadsheetId, `${HOJA_BALANCE}!A${numeroDeFila}:K${numeroDeFila}`, [fila]);
+  }
 }

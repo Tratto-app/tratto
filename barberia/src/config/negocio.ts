@@ -84,12 +84,17 @@ const negocioSchema = z.object({
     derivacion_humana: z.string(),
     despedida: z.string(),
   }),
-  limpieza: z
+  cierre_semanal: z
     .object({
-      activa: z.boolean().default(true),
-      conservar_dias: z.number().int().min(1).max(3650).default(7),
+      activo: z.boolean().default(true),
+      /** 1 = lunes ... 7 = domingo */
+      dia: z.number().int().min(1).max(7).default(7),
+      hora: z.string().regex(HORA).default('20:00'),
+      /** 0 = borrar todo lo que ya paso. Mayor a 0 = conservar esos dias en la base. */
+      conservar_dias: z.number().int().min(0).max(3650).default(0),
+      avisar_al_barbero: z.boolean().default(true),
     })
-    .default({ activa: true, conservar_dias: 7 }),
+    .default({ activo: true, dia: 7, hora: '20:00', conservar_dias: 0, avisar_al_barbero: true }),
   agente: z.object({
     tono: z.string(),
     nombre_bot: z.string(),

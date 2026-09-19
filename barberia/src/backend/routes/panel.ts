@@ -35,6 +35,8 @@ import { normalizarTelefono, sanearNombre, telefonoParecePlausible } from '../..
 import { log } from '../../shared/log.js';
 import { reactivarBot, pausarBot } from '../../conversation/orquestador.js';
 import { resincronizarTodo } from '../../google/sync.js';
+import { calcularResumenSemanal, resumenComoTexto } from '../../reportes/semanal.js';
+import { resumenesRepo } from '../../database/repositories/resumenes.js';
 import {
   borrarCookieDeSesion,
   claveCorrecta,
@@ -185,6 +187,20 @@ export function rutasPanel(ctx: Contexto): Router {
       } catch (e) {
         responderError(res, e);
       }
+    }),
+  );
+
+  // --- Balance de la semana ----------------------------------------------
+  router.get(
+    '/resumen',
+    asinc(async (req, res) => {
+      const desde = String(req.query.desde ?? '');
+      const resumen = await calcularResumenSemanal(ctx, esFechaValida(desde) ? { desde } : {});
+      res.json({
+        resumen,
+        texto: resumenComoTexto(resumen, ctx.cfg.negocio.moneda),
+        historial: await resumenesRepo.ultimos(ctx.db, 8),
+      });
     }),
   );
 

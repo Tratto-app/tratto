@@ -34,7 +34,7 @@ CLIENTE ──WhatsApp──▶ Webhook ──▶ Orquestador ──▶ Agente I
 10. [Configurar la IA](#configurar-la-ia)
 11. [Probar sin WhatsApp: el simulador](#probar-sin-whatsapp-el-simulador)
 12. [Panel del barbero](#panel-del-barbero)
-13. [Limpieza semanal](#limpieza-semanal)
+13. [Cierre de semana](#cierre-de-semana)
 14. [Tests](#tests)
 15. [Despliegue](#despliegue)
 16. [Costos](#costos)
@@ -62,8 +62,9 @@ CLIENTE ──WhatsApp──▶ Webhook ──▶ Orquestador ──▶ Agente I
   botones que permite reservar igual.
 - **Escribe solo en Google Drive.** Cada turno aparece en la planilla a los
   pocos segundos de reservarse, sin que la planilla pueda frenar una reserva.
-- **La base arranca limpia cada semana.** Los turnos viejos se borran solos;
-  en Drive queda el historial completo.
+- **Cierre de semana los domingos.** Te arma el balance (cuántos atendiste,
+  cuántos clientes nuevos, cuánto facturaste, cuánta agenda ocupaste) y recién
+  después vacía la semana. En Drive queda el historial completo.
 - **Panel web** para ver la agenda, cargar turnos a mano, bloquear horarios y
   cambiar precios y horarios sin tocar código.
 
@@ -146,11 +147,12 @@ barberia/
 │   ├── whatsapp/              Cliente de la Cloud API y verificación del webhook
 │   ├── conversation/          Orquestador: idempotencia, contexto, derivación a persona
 │   ├── google/                Autenticación, API de Sheets, proyección y worker de sincronización
-│   ├── mantenimiento/         Liberar reservas abandonadas y limpieza semanal
+│   ├── mantenimiento/         Liberar reservas abandonadas y cierre de semana
+│   ├── reportes/              Balance semanal (turnos, clientes, facturación)
 │   ├── backend/               Servidor HTTP, rutas y middlewares
 │   └── main.ts                Arranque
 ├── public/                    Panel del barbero y simulador de chat
-└── tests/                     163 tests
+└── tests/                     183 tests
 ```
 
 **El flujo de un mensaje:**
@@ -312,6 +314,7 @@ Crea y deja listas: **Hoy**, **Agenda semanal**, **Turnos**, **Clientes** y
 |---|---|
 | **Hoy** | Hoy, mañana y pasado mañana, hora por hora |
 | **Agenda semanal** | Una columna por día, de lunes a domingo, con turnos, bloqueos y lugares libres |
+| **Balance semanal** | Una fila por semana: turnos, clientes, nuevos, facturado, ocupación. Es el historial que sobrevive a la limpieza |
 | **Turnos** | La base completa: ID, Fecha, Día, Hora, Hora fin, Cliente, WhatsApp, Servicio, Precio, Duración, Estado, Creación, Última modificación, Observaciones |
 | **Clientes** | Quiénes son, cuántas veces vinieron, última visita |
 | **Configuración** | Servicios, precios y horarios vigentes (informativa) |
@@ -428,31 +431,86 @@ En producción el simulador queda detrás del login del panel.
 
 ---
 
-## Limpieza semanal
+## Cierre de semana
 
-La base de datos guarda **la semana en curso**, no el historial completo. Todos
-los días se borran los turnos que ya terminaron hace más de `conservar_dias`:
+**Todos los domingos a las 20:00** (el local está cerrado, así que no molesta),
+el sistema hace tres cosas, en este orden:
+
+1. **Arma el balance de la semana.**
+2. Lo guarda en la hoja **"Balance semanal"** de Drive y te lo manda por WhatsApp.
+3. **Recién ahí vacía la semana** de la base de datos.
+
+El orden no es casual: si limpiara primero, el balance daría cero y esa
+información se perdería para siempre.
+
+### Qué te dice el balance
+
+```
+📊 Cómo te fue esta semana (14/09 al 20/09)
+
+✂️ 23 turnos atendidos
+👥 19 clientes, 5 nuevos
+💰 $184.000 facturado
+📈 62% de la agenda ocupada
+
+Lo más pedido: Corte (14)
+Tu día más fuerte: viernes (7 turnos)
+
+❌ 2 cancelados · 1 no vino
+
+Contra la semana pasada: +3 turnos, +$21.000
+```
+
+- **Clientes** son personas distintas, no turnos: si alguien vino dos veces,
+  cuenta una. **Nuevos** son los que reservaron por primera vez esa semana.
+- **Facturado** suma solo los turnos que se atendieron. Lo cancelado y el que
+  no vino no suman.
+- **Ocupación** es cuánto de tu agenda vendiste. Si bloqueaste un día, ese día
+  no cuenta en contra.
+- La comparación con la semana anterior aparece a partir de la segunda semana.
+
+Lo mismo se ve **en el panel**, en la pestaña *Semana*, actualizado al momento
+(sirve para mirar cómo viene la semana un miércoles, no solo el domingo).
+
+### Verlo por WhatsApp cuando quieras
+
+Escribile **"resumen"** al bot desde tu número (el de `BARBERO_WHATSAPP`) y te
+contesta el balance de la semana en curso. También funciona con "balance" o
+"cómo venimos".
+
+> Esto existe por una razón práctica: WhatsApp solo deja mandar texto libre
+> dentro de las 24 h desde el último mensaje de la persona. Si el domingo hace
+> más de un día que no le escribís al bot, Meta puede rechazar el envío. El
+> balance **nunca se pierde** — queda en Drive y en el panel —, pero si querés
+> tenerlo seguro en el celular, escribile "resumen" y listo.
+
+### Qué se borra y qué no
+
+| | Se borra de la base | Queda |
+|---|---|---|
+| Turnos de la semana que terminó | ✅ el domingo | ✅ **en Drive, para siempre** |
+| Turnos futuros | ❌ nunca | ✅ |
+| Ficha de clientes (nombre, cuántas veces vino) | ❌ nunca | ✅ |
+| Balance de cada semana | ❌ nunca | ✅ |
 
 ```json
-"limpieza": {
-  "activa": true,
-  "conservar_dias": 7
+"cierre_semanal": {
+  "activo": true,
+  "dia": 7,
+  "hora": "20:00",
+  "conservar_dias": 0,
+  "avisar_al_barbero": true
 }
 ```
 
-Qué se borra y qué no:
-
-| | Se borra | Se conserva |
-|---|---|---|
-| Turnos que ya pasaron hace más de una semana | ✅ de la base | ✅ **en Google Drive, para siempre** |
-| Turnos futuros | ❌ nunca | ✅ |
-| Ficha de clientes (nombre, cuántas veces vino) | ❌ nunca | ✅ |
+- `dia`: 1 = lunes … 7 = domingo.
+- `conservar_dias`: `0` vacía todo lo que ya pasó. Poné `30` si querés tener el
+  último mes en la base.
+- `activo: false` apaga el cierre entero (no arma balance ni limpia).
 
 > **La planilla de Drive es el archivo del negocio.** La sincronización nunca
 > borra filas: actualiza las que ya están y agrega las nuevas. Aunque la base se
-> limpie, o aunque apretés "Resincronizar", el historial de Drive queda intacto.
-
-Para desactivarla: `"activa": false`. Para guardar un mes: `"conservar_dias": 30`.
+> vacíe, o aunque apretés "Resincronizar", el historial de Drive queda intacto.
 
 ### Recordatorios: apagados
 
@@ -465,7 +523,7 @@ cobran.
 El código quedó por si algún día los querés: se prenden cambiando esas dos
 opciones y cargando una plantilla aprobada en `WHATSAPP_PLANTILLA_RECORDATORIO`.
 
-### Lo que sí corre solo
+### Lo que sí corre solo, todos los días
 
 El worker de mantenimiento **no es opcional** y anda siempre:
 
@@ -473,12 +531,12 @@ El worker de mantenimiento **no es opcional** y anda siempre:
    Sin esto, la agenda se tapa sola con reservas fantasma.
 2. Cierra los turnos que ya pasaron (a las 12 h, para darte tiempo a marcar
    "no vino").
-3. Hace la limpieza semanal.
+3. Los domingos, dispara el cierre de semana.
 
 ## Tests
 
 ```bash
-npm test          # 163 tests (SQLite, sin dependencias externas)
+npm test          # 183 tests (SQLite, sin dependencias externas)
 npm run typecheck
 
 # Opcional: los mismos candados contra la doble reserva, contra un PostgreSQL real
@@ -509,7 +567,8 @@ Cubren lo que pide el enunciado y algo más:
 | 15 | Interpretación de fechas | `fechas.test.ts` |
 | 16 | Bloqueo de horario | `turnos.test.ts` |
 | + | **Turno por WhatsApp → fila en Google Drive**, de punta a punta | `sheets.test.ts` |
-| + | Limpieza semanal: borra lo pasado, respeta lo futuro y los clientes | `turnos.test.ts`, `sheets.test.ts` |
+| + | **Cierre de semana**: balance antes de limpiar, no se repite, respeta lo futuro | `cierre-semanal.test.ts` |
+| + | Cálculo del balance: clientes únicos, nuevos, facturación, ocupación | `cierre-semanal.test.ts` |
 | + | Firma del webhook, idempotencia, derivación a persona, límites del agente, caída de la IA | `webhook.test.ts`, `agente.test.ts` |
 
 ### Sobre PostgreSQL
