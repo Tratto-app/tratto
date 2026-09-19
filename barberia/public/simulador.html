@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="es-AR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>Simulador de chat — probar el bot</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Ctext y='14' font-size='14'%3E%E2%9C%82%3C/text%3E%3C/svg%3E">
+<link rel="stylesheet" href="/estilos.css">
+</head>
+<body>
+<header class="barra">
+  <div>
+    <h1>Simulador de chat</h1>
+    <p class="sub" id="sub">Probá el bot sin WhatsApp real</p>
+  </div>
+  <button id="reiniciar">Reiniciar</button>
+</header>
+
+<main class="contenedor">
+  <div class="tarjeta">
+    <label for="telefono">Número del cliente de prueba</label>
+    <input id="telefono" value="5491100000000" inputmode="tel">
+    <p class="ayuda">
+      Cada número es un cliente distinto: cambialo para probar "cliente nuevo" vs "cliente conocido",
+      o abrí dos pestañas con números distintos para probar dos personas pidiendo el mismo horario.
+    </p>
+  </div>
+
+  <div class="sugerencias" id="sugerencias"></div>
+
+  <div class="chat" id="chat"></div>
+
+  <form class="enviar" id="form">
+    <input id="texto" placeholder="Escribí como si fueras un cliente…" autocomplete="off" required>
+    <button type="submit" class="primario">Enviar</button>
+  </form>
+
+  <div class="tarjeta" id="estado-turnos"></div>
+</main>
+
+<script src="/simulador.js"></script>
+</body>
+</html>

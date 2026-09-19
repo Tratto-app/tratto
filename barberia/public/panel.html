@@ -1,0 +1,168 @@
+<!doctype html>
+<html lang="es-AR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex, nofollow">
+<title>Agenda — Panel del barbero</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Ctext y='14' font-size='14'%3E%E2%9C%82%3C/text%3E%3C/svg%3E">
+<link rel="stylesheet" href="/estilos.css">
+</head>
+<body>
+
+<div id="ingreso" hidden>
+  <h1>Agenda</h1>
+  <p>Ingresá para ver tus turnos.</p>
+  <form id="form-ingreso">
+    <label for="clave">Contraseña</label>
+    <input type="password" id="clave" name="clave" autocomplete="current-password" required>
+    <div class="acciones">
+      <button type="submit" class="primario">Entrar</button>
+    </div>
+    <div id="error-ingreso"></div>
+  </form>
+</div>
+
+<div id="app" hidden>
+  <header class="barra">
+    <div>
+      <h1 id="titulo-negocio">Agenda</h1>
+      <p class="sub" id="subtitulo">—</p>
+    </div>
+    <button id="btn-salir" title="Cerrar sesión">Salir</button>
+  </header>
+
+  <nav class="pestanas" role="tablist">
+    <button role="tab" data-panel="hoy" aria-selected="true">Hoy</button>
+    <button role="tab" data-panel="semana" aria-selected="false">Semana</button>
+    <button role="tab" data-panel="nuevo" aria-selected="false">Nuevo turno</button>
+    <button role="tab" data-panel="bloquear" aria-selected="false">Bloquear</button>
+    <button role="tab" data-panel="ajustes" aria-selected="false">Ajustes</button>
+  </nav>
+
+  <main class="contenedor">
+    <div id="mensajes"></div>
+
+    <section class="panel activa" id="panel-hoy">
+      <h2>Hoy</h2>
+      <div id="agenda-hoy"></div>
+      <h2>Mañana</h2>
+      <div id="agenda-manana"></div>
+    </section>
+
+    <section class="panel" id="panel-semana">
+      <div class="acciones">
+        <button id="semana-anterior">← Anterior</button>
+        <button id="semana-actual">Esta semana</button>
+        <button id="semana-siguiente">Siguiente →</button>
+      </div>
+      <div id="agenda-semana"></div>
+    </section>
+
+    <section class="panel" id="panel-nuevo">
+      <h2>Cargar un turno a mano</h2>
+      <form id="form-turno" class="tarjeta">
+        <label for="t-nombre">Nombre del cliente</label>
+        <input id="t-nombre" required maxlength="60" autocomplete="off">
+
+        <label for="t-telefono">WhatsApp (con código de país)</label>
+        <input id="t-telefono" required inputmode="tel" placeholder="5491122334455" autocomplete="off">
+
+        <label for="t-servicio">Servicio</label>
+        <select id="t-servicio" required></select>
+
+        <label for="t-fecha">Fecha</label>
+        <input id="t-fecha" type="date" required>
+
+        <label>Horario</label>
+        <div class="horarios" id="t-horarios"><span class="vacio">Elegí fecha y servicio.</span></div>
+        <input id="t-hora" type="hidden">
+
+        <label for="t-obs">Observaciones (opcional)</label>
+        <input id="t-obs" maxlength="200" autocomplete="off">
+
+        <div class="acciones">
+          <button type="submit" class="primario">Guardar turno</button>
+        </div>
+      </form>
+    </section>
+
+    <section class="panel" id="panel-bloquear">
+      <h2>Bloquear horarios</h2>
+      <form id="form-bloqueo" class="tarjeta">
+        <label for="b-fecha">Fecha</label>
+        <input id="b-fecha" type="date" required>
+
+        <label><input type="checkbox" id="b-dia-completo"> Bloquear el día completo</label>
+
+        <div class="fila" id="b-rango">
+          <div>
+            <label for="b-desde">Desde</label>
+            <input id="b-desde" type="time" value="16:00">
+          </div>
+          <div>
+            <label for="b-hasta">Hasta</label>
+            <input id="b-hasta" type="time" value="17:00">
+          </div>
+        </div>
+
+        <label for="b-motivo">Motivo (opcional)</label>
+        <input id="b-motivo" maxlength="120" placeholder="Dentista, trámite, etc." autocomplete="off">
+
+        <div class="acciones">
+          <button type="submit" class="primario">Bloquear</button>
+        </div>
+      </form>
+      <h2>Bloqueos de esta semana</h2>
+      <div id="lista-bloqueos"></div>
+    </section>
+
+    <section class="panel" id="panel-ajustes">
+      <h2>Estado del sistema</h2>
+      <div class="tarjeta" id="estado-sistema"></div>
+
+      <h2>Servicios y precios</h2>
+      <div id="editor-servicios"></div>
+      <div class="acciones">
+        <button id="agregar-servicio">+ Agregar servicio</button>
+      </div>
+
+      <h2>Horarios de atención</h2>
+      <div id="editor-horarios"></div>
+
+      <h2>Días cerrados</h2>
+      <div class="tarjeta">
+        <label for="a-feriados">Feriados (uno por línea: 2026-12-25 Navidad)</label>
+        <textarea id="a-feriados" rows="4"></textarea>
+        <label for="a-vacaciones">Vacaciones (una por línea: 2027-01-10 a 2027-01-20 Vacaciones)</label>
+        <textarea id="a-vacaciones" rows="3"></textarea>
+      </div>
+
+      <h2>Reglas</h2>
+      <div class="tarjeta">
+        <label for="a-anticipacion">Anticipación mínima (minutos)</label>
+        <input id="a-anticipacion" type="number" min="0" max="10080">
+        <label for="a-maximo">Se puede reservar hasta (días)</label>
+        <input id="a-maximo" type="number" min="1" max="365">
+        <label for="a-max-turnos">Máximo de turnos futuros por cliente</label>
+        <input id="a-max-turnos" type="number" min="1" max="10">
+        <label for="a-cancelacion">Cancelación mínima (horas antes)</label>
+        <input id="a-cancelacion" type="number" min="0" max="72" step="0.5">
+        <label for="a-margen">Margen entre turnos (minutos)</label>
+        <input id="a-margen" type="number" min="0" max="60">
+      </div>
+
+      <div class="acciones">
+        <button id="guardar-ajustes" class="primario">Guardar cambios</button>
+        <button id="sync-sheets">Resincronizar Google Sheets</button>
+      </div>
+
+      <h2>Charlas derivadas</h2>
+      <div id="lista-derivadas"></div>
+    </section>
+  </main>
+</div>
+
+<script src="/panel.js"></script>
+</body>
+</html>

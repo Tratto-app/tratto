@@ -1,0 +1,43 @@
+# Despliegue en Render (https://render.com).
+# Crear el servicio con "Blueprint" apuntando a este repo.
+services:
+  - type: web
+    name: barberia-turnos
+    runtime: docker
+    dockerfilePath: ./barberia/Dockerfile
+    dockerContext: ./barberia
+    plan: starter            # el plan gratuito se duerme: los recordatorios no saldrían a horario
+    healthCheckPath: /salud
+    autoDeploy: true
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 3000
+      # Se completan a mano en el panel de Render (marcadas como secretas).
+      - key: DATABASE_URL
+        sync: false
+      - key: WHATSAPP_ACCESS_TOKEN
+        sync: false
+      - key: WHATSAPP_PHONE_NUMBER_ID
+        sync: false
+      - key: WHATSAPP_VERIFY_TOKEN
+        sync: false
+      - key: WHATSAPP_APP_SECRET
+        sync: false
+      - key: BARBERO_WHATSAPP
+        sync: false
+      - key: AI_API_KEY
+        sync: false
+      - key: GOOGLE_SPREADSHEET_ID
+        sync: false
+      - key: GOOGLE_CLIENT_ID
+        sync: false
+      - key: GOOGLE_CLIENT_SECRET
+        sync: false
+      - key: GOOGLE_REFRESH_TOKEN
+        sync: false
+      - key: DASHBOARD_PASSWORD
+        sync: false
+      - key: SESSION_SECRET
+        generateValue: true

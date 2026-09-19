@@ -1,0 +1,171 @@
+/* Panel del barbero. Pensado para usarse con una mano, en el celular,
+   entre cliente y cliente. Nada de tablas anchas ni menúes escondidos. */
+
+:root {
+  --fondo: #14110f;
+  --superficie: #1f1b18;
+  --superficie-2: #2a2421;
+  --borde: #3a322d;
+  --texto: #f3ece6;
+  --texto-suave: #b3a79e;
+  --acento: #d9a441;
+  --acento-oscuro: #a87c26;
+  --ok: #5bb98b;
+  --alerta: #e0705a;
+  --radio: 12px;
+  --sombra: 0 2px 12px rgba(0, 0, 0, 0.35);
+}
+
+* { box-sizing: border-box; }
+
+html, body {
+  margin: 0;
+  padding: 0;
+  background: var(--fondo);
+  color: var(--texto);
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  font-size: 16px;
+  line-height: 1.45;
+  -webkit-text-size-adjust: 100%;
+}
+
+a { color: var(--acento); }
+
+.contenedor { max-width: 720px; margin: 0 auto; padding: 0 14px 96px; }
+
+header.barra {
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  background: var(--superficie);
+  border-bottom: 1px solid var(--borde);
+  padding: 12px 14px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+header.barra h1 { font-size: 17px; margin: 0; font-weight: 650; letter-spacing: -0.01em; }
+header.barra .sub { font-size: 12px; color: var(--texto-suave); margin: 0; }
+
+nav.pestanas {
+  position: sticky;
+  top: 61px;
+  z-index: 19;
+  display: flex;
+  gap: 6px;
+  overflow-x: auto;
+  padding: 10px 14px;
+  background: var(--fondo);
+  border-bottom: 1px solid var(--borde);
+  scrollbar-width: none;
+}
+nav.pestanas::-webkit-scrollbar { display: none; }
+nav.pestanas button {
+  flex: 0 0 auto;
+  background: var(--superficie);
+  color: var(--texto-suave);
+  border: 1px solid var(--borde);
+  border-radius: 999px;
+  padding: 8px 14px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+}
+nav.pestanas button[aria-selected="true"] { background: var(--acento); color: #201703; border-color: var(--acento); }
+
+section.panel { display: none; padding-top: 14px; }
+section.panel.activa { display: block; }
+
+h2 { font-size: 15px; text-transform: uppercase; letter-spacing: 0.08em; color: var(--texto-suave); margin: 22px 0 10px; }
+h2:first-child { margin-top: 10px; }
+
+.tarjeta {
+  background: var(--superficie);
+  border: 1px solid var(--borde);
+  border-radius: var(--radio);
+  padding: 12px 14px;
+  margin-bottom: 10px;
+  box-shadow: var(--sombra);
+}
+
+.turno { display: flex; gap: 12px; align-items: flex-start; }
+.turno .hora { font-variant-numeric: tabular-nums; font-weight: 700; font-size: 18px; min-width: 56px; color: var(--acento); }
+.turno .datos { flex: 1; min-width: 0; }
+.turno .nombre { font-weight: 620; }
+.turno .detalle { font-size: 13px; color: var(--texto-suave); }
+.turno.cancelado { opacity: 0.5; }
+.turno.cancelado .nombre { text-decoration: line-through; }
+.turno.bloqueo .hora { color: var(--alerta); }
+
+.acciones { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
+
+button, .boton {
+  background: var(--superficie-2);
+  color: var(--texto);
+  border: 1px solid var(--borde);
+  border-radius: 9px;
+  padding: 9px 12px;
+  font-size: 14px;
+  font-family: inherit;
+  cursor: pointer;
+  min-height: 40px;
+}
+button:active { transform: translateY(1px); }
+button.primario { background: var(--acento); border-color: var(--acento); color: #201703; font-weight: 680; }
+button.peligro { border-color: var(--alerta); color: var(--alerta); }
+button:disabled { opacity: 0.5; cursor: not-allowed; }
+.boton { display: inline-flex; align-items: center; text-decoration: none; }
+
+label { display: block; font-size: 13px; color: var(--texto-suave); margin: 12px 0 4px; }
+input, select, textarea {
+  width: 100%;
+  background: var(--superficie-2);
+  color: var(--texto);
+  border: 1px solid var(--borde);
+  border-radius: 9px;
+  padding: 11px 12px;
+  font-size: 16px; /* 16px evita que iOS haga zoom al enfocar */
+  font-family: inherit;
+}
+input[type="checkbox"] { width: auto; min-width: 20px; min-height: 20px; }
+.fila { display: flex; gap: 10px; }
+.fila > * { flex: 1; }
+
+.vacio { color: var(--texto-suave); font-size: 14px; padding: 6px 0; }
+.chip { display: inline-block; font-size: 11px; padding: 2px 8px; border-radius: 999px; border: 1px solid var(--borde); color: var(--texto-suave); }
+.chip.ok { border-color: var(--ok); color: var(--ok); }
+.chip.mal { border-color: var(--alerta); color: var(--alerta); }
+
+.aviso { padding: 10px 12px; border-radius: 9px; margin: 10px 0; font-size: 14px; }
+.aviso.ok { background: rgba(91, 185, 139, 0.12); border: 1px solid var(--ok); }
+.aviso.error { background: rgba(224, 112, 90, 0.12); border: 1px solid var(--alerta); }
+
+.dia-semana { border-left: 3px solid var(--borde); padding-left: 12px; margin-bottom: 16px; }
+.dia-semana.hoy { border-left-color: var(--acento); }
+.dia-semana h3 { margin: 0 0 4px; font-size: 15px; text-transform: capitalize; }
+.dia-semana .resumen { font-size: 12px; color: var(--texto-suave); margin-bottom: 6px; }
+.dia-semana ul { list-style: none; margin: 0; padding: 0; }
+.dia-semana li { font-size: 14px; padding: 3px 0; border-bottom: 1px dashed rgba(255,255,255,0.05); }
+
+.horarios { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 6px; }
+.horarios button { padding: 7px 10px; font-size: 13px; min-height: 36px; }
+.horarios button[aria-pressed="true"] { background: var(--acento); color: #201703; border-color: var(--acento); }
+
+/* Pantalla de ingreso */
+#ingreso { max-width: 360px; margin: 18vh auto 0; padding: 0 20px; }
+#ingreso h1 { font-size: 22px; margin-bottom: 4px; }
+#ingreso p { color: var(--texto-suave); font-size: 14px; margin-top: 0; }
+
+/* Simulador */
+.chat { display: flex; flex-direction: column; gap: 8px; padding: 12px 0; }
+.burbuja { max-width: 82%; padding: 9px 12px; border-radius: 14px; white-space: pre-wrap; word-wrap: break-word; font-size: 15px; }
+.burbuja.cliente { align-self: flex-end; background: #2e5c45; border-bottom-right-radius: 4px; }
+.burbuja.bot { align-self: flex-start; background: var(--superficie-2); border-bottom-left-radius: 4px; }
+.burbuja.meta { align-self: center; background: none; color: var(--texto-suave); font-size: 12px; text-align: center; max-width: 100%; }
+.escribiendo { align-self: flex-start; color: var(--texto-suave); font-size: 13px; }
+form.enviar { position: sticky; bottom: 0; display: flex; gap: 8px; padding: 10px 0; background: var(--fondo); }
+form.enviar input { flex: 1; }
+.sugerencias { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 10px; }
+.sugerencias button { font-size: 12px; padding: 6px 10px; min-height: 34px; }
+.ayuda { font-size: 13px; color: var(--texto-suave); margin: 8px 0 0; }
