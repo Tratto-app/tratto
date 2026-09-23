@@ -116,6 +116,13 @@ export function revisarEnvProduccion(): string[] {
   if (!env.SESSION_SECRET || env.SESSION_SECRET.length < 32) faltantes.push('SESSION_SECRET tiene que tener al menos 32 caracteres');
   if (!env.DASHBOARD_PASSWORD || env.DASHBOARD_PASSWORD.length < 10) faltantes.push('DASHBOARD_PASSWORD tiene que tener al menos 10 caracteres');
   if (driverBD !== 'postgres') faltantes.push('En produccion se recomienda DATABASE_URL de PostgreSQL (SQLite no escala a varias instancias)');
-  if (!claveIA) faltantes.push('AI_API_KEY sin configurar: el bot va a funcionar solo en modo menu');
+  // Ojo acá: tiene que mirar la clave del proveedor EN USO (claveDelProveedor),
+  // no claveIA (que solo resuelve Claude). Con AI_PROVEEDOR=openai, claveIA
+  // queda vacia aunque OPENAI_API_KEY este bien cargada, y esto tiraba abajo
+  // el arranque en producción con OpenAI aunque todo estuviera bien puesto.
+  if (!claveDelProveedor) {
+    const variable = env.AI_PROVEEDOR === 'openai' ? 'OPENAI_API_KEY' : 'AI_API_KEY';
+    faltantes.push(`${variable} sin configurar: el bot va a funcionar solo en modo menu`);
+  }
   return faltantes;
 }
