@@ -2197,7 +2197,9 @@
   <nav class="tabs oculto" id="tabs"></nav>
 </div>
 
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.117.0/dist/umd/supabase.js"
+  integrity="sha384-xPW3QHswsICVC2mW6BFNwMbhpLkbZ133fKOhxNx3QGGgAOJfL3O9t8r2aWn1aez6"
+  crossorigin="anonymous"></script>
 <script>
 /* ══════════════════ CONFIGURACIÓN ══════════════════ */
 const SUPABASE_URL  = 'https://qglsonbcsncgekzbfafk.supabase.co';
@@ -2903,7 +2905,7 @@ $('s-enviar').addEventListener('click', async () => {
   $('s-txt').textContent='Enviando…'; $('s-aviso').className='aviso';
   try{
     const res = await fetch(SUPABASE_URL+'/rest/v1/solicitudes',{
-      method:'POST', headers:cab({'Prefer':'return=representation'}),
+      method:'POST', headers:cab({'Prefer':'return=minimal'}),
       body: JSON.stringify({
         nombre_cliente:v('s-nombre'), email_cliente:v('s-email'), telefono_cliente:v('s-tel'),
         servicio_necesitado:v('s-servicio'), zona:v('s-zona'),
@@ -3004,7 +3006,7 @@ let misPedidos = [], misPerfiles = [];
 async function cargarPedidos(){
   $('lista-pedidos').innerHTML = esqueleto(2);
   try{
-    misPedidos = await api('solicitudes?user_id=eq.'+sesion.user.id+'&order=created_at.desc');
+    misPedidos = await api('solicitudes?user_id=eq.'+sesion.user.id+'&select=id,created_at,nombre_cliente,servicio_necesitado,zona,presupuesto,urgencia,descripcion,estado,user_id,foto_url,cupo&order=created_at.desc');
     $('n-pedidos').textContent = misPedidos.length ? misPedidos.length : '';
     if(!misPedidos.length){
       $('lista-pedidos').innerHTML = cajaVacia('Ningún pedido todavía',
@@ -3066,14 +3068,18 @@ async function cargarConexiones(){
   $('lista-proveedor').innerHTML = esqueleto(1);
   let comoCliente = [], comoProv = [];
 
+  /* select= explícito, no "*": el proveedor no necesita el email ni el
+     teléfono del cliente para nada de lo que se pinta en esta pantalla ni en
+     el chat, y pedirlos de más los deja dando vueltas en la respuesta de la
+     API aunque la pantalla no los muestre. */
   try{
     const ids = misPedidos.map(s => s.id);
-    if(ids.length) comoCliente = await api('matches?solicitud_id=in.('+ids.join(',')+')&select=*,proveedores(*),solicitudes(*)&order=created_at.desc');
+    if(ids.length) comoCliente = await api('matches?solicitud_id=in.('+ids.join(',')+')&select=id,estado,proveedores(nombre,zona,rubro,descripcion,precio_desde,precio_hasta,disponibilidad),solicitudes(user_id,nombre_cliente,servicio_necesitado,zona,presupuesto,urgencia,descripcion)&order=created_at.desc');
   }catch(e){ console.error(e); }
 
   try{
     const ids = misPerfiles.map(p => p.id);
-    if(ids.length) comoProv = await api('matches?proveedor_id=in.('+ids.join(',')+')&select=*,proveedores(*),solicitudes(*)&order=created_at.desc');
+    if(ids.length) comoProv = await api('matches?proveedor_id=in.('+ids.join(',')+')&select=id,estado,proveedores(nombre,zona,rubro,descripcion,precio_desde,precio_hasta,disponibilidad),solicitudes(user_id,nombre_cliente,servicio_necesitado,zona,presupuesto,urgencia,descripcion)&order=created_at.desc');
   }catch(e){ console.error(e); }
 
   $('n-cli').textContent = comoCliente.length || '';
@@ -3140,7 +3146,7 @@ const dia  = t => new Date(t).toLocaleDateString('es-AR',{weekday:'long',day:'nu
 async function abrirChat(matchId, desde){
   let m = conexiones[matchId];
   if(!m){
-    try{ m = (await api('matches?id=eq.'+matchId+'&select=*,proveedores(*),solicitudes(*)'))[0]; }
+    try{ m = (await api('matches?id=eq.'+matchId+'&select=id,estado,proveedores(nombre,zona,rubro,descripcion,precio_desde,precio_hasta,disponibilidad),solicitudes(user_id,nombre_cliente,servicio_necesitado,zona,presupuesto,urgencia,descripcion)'))[0]; }
     catch(e){ console.error(e); return; }
     if(!m) return;
     conexiones[matchId] = m;
@@ -4267,23 +4273,38 @@ $('ed-pub').addEventListener('click', abrirPublicacion);
    Todo el intercambio de credenciales lo hace un workflow de n8n: acá sólo
    mandamos al proveedor a Mercado Pago y después leemos si quedó guardada. El
    access_token nunca pasa por el navegador. */
-/* OJO: este id y el client_secret que tiene el workflow de OAuth en n8n son un
-   par. Si cambiás uno sin el otro, Mercado Pago emite el código para una
-   aplicación y n8n intenta canjearlo con las credenciales de otra: el canje
-   falla y al proveedor le queda una pantalla en blanco.
-   Hoy apunta a la aplicación de PRUEBA, que cuelga de la cuenta Integrador de
-   sandbox. Para producción hay que poner 2631534334320257 acá Y el
-   client_secret de esa misma aplicación en n8n, las dos cosas juntas. */
-const MP_CLIENT_ID = '2729660226133986';
-const MP_REDIRECT  = 'https://marketplace-servicios.app.n8n.cloud/webhook/mp-conectar';
+/* El client_id y el redirect_uri viven ahora del lado de n8n (workflow
+   mp-iniciar), junto con el client_secret con el que tienen que coincidir.
+   Antes el "state" que identifica a qué proveedor hay que guardarle la
+   cuenta era directamente su user_id, visible y reutilizable por cualquiera:
+   alguien podía armar la URL con el user_id de otro proveedor, autorizar con
+   SU PROPIA cuenta de Mercado Pago, y quedarse cobrando los pagos de esa
+   persona. Ahora pedimos un nonce de un solo uso al propio n8n, que primero
+   valida el token de sesión. */
+const URL_MP_INICIAR = 'https://marketplace-servicios.app.n8n.cloud/webhook/mp-iniciar';
 
-/* El state viaja hasta n8n y vuelve: es cómo sabe a qué proveedor guardarle la
-   cuenta. Por eso mandamos el id del usuario de Supabase. */
-function urlConectarMP(){
-  return 'https://auth.mercadopago.com.ar/authorization?client_id=' + MP_CLIENT_ID +
-    '&response_type=code&platform_id=mp' +
-    '&redirect_uri=' + encodeURIComponent(MP_REDIRECT) +
-    '&state=' + encodeURIComponent(sesion.user.id);
+async function conectarMP(){
+  /* El popup se abre ACÁ, dentro del gesto del click, porque recién después
+     vamos a saber a qué URL mandarlo (necesita el viaje de ida y vuelta a
+     n8n) y para entonces el navegador ya no deja abrir ventanas nuevas.
+     Sin noopener a propósito: si lo lleváramos, no podríamos navegarlo
+     nosotros a la URL real cuando llegue. El destino es Mercado Pago, no una
+     página nuestra, así que el riesgo de que la pestaña reabra la nuestra es
+     el mismo que en cualquier link que abre un banco en pestaña nueva. */
+  const ventana = window.open('', '_blank');
+  if(!ventana) return;  // el navegador bloqueó el popup
+  try{
+    const r = await fetch(URL_MP_INICIAR, {
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({ token: sesion.access_token })
+    });
+    const d = await r.json().catch(() => null);
+    if(!r.ok || !d || !d.url) throw new Error((d && d.error) || 'no se pudo iniciar la conexión');
+    ventana.location = d.url;
+  }catch(e){
+    console.error(e);
+    ventana.close();
+  }
 }
 
 function cobrosHTML(cuenta){
@@ -4345,7 +4366,7 @@ async function cargarCobros(){
 ['panel-cobros','perfil-cobros'].forEach(id => {
   $(id).addEventListener('click', e => {
     if(!e.target.closest('[data-cobros-conectar]')) return;
-    window.open(urlConectarMP(), '_blank', 'noopener');
+    conectarMP();
   });
 });
 document.addEventListener('visibilitychange', () => {
@@ -5158,9 +5179,12 @@ $('tasar-archivo').addEventListener('change', async e => {
        para cotizar, y así no se sube dos veces ni queda huérfana en el depósito. */
     fotoPedido = url;
     pintarFotoPedido();
+    /* Mandamos el token de sesión para que el workflow pueda exigir un
+       usuario logueado (antes se podía llamar a este webhook sin sesión y
+       generar costo de IA sin límite). */
     const r = await fetch(URL_TASADOR, {
       method:'POST', headers:{'Content-Type':'application/json'},
-      body: JSON.stringify({ foto: url, zona: $('s-zona').value || null })
+      body: JSON.stringify({ foto: url, zona: $('s-zona').value || null, token: sesion.access_token })
     });
     const d = await r.json();
 
@@ -5281,7 +5305,12 @@ async function preguntarAsistente(texto){
         pregunta: limpiarDatos(t),
         historial: charla.slice(-8).map(m => ({rol: m.rol === 'yo' ? 'usuario' : 'bot',
                                                texto: limpiarDatos(m.texto)})),
-        userId: sesion ? sesion.user.id : null,
+        /* Antes mandábamos el user_id directo: cualquiera podía poner el id
+           de otra persona y el workflow, si alguna vez usara ese dato para
+           buscar sus pedidos, se lo hubiera creído. Mandamos el token y que
+           el workflow valide de quién es. El asistente también lo puede usar
+           alguien sin sesión (preguntas generales), por eso puede ir null. */
+        token: sesion ? sesion.access_token : null,
         modo: modo
       })
     });
@@ -5418,7 +5447,7 @@ async function mirarSiHayNovedades(){
   if(document.hidden) return;
   try{
     const antes = firmaDeDatos();
-    misPedidos = await api('solicitudes?user_id=eq.'+sesion.user.id+'&order=created_at.desc');
+    misPedidos = await api('solicitudes?user_id=eq.'+sesion.user.id+'&select=id,created_at,nombre_cliente,servicio_necesitado,zona,presupuesto,urgencia,descripcion,estado,user_id,foto_url,cupo&order=created_at.desc');
     misPerfiles = await api('proveedores?user_id=eq.'+sesion.user.id+'&order=created_at.desc');
 
     /* Los pedidos abiertos van ANTES del corte, y no es un descuido: la firma

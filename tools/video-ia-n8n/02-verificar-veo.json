@@ -1,0 +1,194 @@
+{
+  "name": "VIDEO IA - 02 Verificar Veo y guardar video",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": { "interval": [{ "field": "minutes", "minutesInterval": 5 }] }
+      },
+      "id": "n1",
+      "name": "Cada 5 minutos",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [-1120, 0]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            { "id": "c1", "name": "supabaseUrl", "value": "https://qglsonbcsncgekzbfafk.supabase.co", "type": "string" },
+            { "id": "c2", "name": "serviceRole", "value": "PEGA_ACA_TU_SERVICE_ROLE", "type": "string" },
+            { "id": "c3", "name": "geminiApiKey", "value": "PEGA_ACA_TU_GEMINI_API_KEY", "type": "string" }
+          ]
+        },
+        "options": {}
+      },
+      "id": "n2",
+      "name": "Configuracion",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [-900, 0]
+    },
+    {
+      "parameters": {
+        "method": "GET",
+        "url": "={{ $json.supabaseUrl }}/rest/v1/video_jobs?estado=eq.veo_enviado&select=id,veo_operation_name,intentos_veo",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            { "name": "apikey", "value": "={{ $json.serviceRole }}" },
+            { "name": "Authorization", "value": "=Bearer {{ $json.serviceRole }}" }
+          ]
+        },
+        "options": {}
+      },
+      "id": "n3",
+      "name": "Buscar jobs pendientes",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [-680, 0],
+      "notes": "Supabase devuelve un array; n8n lo separa solo en un item por job."
+    },
+    {
+      "parameters": {
+        "method": "GET",
+        "url": "=https://generativelanguage.googleapis.com/v1beta/{{ $json.veo_operation_name }}",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            { "name": "x-goog-api-key", "value": "={{ $('Configuracion').first().json.geminiApiKey }}" }
+          ]
+        },
+        "options": {}
+      },
+      "id": "n4",
+      "name": "Consultar estado en Veo",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [-460, 0]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": { "caseSensitive": true, "leftValue": "", "typeValidation": "loose" },
+          "conditions": [
+            {
+              "id": "cond1",
+              "leftValue": "={{ !!($json.response && $json.response.generateVideoResponse && $json.response.generateVideoResponse.generatedSamples && $json.response.generateVideoResponse.generatedSamples[0] && $json.response.generateVideoResponse.generatedSamples[0].video && $json.response.generateVideoResponse.generatedSamples[0].video.uri) }}",
+              "rightValue": true,
+              "operator": { "type": "boolean", "operation": "true", "singleValue": true }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "n5",
+      "name": "¿Ya termino?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [-240, 0]
+    },
+    {
+      "parameters": {
+        "method": "GET",
+        "url": "={{ $json.response.generateVideoResponse.generatedSamples[0].video.uri }}",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            { "name": "x-goog-api-key", "value": "={{ $('Configuracion').first().json.geminiApiKey }}" }
+          ]
+        },
+        "options": { "response": { "response": { "responseFormat": "file" } } }
+      },
+      "id": "n6",
+      "name": "Descargar video",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [0, -140]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $('Configuracion').first().json.supabaseUrl }}/storage/v1/object/videos-generados/{{ $('Buscar jobs pendientes').item.json.id }}.mp4",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            { "name": "apikey", "value": "={{ $('Configuracion').first().json.serviceRole }}" },
+            { "name": "Authorization", "value": "=Bearer {{ $('Configuracion').first().json.serviceRole }}" },
+            { "name": "Content-Type", "value": "video/mp4" }
+          ]
+        },
+        "sendBody": true,
+        "contentType": "binaryData",
+        "inputDataFieldName": "data",
+        "options": {}
+      },
+      "id": "n7",
+      "name": "Subir a Supabase Storage",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [220, -140]
+    },
+    {
+      "parameters": {
+        "method": "PATCH",
+        "url": "={{ $('Configuracion').first().json.supabaseUrl }}/rest/v1/video_jobs?id=eq.{{ $('Buscar jobs pendientes').item.json.id }}",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            { "name": "apikey", "value": "={{ $('Configuracion').first().json.serviceRole }}" },
+            { "name": "Authorization", "value": "=Bearer {{ $('Configuracion').first().json.serviceRole }}" },
+            { "name": "Content-Type", "value": "application/json" }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ estado: 'veo_listo', video_local_url: $('Configuracion').first().json.supabaseUrl + '/storage/v1/object/public/videos-generados/' + $('Buscar jobs pendientes').item.json.id + '.mp4' }) }}",
+        "options": {}
+      },
+      "id": "n8",
+      "name": "Marcar veo_listo",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [440, -140]
+    },
+    {
+      "parameters": {
+        "method": "PATCH",
+        "url": "={{ $('Configuracion').first().json.supabaseUrl }}/rest/v1/video_jobs?id=eq.{{ $('Buscar jobs pendientes').item.json.id }}",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            { "name": "apikey", "value": "={{ $('Configuracion').first().json.serviceRole }}" },
+            { "name": "Authorization", "value": "=Bearer {{ $('Configuracion').first().json.serviceRole }}" },
+            { "name": "Content-Type", "value": "application/json" }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ (() => { const fallo = $json.error; const intentos = ($('Buscar jobs pendientes').item.json.intentos_veo || 0) + 1; const agotado = intentos >= 20; return JSON.stringify({ intentos_veo: intentos, estado: (fallo || agotado) ? 'veo_fallido' : 'veo_enviado', error: fallo ? (fallo.message || JSON.stringify(fallo)) : (agotado ? 'Veo no termino despues de 20 consultas (~100 min)' : null) }); })() }}",
+        "options": {}
+      },
+      "id": "n9",
+      "name": "Sumar intento (todavia no)",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [0, 140]
+    }
+  ],
+  "connections": {
+    "Cada 5 minutos": { "main": [[{ "node": "Configuracion", "type": "main", "index": 0 }]] },
+    "Configuracion": { "main": [[{ "node": "Buscar jobs pendientes", "type": "main", "index": 0 }]] },
+    "Buscar jobs pendientes": { "main": [[{ "node": "Consultar estado en Veo", "type": "main", "index": 0 }]] },
+    "Consultar estado en Veo": { "main": [[{ "node": "¿Ya termino?", "type": "main", "index": 0 }]] },
+    "¿Ya termino?": {
+      "main": [
+        [{ "node": "Descargar video", "type": "main", "index": 0 }],
+        [{ "node": "Sumar intento (todavia no)", "type": "main", "index": 0 }]
+      ]
+    },
+    "Descargar video": { "main": [[{ "node": "Subir a Supabase Storage", "type": "main", "index": 0 }]] },
+    "Subir a Supabase Storage": { "main": [[{ "node": "Marcar veo_listo", "type": "main", "index": 0 }]] }
+  },
+  "settings": { "executionOrder": "v1" }
+}
