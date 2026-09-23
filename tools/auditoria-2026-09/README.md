@@ -22,31 +22,32 @@ del usuario en vez de la `service_role`. Tiene que usar la `service_role`
 
 ---
 
+## Hecho el 23/09/2026 después del merge (PR #5)
+
+- `mp-iniciar` importado y activo: rechaza tokens inválidos sin crear nonces.
+- Rama mergeada a `main`. Verificado en producción: cabeceras de seguridad
+  activas, CSP sin bloqueos en la app real, supabase-js con hash de
+  integridad, `/lapeluquerie/`, `/.claude/` y `/tools/` dan 404.
+- `05-contacto-cliente-privado.sql` aplicado (migración `contacto_cliente_privado`):
+  ningún usuario puede leer `email_cliente` ni `telefono_cliente`; n8n sí.
+
+**Si algo de n8n deja de andar después de esto** (comparar presupuestos,
+calificar, cobrar) con un error de *permission denied for table solicitudes*,
+es que ese workflow lee `solicitudes` con el token del usuario. Arreglo: que
+use la `service_role`. Reversión de emergencia (vuelve a exponer el contacto):
+`grant select on public.solicitudes to authenticated;`
+
+---
+
 ## Lo que falta, en este orden
 
-### 1. Importar `n8n-mp-iniciar.json` en n8n — ANTES de mergear
+### 1. Probar en la app con una cuenta de prueba
 
-La versión nueva de la app, al tocar "Conectar Mercado Pago", llama a un
-webhook `mp-iniciar` que todavía no existe. Si mergeás antes de importarlo,
-el botón deja de andar.
+Crear un pedido, que un proveedor mande un presupuesto, aceptarlo, "Comparar
+presupuestos" y calificar. Es la única forma de confirmar que los workflows de
+n8n no dependían de leer `solicitudes` con el token del usuario.
 
-1. n8n → Import from file → `n8n-mp-iniciar.json`.
-2. En el nodo "Configuracion": tu `service_role`, y el **mismo** client_id y
-   redirect URI que ya usa el workflow `mp-conectar` (tienen que ser idénticos).
-3. Activarlo.
-
-### 2. Mergear la rama a `main`
-
-Producción despliega desde `main`. Hasta que no se mergee, nada de lo que se
-corrigió en el código (cabeceras, supabase-js fijado, datos de contacto,
-service worker, token en tasar/asistente, OAuth) está en producción.
-
-### 3. Después del merge: correr `05-contacto-cliente-privado.sql`
-
-Corrección de fondo de M-02. **No antes**: la versión vieja de la app deja
-de poder crear pedidos con esto aplicado. (Si querés, pedímelo y lo corro yo.)
-
-### 4. Terminar H-01 en el workflow `mp-conectar` existente
+### 2. Terminar H-01 en el workflow `mp-conectar` existente
 
 Primer paso después del Webhook:
 - `GET {SUPABASE_URL}/rest/v1/oauth_states?nonce=eq.{{ $json.query.state }}&select=user_id`
@@ -55,9 +56,12 @@ Primer paso después del Webhook:
 - Usar ese `user_id` donde antes se usaba el `state` directo.
 - Al final, borrar el nonce: `DELETE .../oauth_states?nonce=eq....`
 
+Hasta que esto esté, la conexión de Mercado Pago **no funciona**: la app ya
+manda el nonce, y `mp-conectar` todavía lo interpreta como un user_id.
+
 No te doy el JSON completo porque nunca vi ese workflow; está solo en tu n8n.
 
-### 5. H-03 en los workflows `tasar` y `asistente`
+### 3. H-03 en los workflows `tasar` y `asistente`
 
 - Primer nodo: validar `{{ $json.body.token }}` con `GET {SUPABASE_URL}/auth/v1/user`
   (copiá el nodo "Validar token de sesion" de `n8n-mp-iniciar.json`).
@@ -68,18 +72,18 @@ No te doy el JSON completo porque nunca vi ese workflow; está solo en tu n8n.
 - En los dos (y en los demás webhooks): Settings → **Allowed Origins (CORS)**
   → `https://www.trattoapp.com.ar`.
 
-### 6. Credenciales (M-05)
+### 4. Credenciales (M-05)
 
 Pasar `service_role` y las API keys de los nodos "Configuracion" de los
 workflows de video a **Credentials** de n8n, y después regenerar la
 `service_role` en Supabase (Settings → API).
 
-### 7. En el panel de Supabase
+### 5. En el panel de Supabase
 
 Authentication → Policies → activar **Leaked password protection** (bloquea
 contraseñas filtradas conocidas).
 
-### 8. Claves compartidas por chat
+### 6. Claves compartidas por chat
 
 Revocar y regenerar la de ElevenLabs y cualquier otra que hayas pegado en el
 chat o en capturas.
