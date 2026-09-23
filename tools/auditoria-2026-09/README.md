@@ -1,135 +1,85 @@
-# Correcciones de seguridad — lo que falta aplicar manualmente
+# Correcciones de seguridad — estado y lo que falta
 
-Esta carpeta es la continuación de `SECURITY-AUDIT.md` (que no está en el
-repo porque es público). Acá está todo lo que **no pude ejecutar yo**: no
-hay conector de Supabase autenticado en esta sesión, y no hay ningún
-conector de n8n — los workflows de n8n siempre se editaron a mano, importando
-JSON como estos.
+Continuación de `SECURITY-AUDIT.md` (que no está en el repo porque es público).
 
-Lo que **sí** ya quedó corregido y commiteado en el código (sin que tengas
-que hacer nada): `vercel.json` (cabeceras de seguridad), fijar `supabase-js`
-con hash de integridad, reducir los datos que le llegan al proveedor en el
-chat, el service worker validando el origen del push, y que `index.html` ya
-manda el token de sesión en `tasar` y `asistente` en vez de nada o de un
-`userId` suelto. Todo eso está probado con Playwright contra la app real.
+## Ya aplicado en Supabase (23/09/2026, en producción)
 
-Lo de abajo, en cambio, **necesita que entres a Supabase y a n8n**. Va en
-orden de severidad. Cada paso dice cómo confirmar que quedó bien.
+Cada cambio se probó primero dentro de una transacción con rollback, actuando
+como el cliente y el proveedor reales del match 29, antes de aplicarlo.
 
----
+| Migración | Qué corrige |
+|---|---|
+| `proteger_columnas_mensajes_y_perfil` (= `02-...sql`) | **P-01 (CRITICAL)**: nadie puede cambiar `monto`, `pago_estado` ni nada de un mensaje ya enviado; solo el cliente responde un presupuesto, solo desde `pendiente`; solo el proveedor marca "terminado"; un presupuesto insertado siempre entra `pendiente` y sin pago. **P-02 (HIGH)**: `trabajos_hechos` ya no se puede escribir a mano, y como el proveedor ya no puede aceptarse a sí mismo, tampoco inflarlo con el trigger. |
+| `cerrar_listado_bucket_publicaciones` (= `03-...sql`) | **H-02**: el bucket de fotos ya no se puede listar (antes: 7 fotos de 6 usuarios visibles sin sesión). Las URLs públicas siguen andando. Además, solo acepta imágenes de hasta 5 MB. |
+| `oauth_states_mercadopago` (= `04-...sql`) | Tabla de nonces para **H-01**. |
+| `pedidos_abiertos_solo_lectura` | **Hallazgo nuevo**: a través de esa vista un proveedor podía modificar y **borrar pedidos de otros clientes** (la vista saltea RLS). Ahora es solo lectura. |
+| `revocar_ejecucion_publica_funciones_internas` | `marcar_publicacion` se podía ejecutar sin sesión; funciones internas sin `search_path` fijo. |
 
-## 1. H-02 — el bucket de fotos se puede listar sin sesión (el más rápido)
-
-Abrí el SQL Editor de Supabase y corré `03-fix-storage.sql`. Te muestra el
-nombre exacto de la política que hay que borrar y trae la línea de `drop
-policy` comentada — descomentala con el nombre que te aparezca y correla.
-
-**Verificar:** el propio archivo tiene los dos `curl` al final. El primero
-tiene que devolver `[]`, el segundo tiene que seguir devolviendo `200`.
-
-## 2. H-01 — conectar Mercado Pago con la cuenta de otro proveedor
-
-**Ya hecho en el código:** `index.html` ya no manda el `user_id` como
-`state`; ahora pide una URL a un webhook nuevo (`mp-iniciar`) mandando el
-token de sesión, y abre esa URL en una pestaña.
-
-**Te falta:**
-
-1. Corré `04-oauth-mercadopago.sql` en Supabase (crea la tabla `oauth_states`).
-2. Importá `n8n-mp-iniciar.json` en n8n como workflow nuevo. Completá en el
-   nodo "Configuracion": tu `service_role`, y el **mismo** `MP_CLIENT_ID` y
-   redirect URI que ya tiene el workflow `mp-conectar` de hoy (los vas a
-   encontrar ahí adentro; tienen que ser idénticos o Mercado Pago va a emitir
-   el código para una app y n8n va a intentar canjearlo con la otra).
-3. Activá el workflow `mp-iniciar`.
-4. En el workflow **`mp-conectar` que ya existe** (el que recibe el `code` y
-   el `state` de vuelta), agregá, como primer paso después del Webhook y
-   antes de usar el `state`:
-   - Un nodo HTTP que busque el nonce:
-     `GET {SUPABASE_URL}/rest/v1/oauth_states?nonce=eq.{{ $json.query.state }}&select=user_id`
-     con `apikey` y `Authorization: Bearer` la `service_role`.
-   - Un IF que chequee que devolvió exactamente una fila. Si no, respondé un
-     error ("el link para conectar la cuenta venció o ya se usó, volvé a
-     intentarlo desde la app") y no sigas.
-   - Reemplazá, en todo el resto del workflow, cualquier lugar donde antes
-     usabas `$json.query.state` como el `user_id` del proveedor, por el
-     `user_id` que te devolvió esta consulta.
-   - Al final (haya salido bien o mal), un nodo que borre el nonce:
-     `DELETE {SUPABASE_URL}/rest/v1/oauth_states?nonce=eq.{{ ... }}`. Así no
-     se puede reusar ni siquiera si alguien lo intercepta.
-
-   No te doy el JSON completo de `mp-conectar` porque nunca lo vi — está
-   solo en tu cuenta de n8n. Modificarlo a ciegas podría romper el canje de
-   token que ya funciona. Los pasos de arriba son un agregado al principio
-   del workflow existente, no un reemplazo.
-
-**Verificar:** entrá al link de autorización con un `state` inventado
-(cualquier texto que no sea un nonce real) → tiene que rechazarlo. Con un
-nonce real recién generado → tiene que conectar la cuenta como antes.
-
-## 3. H-03 — `tasar` y `asistente` no piden sesión
-
-**Ya hecho en el código:** ambos mandan `token: sesion.access_token` (en
-`asistente`, `token` puede ser `null` si nadie inició sesión — ese webhook
-también lo puede usar un visitante sin cuenta para preguntas generales).
-
-**Te falta, en cada uno de los dos workflows:**
-
-1. Primer nodo después del Webhook: `GET {SUPABASE_URL}/auth/v1/user` con
-   `Authorization: Bearer {{ $json.body.token }}` (igual que en
-   `n8n-mp-iniciar.json`, nodo "Validar token de sesion" — podés copiarlo de
-   ahí).
-2. En `tasar`: si no hay token o la validación falla, respondé 401 y cortá
-   ahí. Si tenés un límite de usos por día pensado, este es el lugar: contra
-   el `id` que te devuelve Supabase, no contra nada que mande el navegador.
-3. En `asistente`: si el token no valida, seguí igual pero como usuario
-   anónimo (no le niegues el acceso a alguien sin cuenta) — lo que cambia es
-   que ya no confiás en ningún `userId` que venga en el cuerpo para nada que
-   necesite saber de quién es un pedido.
-4. En los dos: **Settings → Allowed Origins (CORS)** → poné
-   `https://www.trattoapp.com.ar` en vez de dejarlo abierto a cualquiera.
-   Ahora mismo cualquier página web puede hacer que el navegador de sus
-   visitantes te llame estos dos webhooks.
-5. Si `tasar` descarga o reenvía la URL de la foto (`foto` en el body):
-   validá que empiece con
-   `https://qglsonbcsncgekzbfafk.supabase.co/storage/v1/object/public/publicaciones/`
-   antes de usarla. Sin esto, cualquiera puede mandar la URL que quiera y
-   hacer que tu workflow le pegue a un sitio arbitrario (SSRF).
-
-**Verificar:** `POST` sin token → 401. `OPTIONS` con `Origin` de otro sitio →
-la respuesta ya no debe reflejar ese origen.
-
-## 4. M-05 — credenciales en texto plano en los workflows de video
-
-En n8n: **Credentials → New** → creá una credencial de tipo genérico (Header
-Auth o HTTP Header Auth) con tu `service_role`, y otra con cada API key de
-IA. En los nodos HTTP de `tools/video-ia-n8n/*.json` que hoy tienen la clave
-pegada en el nodo "Configuracion", cambiá la forma de autenticar por la
-credencial en vez del valor pegado. Después, **regenerá la `service_role`**
-en Supabase (Settings → API) — la vieja ya circuló en texto plano y no hay
-forma de saber cuánto tiempo estuvo así.
-
-## 5. Antes de eso — confirmar los hallazgos POTENCIALES
-
-Los puntos 1 a 4 son hallazgos ya confirmados. Pero el más grave de todo el
-reporte (**P-01**, que sería CRITICAL) todavía no está confirmado: si un
-cliente puede bajarle el precio a un presupuesto ya aceptado antes de
-pagarlo, con un PATCH directo. Antes de escribir cualquier trigger:
-
-1. Corré `01-verificar-potenciales.sql` en Supabase y pegame o revisá el
-   resultado de cada bloque.
-2. Si confirma que no hay protección hoy, corré
-   `02-triggers-proteger-columnas.sql`. Si ya hay algo (un trigger existente,
-   permisos por columna), **no lo corras** — avisame primero para no duplicar
-   lógica en dos lugares que después hay que mantener sincronizados.
-
-**Verificar:** las tres pruebas que están comentadas al final de
-`02-triggers-proteger-columnas.sql`.
+Si algún pago o flujo de n8n empieza a fallar con *"No se puede modificar un
+mensaje ya enviado"*, es que ese workflow escribe `pago_estado` con el token
+del usuario en vez de la `service_role`. Tiene que usar la `service_role`
+(ya la necesita para leer `cuentas_mp`).
 
 ---
 
-## Orden sugerido
+## Lo que falta, en este orden
 
-H-02 (5 minutos) → P-01/P-02 (confirmar y, si corresponde, corregir) → H-01
-→ H-03 → M-05. Cada uno es independiente de los demás, así que si algún día
-solo tenés tiempo para uno, empezá por H-02.
+### 1. Importar `n8n-mp-iniciar.json` en n8n — ANTES de mergear
+
+La versión nueva de la app, al tocar "Conectar Mercado Pago", llama a un
+webhook `mp-iniciar` que todavía no existe. Si mergeás antes de importarlo,
+el botón deja de andar.
+
+1. n8n → Import from file → `n8n-mp-iniciar.json`.
+2. En el nodo "Configuracion": tu `service_role`, y el **mismo** client_id y
+   redirect URI que ya usa el workflow `mp-conectar` (tienen que ser idénticos).
+3. Activarlo.
+
+### 2. Mergear la rama a `main`
+
+Producción despliega desde `main`. Hasta que no se mergee, nada de lo que se
+corrigió en el código (cabeceras, supabase-js fijado, datos de contacto,
+service worker, token en tasar/asistente, OAuth) está en producción.
+
+### 3. Después del merge: correr `05-contacto-cliente-privado.sql`
+
+Corrección de fondo de M-02. **No antes**: la versión vieja de la app deja
+de poder crear pedidos con esto aplicado. (Si querés, pedímelo y lo corro yo.)
+
+### 4. Terminar H-01 en el workflow `mp-conectar` existente
+
+Primer paso después del Webhook:
+- `GET {SUPABASE_URL}/rest/v1/oauth_states?nonce=eq.{{ $json.query.state }}&select=user_id`
+  con la `service_role`.
+- Si no devuelve exactamente una fila → responder error y cortar.
+- Usar ese `user_id` donde antes se usaba el `state` directo.
+- Al final, borrar el nonce: `DELETE .../oauth_states?nonce=eq....`
+
+No te doy el JSON completo porque nunca vi ese workflow; está solo en tu n8n.
+
+### 5. H-03 en los workflows `tasar` y `asistente`
+
+- Primer nodo: validar `{{ $json.body.token }}` con `GET {SUPABASE_URL}/auth/v1/user`
+  (copiá el nodo "Validar token de sesion" de `n8n-mp-iniciar.json`).
+- `tasar`: sin token válido → 401. Validar que `foto` empiece con
+  `https://qglsonbcsncgekzbfafk.supabase.co/storage/v1/object/public/publicaciones/`.
+- `asistente`: sin token válido → responder igual, pero como anónimo; nunca
+  usar un `userId` que venga en el cuerpo.
+- En los dos (y en los demás webhooks): Settings → **Allowed Origins (CORS)**
+  → `https://www.trattoapp.com.ar`.
+
+### 6. Credenciales (M-05)
+
+Pasar `service_role` y las API keys de los nodos "Configuracion" de los
+workflows de video a **Credentials** de n8n, y después regenerar la
+`service_role` en Supabase (Settings → API).
+
+### 7. En el panel de Supabase
+
+Authentication → Policies → activar **Leaked password protection** (bloquea
+contraseñas filtradas conocidas).
+
+### 8. Claves compartidas por chat
+
+Revocar y regenerar la de ElevenLabs y cualquier otra que hayas pegado en el
+chat o en capturas.

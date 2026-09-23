@@ -1,78 +1,133 @@
--- Corrige P-01 y P-02 SI el resultado de 01-verificar-potenciales.sql muestra
--- que hoy no hay ningun trigger ni permiso por columna protegiendo estas dos
--- tablas (o sea: un UPDATE de authenticated que pase el WITH CHECK de RLS
--- puede tocar cualquier columna, no solo la que la app usa).
+-- Corrige P-01 y P-02 (confirmados el 23/09/2026 leyendo la base):
 --
--- Si 01 ya muestra un trigger o un permiso por columna equivalente, NO
--- corras esto: revisa primero que cubra los mismos casos para no duplicar
--- logica que despues hay que mantener en dos lugares.
+--   P-01 (CRITICAL) - la politica msg_editar deja a cualquiera de los dos
+--     participantes de un chat modificar CUALQUIER columna de cualquier
+--     mensaje del chat, y authenticated tiene UPDATE sobre todas. Un cliente
+--     podia bajar el monto de un presupuesto aceptado antes de pagar, o poner
+--     pago_estado = 'cobrado' sin pagar (y el proveedor recibia el push "Te
+--     pagaron"). El proveedor podia aceptar su propio presupuesto. Y por
+--     msg_crear, cualquiera podia INSERTAR un presupuesto ya aceptado/cobrado.
+--   P-02 (HIGH) - authenticated tiene UPDATE sobre perfil_proveedor.
+--     trabajos_hechos, y "edito mi perfil" deja editar la fila propia: un
+--     proveedor podia ponerse cualquier numero de trabajos y la medalla que
+--     quisiera. Ademas, como sumar_trabajo() suma 1 cada vez que un
+--     presupuesto pasa a 'aceptado', el proveedor podia alternar
+--     pendiente/aceptado sobre su propio presupuesto y sumar sin limite.
 --
--- Que arregla:
---   P-01 (CRITICAL si se confirma) - un cliente podria, con un PATCH directo
---     a /rest/v1/mensajes, bajar el monto de un presupuesto ya aceptado antes
---     de pagarlo (n8n cobra leyendo esa columna), o el proveedor podria
---     marcar su propio presupuesto como aceptado.
---   P-02 (HIGH si se confirma) - el proveedor hace upsert directo de
---     perfil_proveedor (index.html linea ~3929) y podria escribir
---     trabajos_hechos con cualquier numero y autoasignarse una medalla que
---     no gano.
+-- Quien queda afuera de estas reglas: todo lo que NO corre como
+-- authenticated/anon. Eso incluye a n8n (service_role) y a las funciones
+-- SECURITY DEFINER de la base (sumar_trabajo, abrir_chat_al_interesarse...),
+-- que corren como su duenio. Por eso se mira current_user y NO auth.role():
+-- dentro de sumar_trabajo, auth.role() sigue diciendo 'authenticated' y la
+-- suma legitima de trabajos quedaria bloqueada.
 --
--- Los triggers dejan pasar el INSERT normal de la app (que no toca estas
--- columnas) y solo rechazan un UPDATE que intente cambiarlas desde afuera.
--- service_role (n8n) sigue pudiendo escribir todo, porque estos triggers
--- excluyen explicitamente ese rol.
+-- Lo que la app hace hoy (index.html) y sigue funcionando igual:
+--   INSERT texto:        match_id, remitente_tipo, contenido, leido
+--   INSERT presupuesto:  el proveedor, tipo, monto, incluye, plazo, 'pendiente'
+--   UPDATE cliente:      estado_presupuesto pendiente -> aceptado | rechazado
+--   UPDATE proveedor:    trabajo_estado -> 'terminado' (presupuesto aceptado)
+-- pago_estado, pago_id, jurisdiccion_* y zona_* los escribe solo n8n. Si un
+-- workflow de n8n los escribia con el token del usuario en vez de la
+-- service_role, desde ahora va a fallar: tiene que usar la service_role
+-- (que ya necesita de todos modos para leer cuentas_mp).
 
 begin;
 
--- ============================================================
--- mensajes: protege monto/incluye/plazo/contenido, y limita quien puede
--- mover cada maquina de estados
--- ============================================================
 create or replace function public.proteger_mensajes()
 returns trigger
 language plpgsql
-security invoker
 set search_path = ''
 as $$
+declare
+  es_cliente   boolean;
+  es_proveedor boolean;
 begin
-  -- service_role (n8n) hace lo que necesite; esto es solo para authenticated.
-  if auth.role() = 'service_role' then
+  if current_user not in ('authenticated', 'anon') then
     return new;
   end if;
 
-  if new.monto     is distinct from old.monto
-     or new.incluye  is distinct from old.incluye
-     or new.plazo    is distinct from old.plazo
-     or new.contenido is distinct from old.contenido
-     or new.remitente_tipo is distinct from old.remitente_tipo
+  select
+    coalesce(bool_or(s.user_id = auth.uid()), false),
+    coalesce(bool_or(p.user_id = auth.uid()), false)
+  into es_cliente, es_proveedor
+  from public.matches m
+  left join public.solicitudes s on s.id = m.solicitud_id
+  left join public.proveedores p on p.id = m.proveedor_id
+  where m.id = new.match_id;
+
+  if tg_op = 'INSERT' then
+    -- Lo que solo puede escribir n8n arranca siempre vacio.
+    new.pago_estado := null;
+    new.pago_id := null;
+    new.trabajo_estado := null;
+    new.jurisdiccion_proveedor := null;
+    new.jurisdiccion_trabajo := null;
+    new.zona_proveedor := null;
+    new.zona_trabajo := null;
+
+    if new.tipo = 'presupuesto' then
+      if not es_proveedor then
+        raise exception 'Solo el proveedor puede mandar un presupuesto.';
+      end if;
+      new.remitente_tipo := 'proveedor';
+      new.estado_presupuesto := 'pendiente';
+    elsif new.tipo = 'texto' then
+      new.estado_presupuesto := null;
+      new.monto := null;
+      new.incluye := null;
+      new.plazo := null;
+      -- El remitente es el que sos en este match, no el que digas ser.
+      if es_cliente and not es_proveedor then
+        new.remitente_tipo := 'cliente';
+      elsif es_proveedor and not es_cliente then
+        new.remitente_tipo := 'proveedor';
+      end if;
+    else
+      raise exception 'Tipo de mensaje no permitido.';
+    end if;
+    return new;
+  end if;
+
+  -- UPDATE: lo ya enviado no se toca.
+  if new.id is distinct from old.id
+     or new.created_at is distinct from old.created_at
      or new.match_id is distinct from old.match_id
-     or new.tipo     is distinct from old.tipo
+     or new.remitente_tipo is distinct from old.remitente_tipo
+     or new.tipo is distinct from old.tipo
+     or new.contenido is distinct from old.contenido
+     or new.monto is distinct from old.monto
+     or new.incluye is distinct from old.incluye
+     or new.plazo is distinct from old.plazo
+     or new.pago_estado is distinct from old.pago_estado
+     or new.pago_id is distinct from old.pago_id
+     or new.jurisdiccion_proveedor is distinct from old.jurisdiccion_proveedor
+     or new.jurisdiccion_trabajo is distinct from old.jurisdiccion_trabajo
+     or new.zona_proveedor is distinct from old.zona_proveedor
+     or new.zona_trabajo is distinct from old.zona_trabajo
   then
     raise exception 'No se puede modificar un mensaje ya enviado.';
   end if;
 
-  -- estado_presupuesto: solo el CLIENTE del match, y solo desde 'pendiente'
   if new.estado_presupuesto is distinct from old.estado_presupuesto then
-    if old.estado_presupuesto <> 'pendiente' then
-      raise exception 'Ese presupuesto ya no esta pendiente.';
-    end if;
-    if not exists (
-      select 1 from public.matches m
-      join public.solicitudes s on s.id = m.solicitud_id
-      where m.id = new.match_id and s.user_id = auth.uid()
-    ) then
+    if not es_cliente then
       raise exception 'Solo el cliente puede aceptar o rechazar el presupuesto.';
+    end if;
+    if old.tipo <> 'presupuesto'
+       or old.estado_presupuesto is distinct from 'pendiente'
+       or new.estado_presupuesto not in ('aceptado', 'rechazado') then
+      raise exception 'Ese presupuesto ya no se puede responder.';
     end if;
   end if;
 
-  -- trabajo_estado: solo el PROVEEDOR del match
   if new.trabajo_estado is distinct from old.trabajo_estado then
-    if not exists (
-      select 1 from public.matches m
-      join public.proveedores p on p.id = m.proveedor_id
-      where m.id = new.match_id and p.user_id = auth.uid()
-    ) then
+    if not es_proveedor then
       raise exception 'Solo el proveedor puede marcar el trabajo como terminado.';
+    end if;
+    if old.tipo <> 'presupuesto'
+       or new.estado_presupuesto is distinct from 'aceptado'
+       or old.trabajo_estado is not null
+       or new.trabajo_estado is distinct from 'terminado' then
+      raise exception 'Ese trabajo no se puede marcar como terminado.';
     end if;
   end if;
 
@@ -82,29 +137,23 @@ $$;
 
 drop trigger if exists proteger_mensajes on public.mensajes;
 create trigger proteger_mensajes
-  before update on public.mensajes
-  for each row
-  execute function public.proteger_mensajes();
+  before insert or update on public.mensajes
+  for each row execute function public.proteger_mensajes();
 
--- ============================================================
--- perfil_proveedor: el upsert de la app (index.html linea ~3929) escribe
--- titular/bio/anios_exp/web. trabajos_hechos no deberia poder tocarlo un
--- authenticated bajo ninguna circunstancia.
--- ============================================================
+
 create or replace function public.proteger_perfil_proveedor()
 returns trigger
 language plpgsql
-security invoker
 set search_path = ''
 as $$
 begin
-  if auth.role() = 'service_role' then
-    return new;
+  if current_user not in ('authenticated', 'anon') then
+    return new;  -- sumar_trabajo() y n8n
   end if;
   if tg_op = 'UPDATE' then
-    new.trabajos_hechos := old.trabajos_hechos;  -- el upsert de la app nunca lo manda; esto cubre si algun dia lo manda
+    new.trabajos_hechos := old.trabajos_hechos;
   else
-    new.trabajos_hechos := 0;  -- un perfil nuevo siempre arranca sin trabajos
+    new.trabajos_hechos := 0;
   end if;
   return new;
 end;
@@ -113,21 +162,6 @@ $$;
 drop trigger if exists proteger_perfil_proveedor on public.perfil_proveedor;
 create trigger proteger_perfil_proveedor
   before insert or update on public.perfil_proveedor
-  for each row
-  execute function public.proteger_perfil_proveedor();
+  for each row execute function public.proteger_perfil_proveedor();
 
 commit;
-
--- ============================================================
--- Verificacion (correr como usuario autenticado de prueba, o simulando con
--- `set local role authenticated; set local request.jwt.claims...`):
---
---   1. Un cliente intenta: update mensajes set monto = 1 where id = <un_id>;
---      -> debe fallar con la excepcion, no con un 42501 generico de RLS.
---   2. Un proveedor intenta: update perfil_proveedor set trabajos_hechos = 999
---      where user_id = auth.uid();
---      -> debe ejecutar sin error, pero trabajos_hechos NO cambia.
---   3. El flujo normal de la app (aceptar presupuesto como cliente, marcar
---      terminado como proveedor, guardar bio en editar-perfil) sigue
---      funcionando igual que antes.
--- ============================================================

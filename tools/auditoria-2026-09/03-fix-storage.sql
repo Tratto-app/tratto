@@ -1,30 +1,23 @@
--- Corrige H-02: cualquiera, sin sesion, puede listar el bucket "publicaciones"
--- (POST /storage/v1/object/list/publicaciones con la clave anonima), lo que
--- entrega los user_id de todos los que subieron fotos y las URLs de esas
--- fotos -- incluidas las del tasador (fotos de adentro de una casa).
+-- H-02 — APLICADO el 23/09/2026 como migracion cerrar_listado_bucket_publicaciones.
+-- Queda aca como registro.
 --
--- Los buckets publicos sirven un archivo conocido por /object/public/... SIN
--- necesitar ninguna politica de SELECT para 'anon'. Esa politica solo sirve
--- para poder LISTAR el contenido, que es justo lo que no queremos. Por eso
--- borrarla no rompe nada: las fotos existentes siguen cargando igual en la
--- app (podés confirmarlo abriendo cualquier URL /object/public/... después).
+-- La politica "fotos visibles" (SELECT, rol public, bucket_id = 'publicaciones')
+-- dejaba a cualquiera, sin sesion, listar el bucket entero: 7 fotos de 6
+-- usuarios, con sus user_id en la ruta. Los buckets publicos sirven cada
+-- archivo por /object/public/... sin necesitar politica de SELECT, asi que
+-- se reemplazo por una que solo deja a cada usuario ver su propia carpeta
+-- (la usan la subida y el borrado).
 
--- 1) Ver que politica es la que permite esto (nombre puede variar)
-select policyname, cmd, roles, qual
-from pg_policies
-where schemaname = 'storage' and tablename = 'objects'
-  and qual ilike '%publicaciones%';
+drop policy if exists "fotos visibles" on storage.objects;
+create policy "veo mis fotos" on storage.objects for select to authenticated
+  using (bucket_id = 'publicaciones' and (storage.foldername(name))[1] = (auth.uid())::text);
 
--- 2) Borrarla (reemplazá <nombre_de_la_politica> por el que apareció arriba)
--- drop policy "<nombre_de_la_politica>" on storage.objects;
+-- P-12: la app solo sube JPEG achicados.
+update storage.buckets
+   set allowed_mime_types = array['image/jpeg','image/png','image/webp'],
+       file_size_limit = 5242880
+ where id = 'publicaciones';
 
--- 3) Verificar (correr esto DESPUES, ya sin la politica):
---    curl -s -X POST "https://qglsonbcsncgekzbfafk.supabase.co/storage/v1/object/list/publicaciones" \
---      -H "apikey: <la clave anon, la publica>" -H "Content-Type: application/json" \
---      -d '{"prefix":"","limit":3}'
---    Tiene que devolver [] o un error de permiso, no una lista de archivos.
---
---    Y confirmar que una foto YA EXISTENTE sigue cargando:
---    curl -s -o /dev/null -w "%{http_code}\n" \
---      "https://qglsonbcsncgekzbfafk.supabase.co/storage/v1/object/public/publicaciones/<una-ruta-real>.jpg"
---    Tiene que seguir siendo 200.
+-- Verificado despues de aplicar:
+--   POST /storage/v1/object/list/publicaciones con la clave anon -> []
+--   GET  /storage/v1/object/public/publicaciones/<foto existente> -> 200

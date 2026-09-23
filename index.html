@@ -2905,7 +2905,7 @@ $('s-enviar').addEventListener('click', async () => {
   $('s-txt').textContent='Enviando…'; $('s-aviso').className='aviso';
   try{
     const res = await fetch(SUPABASE_URL+'/rest/v1/solicitudes',{
-      method:'POST', headers:cab({'Prefer':'return=representation'}),
+      method:'POST', headers:cab({'Prefer':'return=minimal'}),
       body: JSON.stringify({
         nombre_cliente:v('s-nombre'), email_cliente:v('s-email'), telefono_cliente:v('s-tel'),
         servicio_necesitado:v('s-servicio'), zona:v('s-zona'),
@@ -3006,7 +3006,7 @@ let misPedidos = [], misPerfiles = [];
 async function cargarPedidos(){
   $('lista-pedidos').innerHTML = esqueleto(2);
   try{
-    misPedidos = await api('solicitudes?user_id=eq.'+sesion.user.id+'&order=created_at.desc');
+    misPedidos = await api('solicitudes?user_id=eq.'+sesion.user.id+'&select=id,created_at,nombre_cliente,servicio_necesitado,zona,presupuesto,urgencia,descripcion,estado,user_id,foto_url,cupo&order=created_at.desc');
     $('n-pedidos').textContent = misPedidos.length ? misPedidos.length : '';
     if(!misPedidos.length){
       $('lista-pedidos').innerHTML = cajaVacia('Ningún pedido todavía',
@@ -5447,7 +5447,7 @@ async function mirarSiHayNovedades(){
   if(document.hidden) return;
   try{
     const antes = firmaDeDatos();
-    misPedidos = await api('solicitudes?user_id=eq.'+sesion.user.id+'&order=created_at.desc');
+    misPedidos = await api('solicitudes?user_id=eq.'+sesion.user.id+'&select=id,created_at,nombre_cliente,servicio_necesitado,zona,presupuesto,urgencia,descripcion,estado,user_id,foto_url,cupo&order=created_at.desc');
     misPerfiles = await api('proveedores?user_id=eq.'+sesion.user.id+'&order=created_at.desc');
 
     /* Los pedidos abiertos van ANTES del corte, y no es un descuido: la firma
