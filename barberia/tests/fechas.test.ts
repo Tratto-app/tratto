@@ -2,7 +2,7 @@ import { test, describe } from 'node:test';
 import assert from 'node:assert/strict';
 import { DateTime } from 'luxon';
 import { interpretarFecha, fechaHumana, fechaRelativaHumana, rangoDeFechas, lunesDeLaSemana } from '../src/shared/tiempo.js';
-import { normalizarTelefono, telefonoParecePlausible, sanearNombre, sanearMensaje } from '../src/shared/texto.js';
+import { normalizarTelefono, telefonoParecePlausible, sanearNombre, sanearMensaje, formatearPrecio } from '../src/shared/texto.js';
 import { ZONA } from './helpers.js';
 
 // Miércoles 16/09/2026 a las 11:00 en Buenos Aires.
@@ -131,5 +131,27 @@ describe('saneamiento de datos que entran de afuera', () => {
   test('recorta mensajes larguísimos y saca caracteres de control', () => {
     assert.equal(sanearMensaje('hola\u0000mundo'), 'holamundo');
     assert.equal(sanearMensaje('x'.repeat(5000)).length, 2000);
+  });
+});
+
+describe('formato de precios', () => {
+  test('muestra pesos argentinos con separador de miles', () => {
+    assert.equal(formatearPrecio(9000, 'ARS'), '$9.000');
+    assert.equal(formatearPrecio(12500, 'ARS'), '$12.500');
+  });
+
+  test('un precio en 0 es "a confirmar", no "gratis"', () => {
+    assert.equal(formatearPrecio(0, 'ARS'), 'a confirmar');
+    assert.equal(formatearPrecio(0, 'USD'), 'a confirmar');
+  });
+
+  test('soporta las monedas de otros países', () => {
+    assert.equal(formatearPrecio(15, 'USD'), 'US$15');
+    assert.equal(formatearPrecio(12.5, 'USD'), 'US$12,50');
+    assert.equal(formatearPrecio(18, 'PAB'), 'B/. 18');
+  });
+
+  test('una moneda desconocida no rompe: muestra el código', () => {
+    assert.match(formatearPrecio(100, 'XYZ'), /XYZ/);
   });
 });

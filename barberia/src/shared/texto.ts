@@ -84,10 +84,34 @@ export function recortar(s: string, max: number): string {
   return `${(ultimoEspacio > max * 0.6 ? corte.slice(0, ultimoEspacio) : corte).trimEnd()}…`;
 }
 
+/** Símbolo y formato por moneda. Se agregan más a medida que hagan falta. */
+const MONEDAS: Record<string, { simbolo: string; decimales: boolean }> = {
+  ARS: { simbolo: '$', decimales: false },
+  USD: { simbolo: 'US$', decimales: true },
+  PAB: { simbolo: 'B/. ', decimales: true },
+  UYU: { simbolo: '$U ', decimales: false },
+  CLP: { simbolo: '$', decimales: false },
+  MXN: { simbolo: '$', decimales: false },
+  COP: { simbolo: '$', decimales: false },
+  PEN: { simbolo: 'S/ ', decimales: true },
+  EUR: { simbolo: '€', decimales: true },
+};
+
+/**
+ * Precio listo para mostrarle al cliente.
+ *
+ * Un precio en 0 no es "gratis": es "todavía no lo cargaron". El bot lo dice
+ * asi en vez de inventar un número.
+ */
 export function formatearPrecio(precio: number, moneda = 'ARS'): string {
   if (precio <= 0) return 'a confirmar';
-  const simbolo = moneda === 'ARS' ? '$' : `${moneda} `;
-  return `${simbolo}${precio.toLocaleString('es-AR')}`;
+  const formato = MONEDAS[moneda] ?? { simbolo: `${moneda} `, decimales: true };
+  // Solo se muestran centavos si el precio los tiene: "US$ 12,50" pero "US$ 15".
+  const conCentavos = formato.decimales && precio % 1 !== 0;
+  return `${formato.simbolo}${precio.toLocaleString('es-AR', {
+    minimumFractionDigits: conCentavos ? 2 : 0,
+    maximumFractionDigits: conCentavos ? 2 : 0,
+  })}`;
 }
 
 export function formatearDuracion(min: number): string {

@@ -157,9 +157,10 @@ barberia/
 │   ├── mantenimiento/         Liberar reservas abandonadas y cierre de semana
 │   ├── reportes/              Balance semanal (turnos, clientes, facturación)
 │   ├── backend/               Servidor HTTP, rutas y middlewares
+│   ├── cli/                   `npm run revisar`: qué falta para producción
 │   └── main.ts                Arranque
 ├── public/                    Panel del barbero y simulador de chat
-└── tests/                     228 tests
+└── tests/                     232 tests
 ```
 
 **El flujo de un mensaje:**
@@ -182,8 +183,14 @@ cd barberia
 npm install
 cp .env.example .env     # completar con tus datos
 npm run db:migrate       # crea el esquema
+npm run revisar          # dice qué falta para salir a producción
 npm run dev              # http://localhost:3000
 ```
+
+**`npm run revisar` es el atajo durante la puesta en marcha.** Mira la
+configuración real, prueba la conexión a la base y lista con nombre y apellido
+lo que falta, separando lo que bloquea (❌) de lo que solo conviene mirar (⚠️).
+Corrélo después de cargar cada credencial.
 
 Sin ninguna credencial configurada el sistema ya arranca: el panel funciona y el
 simulador atiende en modo menú. Las credenciales se van agregando de a una.
@@ -638,7 +645,7 @@ El worker de mantenimiento **no es opcional** y anda siempre:
 ## Tests
 
 ```bash
-npm test          # 228 tests (SQLite, sin dependencias externas)
+npm test          # 232 tests (SQLite, sin dependencias externas)
 npm run typecheck
 
 # Opcional: los mismos candados contra la doble reserva, contra un PostgreSQL real
