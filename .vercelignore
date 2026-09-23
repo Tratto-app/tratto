@@ -1,4 +1,6 @@
-tools/video-pipeline
+# Herramientas internas (pipeline de video, workflows de n8n, scripts de la
+# auditoria): viven en el repo, no tienen por que servirse en el dominio
+tools
 
 # Config interna del asistente: no tiene por que servirse en el dominio
 .claude
