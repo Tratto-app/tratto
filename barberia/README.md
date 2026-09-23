@@ -34,15 +34,16 @@ CLIENTE ──WhatsApp──▶ Webhook ──▶ Orquestador ──▶ Agente I
 10. [Configurar la IA (OpenAI o Claude)](#configurar-la-ia-openai-o-claude)
 11. [Probar sin WhatsApp: el simulador](#probar-sin-whatsapp-el-simulador)
 12. [Panel del barbero](#panel-del-barbero)
-13. [Reseñas y descuentos](#reseñas-y-descuentos)
-14. [Recordatorios](#recordatorios)
-15. [Cierre de semana](#cierre-de-semana)
-16. [Tests](#tests)
-17. [Despliegue](#despliegue)
-18. [Costos](#costos)
-19. [Seguridad](#seguridad)
-20. [Problemas frecuentes](#problemas-frecuentes)
-21. [Qué falta / próximos pasos](#qué-falta--próximos-pasos)
+13. [Sitio público y política de privacidad](#sitio-público-y-política-de-privacidad)
+14. [Reseñas y descuentos](#reseñas-y-descuentos)
+15. [Recordatorios](#recordatorios)
+16. [Cierre de semana](#cierre-de-semana)
+17. [Tests](#tests)
+18. [Despliegue](#despliegue)
+19. [Costos](#costos)
+20. [Seguridad](#seguridad)
+21. [Problemas frecuentes](#problemas-frecuentes)
+22. [Qué falta / próximos pasos](#qué-falta--próximos-pasos)
 
 ---
 
@@ -373,6 +374,11 @@ número bloqueado.
 
 8. **Número propio:** *Agregar número de teléfono*, verificarlo y asociarlo a una
    cuenta de WhatsApp Business. El número no puede tener WhatsApp común activo.
+9. **Verificar la empresa y publicar la app.** Mientras la app está en modo
+   *desarrollo* **no llega ningún webhook de producción**, ni siquiera con el
+   número de prueba. Meta pide la URL del negocio para la verificación y la de la
+   política de privacidad para publicarla: las sirve este mismo servidor en `/` y
+   `/privacidad` (ver [Sitio público](#sitio-público-y-política-de-privacidad)).
 
 ### Probar la conexión
 
@@ -455,6 +461,36 @@ En producción el simulador queda detrás del login del panel.
   vacaciones y reglas. Se guarda en `negocio.json` validado, y el bot lo usa
   enseguida, sin reiniciar. También: estado del sistema, resincronizar Sheets y
   devolverle al bot las charlas derivadas.
+
+---
+
+## Sitio público y política de privacidad
+
+El servidor publica dos páginas abiertas, sin login:
+
+| URL | Qué es |
+|---|---|
+| `/` | La página de la barbería: nombre, dirección, servicios con precio y duración, horarios, contacto y un botón para sacar turno por WhatsApp. |
+| `/privacidad` | La política de privacidad: qué datos se guardan, para qué, con quién se comparten y cuánto duran. |
+
+No son decoración: **sin ellas la app de Meta no se puede publicar, y sin la app
+publicada el bot no recibe ni un mensaje.**
+
+- Para **verificar la empresa**, Meta pide una URL del negocio. Una barbería casi
+  nunca tiene sitio web; esta página alcanza.
+- Para **publicar la app** (pasarla a modo *Live*), Meta pide una **URL de
+  política de privacidad** en *Configuración → Básica*.
+
+Las dos se arman desde `config/negocio.json`, así que un precio que cambiás en el
+panel aparece cambiado en el sitio al instante, sin reiniciar ni tocar HTML. Lo
+que todavía tiene un `PLACEHOLDER` simplemente no se muestra: la página sale más
+corta, nunca con texto de relleno a la vista.
+
+Las URLs exactas que le tenés que dar a Meta las imprime `npm run revisar`, a
+partir de `APP_BASE_URL`.
+
+> El panel del barbero sigue en `/panel`, detrás de la contraseña. El sitio
+> público no muestra ni turnos, ni clientes, ni nada de la agenda.
 
 ---
 

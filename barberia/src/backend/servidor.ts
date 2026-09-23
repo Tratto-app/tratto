@@ -10,6 +10,7 @@ import { rutasWebhook } from './routes/webhook.js';
 import { rutasPanel } from './routes/panel.js';
 import { rutasSimulador } from './routes/simulador.js';
 import { manejadorDeErrores, noEncontrado } from './middleware/errores.js';
+import { paginaInicio, paginaPrivacidad } from './sitio.js';
 
 const AQUI = path.dirname(fileURLToPath(import.meta.url));
 const PUBLICO = path.resolve(AQUI, '../../public');
@@ -77,7 +78,17 @@ export function crearServidor(ctx: Contexto): Express {
 
   const limiteEstatico = rateLimit({ windowMs: 60_000, limit: 120, standardHeaders: true, legacyHeaders: false });
 
-  app.get('/', limiteEstatico, (_req, res) => res.redirect('/panel'));
+  // Sitio público. Meta pide un sitio del negocio para verificarlo y una URL
+  // de política de privacidad para publicar la app, y sin la app publicada el
+  // bot no recibe mensajes. Se arma desde la config, no hay HTML duplicado.
+  const html = (res: Response, cuerpo: string) => {
+    res.type('html');
+    res.set('Cache-Control', esProduccion ? 'public, max-age=300' : 'no-store');
+    res.send(cuerpo);
+  };
+
+  app.get('/', limiteEstatico, (_req, res) => html(res, paginaInicio(ctx.cfg)));
+  app.get('/privacidad', limiteEstatico, (_req, res) => html(res, paginaPrivacidad(ctx.cfg)));
   app.get('/panel', limiteEstatico, (_req, res) => res.sendFile(path.join(PUBLICO, 'panel.html')));
   app.get('/test-chat', limiteEstatico, (_req, res) => {
     if (!env.SIMULADOR_HABILITADO) {

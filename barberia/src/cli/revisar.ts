@@ -209,6 +209,34 @@ sistemaPuntos.push(
 grupo('Base de datos y panel', sistemaPuntos);
 
 // ---------------------------------------------------------------------------
+// 6. Sitio público (lo que Meta pide para verificar el negocio y publicar la app)
+// ---------------------------------------------------------------------------
+const sitioPuntos: Punto[] = [];
+if (env.APP_BASE_URL) {
+  const base = env.APP_BASE_URL.replace(/\/$/, '');
+  sitioPuntos.push(
+    { estado: 'ok', que: `Sitio del negocio: ${base}/`, detalle: 'Es la URL que pide Meta al verificar la empresa' },
+    { estado: 'ok', que: `Política de privacidad: ${base}/privacidad`, detalle: 'Va en Configuración → Básica de la app de Meta' },
+  );
+} else {
+  sitioPuntos.push({
+    estado: 'falta',
+    que: 'APP_BASE_URL sin cargar',
+    detalle: 'Meta pide la URL del sitio y la de la política de privacidad: poné acá la de tu hosting',
+  });
+}
+sitioPuntos.push(
+  sinCargar.length === 0
+    ? { estado: 'ok', que: 'El sitio muestra dirección, teléfono e Instagram' }
+    : {
+        estado: 'aviso',
+        que: 'El sitio va a salir incompleto',
+        detalle: 'Meta mira el sitio para verificar el negocio: cargá los datos que faltan arriba',
+      },
+);
+grupo('Sitio público', sitioPuntos);
+
+// ---------------------------------------------------------------------------
 // Salida
 // ---------------------------------------------------------------------------
 const linea = (t: string) => console.log(t);
