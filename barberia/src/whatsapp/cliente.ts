@@ -141,12 +141,18 @@ export const whatsapp = {
   /**
    * Plantilla aprobada por Meta. Hace falta para escribirle a alguien fuera de
    * la ventana de 24 horas (por ejemplo, un recordatorio del dia anterior).
+   *
+   * Los parametros van por NOMBRE, no por posicion: desde 2025 Meta dejo de
+   * aceptar variables numeradas ({{1}}, {{2}}...) en plantillas nuevas y exige
+   * nombres en minuscula ({{nombre_cliente}}, {{fecha_turno}}...). El nombre
+   * que se manda acá tiene que ser identico al que se escribio en el cuerpo de
+   * la plantilla al crearla en Meta, o el envio lo rechaza.
    */
   async enviarPlantilla(
     para: string,
     nombre: string,
     idioma: string,
-    parametros: string[] = [],
+    parametros: Array<{ nombre: string; valor: string }> = [],
   ): Promise<string | null> {
     return enviar({
       recipient_type: 'individual',
@@ -156,7 +162,14 @@ export const whatsapp = {
         name: nombre,
         language: { code: idioma },
         ...(parametros.length
-          ? { components: [{ type: 'body', parameters: parametros.map((t) => ({ type: 'text', text: t })) }] }
+          ? {
+              components: [
+                {
+                  type: 'body',
+                  parameters: parametros.map((p) => ({ type: 'text', parameter_name: p.nombre, text: p.valor })),
+                },
+              ],
+            }
           : {}),
       },
     });

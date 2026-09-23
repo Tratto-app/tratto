@@ -526,8 +526,9 @@ próximo turno: el bot le muestra el precio ya rebajado al confirmar.
 > **Hace falta una plantilla de WhatsApp.** El mensaje sale una hora después del
 > corte, y para entonces suele haber pasado más de un día desde que el cliente
 > escribió, así que Meta no deja mandar texto libre. Creá una plantilla de
-> utilidad en *WhatsApp → Plantillas de mensajes* con tres parámetros
-> (`{{1}}` nombre, `{{2}}` link, `{{3}}` descuento) y cargá su nombre en
+> utilidad en *WhatsApp → Plantillas de mensajes* con tres variables — desde
+> 2025 Meta exige que sean nombradas, ya no acepta `{{1}}`, `{{2}}`...:
+> `{{nombre_cliente}}`, `{{link_resena}}`, `{{descuento}}` — y cargá su nombre en
 > `WHATSAPP_PLANTILLA_RESENA`. El sistema intenta primero el mensaje normal y
 > cae a la plantilla solo si Meta lo rechaza.
 

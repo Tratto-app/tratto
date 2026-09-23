@@ -102,10 +102,10 @@ export async function enviarRecordatoriosPendientes(ctx: Contexto): Promise<{ en
       }
       if (PLANTILLA) {
         await whatsapp.enviarPlantilla(turno.telefono, PLANTILLA, IDIOMA_PLANTILLA, [
-          turno.nombreCliente || 'Hola',
-          fechaHumana(dia),
-          turno.horaInicio,
-          turno.servicioNombre,
+          { nombre: 'nombre_cliente', valor: turno.nombreCliente || 'Hola' },
+          { nombre: 'fecha_turno', valor: fechaHumana(dia) },
+          { nombre: 'hora_turno', valor: turno.horaInicio },
+          { nombre: 'servicio', valor: turno.servicioNombre },
         ]);
       } else {
         await whatsapp.enviarTexto(
@@ -266,9 +266,9 @@ async function enviarPedidoDeResena(ctx: Contexto, turno: Turno): Promise<void> 
     if (!FUERA_DE_VENTANA.test(mensaje) || !PLANTILLA_RESENA) throw e;
     log.info({ turno: turno.id }, 'ventana de 24 h cerrada: el pedido de reseña sale por plantilla');
     await whatsapp.enviarPlantilla(turno.telefono, PLANTILLA_RESENA, IDIOMA_PLANTILLA, [
-      turno.nombreCliente || 'Hola',
-      ctx.cfg.resenas.link_google_maps,
-      String(ctx.cfg.resenas.descuento_porcentaje),
+      { nombre: 'nombre_cliente', valor: turno.nombreCliente || 'Hola' },
+      { nombre: 'link_resena', valor: ctx.cfg.resenas.link_google_maps },
+      { nombre: 'descuento', valor: String(ctx.cfg.resenas.descuento_porcentaje) },
     ]);
   }
 
