@@ -1,1 +1,9 @@
 tools/video-pipeline
+
+# Config interna del asistente: no tiene por que servirse en el dominio
+.claude
+
+# Tiene repo y despliegue propios (Tratto-app/lapeluquerie.com); esta copia
+# quedo adentro de este repo por error y no debe convivir en el mismo origen
+# que la sesion de Tratto (comparten localStorage al estar bajo el mismo dominio)
+lapeluquerie

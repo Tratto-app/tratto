@@ -21,7 +21,15 @@ self.addEventListener('push', e => {
 
 self.addEventListener('notificationclick', e => {
   e.notification.close();
-  const url = (e.notification.data && e.notification.data.url) || '/';
+  const pedida = (e.notification.data && e.notification.data.url) || '/';
+  /* La URL viaja dentro del payload del push. Si algún día se filtra la clave
+     VAPID privada, no queremos que un push falso pueda mandar a un usuario a
+     un sitio ajeno: solo navegamos dentro del propio origen. */
+  let url = '/';
+  try{
+    const resuelta = new URL(pedida, self.location.origin);
+    if(resuelta.origin === self.location.origin) url = resuelta.pathname + resuelta.search + resuelta.hash;
+  }catch(err){}
   e.waitUntil((async () => {
     const clientes = await self.clients.matchAll({ type: 'window', includeUncontrolled: true });
     for(const c of clientes){
