@@ -5,6 +5,7 @@ import path from 'node:path';
 const pares = [
   ['src/database/schema.sql', 'dist/database/schema.sql'],
   ['src/database/schema.postgres.sql', 'dist/database/schema.postgres.sql'],
+  ['src/database/migraciones.sql', 'dist/database/migraciones.sql'],
 ];
 for (const [origen, destino] of pares) {
   fs.mkdirSync(path.dirname(destino), { recursive: true });

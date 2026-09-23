@@ -21,20 +21,27 @@ import type { Contexto } from '../booking/servicio.js';
 import { cerrarTurnosPasados } from '../booking/servicio.js';
 import { recordatoriosRepo } from '../database/repositories/recordatorios.js';
 import { turnosRepo } from '../database/repositories/turnos.js';
-import { mensajesRepo } from '../database/repositories/conversaciones.js';
+import { conversacionesRepo, mensajesRepo } from '../database/repositories/conversaciones.js';
 import { eventosRepo } from '../database/repositories/eventos.js';
-import { ESTADOS_VIGENTES } from '../booking/tipos.js';
+import { ESTADOS_VIGENTES, type Turno } from '../booking/tipos.js';
+import { beneficiosRepo } from '../database/repositories/beneficios.js';
 import { env } from '../config/env.js';
 import { log, enmascararTelefono } from '../shared/log.js';
 import { whatsapp } from '../whatsapp/cliente.js';
 import { fechaDe, fechaHumana, hhmmAMinutos, lunesDeLaSemana } from '../shared/tiempo.js';
 import { calcularResumenSemanal, resumenComoTexto, type ResumenSemanal } from '../reportes/semanal.js';
 import { resumenesRepo } from '../database/repositories/resumenes.js';
-import { guardarResumenEnPlanilla } from '../google/planilla.js';
+import { guardarResumenEnPlanilla, guardarResumenMensualEnPlanilla } from '../google/planilla.js';
+import { calcularResumenMensual, mesPendienteDeCerrar, resumenMensualComoTexto, type ResumenMensual } from '../reportes/mensual.js';
+import { resumenesMensualesRepo } from '../database/repositories/resumenes.js';
 import { avisarAlBarbero } from '../whatsapp/avisos.js';
 
 const PLANTILLA = process.env.WHATSAPP_PLANTILLA_RECORDATORIO ?? '';
+const PLANTILLA_RESENA = process.env.WHATSAPP_PLANTILLA_RESENA ?? '';
 const IDIOMA_PLANTILLA = process.env.WHATSAPP_PLANTILLA_IDIOMA ?? 'es_AR';
+
+/** Meta rechaza el texto libre fuera de la ventana de 24 h con estos códigos. */
+const FUERA_DE_VENTANA = /131047|131026|re-?engagement/i;
 
 /** ¿Estamos dentro del horario permitido para mandar avisos? */
 function horaEducada(ctx: Contexto, ahora: DateTime): boolean {
@@ -44,17 +51,37 @@ function horaEducada(ctx: Contexto, ahora: DateTime): boolean {
   return minutos >= desde && minutos <= hasta;
 }
 
+/**
+ * Texto del pedido de resena, con el link a Google Maps y el descuento.
+ *
+ * Google no ofrece forma de verificar por API si alguien dejo una resena, asi
+ * que el descuento se carga cuando el cliente avisa. Desde el panel el barbero
+ * puede sacarlo si ve que no es cierto.
+ */
+export function mensajeDeResena(ctx: Contexto, nombre: string): string {
+  const cfg = ctx.cfg.resenas;
+  return cfg.mensaje
+    .replace(/\{nombre\}/g, nombre || 'Hola')
+    .replace(/\{link\}/g, cfg.link_google_maps)
+    .replace(/\{descuento\}/g, String(cfg.descuento_porcentaje));
+}
+
 export async function enviarRecordatoriosPendientes(ctx: Contexto): Promise<{ enviados: number; omitidos: number }> {
   const salida = { enviados: 0, omitidos: 0 };
-  if (!ctx.cfg.recordatorios.activos) return salida;
-
   const ahora = ctx.ahora();
   if (!horaEducada(ctx, ahora)) return salida;
 
   const pendientes = await recordatoriosRepo.vencidos(ctx.db, ahora.toMillis());
   for (const r of pendientes) {
+    const esResena = r.avisoId === 'resena';
+    if (esResena ? !ctx.cfg.resenas.activo : !ctx.cfg.recordatorios.activos) continue;
+
     const turno = await turnosRepo.porId(ctx.db, r.turnoId);
-    if (!turno || !ESTADOS_VIGENTES.includes(turno.estado) || turno.inicioMs < ahora.toMillis()) {
+    // El aviso de 24 h se manda antes del turno; el de resena, despues.
+    const sirve = esResena
+      ? turno && ['reservado', 'confirmado', 'completado'].includes(turno.estado) && turno.finMs <= ahora.toMillis()
+      : turno && ESTADOS_VIGENTES.includes(turno.estado) && turno.inicioMs >= ahora.toMillis();
+    if (!turno || !sirve) {
       await recordatoriosRepo.tomar(ctx.db, r.turnoId, r.avisoId, ahora.toUTC().toISO()!);
       salida.omitidos++;
       continue;
@@ -67,6 +94,12 @@ export async function enviarRecordatoriosPendientes(ctx: Contexto): Promise<{ en
 
     const dia = DateTime.fromISO(`${turno.fecha}T${turno.horaInicio}`, { zone: ctx.cfg.negocio.timezone });
     try {
+      if (esResena) {
+        await enviarPedidoDeResena(ctx, turno);
+        salida.enviados++;
+        log.info({ turno: turno.id, cliente: enmascararTelefono(turno.telefono) }, 'pedido de reseña enviado');
+        continue;
+      }
       if (PLANTILLA) {
         await whatsapp.enviarPlantilla(turno.telefono, PLANTILLA, IDIOMA_PLANTILLA, [
           turno.nombreCliente || 'Hola',
@@ -124,8 +157,33 @@ export interface ResultadoCierre {
   corrio: boolean;
   motivo?: string;
   resumen?: ResumenSemanal;
+  /** Se arma solo en el primer cierre de cada mes, con el mes que quedo atras. */
+  resumenMensual?: ResumenMensual;
   turnosBorrados?: number;
   avisado?: boolean;
+}
+
+/**
+ * Cierra el mes anterior si quedo pendiente.
+ *
+ * Se dispara en el primer cierre semanal de cada mes: para entonces ya estan
+ * guardados todos los balances de las semanas que terminaron en el mes que
+ * paso, que es de donde sale el numero mensual.
+ */
+async function cerrarMesSiCorresponde(ctx: Contexto): Promise<ResumenMensual | undefined> {
+  const ahora = ctx.ahora();
+  const mes = await mesPendienteDeCerrar(ctx, ahora);
+  if (!mes) return undefined;
+
+  const resumen = await calcularResumenMensual(ctx, mes);
+  await resumenesMensualesRepo.guardar(ctx.db, resumen, ahora.toUTC().toISO()!);
+  try {
+    await guardarResumenMensualEnPlanilla(ctx, resumen);
+  } catch (e) {
+    log.warn({ err: e instanceof Error ? e.message : e }, 'no se pudo escribir el balance mensual en la planilla');
+  }
+  log.info({ mes, atendidos: resumen.atendidos, personas: resumen.personas }, 'balance mensual cerrado');
+  return resumen;
 }
 
 /**
@@ -171,10 +229,15 @@ export async function cierreSemanal(ctx: Contexto, opciones: { forzar?: boolean 
     log.warn({ err: e instanceof Error ? e.message : e }, 'no se pudo escribir el resumen en la planilla');
   }
 
-  // 3: avisarle al barbero.
+  // 3: cerrar el mes si el que paso quedo completo, y avisarle al barbero.
+  const resumenMensual = await cerrarMesSiCorresponde(ctx);
+
   let avisado = false;
   if (cfg.avisar_al_barbero) {
-    avisado = await avisarAlBarbero(resumenComoTexto(resumen, ctx.cfg.negocio.moneda));
+    const texto = resumenMensual
+      ? `${resumenComoTexto(resumen, ctx.cfg.negocio.moneda)}\n\n———\n\n${resumenMensualComoTexto(resumenMensual, ctx.cfg.negocio.moneda)}`
+      : resumenComoTexto(resumen, ctx.cfg.negocio.moneda);
+    avisado = await avisarAlBarbero(texto);
   }
 
   // 4: ahora si, la limpieza.
@@ -184,7 +247,35 @@ export async function cierreSemanal(ctx: Contexto, opciones: { forzar?: boolean 
     { semana: resumen.desde, atendidos: resumen.atendidos, clientes: resumen.clientes, turnosBorrados, avisado },
     'cierre semanal hecho',
   );
-  return { corrio: true, resumen, turnosBorrados, avisado };
+  return { corrio: true, resumen, ...(resumenMensual ? { resumenMensual } : {}), turnosBorrados, avisado };
+}
+
+/**
+ * Manda el pedido de resena y deja anotado en la conversacion que estamos
+ * esperando la respuesta, para reconocer el "ya la dejé" que venga despues.
+ */
+async function enviarPedidoDeResena(ctx: Contexto, turno: Turno): Promise<void> {
+  const texto = mensajeDeResena(ctx, turno.nombreCliente);
+  try {
+    await whatsapp.enviarBotones(turno.telefono, texto, [{ id: 'resena_hecha', titulo: '✅ Ya la dejé' }]);
+  } catch (e) {
+    // El pedido sale una hora despues del corte, y para entonces la ventana de
+    // 24 h de WhatsApp suele estar cerrada (el cliente reservo dias antes). En
+    // ese caso hace falta una plantilla aprobada por Meta.
+    const mensaje = e instanceof Error ? e.message : String(e);
+    if (!FUERA_DE_VENTANA.test(mensaje) || !PLANTILLA_RESENA) throw e;
+    log.info({ turno: turno.id }, 'ventana de 24 h cerrada: el pedido de reseña sale por plantilla');
+    await whatsapp.enviarPlantilla(turno.telefono, PLANTILLA_RESENA, IDIOMA_PLANTILLA, [
+      turno.nombreCliente || 'Hola',
+      ctx.cfg.resenas.link_google_maps,
+      String(ctx.cfg.resenas.descuento_porcentaje),
+    ]);
+  }
+
+  const ahora = ctx.ahora();
+  const conv = await conversacionesRepo.obtener(ctx.db, turno.telefono);
+  (conv.estado as Record<string, unknown>).esperandoResena = { turnoId: turno.id, ts: ahora.toMillis() };
+  await conversacionesRepo.guardar(ctx.db, conv, ahora.toUTC().toISO()!);
 }
 
 /** Tareas de limpieza: holds vencidos, turnos pasados, tablas de control. */
@@ -201,6 +292,9 @@ export async function mantenimiento(ctx: Contexto): Promise<void> {
     }
     const cerrados = await cerrarTurnosPasados(ctx);
     if (cerrados > 0) log.info({ cerrados }, 'turnos pasados marcados como completados');
+
+    const vencidos = await beneficiosRepo.vencerViejos(ctx.db, ahora.toMillis(), ahoraIso);
+    if (vencidos > 0) log.info({ vencidos }, 'descuentos vencidos');
 
     await cierreSemanal(ctx);
 
@@ -226,7 +320,7 @@ export function arrancarWorkerDeMantenimiento(ctx: Contexto): { detener: () => v
     if (corriendo) return;
     corriendo = true;
     try {
-      if (env.RECORDATORIOS_HABILITADOS && ctx.cfg.recordatorios.activos) {
+      if (env.RECORDATORIOS_HABILITADOS && (ctx.cfg.recordatorios.activos || ctx.cfg.resenas.activo)) {
         await enviarRecordatoriosPendientes(ctx);
       }
       const ahoraMs = Date.now();

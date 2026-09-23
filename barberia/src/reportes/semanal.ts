@@ -41,6 +41,12 @@ export interface ResumenSemanal {
   minutosDisponibles: number;
   porServicio: ResumenPorServicio[];
   diaMasFuerte: { dia: string; cantidad: number } | null;
+  /**
+   * Telefonos atendidos en la semana. Es interno: no se muestra ni se escribe
+   * en la planilla. Sirve para que el balance mensual cuente personas
+   * distintas aunque los turnos de esa semana ya se hayan borrado.
+   */
+  telefonos: string[];
   /** Diferencias contra la semana anterior, si hay resumen guardado. */
   comparacion: { atendidos: number; facturado: number; clientes: number } | null;
 }
@@ -167,6 +173,7 @@ export async function calcularResumenSemanal(ctx: Contexto, opciones: OpcionesRe
     ocupacion: minutosDisponibles > 0 ? Math.round((minutosTrabajados / minutosDisponibles) * 100) : 0,
     porServicio,
     diaMasFuerte,
+    telefonos,
     comparacion: semanaAnterior
       ? {
           atendidos: atendidos.length - semanaAnterior.atendidos,

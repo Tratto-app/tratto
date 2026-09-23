@@ -206,8 +206,13 @@ async function armarResumen(ctx: Contexto, estado: EstadoFallback, telefono: str
     });
     estado.reservaId = hold.id;
     estado.paso = 'confirmar';
+    // Si tiene descuento por reseña, se lo decimos: es el premio prometido.
+    const lineaPrecio =
+      hold.descuentoPorcentaje > 0
+        ? `\n💰 ${formatearPrecio(hold.precio, ctx.cfg.negocio.moneda)} (con tu ${hold.descuentoPorcentaje}% de descuento 🎁)`
+        : '';
     return {
-      texto: `Perfecto. Antes de confirmar:\n\n✂️ ${servicio.nombre}\n📅 ${fechaHumana(DateTime.fromISO(estado.fecha!, { zone: zona }))}\n🕐 ${estado.hora}\n👤 ${nombre}\n\n¿Confirmamos?`,
+      texto: `Perfecto. Antes de confirmar:\n\n✂️ ${servicio.nombre}\n📅 ${fechaHumana(DateTime.fromISO(estado.fecha!, { zone: zona }))}\n🕐 ${estado.hora}\n👤 ${nombre}${lineaPrecio}\n\n¿Confirmamos?`,
       botones: [
         { id: 'confirmar_si', titulo: '✅ Sí, confirmar' },
         { id: 'confirmar_cambiar', titulo: '✏️ Cambiar' },
@@ -321,8 +326,12 @@ export async function responderConMenu(
         const nombre = turno.nombreCliente;
         reiniciar(estado);
         estado.paso = 'menu';
+        const conDescuento =
+          turno.descuentoPorcentaje > 0
+            ? `\n💰 ${formatearPrecio(turno.precio, ctx.cfg.negocio.moneda)} con tu ${turno.descuentoPorcentaje}% 🎁`
+            : '';
         return {
-          texto: `¡Listo, ${nombre}! ✂️\n\nTu turno quedó reservado:\n📅 ${fechaHumana(DateTime.fromISO(turno.fecha, { zone: zona }))}\n🕐 ${turno.horaInicio}\n✂️ ${turno.servicioNombre}\n\n¡Te esperamos!`,
+          texto: `¡Listo, ${nombre}! ✂️\n\nTu turno quedó reservado:\n📅 ${fechaHumana(DateTime.fromISO(turno.fecha, { zone: zona }))}\n🕐 ${turno.horaInicio}\n✂️ ${turno.servicioNombre}${conDescuento}\n\n¡Te esperamos!`,
         };
       } catch (e) {
         estado.paso = 'elegir_hora';

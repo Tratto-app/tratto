@@ -21,7 +21,7 @@ process.env.GOOGLE_CLIENT_SECRET = 'secreto-falso';
 process.env.GOOGLE_REFRESH_TOKEN = 'refresh-falso';
 process.env.SHEETS_HABILITADO = 'true';
 
-const { crearTurno, cancelarTurno } = await import('../src/booking/servicio.js');
+const { crearTurno, cancelarTurno, crearHold, confirmarHold } = await import('../src/booking/servicio.js');
 const { procesarMensaje } = await import('../src/conversation/orquestador.js');
 const { sincronizarPendientes, resincronizarTodo, reiniciarCacheDeEstructura } = await import('../src/google/sync.js');
 const { outboxRepo } = await import('../src/database/repositories/outbox.js');
@@ -47,6 +47,7 @@ beforeEach(async () => {
   google.hojas.clear();
   google.pedidos.length = 0;
   google.fallarProximas = 0;
+  google.formatos.length = 0;
   reiniciarCacheDeEstructura();
 });
 
@@ -273,5 +274,37 @@ describe('el balance semanal queda en Drive', () => {
 
     const filas = google.filas('Balance semanal').filter((f) => f[0] === '2026-09-14 al 2026-09-20');
     assert.equal(filas.length, 1, 'la semana tiene que figurar una sola vez');
+  });
+});
+
+describe('el cliente con descuento se ve distinto en la planilla', () => {
+  test('sale con 🎁 y la celda pintada en la agenda semanal', async () => {
+    const { registrarResenaDeCliente } = await import('../src/conversation/resenas.js');
+    const { conversacionesRepo } = await import('../src/database/repositories/conversaciones.js');
+
+    // Se le pide la reseña y avisa que la dejó.
+    const ahoraIso = ctx.ahora().toUTC().toISO()!;
+    const conv = await conversacionesRepo.obtener(ctx.db, TELEFONO_A);
+    (conv.estado as Record<string, unknown>).esperandoResena = { turnoId: 'X', ts: ctx.ahora().toMillis() };
+    await conversacionesRepo.guardar(ctx.db, conv, ahoraIso);
+    await registrarResenaDeCliente(ctx, TELEFONO_A, ctx.ahora().toMillis());
+
+    await crearTurno(ctx, { telefono: TELEFONO_B, nombre: 'Común', servicioId: 'corte', fecha: SABADO, hora: '16:00', origen: 'whatsapp' });
+    await sincronizarPendientes(ctx);
+    google.formatos.length = 0;
+
+    // Este cliente tiene el descuento vigente, así que se marca.
+    await crearHold(ctx, { telefono: TELEFONO_A, nombre: 'Premiado', servicioId: 'corte', fecha: SABADO, hora: '17:00' });
+    const holdId = (await ctx.db.query<{ id: string }>("SELECT id FROM turnos WHERE estado = 'pendiente'"))[0]!.id;
+    await confirmarHold(ctx, holdId, { telefono: TELEFONO_A, nombre: 'Premiado' });
+    await sincronizarPendientes(ctx);
+
+    const semana = google.filas('Agenda semanal').flat().join(' | ');
+    assert.match(semana, /Premiado 🎁/, 'el cliente con descuento se marca con el regalito');
+    assert.ok(!/Común 🎁/.test(semana), 'el cliente sin descuento no');
+
+    const pintadas = google.formatos.filter((f) => f.hoja === 'Agenda semanal');
+    assert.ok(pintadas.length >= 1, 'la celda del cliente premiado tiene que quedar pintada');
+    assert.ok(pintadas[0]!.color.green > pintadas[0]!.color.red, 'el color es verdoso, distinto del resto');
   });
 });

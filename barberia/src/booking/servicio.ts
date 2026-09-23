@@ -21,6 +21,7 @@ import { turnosRepo } from '../database/repositories/turnos.js';
 import { clientesRepo } from '../database/repositories/clientes.js';
 import { bloqueosRepo } from '../database/repositories/bloqueos.js';
 import { outboxRepo, type TipoEventoSheets } from '../database/repositories/outbox.js';
+import { beneficiosRepo } from '../database/repositories/beneficios.js';
 import { eventosRepo } from '../database/repositories/eventos.js';
 import { recordatoriosRepo } from '../database/repositories/recordatorios.js';
 import {
@@ -302,13 +303,20 @@ async function validarYConstruir(
   const inicio = desdeFechaHora(datos.fecha, datos.hora, zona);
   const fin = inicio.plus({ minutes: servicio.duracion_min });
 
+  // Si el cliente tiene un descuento vigente (por ejemplo, por haber dejado
+  // reseña), se aplica al precio. Recien se consume cuando el turno queda
+  // firme: si el hold vence, el descuento sigue disponible.
+  const beneficio = await beneficiosRepo.disponibleDe(tx, datos.telefono, ahoraMs);
+  const descuento = beneficio ? beneficio.descuentoPorcentaje : 0;
+  const precio = descuento > 0 ? Math.round(servicio.precio * (1 - descuento / 100)) : servicio.precio;
+
   return {
     id: idTurno(),
     telefono: datos.telefono,
     nombreCliente: sanearNombre(datos.nombre ?? ''),
     servicioId: servicio.id,
     servicioNombre: servicio.nombre,
-    precio: servicio.precio,
+    precio,
     duracionMin: servicio.duracion_min,
     fecha: datos.fecha,
     horaInicio: horaDe(inicio),
@@ -319,6 +327,8 @@ async function validarYConstruir(
     origen: datos.origen,
     holdVenceMs: opciones.holdVenceMs ?? null,
     observaciones: (datos.observaciones ?? '').slice(0, 500),
+    descuentoPorcentaje: descuento,
+    beneficioId: beneficio?.id ?? null,
     creadoEn: ahoraIso,
     actualizadoEn: ahoraIso,
     canceladoEn: null,
@@ -342,6 +352,43 @@ function traducirErrorDeConcurrencia(e: unknown): never {
     throw errores.horarioOcupado('colision detectada por la base de datos');
   }
   throw e;
+}
+
+/**
+ * Consume el beneficio que se aplico al turno, ahora que quedo firme.
+ *
+ * Si otro turno se lo gano primero (por ejemplo, dos reservas a la vez), se le
+ * saca el descuento a este y vuelve a quedar con el precio pleno: nunca se usa
+ * el mismo beneficio dos veces.
+ */
+async function consumirBeneficio(tx: Transaccion, ctx: Contexto, turno: Turno, ahoraIso: string): Promise<Turno> {
+  if (!turno.beneficioId) return turno;
+  const consumido = await beneficiosRepo.usar(tx, turno.beneficioId, turno.id, ahoraIso);
+  if (consumido) return turno;
+
+  const precioPleno = servicioPorId(ctx.cfg, turno.servicioId)?.precio ?? turno.precio;
+  await turnosRepo.quitarDescuento(tx, turno.id, precioPleno, ahoraIso);
+  log.warn({ turno: turno.id, beneficio: turno.beneficioId }, 'el beneficio ya estaba usado: se cobra el precio pleno');
+  return { ...turno, descuentoPorcentaje: 0, beneficioId: null, precio: precioPleno };
+}
+
+/**
+ * Programa el pedido de resena para despues del corte.
+ *
+ * Por defecto solo se le pide a los clientes nuevos: al que viene hace años no
+ * tiene sentido pedirle una resena cada vez.
+ */
+async function programarResena(tx: Transaccion, ctx: Contexto, turno: Turno): Promise<void> {
+  const cfg = ctx.cfg.resenas;
+  if (!cfg.activo || !cfg.link_google_maps) return;
+
+  if (cfg.solo_clientes_nuevos) {
+    const cliente = await clientesRepo.porTelefono(tx, turno.telefono);
+    if (!cliente || cliente.totalTurnos > 1) return;
+  }
+
+  const cuando = turno.finMs + cfg.horas_despues * 3_600_000;
+  await recordatoriosRepo.programar(tx, turno.id, 'resena', cuando);
 }
 
 async function programarRecordatorios(tx: Transaccion, ctx: Contexto, turno: Turno): Promise<void> {
@@ -423,8 +470,10 @@ export async function confirmarHold(
     await clientesRepo.registrar(tx, actual.telefono, nombre, ahoraIso);
     await clientesRepo.marcarVisita(tx, actual.telefono, ahoraIso);
 
-    const confirmado: Turno = { ...actual, estado: 'reservado', nombreCliente: nombre, holdVenceMs: null, actualizadoEn: ahoraIso };
+    let confirmado: Turno = { ...actual, estado: 'reservado', nombreCliente: nombre, holdVenceMs: null, actualizadoEn: ahoraIso };
+    confirmado = await consumirBeneficio(tx, ctx, confirmado, ahoraIso);
     await programarRecordatorios(tx, ctx, confirmado);
+    await programarResena(tx, ctx, confirmado);
     await encolarParaSheets(tx, 'turno_alta', confirmado.id, ahora.toMillis());
     await eventosRepo.registrar(tx, 'turno_creado', {
       turnoId: confirmado.id,
@@ -450,7 +499,9 @@ export async function crearTurno(ctx: Contexto, datos: DatosTurnoNuevo): Promise
       await turnosRepo.insertar(tx, nuevo);
       await clientesRepo.registrar(tx, nuevo.telefono, nuevo.nombreCliente, ahoraIso);
       await clientesRepo.marcarVisita(tx, nuevo.telefono, ahoraIso);
-      await programarRecordatorios(tx, ctx, nuevo);
+      const conBeneficio = await consumirBeneficio(tx, ctx, nuevo, ahoraIso);
+      await programarRecordatorios(tx, ctx, conBeneficio);
+      await programarResena(tx, ctx, conBeneficio);
       await encolarParaSheets(tx, 'turno_alta', nuevo.id, ahora.toMillis());
       await eventosRepo.registrar(tx, 'turno_creado', {
         turnoId: nuevo.id,
@@ -458,7 +509,7 @@ export async function crearTurno(ctx: Contexto, datos: DatosTurnoNuevo): Promise
         detalle: `${nuevo.fecha} ${nuevo.horaInicio} ${nuevo.servicioId} (${nuevo.origen})`,
         ahoraMs: ahora.toMillis(),
       });
-      return nuevo;
+      return conBeneficio;
     });
     log.info({ turno: turno.id, origen: turno.origen }, 'turno creado');
     return turno;
@@ -526,6 +577,9 @@ export async function modificarTurno(
         canceladoPor: `reprogramado:${quien.origen}`,
       });
       await recordatoriosRepo.cancelarDeTurno(tx, actual.id);
+      // El descuento del turno viejo se libera acá, antes de construir el
+      // nuevo: si no, el turno reprogramado saldría a precio pleno.
+      await beneficiosRepo.liberarDeTurno(tx, actual.id, ahoraIso);
 
       const nuevo = await validarYConstruir(
         tx,
@@ -543,7 +597,8 @@ export async function modificarTurno(
         { estado: 'reservado', excluirTurnoId: actual.id },
       );
       await turnosRepo.insertar(tx, nuevo);
-      await programarRecordatorios(tx, ctx, nuevo);
+      const reprogramado = await consumirBeneficio(tx, ctx, nuevo, ahoraIso);
+      await programarRecordatorios(tx, ctx, reprogramado);
       await encolarParaSheets(tx, 'turno_baja', actual.id, ahora.toMillis());
       await encolarParaSheets(tx, 'turno_alta', nuevo.id, ahora.toMillis());
       await eventosRepo.registrar(tx, 'turno_modificado', {
@@ -552,7 +607,7 @@ export async function modificarTurno(
         detalle: `${actual.fecha} ${actual.horaInicio} -> ${nuevo.fecha} ${nuevo.horaInicio}`,
         ahoraMs: ahora.toMillis(),
       });
-      return nuevo;
+      return reprogramado;
     });
     log.info({ turno: turno.id }, 'turno reprogramado');
     return turno;
@@ -588,6 +643,8 @@ export async function cancelarTurno(
       canceladoPor: quien.motivo ? `${quien.origen}:${quien.motivo.slice(0, 80)}` : quien.origen,
     });
     await recordatoriosRepo.cancelarDeTurno(tx, actual.id);
+    // Si el turno tenia descuento, vuelve a quedar disponible para el proximo.
+    await beneficiosRepo.liberarDeTurno(tx, actual.id, ahoraIso);
     await encolarParaSheets(tx, 'turno_baja', actual.id, ahora.toMillis());
     await eventosRepo.registrar(tx, 'turno_cancelado', {
       turnoId: actual.id,
@@ -702,9 +759,29 @@ export async function agendaDelDia(ctx: Contexto, fecha: Fecha, servicioParaHuec
   };
 }
 
+/**
+ * Que semana mostrar cuando nadie pide una en particular.
+ *
+ * Normalmente, la semana en curso. Pero si de hoy en adelante ya no queda
+ * ningun dia de atencion (tipico el domingo, con el local cerrado), lo que le
+ * sirve al barbero es la semana que viene: quiere ver los turnos que tiene
+ * agendados, no repasar una semana terminada.
+ */
+export function semanaRelevante(ctx: Contexto): Fecha {
+  const zona = ctx.cfg.negocio.timezone;
+  const hoy = ctx.ahora();
+  const lunes = lunesDeLaSemana(fechaDe(hoy), zona);
+  const finDeSemana = DateTime.fromISO(lunes, { zone: zona }).plus({ days: 6 });
+
+  for (let dia = hoy.startOf('day'); dia <= finDeSemana; dia = dia.plus({ days: 1 })) {
+    if (estadoDelDia(ctx.cfg, fechaDe(dia)).abierto) return lunes;
+  }
+  return fechaDe(DateTime.fromISO(lunes, { zone: zona }).plus({ days: 7 }));
+}
+
 export async function agendaSemanal(ctx: Contexto, desde?: Fecha): Promise<DiaDeAgenda[]> {
   const zona = ctx.cfg.negocio.timezone;
-  const inicio = lunesDeLaSemana(desde ?? fechaDe(ctx.ahora()), zona);
+  const inicio = desde ? lunesDeLaSemana(desde, zona) : semanaRelevante(ctx);
   const fin = fechaDe(DateTime.fromISO(inicio, { zone: zona }).plus({ days: 6 }));
   const fechas = rangoDeFechas(inicio, fin, zona);
   const dias: DiaDeAgenda[] = [];

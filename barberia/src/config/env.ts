@@ -30,6 +30,8 @@ const envSchema = z.object({
   BARBERO_WHATSAPP: z.string().optional(),
 
   // --- IA ---
+  /** Qué motor usa el bot: 'claude' (Anthropic) u 'openai'. */
+  AI_PROVEEDOR: z.enum(['claude', 'openai']).default('claude'),
   AI_API_KEY: z.string().optional(),
   ANTHROPIC_API_KEY: z.string().optional(),
   AI_MODEL: z.string().default('claude-opus-5'),
@@ -39,6 +41,13 @@ const envSchema = z.object({
   AI_MAX_ITERACIONES: z.coerce.number().int().positive().default(6),
   AI_HABILITADA: bool(true),
   AI_FALLBACK_REHUSO: bool(true),
+
+  // --- OpenAI (solo si AI_PROVEEDOR=openai) ---
+  OPENAI_API_KEY: z.string().optional(),
+  OPENAI_MODEL: z.string().default('gpt-6-sol'),
+  /** Solo para tests o proxies corporativos. En producción se deja vacío. */
+  OPENAI_BASE_URL: z.string().optional(),
+  AI_BASE_URL: z.string().optional(),
 
   // --- Google Sheets ---
   GOOGLE_SPREADSHEET_ID: z.string().optional(),
@@ -58,8 +67,7 @@ const envSchema = z.object({
   SIMULADOR_HABILITADO: bool(true),
 
   // --- Workers ---
-  // Apagados a pedido del negocio: el bot no manda recordatorios.
-  RECORDATORIOS_HABILITADOS: bool(false),
+  RECORDATORIOS_HABILITADOS: bool(true),
   WORKERS_HABILITADOS: bool(true),
 });
 
@@ -80,7 +88,9 @@ export const esProduccion = env.NODE_ENV === 'production';
 export const esTest = env.NODE_ENV === 'test';
 
 export const claveIA = env.AI_API_KEY || env.ANTHROPIC_API_KEY || '';
-export const iaConfigurada = Boolean(claveIA) && env.AI_HABILITADA;
+export const claveDelProveedor = env.AI_PROVEEDOR === 'openai' ? env.OPENAI_API_KEY ?? '' : claveIA;
+export const modeloEnUso = env.AI_PROVEEDOR === 'openai' ? env.OPENAI_MODEL : env.AI_MODEL;
+export const iaConfigurada = Boolean(claveDelProveedor) && env.AI_HABILITADA;
 
 export const whatsappConfigurado = Boolean(
   env.WHATSAPP_ACCESS_TOKEN && env.WHATSAPP_PHONE_NUMBER_ID && env.WHATSAPP_VERIFY_TOKEN,

@@ -31,16 +31,18 @@ CLIENTE ──WhatsApp──▶ Webhook ──▶ Orquestador ──▶ Agente I
 7. [Base de datos](#base-de-datos)
 8. [Conectar Google Sheets](#conectar-google-sheets)
 9. [Conectar WhatsApp](#conectar-whatsapp)
-10. [Configurar la IA](#configurar-la-ia)
+10. [Configurar la IA (OpenAI o Claude)](#configurar-la-ia-openai-o-claude)
 11. [Probar sin WhatsApp: el simulador](#probar-sin-whatsapp-el-simulador)
 12. [Panel del barbero](#panel-del-barbero)
-13. [Cierre de semana](#cierre-de-semana)
-14. [Tests](#tests)
-15. [Despliegue](#despliegue)
-16. [Costos](#costos)
-17. [Seguridad](#seguridad)
-18. [Problemas frecuentes](#problemas-frecuentes)
-19. [Qué falta / próximos pasos](#qué-falta--próximos-pasos)
+13. [Reseñas y descuentos](#reseñas-y-descuentos)
+14. [Recordatorios](#recordatorios)
+15. [Cierre de semana](#cierre-de-semana)
+16. [Tests](#tests)
+17. [Despliegue](#despliegue)
+18. [Costos](#costos)
+19. [Seguridad](#seguridad)
+20. [Problemas frecuentes](#problemas-frecuentes)
+21. [Qué falta / próximos pasos](#qué-falta--próximos-pasos)
 
 ---
 
@@ -55,6 +57,10 @@ CLIENTE ──WhatsApp──▶ Webhook ──▶ Orquestador ──▶ Agente I
 - **Consulta, cambia y cancela** turnos por lenguaje natural.
 - **Reconoce a los clientes** por su número: al que ya vino no le vuelve a
   preguntar el nombre.
+- **Pide reseñas en Google** a los clientes nuevos, una hora después del corte,
+  y les carga un 10% de descuento para el próximo. El turno con descuento queda
+  marcado en otro color en la agenda y en la planilla.
+- **Avisa el recordatorio de 24 h** antes del turno.
 - **Responde consultas generales** (precios, dirección, horarios) leyendo la
   configuración, sin inventar nada.
 - **Deriva a una persona** cuando el cliente lo pide, y pausa el bot en esa charla.
@@ -143,7 +149,8 @@ barberia/
 │   ├── shared/                Tiempo (zona horaria, fechas en castellano), errores, logs, textos
 │   ├── database/              Drivers SQLite/PostgreSQL, esquema y repositorios
 │   ├── booking/               Motor de disponibilidad + servicio de turnos (única puerta de escritura)
-│   ├── ai/                    Agente (loop de herramientas), prompt, herramientas y menú de respaldo
+│   ├── ai/                    Agente, prompt, herramientas, menú de respaldo
+│   │   └── proveedores/       Adaptadores de OpenAI y Claude (intercambiables)
 │   ├── whatsapp/              Cliente de la Cloud API y verificación del webhook
 │   ├── conversation/          Orquestador: idempotencia, contexto, derivación a persona
 │   ├── google/                Autenticación, API de Sheets, proyección y worker de sincronización
@@ -152,7 +159,7 @@ barberia/
 │   ├── backend/               Servidor HTTP, rutas y middlewares
 │   └── main.ts                Arranque
 ├── public/                    Panel del barbero y simulador de chat
-└── tests/                     183 tests
+└── tests/                     228 tests
 ```
 
 **El flujo de un mensaje:**
@@ -236,9 +243,11 @@ comentarios). Nunca en el código ni en `negocio.json`.
 | `WHATSAPP_APP_SECRET` | Firma HMAC de los webhooks | **Sí en producción** |
 | `WHATSAPP_GRAPH_VERSION` | Versión de la Graph API (`v26.0`) | No |
 | `BARBERO_WHATSAPP` | Número del barbero, para los avisos | Recomendada |
-| `AI_API_KEY` | Clave de la API de Claude | Para la IA |
-| `AI_MODEL` | Modelo (`claude-opus-5` por defecto) | No |
-| `AI_EFFORT` | `low` \| `medium` \| `high` \| `xhigh` \| `max` | No |
+| `AI_PROVEEDOR` | `openai` o `claude` | No (por defecto `claude`) |
+| `OPENAI_API_KEY` / `OPENAI_MODEL` | Si usás OpenAI | Para la IA con OpenAI |
+| `AI_API_KEY` / `AI_MODEL` | Si usás Claude | Para la IA con Claude |
+| `WHATSAPP_PLANTILLA_RECORDATORIO` | Plantilla del aviso de 24 h | Para los recordatorios |
+| `WHATSAPP_PLANTILLA_RESENA` | Plantilla del pedido de reseña | Para las reseñas |
 | `GOOGLE_SPREADSHEET_ID` | Id de la planilla | Para Sheets |
 | `GOOGLE_CLIENT_ID` / `SECRET` / `REFRESH_TOKEN` | OAuth | Para Sheets (opción A) |
 | `GOOGLE_SERVICE_ACCOUNT_JSON` | JSON de cuenta de servicio | Para Sheets (opción B) |
@@ -378,19 +387,30 @@ texto y puede rebotar (queda registrado en el log).
 
 ---
 
-## Configurar la IA
+## Configurar la IA (OpenAI o Claude)
 
-1. Sacar una API key en [console.anthropic.com](https://console.anthropic.com/) → `AI_API_KEY`.
-2. Listo. El modelo por defecto es `claude-opus-5`.
+El motor se elige con **una variable**, sin tocar código:
 
-Para bajar el costo sin cambiar de modelo: `AI_EFFORT=low` (ya es el valor por
-defecto) y dejar el prompt estable cacheado, que es lo que hace el sistema.
-El bloque fijo del prompt se manda con `cache_control`, así que a partir del
-segundo mensaje se cobra una fracción.
+```bash
+AI_PROVEEDOR=openai        # o 'claude'
+OPENAI_API_KEY=sk-...
+OPENAI_MODEL=gpt-6-luna
+```
 
-Si no configurás `AI_API_KEY`, **el sistema funciona igual** en modo menú.
+| Proveedor | Modelos | Precio por millón de tokens | Cuándo |
+|---|---|---|---|
+| **OpenAI** | `gpt-6-luna` | $0,10 entrada / $0,50 salida | **El más barato con diferencia.** Para turnos alcanza de sobra |
+| | `gpt-6-sol` | $2 / $10 | Más soltura conversando |
+| | `gpt-6-astra` | $10 / $50 | Innecesario para esto |
+| **Claude** | `claude-opus-5` | $5 / $25 | Muy bueno interpretando, más caro |
+| | `claude-haiku-4-5` | $1 / $5 | La opción barata de Claude |
 
----
+Los dos adaptadores están probados contra un servidor que imita cada API
+(`tests/proveedores.test.ts`), así que la misma conversación funciona igual con
+cualquiera de los dos. Podés probar uno, cambiar la variable y probar el otro en
+`/test-chat` sin tocar nada más.
+
+Si no configurás ninguna clave, **el sistema funciona igual** en modo menú.
 
 ## Probar sin WhatsApp: el simulador
 
@@ -428,6 +448,98 @@ En producción el simulador queda detrás del login del panel.
   vacaciones y reglas. Se guarda en `negocio.json` validado, y el bot lo usa
   enseguida, sin reiniciar. También: estado del sistema, resincronizar Sheets y
   devolverle al bot las charlas derivadas.
+
+---
+
+## Reseñas y descuentos
+
+Una hora después del corte, al **cliente nuevo** le llega:
+
+```
+¡Hola Lucas! ✂️ ¿Cómo te fue con el corte?
+
+Si nos dejás tu opinión en Google nos ayudás un montón 🙌
+https://g.page/r/tu-barberia/review
+
+Y por dejarla te hacemos un 10% de descuento en tu próximo corte.
+Avisame cuando la subas y te lo dejo cargado 👇
+
+                                          [ ✅ Ya la dejé ]
+```
+
+Cuando el cliente avisa, el descuento queda cargado y se aplica **solo** en su
+próximo turno: el bot le muestra el precio ya rebajado al confirmar.
+
+### Lo que hay que saber antes de prenderlo
+
+> **Google no permite verificar por API si alguien dejó una reseña.** Ningún
+> sistema puede: no existe ese endpoint. El descuento se carga confiando en lo
+> que dice el cliente. Lo que sí se verifica es que **de verdad le hayamos
+> pedido una reseña hace menos de una semana** — nadie puede reclamar un
+> descuento que nunca se le ofreció, ni el cliente ni el modelo de IA. Si ves
+> que alguien mintió, se lo sacás desde el panel (*Ajustes → Descuentos por
+> reseña*).
+
+> **Hace falta una plantilla de WhatsApp.** El mensaje sale una hora después del
+> corte, y para entonces suele haber pasado más de un día desde que el cliente
+> escribió, así que Meta no deja mandar texto libre. Creá una plantilla de
+> utilidad en *WhatsApp → Plantillas de mensajes* con tres parámetros
+> (`{{1}}` nombre, `{{2}}` link, `{{3}}` descuento) y cargá su nombre en
+> `WHATSAPP_PLANTILLA_RESENA`. El sistema intenta primero el mensaje normal y
+> cae a la plantilla solo si Meta lo rechaza.
+
+### Dónde lo ve el barbero
+
+El turno con descuento aparece **en verde con 🎁 -10%**, tanto en el panel
+(agenda del día y semanal) como en la planilla de Google, donde además la celda
+queda pintada. Es para que sepas de un vistazo en cuál cobrás menos.
+
+El descuento:
+
+- se aplica **una sola vez** y se consume al confirmar el turno;
+- **vuelve a estar disponible** si el turno se cancela;
+- **viaja** si el turno se reprograma;
+- **vence a los 90 días**;
+- se puede sacar desde el panel.
+
+```json
+"resenas": {
+  "activo": true,
+  "horas_despues": 1,
+  "solo_clientes_nuevos": true,
+  "link_google_maps": "https://g.page/r/tu-barberia/review",
+  "descuento_porcentaje": 10,
+  "vence_dias": 90
+}
+```
+
+El link se saca de tu ficha en Google Maps: **Compartir → Copiar vínculo**, o el
+enlace corto `g.page/r/.../review` desde el perfil de empresa.
+
+---
+
+## Recordatorios
+
+El aviso de **24 horas antes** está prendido:
+
+```json
+"recordatorios": {
+  "activos": true,
+  "avisos": [{ "id": "24h", "horas_antes": 24, "activo": true }],
+  "no_enviar_antes_de": "09:00",
+  "no_enviar_despues_de": "21:00"
+}
+```
+
+Se programa al confirmar el turno y se cancela solo si el turno se cancela o se
+mueve. Cada aviso se toma de forma atómica, así que aunque corran dos instancias
+del backend el cliente recibe uno solo. Nunca salen de madrugada.
+
+**También necesita plantilla** (`WHATSAPP_PLANTILLA_RECORDATORIO`), por la misma
+regla de las 24 horas. Los mensajes de plantilla se cobran: ver
+[COSTOS.md](./COSTOS.md).
+
+Para apagarlo: `"activos": false`.
 
 ---
 
@@ -512,17 +624,6 @@ contesta el balance de la semana en curso. También funciona con "balance" o
 > borra filas: actualiza las que ya están y agrega las nuevas. Aunque la base se
 > vacíe, o aunque apretés "Resincronizar", el historial de Drive queda intacto.
 
-### Recordatorios: apagados
-
-El bot **no manda recordatorios**. Está apagado en `negocio.json`
-(`recordatorios.activos: false`) y en el entorno (`RECORDATORIOS_HABILITADOS=false`).
-Además de la decisión del negocio, esto evita el único costo real de WhatsApp:
-los mensajes fuera de la ventana de 24 h necesitan una plantilla aprobada y se
-cobran.
-
-El código quedó por si algún día los querés: se prenden cambiando esas dos
-opciones y cargando una plantilla aprobada en `WHATSAPP_PLANTILLA_RECORDATORIO`.
-
 ### Lo que sí corre solo, todos los días
 
 El worker de mantenimiento **no es opcional** y anda siempre:
@@ -531,12 +632,13 @@ El worker de mantenimiento **no es opcional** y anda siempre:
    Sin esto, la agenda se tapa sola con reservas fantasma.
 2. Cierra los turnos que ya pasaron (a las 12 h, para darte tiempo a marcar
    "no vino").
-3. Los domingos, dispara el cierre de semana.
+3. Manda los recordatorios y los pedidos de reseña que toquen.
+4. Los domingos, dispara el cierre de semana.
 
 ## Tests
 
 ```bash
-npm test          # 183 tests (SQLite, sin dependencias externas)
+npm test          # 228 tests (SQLite, sin dependencias externas)
 npm run typecheck
 
 # Opcional: los mismos candados contra la doble reserva, contra un PostgreSQL real
@@ -569,7 +671,9 @@ Cubren lo que pide el enunciado y algo más:
 | + | **Turno por WhatsApp → fila en Google Drive**, de punta a punta | `sheets.test.ts` |
 | + | **Cierre de semana**: balance antes de limpiar, no se repite, respeta lo futuro | `cierre-semanal.test.ts` |
 | + | Cálculo del balance: clientes únicos, nuevos, facturación, ocupación | `cierre-semanal.test.ts` |
-| + | Firma del webhook, idempotencia, derivación a persona, límites del agente, caída de la IA | `webhook.test.ts`, `agente.test.ts` |
+| + | **Reseña → descuento → turno marcado**, y que no se pueda cobrar dos veces | `resenas.test.ts` |
+| + | **Los dos proveedores de IA** contra un servidor que imita cada API | `proveedores.test.ts` |
+| + | Firma del webhook, idempotencia, derivación a persona, caída de la IA | `webhook.test.ts`, `agente.test.ts` |
 
 ### Sobre PostgreSQL
 
@@ -583,11 +687,14 @@ aplicación. Se ejecutó contra PostgreSQL 16 y pasa.
 
 Conviene decirlo claro antes de conectar el número real:
 
-- **Los tests del agente usan un modelo simulado** (se inyecta un doble del
-  cliente de Anthropic). Prueban el loop de herramientas, el manejo de errores y
-  el armado del prompt sin gastar tokens, pero **no reemplazan una prueba contra
-  el modelo real**: hacé un par de conversaciones en `/test-chat` con
-  `AI_API_KEY` configurada antes de salir a producción.
+- **Los dos proveedores se prueban contra un servidor que imita sus APIs**
+  (`tests/modelo-falso.ts`): se verifica que cada adaptador arme bien el pedido
+  y lea bien la respuesta, incluidas las diferencias de protocolo. Lo que no se
+  ejecutó es una llamada real a OpenAI ni a Anthropic, por falta de claves:
+  hacé un par de conversaciones en `/test-chat` antes de salir a producción.
+- **El envío real de plantillas de WhatsApp** (recordatorio y reseña) no se pudo
+  ejecutar sin un número. La lógica de reintento por ventana cerrada está
+  escrita y testeada, pero la primera vez conviene mirar los logs.
 - **El ida y vuelta real con WhatsApp** (webhook de Meta y envío de mensajes) no
   se pudo ejecutar sin un número y credenciales. La verificación del webhook, la
   firma HMAC y el parseo de los payloads sí están testeados con payloads reales
@@ -608,7 +715,8 @@ Conviene decirlo claro antes de conectar el número real:
 |---|---|---|
 | **Render** | `render.yaml` incluido, runtime Docker | La más simple. Ojo: el plan gratuito duerme el servicio y los recordatorios no salen a horario |
 | **Railway** | `railway.json` incluido | Muy simple, Postgres en dos clics |
-| **Fly.io / VPS** | El `Dockerfile` corre tal cual | Más control, más trabajo |
+| **VPS propio** | `docker compose up -d` levanta app + PostgreSQL | Más barato a la larga, lo administrás vos |
+| **Fly.io** | El `Dockerfile` corre tal cual | Más control, más trabajo |
 | **Vercel** | ❌ **No sirve** | Es serverless: no hay proceso vivo para los workers de recordatorios y Sheets, ni disco para SQLite |
 
 Pasos comunes:
@@ -618,6 +726,30 @@ Pasos comunes:
 3. Desplegar. El esquema se aplica solo al arrancar.
 4. Apuntar el webhook de Meta a `https://TU-DOMINIO/webhook/whatsapp`.
 5. Verificar `https://TU-DOMINIO/salud`.
+
+### En un VPS propio, con Docker
+
+```bash
+cp .env.example .env          # completar claves y POSTGRES_PASSWORD
+docker compose up -d
+docker compose logs -f app
+```
+
+Levanta la app y su PostgreSQL. La configuración del negocio queda montada
+afuera de la imagen, así que el panel la puede editar sin reconstruir nada.
+
+### Backups
+
+Los turnos viejos se borran cada domingo, pero **los clientes, los descuentos y
+los balances no**: eso hay que respaldarlo.
+
+```bash
+./backup.sh                   # guarda un .sql.gz en ./backups
+0 3 * * * /ruta/al/backup.sh  # todas las noches a las 3
+```
+
+Conserva los últimos 30 y borra los más viejos. Si usás un Postgres gestionado
+(Supabase, Neon, Railway), los backups ya vienen incluidos y esto no hace falta.
 
 ---
 
@@ -696,12 +828,14 @@ todo en UTC y razona en hora local; nunca asume la zona del servidor.
 Cosas conscientemente fuera de alcance, ordenadas por lo que pediría primero un
 barbero real:
 
-1. **Varios barberos / sillas.** Hoy la agenda es de una sola persona. El modelo
+1. **Verificar de verdad las reseñas.** Google no expone una API para saber si
+   alguien dejó una. La única alternativa real sería pedirle al cliente una
+   captura, que es peor experiencia. Por ahora: confianza + el botón para
+   sacarlo desde el panel.
+2. **Varios barberos / sillas.** Hoy la agenda es de una sola persona. El modelo
    de datos ya está casi listo: habría que agregar `barbero_id` al turno y a la
    restricción de exclusión.
-2. **Señas o pagos.** Ningún cobro está implementado.
-3. **Backups automáticos** de la base (lo resuelve el Postgres gestionado).
-4. **Métricas** (turnos por semana, ausencias, servicios más pedidos).
-5. **Prueba de carga.** La concurrencia está verificada contra PostgreSQL real
+3. **Señas o pagos.** Ningún cobro está implementado.
+4. **Prueba de carga.** La concurrencia está verificada contra PostgreSQL real
    (`npm run test:postgres`), pero con decenas de reservas simultáneas, no con
    miles. Para una barbería sobra; si algún día son diez sucursales, medir.

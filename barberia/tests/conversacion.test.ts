@@ -237,9 +237,14 @@ describe('respaldo cuando la IA no está disponible (requisito crítico)', () =>
   test('si el modelo falla, el cliente igual puede reservar por menú', async () => {
     await conContexto(async (ctx) => {
       const iaCaida = {
-        async crear(): Promise<never> {
-          throw new Error('529 overloaded');
-        },
+        nombre: 'claude' as const,
+        modelo: 'falso',
+        iniciar: () => ({
+          async siguiente(): Promise<never> {
+            throw new Error('529 overloaded');
+          },
+          agregarResultados() {},
+        }),
       };
 
       // Todo el circuito de reserva, con la IA caída en cada mensaje.
@@ -249,7 +254,7 @@ describe('respaldo cuando la IA no está disponible (requisito crítico)', () =>
         const r = await procesarMensaje(
           ctx,
           { telefono: TELEFONO_A, texto, idExterno: `caida-${i}`, origen: 'whatsapp' },
-          { clienteIA: iaCaida },
+          { proveedorIA: iaCaida },
         );
         assert.equal(r.usoIA, false, 'tiene que haber respondido el menú');
         assert.ok(r.texto.length > 0, `el paso "${texto}" quedó sin respuesta`);
@@ -266,19 +271,19 @@ describe('respaldo cuando la IA no está disponible (requisito crítico)', () =>
   test('cuando la IA responde bien, se usa la IA', async () => {
     await conContexto(async (ctx) => {
       const iaOk = {
-        async crear() {
-          return {
-            id: 'msg', type: 'message', role: 'assistant', model: 'x',
-            content: [{ type: 'text', text: '¡Buenas! ¿Qué día te queda cómodo? ✂️' }],
-            stop_reason: 'end_turn', stop_sequence: null,
-            usage: { input_tokens: 1, output_tokens: 1 },
-          } as never;
-        },
+        nombre: 'openai' as const,
+        modelo: 'falso',
+        iniciar: () => ({
+          async siguiente() {
+            return { texto: '¡Buenas! ¿Qué día te queda cómodo? ✂️', herramientas: [], motivo: 'texto' as const };
+          },
+          agregarResultados() {},
+        }),
       };
       const r = await procesarMensaje(
         ctx,
         { telefono: TELEFONO_A, texto: 'hola', idExterno: 'ok-1', origen: 'whatsapp' },
-        { clienteIA: iaOk },
+        { proveedorIA: iaOk },
       );
       assert.equal(r.usoIA, true);
       assert.match(r.texto, /qué día/i);

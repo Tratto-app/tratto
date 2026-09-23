@@ -11,6 +11,7 @@ const EN_AGENDA = ['pendiente', 'reservado', 'confirmado', 'completado', 'no_sho
 const EDITABLES = ['pendiente', 'reservado', 'confirmado'];
 let CONFIG = null;
 let SEMANA_DESDE = null;
+let NAVEGO_SEMANA = false;
 
 // --- Utilidades -------------------------------------------------------------
 
@@ -109,7 +110,8 @@ $$('nav.pestanas button').forEach((btn) => {
 // --- Agenda de hoy ----------------------------------------------------------
 
 function tarjetaDeTurno(turno, recargar) {
-  const card = elemento('div', 'tarjeta');
+  const tieneDescuento = turno.descuentoPorcentaje > 0;
+  const card = elemento('div', `tarjeta${tieneDescuento ? ' con-descuento' : ''}`);
   const fila = elemento('div', `turno${turno.estado === 'cancelado' ? ' cancelado' : ''}`);
   fila.append(elemento('div', 'hora', turno.horaInicio));
 
@@ -121,6 +123,10 @@ function tarjetaDeTurno(turno, recargar) {
   const claseChip = turno.estado === 'completado' ? ' ok' : ['cancelado', 'no_show'].includes(turno.estado) ? ' mal' : '';
   const estado = elemento('span', `chip${claseChip}`, etiquetas[turno.estado] ?? turno.estado);
   datos.append(estado);
+  if (tieneDescuento) {
+    datos.append(document.createTextNode(' '));
+    datos.append(elemento('span', 'chip descuento', `🎁 ${turno.descuentoPorcentaje}% OFF`));
+  }
   fila.append(datos);
   card.append(fila);
 
@@ -240,14 +246,19 @@ function pesos(n) {
   return `$${Number(n || 0).toLocaleString('es-AR')}`;
 }
 
-async function cargarResumen() {
+function corto(iso) {
+  const [, m, d] = iso.split('-');
+  return `${d}/${m}`;
+}
+
+async function cargarResumen(semana) {
   const cont = $('#resumen-semana');
   limpiar(cont);
   try {
-    const q = SEMANA_DESDE ? `?desde=${SEMANA_DESDE}` : '';
+    const q = semana ? `?desde=${semana}` : '';
     const { resumen: r } = await api(`/resumen${q}`);
     const caja = elemento('div', 'balance');
-    caja.append(elemento('h3', '', 'Cómo viene la semana'));
+    caja.append(elemento('h3', '', `Balance ${corto(r.desde)} al ${corto(r.hasta)}`));
 
     const numeros = elemento('div', 'numeros');
     numeros.append(tarjetaDeNumero(String(r.atendidos), 'turnos atendidos', r.comparacion?.atendidos));
@@ -267,6 +278,28 @@ async function cargarResumen() {
   } catch (e) {
     cont.append(elemento('div', 'vacio', `No se pudo calcular el balance: ${e.message}`));
   }
+  await cargarResumenMensual(cont);
+}
+
+async function cargarResumenMensual(cont) {
+  try {
+    const { resumen: m } = await api('/resumen-mensual');
+    if (!m || m.atendidos === 0) return;
+    const caja = elemento('div', 'balance');
+    caja.append(elemento('h3', '', `Balance de ${m.nombre}`));
+    const numeros = elemento('div', 'numeros');
+    numeros.append(tarjetaDeNumero(String(m.atendidos), 'turnos del mes', m.comparacion?.atendidos));
+    numeros.append(tarjetaDeNumero(String(m.personas), `personas${m.clientesNuevos ? ` · ${m.clientesNuevos} nuevas` : ''}`, null));
+    numeros.append(tarjetaDeNumero(m.facturado > 0 ? pesos(m.facturado) : '—', 'facturado', null));
+    numeros.append(tarjetaDeNumero(`${m.ocupacion}%`, 'agenda ocupada', null));
+    caja.append(numeros);
+    if (m.mejorSemana) {
+      caja.append(elemento('div', 'detalle', `Mejor semana: ${corto(m.mejorSemana.desde)} al ${corto(m.mejorSemana.hasta)} (${m.mejorSemana.atendidos} turnos).`));
+    }
+    cont.append(caja);
+  } catch {
+    /* el balance mensual es un extra: si falla, no rompe la pantalla */
+  }
 }
 
 async function cargarSemana() {
@@ -276,6 +309,12 @@ async function cargarSemana() {
     const q = SEMANA_DESDE ? `?desde=${SEMANA_DESDE}` : '';
     const datos = await api(`/agenda/semana${q}`);
     const hoy = fechaISO(new Date());
+    if (datos.dias.length) {
+      const primero = datos.dias[0].fecha;
+      const ultimo = datos.dias[datos.dias.length - 1].fecha;
+      const titulo = elemento('h2', '', `Semana del ${corto(primero)} al ${corto(ultimo)}${primero > hoy ? ' (la que viene)' : ''}`);
+      cont.append(titulo);
+    }
     datos.dias.forEach((dia) => {
       const bloque = elemento('div', `dia-semana${dia.fecha === hoy ? ' hoy' : ''}`);
       bloque.append(elemento('h3', '', nombreDeFecha(dia.fecha)));
@@ -292,14 +331,22 @@ async function cargarSemana() {
       );
       if (vivos.length || dia.bloqueos.length) {
         const ul = elemento('ul');
-        vivos.forEach((t) => ul.append(elemento('li', '', `${t.horaInicio} · ${t.nombreCliente || '(sin nombre)'} — ${t.servicioNombre}`)));
+        vivos.forEach((t) => {
+          const premio = t.descuentoPorcentaje > 0;
+          const li = elemento('li', premio ? 'con-descuento' : '',
+            `${t.horaInicio} · ${t.nombreCliente || '(sin nombre)'} — ${t.servicioNombre}${premio ? ` 🎁 -${t.descuentoPorcentaje}%` : ''}`);
+          ul.append(li);
+        });
         dia.bloqueos.forEach((b) => ul.append(elemento('li', '', `${b.horaInicio}-${b.horaFin} · 🔒 ${b.motivo || 'bloqueado'}`)));
         bloque.append(ul);
       }
       cont.append(bloque);
     });
     SEMANA_DESDE = datos.dias[0] ? datos.dias[0].fecha : SEMANA_DESDE;
-    await cargarResumen();
+    // Si el barbero no navegó, el balance es el de la semana calendario en
+    // curso: el domingo la agenda ya muestra la semana que viene, pero lo que
+    // quiere saber es cómo le fue en la que terminó.
+    await cargarResumen(NAVEGO_SEMANA ? SEMANA_DESDE : null);
   } catch (e) {
     avisar(e.message, 'error');
   }
@@ -312,9 +359,9 @@ function correrSemana(dias) {
   cargarSemana();
 }
 
-$('#semana-anterior').addEventListener('click', () => correrSemana(-7));
-$('#semana-siguiente').addEventListener('click', () => correrSemana(7));
-$('#semana-actual').addEventListener('click', () => { SEMANA_DESDE = null; cargarSemana(); });
+$('#semana-anterior').addEventListener('click', () => { NAVEGO_SEMANA = true; correrSemana(-7); });
+$('#semana-siguiente').addEventListener('click', () => { NAVEGO_SEMANA = true; correrSemana(7); });
+$('#semana-actual').addEventListener('click', () => { NAVEGO_SEMANA = false; SEMANA_DESDE = null; cargarSemana(); });
 
 // --- Turno nuevo ------------------------------------------------------------
 
@@ -548,6 +595,8 @@ async function cargarAjustes() {
       cont.append(f);
     });
 
+    await cargarBeneficios();
+
     const derivadas = await api('/conversaciones/derivadas');
     const contDer = $('#lista-derivadas');
     limpiar(contDer);
@@ -577,6 +626,39 @@ async function cargarAjustes() {
     }
   } catch (e) {
     avisar(e.message, 'error');
+  }
+}
+
+async function cargarBeneficios() {
+  const cont = $('#lista-beneficios');
+  limpiar(cont);
+  try {
+    const { beneficios } = await api('/beneficios');
+    const vigentes = beneficios.filter((b) => b.estado === 'disponible');
+    if (!vigentes.length) {
+      cont.append(elemento('div', 'vacio', 'Nadie tiene descuento cargado por ahora.'));
+      return;
+    }
+    vigentes.forEach((b) => {
+      const card = elemento('div', 'tarjeta con-descuento');
+      card.append(elemento('div', 'nombre', `🎁 ${b.descuentoPorcentaje}% OFF — ${b.telefono}`));
+      card.append(elemento('div', 'detalle', `Por dejar reseña. ${b.venceMs ? `Vence el ${new Date(b.venceMs).toLocaleDateString('es-AR')}.` : ''}`));
+      const acciones = elemento('div', 'acciones');
+      const sacar = elemento('button', 'peligro', 'Sacar descuento');
+      sacar.addEventListener('click', async () => {
+        if (!confirmar('¿Sacarle el descuento a este cliente?')) return;
+        try {
+          await api(`/beneficios/${b.id}/anular`, { method: 'POST', body: JSON.stringify({}) });
+          avisar('Descuento dado de baja.');
+          cargarBeneficios();
+        } catch (e) { avisar(e.message, 'error'); }
+      });
+      acciones.append(sacar);
+      card.append(acciones);
+      cont.append(card);
+    });
+  } catch (e) {
+    cont.append(elemento('div', 'vacio', e.message));
   }
 }
 

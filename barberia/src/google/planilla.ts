@@ -15,6 +15,7 @@ import { fechaDe, nombreDia } from '../shared/tiempo.js';
 import { formatearPrecio } from '../shared/texto.js';
 import type { Turno } from '../booking/tipos.js';
 import { ENCABEZADOS_RESUMEN, resumenComoFila, type ResumenSemanal } from '../reportes/semanal.js';
+import { ENCABEZADOS_MENSUAL, resumenMensualComoFila, type ResumenMensual } from '../reportes/mensual.js';
 
 export const HOJA_TURNOS = 'Turnos';
 export const HOJA_HOY = 'Hoy';
@@ -22,8 +23,9 @@ export const HOJA_SEMANA = 'Agenda semanal';
 export const HOJA_CLIENTES = 'Clientes';
 export const HOJA_CONFIG = 'Configuración';
 export const HOJA_BALANCE = 'Balance semanal';
+export const HOJA_BALANCE_MES = 'Balance mensual';
 
-export const HOJAS = [HOJA_HOY, HOJA_SEMANA, HOJA_BALANCE, HOJA_TURNOS, HOJA_CLIENTES, HOJA_CONFIG];
+export const HOJAS = [HOJA_HOY, HOJA_SEMANA, HOJA_BALANCE, HOJA_BALANCE_MES, HOJA_TURNOS, HOJA_CLIENTES, HOJA_CONFIG];
 
 export const ENCABEZADOS_TURNOS = [
   'ID', 'Fecha', 'Día', 'Hora', 'Hora fin', 'Cliente', 'WhatsApp', 'Servicio',
@@ -118,13 +120,58 @@ export async function volcarTurno(spreadsheetId: string, turno: Turno, zona: str
   }
 }
 
-function bloqueDeDia(dia: { fecha: string; abierto: boolean; motivo_cerrado: string; turnos: Turno[]; bloqueos: Array<{ horaInicio: string; horaFin: string; motivo: string }> }, zona: string): string[][] {
+/** Color de fondo para los clientes con descuento por reseña: verde suave. */
+const VERDE_DESCUENTO = { red: 0.78, green: 0.93, blue: 0.82 };
+const SIN_COLOR = { red: 1, green: 1, blue: 1 };
+
+interface Celda {
+  fila: number;
+  columna: number;
+}
+
+/**
+ * Pinta las celdas de los clientes con descuento.
+ *
+ * Antes limpia el formato de todo el rango: si no, los colores de la semana
+ * pasada quedarian pegados sobre turnos de otra gente.
+ */
+async function pintarDescuentos(spreadsheetId: string, hoja: string, celdas: Celda[], filas: number, columnas: number): Promise<void> {
+  const propiedades = (await sheets.hojas(spreadsheetId)).find((h) => h.title === hoja);
+  if (!propiedades) return;
+
+  const pedidos: unknown[] = [
+    {
+      repeatCell: {
+        range: { sheetId: propiedades.sheetId, startRowIndex: 0, endRowIndex: Math.max(filas, 1), startColumnIndex: 0, endColumnIndex: columnas },
+        cell: { userEnteredFormat: { backgroundColor: SIN_COLOR } },
+        fields: 'userEnteredFormat.backgroundColor',
+      },
+    },
+    ...celdas.map((c) => ({
+      repeatCell: {
+        range: {
+          sheetId: propiedades.sheetId,
+          startRowIndex: c.fila,
+          endRowIndex: c.fila + 1,
+          startColumnIndex: c.columna,
+          endColumnIndex: c.columna + 1,
+        },
+        cell: { userEnteredFormat: { backgroundColor: VERDE_DESCUENTO } },
+        fields: 'userEnteredFormat.backgroundColor',
+      },
+    })),
+  ];
+  await sheets.batchUpdate(spreadsheetId, pedidos);
+}
+
+function bloqueDeDia(dia: { fecha: string; abierto: boolean; motivo_cerrado: string; turnos: Turno[]; bloqueos: Array<{ horaInicio: string; horaFin: string; motivo: string }> }, zona: string): { filas: string[][]; conDescuento: number[] } {
   const dt = DateTime.fromISO(dia.fecha, { zone: zona });
   const filas: string[][] = [];
+  const conDescuento: number[] = [];
   filas.push([`${nombreDia(dt).toUpperCase()} ${dt.toFormat('dd/LL')}`, '', '', '']);
   if (!dia.abierto) {
     filas.push(['Cerrado', dia.motivo_cerrado, '', '']);
-    return filas;
+    return { filas, conDescuento };
   }
   const vivos = dia.turnos.filter((t) => EN_AGENDA.includes(t.estado));
   const cancelados = dia.turnos.filter((t) => t.estado === 'cancelado');
@@ -133,7 +180,11 @@ function bloqueDeDia(dia: { fecha: string; abierto: boolean; motivo_cerrado: str
   }
   for (const t of vivos) {
     const marca = t.estado === 'completado' ? ' ✓' : t.estado === 'no_show' ? ' (no vino)' : '';
-    filas.push([t.horaInicio, `${t.nombreCliente || '(sin nombre)'}${marca}`, t.servicioNombre, t.telefono]);
+    // Se marca el turno que tiene descuento aplicado: es donde el barbero
+    // tiene que cobrar menos.
+    const premio = t.descuentoPorcentaje > 0 ? ` 🎁 -${t.descuentoPorcentaje}%` : '';
+    if (premio) conDescuento.push(filas.length);
+    filas.push([t.horaInicio, `${t.nombreCliente || '(sin nombre)'}${marca}${premio}`, t.servicioNombre, t.telefono]);
   }
   for (const b of dia.bloqueos) {
     filas.push([`${b.horaInicio}-${b.horaFin}`, '🔒 BLOQUEADO', b.motivo, '']);
@@ -142,7 +193,7 @@ function bloqueDeDia(dia: { fecha: string; abierto: boolean; motivo_cerrado: str
     filas.push([`${cancelados.length} cancelado(s)`, cancelados.map((c) => `${c.horaInicio} ${c.nombreCliente}`).join(', '), '', '']);
   }
   filas.push([`${vivos.length} turno(s)`, '', '', '']);
-  return filas;
+  return { filas, conDescuento };
 }
 
 /** Rehace la hoja "Hoy" con la agenda de hoy y de mañana. */
@@ -152,20 +203,26 @@ export async function refrescarHoy(spreadsheetId: string, ctx: Contexto): Promis
   const { agendaDelDia } = await import('../booking/servicio.js');
   const dias = [fechaDe(hoy), fechaDe(hoy.plus({ days: 1 })), fechaDe(hoy.plus({ days: 2 }))];
   const filas: string[][] = [[`Actualizado: ${hoy.toFormat('dd/LL/yyyy HH:mm')}`, '', '', '']];
+  const celdasPremiadas: Celda[] = [];
   for (const f of dias) {
     const dia = await agendaDelDia(ctx, f);
     filas.push(['', '', '', '']);
-    filas.push(...bloqueDeDia(dia, zona));
+    const bloque = bloqueDeDia(dia, zona);
+    const desplazamiento = filas.length;
+    for (const indice of bloque.conDescuento) celdasPremiadas.push({ fila: desplazamiento + indice, columna: 1 });
+    filas.push(...bloque.filas);
   }
   await sheets.limpiar(spreadsheetId, `${HOJA_HOY}!A:D`);
   await sheets.escribir(spreadsheetId, `${HOJA_HOY}!A1:D${filas.length}`, filas);
+  await pintarDescuentos(spreadsheetId, HOJA_HOY, celdasPremiadas, filas.length, 4);
 }
 
 /** Rehace la hoja "Agenda semanal": una columna por dia, de lunes a domingo. */
 export async function refrescarSemana(spreadsheetId: string, ctx: Contexto, desde?: string): Promise<void> {
   const zona = ctx.cfg.negocio.timezone;
   const semana = await agendaSemanal(ctx, desde);
-  const columnas: string[][] = semana.map((dia) => {
+  const celdasPremiadas: Celda[] = [];
+  const columnas: string[][] = semana.map((dia, indiceDia) => {
     const dt = DateTime.fromISO(dia.fecha, { zone: zona });
     const celdas: string[] = [`${nombreDia(dt)} ${dt.toFormat('dd/LL')}`];
     if (!dia.abierto) {
@@ -176,7 +233,10 @@ export async function refrescarSemana(spreadsheetId: string, ctx: Contexto, desd
     celdas.push(`${vivos.length} turno(s) · ${dia.huecos_libres.length} lugar(es) libre(s)`);
     for (const t of vivos) {
       const marca = t.estado === 'completado' ? ' ✓' : t.estado === 'no_show' ? ' (no vino)' : '';
-      celdas.push(`${t.horaInicio} ${t.nombreCliente || '(sin nombre)'}${marca} — ${t.servicioNombre}`);
+      const premio = t.descuentoPorcentaje > 0 ? ` 🎁 -${t.descuentoPorcentaje}%` : '';
+      // +2 por el título y la fila en blanco que van arriba de la grilla.
+      if (premio) celdasPremiadas.push({ fila: celdas.length + 2, columna: indiceDia });
+      celdas.push(`${t.horaInicio} ${t.nombreCliente || '(sin nombre)'}${marca}${premio} — ${t.servicioNombre}`);
     }
     for (const b of dia.bloqueos) celdas.push(`${b.horaInicio}-${b.horaFin} 🔒 ${b.motivo || 'bloqueado'}`);
     const cancelados = dia.turnos.filter((t) => t.estado === 'cancelado');
@@ -192,6 +252,7 @@ export async function refrescarSemana(spreadsheetId: string, ctx: Contexto, desd
 
   await sheets.limpiar(spreadsheetId, `${HOJA_SEMANA}!A:G`);
   await sheets.escribir(spreadsheetId, `${HOJA_SEMANA}!A1:G${filas.length}`, filas);
+  await pintarDescuentos(spreadsheetId, HOJA_SEMANA, celdasPremiadas, filas.length, 7);
 }
 
 export async function refrescarClientes(spreadsheetId: string, ctx: Contexto): Promise<void> {
@@ -326,5 +387,29 @@ export async function guardarResumenEnPlanilla(ctx: Contexto, resumen: ResumenSe
   } else {
     const numeroDeFila = posicion + 2;
     await sheets.escribir(spreadsheetId, `${HOJA_BALANCE}!A${numeroDeFila}:K${numeroDeFila}`, [fila]);
+  }
+}
+
+/** Igual que el semanal, pero para el balance del mes. */
+export async function guardarResumenMensualEnPlanilla(ctx: Contexto, resumen: ResumenMensual): Promise<void> {
+  const { env, sheetsConfigurado } = await import('../config/env.js');
+  if (!sheetsConfigurado || !env.GOOGLE_SPREADSHEET_ID) return;
+  const spreadsheetId = env.GOOGLE_SPREADSHEET_ID;
+
+  await sheets.asegurarHojas(spreadsheetId, [HOJA_BALANCE_MES]);
+
+  const encabezado = await sheets.leer(spreadsheetId, `${HOJA_BALANCE_MES}!A1:J1`);
+  if (encabezado.length === 0 || encabezado[0]?.[0] !== ENCABEZADOS_MENSUAL[0]) {
+    await sheets.escribir(spreadsheetId, `${HOJA_BALANCE_MES}!A1:J1`, [ENCABEZADOS_MENSUAL]);
+  }
+
+  const fila = resumenMensualComoFila(resumen);
+  const existentes = await sheets.leer(spreadsheetId, `${HOJA_BALANCE_MES}!A2:A`);
+  const posicion = existentes.findIndex((f) => f[0] === fila[0]);
+  if (posicion === -1) {
+    await sheets.agregar(spreadsheetId, `${HOJA_BALANCE_MES}!A:J`, [fila]);
+  } else {
+    const numeroDeFila = posicion + 2;
+    await sheets.escribir(spreadsheetId, `${HOJA_BALANCE_MES}!A${numeroDeFila}:J${numeroDeFila}`, [fila]);
   }
 }

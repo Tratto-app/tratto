@@ -18,6 +18,8 @@ interface FilaTurno {
   origen: Turno['origen'];
   hold_vence_ms: number | null;
   observaciones: string;
+  descuento_porcentaje: number;
+  beneficio_id: string | null;
   creado_en: string;
   actualizado_en: string;
   cancelado_en: string | null;
@@ -42,6 +44,8 @@ export function mapearTurno(f: FilaTurno): Turno {
     origen: f.origen,
     holdVenceMs: f.hold_vence_ms === null ? null : Number(f.hold_vence_ms),
     observaciones: f.observaciones ?? '',
+    descuentoPorcentaje: Number(f.descuento_porcentaje ?? 0),
+    beneficioId: f.beneficio_id ?? null,
     creadoEn: f.creado_en,
     actualizadoEn: f.actualizado_en,
     canceladoEn: f.cancelado_en,
@@ -51,7 +55,7 @@ export function mapearTurno(f: FilaTurno): Turno {
 
 const COLUMNAS = `id, telefono, nombre_cliente, servicio_id, servicio_nombre, precio, duracion_min,
   fecha, hora_inicio, hora_fin, inicio_ms, fin_ms, estado, origen, hold_vence_ms, observaciones,
-  creado_en, actualizado_en, cancelado_en, cancelado_por`;
+  descuento_porcentaje, beneficio_id, creado_en, actualizado_en, cancelado_en, cancelado_por`;
 
 const lista = (n: number) => Array.from({ length: n }, () => '?').join(',');
 
@@ -134,11 +138,11 @@ export const turnosRepo = {
 
   async insertar(ex: Ejecutor, t: Turno): Promise<void> {
     await ex.exec(
-      `INSERT INTO turnos (${COLUMNAS}) VALUES (${lista(20)})`,
+      `INSERT INTO turnos (${COLUMNAS}) VALUES (${lista(22)})`,
       [
         t.id, t.telefono, t.nombreCliente, t.servicioId, t.servicioNombre, t.precio, t.duracionMin,
         t.fecha, t.horaInicio, t.horaFin, t.inicioMs, t.finMs, t.estado, t.origen, t.holdVenceMs,
-        t.observaciones, t.creadoEn, t.actualizadoEn, t.canceladoEn, t.canceladoPor,
+        t.observaciones, t.descuentoPorcentaje, t.beneficioId, t.creadoEn, t.actualizadoEn, t.canceladoEn, t.canceladoPor,
       ],
     );
   },
@@ -169,6 +173,14 @@ export const turnosRepo = {
     }
     const r = await ex.exec(sql, params);
     return r.filas;
+  },
+
+  /** Saca el descuento de un turno (por ejemplo, si el beneficio ya se usó en otro). */
+  async quitarDescuento(ex: Ejecutor, id: string, precioPleno: number, ahoraIso: string): Promise<void> {
+    await ex.exec(
+      'UPDATE turnos SET descuento_porcentaje = 0, beneficio_id = NULL, precio = ?, actualizado_en = ? WHERE id = ?',
+      [precioPleno, ahoraIso, id],
+    );
   },
 
   async actualizarDatos(

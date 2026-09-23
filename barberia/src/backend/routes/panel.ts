@@ -23,6 +23,7 @@ import {
   turnoPorId,
 } from '../../booking/servicio.js';
 import { clientesRepo } from '../../database/repositories/clientes.js';
+import { beneficiosRepo } from '../../database/repositories/beneficios.js';
 import { conversacionesRepo } from '../../database/repositories/conversaciones.js';
 import { eventosRepo } from '../../database/repositories/eventos.js';
 import { outboxRepo } from '../../database/repositories/outbox.js';
@@ -36,7 +37,8 @@ import { log } from '../../shared/log.js';
 import { reactivarBot, pausarBot } from '../../conversation/orquestador.js';
 import { resincronizarTodo } from '../../google/sync.js';
 import { calcularResumenSemanal, resumenComoTexto } from '../../reportes/semanal.js';
-import { resumenesRepo } from '../../database/repositories/resumenes.js';
+import { resumenesRepo, resumenesMensualesRepo } from '../../database/repositories/resumenes.js';
+import { calcularResumenMensual, mesDe } from '../../reportes/mensual.js';
 import {
   borrarCookieDeSesion,
   claveCorrecta,
@@ -204,6 +206,18 @@ export function rutasPanel(ctx: Contexto): Router {
     }),
   );
 
+  router.get(
+    '/resumen-mensual',
+    asinc(async (req, res) => {
+      const pedido = String(req.query.mes ?? '');
+      const mes = /^\d{4}-\d{2}$/.test(pedido) ? pedido : mesDe(fechaDe(ctx.ahora()));
+      res.json({
+        resumen: await calcularResumenMensual(ctx, mes),
+        historial: await resumenesMensualesRepo.ultimos(ctx.db, 12),
+      });
+    }),
+  );
+
   // --- Turnos -------------------------------------------------------------
   router.post(
     '/turnos',
@@ -337,6 +351,29 @@ export function rutasPanel(ctx: Contexto): Router {
     '/bloqueos/:id',
     asinc(async (req, res) => {
       const ok = await quitarBloqueo(ctx, String(req.params.id));
+      res.status(ok ? 200 : 404).json({ ok });
+    }),
+  );
+
+  // --- Descuentos por reseña ---------------------------------------------
+  router.get(
+    '/beneficios',
+    asinc(async (_req, res) => {
+      res.json({ beneficios: await beneficiosRepo.listar(ctx.db, 200) });
+    }),
+  );
+
+  router.post(
+    '/beneficios/:id/anular',
+    asinc(async (req, res) => {
+      const ahora = ctx.ahora();
+      const ok = await beneficiosRepo.anular(ctx.db, String(req.params.id), ahora.toUTC().toISO()!);
+      if (ok) {
+        await eventosRepo.registrar(ctx.db, 'beneficio_anulado', {
+          detalle: String(req.params.id),
+          ahoraMs: ahora.toMillis(),
+        });
+      }
       res.status(ok ? 200 : 404).json({ ok });
     }),
   );

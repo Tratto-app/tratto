@@ -120,6 +120,25 @@ CREATE TABLE IF NOT EXISTS recordatorios (
 
 CREATE INDEX IF NOT EXISTS idx_recordatorios_programado ON recordatorios (estado, programado_ms);
 
+-- Beneficios del cliente (hoy: el descuento por dejar reseña en Google Maps).
+-- Viven aparte de los turnos porque sobreviven al vaciado semanal: un cliente
+-- puede dejar la reseña hoy y usar el descuento el mes que viene.
+CREATE TABLE IF NOT EXISTS beneficios (
+  id                   TEXT PRIMARY KEY,
+  telefono             TEXT NOT NULL,
+  tipo                 TEXT NOT NULL,
+  descuento_porcentaje REAL NOT NULL,
+  estado               TEXT NOT NULL,
+  turno_origen         TEXT,
+  turno_usado          TEXT,
+  vence_ms             BIGINT,
+  creado_en            TEXT NOT NULL,
+  actualizado_en       TEXT NOT NULL,
+  CONSTRAINT beneficios_estado_valido CHECK (estado IN ('disponible','usado','vencido','anulado'))
+);
+
+CREATE INDEX IF NOT EXISTS idx_beneficios_cliente ON beneficios (telefono, estado);
+
 -- Resumen de cada semana cerrada. Se guarda ANTES de la limpieza, asi que
 -- sobrevive al borrado de los turnos y sirve para comparar semana contra semana.
 CREATE TABLE IF NOT EXISTS resumenes_semanales (
@@ -127,6 +146,13 @@ CREATE TABLE IF NOT EXISTS resumenes_semanales (
   semana_hasta  TEXT NOT NULL,
   datos_json    TEXT NOT NULL,
   creado_en     TEXT NOT NULL
+);
+
+-- Balance de cada mes cerrado, armado a partir de los resumenes semanales.
+CREATE TABLE IF NOT EXISTS resumenes_mensuales (
+  mes         TEXT PRIMARY KEY,
+  datos_json  TEXT NOT NULL,
+  creado_en   TEXT NOT NULL
 );
 
 -- Bitacora de auditoria: quien hizo que y cuando. Sirve para soporte y para

@@ -84,6 +84,27 @@ const negocioSchema = z.object({
     derivacion_humana: z.string(),
     despedida: z.string(),
   }),
+  resenas: z
+    .object({
+      activo: z.boolean().default(true),
+      horas_despues: z.number().min(0).max(72).default(1),
+      solo_clientes_nuevos: z.boolean().default(true),
+      link_google_maps: z.string().default(''),
+      descuento_porcentaje: z.number().min(0).max(100).default(10),
+      vence_dias: z.number().int().min(1).max(3650).default(90),
+      mensaje: z.string().default(''),
+      mensaje_confirmacion: z.string().default(''),
+    })
+    .default({
+      activo: true,
+      horas_despues: 1,
+      solo_clientes_nuevos: true,
+      link_google_maps: '',
+      descuento_porcentaje: 10,
+      vence_dias: 90,
+      mensaje: '',
+      mensaje_confirmacion: '',
+    }),
   cierre_semanal: z
     .object({
       activo: z.boolean().default(true),

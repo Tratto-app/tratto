@@ -191,13 +191,13 @@
     "max_opciones_horarios": 6
   },
   "recordatorios": {
-    "activos": false,
-    "_comentario": "Apagados a pedido: el bot no manda recordatorios. Poner en true los reactiva; ojo que los mensajes fuera de la ventana de 24 h de WhatsApp necesitan una plantilla aprobada y se cobran.",
+    "activos": true,
+    "_comentario": "El aviso de 24 h necesita una plantilla aprobada de WhatsApp si pasaron más de 24 h desde el último mensaje del cliente (cargala en WHATSAPP_PLANTILLA_RECORDATORIO). Los mensajes de plantilla se cobran.",
     "avisos": [
       {
         "id": "24h",
         "horas_antes": 24,
-        "activo": false
+        "activo": true
       },
       {
         "id": "2h",
@@ -228,5 +228,16 @@
     "conservar_dias": 0,
     "avisar_al_barbero": true,
     "_comentario": "Cada domingo a las 20:00 el sistema arma el balance de la semana (turnos, clientes, facturado, ocupación), lo guarda en Google Sheets y recién después borra de la base los turnos que ya pasaron, así la semana arranca limpia. conservar_dias: 0 borra todo lo pasado; poné 30 si querés tener el último mes en la base. Los turnos futuros y los clientes NO se tocan nunca. dia: 1=lunes ... 7=domingo."
+  },
+  "resenas": {
+    "activo": true,
+    "horas_despues": 1,
+    "solo_clientes_nuevos": true,
+    "link_google_maps": "https://g.page/r/barberia-de-prueba/review",
+    "descuento_porcentaje": 10,
+    "vence_dias": 90,
+    "mensaje": "¡Hola {nombre}! ✂️ ¿Cómo te fue con el corte?\n\nSi nos dejás tu opinión en Google nos ayudás un montón 🙌\n{link}\n\nY por dejarla te hacemos un {descuento}% de descuento en tu próximo corte. Avisame cuando la subas y te lo dejo cargado 👇",
+    "mensaje_confirmacion": "¡Gracias {nombre}! 🙌 Te dejé cargado el {descuento}% de descuento para tu próximo corte.",
+    "_comentario": "Google no permite verificar por API si alguien dejó una reseña. El descuento se carga cuando el cliente avisa que la dejó; desde el panel lo podés sacar si ves que no es cierto."
   }
 }

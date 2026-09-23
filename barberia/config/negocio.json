@@ -191,12 +191,12 @@
     "max_opciones_horarios": 6
   },
   "recordatorios": {
-    "activos": false,
+    "activos": true,
     "avisos": [
       {
         "id": "24h",
         "horas_antes": 24,
-        "activo": false
+        "activo": true
       },
       {
         "id": "2h",
@@ -214,6 +214,16 @@
     "error_al_confirmar": "Estoy teniendo un inconveniente para confirmar el turno. Dame un momento y vuelvo a intentarlo 🙏",
     "derivacion_humana": "Listo, le aviso al barbero para que te escriba por acá. Puede demorar un rato en responder 🙌",
     "despedida": "¡Gracias! Cualquier cosa escribime por acá ✂️"
+  },
+  "resenas": {
+    "activo": true,
+    "horas_despues": 1,
+    "solo_clientes_nuevos": true,
+    "link_google_maps": "https://g.page/r/mi-barberia/review",
+    "descuento_porcentaje": 10,
+    "vence_dias": 90,
+    "mensaje": "¡Hola {nombre}! ✂️ ¿Cómo te fue con el corte?\n\nSi nos dejás tu opinión en Google nos ayudás un montón 🙌\n{link}\n\nY por dejarla te hacemos un {descuento}% de descuento en tu próximo corte. Avisame cuando la subas y te lo dejo cargado 👇",
+    "mensaje_confirmacion": "¡Gracias {nombre}! 🙌 Te dejé cargado el {descuento}% de descuento para tu próximo corte."
   },
   "cierre_semanal": {
     "activo": true,

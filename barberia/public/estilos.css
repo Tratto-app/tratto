@@ -182,3 +182,9 @@ form.enviar input { flex: 1; }
 .numero .delta.sube { color: var(--ok); }
 .numero .delta.baja { color: var(--alerta); }
 .balance .detalle { margin-top: 12px; font-size: 13px; color: var(--texto-suave); }
+
+/* Cliente con descuento por dejar reseña: se tiene que ver de un vistazo. */
+:root { --premio: #5bb98b; }
+.tarjeta.con-descuento { border-left: 4px solid var(--premio); background: linear-gradient(90deg, rgba(91,185,139,0.10), var(--superficie) 60%); }
+.chip.descuento { border-color: var(--premio); color: var(--premio); font-weight: 650; }
+.dia-semana li.con-descuento { color: var(--premio); font-weight: 600; }

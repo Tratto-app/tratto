@@ -26,7 +26,7 @@ const datos = (r: { datos: unknown }) => r.datos as Record<string, any>;
 
 describe('definiciones expuestas al modelo', () => {
   test('el agente no tiene herramientas de barbero', () => {
-    const nombres = DEFINICIONES.map((d) => d.name);
+    const nombres = DEFINICIONES.map((d) => d.nombre);
     for (const prohibida of ['bloquear_horario', 'block_time', 'agenda_semanal', 'cambiar_precios', 'get_weekly_schedule']) {
       assert.ok(!nombres.includes(prohibida), `el agente no debería poder ejecutar ${prohibida}`);
     }
@@ -34,8 +34,8 @@ describe('definiciones expuestas al modelo', () => {
 
   test('todas las herramientas declaran un esquema cerrado', () => {
     for (const d of DEFINICIONES) {
-      const esquema = d.input_schema as { additionalProperties?: boolean };
-      assert.equal(esquema.additionalProperties, false, `${d.name} acepta propiedades libres`);
+      const esquema = d.esquema as { additionalProperties?: boolean };
+      assert.equal(esquema.additionalProperties, false, `${d.nombre} acepta propiedades libres`);
     }
   });
 });

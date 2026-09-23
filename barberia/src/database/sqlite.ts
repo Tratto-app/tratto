@@ -6,6 +6,15 @@ import type { BaseDeDatos, Transaccion } from './tipos.js';
 
 const AQUI = path.dirname(fileURLToPath(import.meta.url));
 
+/** Parte el archivo de migraciones en sentencias sueltas, salteando comentarios. */
+export function sentenciasDeMigracion(ruta: string): string[] {
+  return fs
+    .readFileSync(ruta, 'utf8')
+    .split(';')
+    .map((s) => s.replace(/^\s*--.*$/gm, '').trim())
+    .filter(Boolean);
+}
+
 /**
  * Driver SQLite: pensado para desarrollo, tests y barberias de un solo local
  * corriendo en una sola instancia.
@@ -70,6 +79,14 @@ export function crearSqlite(rutaArchivo: string): BaseDeDatos {
     },
     async migrar() {
       db.exec(fs.readFileSync(path.join(AQUI, 'schema.sql'), 'utf8'));
+      // Cada ALTER se aplica por separado: si la columna ya existe, se ignora.
+      for (const sentencia of sentenciasDeMigracion(path.join(AQUI, 'migraciones.sql'))) {
+        try {
+          db.exec(sentencia);
+        } catch (e) {
+          if (!/duplicate column name/i.test(e instanceof Error ? e.message : '')) throw e;
+        }
+      }
     },
     async cerrar() {
       db.close();

@@ -16,8 +16,10 @@ import { conversacionesRepo, mensajesRepo, type MensajeHistorial } from '../data
 import { eventosRepo } from '../database/repositories/eventos.js';
 import { env, iaConfigurada } from '../config/env.js';
 import { log, logConTelefono } from '../shared/log.js';
+import { registrarResenaDeCliente } from './resenas.js';
 import { sanearMensaje } from '../shared/texto.js';
-import { ErrorIA, responder as responderConIA, type ClienteIA } from '../ai/agente.js';
+import { ErrorIA, responder as responderConIA } from '../ai/agente.js';
+import type { ProveedorIA } from '../ai/proveedores/tipos.js';
 import { responderConMenu, type Boton, type EstadoFallback, type RespuestaFallback } from '../ai/fallback.js';
 
 /** Cuanto dura la pausa del bot despues de derivar a una persona. */
@@ -52,8 +54,8 @@ function recortarHistorial(historial: MensajeHistorial[]): MensajeHistorial[] {
 }
 
 export interface OpcionesProceso {
-  /** Doble del modelo, solo para tests: permite probar el circuito sin llamar a la API. */
-  clienteIA?: ClienteIA;
+  /** Doble del proveedor, solo para tests: permite probar sin llamar a ninguna API. */
+  proveedorIA?: ProveedorIA;
 }
 
 export async function procesarMensaje(
@@ -81,19 +83,37 @@ export async function procesarMensaje(
   // 2. Atajo para el barbero: si pide el balance, se lo damos al instante.
   //    Funciona siempre porque el la ventana de 24 h la abre el mismo con su
   //    mensaje, asi que no depende de plantillas aprobadas.
-  if (env.BARBERO_WHATSAPP && entrada.telefono === env.BARBERO_WHATSAPP && pideElBalance(texto)) {
-    const { calcularResumenSemanal, resumenComoTexto } = await import('../reportes/semanal.js');
-    const resumen = await calcularResumenSemanal(ctx);
-    registro.info('el barbero pidió el balance de la semana');
-    return {
-      texto: resumenComoTexto(resumen, ctx.cfg.negocio.moneda),
-      avisarAlBarbero: false,
-      usoIA: false,
-      herramientas: ['resumen_semanal'],
-    };
+  if (env.BARBERO_WHATSAPP && entrada.telefono === env.BARBERO_WHATSAPP) {
+    const pedido = queBalancePide(texto);
+    if (pedido === 'mes') {
+      const { calcularResumenMensual, mesDe, resumenMensualComoTexto } = await import('../reportes/mensual.js');
+      const resumen = await calcularResumenMensual(ctx, mesDe(ahora.toISODate()!));
+      registro.info('el barbero pidió el balance del mes');
+      return {
+        texto: resumenMensualComoTexto(resumen, ctx.cfg.negocio.moneda),
+        avisarAlBarbero: false,
+        usoIA: false,
+        herramientas: ['resumen_mensual'],
+      };
+    }
+    if (pedido === 'semana') {
+      const { calcularResumenSemanal, resumenComoTexto } = await import('../reportes/semanal.js');
+      const resumen = await calcularResumenSemanal(ctx);
+      registro.info('el barbero pidió el balance de la semana');
+      return {
+        texto: resumenComoTexto(resumen, ctx.cfg.negocio.moneda),
+        avisarAlBarbero: false,
+        usoIA: false,
+        herramientas: ['resumen_semanal'],
+      };
+    }
   }
 
-  // 3. Estado de la conversacion.
+  // 3. ¿Está avisando que dejó la reseña? Se le carga el descuento.
+  const respuestaResena = await quizasRegistrarResena(ctx, entrada.telefono, texto, ahoraMs);
+  if (respuestaResena) return respuestaResena;
+
+  // 4. Estado de la conversacion.
   const conv = await conversacionesRepo.obtener(ctx.db, entrada.telefono);
   const estado = conv.estado as Record<string, unknown>;
 
@@ -112,7 +132,7 @@ export async function procesarMensaje(
     await eventosRepo.registrar(ctx.db, 'bot_reactivado', { telefono: entrada.telefono, detalle: 'venció la pausa', ahoraMs });
   }
 
-  // 4. Datos del cliente para personalizar la respuesta.
+  // 5. Datos del cliente para personalizar la respuesta.
   const cliente = await clientesRepo.porTelefono(ctx.db, entrada.telefono);
   if (cliente?.bloqueado) {
     registro.warn('cliente bloqueado: no se responde');
@@ -130,8 +150,8 @@ export async function procesarMensaje(
 
   let respuesta: RespuestaConversacion;
 
-  // 5. Primero la IA; si no esta disponible o falla, el menu.
-  if (iaConfigurada || opciones.clienteIA) {
+  // 6. Primero la IA; si no esta disponible o falla, el menu.
+  if (iaConfigurada || opciones.proveedorIA) {
     try {
       const r = await responderConIA(
         {
@@ -147,7 +167,7 @@ export async function procesarMensaje(
           },
           llamador,
         },
-        opciones.clienteIA,
+        opciones.proveedorIA,
       );
       respuesta = {
         texto: r.texto,
@@ -165,7 +185,7 @@ export async function procesarMensaje(
     respuesta = await conMenu(ctx, entrada, texto, llamador, estado);
   }
 
-  // 6. Derivacion a persona: se pausa el bot.
+  // 7. Derivacion a persona: se pausa el bot.
   if (respuesta.avisarAlBarbero) {
     conv.modo = 'humano';
     estado.derivadoEnMs = ahoraMs;
@@ -178,7 +198,7 @@ export async function procesarMensaje(
     if (!respuesta.texto) respuesta.texto = ctx.cfg.mensajes.derivacion_humana;
   }
 
-  // 7. Persistencia del contexto.
+  // 8. Persistencia del contexto.
   conv.estado = estado;
   conv.ultimoMensajeMs = ahoraMs;
   conv.historial = recortarHistorial([
@@ -221,14 +241,43 @@ async function conMenu(
   }
 }
 
-/** ¿El barbero está pidiendo el balance de la semana? */
-function pideElBalance(texto: string): boolean {
+/** ¿El cliente está diciendo que ya dejó la reseña? */
+function confirmaResena(texto: string): boolean {
   const t = texto
     .toLowerCase()
     .normalize('NFD')
     .replace(/[\u0300-\u036f]/g, '')
     .trim();
-  return /^(resumen|balance|reporte|estadisticas)\b/.test(t) || /\bcomo (venimos|vengo|vamos|fue la semana|viene la semana)\b/.test(t);
+  return (
+    t === 'resena_hecha' ||
+    /\b(ya (la )?(deje|subi|puse|hice)|la deje|listo|hecho|ya esta|ya la puse|la subi)\b/.test(t)
+  );
+}
+
+/** Carga el descuento si el cliente avisa que dejó la reseña que le pedimos. */
+async function quizasRegistrarResena(
+  ctx: Contexto,
+  telefono: string,
+  texto: string,
+  ahoraMs: number,
+): Promise<RespuestaConversacion | null> {
+  if (!ctx.cfg.resenas.activo || !confirmaResena(texto)) return null;
+  const r = await registrarResenaDeCliente(ctx, telefono, ahoraMs);
+  if (!r.otorgado) return null;
+  return { texto: r.mensaje ?? '', avisarAlBarbero: false, usoIA: false, herramientas: ['registrar_resena'] };
+}
+
+/** ¿El barbero pide un balance? ¿De la semana o del mes? */
+function queBalancePide(texto: string): 'semana' | 'mes' | null {
+  const t = texto
+    .toLowerCase()
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .trim();
+  const pideBalance =
+    /^(resumen|balance|reporte|estadisticas)\b/.test(t) || /\bcomo (venimos|vengo|vamos|fue la semana|viene la semana|fue el mes)\b/.test(t);
+  if (!pideBalance) return null;
+  return /\b(mes|mensual|mes pasado)\b/.test(t) ? 'mes' : 'semana';
 }
 
 /** Devuelve la conversacion al bot (lo usa el panel del barbero). */

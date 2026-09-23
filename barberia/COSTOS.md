@@ -15,13 +15,13 @@ Supuesto: **300 conversaciones por mes**, ~8 mensajes por conversación,
 
 | Servicio | Qué cobra | Estimado mensual (USD) |
 |---|---|---|
-| WhatsApp Cloud API | Solo cobra las plantillas, y no se usan | **0** |
-| API de IA (Claude) | Por token de entrada y salida | 3 – 12 |
+| WhatsApp Cloud API | Plantillas: recordatorio de 24 h + pedido de reseña | 3 – 8 |
+| API de IA | Por token. Con `gpt-6-luna` es casi nada | 0,50 – 12 |
 | Hosting (Render/Railway) | Instancia siempre prendida | 5 – 10 |
 | Base de datos PostgreSQL | Instancia gestionada | 0 – 7 |
 | Google Sheets / Drive | Gratis en este volumen | 0 |
 | Dominio (opcional) | Anual | ~1 (prorrateado) |
-| **Total** | | **≈ 5 – 30 USD/mes** |
+| **Total** | | **≈ 9 – 35 USD/mes** |
 
 El rango depende sobre todo de cuánto se usa la IA y de si el Postgres es de
 capa gratuita o pago.
@@ -37,14 +37,16 @@ cliente— son **gratis**.
 Para este sistema:
 
 - Un cliente escribe para sacar turno → **conversación de servicio → gratis.**
-- El sistema **no manda recordatorios** (están apagados), que era lo único que
-  iba a costar plata.
+- **Recordatorio de 24 h** → plantilla de utilidad → **se cobra**.
+- **Pedido de reseña** (solo a clientes nuevos) → plantilla → **se cobra**.
 
-**Estimado: 0 USD.** Todo el ida y vuelta de turnos entra en las conversaciones
-que inicia el cliente, que no se cobran.
+**Estimado:** sobre ~150 turnos al mes, el recordatorio son unos 3 a 5 USD.
+El pedido de reseña va solo a los clientes nuevos (digamos 20 al mes), así que
+suma menos de 1 USD.
 
-Si algún día prendés los recordatorios: una plantilla de utilidad cuesta
-centavos por mensaje, y sobre ~150 turnos/mes serían 2 a 5 USD.
+Si querés bajarlo a 0: apagá los recordatorios (`recordatorios.activos: false`).
+El pedido de reseña conviene dejarlo — una reseña en Google vale bastante más
+que los centavos que cuesta el mensaje.
 
 También hay que tener en cuenta:
 - El número de WhatsApp Business no puede ser el mismo que ya usa el barbero
@@ -55,11 +57,20 @@ También hay que tener en cuenta:
 
 ---
 
-## 2. API de IA (Claude)
+## 2. API de IA (OpenAI o Claude)
 
-**Modelo:** por token. Precios de `claude-opus-5`: **5 USD por millón de tokens
-de entrada** y **25 USD por millón de salida**. Las lecturas de caché cuestan una
-fracción de la entrada.
+**Modelo:** por token. Se elige proveedor con `AI_PROVEEDOR`.
+
+| Modelo | Entrada / salida por millón | Costo estimado por mes (300 conversaciones) |
+|---|---|---|
+| `gpt-6-luna` (OpenAI) | $0,10 / $0,50 | **~0,50 USD** |
+| `gpt-6-sol` (OpenAI) | $2 / $10 | ~5 USD |
+| `claude-haiku-4-5` | $1 / $5 | ~3 USD |
+| `claude-opus-5` | $5 / $25 | ~12 USD |
+
+**Con `gpt-6-luna` la IA deja de ser un costo relevante.** Para atender turnos
+alcanza de sobra: las reglas duras (horarios, disponibilidad, doble reserva) las
+aplica el backend, no el modelo.
 
 **Cómo baja el costo este proyecto:**
 
@@ -76,13 +87,13 @@ la mayoría con caché. Unos **0,01 a 0,04 USD por conversación** →
 **3 a 12 USD** por 300 conversaciones.
 
 **Cómo gastar menos:**
-- `AI_MODEL=claude-sonnet-5` (2 USD / 10 USD por millón) o
-  `claude-haiku-4-5` (1 USD / 5 USD). Para este caso de uso, un modelo más chico
-  alcanza bastante bien; conviene probarlo en `/test-chat` antes de cambiarlo.
+- Empezá con `gpt-6-luna` y probalo en `/test-chat`. Si conversa bien (para
+  turnos, suele alcanzar), quedate ahí.
 - `AI_HABILITADA=false` deja el bot en modo menú: **costo cero de IA**, y los
   turnos se siguen reservando.
 
-📎 [Precios de la API](https://www.anthropic.com/pricing)
+📎 [Precios de OpenAI](https://developers.openai.com/api/docs/models) ·
+[Precios de Anthropic](https://www.anthropic.com/pricing)
 
 ---
 
@@ -96,7 +107,7 @@ sincronización con Sheets no funcionan en serverless.
 | Render | Starter | ~7 | El plan gratuito **duerme** el servicio: los recordatorios no salen a horario |
 | Railway | Uso medido | ~5 | Se paga por lo que consume |
 | Fly.io | Máquina chica | ~3–5 | Más configuración |
-| VPS (Hetzner, DigitalOcean) | 1 vCPU | ~5 | Hay que administrarlo |
+| VPS (Hetzner, DigitalOcean) | 1 vCPU | ~5 | `docker compose up -d` levanta todo, incluida la base |
 | **Vercel** | — | — | ❌ No sirve: serverless, sin proceso vivo ni disco |
 
 ---
@@ -138,7 +149,7 @@ viejos: la base de datos igual los guarda todos.
 ## Cómo bajar el costo a casi cero para probar
 
 1. `AI_HABILITADA=false` → sin costo de IA, el bot atiende por menú.
-2. Los recordatorios ya vienen apagados → sin costo de WhatsApp.
+2. `recordatorios.activos: false` → sin costo de WhatsApp.
 3. SQLite + un VPS de 5 USD, o directamente la notebook con ngrok.
 
 Con eso el sistema completo se prueba **sin gastar nada más que el hosting**.

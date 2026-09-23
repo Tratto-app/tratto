@@ -12,7 +12,6 @@
  *    cambiar precios) NO estan expuestas al agente: viven en el panel web.
  */
 import { z } from 'zod';
-import type Anthropic from '@anthropic-ai/sdk';
 import {
   cancelarTurno,
   confirmarHold,
@@ -31,6 +30,7 @@ import { log } from '../shared/log.js';
 import { esFechaValida, esHoraValida, fechaHumana, fechaRelativaHumana } from '../shared/tiempo.js';
 import { formatearDuracion, formatearPrecio } from '../shared/texto.js';
 import { DateTime } from 'luxon';
+import type { DefinicionHerramienta } from './proveedores/tipos.js';
 
 /** Contexto de quien esta hablando. Lo arma el backend, no el modelo. */
 export interface Llamador {
@@ -84,33 +84,37 @@ const esquemas = {
     .strict(),
   cancelar_turno: z.object({ turno_id: z.string().min(1), motivo: z.string().max(120).nullish() }).strict(),
   derivar_a_persona: z.object({ motivo: z.string().max(200).nullish() }).strict(),
+  registrar_resena: z.object({}).strict(),
 } as const;
 
 export type NombreHerramienta = keyof typeof esquemas;
 
-/** Definiciones que se le mandan al modelo. El orden es fijo para no romper el cache. */
-export const DEFINICIONES: Anthropic.Tool[] = [
+/**
+ * Definiciones que se le mandan al modelo, en formato neutral: cada proveedor
+ * las traduce a su API. El orden es fijo para no romper el cache de prompt.
+ */
+export const DEFINICIONES: DefinicionHerramienta[] = [
   {
-    name: 'obtener_servicios',
-    description:
+    nombre: 'obtener_servicios',
+    descripcion:
       'Lista los servicios activos con precio y duración. Usala antes de hablar de precios o duraciones: nunca los inventes ni los recuerdes de memoria.',
-    input_schema: { type: 'object', properties: {}, additionalProperties: false },
+    esquema: { type: 'object', properties: {}, additionalProperties: false },
   },
   {
-    name: 'obtener_horarios_de_atencion',
-    description: 'Días y horarios en los que atiende la barbería, más feriados y vacaciones cargados.',
-    input_schema: { type: 'object', properties: {}, additionalProperties: false },
+    nombre: 'obtener_horarios_de_atencion',
+    descripcion: 'Días y horarios en los que atiende la barbería, más feriados y vacaciones cargados.',
+    esquema: { type: 'object', properties: {}, additionalProperties: false },
   },
   {
-    name: 'obtener_informacion_del_negocio',
-    description: 'Dirección, teléfono, Instagram, medios de pago y política de cancelación.',
-    input_schema: { type: 'object', properties: {}, additionalProperties: false },
+    nombre: 'obtener_informacion_del_negocio',
+    descripcion: 'Dirección, teléfono, Instagram, medios de pago y política de cancelación.',
+    esquema: { type: 'object', properties: {}, additionalProperties: false },
   },
   {
-    name: 'consultar_disponibilidad',
-    description:
+    nombre: 'consultar_disponibilidad',
+    descripcion:
       'Horarios realmente libres para un servicio en una fecha. Es la ÚNICA fuente válida de horarios: no ofrezcas ninguno que no haya salido de acá.',
-    input_schema: {
+    esquema: {
       type: 'object',
       properties: {
         fecha: { type: 'string', description: 'Fecha en formato YYYY-MM-DD' },
@@ -124,10 +128,10 @@ export const DEFINICIONES: Anthropic.Tool[] = [
     },
   },
   {
-    name: 'reservar_horario',
-    description:
+    nombre: 'reservar_horario',
+    descripcion:
       'Aparta un horario por unos minutos mientras el cliente confirma. NO crea el turno definitivo. Después de llamarla tenés que mostrar el resumen y preguntar si confirma.',
-    input_schema: {
+    esquema: {
       type: 'object',
       properties: {
         fecha: { type: 'string', description: 'YYYY-MM-DD' },
@@ -140,10 +144,10 @@ export const DEFINICIONES: Anthropic.Tool[] = [
     },
   },
   {
-    name: 'confirmar_reserva',
-    description:
+    nombre: 'confirmar_reserva',
+    descripcion:
       'Convierte la reserva temporal en turno firme. Llamala SOLO después de que el cliente dijo explícitamente que sí, y sabiendo su nombre.',
-    input_schema: {
+    esquema: {
       type: 'object',
       properties: {
         reserva_id: { type: 'string', description: 'El id que devolvió reservar_horario' },
@@ -154,9 +158,9 @@ export const DEFINICIONES: Anthropic.Tool[] = [
     },
   },
   {
-    name: 'soltar_reserva',
-    description: 'Libera una reserva temporal cuando el cliente cambia de idea antes de confirmar.',
-    input_schema: {
+    nombre: 'soltar_reserva',
+    descripcion: 'Libera una reserva temporal cuando el cliente cambia de idea antes de confirmar.',
+    esquema: {
       type: 'object',
       properties: { reserva_id: { type: 'string' } },
       required: ['reserva_id'],
@@ -164,15 +168,15 @@ export const DEFINICIONES: Anthropic.Tool[] = [
     },
   },
   {
-    name: 'mis_turnos',
-    description: 'Turnos vigentes del cliente con el que estás hablando. Usala antes de modificar o cancelar.',
-    input_schema: { type: 'object', properties: {}, additionalProperties: false },
+    nombre: 'mis_turnos',
+    descripcion: 'Turnos vigentes del cliente con el que estás hablando. Usala antes de modificar o cancelar.',
+    esquema: { type: 'object', properties: {}, additionalProperties: false },
   },
   {
-    name: 'modificar_turno',
-    description:
+    nombre: 'modificar_turno',
+    descripcion:
       'Mueve un turno existente a otra fecha, hora o servicio. Antes verificá con consultar_disponibilidad que el horario nuevo esté libre.',
-    input_schema: {
+    esquema: {
       type: 'object',
       properties: {
         turno_id: { type: 'string' },
@@ -185,9 +189,9 @@ export const DEFINICIONES: Anthropic.Tool[] = [
     },
   },
   {
-    name: 'cancelar_turno',
-    description: 'Cancela un turno. Llamala SOLO después de que el cliente confirmó que quiere cancelarlo.',
-    input_schema: {
+    nombre: 'cancelar_turno',
+    descripcion: 'Cancela un turno. Llamala SOLO después de que el cliente confirmó que quiere cancelarlo.',
+    esquema: {
       type: 'object',
       properties: { turno_id: { type: 'string' }, motivo: { type: 'string' } },
       required: ['turno_id'],
@@ -195,10 +199,16 @@ export const DEFINICIONES: Anthropic.Tool[] = [
     },
   },
   {
-    name: 'derivar_a_persona',
-    description:
+    nombre: 'registrar_resena',
+    descripcion:
+      'Usala SOLO si el cliente dice que ya dejó la reseña en Google que le pedimos. Le carga el descuento para el próximo corte. Si no le pedimos ninguna reseña, la herramienta la rechaza sola.',
+    esquema: { type: 'object', properties: {}, additionalProperties: false },
+  },
+  {
+    nombre: 'derivar_a_persona',
+    descripcion:
       'Avisa al barbero para que atienda personalmente y pausa las respuestas automáticas. Usala si el cliente pide hablar con alguien, se queja, o pide algo que no podés resolver.',
-    input_schema: {
+    esquema: {
       type: 'object',
       properties: { motivo: { type: 'string' } },
       required: [],
@@ -207,7 +217,11 @@ export const DEFINICIONES: Anthropic.Tool[] = [
   },
 ];
 
-function resumirTurno(t: { id: string; fecha: string; horaInicio: string; horaFin: string; servicioNombre: string; precio: number; nombreCliente: string }, zona: string, ahora: DateTime) {
+function resumirTurno(
+  t: { id: string; fecha: string; horaInicio: string; horaFin: string; servicioNombre: string; precio: number; nombreCliente: string; descuentoPorcentaje: number },
+  zona: string,
+  ahora: DateTime,
+) {
   const dt = DateTime.fromISO(`${t.fecha}T${t.horaInicio}`, { zone: zona });
   return {
     turno_id: t.id,
@@ -218,6 +232,9 @@ function resumirTurno(t: { id: string; fecha: string; horaInicio: string; horaFi
     hora_fin: t.horaFin,
     servicio: t.servicioNombre,
     precio: formatearPrecio(t.precio),
+    ...(t.descuentoPorcentaje > 0
+      ? { descuento_aplicado: `${t.descuentoPorcentaje}% por haber dejado reseña — decíselo al cliente` }
+      : {}),
     cliente: t.nombreCliente,
   };
 }
@@ -373,6 +390,20 @@ export async function ejecutarHerramienta(
           motivo: (entrada.motivo as string) ?? '',
         });
         return { ok: true, datos: { cancelado: true, turno: resumirTurno(turno, zona, ahora) } };
+      }
+
+      case 'registrar_resena': {
+        // El modelo no puede regalar descuentos: el backend verifica que de
+        // verdad le hayamos pedido una resena a este cliente hace poco.
+        const { registrarResenaDeCliente } = await import('../conversation/resenas.js');
+        const r = await registrarResenaDeCliente(ctx, telefono, ahora.toMillis());
+        if (!r.otorgado) {
+          return { ok: false, datos: { error: 'sin_resena_pendiente', mensaje: r.motivo } };
+        }
+        return {
+          ok: true,
+          datos: { descuento_porcentaje: r.descuento, mensaje_sugerido: r.mensaje, vence_en_dias: ctx.cfg.resenas.vence_dias },
+        };
       }
 
       case 'derivar_a_persona': {

@@ -2,6 +2,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import pg from 'pg';
+import { sentenciasDeMigracion } from './sqlite.js';
 import type { BaseDeDatos, Transaccion } from './tipos.js';
 
 const AQUI = path.dirname(fileURLToPath(import.meta.url));
@@ -76,6 +77,14 @@ export function crearPostgres(connectionString: string): BaseDeDatos {
       const especifico = fs.readFileSync(path.join(AQUI, 'schema.postgres.sql'), 'utf8');
       await pool.query(comun);
       await pool.query(especifico);
+      for (const sentencia of sentenciasDeMigracion(path.join(AQUI, 'migraciones.sql'))) {
+        try {
+          await pool.query(sentencia);
+        } catch (e) {
+          // 42701 = columna duplicada: la migracion ya estaba aplicada.
+          if ((e as { code?: string }).code !== '42701') throw e;
+        }
+      }
     },
     async cerrar() {
       await pool.end();

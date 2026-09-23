@@ -1,0 +1,53 @@
+# Levanta el sistema completo con su PostgreSQL, en un solo comando:
+#
+#   cp .env.example .env    (y completá las claves)
+#   docker compose up -d
+#
+# Sirve para un VPS propio (Hetzner, DigitalOcean, una máquina en el local).
+# Si usás Render o Railway no hace falta: ahí se despliega con el Dockerfile y
+# la base la da la plataforma.
+
+services:
+  base:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: barberia
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?definí POSTGRES_PASSWORD en el .env}
+      POSTGRES_DB: barberia
+    volumes:
+      - datos-postgres:/var/lib/postgresql/data
+      # Los backups caen acá: hacé copia de esta carpeta.
+      - ./backups:/backups
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U barberia -d barberia']
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  app:
+    build: .
+    restart: unless-stopped
+    depends_on:
+      base:
+        condition: service_healthy
+    env_file: .env
+    environment:
+      NODE_ENV: production
+      PORT: 3000
+      DATABASE_URL: postgresql://barberia:${POSTGRES_PASSWORD}@base:5432/barberia
+    ports:
+      - '${PUERTO_PUBLICO:-3000}:3000'
+    volumes:
+      # La configuración del negocio queda afuera de la imagen para poder
+      # editarla (o que la edite el panel) sin reconstruir nada.
+      - ./config:/app/config
+    healthcheck:
+      test: ['CMD', 'node', '-e', "fetch('http://127.0.0.1:3000/salud').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 20s
+
+volumes:
+  datos-postgres:

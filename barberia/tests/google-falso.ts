@@ -13,6 +13,8 @@ export interface GoogleFalso {
   urlToken: string;
   hojas: Map<string, string[][]>;
   pedidos: string[];
+  /** Formatos aplicados (repeatCell), para verificar los colores. */
+  formatos: Array<{ hoja: string; fila: number; columna: number; color: { red: number; green: number; blue: number } }>;
   /** Fuerza que las próximas N respuestas fallen, para probar los reintentos. */
   fallarProximas: number;
   codigoDeFalla: number;
@@ -50,6 +52,7 @@ function parsearRango(texto: string): Rango {
 export async function levantarGoogleFalso(): Promise<GoogleFalso> {
   const hojas = new Map<string, string[][]>();
   const pedidos: string[] = [];
+  const formatos: GoogleFalso['formatos'] = [];
   const estado = { fallarProximas: 0, codigoDeFalla: 500 };
 
   const servidor = http.createServer((req, res) => {
@@ -87,9 +90,29 @@ export async function levantarGoogleFalso(): Promise<GoogleFalso> {
 
       // POST /{id}:batchUpdate → crear hojas y formato (el formato se ignora)
       if (resto === ':batchUpdate' && req.method === 'POST') {
-        const { requests = [] } = JSON.parse(cuerpo || '{}') as { requests?: Array<{ addSheet?: { properties: { title: string } } }> };
+        const { requests = [] } = JSON.parse(cuerpo || '{}') as {
+          requests?: Array<{
+            addSheet?: { properties: { title: string } };
+            repeatCell?: {
+              range: { sheetId: number; startRowIndex?: number; startColumnIndex?: number; endRowIndex?: number; endColumnIndex?: number };
+              cell?: { userEnteredFormat?: { backgroundColor?: { red: number; green: number; blue: number } } };
+            };
+          }>;
+        };
+        const titulos = [...hojas.keys()];
         for (const r of requests) {
           if (r.addSheet && !hojas.has(r.addSheet.properties.title)) hojas.set(r.addSheet.properties.title, []);
+          const color = r.repeatCell?.cell?.userEnteredFormat?.backgroundColor;
+          const rango = r.repeatCell?.range;
+          // Solo se anotan los pintados de una celda puntual, no los reseteos.
+          if (color && rango && (rango.endRowIndex ?? 0) - (rango.startRowIndex ?? 0) === 1) {
+            formatos.push({
+              hoja: titulos[(rango.sheetId ?? 1) - 1] ?? '',
+              fila: rango.startRowIndex ?? 0,
+              columna: rango.startColumnIndex ?? 0,
+              color,
+            });
+          }
         }
         return responder(200, { replies: [] });
       }
@@ -157,6 +180,7 @@ export async function levantarGoogleFalso(): Promise<GoogleFalso> {
     urlToken: `http://127.0.0.1:${puerto}/token`,
     hojas,
     pedidos,
+    formatos,
     get fallarProximas() {
       return estado.fallarProximas;
     },

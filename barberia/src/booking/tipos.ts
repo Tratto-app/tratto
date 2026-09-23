@@ -38,6 +38,10 @@ export interface Turno {
   origen: OrigenTurno;
   holdVenceMs: number | null;
   observaciones: string;
+  /** Descuento aplicado a este turno (por ejemplo, el 10% por dejar reseña). */
+  descuentoPorcentaje: number;
+  /** Beneficio que se consumió en este turno, si hubo alguno. */
+  beneficioId: string | null;
   creadoEn: string;
   actualizadoEn: string;
   canceladoEn: string | null;
