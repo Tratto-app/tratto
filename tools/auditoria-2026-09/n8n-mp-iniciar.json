@@ -113,9 +113,8 @@
     {
       "parameters": {
         "respondWith": "json",
-        "responseCode": 401,
         "responseBody": "={{ JSON.stringify({ error: 'Sesion invalida. Volve a entrar y proba de nuevo.' }) }}",
-        "options": {}
+        "options": { "responseCode": 401 }
       },
       "id": "n6",
       "name": "401 sesion invalida",
