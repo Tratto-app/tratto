@@ -41,11 +41,30 @@ use la `service_role`. Reversión de emergencia (vuelve a exponer el contacto):
 
 ## Lo que falta, en este orden
 
-### 1. Probar en la app con una cuenta de prueba
+### 1. ~~Probar el flujo completo con cuentas de prueba~~ — hecho el 24/09/2026
 
-Crear un pedido, que un proveedor mande un presupuesto, aceptarlo, "Comparar
-presupuestos" y calificar. Es la única forma de confirmar que los workflows de
-n8n no dependían de leer `solicitudes` con el token del usuario.
+Con 1 cliente y 2 proveedores de prueba (rubro inventado, ningún usuario real
+recibió nada), por la API real y los webhooks reales de n8n:
+
+- Pedido → matching → 2 proveedores; chat; presupuestos; aceptar; "terminado":
+  todo anda.
+- Comparar presupuestos (n8n): anda para el cliente; no le devuelve nada a
+  un proveedor ni a alguien sin sesión.
+- Calificar (n8n): anda para el cliente; al proveedor le responde `permiso`.
+  Calificar dos veces el mismo trabajo reemplaza la calificación (no duplica).
+- Asistente: anda con y sin sesión.
+- Siguen bloqueados: leer email/teléfono del cliente, colar un presupuesto
+  como aceptado o pagado, aceptarse el propio presupuesto, cambiar el monto,
+  que el cliente marque "terminado", escribir en el chat de otro.
+- **Conclusión: ningún workflow de n8n dependía de leer `solicitudes` con el
+  token del usuario.** La reversión de emergencia de arriba ya no hace falta.
+
+Todo lo de prueba (3 usuarios, 2 pedidos, 2 perfiles, 3 matches, 6 mensajes,
+1 calificación) se borró al terminar.
+
+Detalle de producto que apareció (no es de seguridad): cuando un pedido ya
+tiene un match, un proveedor que se registra después no se suma a ese pedido;
+solo entra en los pedidos nuevos.
 
 ### 2. Terminar H-01 en el workflow `mp-conectar` existente
 
