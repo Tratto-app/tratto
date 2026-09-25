@@ -1,0 +1,8 @@
+# La voz del dueño no va al repo (es publico): sirve para clonarla.
+# Las grabaciones y los masters se guardan en el Drive de Tratto.
+*.wav
+*.m4a
+*.mp3
+*.aac
+*.ogg
+*.flac
