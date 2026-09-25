@@ -27,6 +27,8 @@ const envSchema = z.object({
   WHATSAPP_VERIFY_TOKEN: z.string().optional(),
   WHATSAPP_APP_SECRET: z.string().optional(),
   WHATSAPP_GRAPH_VERSION: z.string().default('v26.0'),
+  /** Id de la cuenta de WhatsApp Business (WABA). Con esto el servidor suscribe la app a sus webhooks al arrancar. */
+  WHATSAPP_BUSINESS_ACCOUNT_ID: z.string().optional(),
   BARBERO_WHATSAPP: z.string().optional(),
 
   // --- IA ---

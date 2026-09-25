@@ -12,6 +12,7 @@ import { crearServidor, escuchar } from './backend/servidor.js';
 import { arrancarWorkerDeSheets } from './google/sync.js';
 import { arrancarWorkerDeMantenimiento } from './mantenimiento/tareas.js';
 import { log } from './shared/log.js';
+import { diagnosticarWhatsApp } from './whatsapp/diagnostico.js';
 
 async function arrancar(): Promise<void> {
   // 1. Configuracion del negocio.
@@ -45,6 +46,10 @@ async function arrancar(): Promise<void> {
   // 5. Servidor HTTP.
   const app = crearServidor(ctx);
   const servidor = escuchar(app);
+
+  // Chequeo contra Meta en segundo plano: no frena el arranque, deja el
+  // resultado en el log (acceso del token al número y suscripción de la cuenta).
+  void diagnosticarWhatsApp().catch((e) => log.error({ err: String(e) }, 'diagnóstico de WhatsApp falló'));
 
   const apagar = async (senal: string) => {
     log.info({ senal }, 'apagando');
