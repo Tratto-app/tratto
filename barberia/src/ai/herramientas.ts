@@ -28,7 +28,7 @@ import { describirHorarios } from '../booking/disponibilidad.js';
 import { esErrorDeNegocio } from '../shared/errores.js';
 import { log } from '../shared/log.js';
 import { esFechaValida, esHoraValida, fechaHumana, fechaRelativaHumana } from '../shared/tiempo.js';
-import { formatearDuracion, formatearPrecio } from '../shared/texto.js';
+import { formatearPrecio } from '../shared/texto.js';
 import { DateTime } from 'luxon';
 import type { DefinicionHerramienta } from './proveedores/tipos.js';
 
@@ -276,10 +276,12 @@ export async function ejecutarHerramienta(
         return {
           ok: true,
           datos: {
-            servicios: obtenerServicios(ctx).map((s) => ({
+            // La duración no va: el negocio decidió no mostrársela al cliente,
+            // y si el modelo la ve, la termina diciendo. La grilla de horarios
+            // la sigue usando por dentro.
+            servicios: obtenerServicios(ctx).map(({ duracion_min: _duracion, ...s }) => ({
               ...s,
               precio_texto: formatearPrecio(s.precio, ctx.cfg.negocio.moneda),
-              duracion_texto: formatearDuracion(s.duracion_min),
             })),
           },
         };

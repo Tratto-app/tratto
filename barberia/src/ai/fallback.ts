@@ -21,7 +21,7 @@ import { describirHorarios, proximosDiasAbiertos } from '../booking/disponibilid
 import { serviciosActivos } from '../config/negocio.js';
 import { esErrorDeNegocio } from '../shared/errores.js';
 import { fechaDe, fechaHumana, interpretarFecha } from '../shared/tiempo.js';
-import { formatearDuracion, formatearPrecio, nombreParecePlausible, normalizar, sanearNombre } from '../shared/texto.js';
+import { formatearPrecio, nombreParecePlausible, normalizar, sanearNombre } from '../shared/texto.js';
 
 export interface Boton {
   id: string;
@@ -112,7 +112,7 @@ function opcionDeMenu(texto: string): 'reservar' | 'consultar' | 'cancelar' | 'm
 function listaDeServicios(ctx: Contexto): RespuestaFallback {
   const servicios = serviciosActivos(ctx.cfg);
   const lineas = servicios
-    .map((s, i) => `${i + 1}️⃣ ${s.nombre} — ${formatearPrecio(s.precio, ctx.cfg.negocio.moneda)} (${formatearDuracion(s.duracion_min)})`)
+    .map((s, i) => `${i + 1}️⃣ ${s.nombre} — ${formatearPrecio(s.precio, ctx.cfg.negocio.moneda)}`)
     .join('\n');
   return {
     texto: `¿Qué te querés hacer?\n\n${lineas}`,
@@ -122,7 +122,7 @@ function listaDeServicios(ctx: Contexto): RespuestaFallback {
       opciones: servicios.slice(0, 10).map((s) => ({
         id: `srv_${s.id}`,
         titulo: s.nombre.slice(0, 24),
-        descripcion: `${formatearPrecio(s.precio, ctx.cfg.negocio.moneda)} · ${formatearDuracion(s.duracion_min)}`,
+        descripcion: formatearPrecio(s.precio, ctx.cfg.negocio.moneda),
       })),
     },
   };
@@ -441,7 +441,7 @@ export async function responderConMenu(
           estado.paso = 'menu';
           return {
             texto: `Estos son los servicios:\n\n${servicios
-              .map((s) => `✂️ ${s.nombre} — ${formatearPrecio(s.precio, ctx.cfg.negocio.moneda)} (${formatearDuracion(s.duracion_min)})`)
+              .map((s) => `✂️ ${s.nombre} — ${formatearPrecio(s.precio, ctx.cfg.negocio.moneda)}`)
               .join('\n')}\n\n${describirHorarios(ctx.cfg)}`,
             botones: MENU_BOTONES,
           };

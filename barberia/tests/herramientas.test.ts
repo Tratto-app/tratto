@@ -174,7 +174,9 @@ describe('información del negocio', () => {
       const corte = datos(r).servicios.find((s: { id: string }) => s.id === 'corte');
       assert.equal(corte.precio, 8000);
       assert.match(corte.precio_texto, /8\.000/);
-      assert.equal(corte.duracion_min, 45);
+      // El negocio no quiere mostrar duraciones: si el modelo las ve, las dice.
+      assert.equal(corte.duracion_min, undefined);
+      assert.equal(corte.duracion_texto, undefined);
     });
   });
 

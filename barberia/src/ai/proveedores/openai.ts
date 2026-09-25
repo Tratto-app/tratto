@@ -71,6 +71,33 @@ export function crearProveedorOpenAI(opciones: { apiKey: string; modelo?: string
 
           const salida = ((respuesta as { output?: unknown[] }).output ?? []) as Array<Record<string, unknown>>;
 
+          // Con store: false la API no recuerda nada entre llamadas: lo que el
+          // modelo dijo o pidió hay que reenviarlo en la próxima entrada. Sin
+          // esto, el resultado de una herramienta llega sin su pedido y la API
+          // lo rechaza ("No tool call found for function call output"). Pasó
+          // en producción.
+          //
+          // Los function_call se reconstruyen sin su `id` a propósito: con el
+          // id, un modelo de razonamiento exige también el item de reasoning
+          // que lo precedió, que con store: false no se puede referenciar.
+          for (const item of salida) {
+            if (item.type === 'function_call') {
+              entrada.push({
+                type: 'function_call',
+                call_id: item.call_id,
+                name: item.name,
+                arguments: item.arguments ?? '{}',
+              });
+            } else if (item.type === 'message') {
+              const textoDelItem = ((item.content ?? []) as Array<Record<string, unknown>>)
+                .filter((c) => c.type === 'output_text')
+                .map((c) => String(c.text ?? ''))
+                .join('\n')
+                .trim();
+              if (textoDelItem) entrada.push({ role: 'assistant', content: textoDelItem });
+            }
+          }
+
           const llamadas = salida
             .filter((item) => item.type === 'function_call')
             .map((item) => {

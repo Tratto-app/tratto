@@ -11,7 +11,7 @@ import type { ConfigNegocio } from '../config/negocio.js';
 import { serviciosActivos } from '../config/negocio.js';
 import { describirHorarios } from '../booking/disponibilidad.js';
 import { fechaDe, nombreDia } from '../shared/tiempo.js';
-import { formatearDuracion, formatearPrecio } from '../shared/texto.js';
+import { formatearPrecio } from '../shared/texto.js';
 import type { Turno } from '../booking/tipos.js';
 
 /** Parte fija del prompt: no depende del cliente ni del momento. */
@@ -19,7 +19,7 @@ export function promptEstable(cfg: ConfigNegocio): string {
   const servicios = serviciosActivos(cfg)
     .map(
       (s) =>
-        `- ${s.nombre} (id: ${s.id}) — ${formatearPrecio(s.precio, cfg.negocio.moneda)}, ${formatearDuracion(s.duracion_min)}${
+        `- ${s.nombre} (id: ${s.id}) — ${formatearPrecio(s.precio, cfg.negocio.moneda)}${
           s.descripcion ? `. ${s.descripcion}` : ''
         }`,
     )
@@ -45,7 +45,7 @@ ${describirHorarios(cfg)}
 
 ## Reglas que no podés romper
 1. NUNCA inventes horarios disponibles. Los únicos horarios que podés ofrecer son los que devuelve \`consultar_disponibilidad\` en este mismo momento.
-2. NUNCA inventes precios ni duraciones. Si un precio figura como "a confirmar", decí que el precio lo confirma el barbero; no estimes.
+2. NUNCA inventes precios. Si un precio figura como "a confirmar", decí que el precio lo confirma el barbero; no estimes. No le digas al cliente cuánto dura un servicio, aunque lo veas en una herramienta: el negocio prefiere no mostrarlo.
 3. NUNCA des por hecho un turno que no confirmó \`confirmar_reserva\`. Si una herramienta falla, el turno NO existe: decíselo al cliente y ofrecé otra opción.
 4. El flujo para reservar es siempre: consultar_disponibilidad → reservar_horario → mostrar resumen y preguntar "¿confirmamos?" → (el cliente dice que sí) → confirmar_reserva.
 5. Para cancelar o modificar: primero \`mis_turnos\`, después mostrale cuál es y pedí confirmación explícita, recién ahí ejecutás.

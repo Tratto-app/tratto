@@ -326,3 +326,25 @@ describe('el menú entiende cómo habla la gente', () => {
     });
   });
 });
+
+describe('el cliente no ve duraciones', () => {
+  // El negocio pidió no mostrar cuánto dura cada servicio. La duración sigue
+  // existiendo por dentro (arma la grilla de horarios), pero no se escribe.
+  const DURACION = /\b\d+\s*min\b|\b\d+\s*h\b/;
+
+  test('la lista de servicios para reservar muestra nombre y precio, sin minutos', async () => {
+    await conContexto(async (ctx) => {
+      const r = await decir(ctx, '1');
+      assert.match(r, /Corte \+ Barba/);
+      assert.ok(!DURACION.test(r), `apareció una duración: ${r}`);
+    });
+  });
+
+  test('la consulta de precios tampoco muestra minutos', async () => {
+    await conContexto(async (ctx) => {
+      const r = await decir(ctx, 'cuánto sale el corte?');
+      assert.match(r, /Corte/);
+      assert.ok(!DURACION.test(r), `apareció una duración: ${r}`);
+    });
+  });
+});
