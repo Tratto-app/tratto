@@ -1,0 +1,166 @@
+<!doctype html><html><head><meta charset="utf-8">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@500&family=IBM+Plex+Sans+Condensed:wght@600;700&family=IBM+Plex+Sans:wght@400;500;600&display=block" rel="stylesheet">
+<style>
+:root{--noche:#0C2620;--noche-2:#123830;--noche-3:#1B4B40;--claro:#FCFBF8;--papel:#F4F1EA;
+  --gris:#5E6B65;--gris-2:#94A19B;--gris-3:#B9C2BC;--laton:#C9A227;--laton-osc:#8A6E10;
+  --verde:#1E5D49;--verde-vivo:#2B7E62;--verde-luz:#8FD9BC;--tinta:#0E1815}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:#777;font-family:'IBM Plex Sans',sans-serif;display:flex;flex-direction:column;gap:40px;padding:40px;align-items:flex-start}
+.pieza{position:relative;overflow:hidden;flex:none}
+.oscura{background:var(--noche);color:var(--claro)}
+.oscura::after{content:'';position:absolute;inset:0;pointer-events:none;
+  background:radial-gradient(90% 70% at 0% 0%, rgba(43,126,98,.42), transparent 62%),
+             radial-gradient(70% 60% at 100% 100%, rgba(201,162,39,.15), transparent 58%)}
+.cont{position:relative;z-index:1;height:100%}
+.mono{font-family:'IBM Plex Mono',monospace;font-weight:500;text-transform:uppercase}
+.cond{font-family:'IBM Plex Sans Condensed',sans-serif;font-weight:700;letter-spacing:-.025em}
+em{font-style:normal;color:var(--laton)}
+.marca{display:flex;align-items:center;gap:18px}
+.marca span{font-family:'IBM Plex Mono',monospace;font-weight:500;letter-spacing:.34em;color:var(--gris-3)}
+.url{font-family:'IBM Plex Mono',monospace;font-weight:500;letter-spacing:.08em;color:var(--verde-luz)}
+.sello{display:inline-block;font-family:'IBM Plex Mono',monospace;font-weight:500;letter-spacing:.16em;text-transform:uppercase;
+  color:var(--laton);border:2px solid rgba(201,162,39,.55);border-radius:99px}
+.hilo{height:2px;background:linear-gradient(90deg,var(--noche-3),var(--laton))}
+
+/* 1 · perfil 1080 */
+#perfil{width:1080px;height:1080px}
+#perfil .cont{display:flex;align-items:center;justify-content:center}
+
+/* 2 · portada facebook 1640x624 */
+#portada{width:1640px;height:624px}
+#portada .cont{display:flex;align-items:center;justify-content:center;gap:70px;padding:0 160px}
+#portada h1{font-size:84px;line-height:1.0}
+#portada p{font-size:30px;color:var(--gris-3);margin-top:22px}
+
+/* posts 1080x1350 */
+.post{width:1080px;height:1350px}
+.post .cont{padding:88px 92px 80px;display:flex;flex-direction:column}
+.post .marca span{font-size:24px}
+.post .pie{margin-top:auto;display:flex;align-items:center;justify-content:space-between}
+.post .pie .url{font-size:30px}
+.post h1{font-size:112px;line-height:.98;margin-top:70px}
+.post .baja{font-size:38px;line-height:1.38;color:var(--gris-3);margin-top:40px;max-width:24ch}
+
+.nodo{background:var(--noche-2);border:2px solid var(--noche-3);border-radius:20px;padding:34px 40px}
+.rol{font-size:20px;letter-spacing:.19em;color:var(--gris-2);margin-bottom:12px}
+.txt{font-size:36px;font-weight:500;line-height:1.3}
+
+.paso{display:grid;grid-template-columns:110px 1fr;gap:34px;align-items:start;padding:40px 0}
+.paso + .paso{border-top:2px solid var(--noche-3)}
+.num{font-family:'IBM Plex Mono',monospace;font-weight:500;font-size:64px;color:var(--laton);line-height:1}
+.paso b{display:block;font-family:'IBM Plex Sans Condensed',sans-serif;font-weight:700;font-size:54px;line-height:1.05;letter-spacing:-.02em}
+.paso span{display:block;font-size:31px;line-height:1.38;color:var(--gris-3);margin-top:12px}
+
+.check{display:flex;gap:26px;align-items:baseline;font-size:40px;line-height:1.3;padding:20px 0}
+.check i{font-style:normal;color:var(--verde-luz);font-weight:600;flex:none;width:40px}
+
+/* carteles A4 (1240x1754 = 150 dpi; se exporta a 300) */
+.a4{width:1240px;height:1754px;background:var(--claro);color:var(--tinta)}
+.a4 .cont{padding:110px 110px 90px;display:flex;flex-direction:column}
+.a4 .franja{position:absolute;left:0;right:0;top:0;height:22px;background:linear-gradient(90deg,var(--verde),var(--verde-vivo) 60%,var(--laton))}
+.a4 .marca span{font-size:30px;color:var(--gris)}
+.a4 .ante{font-size:34px;letter-spacing:.18em;color:var(--verde-vivo);margin-top:90px}
+.a4 h1{font-size:132px;line-height:.96;margin-top:26px;color:var(--tinta)}
+.a4 h1 em{color:var(--laton-osc)}
+.a4 .baja{font-size:44px;line-height:1.35;color:#2c3833;margin-top:40px;max-width:24ch}
+.a4 .lista{margin-top:46px}
+.a4 .check{font-size:42px;padding:14px 0}
+.a4 .check i{color:var(--verde-vivo)}
+.a4 .qrbloque{margin-top:auto;display:grid;grid-template-columns:420px 1fr;gap:64px;align-items:center;
+  background:#fff;border:3px solid var(--verde);border-radius:28px;padding:44px}
+.a4 .qrbloque img{width:420px;height:420px;display:block}
+.a4 .qrbloque b{display:block;font-family:'IBM Plex Sans Condensed',sans-serif;font-weight:700;font-size:60px;line-height:1.02}
+.a4 .qrbloque span{display:block;font-size:34px;color:var(--gris);margin-top:18px;line-height:1.35}
+.a4 .qrbloque .url{color:var(--verde);font-size:36px;margin-top:28px;text-transform:none}
+</style></head><body>
+
+<!-- 1 · Foto de perfil -->
+<div class="pieza oscura" id="perfil"><div class="cont">
+  <svg width="600" height="600" viewBox="0 0 32 32" fill="none">
+    <circle cx="9" cy="9" r="4.8" stroke="#8FD9BC" stroke-width="1.7"/>
+    <circle cx="23" cy="23" r="4.8" stroke="#C9A227" stroke-width="1.7"/>
+    <path d="M12.5 12.5 L19.5 19.5" stroke="#4E7A6E" stroke-width="1.7" stroke-linecap="round"/>
+  </svg>
+</div></div>
+
+<!-- 2 · Portada de Facebook -->
+<div class="pieza oscura" id="portada"><div class="cont">
+  <svg width="210" height="210" viewBox="0 0 32 32" fill="none" style="flex:none">
+    <circle cx="9" cy="9" r="4.8" stroke="#8FD9BC" stroke-width="1.7"/>
+    <circle cx="23" cy="23" r="4.8" stroke="#C9A227" stroke-width="1.7"/>
+    <path d="M12.5 12.5 L19.5 19.5" stroke="#4E7A6E" stroke-width="1.7" stroke-linecap="round"/>
+  </svg>
+  <div>
+    <h1 class="cond">Del pedido al presupuesto,<br><em>sin vueltas</em>.</h1>
+    <p>Arreglos del hogar con gente de tu zona · <span class="url" style="font-size:28px">trattoapp.com.ar</span></p>
+  </div>
+</div></div>
+
+<!-- 3 · Post presentación -->
+<div class="pieza oscura post" id="post1"><div class="cont">
+  <div class="marca"><svg width="54" height="54" viewBox="0 0 32 32" fill="none"><circle cx="8" cy="8" r="4.6" stroke="#8FD9BC" stroke-width="1.8"/><circle cx="24" cy="24" r="4.6" stroke="#C9A227" stroke-width="1.8"/><path d="M11.4 11.4 L20.6 20.6" stroke="#4E7A6E" stroke-width="1.8" stroke-linecap="round"/></svg><span>TRATTO</span></div>
+  <h1 class="cond">¿Se rompió algo?<br><em>Sacale una foto.</em></h1>
+  <p class="baja">Te damos un precio de referencia y te conectamos con gente de tu zona que hace ese trabajo.</p>
+  <div style="margin-top:64px">
+    <div class="nodo"><div class="rol mono">Vos necesitás</div><div class="txt">Arreglar una mancha de humedad en el techo</div></div>
+    <div style="display:flex;align-items:center;gap:22px;padding:26px 0 26px 40px"><span class="hilo" style="flex:1"></span><span class="sello" style="font-size:20px;padding:10px 22px">Te cotizan</span></div>
+    <div class="nodo"><div class="rol mono">Elegís vos</div><div class="txt">Techos y humedades · GBA Oeste</div></div>
+  </div>
+  <div class="pie"><span class="url">trattoapp.com.ar</span><span class="sello" style="font-size:20px;padding:10px 22px">Gratis para el que pide</span></div>
+</div></div>
+
+<!-- 4 · Post cómo funciona -->
+<div class="pieza oscura post" id="post2"><div class="cont">
+  <div class="marca"><svg width="54" height="54" viewBox="0 0 32 32" fill="none"><circle cx="8" cy="8" r="4.6" stroke="#8FD9BC" stroke-width="1.8"/><circle cx="24" cy="24" r="4.6" stroke="#C9A227" stroke-width="1.8"/><path d="M11.4 11.4 L20.6 20.6" stroke="#4E7A6E" stroke-width="1.8" stroke-linecap="round"/></svg><span>TRATTO</span></div>
+  <h1 class="cond" style="font-size:100px">Así de <em>simple</em>.</h1>
+  <div style="margin-top:56px">
+    <div class="paso"><div class="num">01</div><div><b>Pedís</b><span>Contás qué necesitás arreglar. Si subís una foto, te damos un precio de referencia al toque.</span></div></div>
+    <div class="paso"><div class="num">02</div><div><b>Te cotizan</b><span>Proveedores de tu zona y de ese rubro te mandan su presupuesto por el chat.</span></div></div>
+    <div class="paso"><div class="num">03</div><div><b>Elegís vos</b><span>Comparás qué incluye cada uno, cuánto sale y cuándo puede. Sin llamar a diez personas.</span></div></div>
+  </div>
+  <div class="pie"><span class="url">trattoapp.com.ar</span><span class="sello" style="font-size:20px;padding:10px 22px">Del pedido al presupuesto</span></div>
+</div></div>
+
+<!-- 5 · Post proveedores -->
+<div class="pieza oscura post" id="post3"><div class="cont">
+  <div class="marca"><svg width="54" height="54" viewBox="0 0 32 32" fill="none"><circle cx="8" cy="8" r="4.6" stroke="#8FD9BC" stroke-width="1.8"/><circle cx="24" cy="24" r="4.6" stroke="#C9A227" stroke-width="1.8"/><path d="M11.4 11.4 L20.6 20.6" stroke="#4E7A6E" stroke-width="1.8" stroke-linecap="round"/></svg><span>TRATTO</span></div>
+  <div class="mono" style="font-size:26px;letter-spacing:.18em;color:var(--verde-luz);margin-top:70px">¿Tenés un oficio?</div>
+  <h1 class="cond" style="margin-top:22px">Recibí pedidos <em>de tu zona</em>.</h1>
+  <div style="margin-top:56px">
+    <div class="check"><i>✓</i><span>Registrarte es gratis</span></div>
+    <div class="check"><i>✓</i><span>Te llegan pedidos de tu rubro y tu zona, no de la otra punta</span></div>
+    <div class="check"><i>✓</i><span>Chateás directo con el cliente y mandás tu presupuesto</span></div>
+    <div class="check"><i>✓</i><span>Sin abono mensual: solo un 3% si cobrás por la app</span></div>
+  </div>
+  <div class="pie"><span class="url">trattoapp.com.ar</span><span class="sello" style="font-size:20px;padding:10px 22px">Sumate gratis</span></div>
+</div></div>
+
+<!-- 6 · Cartel A4 proveedores -->
+<div class="pieza a4" id="cartel-prov"><div class="franja"></div><div class="cont">
+  <div class="marca"><svg width="64" height="64" viewBox="0 0 32 32" fill="none"><circle cx="8" cy="8" r="4.6" stroke="#2B7E62" stroke-width="2"/><circle cx="24" cy="24" r="4.6" stroke="#C9A227" stroke-width="2"/><path d="M11.4 11.4 L20.6 20.6" stroke="#4E7A6E" stroke-width="2" stroke-linecap="round"/></svg><span>TRATTO</span></div>
+  <div class="ante mono">¿Hacés arreglos?</div>
+  <h1 class="cond">Recibí pedidos de <em>vecinos de tu zona</em>.</h1>
+  <p class="baja">Plomería, destapaciones, humedades, pintura, cerrajería, albañilería y más.</p>
+  <div class="lista">
+    <div class="check"><i>✓</i><span>Registrarte es gratis</span></div>
+    <div class="check"><i>✓</i><span>Te llegan pedidos de tu rubro y tu zona</span></div>
+    <div class="check"><i>✓</i><span>Mandás tu presupuesto por el chat</span></div>
+  </div>
+  <div class="qrbloque"><img src="qr-prov.svg"><div><b>Escaneá y sumate</b><span>Te registrás en 2 minutos desde el celular.</span><div class="url">trattoapp.com.ar</div></div></div>
+</div></div>
+
+<!-- 7 · Cartel A4 vecinos -->
+<div class="pieza a4" id="cartel-cli"><div class="franja"></div><div class="cont">
+  <div class="marca"><svg width="64" height="64" viewBox="0 0 32 32" fill="none"><circle cx="8" cy="8" r="4.6" stroke="#2B7E62" stroke-width="2"/><circle cx="24" cy="24" r="4.6" stroke="#C9A227" stroke-width="2"/><path d="M11.4 11.4 L20.6 20.6" stroke="#4E7A6E" stroke-width="2" stroke-linecap="round"/></svg><span>TRATTO</span></div>
+  <div class="ante mono">¿Se te rompió algo en casa?</div>
+  <h1 class="cond" style="font-size:118px">Sacale una foto y <em>recibí presupuestos</em>.</h1>
+  <p class="baja">Precio de referencia al toque y presupuestos de gente de tu zona.</p>
+  <div class="lista">
+    <div class="check"><i>✓</i><span>Gratis para el que pide</span></div>
+    <div class="check"><i>✓</i><span>Proveedores de tu zona</span></div>
+    <div class="check"><i>✓</i><span>Comparás y elegís vos</span></div>
+  </div>
+  <div class="qrbloque"><img src="qr-cli.svg"><div><b>Escaneá y pedí</b><span>Del pedido al presupuesto, sin vueltas.</span><div class="url">trattoapp.com.ar</div></div></div>
+</div></div>
+
+</body></html>
