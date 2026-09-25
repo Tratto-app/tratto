@@ -66,30 +66,24 @@ Detalle de producto que apareció (no es de seguridad): cuando un pedido ya
 tiene un match, un proveedor que se registra después no se suma a ese pedido;
 solo entra en los pedidos nuevos.
 
-### 2. Terminar H-01 en el workflow `mp-conectar` existente
+### 2 y 3. ~~n8n: H-01, H-03, CORS~~ — hecho el 25/09/2026 por la API de n8n
 
-Primer paso después del Webhook:
-- `GET {SUPABASE_URL}/rest/v1/oauth_states?nonce=eq.{{ $json.query.state }}&select=user_id`
-  con la `service_role`.
-- Si no devuelve exactamente una fila → responder error y cortar.
-- Usar ese `user_id` donde antes se usaba el `state` directo.
-- Al final, borrar el nonce: `DELETE .../oauth_states?nonce=eq....`
+Antes de tocar nada se guardó una copia de los 50 workflows (fuera del repo:
+tienen claves). Todo se probó en producción con cuentas temporales, que
+después se borraron.
 
-Hasta que esto esté, la conexión de Mercado Pago **no funciona**: la app ya
-manda el nonce, y `mp-conectar` todavía lo interpreta como un user_id.
+| Workflow | Cambio |
+|---|---|
+| `mp-conectar` | **H-01 cerrado.** Busca el nonce en `oauth_states` (un solo uso, vence a los 30 min), usa el `user_id` guardado ahí, lo borra al terminar. Enlace vencido o código rechazado por Mercado Pago → página de error propia (400; un 502 lo tapa Cloudflare). |
+| `tasar` | **H-03 cerrado.** Exige sesión válida y una foto del bucket `publicaciones`; si no, 401. |
+| `asistente` | El `user_id` sale del token validado, nunca del cuerpo. Sigue respondiendo sin sesión (preguntas generales). Tenía una clave de Supabase inválida: nunca había guardado una consulta; ahora sí. |
+| `matching` | **Hallazgo nuevo (alto).** Aceptaba cualquier aviso: cualquiera podía inventar un pedido y hacer que Tratto creara conexiones y mandara mails desde info@trattoapp.com.ar. Ahora exige el encabezado `x-tratto-secreto` (lo mandan los triggers de la base, migración `matching_webhook_con_secreto`) y vuelve a leer el registro de la base; del aviso solo usa tabla e id. |
+| `mp-iniciar` | El 401 devolvía 200. |
+| Los 7 webhooks que usa la app | CORS limitado a `https://www.trattoapp.com.ar` y `https://trattoapp.com.ar` (probado en navegador: desde otro sitio se bloquea). |
+| VIDEO IA 01, 02, 03 | Desactivados: el 01 fallaba todos los días (sin crédito de Veo) y el 02 y 03 corrían cada 5 y 15 minutos (~11.500 ejecuciones por mes), con riesgo de agotar el cupo de n8n y frenar la app. Se reactivan desde n8n. |
 
-No te doy el JSON completo porque nunca vi ese workflow; está solo en tu n8n.
-
-### 3. H-03 en los workflows `tasar` y `asistente`
-
-- Primer nodo: validar `{{ $json.body.token }}` con `GET {SUPABASE_URL}/auth/v1/user`
-  (copiá el nodo "Validar token de sesion" de `n8n-mp-iniciar.json`).
-- `tasar`: sin token válido → 401. Validar que `foto` empiece con
-  `https://qglsonbcsncgekzbfafk.supabase.co/storage/v1/object/public/publicaciones/`.
-- `asistente`: sin token válido → responder igual, pero como anónimo; nunca
-  usar un `userId` que venga en el cuerpo.
-- En los dos (y en los demás webhooks): Settings → **Allowed Origins (CORS)**
-  → `https://www.trattoapp.com.ar`.
+Falta probar de punta a punta **conectar una cuenta real de Mercado Pago**
+(necesita iniciar sesión en Mercado Pago): Cuenta → Conectar Mercado Pago.
 
 ### 4. Credenciales (M-05)
 
