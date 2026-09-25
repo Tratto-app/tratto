@@ -13,7 +13,7 @@
 import type { ConfigNegocio } from '../config/negocio.js';
 import { serviciosActivos } from '../config/negocio.js';
 import { describirHorarios } from '../booking/disponibilidad.js';
-import { formatearDuracion, formatearPrecio, normalizarTelefono, telefonoParecePlausible } from '../shared/texto.js';
+import { formatearPrecio, normalizarTelefono, telefonoParecePlausible } from '../shared/texto.js';
 
 /** Escapa todo lo que sale de la configuración: nada llega crudo al HTML. */
 function esc(texto: string): string {
@@ -74,7 +74,6 @@ export function paginaInicio(cfg: ConfigNegocio): string {
         </div>
         <div class="servicio-datos">
           <span class="precio">${esc(formatearPrecio(s.precio, n.moneda))}</span>
-          <span class="duracion">${esc(formatearDuracion(s.duracion_min))}</span>
         </div>
       </li>`,
     )

@@ -33,10 +33,11 @@ describe('portada', () => {
     assert.ok(html.includes('Calle Falsa 123'));
   });
 
-  test('lista los servicios activos con precio y duración', () => {
+  test('lista los servicios activos con precio, sin duración', () => {
     assert.ok(html.includes('Corte + Barba'));
     assert.ok(html.includes('12.000'));
-    assert.ok(html.includes('1 h 15 min'));
+    // El negocio pidió no mostrarle al cliente cuánto dura cada servicio.
+    assert.doesNotMatch(html, /\d+\s*min\b|\b\d+ h\b/);
   });
 
   test('no muestra servicios dados de baja', () => {

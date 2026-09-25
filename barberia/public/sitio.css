@@ -90,7 +90,6 @@ ul { margin: 0; padding: 0; list-style: none; }
 .servicio-desc { display: block; font-size: 14px; color: var(--texto-suave); }
 .servicio-datos { text-align: right; white-space: nowrap; }
 .precio { display: block; color: var(--acento); font-weight: 650; }
-.duracion { display: block; font-size: 14px; color: var(--texto-suave); }
 
 .tenue { color: var(--texto-suave); font-size: 15px; }
 
