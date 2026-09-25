@@ -10,7 +10,7 @@
  *   - avisarle al barbero cuando alguien pide hablar con el.
  */
 import type { Contexto } from '../booking/servicio.js';
-import { turnosDeCliente } from '../booking/servicio.js';
+import { turnoPorId, turnosDeCliente } from '../booking/servicio.js';
 import { clientesRepo } from '../database/repositories/clientes.js';
 import { conversacionesRepo, mensajesRepo, type MensajeHistorial } from '../database/repositories/conversaciones.js';
 import { eventosRepo } from '../database/repositories/eventos.js';
@@ -140,6 +140,18 @@ export async function procesarMensaje(
   }
   const turnosVigentes = await turnosDeCliente(ctx, entrada.telefono);
 
+  // Horario apartado en un mensaje anterior y todavía sin confirmar. El
+  // historial que ve el modelo es solo texto, así que sin esto se olvida del
+  // reserva_id, no puede confirmarlo y, al volver a consultar, su propio
+  // horario apartado le aparece ocupado ("ya no hay lugar"). Pasó en producción.
+  let reservaApartada: Awaited<ReturnType<typeof turnoPorId>> = null;
+  if (typeof estado.reservaPendiente === 'string') {
+    const t = await turnoPorId(ctx, estado.reservaPendiente);
+    const vigente = t && t.telefono === entrada.telefono && t.estado === 'pendiente' && (t.holdVenceMs ?? 0) > ahora.toMillis();
+    if (vigente) reservaApartada = t;
+    else delete estado.reservaPendiente;
+  }
+
   const llamador = {
     ctx,
     telefono: entrada.telefono,
@@ -164,6 +176,7 @@ export async function procesarMensaje(
             esClienteConocido: Boolean(cliente?.nombre) && (cliente?.totalTurnos ?? 0) > 0,
             cantidadDeVisitas: cliente?.totalTurnos ?? 0,
             turnosVigentes,
+            reservaApartada,
           },
           llamador,
         },

@@ -26,9 +26,10 @@ import {
 } from '../booking/servicio.js';
 import { describirHorarios } from '../booking/disponibilidad.js';
 import { esErrorDeNegocio } from '../shared/errores.js';
-import { log } from '../shared/log.js';
+import { enmascararTelefono, log } from '../shared/log.js';
 import { esFechaValida, esHoraValida, fechaHumana, fechaRelativaHumana } from '../shared/tiempo.js';
 import { formatearPrecio } from '../shared/texto.js';
+import { resolverServicio, serviciosActivos } from '../config/negocio.js';
 import { DateTime } from 'luxon';
 import type { DefinicionHerramienta } from './proveedores/tipos.js';
 
@@ -249,6 +250,60 @@ export async function ejecutarHerramienta(
   entradaCruda: unknown,
   llamador: Llamador,
 ): Promise<ResultadoHerramienta> {
+  const entradaLimpia = corregirEntrada(entradaCruda, llamador);
+  const r = await ejecutarSinRegistro(nombre, entradaLimpia, llamador);
+  // Cada herramienta que usa la IA queda en el log: sin esto, cuando el bot
+  // dice algo raro no hay forma de saber qué pidió ni qué le contestamos.
+  // El nombre y el motivo que escribe el cliente no se registran.
+  const { nombre: _n, motivo: _m, ...visible } = (entradaLimpia ?? {}) as Record<string, unknown>;
+  const datos = r.datos as Record<string, unknown> | undefined;
+  log.info(
+    {
+      cliente: enmascararTelefono(llamador.telefono),
+      herramienta: nombre,
+      entrada: visible,
+      ok: r.ok,
+      ...(r.ok ? {} : { error: datos?.error ?? datos?.codigo, mensaje: datos?.mensaje ?? datos?.mensaje_para_el_cliente }),
+      ...(r.ok && nombre === 'consultar_disponibilidad' ? { horarios: (datos?.horarios_para_ofrecer as unknown[] | undefined)?.length ?? 0 } : {}),
+    },
+    'herramienta de la IA',
+  );
+  return r;
+}
+
+/**
+ * Perdona los errores de formato típicos de un modelo chico, antes de validar:
+ * el servicio por su nombre en vez del id ("Corte + Barba" en lugar de
+ * corte_barba), la hora con espacios o sin cero adelante ("9:00", "10 hs").
+ * Todo lo que no se puede corregir con seguridad se deja igual y lo rechaza
+ * la validación de siempre.
+ */
+function corregirEntrada(entrada: unknown, llamador: Llamador): unknown {
+  if (!entrada || typeof entrada !== 'object') return entrada;
+  const e = { ...(entrada as Record<string, unknown>) };
+  const cfg = llamador.ctx.cfg;
+
+  if (typeof e.fecha === 'string') e.fecha = e.fecha.trim();
+
+  if (typeof e.hora === 'string') {
+    const h = e.hora.trim().toLowerCase().replace(/\s*(hs|h|horas)$/, '');
+    const m = /^(\d{1,2})(?:[:.](\d{2}))?$/.exec(h);
+    e.hora = m ? `${(m[1] ?? '').padStart(2, '0')}:${m[2] ?? '00'}` : h;
+  }
+
+  if (typeof e.servicio_id === 'string') {
+    const id = e.servicio_id.trim();
+    const existe = serviciosActivos(cfg).some((s) => s.id === id);
+    e.servicio_id = existe ? id : (resolverServicio(cfg, id)?.id ?? id);
+  }
+  return e;
+}
+
+async function ejecutarSinRegistro(
+  nombre: string,
+  entradaCruda: unknown,
+  llamador: Llamador,
+): Promise<ResultadoHerramienta> {
   const esquema = esquemas[nombre as NombreHerramienta];
   if (!esquema) {
     return { ok: false, datos: { error: 'herramienta_desconocida', mensaje: `No existe la herramienta ${nombre}` } };
@@ -269,6 +324,22 @@ export async function ejecutarHerramienta(
   const zona = ctx.cfg.negocio.timezone;
   const ahora = ctx.ahora();
   const entrada = parseo.data as Record<string, unknown>;
+
+  // Una fecha pasada nunca tiene lugar, pero contestar "no hay lugar" hace que
+  // el modelo le diga al cliente que está todo ocupado. Pasa cuando el modelo
+  // se equivoca de año o de semana: mejor decírselo para que se corrija solo.
+  if (typeof entrada.fecha === 'string' && ['consultar_disponibilidad', 'reservar_horario', 'modificar_turno'].includes(nombre)) {
+    const hoy = ahora.setZone(zona).toISODate()!;
+    if (entrada.fecha < hoy) {
+      return {
+        ok: false,
+        datos: {
+          error: 'FECHA_PASADA',
+          mensaje: `La fecha ${entrada.fecha} ya pasó: hoy es ${hoy} (${fechaHumana(ahora.setZone(zona))}). Revisá el calendario de "Ahora mismo" y volvé a consultar con la fecha correcta. No le digas al cliente que no hay lugar.`,
+        },
+      };
+    }
+  }
 
   try {
     switch (nombre as NombreHerramienta) {
@@ -299,6 +370,10 @@ export async function ejecutarHerramienta(
           rango: (entrada.franja as 'mañana' | 'tarde' | 'noche' | undefined) ?? null,
           desdeHora: (entrada.desde_hora as string | undefined) ?? null,
           hastaHora: (entrada.hasta_hora as string | undefined) ?? null,
+          // El horario que este mismo cliente tiene apartado no cuenta como
+          // ocupado para él: si no, al volver a consultar ve su propio hold y
+          // le dice que ya no hay lugar.
+          excluirTurnoId: typeof llamador.estado.reservaPendiente === 'string' ? llamador.estado.reservaPendiente : undefined,
         });
         return {
           ok: true,
@@ -344,10 +419,21 @@ export async function ejecutarHerramienta(
       }
 
       case 'confirmar_reserva': {
-        const turno = await confirmarHold(ctx, entrada.reserva_id as string, {
+        const datosConfirmacion = {
           telefono,
           nombre: (entrada.nombre as string) || llamador.nombreConocido || undefined,
-        });
+        };
+        const pendiente = typeof llamador.estado.reservaPendiente === 'string' ? llamador.estado.reservaPendiente : undefined;
+        let turno;
+        try {
+          turno = await confirmarHold(ctx, entrada.reserva_id as string, datosConfirmacion);
+        } catch (e) {
+          // Si el modelo perdió o inventó el id, pero este cliente tiene un
+          // único horario apartado, se confirma ese: es lo que el cliente está
+          // confirmando. Cualquier otro error (venció, falta el nombre) sigue.
+          if (!pendiente || pendiente === entrada.reserva_id || !esErrorDeNegocio(e) || e.codigo !== 'TURNO_NO_ENCONTRADO') throw e;
+          turno = await confirmarHold(ctx, pendiente, datosConfirmacion);
+        }
         delete llamador.estado.reservaPendiente;
         llamador.estado.ultimoTurno = turno.id;
         return { ok: true, datos: { confirmado: true, turno: resumirTurno(turno, zona, ahora) } };

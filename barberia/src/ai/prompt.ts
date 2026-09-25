@@ -6,7 +6,7 @@
  *  2. Una parte VOLATIL (fecha de hoy, calendario, datos del cliente) que va
  *     despues, para no invalidar el cache en cada mensaje.
  */
-import type { DateTime } from 'luxon';
+import { DateTime } from 'luxon';
 import type { ConfigNegocio } from '../config/negocio.js';
 import { serviciosActivos } from '../config/negocio.js';
 import { describirHorarios } from '../booking/disponibilidad.js';
@@ -77,6 +77,8 @@ export interface DatosVolatiles {
   esClienteConocido: boolean;
   cantidadDeVisitas: number;
   turnosVigentes: Turno[];
+  /** Horario apartado (hold) de un mensaje anterior, esperando que el cliente confirme. */
+  reservaApartada?: Turno | null;
 }
 
 /** Parte que cambia en cada conversacion. Va despues del bloque cacheado. */
@@ -109,5 +111,14 @@ Solo se toman turnos desde ${cfg.reglas.anticipacion_minima_min} minutos en adel
 ${d.esClienteConocido ? `Es un cliente conocido: se llama ${d.nombreCliente} y ya vino ${d.cantidadDeVisitas} vez/veces. Saludalo por su nombre y no le preguntes cómo se llama de nuevo.` : 'Es la primera vez que escribe (o todavía no sabés su nombre). Pedíselo recién cuando esté por confirmar el turno.'}
 
 Turnos vigentes de este cliente:
-${lineasTurnos}`;
+${lineasTurnos}${
+    d.reservaApartada
+      ? `
+
+## Horario apartado esperando que confirme
+reserva_id: ${d.reservaApartada.id}. ${d.reservaApartada.servicioNombre}, ${nombreDia(DateTime.fromISO(d.reservaApartada.fecha, { zone: zona }))} ${d.reservaApartada.fecha} a las ${d.reservaApartada.horaInicio}. Vence a las ${DateTime.fromMillis(d.reservaApartada.holdVenceMs ?? 0, { zone: zona }).toFormat('HH:mm')}.
+Ese horario ya es de este cliente mientras no venza: NO digas que está ocupado y no vuelvas a consultar disponibilidad para él.
+Si el cliente confirma ("sí", "dale", "ok", o te da su nombre), llamá a confirmar_reserva con reserva_id ${d.reservaApartada.id}. Si quiere otro horario, llamá a soltar_reserva primero.`
+      : ''
+  }`;
 }
