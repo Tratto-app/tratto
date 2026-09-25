@@ -58,8 +58,21 @@ describe('config/negocio.json (la de producción)', () => {
     assert.match(texto, /💵 \$10\.000/);
   });
 
+  test('todos los servicios a $10.000, turnos de 30 minutos, sin Corte + Barba', () => {
+    const activos = serviciosActivos(cfg);
+    assert.deepEqual(activos.map((s) => s.nombre), ['Corte', 'Barba', 'Corte niños']);
+    for (const s of activos) {
+      assert.equal(s.precio, 10000, s.nombre);
+      assert.equal(s.duracion_min, 30, s.nombre);
+    }
+    assert.equal(cfg.reglas.grilla_min, 30, 'horarios cada 30 minutos');
+  });
+
+  test('medios de pago: efectivo y transferencia', () => {
+    assert.deepEqual(cfg.negocio.medios_de_pago, ['efectivo', 'transferencia']);
+  });
+
   test('no promete cosas que el negocio no confirmó', () => {
-    assert.deepEqual(cfg.negocio.medios_de_pago, []);
     const descripciones = cfg.servicios.map((s) => s.descripcion).join(' ');
     assert.doesNotMatch(descripciones, /lavado|toalla|12 años/i);
   });

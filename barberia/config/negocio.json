@@ -6,7 +6,10 @@
     "telefono": "+54 9 11 6858-1736",
     "instagram": "",
     "maps": "https://maps.app.goo.gl/7W1Z1urKHChTHse69",
-    "medios_de_pago": [],
+    "medios_de_pago": [
+      "efectivo",
+      "transferencia"
+    ],
     "codigo_pais": "54",
     "timezone": "America/Argentina/Buenos_Aires",
     "moneda": "ARS"
@@ -123,7 +126,7 @@
       "nombre": "Corte",
       "descripcion": "Corte de pelo.",
       "precio": 10000,
-      "duracion_min": 45,
+      "duracion_min": 30,
       "activo": true,
       "alias": [
         "corte de pelo",
@@ -137,9 +140,9 @@
       "id": "corte_barba",
       "nombre": "Corte + Barba",
       "descripcion": "Corte de pelo y arreglo de barba.",
-      "precio": 0,
-      "duracion_min": 75,
-      "activo": true,
+      "precio": 10000,
+      "duracion_min": 30,
+      "activo": false,
       "alias": [
         "corte y barba",
         "completo",
@@ -151,7 +154,7 @@
       "id": "barba",
       "nombre": "Barba",
       "descripcion": "Arreglo y perfilado de barba.",
-      "precio": 0,
+      "precio": 10000,
       "duracion_min": 30,
       "activo": true,
       "alias": [
@@ -164,7 +167,7 @@
       "id": "corte_ninos",
       "nombre": "Corte niños",
       "descripcion": "Corte de pelo para chicos.",
-      "precio": 0,
+      "precio": 10000,
       "duracion_min": 30,
       "activo": true,
       "alias": [
@@ -179,7 +182,7 @@
     "anticipacion_maxima_dias": 45,
     "permite_reservar_mismo_dia": true,
     "margen_entre_turnos_min": 0,
-    "grilla_min": 15,
+    "grilla_min": 30,
     "max_turnos_futuros_por_cliente": 2,
     "cancelacion_minima_horas": 2,
     "politica_cancelacion": "Podés cancelar o reprogramar hasta 2 horas antes del turno escribiendo por acá.",
