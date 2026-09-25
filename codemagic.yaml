@@ -1,0 +1,40 @@
+# Compila la app de iPhone en la nube (Codemagic tiene Macs) y la sube a
+# TestFlight. La app vive en tools/ios-app. Se corre a mano desde codemagic.io.
+# Requisitos (una sola vez), ver tools/ios-app/README.md:
+#   - integración "Tratto App Store Connect" (clave API de App Store Connect)
+#   - APP_STORE_APPLE_ID: el número de la app en App Store Connect
+workflows:
+  ios-testflight:
+    name: Tratto iOS → TestFlight
+    max_build_duration: 60
+    instance_type: mac_mini_m2
+    working_directory: tools/ios-app
+    integrations:
+      app_store_connect: Tratto App Store Connect
+    environment:
+      ios_signing:
+        distribution_type: app_store
+        bundle_identifier: ar.com.trattoapp
+      vars:
+        APP_STORE_APPLE_ID: 0   # reemplazar por el Apple ID numérico de la app
+      xcode: latest
+      node: 22
+    scripts:
+      - name: Instalar dependencias
+        script: npm ci
+      - name: Sincronizar Capacitor
+        script: npx cap sync ios
+      - name: Perfiles de firma
+        script: xcode-project use-profiles
+      - name: Número de build
+        script: |
+          ULTIMO=$(app-store-connect get-latest-testflight-build-number "$APP_STORE_APPLE_ID" 2>/dev/null || echo 0)
+          cd ios/App && agvtool new-version -all $((ULTIMO + 1))
+      - name: Compilar
+        script: xcode-project build-ipa --project "ios/App/App.xcodeproj" --scheme "App"
+    artifacts:
+      - build/ios/ipa/*.ipa
+    publishing:
+      app_store_connect:
+        auth: integration
+        submit_to_testflight: true
