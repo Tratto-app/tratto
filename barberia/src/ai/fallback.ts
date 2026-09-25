@@ -570,7 +570,8 @@ export async function responderConMenu(
           if (/\b(donde|direccion|ubicados|ubicacion|queda|como llego)\b/.test(t)) {
             const info = obtenerInfoNegocio(ctx);
             if (info.direccion) {
-              return { texto: `Estamos en ${info.direccion}${info.como_llegar ? ` (${info.como_llegar})` : ''} 📍`, botones: MENU_BOTONES };
+              const mapa = info.maps ? `\n🗺️ ${info.maps}` : '';
+              return { texto: `Estamos en ${info.direccion}${info.como_llegar ? ` (${info.como_llegar})` : ''} 📍${mapa}`, botones: MENU_BOTONES };
             }
             return { texto: 'La dirección te la confirma el barbero 🙌 Si la necesitás ahora, escribí *5* y le aviso para que te escriba.', botones: MENU_BOTONES };
           }

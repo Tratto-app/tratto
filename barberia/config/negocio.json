@@ -1,11 +1,11 @@
 {
   "negocio": {
     "nombre": "Barbería Panamá",
-    "direccion": "",
+    "direccion": "Panamá 7442, Martín Coronado",
     "como_llegar": "",
     "telefono": "+54 9 11 6858-1736",
     "instagram": "",
-    "maps": "",
+    "maps": "https://maps.app.goo.gl/7W1Z1urKHChTHse69",
     "medios_de_pago": [],
     "codigo_pais": "54",
     "timezone": "America/Argentina/Buenos_Aires",

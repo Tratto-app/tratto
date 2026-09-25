@@ -12,6 +12,10 @@ import { configDeArranque, guardarConfigEditada } from '../src/config/guardada.j
 import { crearSqlite } from '../src/database/sqlite.js';
 import { promptEstable } from '../src/ai/prompt.js';
 import { formatearPrecio } from '../src/shared/texto.js';
+import { mensajeConfirmado } from '../src/conversation/mensajes.js';
+import type { Contexto } from '../src/booking/servicio.js';
+import type { Turno } from '../src/booking/tipos.js';
+import { AHORA_FIJO } from './helpers.js';
 import { CONFIG_TEST } from './helpers.js';
 
 describe('config/negocio.json (la de producción)', () => {
@@ -23,9 +27,12 @@ describe('config/negocio.json (la de producción)', () => {
     assert.equal(formatearPrecio(corte!.precio, cfg.negocio.moneda), '$10.000');
   });
 
-  test('nombre y teléfono del local cargados, sin textos de ejemplo', () => {
+  test('nombre, teléfono, dirección y mapa del local cargados, sin textos de ejemplo', () => {
     assert.equal(cfg.negocio.nombre, 'Barbería Panamá');
     assert.equal(cfg.negocio.telefono, '+54 9 11 6858-1736');
+    assert.equal(cfg.negocio.direccion, 'Panamá 7442, Martín Coronado');
+    assert.match(cfg.negocio.maps, /^https:\/\/maps\.app\.goo\.gl\//);
+    assert.equal(cfg.resenas.link_google_maps, cfg.negocio.maps);
     assert.doesNotMatch(JSON.stringify(cfg), /PLACEHOLDER/i);
   });
 
@@ -36,6 +43,19 @@ describe('config/negocio.json (la de producción)', () => {
     assert.doesNotMatch(prompt, /PLACEHOLDER/);
     const servicios = prompt.slice(prompt.indexOf('## Servicios'), prompt.indexOf('## Horarios'));
     assert.doesNotMatch(servicios, /\d+\s*min/);
+  });
+
+  test('el turno confirmado le dice al cliente dónde es, con el link de Maps', () => {
+    const ctx = { cfg, ahora: () => AHORA_FIJO } as unknown as Contexto;
+    const turno = {
+      id: 'TUR-X', telefono: '5491100000000', nombreCliente: 'Santi', servicioId: 'corte', servicioNombre: 'Corte',
+      precio: 10000, duracionMin: 45, fecha: '2026-09-19', horaInicio: '11:00', horaFin: '11:45', estado: 'reservado',
+      descuentoPorcentaje: 0,
+    } as unknown as Turno;
+    const texto = mensajeConfirmado(ctx, turno);
+    assert.match(texto, /📍 Panamá 7442, Martín Coronado/);
+    assert.match(texto, /🗺️ https:\/\/maps\.app\.goo\.gl\//);
+    assert.match(texto, /💵 \$10\.000/);
   });
 
   test('no promete cosas que el negocio no confirmó', () => {

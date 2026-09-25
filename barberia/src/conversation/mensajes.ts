@@ -36,10 +36,12 @@ export function fichaDelTurno(ctx: Contexto, t: Turno, opciones: { conNombre?: b
   return lineas.join('\n');
 }
 
+/** Dirección del local y, si está cargado, el link de Google Maps para llegar. */
 function lineaDireccion(ctx: Contexto): string {
   const n = ctx.cfg.negocio;
   if (!n.direccion) return '';
-  return `📍 ${n.direccion}${n.como_llegar ? ` (${n.como_llegar})` : ''}`;
+  const direccion = `📍 ${n.direccion}${n.como_llegar ? ` (${n.como_llegar})` : ''}`;
+  return n.maps ? `${direccion}\n🗺️ ${n.maps}` : direccion;
 }
 
 /** Horario apartado, esperando que el cliente confirme. */
