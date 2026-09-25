@@ -1,5 +1,5 @@
 <!doctype html><html><head><meta charset="utf-8">
-<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@500&family=IBM+Plex+Sans+Condensed:wght@600;700&family=IBM+Plex+Sans:wght@400;500;600&display=block" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@500&family=IBM+Plex+Sans+Condensed:wght@600;700&family=IBM+Plex+Sans:wght@400;500;600&family=Montserrat:wght@500&display=block" rel="stylesheet">
 <style>
 :root{--noche:#0C2620;--noche-2:#123830;--noche-3:#1B4B40;--claro:#FCFBF8;--papel:#F4F1EA;
   --gris:#5E6B65;--gris-2:#94A19B;--gris-3:#B9C2BC;--laton:#C9A227;--laton-osc:#8A6E10;
@@ -16,7 +16,7 @@ body{background:#777;font-family:'IBM Plex Sans',sans-serif;display:flex;flex-di
 .cond{font-family:'IBM Plex Sans Condensed',sans-serif;font-weight:700;letter-spacing:-.025em}
 em{font-style:normal;color:var(--laton)}
 .marca{display:flex;align-items:center;gap:18px}
-.marca span{font-family:'IBM Plex Mono',monospace;font-weight:500;letter-spacing:.34em;color:var(--gris-3)}
+.marca span{font-family:'Montserrat',sans-serif;font-weight:500;letter-spacing:.3em;color:#E8EBEA}
 .url{font-family:'IBM Plex Mono',monospace;font-weight:500;letter-spacing:.08em;color:var(--verde-luz)}
 .sello{display:inline-block;font-family:'IBM Plex Mono',monospace;font-weight:500;letter-spacing:.16em;text-transform:uppercase;
   color:var(--laton);border:2px solid rgba(201,162,39,.55);border-radius:99px}
@@ -58,7 +58,7 @@ em{font-style:normal;color:var(--laton)}
 .a4{width:1240px;height:1754px;background:var(--claro);color:var(--tinta)}
 .a4 .cont{padding:110px 110px 90px;display:flex;flex-direction:column}
 .a4 .franja{position:absolute;left:0;right:0;top:0;height:22px;background:linear-gradient(90deg,var(--verde),var(--verde-vivo) 60%,var(--laton))}
-.a4 .marca span{font-size:30px;color:var(--gris)}
+.a4 .marca span{font-size:30px;color:#0E1815}
 .a4 .ante{font-size:34px;letter-spacing:.18em;color:var(--verde-vivo);margin-top:90px}
 .a4 h1{font-size:132px;line-height:.96;margin-top:26px;color:var(--tinta)}
 .a4 h1 em{color:var(--laton-osc)}
@@ -76,20 +76,12 @@ em{font-style:normal;color:var(--laton)}
 
 <!-- 1 · Foto de perfil -->
 <div class="pieza oscura" id="perfil"><div class="cont">
-  <svg width="600" height="600" viewBox="0 0 32 32" fill="none">
-    <circle cx="9" cy="9" r="4.8" stroke="#8FD9BC" stroke-width="1.7"/>
-    <circle cx="23" cy="23" r="4.8" stroke="#C9A227" stroke-width="1.7"/>
-    <path d="M12.5 12.5 L19.5 19.5" stroke="#4E7A6E" stroke-width="1.7" stroke-linecap="round"/>
-  </svg>
+  <svg width='600' height='600' viewBox='0 0 32 32' fill='none'><defs><linearGradient id='gx1' gradientUnits='userSpaceOnUse' x1='10.3' y1='10.37' x2='22.54' y2='22.46'><stop offset='0' stop-color='#96E7CE'/><stop offset='1' stop-color='#62AD98'/></linearGradient></defs>    <path d='M10.3 10.37 L22.54 22.46' stroke='url(#gx1)' stroke-width='2.39'/>    <circle cx='7.47' cy='7.58' r='5.23' stroke='#9EECD4' stroke-width='2.5'/>    <path d='M10.3 10.37 L12.08 12.13' stroke='#96E7CE' stroke-width='2.39'/>    <circle cx='25.12' cy='25.02' r='4.76' stroke='#F7CA55' stroke-width='2.24'/>    <path d='M20.95 20.89 L22.54 22.46' stroke='#9EECD4' stroke-opacity='.32' stroke-width='2.39'/></svg>
 </div></div>
 
 <!-- 2 · Portada de Facebook -->
 <div class="pieza oscura" id="portada"><div class="cont">
-  <svg width="210" height="210" viewBox="0 0 32 32" fill="none" style="flex:none">
-    <circle cx="9" cy="9" r="4.8" stroke="#8FD9BC" stroke-width="1.7"/>
-    <circle cx="23" cy="23" r="4.8" stroke="#C9A227" stroke-width="1.7"/>
-    <path d="M12.5 12.5 L19.5 19.5" stroke="#4E7A6E" stroke-width="1.7" stroke-linecap="round"/>
-  </svg>
+  <svg width='210' height='210' style='flex:none' viewBox='0 0 32 32' fill='none'><defs><linearGradient id='gx2' gradientUnits='userSpaceOnUse' x1='10.3' y1='10.37' x2='22.54' y2='22.46'><stop offset='0' stop-color='#96E7CE'/><stop offset='1' stop-color='#62AD98'/></linearGradient></defs>    <path d='M10.3 10.37 L22.54 22.46' stroke='url(#gx2)' stroke-width='2.39'/>    <circle cx='7.47' cy='7.58' r='5.23' stroke='#9EECD4' stroke-width='2.5'/>    <path d='M10.3 10.37 L12.08 12.13' stroke='#96E7CE' stroke-width='2.39'/>    <circle cx='25.12' cy='25.02' r='4.76' stroke='#F7CA55' stroke-width='2.24'/>    <path d='M20.95 20.89 L22.54 22.46' stroke='#9EECD4' stroke-opacity='.32' stroke-width='2.39'/></svg>
   <div>
     <h1 class="cond">Del pedido al presupuesto,<br><em>sin vueltas</em>.</h1>
     <p>Arreglos del hogar con gente de tu zona · <span class="url" style="font-size:28px">trattoapp.com.ar</span></p>
@@ -98,7 +90,7 @@ em{font-style:normal;color:var(--laton)}
 
 <!-- 3 · Post presentación -->
 <div class="pieza oscura post" id="post1"><div class="cont">
-  <div class="marca"><svg width="54" height="54" viewBox="0 0 32 32" fill="none"><circle cx="8" cy="8" r="4.6" stroke="#8FD9BC" stroke-width="1.8"/><circle cx="24" cy="24" r="4.6" stroke="#C9A227" stroke-width="1.8"/><path d="M11.4 11.4 L20.6 20.6" stroke="#4E7A6E" stroke-width="1.8" stroke-linecap="round"/></svg><span>TRATTO</span></div>
+  <div class="marca"><svg width='54' height='54' viewBox='0 0 32 32' fill='none'><defs><linearGradient id='gx3' gradientUnits='userSpaceOnUse' x1='10.3' y1='10.37' x2='22.54' y2='22.46'><stop offset='0' stop-color='#96E7CE'/><stop offset='1' stop-color='#62AD98'/></linearGradient></defs>    <path d='M10.3 10.37 L22.54 22.46' stroke='url(#gx3)' stroke-width='2.39'/>    <circle cx='7.47' cy='7.58' r='5.23' stroke='#9EECD4' stroke-width='2.5'/>    <path d='M10.3 10.37 L12.08 12.13' stroke='#96E7CE' stroke-width='2.39'/>    <circle cx='25.12' cy='25.02' r='4.76' stroke='#F7CA55' stroke-width='2.24'/>    <path d='M20.95 20.89 L22.54 22.46' stroke='#9EECD4' stroke-opacity='.32' stroke-width='2.39'/></svg><span>TRATTO</span></div>
   <h1 class="cond">¿Se rompió algo?<br><em>Sacale una foto.</em></h1>
   <p class="baja">Te damos un precio de referencia y te conectamos con gente de tu zona que hace ese trabajo.</p>
   <div style="margin-top:64px">
@@ -111,7 +103,7 @@ em{font-style:normal;color:var(--laton)}
 
 <!-- 4 · Post cómo funciona -->
 <div class="pieza oscura post" id="post2"><div class="cont">
-  <div class="marca"><svg width="54" height="54" viewBox="0 0 32 32" fill="none"><circle cx="8" cy="8" r="4.6" stroke="#8FD9BC" stroke-width="1.8"/><circle cx="24" cy="24" r="4.6" stroke="#C9A227" stroke-width="1.8"/><path d="M11.4 11.4 L20.6 20.6" stroke="#4E7A6E" stroke-width="1.8" stroke-linecap="round"/></svg><span>TRATTO</span></div>
+  <div class="marca"><svg width='54' height='54' viewBox='0 0 32 32' fill='none'><defs><linearGradient id='gx4' gradientUnits='userSpaceOnUse' x1='10.3' y1='10.37' x2='22.54' y2='22.46'><stop offset='0' stop-color='#96E7CE'/><stop offset='1' stop-color='#62AD98'/></linearGradient></defs>    <path d='M10.3 10.37 L22.54 22.46' stroke='url(#gx4)' stroke-width='2.39'/>    <circle cx='7.47' cy='7.58' r='5.23' stroke='#9EECD4' stroke-width='2.5'/>    <path d='M10.3 10.37 L12.08 12.13' stroke='#96E7CE' stroke-width='2.39'/>    <circle cx='25.12' cy='25.02' r='4.76' stroke='#F7CA55' stroke-width='2.24'/>    <path d='M20.95 20.89 L22.54 22.46' stroke='#9EECD4' stroke-opacity='.32' stroke-width='2.39'/></svg><span>TRATTO</span></div>
   <h1 class="cond" style="font-size:100px">Así de <em>simple</em>.</h1>
   <div style="margin-top:56px">
     <div class="paso"><div class="num">01</div><div><b>Pedís</b><span>Contás qué necesitás arreglar. Si subís una foto, te damos un precio de referencia al toque.</span></div></div>
@@ -123,7 +115,7 @@ em{font-style:normal;color:var(--laton)}
 
 <!-- 5 · Post proveedores -->
 <div class="pieza oscura post" id="post3"><div class="cont">
-  <div class="marca"><svg width="54" height="54" viewBox="0 0 32 32" fill="none"><circle cx="8" cy="8" r="4.6" stroke="#8FD9BC" stroke-width="1.8"/><circle cx="24" cy="24" r="4.6" stroke="#C9A227" stroke-width="1.8"/><path d="M11.4 11.4 L20.6 20.6" stroke="#4E7A6E" stroke-width="1.8" stroke-linecap="round"/></svg><span>TRATTO</span></div>
+  <div class="marca"><svg width='54' height='54' viewBox='0 0 32 32' fill='none'><defs><linearGradient id='gx5' gradientUnits='userSpaceOnUse' x1='10.3' y1='10.37' x2='22.54' y2='22.46'><stop offset='0' stop-color='#96E7CE'/><stop offset='1' stop-color='#62AD98'/></linearGradient></defs>    <path d='M10.3 10.37 L22.54 22.46' stroke='url(#gx5)' stroke-width='2.39'/>    <circle cx='7.47' cy='7.58' r='5.23' stroke='#9EECD4' stroke-width='2.5'/>    <path d='M10.3 10.37 L12.08 12.13' stroke='#96E7CE' stroke-width='2.39'/>    <circle cx='25.12' cy='25.02' r='4.76' stroke='#F7CA55' stroke-width='2.24'/>    <path d='M20.95 20.89 L22.54 22.46' stroke='#9EECD4' stroke-opacity='.32' stroke-width='2.39'/></svg><span>TRATTO</span></div>
   <div class="mono" style="font-size:26px;letter-spacing:.18em;color:var(--verde-luz);margin-top:70px">¿Tenés un oficio?</div>
   <h1 class="cond" style="margin-top:22px">Recibí pedidos <em>de tu zona</em>.</h1>
   <div style="margin-top:56px">
@@ -137,7 +129,7 @@ em{font-style:normal;color:var(--laton)}
 
 <!-- 6 · Cartel A4 proveedores -->
 <div class="pieza a4" id="cartel-prov"><div class="franja"></div><div class="cont">
-  <div class="marca"><svg width="64" height="64" viewBox="0 0 32 32" fill="none"><circle cx="8" cy="8" r="4.6" stroke="#2B7E62" stroke-width="2"/><circle cx="24" cy="24" r="4.6" stroke="#C9A227" stroke-width="2"/><path d="M11.4 11.4 L20.6 20.6" stroke="#4E7A6E" stroke-width="2" stroke-linecap="round"/></svg><span>TRATTO</span></div>
+  <div class="marca"><img src='../logo/simbolo-512.png' style='width:64px;height:64px;border-radius:22%;flex:none' alt=''><span>TRATTO</span></div>
   <div class="ante mono">¿Hacés arreglos?</div>
   <h1 class="cond">Recibí pedidos de <em>vecinos de tu zona</em>.</h1>
   <p class="baja">Plomería, destapaciones, humedades, pintura, cerrajería, albañilería y más.</p>
@@ -151,7 +143,7 @@ em{font-style:normal;color:var(--laton)}
 
 <!-- 7 · Cartel A4 vecinos -->
 <div class="pieza a4" id="cartel-cli"><div class="franja"></div><div class="cont">
-  <div class="marca"><svg width="64" height="64" viewBox="0 0 32 32" fill="none"><circle cx="8" cy="8" r="4.6" stroke="#2B7E62" stroke-width="2"/><circle cx="24" cy="24" r="4.6" stroke="#C9A227" stroke-width="2"/><path d="M11.4 11.4 L20.6 20.6" stroke="#4E7A6E" stroke-width="2" stroke-linecap="round"/></svg><span>TRATTO</span></div>
+  <div class="marca"><img src='../logo/simbolo-512.png' style='width:64px;height:64px;border-radius:22%;flex:none' alt=''><span>TRATTO</span></div>
   <div class="ante mono">¿Se te rompió algo en casa?</div>
   <h1 class="cond" style="font-size:118px">Sacale una foto y <em>recibí presupuestos</em>.</h1>
   <p class="baja">Precio de referencia al toque y presupuestos de gente de tu zona.</p>

@@ -5,6 +5,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, maximum-scale=1">
 <meta name="theme-color" content="#0D2721">
 <title>Tratto · Del pedido al presupuesto, sin vueltas</title>
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png">
+<link rel="icon" type="image/png" sizes="64x64" href="/favicon-64.png">
 <meta name="description" content="Pedís un servicio y te conectamos con quien lo hace en tu zona. Sacale una foto a lo que se rompió y te damos una idea del precio. Plomeros, electricistas, gasistas y más, en Argentina.">
 <link rel="canonical" href="https://www.trattoapp.com.ar/">
 <!-- Vista previa al compartir el link (WhatsApp, Instagram, Facebook, LinkedIn, X) -->
@@ -14,14 +16,14 @@
 <meta property="og:url" content="https://www.trattoapp.com.ar/">
 <meta property="og:title" content="Tratto · Del pedido al presupuesto, sin vueltas">
 <meta property="og:description" content="Pedís un servicio y te conectamos con quien lo hace en tu zona. Sacale una foto y te damos una idea del precio.">
-<meta property="og:image" content="https://www.trattoapp.com.ar/og-image.png">
+<meta property="og:image" content="https://www.trattoapp.com.ar/og-image.png?v=2">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
 <meta property="og:image:alt" content="Tratto: del pedido al presupuesto, sin vueltas. Alguien necesita un plomero, vos ofrecés plomería: match.">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="Tratto · Del pedido al presupuesto, sin vueltas">
 <meta name="twitter:description" content="Pedís un servicio y te conectamos con quien lo hace en tu zona.">
-<meta name="twitter:image" content="https://www.trattoapp.com.ar/og-image.png">
+<meta name="twitter:image" content="https://www.trattoapp.com.ar/og-image.png?v=2">
 <link rel="manifest" href="/manifest.json">
 <!-- Vercel Web Analytics: sin cookies, visitas agregadas. Se manda la URL sin
      el fragmento (#) ni parámetros, salvo los utm_ de las campañas: al
@@ -42,6 +44,7 @@
 <link rel="apple-touch-icon" href="/apple-touch-icon.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500&text=TRAO&display=swap" rel="stylesheet">
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans+Condensed:wght@600;700&family=IBM+Plex+Sans:wght@400;450;500;600&display=swap" rel="stylesheet">
 <style>
   :root{
@@ -86,8 +89,9 @@
     overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
   .marca{display:flex;align-items:center;gap:9px;flex:1;min-width:0}
   .glifo{width:23px;height:23px;flex:none}
-  .marca-txt{font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:.19em;
-    text-transform:uppercase;color:var(--gris-2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  /* El nombre va en Montserrat, como en el logo (solo se descargan las letras T, R, A y O). */
+  .marca-txt{font-family:'Montserrat','IBM Plex Sans',sans-serif;font-weight:500;font-size:11px;letter-spacing:.3em;
+    text-transform:uppercase;color:#E8EBEA;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
   .top-accion{background:none;border:none;color:var(--verde-luz);cursor:pointer;
     padding:7px;border-radius:8px;display:flex;flex:none}
   .top-accion svg{width:19px;height:19px}
@@ -129,7 +133,7 @@
   #arranque.fuera{opacity:0;pointer-events:none}
   #arranque .glifo-xl{width:54px;height:54px;animation:latir 1.8s ease-in-out infinite}
   @keyframes latir{0%,100%{opacity:.65;transform:scale(.97)}50%{opacity:1;transform:scale(1)}}
-  #arranque .marca-txt{font-size:9.5px}
+  #arranque .marca-txt{font-size:13px}
 
   /* ═══════════ TIPOGRAFÍA ═══════════ */
   .kicker{font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:.19em;
@@ -1119,9 +1123,12 @@
 <!-- ═══════════ ARRANQUE ═══════════ -->
 <div id="arranque">
   <svg class="glifo-xl" viewBox="0 0 32 32" fill="none" aria-hidden="true">
-    <circle cx="8" cy="8" r="4.6" stroke="#8FD9BC" stroke-width="1.8"/>
-    <circle cx="24" cy="24" r="4.6" stroke="#C9A227" stroke-width="1.8"/>
-    <path d="M11.4 11.4 L20.6 20.6" stroke="#4E7A6E" stroke-width="1.8" stroke-linecap="round"/>
+    <defs><linearGradient id="glifo-index-1" gradientUnits="userSpaceOnUse" x1="10.3" y1="10.37" x2="22.54" y2="22.46"><stop offset="0" stop-color="#96E7CE"/><stop offset="1" stop-color="#62AD98"/></linearGradient></defs>
+    <path d="M10.3 10.37 L22.54 22.46" stroke="url(#glifo-index-1)" stroke-width="2.39"/>
+    <circle cx="7.47" cy="7.58" r="5.23" stroke="#9EECD4" stroke-width="2.5"/>
+    <path d="M10.3 10.37 L12.08 12.13" stroke="#96E7CE" stroke-width="2.39"/>
+    <circle cx="25.12" cy="25.02" r="4.76" stroke="#F7CA55" stroke-width="2.24"/>
+    <path d="M20.95 20.89 L22.54 22.46" stroke="#9EECD4" stroke-opacity=".32" stroke-width="2.39"/>
   </svg>
   <span class="marca-txt">Tratto</span>
 </div>
@@ -1276,9 +1283,12 @@
     </button>
     <div class="marca" id="tb-marca">
       <svg class="glifo" viewBox="0 0 32 32" fill="none" aria-hidden="true">
-        <circle cx="8" cy="8" r="4.6" stroke="#8FD9BC" stroke-width="1.8"/>
-        <circle cx="24" cy="24" r="4.6" stroke="#C9A227" stroke-width="1.8"/>
-        <path d="M11.4 11.4 L20.6 20.6" stroke="#4E7A6E" stroke-width="1.8" stroke-linecap="round"/>
+        <defs><linearGradient id="glifo-index-2" gradientUnits="userSpaceOnUse" x1="10.3" y1="10.37" x2="22.54" y2="22.46"><stop offset="0" stop-color="#96E7CE"/><stop offset="1" stop-color="#62AD98"/></linearGradient></defs>
+        <path d="M10.3 10.37 L22.54 22.46" stroke="url(#glifo-index-2)" stroke-width="2.39"/>
+        <circle cx="7.47" cy="7.58" r="5.23" stroke="#9EECD4" stroke-width="2.5"/>
+        <path d="M10.3 10.37 L12.08 12.13" stroke="#96E7CE" stroke-width="2.39"/>
+        <circle cx="25.12" cy="25.02" r="4.76" stroke="#F7CA55" stroke-width="2.24"/>
+        <path d="M20.95 20.89 L22.54 22.46" stroke="#9EECD4" stroke-opacity=".32" stroke-width="2.39"/>
       </svg>
       <span class="marca-txt">Tratto</span>
     </div>
