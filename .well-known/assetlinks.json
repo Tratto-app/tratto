@@ -1,0 +1,12 @@
+[
+  {
+    "relation": ["delegate_permission/common.handle_all_urls"],
+    "target": {
+      "namespace": "android_app",
+      "package_name": "ar.com.trattoapp",
+      "sha256_cert_fingerprints": [
+        "B2:F3:2D:48:40:00:86:1D:B2:5A:65:3D:FE:C2:D7:6B:52:36:81:5B:73:D9:D5:18:C8:09:0D:EB:A2:6E:FA:19"
+      ]
+    }
+  }
+]

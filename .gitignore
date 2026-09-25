@@ -9,3 +9,10 @@ tools/video-pipeline/**/*.avi
 
 # Reporte de auditoria: contiene vulnerabilidades sin corregir y el repo es publico
 SECURITY-AUDIT.md
+
+# Claves de firma de las apps: nunca al repo
+*.keystore
+*.jks
+*.p12
+*.p8
+*.mobileprovision
