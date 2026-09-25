@@ -21,14 +21,16 @@ import {
   obtenerHorariosAtencion,
   obtenerInfoNegocio,
   obtenerServicios,
+  turnoPorId,
   turnosDeCliente,
   type Contexto,
 } from '../booking/servicio.js';
+import type { Turno } from '../booking/tipos.js';
 import { describirHorarios } from '../booking/disponibilidad.js';
 import { esErrorDeNegocio } from '../shared/errores.js';
 import { enmascararTelefono, log } from '../shared/log.js';
 import { esFechaValida, esHoraValida, fechaHumana, fechaRelativaHumana } from '../shared/tiempo.js';
-import { formatearPrecio } from '../shared/texto.js';
+import { extraerNombre, formatearPrecio } from '../shared/texto.js';
 import { resolverServicio, serviciosActivos } from '../config/negocio.js';
 import { DateTime } from 'luxon';
 import type { DefinicionHerramienta } from './proveedores/tipos.js';
@@ -41,6 +43,21 @@ export interface Llamador {
   /** Estado de la conversacion; las herramientas pueden dejar rastros ahi. */
   estado: Record<string, unknown>;
   origen: 'whatsapp' | 'simulador';
+  /**
+   * Lo que las herramientas hicieron con turnos en este mensaje. Con esto el
+   * orquestador arma el mensaje final con los datos exactos del turno, en vez
+   * de confiar en cómo los redactó el modelo.
+   */
+  acciones?: AccionSobreTurno[];
+}
+
+export interface AccionSobreTurno {
+  tipo: 'apartado' | 'confirmado' | 'modificado' | 'cancelado' | 'soltado';
+  turno: Turno;
+}
+
+function registrarAccion(llamador: Llamador, tipo: AccionSobreTurno['tipo'], turno: Turno): void {
+  (llamador.acciones ??= []).push({ tipo, turno });
 }
 
 export interface ResultadoHerramienta {
@@ -98,7 +115,7 @@ export const DEFINICIONES: DefinicionHerramienta[] = [
   {
     nombre: 'obtener_servicios',
     descripcion:
-      'Lista los servicios activos con precio y duración. Usala antes de hablar de precios o duraciones: nunca los inventes ni los recuerdes de memoria.',
+      'Lista los servicios activos con su precio. Usala antes de hablar de precios: nunca los inventes ni los recuerdes de memoria.',
     esquema: { type: 'object', properties: {}, additionalProperties: false },
   },
   {
@@ -108,7 +125,8 @@ export const DEFINICIONES: DefinicionHerramienta[] = [
   },
   {
     nombre: 'obtener_informacion_del_negocio',
-    descripcion: 'Dirección, teléfono, Instagram, medios de pago y política de cancelación.',
+    descripcion:
+      'Dirección, teléfono, Instagram, medios de pago y política de cancelación. Un dato que no esté cargado NO se inventa: la herramienta te dice qué contestar.',
     esquema: { type: 'object', properties: {}, additionalProperties: false },
   },
   {
@@ -147,12 +165,12 @@ export const DEFINICIONES: DefinicionHerramienta[] = [
   {
     nombre: 'confirmar_reserva',
     descripcion:
-      'Convierte la reserva temporal en turno firme. Llamala SOLO después de que el cliente dijo explícitamente que sí, y sabiendo su nombre.',
+      'Convierte la reserva temporal en turno firme. Llamala SOLO en un mensaje posterior al resumen, cuando el cliente dijo explícitamente que sí, y sabiendo su nombre.',
     esquema: {
       type: 'object',
       properties: {
         reserva_id: { type: 'string', description: 'El id que devolvió reservar_horario' },
-        nombre: { type: 'string', description: 'Nombre del cliente' },
+        nombre: { type: 'string', description: 'Solo el nombre de la persona (ej: "Santi"), sin "soy" ni otras palabras' },
       },
       required: ['reserva_id'],
       additionalProperties: false,
@@ -160,7 +178,8 @@ export const DEFINICIONES: DefinicionHerramienta[] = [
   },
   {
     nombre: 'soltar_reserva',
-    descripcion: 'Libera una reserva temporal cuando el cliente cambia de idea antes de confirmar.',
+    descripcion:
+      'Libera una reserva temporal (sin confirmar) cuando el cliente cambia de idea antes de confirmar. No sirve para turnos ya confirmados: esos se cancelan con cancelar_turno.',
     esquema: {
       type: 'object',
       properties: { reserva_id: { type: 'string' } },
@@ -230,13 +249,34 @@ function resumirTurno(
     dia: fechaHumana(dt),
     cuando: fechaRelativaHumana(dt, ahora),
     hora: t.horaInicio,
-    hora_fin: t.horaFin,
     servicio: t.servicioNombre,
     precio: formatearPrecio(t.precio),
     ...(t.descuentoPorcentaje > 0
       ? { descuento_aplicado: `${t.descuentoPorcentaje}% por haber dejado reseña — decíselo al cliente` }
       : {}),
     cliente: t.nombreCliente,
+  };
+}
+
+/**
+ * Datos del local para el modelo. Lo que no está cargado va con la
+ * instrucción de qué decir, así el modelo no lo inventa ("aceptamos tarjeta",
+ * "estamos en la esquina de...").
+ */
+function infoParaElModelo(ctx: Contexto) {
+  const info = obtenerInfoNegocio(ctx);
+  const sinDato = (que: string) =>
+    `(no cargado) No lo inventes. Si el cliente pregunta ${que}, decile que ese dato se lo pasa el barbero y ofrecele avisarle (derivar_a_persona) si lo necesita ya.`;
+  return {
+    nombre: info.nombre,
+    direccion: info.direccion || sinDato('la dirección'),
+    como_llegar: info.como_llegar || undefined,
+    telefono: info.telefono || undefined,
+    instagram: info.instagram || undefined,
+    link_google_maps: info.maps || undefined,
+    medios_de_pago: info.medios_de_pago.length ? info.medios_de_pago : sinDato('cómo se paga'),
+    politica_cancelacion: info.politica_cancelacion,
+    anticipacion_maxima_dias: info.anticipacion_maxima_dias,
   };
 }
 
@@ -361,7 +401,7 @@ async function ejecutarSinRegistro(
         return { ok: true, datos: { ...obtenerHorariosAtencion(ctx), resumen: describirHorarios(ctx.cfg) } };
 
       case 'obtener_informacion_del_negocio':
-        return { ok: true, datos: obtenerInfoNegocio(ctx) };
+        return { ok: true, datos: infoParaElModelo(ctx) };
 
       case 'consultar_disponibilidad': {
         const r = await consultarDisponibilidad(ctx, {
@@ -383,7 +423,6 @@ async function ejecutarSinRegistro(
             abierto: r.abierto,
             motivo_cerrado: r.motivo_cerrado,
             servicio: r.servicio.nombre,
-            duracion_min: r.servicio.duracion_min,
             horarios_para_ofrecer: r.horarios_sugeridos,
             todos_los_horarios_libres: r.horarios,
             hay_lugar: r.total_disponibles > 0,
@@ -398,13 +437,14 @@ async function ejecutarSinRegistro(
       case 'reservar_horario': {
         const turno = await crearHold(ctx, {
           telefono,
-          nombre: (entrada.nombre as string) || llamador.nombreConocido,
+          nombre: extraerNombre((entrada.nombre as string | undefined) ?? '') || llamador.nombreConocido,
           servicioId: entrada.servicio_id as string,
           fecha: entrada.fecha as string,
           hora: entrada.hora as string,
           origen: llamador.origen === 'simulador' ? 'simulador' : 'whatsapp',
         });
         llamador.estado.reservaPendiente = turno.id;
+        registrarAccion(llamador, 'apartado', turno);
         return {
           ok: true,
           datos: {
@@ -421,9 +461,22 @@ async function ejecutarSinRegistro(
       case 'confirmar_reserva': {
         const datosConfirmacion = {
           telefono,
-          nombre: (entrada.nombre as string) || llamador.nombreConocido || undefined,
+          nombre: extraerNombre((entrada.nombre as string | undefined) ?? '') || llamador.nombreConocido || undefined,
         };
         const pendiente = typeof llamador.estado.reservaPendiente === 'string' ? llamador.estado.reservaPendiente : undefined;
+        // El cliente tiene que ver el resumen antes de que el turno quede
+        // firme. Si el horario se apartó en este mismo mensaje, todavía no lo
+        // vio: se frena y se le muestra.
+        const apartadoRecien = llamador.acciones?.some((a) => a.tipo === 'apartado' && (a.turno.id === entrada.reserva_id || a.turno.id === pendiente));
+        if (apartadoRecien) {
+          return {
+            ok: false,
+            datos: {
+              error: 'FALTA_QUE_EL_CLIENTE_CONFIRME',
+              mensaje: 'El horario se acaba de apartar y el cliente todavía no vio el resumen. Mostráselo y preguntale si confirma; confirmá en su próximo mensaje.',
+            },
+          };
+        }
         let turno;
         try {
           turno = await confirmarHold(ctx, entrada.reserva_id as string, datosConfirmacion);
@@ -436,12 +489,30 @@ async function ejecutarSinRegistro(
         }
         delete llamador.estado.reservaPendiente;
         llamador.estado.ultimoTurno = turno.id;
+        registrarAccion(llamador, 'confirmado', turno);
         return { ok: true, datos: { confirmado: true, turno: resumirTurno(turno, zona, ahora) } };
       }
 
       case 'soltar_reserva': {
-        await cancelarTurno(ctx, entrada.reserva_id as string, { telefono, origen: 'whatsapp', forzar: true, motivo: 'el cliente cambio de idea' });
+        // Solo reservas temporales de este cliente. Antes esto cancelaba
+        // cualquier turno (con "forzar"), y un id equivocado del modelo podía
+        // bajar un turno ya confirmado sin que el cliente lo pidiera.
+        const pendiente = typeof llamador.estado.reservaPendiente === 'string' ? llamador.estado.reservaPendiente : undefined;
+        let hold = await turnoPorId(ctx, entrada.reserva_id as string);
+        if ((!hold || hold.telefono !== telefono || hold.estado !== 'pendiente') && pendiente) hold = await turnoPorId(ctx, pendiente);
+        if (!hold || hold.telefono !== telefono || hold.estado !== 'pendiente') {
+          delete llamador.estado.reservaPendiente;
+          return {
+            ok: false,
+            datos: {
+              error: 'NO_ES_UNA_RESERVA_TEMPORAL',
+              mensaje: 'No hay ningún horario apartado sin confirmar para soltar. Si el cliente quiere cancelar un turno confirmado, usá mis_turnos y cancelar_turno (con su confirmación).',
+            },
+          };
+        }
+        const soltado = await cancelarTurno(ctx, hold.id, { telefono, origen: 'whatsapp', forzar: true, motivo: 'el cliente cambio de idea' });
         delete llamador.estado.reservaPendiente;
+        registrarAccion(llamador, 'soltado', soltado);
         return { ok: true, datos: { liberado: true } };
       }
 
@@ -468,6 +539,7 @@ async function ejecutarSinRegistro(
           },
           { telefono, origen: llamador.origen === 'simulador' ? 'simulador' : 'whatsapp' },
         );
+        registrarAccion(llamador, 'modificado', turno);
         return { ok: true, datos: { modificado: true, turno: resumirTurno(turno, zona, ahora) } };
       }
 
@@ -477,6 +549,7 @@ async function ejecutarSinRegistro(
           origen: llamador.origen === 'simulador' ? 'simulador' : 'whatsapp',
           motivo: (entrada.motivo as string) ?? '',
         });
+        registrarAccion(llamador, 'cancelado', turno);
         return { ok: true, datos: { cancelado: true, turno: resumirTurno(turno, zona, ahora) } };
       }
 

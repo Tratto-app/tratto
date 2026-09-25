@@ -167,3 +167,12 @@ CREATE TABLE IF NOT EXISTS eventos (
 );
 
 CREATE INDEX IF NOT EXISTS idx_eventos_ts ON eventos (ts_ms);
+
+-- Configuración del negocio editada desde el panel (precios, horarios, textos).
+-- Al arrancar, si hay una copia acá, manda sobre config/negocio.json: en un
+-- hosting con disco efímero el archivo se pisa en cada despliegue.
+CREATE TABLE IF NOT EXISTS configuracion (
+  clave           TEXT PRIMARY KEY,
+  valor_json      TEXT NOT NULL,
+  actualizado_en  TEXT NOT NULL
+);

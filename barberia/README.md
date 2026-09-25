@@ -203,25 +203,32 @@ simulador atiende en modo menú. Las credenciales se van agregando de a una.
 **Todo lo comercial vive en `config/negocio.json`.** No hace falta tocar código
 para cambiar un precio, un horario o un mensaje.
 
-Lo que hay que completar antes de salir a producción (está marcado con `PLACEHOLDER`):
+Datos del local (los vacíos no se muestran ni se inventan: si un cliente los
+pregunta, el bot le dice que se los pasa el barbero):
 
 ```json
 "negocio": {
-  "nombre": "PLACEHOLDER - Nombre de la Barbería",
-  "direccion": "PLACEHOLDER - Calle 1234, Ciudad, Provincia",
-  "telefono": "PLACEHOLDER - +54 9 11 0000 0000",
-  "instagram": "PLACEHOLDER - @tubarberia"
+  "nombre": "Barbería Panamá",
+  "direccion": "",
+  "telefono": "+54 9 11 6858-1736",
+  "instagram": "",
+  "medios_de_pago": []
 }
 ```
 
-Y los precios, que vienen en `0`:
+Un valor que todavía dice `PLACEHOLDER - ...` se trata como vacío: nunca le
+llega al cliente.
+
+Precios: el corte está en **$10.000**. Los que siguen en `0` salen como
+"a confirmar":
 
 ```json
-{ "id": "corte", "nombre": "Corte", "precio": 0, "duracion_min": 45 }
+{ "id": "corte", "nombre": "Corte", "precio": 10000, "duracion_min": 45 }
 ```
 
 > **`precio: 0` significa "a confirmar".** El bot no inventa precios: dice que el
 > precio lo confirma el barbero. Cargá los reales y los empieza a informar solo.
+> La duración se usa por dentro para armar la agenda; al cliente no se le muestra.
 
 Los horarios vienen configurados como pidió el enunciado: **martes a sábado, de
 10:00 a 13:00 y de 15:00 a 20:00; lunes y domingo cerrado.** Se cambian en
@@ -233,6 +240,12 @@ máximo de turnos por cliente, margen entre turnos, duración del hold),
 `recordatorios` y `mensajes`.
 
 El archivo se relee solo cuando cambia: no hace falta reiniciar el servidor.
+
+**Lo que se cambia desde el panel queda guardado en la base de datos** (tabla
+`configuracion`) y, al arrancar, manda sobre el archivo. En Render el disco se
+borra en cada despliegue: sin esto, un precio cambiado desde el panel volvía al
+del repositorio en el siguiente deploy. Si nunca se tocó el panel, se usa el
+archivo.
 
 ---
 
@@ -332,12 +345,27 @@ Crea y deja listas: **Hoy**, **Agenda semanal**, **Turnos**, **Clientes** y
 | **Hoy** | Hoy, mañana y pasado mañana, hora por hora |
 | **Agenda semanal** | Una columna por día, de lunes a domingo, con turnos, bloqueos y lugares libres |
 | **Balance semanal** | Una fila por semana: turnos, clientes, nuevos, facturado, ocupación. Es el historial que sobrevive a la limpieza |
-| **Turnos** | La base completa: ID, Fecha, Día, Hora, Hora fin, Cliente, WhatsApp, Servicio, Precio, Duración, Estado, Creación, Última modificación, Observaciones |
+| **Turnos** | El archivo completo, un turno por fila y ordenado por fecha y hora: Fecha, Día, Hora, Cliente, Servicio, Precio, Descuento, Estado, WhatsApp, Hora fin, Observaciones, Creado, Modificado, ID |
 | **Clientes** | Quiénes son, cuántas veces vinieron, última visita |
 | **Configuración** | Servicios, precios y horarios vigentes (informativa) |
 
 **Cada turno que alguien reserva por WhatsApp aparece en la hoja "Turnos" a los
 pocos segundos, solo.** No hay que hacer nada.
+
+Cómo está armada la hoja "Turnos":
+
+- **Un turno, una fila.** La clave es el ID (última columna): si el turno cambia
+  de estado se actualiza su fila, nunca se duplica. Si alguien copia una fila a
+  mano, "Resincronizar" deja una sola.
+- **Solo turnos de verdad.** Un horario que un cliente apartó y no confirmó no
+  aparece. Un turno que se movió a otro día queda como "↪️ reprogramado" y el
+  nuevo aparece en su fecha.
+- **Fecha en formato año-mes-día** (2026-09-26): ordenada de la A a la Z queda en
+  orden cronológico. Al lado, el día legible ("Sábado 26/09").
+- **Precio como número** con formato de pesos ($10.000): se puede sumar.
+- **WhatsApp legible** (+54 9 11 6858-1736), filtro activado y encabezado fijo.
+- Se escribe "tal cual": nada de lo que escribe un cliente se interpreta como
+  fórmula.
 
 Si algo se desincronizó: `npm run sheets:sync` (o el botón **Resincronizar** del
 panel). Es seguro apretarlo: actualiza y agrega filas, nunca borra.
@@ -458,8 +486,8 @@ En producción el simulador queda detrás del login del panel.
 - **Bloquear:** un rango ("martes de 16 a 17") o el día completo. El bot deja de
   ofrecerlo al instante. Si ya había turnos ahí, el panel avisa.
 - **Ajustes:** servicios, precios, duraciones, horarios por día, feriados,
-  vacaciones y reglas. Se guarda en `negocio.json` validado, y el bot lo usa
-  enseguida, sin reiniciar. También: estado del sistema, resincronizar Sheets y
+  vacaciones y reglas. Se valida, se guarda en la base (sobrevive a los
+  deploys) y en `negocio.json`, y el bot lo usa enseguida, sin reiniciar. También: estado del sistema, resincronizar Sheets y
   devolverle al bot las charlas derivadas.
 
 ---

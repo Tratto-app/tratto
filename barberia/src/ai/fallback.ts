@@ -14,14 +14,18 @@ import {
   confirmarHold,
   consultarDisponibilidad,
   crearHold,
+  modificarTurno,
   obtenerInfoNegocio,
+  turnoPorId,
   turnosDeCliente,
 } from '../booking/servicio.js';
+import type { Turno } from '../booking/tipos.js';
 import { describirHorarios, proximosDiasAbiertos } from '../booking/disponibilidad.js';
-import { serviciosActivos } from '../config/negocio.js';
+import { resolverServicio, serviciosActivos } from '../config/negocio.js';
 import { esErrorDeNegocio } from '../shared/errores.js';
 import { fechaDe, fechaHumana, interpretarFecha } from '../shared/tiempo.js';
-import { formatearPrecio, nombreParecePlausible, normalizar, sanearNombre } from '../shared/texto.js';
+import { extraerNombre, formatearPrecio, normalizar } from '../shared/texto.js';
+import { fichaDelTurno, mensajeApartado, mensajeCancelado, mensajeConfirmado, mensajeModificado } from '../conversation/mensajes.js';
 
 export interface Boton {
   id: string;
@@ -49,7 +53,9 @@ type Paso =
   | 'pedir_nombre'
   | 'confirmar'
   | 'elegir_turno_a_cancelar'
-  | 'confirmar_cancelacion';
+  | 'confirmar_cancelacion'
+  | 'elegir_turno_a_cambiar'
+  | 'confirmar_cambio';
 
 export interface EstadoFallback {
   paso: Paso;
@@ -60,8 +66,8 @@ export interface EstadoFallback {
   nombre?: string;
   opciones?: string[];
   turnoACancelar?: string;
-  /** El cliente esta cambiando el turno: al cancelar seguimos con uno nuevo. */
-  reprogramando?: boolean;
+  /** Turno que el cliente está cambiando de día u horario (se mueve, no se cancela). */
+  turnoACambiar?: string;
 }
 
 const MENU_BOTONES: Boton[] = [
@@ -70,8 +76,8 @@ const MENU_BOTONES: Boton[] = [
   { id: 'menu_mas', titulo: '➕ Más opciones' },
 ];
 
-function textoMenu(): string {
-  return `¿Qué necesitás? Respondé con el número:
+function textoMenu(conPregunta = true): string {
+  return `${conPregunta ? '¿Qué necesitás? ' : ''}Respondé con el número:
 
 1️⃣ Sacar un turno
 2️⃣ Consultar mi turno
@@ -105,9 +111,45 @@ function opcionDeMenu(texto: string): 'reservar' | 'consultar' | 'cancelar' | 'm
   if (/^2\b/.test(t) || t === 'menu_mis_turnos' || preguntaPorSuTurno) return 'consultar';
   if (/^4\b/.test(t) || /\b(precio|precios|cuanto sale|cuanto cuesta|cuanto esta|servicios|lista de precios)\b/.test(t)) return 'precios';
   if (/^1\b/.test(t) || t === 'menu_reservar' || /\b(turno|reservar|sacar|agendar|cortar|corte|pelo|barba)\b/.test(t)) return 'reservar';
-  if (/^5\b/.test(t) || /\b(persona|humano|barbero|hablar con)\b/.test(t)) return 'persona';
+  if (
+    /^5\b/.test(t) ||
+    /\b(hablar|comunicarme|contactarme|contactar)\b.{0,20}\b(persona|humano|barbero|alguien|dueno)\b/.test(t) ||
+    /^(con )?(una persona|un humano|el barbero|persona|humano|barbero)$/.test(t)
+  ) {
+    return 'persona';
+  }
   return null;
 }
+
+/** "sí", "dale", "perfecto", "de una"... o el botón de confirmar. */
+function esAfirmacion(t: string): boolean {
+  if (/\bpero\b/.test(t)) return false; // "sí, pero a las 11" no es un sí
+  return /^(si+|s|sep|see|dale|ok|oka|okey|okay|obvio|claro|confirmo|confirmar|confirmado|listo|perfecto|genial|joya|de una|bueno|va|vamos|correcto|exacto|1|👍)\b/.test(t) || /^👍/.test(t);
+}
+
+/** "no", "mejor no", "cancelá"... o el botón de no. */
+function esNegacion(t: string): boolean {
+  return /^(no+|nop|nah|mejor no|dejalo|deja|cancela|cancelar|anula|3)\b/.test(t);
+}
+
+/**
+ * El servicio que nombró el cliente, solo si no hay duda. "corte y barba" es
+ * Corte + Barba; "barba y corte" puede ser dos cosas, y ante la duda se pregunta.
+ */
+function servicioSinDuda(ctx: Contexto, texto: string) {
+  const t = normalizar(texto).replace(/[^a-z0-9 ]/g, ' ').replace(/\s+/g, ' ').trim();
+  const elegido = resolverServicio(ctx.cfg, texto);
+  if (!elegido) return undefined;
+  const nombresDe = (s: { nombre: string; alias: string[] }) =>
+    [s.nombre, ...s.alias].map((c) => normalizar(c).replace(/[^a-z0-9 ]/g, ' ').replace(/\s+/g, ' ').trim());
+  const delElegido = nombresDe(elegido).filter((c) => c.length >= 4 && t.includes(c));
+  const masLargo = delElegido.sort((a, b) => b.length - a.length)[0] ?? t;
+  const otros = serviciosActivos(ctx.cfg).filter((s) => s.id !== elegido.id);
+  const hayOtro = otros.some((s) => nombresDe(s).some((c) => c.length >= 4 && t.includes(c) && !masLargo.includes(c)));
+  return hayOtro ? undefined : elegido;
+}
+
+const dia = (ctx: Contexto, f: string) => fechaHumana(DateTime.fromISO(f, { zone: ctx.cfg.negocio.timezone }));
 
 function listaDeServicios(ctx: Contexto): RespuestaFallback {
   const servicios = serviciosActivos(ctx.cfg);
@@ -144,21 +186,27 @@ async function ofrecerDias(ctx: Contexto, estado: EstadoFallback): Promise<Respu
   const dias = proximosDiasAbiertos(ctx.cfg, hoy, 6);
   estado.opciones = dias;
   estado.paso = 'elegir_dia';
+  const capital = (s: string) => s[0]!.toUpperCase() + s.slice(1);
   const lineas = dias
-    .map((f, i) => `${i + 1}️⃣ ${fechaHumana(DateTime.fromISO(f, { zone: zona }))}${f === hoy ? ' (hoy)' : ''}`)
+    .map((f, i) => `${i + 1}️⃣ ${capital(fechaHumana(DateTime.fromISO(f, { zone: zona })))}${f === hoy ? ' (hoy)' : ''}`)
     .join('\n');
   return {
     texto: `¿Qué día te queda bien?\n\n${lineas}\n\nO escribime el día (por ejemplo: "el sábado").`,
     lista: {
       encabezado: 'Días',
       boton: 'Elegir día',
-      opciones: dias.map((f) => ({ id: `dia_${f}`, titulo: fechaHumana(DateTime.fromISO(f, { zone: zona })).slice(0, 24) })),
+      opciones: dias.map((f) => ({ id: `dia_${f}`, titulo: capital(fechaHumana(DateTime.fromISO(f, { zone: zona }))).slice(0, 24) })),
     },
   };
 }
 
 async function ofrecerHorarios(ctx: Contexto, estado: EstadoFallback): Promise<RespuestaFallback> {
-  const r = await consultarDisponibilidad(ctx, { fecha: estado.fecha!, servicioId: estado.servicioId! });
+  // Al cambiar un turno, su propio horario cuenta como libre (se puede correr media hora).
+  const r = await consultarDisponibilidad(ctx, {
+    fecha: estado.fecha!,
+    servicioId: estado.servicioId!,
+    excluirTurnoId: estado.turnoACambiar,
+  });
   if (!r.abierto) {
     const otros = r.proximos_dias_con_lugar;
     estado.paso = 'elegir_dia';
@@ -194,8 +242,6 @@ async function ofrecerHorarios(ctx: Contexto, estado: EstadoFallback): Promise<R
 }
 
 async function armarResumen(ctx: Contexto, estado: EstadoFallback, telefono: string, nombre: string): Promise<RespuestaFallback> {
-  const zona = ctx.cfg.negocio.timezone;
-  const servicio = serviciosActivos(ctx.cfg).find((s) => s.id === estado.servicioId)!;
   try {
     const hold = await crearHold(ctx, {
       telefono,
@@ -206,13 +252,8 @@ async function armarResumen(ctx: Contexto, estado: EstadoFallback, telefono: str
     });
     estado.reservaId = hold.id;
     estado.paso = 'confirmar';
-    // Si tiene descuento por reseña, se lo decimos: es el premio prometido.
-    const lineaPrecio =
-      hold.descuentoPorcentaje > 0
-        ? `\n💰 ${formatearPrecio(hold.precio, ctx.cfg.negocio.moneda)} (con tu ${hold.descuentoPorcentaje}% de descuento 🎁)`
-        : '';
     return {
-      texto: `Perfecto. Antes de confirmar:\n\n✂️ ${servicio.nombre}\n📅 ${fechaHumana(DateTime.fromISO(estado.fecha!, { zone: zona }))}\n🕐 ${estado.hora}\n👤 ${nombre}${lineaPrecio}\n\n¿Confirmamos?`,
+      texto: mensajeApartado(ctx, hold),
       botones: [
         { id: 'confirmar_si', titulo: '✅ Sí, confirmar' },
         { id: 'confirmar_cambiar', titulo: '✏️ Cambiar' },
@@ -227,6 +268,31 @@ async function armarResumen(ctx: Contexto, estado: EstadoFallback, telefono: str
   }
 }
 
+/** Pregunta por un turno, con la ficha y dos botones. */
+function preguntarPorTurno(ctx: Contexto, pregunta: string, t: Turno, botones: Boton[]): RespuestaFallback {
+  return { texto: `${pregunta}\n\n${fichaDelTurno(ctx, t)}`, botones };
+}
+
+const BOTONES_CANCELAR: Boton[] = [
+  { id: 'cancelar_si', titulo: '✅ Sí, cancelar' },
+  { id: 'cancelar_no', titulo: '❌ No' },
+];
+
+function listaDeTurnos(ctx: Contexto, turnos: Turno[]): string {
+  return turnos.map((t2, i) => `${i + 1}️⃣ ${dia(ctx, t2.fecha)} ${t2.horaInicio} hs — ${t2.servicioNombre}`).join('\n');
+}
+
+/** Arranca el cambio de un turno: se elige otro día para el mismo servicio. */
+async function empezarCambio(ctx: Contexto, estado: EstadoFallback, t: Turno): Promise<RespuestaFallback> {
+  estado.turnoACambiar = t.id;
+  estado.servicioId = t.servicioId;
+  const dias = await ofrecerDias(ctx, estado);
+  return {
+    ...dias,
+    texto: `Dale, cambiamos tu turno de ${t.servicioNombre} del ${dia(ctx, t.fecha)} a las ${t.horaInicio} hs.\n\n${dias.texto}`,
+  };
+}
+
 /**
  * Procesa un mensaje en modo menu. Devuelve la respuesta y muta `estado`,
  * que el orquestador guarda en la conversacion.
@@ -236,26 +302,38 @@ export async function responderConMenu(
   entrada: { texto: string; telefono: string; nombreConocido: string; estado: EstadoFallback },
 ): Promise<RespuestaFallback> {
   const { texto, telefono, nombreConocido, estado } = entrada;
-  const zona = ctx.cfg.negocio.timezone;
   const t = normalizar(texto);
 
-  // Salidas rapidas disponibles en cualquier paso.
-  if (/\b(menu|menú|volver|empezar de nuevo|cancelar todo)\b/.test(t)) {
+  // Salidas rapidas disponibles en cualquier paso. Tienen que ser el mensaje
+  // entero: "quiero volver a sacar turno" no es "volver al menú", y "¿el
+  // barbero atiende el sábado?" no es pedir hablar con él.
+  if (/^(menu|volver|volver al menu|inicio|empezar de nuevo|cancelar todo)$/.test(t) || t === 'menu_mas') {
+    if (estado.reservaId) {
+      await cancelarTurno(ctx, estado.reservaId, { telefono, origen: 'whatsapp', forzar: true, motivo: 'volvio al menu' }).catch(() => {});
+    }
     reiniciar(estado);
-    estado.paso = 'menu';
     return menuInicial();
   }
-  if (/\b(hablar con|persona|humano|un humano|el barbero)\b/.test(t)) {
-    estado.paso = 'menu';
+  if (
+    /\b(hablar|comunicarme|contactarme|contactar)\b.{0,20}\b(persona|humano|barbero|alguien|dueno)\b/.test(t) ||
+    /^(con )?(una persona|un humano|el barbero|persona|humano|barbero)$/.test(t) ||
+    (estado.paso === 'menu' && /^5\b/.test(t))
+  ) {
+    reiniciar(estado);
     return { texto: ctx.cfg.mensajes.derivacion_humana, derivar: true };
   }
 
   switch (estado.paso) {
     case 'elegir_servicio': {
       const servicios = serviciosActivos(ctx.cfg);
-      const elegido = elegirDe(texto, servicios, (s) => `srv_${s.id}`) ?? servicios.find((s) => normalizar(s.nombre) === t);
-      if (!elegido) return { texto: `No te entendí 😅 Elegí con el número:\n\n${listaDeServicios(ctx).texto}` };
+      const elegido = elegirDe(texto, servicios, (s) => `srv_${s.id}`) ?? servicioSinDuda(ctx, texto);
+      if (!elegido) return { ...listaDeServicios(ctx), texto: `No te entendí 😅 Elegí con el número:\n\n${listaDeServicios(ctx).texto}` };
       estado.servicioId = elegido.id;
+      const { fecha } = interpretarFecha(texto, ctx.ahora());
+      if (fecha) {
+        estado.fecha = fecha;
+        return ofrecerHorarios(ctx, estado);
+      }
       return ofrecerDias(ctx, estado);
     }
 
@@ -279,33 +357,62 @@ export async function responderConMenu(
       // Si escribió un horario a mano, hay que verificar que siga libre antes de
       // seguir: no tiene sentido pedirle el nombre para después rechazarlo.
       if (!opciones.includes(elegido)) {
-        const disponibles = await consultarDisponibilidad(ctx, { fecha: estado.fecha!, servicioId: estado.servicioId! });
+        const disponibles = await consultarDisponibilidad(ctx, {
+          fecha: estado.fecha!,
+          servicioId: estado.servicioId!,
+          excluirTurnoId: estado.turnoACambiar,
+        });
         if (!disponibles.horarios.includes(elegido)) {
           const r = await ofrecerHorarios(ctx, estado);
           return {
-            texto: `Las ${elegido} ya las tengo ocupadas 😕\n\n${r.texto}`,
+            texto: `Las ${elegido} no las tengo libres 😕\n\n${r.texto}`,
             ...(r.lista ? { lista: r.lista } : {}),
           };
         }
       }
       estado.hora = elegido;
+
+      // Cambio de un turno existente: se muestra cómo queda y se pide el sí.
+      if (estado.turnoACambiar) {
+        const actual = await turnoPorId(ctx, estado.turnoACambiar);
+        if (!actual) {
+          reiniciar(estado);
+          return { texto: 'No encontré el turno que querías cambiar 🤔', botones: MENU_BOTONES };
+        }
+        estado.paso = 'confirmar_cambio';
+        return {
+          texto: `Te lo cambio así:\n\nAntes: ${dia(ctx, actual.fecha)} a las ${actual.horaInicio} hs\nAhora: *${dia(ctx, estado.fecha!)} a las ${elegido} hs*\n\n¿Lo cambio?`,
+          botones: [
+            { id: 'cambio_si', titulo: '✅ Sí, cambiarlo' },
+            { id: 'cambio_no', titulo: '❌ Dejarlo como está' },
+          ],
+        };
+      }
+
       const nombre = estado.nombre || nombreConocido;
       if (!nombre) {
         estado.paso = 'pedir_nombre';
-        return { texto: 'Perfecto. ¿Me pasás tu nombre para confirmar el turno?' };
+        return { texto: 'Perfecto. ¿Me decís tu nombre para anotar el turno?' };
       }
       return armarResumen(ctx, estado, telefono, nombre);
     }
 
     case 'pedir_nombre': {
-      if (!nombreParecePlausible(texto)) return { texto: 'Decime tu nombre así te lo dejo agendado 🙌' };
-      estado.nombre = sanearNombre(texto);
-      return armarResumen(ctx, estado, telefono, estado.nombre);
+      const nombre = extraerNombre(texto);
+      if (!nombre) return { texto: 'Decime solo tu nombre así te anoto el turno 🙌 (por ejemplo: Juan)' };
+      estado.nombre = nombre;
+      // Si ya hay un horario apartado (por ejemplo, lo apartó la IA antes de
+      // caerse), se confirma ese mismo con el nombre.
+      if (estado.reservaId) return confirmarApartado(ctx, estado, telefono, nombre);
+      return armarResumen(ctx, estado, telefono, nombre);
     }
 
     case 'confirmar': {
-      const afirma = /^(si|sí|s|dale|ok|oka|obvio|confirmo|confirmar|listo|1|confirmar_si)\b/.test(t) || t === 'confirmar_si';
-      const cambia = /\b(cambiar|otro|otra)\b/.test(t) || t === 'confirmar_cambiar';
+      const cambia =
+        t === 'confirmar_cambiar' ||
+        t === '2' ||
+        /\b(cambiar|otro horario|otra hora|otro dia)\b/.test(t) ||
+        (/\bmejor\b/.test(t) && !/^mejor no\b/.test(t));
       if (cambia) {
         if (estado.reservaId) {
           await cancelarTurno(ctx, estado.reservaId, { telefono, origen: 'whatsapp', forzar: true, motivo: 'cambio antes de confirmar' }).catch(() => {});
@@ -313,64 +420,80 @@ export async function responderConMenu(
         }
         return ofrecerDias(ctx, estado);
       }
-      if (!afirma) {
+      if (t === 'confirmar_no' || esNegacion(t)) {
         if (estado.reservaId) {
           await cancelarTurno(ctx, estado.reservaId, { telefono, origen: 'whatsapp', forzar: true, motivo: 'no confirmo' }).catch(() => {});
-          delete estado.reservaId;
         }
-        estado.paso = 'menu';
+        reiniciar(estado);
         return { texto: 'Listo, no reservo nada entonces 👍 Cuando quieras escribime.', botones: MENU_BOTONES };
       }
-      try {
-        const turno = await confirmarHold(ctx, estado.reservaId!, { telefono, nombre: estado.nombre || nombreConocido });
-        const nombre = turno.nombreCliente;
-        reiniciar(estado);
-        estado.paso = 'menu';
-        const conDescuento =
-          turno.descuentoPorcentaje > 0
-            ? `\n💰 ${formatearPrecio(turno.precio, ctx.cfg.negocio.moneda)} con tu ${turno.descuentoPorcentaje}% 🎁`
-            : '';
-        return {
-          texto: `¡Listo, ${nombre}! ✂️\n\nTu turno quedó reservado:\n📅 ${fechaHumana(DateTime.fromISO(turno.fecha, { zone: zona }))}\n🕐 ${turno.horaInicio}\n✂️ ${turno.servicioNombre}${conDescuento}\n\n¡Te esperamos!`,
-        };
-      } catch (e) {
-        estado.paso = 'elegir_hora';
-        delete estado.reservaId;
-        const msg = esErrorDeNegocio(e) ? e.mensajeCliente : ctx.cfg.mensajes.error_al_confirmar;
-        const r = await ofrecerHorarios(ctx, estado);
-        return { texto: `${msg}\n\n${r.texto}`, ...(r.lista ? { lista: r.lista } : {}) };
+      if (t === 'confirmar_si' || esAfirmacion(t)) {
+        const nombre = estado.nombre || nombreConocido;
+        if (!nombre) {
+          estado.paso = 'pedir_nombre';
+          return { texto: '¡Dale! ¿Me decís tu nombre para anotar el turno?' };
+        }
+        return confirmarApartado(ctx, estado, telefono, nombre);
       }
-    }
-
-    case 'elegir_turno_a_cancelar': {
-      const turnos = await turnosDeCliente(ctx, telefono);
-      const elegido = elegirDe(texto, turnos, (x) => x.id);
-      if (!elegido) {
-        estado.paso = 'menu';
-        return { texto: 'No encontré ese turno. Volvemos al menú 👇\n\n' + textoMenu(), botones: MENU_BOTONES };
-      }
-      estado.turnoACancelar = elegido.id;
-      estado.paso = 'confirmar_cancelacion';
+      // Respuesta que no es ni sí ni no: el horario sigue guardado, se vuelve a preguntar.
       return {
-        texto: `¿Querés cancelar este turno?\n\n✂️ ${elegido.servicioNombre}\n📅 ${fechaHumana(DateTime.fromISO(elegido.fecha, { zone: zona }))}\n🕐 ${elegido.horaInicio}`,
+        texto: 'No te entendí 😅 ¿Confirmo el turno?',
         botones: [
-          { id: 'cancelar_si', titulo: '✅ Sí, cancelar' },
-          { id: 'cancelar_no', titulo: '❌ No' },
+          { id: 'confirmar_si', titulo: '✅ Sí, confirmar' },
+          { id: 'confirmar_cambiar', titulo: '✏️ Cambiar' },
+          { id: 'confirmar_no', titulo: '❌ Cancelar' },
         ],
       };
     }
 
+    case 'elegir_turno_a_cancelar':
+    case 'elegir_turno_a_cambiar': {
+      const turnos = await turnosDeCliente(ctx, telefono);
+      const elegido = elegirDe(texto, turnos, (x) => x.id);
+      if (!elegido) {
+        reiniciar(estado);
+        return { texto: `No encontré ese turno. Volvemos al menú 👇\n\n${textoMenu()}`, botones: MENU_BOTONES };
+      }
+      if (estado.paso === 'elegir_turno_a_cambiar') return empezarCambio(ctx, estado, elegido);
+      estado.turnoACancelar = elegido.id;
+      estado.paso = 'confirmar_cancelacion';
+      return preguntarPorTurno(ctx, '¿Querés cancelar este turno?', elegido, BOTONES_CANCELAR);
+    }
+
     case 'confirmar_cancelacion': {
-      const afirma = /^(si|sí|s|dale|ok|confirmo|cancelar|cancelar_si)\b/.test(t) || t === 'cancelar_si';
+      const afirma = t === 'cancelar_si' || esAfirmacion(t) || /^(si,? )?cancela(r|lo)?\b/.test(t);
       const id = estado.turnoACancelar!;
       reiniciar(estado);
-      estado.paso = 'menu';
       if (!afirma) return { texto: 'Listo, tu turno sigue en pie 👍' };
       try {
-        await cancelarTurno(ctx, id, { telefono, origen: 'whatsapp' });
-        return { texto: 'Listo, cancelé tu turno ✅ Cuando quieras sacás otro por acá.' };
+        const cancelado = await cancelarTurno(ctx, id, { telefono, origen: 'whatsapp' });
+        return { texto: mensajeCancelado(ctx, cancelado) };
       } catch (e) {
         return { texto: esErrorDeNegocio(e) ? e.mensajeCliente : ctx.cfg.mensajes.error_generico };
+      }
+    }
+
+    case 'confirmar_cambio': {
+      const afirma = t === 'cambio_si' || esAfirmacion(t);
+      const id = estado.turnoACambiar!;
+      const { fecha, hora } = estado;
+      if (!afirma) {
+        reiniciar(estado);
+        return { texto: 'Listo, tu turno queda como estaba 👍' };
+      }
+      try {
+        const movido = await modificarTurno(ctx, id, { fecha: fecha!, hora: hora! }, { telefono, origen: 'whatsapp' });
+        reiniciar(estado);
+        return { texto: mensajeModificado(ctx, movido) };
+      } catch (e) {
+        const msg = esErrorDeNegocio(e) ? e.mensajeCliente : ctx.cfg.mensajes.error_al_confirmar;
+        if (esErrorDeNegocio(e) && e.codigo === 'CANCELACION_TARDIA') {
+          reiniciar(estado);
+          return { texto: msg };
+        }
+        estado.paso = 'elegir_hora';
+        const r = await ofrecerHorarios(ctx, estado);
+        return { texto: `${msg}\n\n${r.texto}`, ...(r.lista ? { lista: r.lista } : {}) };
       }
     }
 
@@ -379,8 +502,19 @@ export async function responderConMenu(
       const opcion = opcionDeMenu(texto);
       switch (opcion) {
         case 'reservar': {
-          estado.paso = 'elegir_servicio';
-          return listaDeServicios(ctx);
+          // Si ya dijo qué y cuándo ("corte el sábado"), no se le vuelve a preguntar.
+          const servicio = /^(1|menu_reservar)$/.test(t) ? undefined : servicioSinDuda(ctx, texto);
+          if (!servicio) {
+            estado.paso = 'elegir_servicio';
+            return listaDeServicios(ctx);
+          }
+          estado.servicioId = servicio.id;
+          const { fecha } = interpretarFecha(texto, ctx.ahora());
+          if (fecha) {
+            estado.fecha = fecha;
+            return ofrecerHorarios(ctx, estado);
+          }
+          return ofrecerDias(ctx, estado);
         }
         case 'consultar': {
           const turnos = await turnosDeCliente(ctx, telefono);
@@ -388,10 +522,8 @@ export async function responderConMenu(
           if (turnos.length === 0) {
             return { texto: 'No tenés ningún turno reservado 🤔 ¿Querés sacar uno?', botones: MENU_BOTONES };
           }
-          const lineas = turnos
-            .map((t2) => `📅 ${fechaHumana(DateTime.fromISO(t2.fecha, { zone: zona }))} a las ${t2.horaInicio} — ${t2.servicioNombre}`)
-            .join('\n');
-          return { texto: `Tenés ${turnos.length === 1 ? 'este turno' : 'estos turnos'}:\n\n${lineas}` };
+          const fichas = turnos.map((t2) => fichaDelTurno(ctx, t2)).join('\n\n');
+          return { texto: `Tenés ${turnos.length === 1 ? 'este turno' : 'estos turnos'}:\n\n${fichas}` };
         }
         case 'cancelar': {
           const turnos = await turnosDeCliente(ctx, telefono);
@@ -402,39 +534,20 @@ export async function responderConMenu(
           if (turnos.length === 1) {
             estado.turnoACancelar = turnos[0]!.id;
             estado.paso = 'confirmar_cancelacion';
-            const t2 = turnos[0]!;
-            return {
-              texto: `¿Querés cancelar este turno?\n\n✂️ ${t2.servicioNombre}\n📅 ${fechaHumana(DateTime.fromISO(t2.fecha, { zone: zona }))}\n🕐 ${t2.horaInicio}`,
-              botones: [
-                { id: 'cancelar_si', titulo: '✅ Sí, cancelar' },
-                { id: 'cancelar_no', titulo: '❌ No' },
-              ],
-            };
+            return preguntarPorTurno(ctx, '¿Querés cancelar este turno?', turnos[0]!, BOTONES_CANCELAR);
           }
           estado.paso = 'elegir_turno_a_cancelar';
-          return {
-            texto: `¿Cuál querés cancelar?\n\n${turnos
-              .map((t2, i) => `${i + 1}️⃣ ${fechaHumana(DateTime.fromISO(t2.fecha, { zone: zona }))} ${t2.horaInicio} — ${t2.servicioNombre}`)
-              .join('\n')}`,
-          };
+          return { texto: `¿Cuál querés cancelar?\n\n${listaDeTurnos(ctx, turnos)}` };
         }
         case 'modificar': {
           const turnos = await turnosDeCliente(ctx, telefono);
           if (turnos.length === 0) {
             estado.paso = 'elegir_servicio';
-            return { texto: 'No encuentro ningún turno tuyo 🤔 ¿Sacamos uno?\n\n' + listaDeServicios(ctx).texto };
+            return { ...listaDeServicios(ctx), texto: `No encuentro ningún turno tuyo 🤔 ¿Sacamos uno?\n\n${listaDeServicios(ctx).texto}` };
           }
-          const t2 = turnos[0]!;
-          estado.turnoACancelar = t2.id;
-          estado.reprogramando = true;
-          estado.paso = 'confirmar_cancelacion';
-          return {
-            texto: `Tenés este turno:\n\n✂️ ${t2.servicioNombre}\n📅 ${fechaHumana(DateTime.fromISO(t2.fecha, { zone: zona }))}\n🕐 ${t2.horaInicio}\n\nPara cambiarlo lo doy de baja y sacamos uno nuevo. ¿Dale?`,
-            botones: [
-              { id: 'cancelar_si', titulo: '🔁 Sí, cambiarlo' },
-              { id: 'cancelar_no', titulo: '❌ Dejarlo así' },
-            ],
-          };
+          if (turnos.length === 1) return empezarCambio(ctx, estado, turnos[0]!);
+          estado.paso = 'elegir_turno_a_cambiar';
+          return { texto: `¿Cuál querés cambiar?\n\n${listaDeTurnos(ctx, turnos)}` };
         }
         case 'precios': {
           const servicios = serviciosActivos(ctx.cfg);
@@ -442,25 +555,62 @@ export async function responderConMenu(
           return {
             texto: `Estos son los servicios:\n\n${servicios
               .map((s) => `✂️ ${s.nombre} — ${formatearPrecio(s.precio, ctx.cfg.negocio.moneda)}`)
-              .join('\n')}\n\n${describirHorarios(ctx.cfg)}`,
+              .join('\n')}\n\n🕐 Horarios de atención:\n${describirHorarios(ctx.cfg)
+              .split('\n')
+              .map((l) => l[0]!.toUpperCase() + l.slice(1))
+              .join('\n')}`,
             botones: MENU_BOTONES,
           };
         }
         case 'persona': {
-          estado.paso = 'menu';
+          reiniciar(estado);
           return { texto: ctx.cfg.mensajes.derivacion_humana, derivar: true };
         }
         default: {
-          const info = obtenerInfoNegocio(ctx);
-          if (/\b(donde|direccion|ubicados|queda)\b/.test(t) && info.direccion) {
-            return { texto: `Estamos en ${info.direccion}${info.como_llegar ? ` (${info.como_llegar})` : ''} 📍`, botones: MENU_BOTONES };
+          if (/\b(donde|direccion|ubicados|ubicacion|queda|como llego)\b/.test(t)) {
+            const info = obtenerInfoNegocio(ctx);
+            if (info.direccion) {
+              return { texto: `Estamos en ${info.direccion}${info.como_llegar ? ` (${info.como_llegar})` : ''} 📍`, botones: MENU_BOTONES };
+            }
+            return { texto: 'La dirección te la confirma el barbero 🙌 Si la necesitás ahora, escribí *5* y le aviso para que te escriba.', botones: MENU_BOTONES };
           }
           estado.paso = 'menu';
-          return { texto: `${ctx.cfg.mensajes.bienvenida}\n\n${textoMenu()}`, botones: MENU_BOTONES };
+          return { texto: `${ctx.cfg.mensajes.bienvenida}\n\n${textoMenu(false)}`, botones: MENU_BOTONES };
         }
       }
     }
   }
+}
+
+/** Confirma el horario apartado y deja el estado limpio. */
+async function confirmarApartado(ctx: Contexto, estado: EstadoFallback, telefono: string, nombre: string): Promise<RespuestaFallback> {
+  try {
+    const turno = await confirmarHold(ctx, estado.reservaId!, { telefono, nombre });
+    reiniciar(estado);
+    return { texto: mensajeConfirmado(ctx, turno) };
+  } catch (e) {
+    delete estado.reservaId;
+    const msg = esErrorDeNegocio(e) ? e.mensajeCliente : ctx.cfg.mensajes.error_al_confirmar;
+    if (!estado.servicioId || !estado.fecha) {
+      reiniciar(estado);
+      return { texto: `${msg}\n\n${textoMenu()}`, botones: MENU_BOTONES };
+    }
+    estado.paso = 'elegir_hora';
+    const r = await ofrecerHorarios(ctx, estado);
+    return { texto: `${msg}\n\n${r.texto}`, ...(r.lista ? { lista: r.lista } : {}) };
+  }
+}
+
+/** Menú a partir de un horario que apartó la IA: el cliente solo tiene que decir que sí. */
+export function estadoParaConfirmar(t: Turno): EstadoFallback {
+  return {
+    paso: t.nombreCliente ? 'confirmar' : 'pedir_nombre',
+    reservaId: t.id,
+    servicioId: t.servicioId,
+    fecha: t.fecha,
+    hora: t.horaInicio,
+    ...(t.nombreCliente ? { nombre: t.nombreCliente } : {}),
+  };
 }
 
 export function estadoFallbackInicial(): EstadoFallback {

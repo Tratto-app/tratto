@@ -1,16 +1,12 @@
 {
   "negocio": {
-    "nombre": "PLACEHOLDER - Nombre de la Barberia",
-    "direccion": "PLACEHOLDER - Calle 1234, Ciudad, Provincia",
-    "como_llegar": "PLACEHOLDER - referencia corta, ej: a media cuadra de la plaza",
-    "telefono": "PLACEHOLDER - +54 9 11 0000 0000",
-    "instagram": "PLACEHOLDER - @tubarberia",
-    "maps": "PLACEHOLDER - link de Google Maps",
-    "medios_de_pago": [
-      "efectivo",
-      "transferencia",
-      "tarjeta de debito"
-    ],
+    "nombre": "Barbería Panamá",
+    "direccion": "",
+    "como_llegar": "",
+    "telefono": "+54 9 11 6858-1736",
+    "instagram": "",
+    "maps": "",
+    "medios_de_pago": [],
     "codigo_pais": "54",
     "timezone": "America/Argentina/Buenos_Aires",
     "moneda": "ARS"
@@ -125,8 +121,8 @@
     {
       "id": "corte",
       "nombre": "Corte",
-      "descripcion": "Corte de pelo con maquina y tijera, incluye lavado.",
-      "precio": 0,
+      "descripcion": "Corte de pelo.",
+      "precio": 10000,
       "duracion_min": 45,
       "activo": true,
       "alias": [
@@ -140,7 +136,7 @@
     {
       "id": "corte_barba",
       "nombre": "Corte + Barba",
-      "descripcion": "Corte de pelo completo mas perfilado y arreglo de barba.",
+      "descripcion": "Corte de pelo y arreglo de barba.",
       "precio": 0,
       "duracion_min": 75,
       "activo": true,
@@ -154,7 +150,7 @@
     {
       "id": "barba",
       "nombre": "Barba",
-      "descripcion": "Perfilado y arreglo de barba con toalla caliente.",
+      "descripcion": "Arreglo y perfilado de barba.",
       "precio": 0,
       "duracion_min": 30,
       "activo": true,
@@ -167,7 +163,7 @@
     {
       "id": "corte_ninos",
       "nombre": "Corte niños",
-      "descripcion": "Corte para chicos hasta 12 años.",
+      "descripcion": "Corte de pelo para chicos.",
       "precio": 0,
       "duracion_min": 30,
       "activo": true,
@@ -212,14 +208,14 @@
     "fuera_de_horario_comercial": null,
     "error_generico": "Uy, se me complicó de este lado 😅 Dame un minuto y probá de nuevo, por favor.",
     "error_al_confirmar": "Estoy teniendo un inconveniente para confirmar el turno. Dame un momento y vuelvo a intentarlo 🙏",
-    "derivacion_humana": "Listo, le aviso al barbero para que te escriba por acá. Puede demorar un rato en responder 🙌",
+    "derivacion_humana": "Listo, le aviso al barbero para que te escriba él 🙌 Puede demorar un rato en responder.",
     "despedida": "¡Gracias! Cualquier cosa escribime por acá ✂️"
   },
   "resenas": {
     "activo": true,
     "horas_despues": 1,
     "solo_clientes_nuevos": true,
-    "link_google_maps": "PLACEHOLDER - link para dejar reseña. Sacalo de tu ficha en Google Maps: Compartir → Copiar vínculo, o el enlace corto g.page/r/.../review",
+    "link_google_maps": "",
     "descuento_porcentaje": 10,
     "vence_dias": 90,
     "mensaje": "¡Hola {nombre}! ✂️ ¿Cómo te fue con el corte?\n\nSi nos dejás tu opinión en Google nos ayudás un montón 🙌\n{link}\n\nY por dejarla te hacemos un {descuento}% de descuento en tu próximo corte. Avisame cuando la subas y te lo dejo cargado 👇",
@@ -234,7 +230,7 @@
   },
   "agente": {
     "tono": "argentino rioplatense, cercano, breve, amable. Tuteo con 'vos'. Emojis con moderacion (0 a 2 por mensaje).",
-    "nombre_bot": "el asistente de la barberia",
+    "nombre_bot": "el asistente de Barbería Panamá",
     "max_caracteres_respuesta": 600
   }
 }

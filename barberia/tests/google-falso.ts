@@ -58,7 +58,7 @@ export async function levantarGoogleFalso(): Promise<GoogleFalso> {
   const servidor = http.createServer((req, res) => {
     const url = new URL(req.url ?? '/', 'http://localhost');
     const ruta = decodeURIComponent(url.pathname);
-    pedidos.push(`${req.method} ${ruta}`);
+    pedidos.push(`${req.method} ${ruta}${url.search}`);
 
     let cuerpo = '';
     req.on('data', (c) => (cuerpo += c));

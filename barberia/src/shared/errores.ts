@@ -47,8 +47,12 @@ export const errores = {
     new ErrorDeNegocio('DEMASIADO_LEJOS', `Solo se reserva hasta ${dias} dias en el futuro`, `Por ahora estamos tomando turnos hasta ${dias} días para adelante.`),
   limiteTurnos: (max: number) =>
     new ErrorDeNegocio('LIMITE_TURNOS', `El cliente supera el maximo de ${max} turnos futuros`, `Ya tenés ${max} turno(s) reservado(s). Si querés, cancelamos alguno y sacamos otro 👍`),
-  cancelacionTardia: (horas: number) =>
-    new ErrorDeNegocio('CANCELACION_TARDIA', `Cancelacion dentro de las ${horas} horas previas`, 'Estamos muy sobre la hora para cancelar por acá. Escribile directo al barbero, por favor 🙏'),
+  cancelacionTardia: (horas: number, accion: 'cancelar' | 'cambiar' = 'cancelar') =>
+    new ErrorDeNegocio(
+      'CANCELACION_TARDIA',
+      `${accion === 'cancelar' ? 'Cancelacion' : 'Cambio'} dentro de las ${horas} horas previas`,
+      `Falta muy poco para el turno y ya no lo puedo ${accion} por acá 🙏 Si querés, le aviso al barbero para que lo vea él.`,
+    ),
   holdVencido: () =>
     new ErrorDeNegocio('HOLD_VENCIDO', 'La reserva temporal expiro', 'Se me venció la reserva del horario 😅 ¿Lo buscamos de nuevo?', { httpStatus: 409 }),
   datosInvalidos: (detalle: string, mensajeCliente = 'Me faltan datos para poder seguir.') =>

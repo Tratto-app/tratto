@@ -59,6 +59,9 @@ export async function responder(pedido: PedidoAgente, proveedorInyectado?: Prove
   }
 
   const { datos, llamador } = pedido;
+  // Cada llamada es un mensaje del cliente: lo que hicieron las herramientas
+  // se cuenta desde cero (el orquestador lo lee al terminar).
+  llamador.acciones = [];
   const herramientasUsadas: string[] = [];
   const arranque = Date.now();
 

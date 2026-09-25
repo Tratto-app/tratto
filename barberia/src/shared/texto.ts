@@ -32,15 +32,64 @@ export function sanearNombre(s: string): string {
     .replace(/\s+/g, ' ')
     .trim()
     .slice(0, 60);
+  // "maria de los angeles" → "Maria de los Angeles": las partículas van en minúscula.
+  const particulas = new Set(['de', 'del', 'la', 'las', 'los', 'y', 'da', 'di', 'van', 'von']);
   return limpio
     .split(' ')
-    .map((p) => (p.length > 1 ? p[0]!.toUpperCase() + p.slice(1) : p.toUpperCase()))
+    .map((p, i) =>
+      i > 0 && particulas.has(p.toLowerCase())
+        ? p.toLowerCase()
+        : p.length > 1
+          ? p[0]!.toUpperCase() + p.slice(1)
+          : p.toUpperCase(),
+    )
     .join(' ');
 }
 
 export function nombreParecePlausible(s: string): boolean {
-  const limpio = sanearNombre(s);
-  return limpio.length >= 2 && limpio.length <= 60 && /\p{L}/u.test(limpio);
+  return extraerNombre(s) !== '';
+}
+
+/**
+ * Palabras que llegan cuando se pide el nombre pero que no son un nombre:
+ * "sí", "dale", "hola", "gracias". Sin este filtro quedaban turnos a nombre de
+ * "Sí" o "Dale" en la agenda del barbero.
+ */
+const NO_SON_NOMBRES = new Set(
+  (
+    'si no dale ok oka okey okay listo bueno buenas buenos hola holis chau gracias genial perfecto joya ' +
+    'confirmo confirmar confirmado claro obvio de una va vale sale mañana hoy turno corte barba nada ' +
+    'ninguno nadie yo el ella nombre mi me soy perdon disculpa que como cuando donde quiero reservar ' +
+    'cancelar cambiar precio precios menu hablar persona barbero hora dia tarde noche jaja jeje'
+  )
+    .split(' ')
+    .map((p) => normalizar(p)),
+);
+
+/**
+ * Saca el nombre de lo que escribió el cliente cuando se lo pedimos: "soy
+ * Santi", "me llamo Juan Pérez", "a nombre de Lucas", "Santi". Devuelve '' si
+ * no parece un nombre (una respuesta suelta, una frase larga, un número).
+ */
+export function extraerNombre(texto: string): string {
+  let t = texto
+    .replace(/[\u0000-\u001F\u007F]/g, ' ')
+    .replace(/https?:\/\/\S+/gi, ' ')
+    .trim();
+  // "sí, soy Santi" / "dale, me llamo Juan": primero la muletilla, después el prefijo.
+  t = t.replace(/^(s[ií]|dale|ok|okey|listo|bueno|perfecto|genial|joya|claro|de una)(?=[\s,.!]|$)[\s,.!]*/i, '');
+  t = t.replace(
+    /^(hola[\s,!.]*)?(yo\s+)?(ya te dije|te dije|soy|me llamo|mi nombre es|mi nombre|a nombre de|ponelo a nombre de|anotalo a nombre de|anotame como|es para|para)\s+/i,
+    '',
+  );
+  t = t.replace(/[\s,.!¡¿?]+$/g, '');
+  const limpio = sanearNombre(t);
+  if (limpio.length < 2 || !/\p{L}{2}/u.test(limpio)) return '';
+  const palabras = limpio.split(' ');
+  if (palabras.length > 5) return '';
+  if (palabras.every((p) => NO_SON_NOMBRES.has(normalizar(p)))) return '';
+  if (NO_SON_NOMBRES.has(normalizar(palabras[0]!)) && palabras.length <= 2) return '';
+  return limpio;
 }
 
 /**
@@ -70,6 +119,19 @@ export function normalizarTelefono(tel: string, opciones: { codigoPais?: string 
   if (n.startsWith(codigoPais)) return n;
   if (n.startsWith('0')) n = n.slice(1);
   return `${codigoPais}${n}`;
+}
+
+/**
+ * Teléfono para que lo lea una persona: "+54 9 11 3333-4444". Los de otras
+ * características o países van con "+" y los dígitos, sin inventar cortes.
+ */
+export function telefonoLegible(tel: string): string {
+  const d = tel.replace(/\D/g, '');
+  if (!d) return '';
+  const caba = /^54911(\d{4})(\d{4})$/.exec(d);
+  if (caba) return `+54 9 11 ${caba[1]}-${caba[2]}`;
+  if (/^549\d{10}$/.test(d)) return `+54 9 ${d.slice(3)}`;
+  return `+${d}`;
 }
 
 /** Un numero de WhatsApp valido tiene entre 10 y 15 digitos (E.164). */

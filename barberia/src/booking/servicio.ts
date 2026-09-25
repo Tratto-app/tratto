@@ -44,7 +44,7 @@ import {
 } from '../shared/tiempo.js';
 import { errores } from '../shared/errores.js';
 import { idTurno } from '../shared/ids.js';
-import { sanearNombre } from '../shared/texto.js';
+import { extraerNombre, sanearNombre } from '../shared/texto.js';
 import { log } from '../shared/log.js';
 import { sheetsConfigurado } from '../config/env.js';
 import {
@@ -54,7 +54,7 @@ import {
   proximosDiasAbiertos,
   repartirOpciones,
 } from './disponibilidad.js';
-import { ESTADOS_VIGENTES, type Bloqueo, type HorarioDisponible, type OrigenTurno, type Turno } from './tipos.js';
+import { ESTADOS_VIGENTES, fueReprogramado, nuncaFueTurno, type Bloqueo, type HorarioDisponible, type OrigenTurno, type Turno } from './tipos.js';
 
 /**
  * Encola un evento para Google Sheets solo si Sheets esta configurado.
@@ -456,7 +456,9 @@ export async function confirmarHold(
       throw errores.holdVencido();
     }
 
-    const nombre = sanearNombre(datos.nombre ?? actual.nombreCliente);
+    // Lo que llega como nombre puede ser cualquier cosa ("sí", "dale"): solo
+    // se usa si parece un nombre; si no, queda el que ya tenía el hold.
+    const nombre = extraerNombre(datos.nombre ?? '') || sanearNombre(actual.nombreCliente);
     if (!nombre) throw errores.datosInvalidos('falta el nombre del cliente', '¿Me pasás tu nombre para confirmar?');
 
     const filas = await turnosRepo.cambiarEstado(tx, actual.id, 'reservado', {
@@ -553,6 +555,15 @@ export async function modificarTurno(
       const nuevoServicio = cambios.servicioId ?? actual.servicioId;
       const cambiaHorario = nuevaFecha !== actual.fecha || nuevaHora !== actual.horaInicio || nuevoServicio !== actual.servicioId;
 
+      // Misma regla que para cancelar: sobre la hora, el cliente no puede
+      // mover el turno por su cuenta (el barbero ya contaba con ese horario).
+      if (cambiaHorario && !quien.forzar && quien.origen !== 'panel') {
+        const horasParaElTurno = (actual.inicioMs - ahora.toMillis()) / 3_600_000;
+        if (horasParaElTurno < ctx.cfg.reglas.cancelacion_minima_horas) {
+          throw errores.cancelacionTardia(ctx.cfg.reglas.cancelacion_minima_horas, 'cambiar');
+        }
+      }
+
       if (!cambiaHorario) {
         if (cambios.observaciones !== undefined || cambios.nombre !== undefined) {
           await turnosRepo.actualizarDatos(
@@ -599,6 +610,7 @@ export async function modificarTurno(
       await turnosRepo.insertar(tx, nuevo);
       const reprogramado = await consumirBeneficio(tx, ctx, nuevo, ahoraIso);
       await programarRecordatorios(tx, ctx, reprogramado);
+      await programarResena(tx, ctx, reprogramado);
       await encolarParaSheets(tx, 'turno_baja', actual.id, ahora.toMillis());
       await encolarParaSheets(tx, 'turno_alta', nuevo.id, ahora.toMillis());
       await eventosRepo.registrar(tx, 'turno_modificado', {
@@ -645,7 +657,8 @@ export async function cancelarTurno(
     await recordatoriosRepo.cancelarDeTurno(tx, actual.id);
     // Si el turno tenia descuento, vuelve a quedar disponible para el proximo.
     await beneficiosRepo.liberarDeTurno(tx, actual.id, ahoraIso);
-    await encolarParaSheets(tx, 'turno_baja', actual.id, ahora.toMillis());
+    // Un horario apartado que se suelta nunca estuvo en la planilla: no va.
+    if (!nuncaFueTurno(actual)) await encolarParaSheets(tx, 'turno_baja', actual.id, ahora.toMillis());
     await eventosRepo.registrar(tx, 'turno_cancelado', {
       turnoId: actual.id,
       telefono: actual.telefono,
@@ -748,12 +761,16 @@ export async function agendaDelDia(ctx: Contexto, fecha: Fecha, servicioParaHuec
         ignorarAnticipacion: true,
       })
     : [];
+  // Lo que ve el barbero: afuera los horarios que alguien apartó y no confirmó
+  // (vencidos o soltados) y los turnos viejos que se movieron a otro horario.
+  // El que está apartado ahora mismo sí se ve: ese horario está ocupado.
+  const paraElBarbero = turnos.filter((t) => t.estado === 'pendiente' || (!nuncaFueTurno(t) && !fueReprogramado(t)));
   return {
     fecha,
     abierto: dia.abierto,
     motivo_cerrado: dia.motivo,
     tramos: dia.tramos,
-    turnos,
+    turnos: paraElBarbero,
     bloqueos,
     huecos_libres: huecos,
   };

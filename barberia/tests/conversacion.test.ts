@@ -261,7 +261,7 @@ describe('respaldo cuando la IA no está disponible (requisito crítico)', () =>
         ultima = r.texto;
       }
 
-      assert.match(ultima, /quedó reservado/i);
+      assert.match(ultima, /quedó confirmado/i);
       const turnos = await turnosDeCliente(ctx, TELEFONO_A);
       assert.equal(turnos.length, 1);
       assert.equal(turnos[0]!.horaInicio, '17:30');
@@ -295,7 +295,12 @@ describe('el menú entiende cómo habla la gente', () => {
   const casos: Array<[string, RegExp]> = [
     ['quiero sacar turno', /qué te querés hacer/i],
     ['hola, quiero un turno', /qué te querés hacer/i],
-    ['quiero cortarme el pelo', /qué te querés hacer/i],
+    // Ya dijo el servicio: no se le vuelve a preguntar, se pasa al día.
+    ['quiero cortarme el pelo', /qué día te queda bien/i],
+    // Dos servicios distintos en la misma frase: ante la duda, se pregunta.
+    ['quiero turno para barba y corte', /qué te querés hacer/i],
+    // Mencionar al barbero no es pedir hablar con él.
+    ['el barbero atiende el sábado?', /sacar un turno/i],
     ['que turno tengo', /no tenés ningún turno/i],
     ['¿a qué hora tengo turno?', /no tenés ningún turno/i],
     ['cuándo es mi turno', /no tenés ningún turno/i],

@@ -159,17 +159,49 @@ function validarCoherencia(cfg: ConfigNegocio): string[] {
   return problemas;
 }
 
-let cache: { cfg: ConfigNegocio; mtimeMs: number; ruta: string } | null = null;
+/**
+ * Un dato sin completar ("PLACEHOLDER - ...") se trata como vacío. Si no, el
+ * bot le diría al cliente "la dirección es PLACEHOLDER - Calle 1234" o le
+ * mandaría un link de reseña que no existe. Con el campo vacío, cada lugar que
+ * lo usa ya sabe qué hacer (no mostrarlo, derivar al barbero, no pedir reseña).
+ */
+const sinCompletar = (v: string) => /placeholder/i.test(v);
 
-export function cargarConfigNegocio(ruta: string = RUTA_POR_DEFECTO): ConfigNegocio {
-  const crudo = JSON.parse(fs.readFileSync(ruta, 'utf8'));
+function sinPendientes(cfg: ConfigNegocio): ConfigNegocio {
+  const n = cfg.negocio;
+  const limpio = (v: string) => (sinCompletar(v) ? '' : v.trim());
+  return {
+    ...cfg,
+    negocio: {
+      ...n,
+      nombre: limpio(n.nombre) || 'la barbería',
+      direccion: limpio(n.direccion),
+      como_llegar: limpio(n.como_llegar),
+      telefono: limpio(n.telefono),
+      instagram: limpio(n.instagram),
+      maps: limpio(n.maps),
+      medios_de_pago: n.medios_de_pago.map((m) => m.trim()).filter((m) => m && !sinCompletar(m)),
+    },
+    servicios: cfg.servicios.map((s) => ({ ...s, descripcion: limpio(s.descripcion) })),
+    resenas: { ...cfg.resenas, link_google_maps: limpio(cfg.resenas.link_google_maps) },
+  };
+}
+
+function validar(crudo: unknown, origen: string): ConfigNegocio {
   const parsed = negocioSchema.safeParse(crudo);
   if (!parsed.success) {
     const detalle = parsed.error.issues.map((i) => `  - ${i.path.join('.')}: ${i.message}`).join('\n');
-    throw new Error(`config/negocio.json invalido:\n${detalle}`);
+    throw new Error(`${origen} invalido:\n${detalle}`);
   }
-  return parsed.data;
+  return sinPendientes(parsed.data);
 }
+
+let cache: { cfg: ConfigNegocio; mtimeMs: number; ruta: string } | null = null;
+
+export function cargarConfigNegocio(ruta: string = RUTA_POR_DEFECTO): ConfigNegocio {
+  return validar(JSON.parse(fs.readFileSync(ruta, 'utf8')), 'config/negocio.json');
+}
+
 
 /**
  * Devuelve la config viva. Relee el archivo si cambio en disco, asi el barbero
@@ -192,20 +224,26 @@ export function invalidarCacheNegocio(): void {
  * + rename) para que un corte de luz no deje el JSON a medias.
  */
 export function guardarConfigNegocio(nueva: unknown, ruta: string = RUTA_POR_DEFECTO): ConfigNegocio {
+  const cfg = prepararConfigNegocio(nueva);
+  const temporal = `${ruta}.tmp`;
+  fs.writeFileSync(temporal, `${JSON.stringify(cfg, null, 2)}\n`, 'utf8');
+  fs.renameSync(temporal, ruta);
+  invalidarCacheNegocio();
+  return cfg;
+}
+
+/** Valida una config nueva (forma y coherencia) sin escribir nada. Tira con un mensaje legible. */
+export function prepararConfigNegocio(nueva: unknown): ConfigNegocio {
   const parsed = negocioSchema.safeParse(nueva);
   if (!parsed.success) {
     const detalle = parsed.error.issues.map((i) => `${i.path.join('.')}: ${i.message}`).join('; ');
     throw new Error(`Configuración inválida: ${detalle}`);
   }
-  const problemas = validarCoherencia(parsed.data);
+  const cfg = sinPendientes(parsed.data);
+  const problemas = validarCoherencia(cfg);
   const bloqueantes = problemas.filter((p) => !p.includes('(aviso, no bloquea)'));
   if (bloqueantes.length) throw new Error(`Configuración incoherente: ${bloqueantes.join('; ')}`);
-
-  const temporal = `${ruta}.tmp`;
-  fs.writeFileSync(temporal, `${JSON.stringify(parsed.data, null, 2)}\n`, 'utf8');
-  fs.renameSync(temporal, ruta);
-  invalidarCacheNegocio();
-  return parsed.data;
+  return cfg;
 }
 
 export function revisarConfig(ruta: string = RUTA_POR_DEFECTO): string[] {

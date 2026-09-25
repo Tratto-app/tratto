@@ -128,12 +128,61 @@ describe('reservar de verdad', () => {
   test('confirmar_reserva sí lo crea', async () => {
     await conContexto(async (ctx, llamador) => {
       const hold = await ejecutarHerramienta('reservar_horario', { fecha: SABADO, hora: '17:00', servicio_id: 'corte' }, llamador);
+      // El cliente confirma en su mensaje siguiente.
+      llamador.acciones = [];
       const r = await ejecutarHerramienta('confirmar_reserva', { reserva_id: datos(hold).reserva_id, nombre: 'Agustín' }, llamador);
       assert.equal(r.ok, true);
       assert.equal(datos(r).confirmado, true);
       const turnos = await turnosDeCliente(ctx, TELEFONO_A);
       assert.equal(turnos.length, 1);
       assert.equal(turnos[0]!.nombreCliente, 'Agustín');
+    });
+  });
+
+  test('no se confirma en el mismo mensaje en que se apartó: el cliente tiene que ver el resumen', async () => {
+    await conContexto(async (ctx, llamador) => {
+      llamador.acciones = [];
+      const hold = await ejecutarHerramienta('reservar_horario', { fecha: SABADO, hora: '17:00', servicio_id: 'corte' }, llamador);
+      const r = await ejecutarHerramienta('confirmar_reserva', { reserva_id: datos(hold).reserva_id, nombre: 'Agustín' }, llamador);
+      assert.equal(r.ok, false);
+      assert.equal(datos(r).error, 'FALTA_QUE_EL_CLIENTE_CONFIRME');
+      assert.equal((await turnosDeCliente(ctx, TELEFONO_A)).length, 0);
+    });
+  });
+
+  test('un "sí" que el modelo pasa como nombre no queda como nombre del cliente', async () => {
+    await conContexto(async (ctx, llamador) => {
+      llamador.nombreConocido = '';
+      const hold = await ejecutarHerramienta('reservar_horario', { fecha: SABADO, hora: '17:00', servicio_id: 'corte' }, llamador);
+      llamador.acciones = [];
+      const r = await ejecutarHerramienta('confirmar_reserva', { reserva_id: datos(hold).reserva_id, nombre: 'Sí' }, llamador);
+      assert.equal(r.ok, false, 'sin un nombre de verdad no se confirma');
+      assert.match(String(datos(r).mensaje_para_el_cliente), /nombre/i);
+      llamador.acciones = [];
+      const ok = await ejecutarHerramienta('confirmar_reserva', { reserva_id: datos(hold).reserva_id, nombre: 'soy Santi' }, llamador);
+      assert.equal(ok.ok, true);
+      assert.equal((await turnosDeCliente(ctx, TELEFONO_A))[0]!.nombreCliente, 'Santi');
+    });
+  });
+
+  test('soltar_reserva no puede bajar un turno ya confirmado', async () => {
+    await conContexto(async (ctx, llamador) => {
+      const firme = await crearTurno(ctx, {
+        telefono: TELEFONO_A, nombre: 'Agustín', servicioId: 'corte', fecha: SABADO, hora: '17:00', origen: 'whatsapp',
+      });
+      const r = await ejecutarHerramienta('soltar_reserva', { reserva_id: firme.id }, llamador);
+      assert.equal(r.ok, false);
+      const sigue = await turnosDeCliente(ctx, TELEFONO_A);
+      assert.equal(sigue.length, 1, 'el turno confirmado sigue en pie');
+    });
+  });
+
+  test('el modelo no ve duraciones ni hora de fin', async () => {
+    await conContexto(async (_ctx, llamador) => {
+      const disp = await ejecutarHerramienta('consultar_disponibilidad', { fecha: SABADO, servicio_id: 'corte' }, llamador);
+      assert.equal(datos(disp).duracion_min, undefined);
+      const hold = await ejecutarHerramienta('reservar_horario', { fecha: SABADO, hora: '17:00', servicio_id: 'corte' }, llamador);
+      assert.equal(datos(hold).resumen.hora_fin, undefined);
     });
   });
 

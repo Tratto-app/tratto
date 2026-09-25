@@ -17,18 +17,28 @@ import { eventosRepo } from '../database/repositories/eventos.js';
 import { env, iaConfigurada } from '../config/env.js';
 import { log, logConTelefono } from '../shared/log.js';
 import { registrarResenaDeCliente } from './resenas.js';
-import { sanearMensaje } from '../shared/texto.js';
+import { extraerNombre, sanearMensaje } from '../shared/texto.js';
+import { enFila } from '../shared/fila.js';
 import { ErrorIA, responder as responderConIA } from '../ai/agente.js';
 import type { ProveedorIA } from '../ai/proveedores/tipos.js';
-import { responderConMenu, type Boton, type EstadoFallback, type RespuestaFallback } from '../ai/fallback.js';
+import type { AccionSobreTurno, Llamador } from '../ai/herramientas.js';
+import { estadoParaConfirmar, responderConMenu, type Boton, type EstadoFallback, type RespuestaFallback } from '../ai/fallback.js';
+import type { Turno } from '../booking/tipos.js';
+import { mensajeApartado, mensajeCancelado, mensajeConfirmado, mensajeModificado } from './mensajes.js';
 
 /** Cuanto dura la pausa del bot despues de derivar a una persona. */
-const HORAS_MODO_HUMANO = 12;
+export const HORAS_MODO_HUMANO = 12;
 const MAX_MENSAJES_HISTORIAL = 14;
 
 export interface MensajeEntrante {
   telefono: string;
   texto: string;
+  /**
+   * Si tocó un botón o una opción de lista: lo que decía el botón. `texto`
+   * trae el id (lo que entiende el menú, ej. "srv_corte"); la IA y el
+   * historial ven este título ("Corte"), que es lo que el cliente leyó.
+   */
+  titulo?: string;
   /** Id del mensaje en WhatsApp, para no procesar dos veces el mismo. */
   idExterno?: string;
   origen: 'whatsapp' | 'simulador';
@@ -58,16 +68,34 @@ export interface OpcionesProceso {
   proveedorIA?: ProveedorIA;
 }
 
-export async function procesarMensaje(
+/**
+ * Procesa un mensaje entrante. Los mensajes de un mismo teléfono se procesan
+ * de a uno y en orden (ver shared/fila.ts): dos mensajes seguidos no pueden
+ * pisarse el estado de la charla ni apartar dos horarios a la vez.
+ */
+export function procesarMensaje(
   ctx: Contexto,
   entrada: MensajeEntrante,
   opciones: OpcionesProceso = {},
+): Promise<RespuestaConversacion> {
+  return enFila(`charla:${entrada.telefono}`, () => procesarEnOrden(ctx, entrada, opciones));
+}
+
+/** Respuestas de botones y listas del menú: las sigue atendiendo el menú. */
+const ID_DE_MENU = /^(srv|dia|hora|confirmar|cancelar|cambio|menu)_[\w:-]+$/;
+
+async function procesarEnOrden(
+  ctx: Contexto,
+  entrada: MensajeEntrante,
+  opciones: OpcionesProceso,
 ): Promise<RespuestaConversacion> {
   const registro = logConTelefono(entrada.telefono);
   const ahora = ctx.ahora();
   const ahoraMs = ahora.toMillis();
   const ahoraIso = ahora.toUTC().toISO()!;
   const texto = sanearMensaje(entrada.texto);
+  // Lo que el cliente leyó en el botón que tocó; si escribió, lo que escribió.
+  const textoLegible = sanearMensaje(entrada.titulo ?? '') || texto;
 
   // 1. Idempotencia: WhatsApp reintenta los webhooks si tardamos en responder.
   if (entrada.idExterno) {
@@ -109,19 +137,37 @@ export async function procesarMensaje(
     }
   }
 
-  // 3. ¿Está avisando que dejó la reseña? Se le carga el descuento.
-  const respuestaResena = await quizasRegistrarResena(ctx, entrada.telefono, texto, ahoraMs);
-  if (respuestaResena) return respuestaResena;
-
-  // 4. Estado de la conversacion.
+  // 3. Estado de la conversacion.
   const conv = await conversacionesRepo.obtener(ctx.db, entrada.telefono);
   const estado = conv.estado as Record<string, unknown>;
+  const guardarCon = async (respuesta: RespuestaConversacion) => {
+    conv.estado = estado;
+    conv.ultimoMensajeMs = ahoraMs;
+    conv.historial = recortarHistorial([
+      ...conv.historial,
+      { rol: 'cliente', texto: textoLegible, ts: ahoraMs },
+      ...(respuesta.texto ? [{ rol: 'bot' as const, texto: respuesta.texto, ts: ahoraMs }] : []),
+    ]);
+    await conversacionesRepo.guardar(ctx.db, conv, ahoraIso);
+    return respuesta;
+  };
+
+  // 4. ¿Está avisando que dejó la reseña? Se le carga el descuento.
+  const respuestaResena = await quizasRegistrarResena(ctx, entrada.telefono, texto, ahoraMs);
+  if (respuestaResena) {
+    // registrarResenaDeCliente ya limpió el pedido de reseña en la base: se
+    // relee para no pisarlo con el estado viejo.
+    const fresca = await conversacionesRepo.obtener(ctx.db, entrada.telefono);
+    for (const k of Object.keys(estado)) delete estado[k];
+    Object.assign(estado, fresca.estado);
+    return guardarCon(respuestaResena);
+  }
 
   if (conv.modo === 'humano') {
     const desde = Number(estado.derivadoEnMs ?? 0);
     const venció = desde > 0 && ahoraMs - desde > HORAS_MODO_HUMANO * 3_600_000;
     if (!venció) {
-      conv.historial = recortarHistorial([...conv.historial, { rol: 'cliente', texto, ts: ahoraMs }]);
+      conv.historial = recortarHistorial([...conv.historial, { rol: 'cliente', texto: textoLegible, ts: ahoraMs }]);
       conv.ultimoMensajeMs = ahoraMs;
       await conversacionesRepo.guardar(ctx.db, conv, ahoraIso);
       registro.info('mensaje recibido mientras atiende una persona: el bot no responde');
@@ -152,28 +198,33 @@ export async function procesarMensaje(
     else delete estado.reservaPendiente;
   }
 
-  const llamador = {
+  // Un nombre guardado que no es un nombre ("Sí", "Dale") no cuenta como conocido.
+  const nombreConocido = extraerNombre(cliente?.nombre ?? '');
+  const llamador: Llamador = {
     ctx,
     telefono: entrada.telefono,
-    nombreConocido: cliente?.nombre ?? '',
+    nombreConocido,
     estado,
     origen: entrada.origen,
+    acciones: [],
   };
 
   let respuesta: RespuestaConversacion;
 
-  // 6. Primero la IA; si no esta disponible o falla, el menu.
-  if (iaConfigurada || opciones.proveedorIA) {
+  // 6. Primero la IA; si no esta disponible o falla, el menu. Si el cliente
+  //    tocó un botón del menú, lo sigue atendiendo el menú.
+  const sigueEnElMenu = ID_DE_MENU.test(texto) && !!estado.fallback;
+  if ((iaConfigurada || opciones.proveedorIA) && !sigueEnElMenu) {
     try {
       const r = await responderConIA(
         {
-          mensaje: texto,
+          mensaje: textoLegible,
           historial: conv.historial.map((h) => ({ rol: h.rol, texto: h.texto })),
           datos: {
             ahora,
             cfg: ctx.cfg,
-            nombreCliente: cliente?.nombre ?? '',
-            esClienteConocido: Boolean(cliente?.nombre) && (cliente?.totalTurnos ?? 0) > 0,
+            nombreCliente: nombreConocido,
+            esClienteConocido: Boolean(nombreConocido) && (cliente?.totalTurnos ?? 0) > 0,
             cantidadDeVisitas: cliente?.totalTurnos ?? 0,
             turnosVigentes,
             reservaApartada,
@@ -183,19 +234,33 @@ export async function procesarMensaje(
         opciones.proveedorIA,
       );
       respuesta = {
-        texto: r.texto,
+        // Si la IA reservó, confirmó, cambió o canceló un turno, el cliente
+        // recibe la ficha armada con los datos guardados, no la redacción del
+        // modelo: así el día y la hora son exactamente los de la agenda.
+        texto: mensajeDeAcciones(ctx, llamador.acciones ?? []) || r.texto,
         avisarAlBarbero: r.derivar,
         usoIA: true,
         herramientas: r.herramientasUsadas,
         ...(r.derivar ? { motivoDerivacion: String((estado.pedidoDerivacion as { motivo?: string } | undefined)?.motivo ?? '') } : {}),
       };
+      // La IA tomó la charla: si había un menú a medias, queda descartado.
+      delete estado.fallback;
     } catch (e) {
       const motivo = e instanceof ErrorIA ? e.motivo : 'desconocido';
-      registro.warn({ motivo }, 'la IA no pudo responder; se sigue con el menú');
-      respuesta = await conMenu(ctx, entrada, texto, llamador, estado);
+      const hecho = mensajeDeAcciones(ctx, llamador.acciones ?? []);
+      if (hecho) {
+        // La IA se cayó DESPUÉS de hacer algo (por ejemplo, confirmó el turno
+        // y se cortó antes de redactar): se le avisa al cliente lo que quedó
+        // hecho, en vez de mostrarle el menú como si nada.
+        registro.warn({ motivo }, 'la IA se cortó después de usar herramientas; se informa lo hecho');
+        respuesta = { texto: hecho, avisarAlBarbero: false, usoIA: true, herramientas: llamador.acciones!.map((a) => a.tipo) };
+      } else {
+        registro.warn({ motivo }, 'la IA no pudo responder; se sigue con el menú');
+        respuesta = await conMenu(ctx, entrada, texto, llamador, estado, reservaApartada);
+      }
     }
   } else {
-    respuesta = await conMenu(ctx, entrada, texto, llamador, estado);
+    respuesta = await conMenu(ctx, entrada, texto, llamador, estado, reservaApartada);
   }
 
   // 7. Derivacion a persona: se pausa el bot.
@@ -212,16 +277,29 @@ export async function procesarMensaje(
   }
 
   // 8. Persistencia del contexto.
-  conv.estado = estado;
-  conv.ultimoMensajeMs = ahoraMs;
-  conv.historial = recortarHistorial([
-    ...conv.historial,
-    { rol: 'cliente', texto, ts: ahoraMs },
-    ...(respuesta.texto ? [{ rol: 'bot' as const, texto: respuesta.texto, ts: ahoraMs }] : []),
-  ]);
-  await conversacionesRepo.guardar(ctx.db, conv, ahoraIso);
+  return guardarCon(respuesta);
+}
 
-  return respuesta;
+/**
+ * Mensaje para el cliente a partir de lo que hicieron las herramientas en este
+ * mensaje. Vacío si no se tocó ningún turno.
+ */
+export function mensajeDeAcciones(ctx: Contexto, acciones: AccionSobreTurno[]): string {
+  // Solo cuenta el último estado de cada turno: apartado y después confirmado
+  // es "confirmado"; apartado y después soltado no se informa.
+  const ultimo = new Map<string, AccionSobreTurno>();
+  for (const a of acciones) {
+    ultimo.delete(a.turno.id);
+    ultimo.set(a.turno.id, a);
+  }
+  const partes: string[] = [];
+  for (const a of ultimo.values()) {
+    if (a.tipo === 'confirmado') partes.push(mensajeConfirmado(ctx, a.turno));
+    else if (a.tipo === 'modificado') partes.push(mensajeModificado(ctx, a.turno));
+    else if (a.tipo === 'cancelado') partes.push(mensajeCancelado(ctx, a.turno));
+    else if (a.tipo === 'apartado') partes.push(mensajeApartado(ctx, a.turno));
+  }
+  return partes.join('\n\n');
 }
 
 async function conMenu(
@@ -230,8 +308,12 @@ async function conMenu(
   texto: string,
   llamador: { nombreConocido: string },
   estado: Record<string, unknown>,
+  reservaApartada: Turno | null,
 ): Promise<RespuestaConversacion> {
-  const estadoMenu = (estado.fallback as EstadoFallback | undefined) ?? { paso: 'menu' as const };
+  let estadoMenu = (estado.fallback as EstadoFallback | undefined) ?? { paso: 'menu' as const };
+  // La IA había apartado un horario y se cayó justo cuando el cliente iba a
+  // confirmar: el menú retoma desde ahí ("sí" confirma ese horario).
+  if (reservaApartada && estadoMenu.reservaId !== reservaApartada.id) estadoMenu = estadoParaConfirmar(reservaApartada);
   try {
     const r = await responderConMenu(ctx, {
       texto,
@@ -240,6 +322,10 @@ async function conMenu(
       estado: estadoMenu,
     });
     estado.fallback = estadoMenu;
+    // Mismo registro que usa la IA para el horario apartado: si en el próximo
+    // mensaje vuelve la IA, sabe qué tiene que confirmar.
+    if (estadoMenu.reservaId) estado.reservaPendiente = estadoMenu.reservaId;
+    else delete estado.reservaPendiente;
     return {
       texto: r.texto,
       ...(r.botones ? { botones: r.botones } : {}),
@@ -254,17 +340,25 @@ async function conMenu(
   }
 }
 
-/** ¿El cliente está diciendo que ya dejó la reseña? */
-function confirmaResena(texto: string): boolean {
+/**
+ * ¿El cliente está diciendo que ya dejó la reseña? Tiene que ser claro: un
+ * "listo" o "ya está" suelto puede ser la respuesta a cualquier otra cosa
+ * (confirmar un turno, por ejemplo) y se lo comía esto.
+ */
+export function confirmaResena(texto: string): boolean {
   const t = texto
     .toLowerCase()
     .normalize('NFD')
     .replace(/[\u0300-\u036f]/g, '')
+    .replace(/[^\w\s]/g, ' ')
+    .replace(/\s+/g, ' ')
     .trim();
-  return (
-    t === 'resena_hecha' ||
-    /\b(ya (la )?(deje|subi|puse|hice)|la deje|listo|hecho|ya esta|ya la puse|la subi)\b/.test(t)
-  );
+  if (t === 'resena_hecha') return true;
+  const hablaDeLaResena = /\b(resena|resenia|opinion|comentario|calificacion|estrellas|google)\b/.test(t);
+  const diceQueLaHizo = /\b(ya (la |lo )?(deje|subi|puse|hice|mande|escribi)|(la|lo) (deje|subi|puse|hice)|listo|hecho|hecha|ya esta)\b/.test(t);
+  // "ya la dejé" / "la subí recién": corto y sin otra cosa, se entiende solo.
+  const cortoYClaro = t.split(' ').length <= 5 && /^(ya )?(la |lo )?(deje|subi|puse|hice)\b/.test(t);
+  return (diceQueLaHizo && hablaDeLaResena) || cortoYClaro;
 }
 
 /** Carga el descuento si el cliente avisa que dejó la reseña que le pedimos. */

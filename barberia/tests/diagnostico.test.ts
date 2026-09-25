@@ -55,6 +55,36 @@ describe('diagnosticarWhatsApp', () => {
     assert.ok(llamadas.some((l) => l.metodo === 'POST' && l.url.endsWith('/222/subscribed_apps')));
   });
 
+  test('plantillas: avisa si la configurada no existe en la cuenta o está en otro idioma', async () => {
+    process.env.WHATSAPP_PLANTILLA_RECORDATORIO = 'recordatorio_turno';
+    process.env.WHATSAPP_PLANTILLA_RESENA = 'pedido_resena';
+    process.env.WHATSAPP_PLANTILLA_IDIOMA = 'es_AR';
+    try {
+      responder({
+        'GET https://graph.facebook.com/v26.0/111': { status: 200, body: {} },
+        'POST https://graph.facebook.com/v26.0/222/subscribed_apps': { status: 200, body: { success: true } },
+        'GET https://graph.facebook.com/v26.0/222/message_templates': {
+          status: 200,
+          body: {
+            data: [
+              { name: 'recordatorio', status: 'APPROVED', language: 'es_AR', category: 'MARKETING' },
+              { name: 'pedido_resena', status: 'APPROVED', language: 'es', category: 'UTILITY' },
+            ],
+          },
+        },
+      });
+      const r = await diagnosticarWhatsApp();
+      assert.ok(r?.plantillas && r.plantillas.ok);
+      const problemas = (r.plantillas as { problemas: string[] }).problemas.join(' | ');
+      assert.match(problemas, /recordatorio_turno" no existe/);
+      assert.match(problemas, /pedido_resena" existe pero en es, no en es_AR/);
+    } finally {
+      delete process.env.WHATSAPP_PLANTILLA_RECORDATORIO;
+      delete process.env.WHATSAPP_PLANTILLA_RESENA;
+      delete process.env.WHATSAPP_PLANTILLA_IDIOMA;
+    }
+  });
+
   test('token sin acceso al número: lo informa con el mensaje de Meta y sigue', async () => {
     responder({
       'GET https://graph.facebook.com/v26.0/111': {

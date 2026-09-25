@@ -15,15 +15,28 @@
  * Acá se chequea lo primero y se resuelve lo segundo (la suscripción es
  * idempotente: repetirla no hace nada). Nunca frena el arranque: solo deja el
  * resultado escrito en el log, con la causa y qué hacer.
+ *
+ * Además revisa las plantillas (recordatorio y reseña): tienen que existir en
+ * ESTA cuenta, con el nombre y el idioma configurados y aprobadas. Una
+ * plantilla creada en otra cuenta (por ejemplo, la de prueba) o con otro
+ * nombre hace que el recordatorio falle recién el día anterior al turno.
  */
 import { env, whatsappConfigurado } from '../config/env.js';
 import { log } from '../shared/log.js';
 
 const GRAFO = 'https://graph.facebook.com';
 
+export interface PlantillaDeMeta {
+  nombre: string;
+  estado: string;
+  idioma: string;
+  categoria: string;
+}
+
 export interface ResultadoDiagnostico {
   numero: { ok: true; telefono?: string; nombre?: string; calidad?: string } | { ok: false; error: string };
   suscripcion: { ok: true } | { ok: false; error: string } | { omitida: true };
+  plantillas?: { ok: true; lista: PlantillaDeMeta[]; problemas: string[] } | { ok: false; error: string };
 }
 
 async function llamar(metodo: 'GET' | 'POST', ruta: string): Promise<{ ok: boolean; json: Record<string, unknown> }> {
@@ -90,5 +103,54 @@ export async function diagnosticarWhatsApp(): Promise<ResultadoDiagnostico | nul
     }
   }
 
-  return { numero, suscripcion };
+  const plantillas = env.WHATSAPP_BUSINESS_ACCOUNT_ID ? await revisarPlantillas() : undefined;
+
+  return { numero, suscripcion, ...(plantillas ? { plantillas } : {}) };
+}
+
+/** Qué plantillas usa el sistema, según el entorno. */
+function plantillasConfiguradas(): Array<{ para: string; variable: string; nombre: string }> {
+  return [
+    { para: 'recordatorio de 24 h', variable: 'WHATSAPP_PLANTILLA_RECORDATORIO', nombre: process.env.WHATSAPP_PLANTILLA_RECORDATORIO ?? '' },
+    { para: 'pedido de reseña', variable: 'WHATSAPP_PLANTILLA_RESENA', nombre: process.env.WHATSAPP_PLANTILLA_RESENA ?? '' },
+  ];
+}
+
+async function revisarPlantillas(): Promise<NonNullable<ResultadoDiagnostico['plantillas']>> {
+  try {
+    const r = await llamar('GET', `${env.WHATSAPP_BUSINESS_ACCOUNT_ID}/message_templates?fields=name,status,language,category&limit=100`);
+    if (!r.ok) {
+      const error = mensajeDeError(r.json);
+      log.warn({ err: error }, 'WhatsApp: no se pudieron listar las plantillas');
+      return { ok: false, error };
+    }
+    const lista: PlantillaDeMeta[] = ((r.json.data ?? []) as Array<Record<string, unknown>>).map((p) => ({
+      nombre: String(p.name ?? ''),
+      estado: String(p.status ?? ''),
+      idioma: String(p.language ?? ''),
+      categoria: String(p.category ?? ''),
+    }));
+    log.info({ plantillas: lista.map((p) => `${p.nombre} (${p.idioma}, ${p.estado}, ${p.categoria})`) }, 'WhatsApp: plantillas de la cuenta');
+
+    const idioma = process.env.WHATSAPP_PLANTILLA_IDIOMA ?? 'es_AR';
+    const problemas: string[] = [];
+    for (const c of plantillasConfiguradas()) {
+      if (!c.nombre) {
+        problemas.push(`${c.variable} vacía: el ${c.para} sale como texto y falla si pasaron más de 24 h desde el último mensaje del cliente`);
+        continue;
+      }
+      const mismoNombre = lista.filter((p) => p.nombre === c.nombre);
+      const exacta = mismoNombre.find((p) => p.idioma === idioma);
+      if (mismoNombre.length === 0) problemas.push(`${c.variable}="${c.nombre}" no existe en esta cuenta (${c.para})`);
+      else if (!exacta) problemas.push(`${c.variable}="${c.nombre}" existe pero en ${mismoNombre.map((p) => p.idioma).join(', ')}, no en ${idioma} (WHATSAPP_PLANTILLA_IDIOMA)`);
+      else if (exacta.estado !== 'APPROVED') problemas.push(`${c.variable}="${c.nombre}" está ${exacta.estado}, todavía no se puede usar`);
+    }
+    for (const p of problemas) log.warn({ problema: p }, 'WhatsApp: revisá las plantillas');
+    if (problemas.length === 0) log.info('WhatsApp: plantillas de recordatorio y reseña listas');
+    return { ok: true, lista, problemas };
+  } catch (e) {
+    const error = e instanceof Error ? e.message : String(e);
+    log.warn({ err: error }, 'WhatsApp: no se pudieron listar las plantillas');
+    return { ok: false, error };
+  }
 }

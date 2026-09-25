@@ -35,6 +35,7 @@ import { guardarResumenEnPlanilla, guardarResumenMensualEnPlanilla } from '../go
 import { calcularResumenMensual, mesPendienteDeCerrar, resumenMensualComoTexto, type ResumenMensual } from '../reportes/mensual.js';
 import { resumenesMensualesRepo } from '../database/repositories/resumenes.js';
 import { avisarAlBarbero } from '../whatsapp/avisos.js';
+import { fichaDelTurno } from '../conversation/mensajes.js';
 
 const PLANTILLA = process.env.WHATSAPP_PLANTILLA_RECORDATORIO ?? '';
 const PLANTILLA_RESENA = process.env.WHATSAPP_PLANTILLA_RESENA ?? '';
@@ -108,12 +109,10 @@ export async function enviarRecordatoriosPendientes(ctx: Contexto): Promise<{ en
           { nombre: 'servicio', valor: turno.servicioNombre },
         ]);
       } else {
+        const saludo = turno.nombreCliente ? `¡Hola, ${turno.nombreCliente.split(' ')[0]}! 👋` : '¡Hola! 👋';
         await whatsapp.enviarTexto(
           turno.telefono,
-          `Hola ${turno.nombreCliente || ''} 👋 Te recordamos tu turno:\n\n✂️ ${turno.servicioNombre}\n📅 ${fechaHumana(dia)}\n🕐 ${turno.horaInicio}\n\n¿Seguís viniendo? Si no podés, avisame por acá y lo cambiamos 🙌`.replace(
-            '  ',
-            ' ',
-          ),
+          `${saludo} Te recuerdo tu turno:\n\n${fichaDelTurno(ctx, turno)}\n\nSi no podés venir, avisame por acá y lo cambiamos 🙌`,
         );
       }
       salida.enviados++;

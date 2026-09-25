@@ -9,6 +9,12 @@ const DIAS = ['lunes', 'martes', 'miércoles', 'jueves', 'viernes', 'sábado', '
 // desaparece: el barbero quiere ver a quién atendió.
 const EN_AGENDA = ['pendiente', 'reservado', 'confirmado', 'completado', 'no_show'];
 const EDITABLES = ['pendiente', 'reservado', 'confirmado'];
+
+/** Nombre para mostrar. Un horario "pendiente" es alguien confirmando por WhatsApp en este momento. */
+function nombreDeTurno(turno) {
+  if (turno.estado === 'pendiente') return '⏳ Reservando por WhatsApp…';
+  return turno.nombreCliente || '(sin nombre)';
+}
 let CONFIG = null;
 let SEMANA_DESDE = null;
 let NAVEGO_SEMANA = false;
@@ -116,7 +122,7 @@ function tarjetaDeTurno(turno, recargar) {
   fila.append(elemento('div', 'hora', turno.horaInicio));
 
   const datos = elemento('div', 'datos');
-  datos.append(elemento('div', 'nombre', turno.nombreCliente || '(sin nombre)'));
+  datos.append(elemento('div', 'nombre', nombreDeTurno(turno)));
   const detalle = `${turno.servicioNombre} · ${turno.duracionMin} min · hasta ${turno.horaFin}`;
   datos.append(elemento('div', 'detalle', detalle));
   const etiquetas = { completado: 'vino ✓', no_show: 'no vino', pendiente: 'sin confirmar', reservado: 'reservado', confirmado: 'confirmado', cancelado: 'cancelado' };
@@ -334,7 +340,7 @@ async function cargarSemana() {
         vivos.forEach((t) => {
           const premio = t.descuentoPorcentaje > 0;
           const li = elemento('li', premio ? 'con-descuento' : '',
-            `${t.horaInicio} · ${t.nombreCliente || '(sin nombre)'} — ${t.servicioNombre}${premio ? ` 🎁 -${t.descuentoPorcentaje}%` : ''}`);
+            `${t.horaInicio} · ${nombreDeTurno(t)} — ${t.servicioNombre}${premio ? ` 🎁 -${t.descuentoPorcentaje}%` : ''}`);
           ul.append(li);
         });
         dia.bloqueos.forEach((b) => ul.append(elemento('li', '', `${b.horaInicio}-${b.horaFin} · 🔒 ${b.motivo || 'bloqueado'}`)));

@@ -16,7 +16,7 @@ import { clientesRepo } from '../database/repositories/clientes.js';
 import { estadoDelDia } from '../booking/disponibilidad.js';
 import { desdeFechaHora, fechaDe, hhmmAMinutos, lunesDeLaSemana, nombreDia, rangoDeFechas } from '../shared/tiempo.js';
 import { formatearPrecio } from '../shared/texto.js';
-import type { Turno } from '../booking/tipos.js';
+import { esCancelacionReal, type Turno } from '../booking/tipos.js';
 
 export interface ResumenPorServicio {
   servicio: string;
@@ -108,7 +108,9 @@ export async function calcularResumenSemanal(ctx: Contexto, opciones: OpcionesRe
 
   const yaPaso = (t: Turno) => opciones.incluirFuturos || t.finMs <= ahora.toMillis();
   const atendidos = turnos.filter((t) => ATENDIDOS.includes(t.estado) && yaPaso(t));
-  const cancelados = turnos.filter((t) => t.estado === 'cancelado');
+  // Solo cancelaciones de verdad: un horario que alguien apartó y no confirmó,
+  // o un turno que se movió a otro día, no son turnos perdidos.
+  const cancelados = turnos.filter(esCancelacionReal);
   const noShow = turnos.filter((t) => t.estado === 'no_show');
 
   const facturado = atendidos.reduce((suma, t) => suma + precioDelTurno(ctx, t), 0);

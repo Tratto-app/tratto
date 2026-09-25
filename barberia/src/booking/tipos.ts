@@ -18,6 +18,25 @@ export const ESTADOS_VIGENTES: EstadoTurno[] = ['reservado', 'confirmado'];
 
 export type OrigenTurno = 'whatsapp' | 'panel' | 'simulador' | 'sistema';
 
+/**
+ * Un horario que se apartó mientras el cliente confirmaba y nunca llegó a ser
+ * turno (sigue apartado, venció o se soltó). Al confirmarse, `holdVenceMs`
+ * pasa a null; un turno cargado directo nace con null.
+ */
+export function nuncaFueTurno(t: Pick<Turno, 'estado' | 'holdVenceMs'>): boolean {
+  return t.holdVenceMs !== null || t.estado === 'pendiente' || t.estado === 'expirado';
+}
+
+/** El turno viejo que quedó cancelado al mover un turno a otro horario. */
+export function fueReprogramado(t: Pick<Turno, 'estado' | 'canceladoPor'>): boolean {
+  return t.estado === 'cancelado' && (t.canceladoPor ?? '').startsWith('reprogramado');
+}
+
+/** Cancelación de verdad: no cuentan los horarios apartados ni los turnos que solo se movieron. */
+export function esCancelacionReal(t: Pick<Turno, 'estado' | 'holdVenceMs' | 'canceladoPor'>): boolean {
+  return t.estado === 'cancelado' && !nuncaFueTurno(t) && !fueReprogramado(t);
+}
+
 export interface Turno {
   id: string;
   telefono: string;

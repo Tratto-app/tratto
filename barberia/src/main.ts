@@ -5,7 +5,8 @@
  * -> servidor HTTP. Si algo esencial falta, avisa y (en produccion) no arranca.
  */
 import { env, esProduccion, revisarEnvProduccion, iaConfigurada, whatsappConfigurado, sheetsConfigurado } from './config/env.js';
-import { negocio, revisarConfig } from './config/negocio.js';
+import { revisarConfig } from './config/negocio.js';
+import { configDeArranque } from './config/guardada.js';
 import { crearBaseDeDatos } from './database/index.js';
 import { crearContexto } from './booking/servicio.js';
 import { crearServidor, escuchar } from './backend/servidor.js';
@@ -15,21 +16,21 @@ import { log } from './shared/log.js';
 import { diagnosticarWhatsApp } from './whatsapp/diagnostico.js';
 
 async function arrancar(): Promise<void> {
-  // 1. Configuracion del negocio.
-  const avisos = revisarConfig();
-  for (const aviso of avisos) log.warn({ aviso }, 'revisá la configuración del negocio');
-  const cfg = negocio();
-
-  // 2. Variables de entorno criticas.
+  // 1. Variables de entorno criticas.
   const faltantes = revisarEnvProduccion();
   if (faltantes.length) {
     for (const f of faltantes) log.error({ falta: f }, 'configuración incompleta para producción');
     throw new Error(`No se puede arrancar en producción: ${faltantes.join(' | ')}`);
   }
 
-  // 3. Base de datos.
+  // 2. Base de datos.
   const db = crearBaseDeDatos();
   await db.migrar();
+
+  // 3. Configuracion del negocio: la guardada desde el panel manda sobre el
+  //    archivo (que en Render vuelve a la del repositorio en cada deploy).
+  const cfg = await configDeArranque(db);
+  for (const aviso of revisarConfig()) log.warn({ aviso }, 'revisá la configuración del negocio');
   const ctx = crearContexto(db, cfg);
   log.info(
     { negocio: cfg.negocio.nombre, zona: cfg.negocio.timezone, driver: db.driver, ia: iaConfigurada, whatsapp: whatsappConfigurado, sheets: sheetsConfigurado },

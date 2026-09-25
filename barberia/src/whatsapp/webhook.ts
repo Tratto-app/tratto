@@ -60,6 +60,8 @@ export interface MensajeNormalizado {
   id: string;
   telefono: string;
   texto: string;
+  /** Texto del botón u opción de lista que tocó (el `texto` trae su id). */
+  titulo?: string;
   nombrePerfil: string;
   tipo: string;
   /** true si el cliente mandó audio, foto, ubicación, etc. */
@@ -95,10 +97,16 @@ function normalizarMensaje(m: MensajeWhatsApp, nombrePerfil: string): MensajeNor
       // lo que entiende el flujo de menú.
       const id = m.interactive?.button_reply?.id ?? m.interactive?.list_reply?.id ?? '';
       const titulo = m.interactive?.button_reply?.title ?? m.interactive?.list_reply?.title ?? '';
-      return { ...base, texto: sanearMensaje(id || titulo), noEsTexto: false };
+      return { ...base, texto: sanearMensaje(id || titulo), titulo: sanearMensaje(titulo) || undefined, noEsTexto: false };
     }
     case 'button':
-      return { ...base, texto: sanearMensaje(m.button?.payload ?? m.button?.text ?? ''), noEsTexto: false };
+      // Botón de respuesta rápida de una plantilla (recordatorio, reseña).
+      return {
+        ...base,
+        texto: sanearMensaje(m.button?.payload ?? m.button?.text ?? ''),
+        titulo: sanearMensaje(m.button?.text ?? '') || undefined,
+        noEsTexto: false,
+      };
     default:
       return { ...base, texto: '', noEsTexto: true };
   }

@@ -28,7 +28,8 @@ import { conversacionesRepo } from '../../database/repositories/conversaciones.j
 import { eventosRepo } from '../../database/repositories/eventos.js';
 import { outboxRepo } from '../../database/repositories/outbox.js';
 import { turnosRepo } from '../../database/repositories/turnos.js';
-import { guardarConfigNegocio, negocio as cargarNegocio } from '../../config/negocio.js';
+import { prepararConfigNegocio } from '../../config/negocio.js';
+import { guardarConfigEditada } from '../../config/guardada.js';
 import { env, iaConfigurada, sheetsConfigurado, whatsappConfigurado, driverBD } from '../../config/env.js';
 import { esErrorDeNegocio } from '../../shared/errores.js';
 import { fechaDe, esFechaValida, esHoraValida } from '../../shared/tiempo.js';
@@ -406,21 +407,25 @@ export function rutasPanel(ctx: Contexto): Router {
 
   // --- Configuracion ------------------------------------------------------
   router.get('/config', (_req, res) => {
-    res.json({ config: cargarNegocio(), servicios: obtenerServicios(ctx) });
+    res.json({ config: ctx.cfg, servicios: obtenerServicios(ctx) });
   });
 
   router.put(
     '/config',
     asinc(async (req, res) => {
+      const pedida = (req.body as { config?: unknown })?.config ?? req.body;
       try {
-        const nueva = guardarConfigNegocio((req.body as { config?: unknown })?.config ?? req.body);
-        // El contexto vivo tiene que ver los cambios sin reiniciar el servidor.
-        (ctx as { cfg: typeof nueva }).cfg = nueva;
-        log.info('configuración del negocio actualizada desde el panel');
-        res.json({ ok: true, config: nueva });
+        prepararConfigNegocio(pedida);
       } catch (e) {
         res.status(422).json({ error: 'config_invalida', mensaje: e instanceof Error ? e.message : 'configuración inválida' });
+        return;
       }
+      // Se guarda en la base (sobrevive a los deploys) y en el archivo.
+      const nueva = await guardarConfigEditada(ctx.db, pedida, new Date().toISOString());
+      // El contexto vivo tiene que ver los cambios sin reiniciar el servidor.
+      (ctx as { cfg: typeof nueva }).cfg = nueva;
+      log.info('configuración del negocio actualizada desde el panel');
+      res.json({ ok: true, config: nueva });
     }),
   );
 

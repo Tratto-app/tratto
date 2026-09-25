@@ -73,21 +73,35 @@ export const sheets = {
     return r.properties?.title ?? '';
   },
 
-  async leer(spreadsheetId: string, rango: string): Promise<string[][]> {
-    const r = await pedir<{ values?: string[][] }>(`/${spreadsheetId}/values/${encodeURIComponent(rango)}`);
+  /**
+   * Lee un rango. Con `sinFormato`, los números vuelven como números (10000)
+   * y no como se ven en pantalla ("$10.000"): así se pueden volver a escribir
+   * sin que cambien de valor según el idioma de la planilla.
+   */
+  async leer(spreadsheetId: string, rango: string, opciones: { sinFormato?: boolean } = {}): Promise<string[][]> {
+    const consulta = opciones.sinFormato ? '?valueRenderOption=UNFORMATTED_VALUE' : '';
+    const r = await pedir<{ values?: string[][] }>(`/${spreadsheetId}/values/${encodeURIComponent(rango)}${consulta}`);
     return r.values ?? [];
   },
 
-  async escribir(spreadsheetId: string, rango: string, valores: unknown[][]): Promise<void> {
-    await pedir(`/${spreadsheetId}/values/${encodeURIComponent(rango)}?valueInputOption=USER_ENTERED`, {
+  /**
+   * Escribe un rango. Con `tal cual` (RAW), Google guarda el texto exacto: no
+   * convierte "+54 9 11..." en fórmula, ni un teléfono en número con notación
+   * científica, ni "=..." en una fórmula (lo que escribe un cliente nunca se
+   * ejecuta). Sin eso, interpreta como si alguien lo tipeara (USER_ENTERED).
+   */
+  async escribir(spreadsheetId: string, rango: string, valores: unknown[][], opciones: { talCual?: boolean } = {}): Promise<void> {
+    const modo = opciones.talCual ? 'RAW' : 'USER_ENTERED';
+    await pedir(`/${spreadsheetId}/values/${encodeURIComponent(rango)}?valueInputOption=${modo}`, {
       method: 'PUT',
       body: JSON.stringify({ range: rango, majorDimension: 'ROWS', values: valores }),
     });
   },
 
-  async agregar(spreadsheetId: string, rango: string, valores: unknown[][]): Promise<void> {
+  async agregar(spreadsheetId: string, rango: string, valores: unknown[][], opciones: { talCual?: boolean } = {}): Promise<void> {
+    const modo = opciones.talCual ? 'RAW' : 'USER_ENTERED';
     await pedir(
-      `/${spreadsheetId}/values/${encodeURIComponent(rango)}:append?valueInputOption=USER_ENTERED&insertDataOption=INSERT_ROWS`,
+      `/${spreadsheetId}/values/${encodeURIComponent(rango)}:append?valueInputOption=${modo}&insertDataOption=INSERT_ROWS`,
       { method: 'POST', body: JSON.stringify({ range: rango, majorDimension: 'ROWS', values: valores }) },
     );
   },
