@@ -4812,6 +4812,46 @@ const VAPID_PUBLIC_KEY = 'BEdS7DAJLwT_-di-EEfo9OFpLry_Db-Keemi4Rh9cBDstDEsEPelOK
 const SW_SOPORTADO = 'serviceWorker' in navigator && 'PushManager' in window;
 let swReg = null;
 
+/* Dentro de la app de iPhone (Capacitor) no existe Web Push: el aviso llega por
+   Apple (APNs). El flujo es el mismo; cambia el canal. La suscripción se guarda
+   en la misma tabla, con el token del teléfono como endpoint "apns:<token>", y la
+   función que manda los avisos elige el canal según ese prefijo. En el navegador
+   y en la app de Android (que es la web a pantalla completa) nada de esto corre. */
+const PN = (window.Capacitor && window.Capacitor.isNativePlatform && window.Capacitor.isNativePlatform() &&
+            window.Capacitor.Plugins && window.Capacitor.Plugins.PushNotifications) || null;
+const PUSH_SOPORTADO = SW_SOPORTADO || !!PN;
+let tokenNativo = null;
+try{ tokenNativo = localStorage.getItem('tratto_push_nativo'); }catch(e){}
+
+async function permisoPush(){
+  if(!PN) return Notification.permission;
+  try{
+    const p = (await PN.checkPermissions()).receive;
+    return p === 'granted' ? 'granted' : p === 'denied' ? 'denied' : 'default';
+  }catch(e){ return 'default'; }
+}
+
+function tokenDeApple(){
+  return new Promise((ok, mal) => {
+    const corte = setTimeout(() => mal(new Error('sin_token')), 15000);
+    PN.addListener('registration', t => { clearTimeout(corte); ok(t.value); });
+    PN.addListener('registrationError', e => { clearTimeout(corte); mal(new Error(e.error || 'registro')); });
+    PN.register();
+  });
+}
+
+if(PN){
+  /* Tocar la notificación abre la pantalla del aviso, solo dentro de Tratto
+     (misma regla que el service worker para Web Push). */
+  PN.addListener('pushNotificationActionPerformed', a => {
+    const pedida = (a.notification && a.notification.data && a.notification.data.url) || '/';
+    try{
+      const u = new URL(pedida, location.origin);
+      if(u.origin === location.origin) location.href = u.pathname + u.search + u.hash;
+    }catch(e){}
+  });
+}
+
 async function registrarSW(){
   if(!SW_SOPORTADO) return null;
   try{ swReg = swReg || await navigator.serviceWorker.register('/sw.js'); return swReg; }
@@ -4831,11 +4871,25 @@ function base64UrlABuffer(base64){
 }
 
 async function suscripcionActual(){
+  if(PN) return (tokenNativo && await permisoPush() === 'granted') ? { endpoint: 'apns:' + tokenNativo } : null;
   const reg = await registrarSW();
   return reg ? reg.pushManager.getSubscription() : null;
 }
 
 async function activarPush(){
+  if(PN){
+    const p = await PN.requestPermissions();
+    if(p.receive !== 'granted') throw new Error(p.receive);
+    const token = await tokenDeApple();
+    const r = await fetch(SUPABASE_URL + '/rest/v1/rpc/registrar_push_subscripcion', {
+      method:'POST', headers:cab(),
+      body: JSON.stringify({ p_endpoint: 'apns:' + token, p_p256dh: '', p_auth_clave: '', p_user_agent: 'app-ios' })
+    });
+    if(!r.ok){ console.error(await r.text()); throw new Error('no_guardado'); }
+    tokenNativo = token;
+    try{ localStorage.setItem('tratto_push_nativo', token); }catch(e){}
+    return { endpoint: 'apns:' + token };
+  }
   const reg = await registrarSW();
   if(!reg) throw new Error('no_soportado');
   const permiso = await Notification.requestPermission();
@@ -4860,6 +4914,17 @@ async function activarPush(){
 }
 
 async function desactivarPush(){
+  if(PN){
+    if(!tokenNativo) return;
+    try{
+      await fetch(SUPABASE_URL + '/rest/v1/push_subscripciones?endpoint=eq.' + encodeURIComponent('apns:' + tokenNativo),
+        { method:'DELETE', headers:cab() });
+    }catch(e){ console.error(e); }
+    try{ await PN.unregister(); }catch(e){}
+    tokenNativo = null;
+    try{ localStorage.removeItem('tratto_push_nativo'); }catch(e){}
+    return;
+  }
   const reg = await registrarSW();
   const sub = reg ? await reg.pushManager.getSubscription() : null;
   if(!sub) return;
@@ -4873,18 +4938,20 @@ async function desactivarPush(){
 
 async function pintarPush(){
   const sello = $('push-sello'), txt = $('push-txt'), boton = $('push-cambiar'), botonTxt = $('push-cambiar-txt');
-  if(!SW_SOPORTADO){
+  if(!PUSH_SOPORTADO){
     sello.className = 'sello gris'; sello.textContent = 'No disponible';
     txt.textContent = 'Este navegador no soporta notificaciones. Probá desde Chrome en Android, ' +
       'o agregando Tratto a la pantalla de inicio en iPhone (Safari 16.4 o más nuevo).';
     boton.disabled = true; botonTxt.textContent = 'No disponible';
     return;
   }
-  const permiso = Notification.permission;
+  const permiso = await permisoPush();
   if(permiso === 'denied'){
     sello.className = 'sello alerta'; sello.textContent = 'Bloqueadas';
-    txt.textContent = 'Las bloqueaste en el navegador. Para reactivarlas, abrí la configuración ' +
-      'del sitio (el candado en la barra de direcciones) y permitilas de nuevo.';
+    txt.textContent = PN
+      ? 'Las bloqueaste en el teléfono. Para reactivarlas: Ajustes del iPhone → Tratto → Notificaciones.'
+      : 'Las bloqueaste en el navegador. Para reactivarlas, abrí la configuración ' +
+        'del sitio (el candado en la barra de direcciones) y permitilas de nuevo.';
     boton.disabled = true; botonTxt.textContent = 'Bloqueadas por el navegador';
     return;
   }
@@ -4898,7 +4965,7 @@ async function pintarPush(){
   }else{
     sello.className = 'sello gris'; sello.textContent = 'Desactivadas';
     txt.textContent = 'Activalas para que los avisos de tus pedidos te aparezcan en la pantalla del ' +
-      'celular. En iPhone, primero agregá Tratto a la pantalla de inicio desde Safari.';
+      'celular.' + (PN ? '' : ' En iPhone, primero agregá Tratto a la pantalla de inicio desde Safari.');
     botonTxt.textContent = 'Activar en este dispositivo';
   }
 }
@@ -4910,9 +4977,9 @@ async function pintarPush(){
    contestar una sola vez en la vida de ese navegador, y si contestan que no,
    no hay forma de volver a preguntar. Mejor explicar primero y preguntar
    después, a quien ya dijo que le interesa. */
-function ofrecerAvisos(){
-  if(!SW_SOPORTADO) return;                      // iPhone sin instalar: no hay nada que pedir
-  if(Notification.permission !== 'default') return; // ya contestó alguna vez
+async function ofrecerAvisos(){
+  if(!PUSH_SOPORTADO) return;                    // iPhone sin instalar: no hay nada que pedir
+  if(await permisoPush() !== 'default') return;  // ya contestó alguna vez
   $('telon-avisos').classList.add('abierto');
 }
 

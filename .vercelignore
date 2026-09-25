@@ -9,3 +9,6 @@ tools
 # quedo adentro de este repo por error y no debe convivir en el mismo origen
 # que la sesion de Tratto (comparten localStorage al estar bajo el mismo dominio)
 lapeluquerie
+
+# Configuración de la compilación en la nube de la app de iPhone
+codemagic.yaml

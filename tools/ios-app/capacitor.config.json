@@ -1,0 +1,20 @@
+{
+  "appId": "ar.com.trattoapp",
+  "appName": "Tratto",
+  "webDir": "www",
+  "server": {
+    "url": "https://www.trattoapp.com.ar/?utm_source=ios_app",
+    "errorPath": "index.html"
+  },
+  "backgroundColor": "#0C2620",
+  "ios": {
+    "contentInset": "never",
+    "backgroundColor": "#0C2620",
+    "scheme": "Tratto"
+  },
+  "plugins": {
+    "PushNotifications": {
+      "presentationOptions": ["badge", "sound", "alert"]
+    }
+  }
+}
