@@ -5,8 +5,11 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="robots" content="index,follow">
 <title>Términos · proveedores · Tratto</title>
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png">
+<link rel="icon" type="image/png" sizes="64x64" href="/favicon-64.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500&text=TRAO&display=swap" rel="stylesheet">
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=IBM+Plex+Sans+Condensed:wght@600;700&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
   :root{
@@ -27,7 +30,7 @@
   .barra{background:var(--noche);color:var(--claro);padding:calc(14px + var(--st)) 18px 14px;
     display:flex;align-items:center;gap:11px;position:sticky;top:0;z-index:5}
   .barra svg{width:22px;height:22px;flex:none}
-  .barra-marca{font-family:'IBM Plex Sans Condensed',sans-serif;font-weight:700;font-size:17px}
+  .barra-marca{font-family:'Montserrat','IBM Plex Sans',sans-serif;font-weight:500;font-size:13px;letter-spacing:.3em;text-transform:uppercase}
   .barra a{margin-left:auto;color:var(--verde-luz);text-decoration:none;
     font-family:'IBM Plex Mono',monospace;font-size:9.5px;letter-spacing:.15em;
     text-transform:uppercase;font-weight:600}
@@ -99,9 +102,12 @@
 
 <div class="barra">
   <svg viewBox="0 0 32 32" fill="none" aria-hidden="true">
-    <circle cx="8" cy="8" r="4.6" stroke="#8FD9BC" stroke-width="1.8"/>
-    <circle cx="24" cy="24" r="4.6" stroke="#C9A227" stroke-width="1.8"/>
-    <path d="M11.4 11.4 L20.6 20.6" stroke="#4E7A6E" stroke-width="1.8" stroke-linecap="round"/>
+    <defs><linearGradient id="glifo-terminos-proveedor-1" gradientUnits="userSpaceOnUse" x1="10.3" y1="10.37" x2="22.54" y2="22.46"><stop offset="0" stop-color="#96E7CE"/><stop offset="1" stop-color="#62AD98"/></linearGradient></defs>
+    <path d="M10.3 10.37 L22.54 22.46" stroke="url(#glifo-terminos-proveedor-1)" stroke-width="2.39"/>
+    <circle cx="7.47" cy="7.58" r="5.23" stroke="#9EECD4" stroke-width="2.5"/>
+    <path d="M10.3 10.37 L12.08 12.13" stroke="#96E7CE" stroke-width="2.39"/>
+    <circle cx="25.12" cy="25.02" r="4.76" stroke="#F7CA55" stroke-width="2.24"/>
+    <path d="M20.95 20.89 L22.54 22.46" stroke="#9EECD4" stroke-opacity=".32" stroke-width="2.39"/>
   </svg>
   <span class="barra-marca">Tratto</span>
   <a href="/">Volver a la app</a>

@@ -1,0 +1,6 @@
+<defs><linearGradient id="GID" gradientUnits="userSpaceOnUse" x1="10.3" y1="10.37" x2="22.54" y2="22.46"><stop offset="0" stop-color="#96E7CE"/><stop offset="1" stop-color="#62AD98"/></linearGradient></defs>
+    <path d="M10.3 10.37 L22.54 22.46" stroke="url(#GID)" stroke-width="2.39"/>
+    <circle cx="7.47" cy="7.58" r="5.23" stroke="#9EECD4" stroke-width="2.5"/>
+    <path d="M10.3 10.37 L12.08 12.13" stroke="#96E7CE" stroke-width="2.39"/>
+    <circle cx="25.12" cy="25.02" r="4.76" stroke="#F7CA55" stroke-width="2.24"/>
+    <path d="M20.95 20.89 L22.54 22.46" stroke="#9EECD4" stroke-opacity=".32" stroke-width="2.39"/>
