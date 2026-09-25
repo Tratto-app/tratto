@@ -14,6 +14,7 @@ import type { ConfigNegocio } from '../config/negocio.js';
 import { serviciosActivos } from '../config/negocio.js';
 import { describirHorarios } from '../booking/disponibilidad.js';
 import { formatearPrecio, normalizarTelefono, telefonoParecePlausible } from '../shared/texto.js';
+import { logoSvg } from './logo.js';
 
 /** Escapa todo lo que sale de la configuración: nada llega crudo al HTML. */
 function esc(texto: string): string {
@@ -36,7 +37,7 @@ function enlaceSeguro(url: string): string {
   return /^https?:\/\//i.test(limpio) ? limpio : '';
 }
 
-function armar(titulo: string, descripcion: string, cuerpo: string): string {
+function armar(titulo: string, descripcion: string, cuerpo: string, extra = ''): string {
   return `<!doctype html>
 <html lang="es">
 <head>
@@ -44,16 +45,35 @@ function armar(titulo: string, descripcion: string, cuerpo: string): string {
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>${esc(titulo)}</title>
 <meta name="description" content="${esc(descripcion)}">
+<meta name="theme-color" content="#14110f">
 <link rel="icon" href="/favicon.svg">
+<link rel="preload" href="/fuentes/cinzel.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="stylesheet" href="/sitio.css">
-</head>
+${extra}</head>
 <body>
 ${cuerpo}
 </body>
 </html>`;
 }
 
-export function paginaInicio(cfg: ConfigNegocio): string {
+/** "Panamá 7442, Martín Coronado" → "Martín Coronado". Para el arco de abajo del logo. */
+function localidad(direccion: string): string {
+  const partes = direccion.split(',').map((p) => p.trim()).filter(Boolean);
+  return partes.length > 1 ? partes[partes.length - 1]! : '';
+}
+
+const ICONOS = {
+  whatsapp:
+    '<svg class="icono" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2Zm0 18.2a8.2 8.2 0 0 1-4.2-1.1l-.3-.2-3 .8.8-2.9-.2-.3A8.2 8.2 0 1 1 12 20.2Zm4.5-6.1c-.2-.1-1.5-.7-1.7-.8s-.4-.1-.6.1-.7.8-.8 1-.3.2-.5.1a6.7 6.7 0 0 1-3.3-2.9c-.3-.4.3-.4.7-1.3.1-.2 0-.3 0-.4l-.8-1.8c-.2-.5-.4-.4-.6-.4h-.5a1 1 0 0 0-.7.3 3 3 0 0 0-.9 2.2 5.2 5.2 0 0 0 1.1 2.7 11.8 11.8 0 0 0 4.5 4c1.7.7 2.3.8 3.2.6a2.7 2.7 0 0 0 1.8-1.3 2.2 2.2 0 0 0 .1-1.3c0-.1-.2-.2-.5-.3Z"/></svg>',
+  reloj:
+    '<svg class="icono" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M12 7v5l3.2 2" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>',
+  billete:
+    '<svg class="icono" viewBox="0 0 24 24" aria-hidden="true"><rect x="2.5" y="6" width="19" height="12" rx="2" fill="none" stroke="currentColor" stroke-width="1.6"/><circle cx="12" cy="12" r="2.6" fill="none" stroke="currentColor" stroke-width="1.6"/></svg>',
+  pin:
+    '<svg class="icono" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21s-6.5-5.6-6.5-11a6.5 6.5 0 0 1 13 0c0 5.4-6.5 11-6.5 11Z" fill="none" stroke="currentColor" stroke-width="1.6"/><circle cx="12" cy="10" r="2.3" fill="none" stroke="currentColor" stroke-width="1.6"/></svg>',
+};
+
+export function paginaInicio(cfg: ConfigNegocio, opciones: { urlBase?: string } = {}): string {
   const n = cfg.negocio;
   const nombre = cargado(n.nombre) || 'Barbería';
   const direccion = cargado(n.direccion);
@@ -61,45 +81,79 @@ export function paginaInicio(cfg: ConfigNegocio): string {
   const telefono = cargado(n.telefono);
   const instagram = cargado(n.instagram);
   const maps = enlaceSeguro(n.maps);
+  const barrio = localidad(direccion);
+  const pagos = n.medios_de_pago.filter((m) => cargado(m));
 
   const whatsapp = normalizarTelefono(telefono, { codigoPais: n.codigo_pais });
-  const linkWhatsApp = telefonoParecePlausible(whatsapp) ? `https://wa.me/${whatsapp}` : '';
+  const linkWhatsApp = telefonoParecePlausible(whatsapp)
+    ? `https://wa.me/${whatsapp}?text=${encodeURIComponent('¡Hola! Quiero sacar un turno')}`
+    : '';
+  const botonTurno = (clase: string, texto = 'Sacar turno por WhatsApp') =>
+    linkWhatsApp ? `<a class="${clase}" href="${esc(linkWhatsApp)}" target="_blank" rel="noopener">${ICONOS.whatsapp}<span>${texto}</span></a>` : '';
+
+  const logo = logoSvg({ arriba: nombre, abajo: barrio || 'Barbería', titulo: `Logo de ${nombre}`, clase: 'logo' });
 
   const servicios = serviciosActivos(cfg)
     .map(
       (s) => `      <li class="servicio">
-        <div>
-          <span class="servicio-nombre">${esc(s.nombre)}</span>
-          ${s.descripcion ? `<span class="servicio-desc">${esc(s.descripcion)}</span>` : ''}
-        </div>
-        <div class="servicio-datos">
-          <span class="precio">${esc(formatearPrecio(s.precio, n.moneda))}</span>
-        </div>
+        <h3>${esc(s.nombre)}</h3>
+        ${s.descripcion ? `<p>${esc(s.descripcion)}</p>` : ''}
+        <span class="precio">${esc(formatearPrecio(s.precio, n.moneda))}</span>
       </li>`,
     )
     .join('\n');
 
   const horarios = describirHorarios(cfg)
     .split('\n')
-    .map((linea) => `      <li>${esc(linea)}</li>`)
+    .map((linea) => {
+      const corte = linea.indexOf(': ');
+      const dias = corte > 0 ? linea.slice(0, corte) : linea;
+      const horas = corte > 0 ? linea.slice(corte + 2) : '';
+      const cerrado = /cerrado/i.test(horas);
+      return `      <li${cerrado ? ' class="cerrado"' : ''}><span>${esc(dias[0]!.toUpperCase() + dias.slice(1))}</span><span>${esc(horas.replace(/ y /g, ' · '))}</span></li>`;
+    })
     .join('\n');
 
-  const contacto = [
-    direccion ? `<li>📍 ${maps ? `<a href="${esc(maps)}" target="_blank" rel="noopener">${esc(direccion)}</a>` : esc(direccion)}${comoLlegar ? ` <span class="tenue">(${esc(comoLlegar)})</span>` : ''}</li>` : '',
-    telefono ? `<li>📱 ${esc(telefono)}</li>` : '',
-    instagram ? `<li>📷 ${esc(instagram)}</li>` : '',
+  const destacados = [
+    `<li>${ICONOS.reloj}<div><b>Turnos al instante</b><span>Reservá, cambiá o cancelá por WhatsApp, a cualquier hora.</span></div></li>`,
+    pagos.length
+      ? `<li>${ICONOS.billete}<div><b>${esc(pagos.map((p, i) => (i === 0 ? p[0]!.toUpperCase() + p.slice(1) : p)).join(' o '))}</b><span>Medios de pago aceptados.</span></div></li>`
+      : '',
+    direccion
+      ? `<li>${ICONOS.pin}<div><b>${esc(barrio || direccion)}</b><span>${esc(direccion)}</span></div></li>`
+      : '',
   ]
     .filter(Boolean)
     .join('\n      ');
 
-  const cuerpo = `<main class="sitio">
-  <header class="portada">
-    <h1>${esc(nombre)}</h1>
-    ${direccion ? `<p class="lugar">${esc(direccion)}</p>` : ''}
-    ${linkWhatsApp ? `<a class="boton-turno" href="${esc(linkWhatsApp)}" target="_blank" rel="noopener">Sacar turno por WhatsApp</a>` : ''}
-  </header>
+  const ubicacion = direccion
+    ? `<section class="bloque ubicacion">
+      <h2>Dónde estamos</h2>
+      <p class="direccion">${maps ? `<a href="${esc(maps)}" target="_blank" rel="noopener">${esc(direccion)}</a>` : esc(direccion)}</p>
+      ${comoLlegar ? `<p class="tenue">${esc(comoLlegar)}</p>` : ''}
+      ${maps ? `<a class="boton-secundario" href="${esc(maps)}" target="_blank" rel="noopener">${ICONOS.pin}<span>Cómo llegar</span></a>` : ''}
+      ${telefono || instagram ? `<ul class="contacto">${telefono ? `<li>WhatsApp: ${esc(telefono)}</li>` : ''}${instagram ? `<li>Instagram: ${esc(instagram)}</li>` : ''}</ul>` : ''}
+    </section>`
+    : '';
 
-  <section>
+  const cuerpo = `<header class="portada">
+  <div class="portada-contenido">
+    ${logo}
+    <h1>${esc(nombre)}</h1>
+    <p class="bajada">Cortes de pelo y barba${barrio ? ` en ${esc(barrio)}` : ''}</p>
+    <div class="acciones">
+      ${botonTurno('boton-turno')}
+      ${maps ? `<a class="boton-secundario" href="${esc(maps)}" target="_blank" rel="noopener">${ICONOS.pin}<span>Cómo llegar</span></a>` : ''}
+    </div>
+  </div>
+</header>
+
+<main class="sitio">
+  ${destacados ? `<ul class="destacados">
+      ${destacados}
+  </ul>` : ''}
+
+  <section class="bloque">
     <h2>Servicios</h2>
     <ul class="servicios">
 ${servicios}
@@ -107,33 +161,51 @@ ${servicios}
     ${serviciosActivos(cfg).some((s) => s.precio <= 0) ? '<p class="tenue">Los precios marcados «a confirmar» los confirmamos por WhatsApp.</p>' : ''}
   </section>
 
-  <section>
-    <h2>Horarios</h2>
-    <ul class="horarios">
+  <div class="dos-columnas">
+    <section class="bloque">
+      <h2>Horarios</h2>
+      <ul class="horarios">
 ${horarios}
-    </ul>
-  </section>
+      </ul>
+    </section>
+    ${ubicacion}
+  </div>
 
-  ${contacto ? `<section>
-    <h2>Dónde estamos</h2>
-    <ul class="contacto">
-      ${contacto}
-    </ul>
-  </section>` : ''}
-
-  <section class="turnos-info">
+  <section class="bloque pasos">
     <h2>Cómo sacar turno</h2>
-    <p>Escribinos por WhatsApp y te atiende nuestro asistente. Podés reservar, consultar, cambiar o cancelar tu turno a cualquier hora, sin esperar respuesta.</p>
+    <ol>
+      <li><b>Escribinos por WhatsApp.</b> Te atiende nuestro asistente, sin esperas.</li>
+      <li><b>Elegí servicio, día y horario.</b> Solo te ofrece horarios que están libres de verdad.</li>
+      <li><b>Listo.</b> Te llega la confirmación con todos los datos y un recordatorio el día anterior.</li>
+    </ol>
     ${cfg.reglas.politica_cancelacion ? `<p class="tenue">${esc(cfg.reglas.politica_cancelacion)}</p>` : ''}
   </section>
 
-  <footer>
-    <p>${esc(nombre)}</p>
-    <p><a href="/privacidad">Política de privacidad</a></p>
-  </footer>
-</main>`;
+  ${linkWhatsApp ? `<section class="llamado">
+    <p>¿Te toca el corte?</p>
+    ${botonTurno('boton-turno')}
+  </section>` : ''}
+</main>
 
-  return armar(nombre, `${nombre}${direccion ? ` — ${direccion}` : ''}. Turnos por WhatsApp.`, cuerpo);
+<footer class="pie">
+  ${logoSvg({ arriba: nombre, abajo: barrio || 'Barbería', titulo: nombre, clase: 'logo-pie' })}
+  <p>${esc(nombre)}${direccion ? ` · ${esc(direccion)}` : ''}</p>
+  <p><a href="/privacidad">Política de privacidad</a></p>
+</footer>
+
+${botonTurno('whatsapp-flotante', 'Turnos')}`;
+
+  const descripcion = `${nombre}${direccion ? ` — ${direccion}` : ''}. Cortes de pelo y barba. Turnos por WhatsApp.`;
+  const base = (opciones.urlBase ?? '').replace(/\/+$/, '');
+  const social = base
+    ? `<meta property="og:type" content="website">
+<meta property="og:title" content="${esc(nombre)}">
+<meta property="og:description" content="${esc(descripcion)}">
+<meta property="og:image" content="${esc(`${base}/logo.png`)}">
+<meta property="og:url" content="${esc(`${base}/`)}">
+`
+    : '';
+  return armar(nombre, descripcion, cuerpo, social);
 }
 
 export function paginaPrivacidad(cfg: ConfigNegocio): string {
@@ -148,7 +220,7 @@ export function paginaPrivacidad(cfg: ConfigNegocio): string {
 
   const cuerpo = `<main class="sitio texto">
   <header>
-    <p class="volver"><a href="/">← ${esc(nombre)}</a></p>
+    <p class="volver"><a href="/">← Volver a ${esc(nombre)}</a></p>
     <h1>Política de privacidad</h1>
     <p class="tenue">Cómo tratamos los datos de quienes sacan turno por WhatsApp.</p>
   </header>

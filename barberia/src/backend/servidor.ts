@@ -87,7 +87,7 @@ export function crearServidor(ctx: Contexto): Express {
     res.send(cuerpo);
   };
 
-  app.get('/', limiteEstatico, (_req, res) => html(res, paginaInicio(ctx.cfg)));
+  app.get('/', limiteEstatico, (_req, res) => html(res, paginaInicio(ctx.cfg, { urlBase: env.APP_BASE_URL })));
   app.get('/privacidad', limiteEstatico, (_req, res) => html(res, paginaPrivacidad(ctx.cfg)));
   app.get('/panel', limiteEstatico, (_req, res) => res.sendFile(path.join(PUBLICO, 'panel.html')));
   app.get('/test-chat', limiteEstatico, (_req, res) => {

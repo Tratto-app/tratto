@@ -1,120 +1,364 @@
 /* Sitio público de la barbería. Lo ve el cliente antes de escribir por
    WhatsApp, y también Meta cuando revisa el negocio y la política de
-   privacidad. Una sola columna, pensado para el celular. */
+   privacidad. Pensado primero para el celular. */
+
+@font-face {
+  font-family: 'Cinzel';
+  src: url('/fuentes/cinzel.woff2') format('woff2');
+  font-weight: 400 900;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Inter';
+  src: url('/fuentes/inter.woff2') format('woff2');
+  font-weight: 100 900;
+  font-display: swap;
+}
 
 :root {
-  --fondo: #14110f;
-  --superficie: #1f1b18;
-  --borde: #3a322d;
-  --texto: #f3ece6;
-  --texto-suave: #b3a79e;
-  --acento: #d9a441;
-  --acento-oscuro: #a87c26;
-  --radio: 14px;
+  --fondo: #0f0d0c;
+  --superficie: #181412;
+  --superficie-2: #201b18;
+  --borde: #2f2824;
+  --texto: #f4ede6;
+  --texto-suave: #a99d92;
+  --oro: #d4a64a;
+  --oro-claro: #e6c27a;
+  --oro-oscuro: #a47e2e;
+  --radio: 16px;
+  --ancho: 1040px;
 }
 
 * { box-sizing: border-box; }
+
+html { scroll-behavior: smooth; }
 
 html, body {
   margin: 0;
   padding: 0;
   background: var(--fondo);
   color: var(--texto);
-  font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
   font-size: 17px;
-  line-height: 1.5;
+  line-height: 1.55;
   -webkit-text-size-adjust: 100%;
+  -webkit-font-smoothing: antialiased;
 }
 
-a { color: var(--acento); }
+a { color: var(--oro-claro); }
 
-.sitio {
-  max-width: 620px;
-  margin: 0 auto;
-  padding: 0 18px 56px;
-}
+.icono { width: 22px; height: 22px; flex: none; }
+
+/* --- Portada ------------------------------------------------------------ */
 
 .portada {
-  padding: 48px 0 32px;
+  position: relative;
+  padding: 56px 16px 64px;
   text-align: center;
+  overflow: hidden;
   border-bottom: 1px solid var(--borde);
+  background:
+    radial-gradient(ellipse 70% 60% at 50% 0%, rgba(212, 166, 74, 0.16), transparent 70%),
+    linear-gradient(180deg, #16120f 0%, var(--fondo) 100%);
 }
+/* Rayas finas en diagonal, un guiño al poste de barbería. */
+.portada::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: repeating-linear-gradient(135deg, rgba(212, 166, 74, 0.035) 0 2px, transparent 2px 22px);
+  pointer-events: none;
+}
+.portada-contenido { position: relative; max-width: 640px; margin: 0 auto; }
+
+.logo {
+  width: 188px;
+  height: 188px;
+  display: block;
+  margin: 0 auto 22px;
+  filter: drop-shadow(0 10px 30px rgba(0, 0, 0, 0.55));
+}
+
 .portada h1 {
   margin: 0;
-  font-size: 34px;
-  line-height: 1.15;
-  letter-spacing: -0.02em;
+  font-family: 'Cinzel', 'Times New Roman', serif;
+  font-weight: 700;
+  font-size: clamp(30px, 7vw, 46px);
+  line-height: 1.1;
+  letter-spacing: 0.06em;
+  color: var(--texto);
 }
-.portada .lugar {
-  margin: 10px 0 0;
+.bajada {
+  margin: 12px 0 0;
+  font-size: 18px;
   color: var(--texto-suave);
+  letter-spacing: 0.02em;
 }
 
-.boton-turno {
-  display: inline-block;
-  margin-top: 24px;
-  padding: 15px 26px;
-  background: var(--acento);
-  color: #1a1410;
+.acciones {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  justify-content: center;
+  margin-top: 30px;
+}
+
+.boton-turno,
+.boton-secundario {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  min-height: 52px;
+  padding: 0 24px;
+  border-radius: 999px;
   font-weight: 650;
+  font-size: 16px;
   text-decoration: none;
+  transition: transform 0.15s ease, background-color 0.15s ease, border-color 0.15s ease;
+}
+.boton-turno {
+  background: linear-gradient(180deg, var(--oro-claro), var(--oro));
+  color: #1a1410;
+  box-shadow: 0 8px 24px rgba(212, 166, 74, 0.25);
+}
+.boton-turno:hover { transform: translateY(-1px); }
+.boton-turno:active { background: var(--oro-oscuro); transform: none; }
+.boton-secundario {
+  border: 1px solid var(--borde);
+  background: rgba(255, 255, 255, 0.02);
+  color: var(--texto);
+}
+.boton-secundario:hover { border-color: var(--oro); }
+.boton-secundario .icono { color: var(--oro); }
+
+/* --- Contenido ---------------------------------------------------------- */
+
+.sitio {
+  max-width: var(--ancho);
+  margin: 0 auto;
+  padding: 0 16px 40px;
+}
+
+ul, ol { margin: 0; padding: 0; list-style: none; }
+
+.destacados {
+  display: grid;
+  gap: 12px;
+  margin: -30px 0 8px;
+  position: relative;
+}
+.destacados li {
+  display: flex;
+  gap: 14px;
+  align-items: flex-start;
+  padding: 18px;
+  background: var(--superficie);
+  border: 1px solid var(--borde);
   border-radius: var(--radio);
 }
-.boton-turno:active { background: var(--acento-oscuro); }
+.destacados .icono { color: var(--oro); margin-top: 2px; }
+.destacados b { display: block; font-weight: 650; }
+.destacados span { display: block; color: var(--texto-suave); font-size: 15px; }
 
-section { padding: 28px 0; border-bottom: 1px solid var(--borde); }
-section:last-of-type { border-bottom: 0; }
+.bloque { padding: 44px 0 8px; }
 
 h2 {
-  margin: 0 0 14px;
-  font-size: 13px;
-  font-weight: 650;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-  color: var(--texto-suave);
-}
-
-ul { margin: 0; padding: 0; list-style: none; }
-.horarios li, .contacto li { padding: 5px 0; }
-
-.servicio {
+  margin: 0 0 20px;
+  font-family: 'Cinzel', 'Times New Roman', serif;
+  font-weight: 700;
+  font-size: 22px;
+  letter-spacing: 0.08em;
+  color: var(--texto);
   display: flex;
-  align-items: baseline;
-  justify-content: space-between;
-  gap: 16px;
-  padding: 12px 0;
-  border-bottom: 1px solid var(--superficie);
+  align-items: center;
+  gap: 14px;
 }
-.servicio:last-child { border-bottom: 0; }
-.servicio-nombre { display: block; font-weight: 600; }
-.servicio-desc { display: block; font-size: 14px; color: var(--texto-suave); }
-.servicio-datos { text-align: right; white-space: nowrap; }
-.precio { display: block; color: var(--acento); font-weight: 650; }
+h2::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: linear-gradient(90deg, var(--oro-oscuro), transparent);
+}
 
-.tenue { color: var(--texto-suave); font-size: 15px; }
-
-.turnos-info p { margin: 0 0 10px; }
-
-footer {
-  padding: 32px 0 0;
-  text-align: center;
+.servicios { display: grid; gap: 12px; }
+.servicio {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  align-items: center;
+  gap: 4px 16px;
+  padding: 20px 22px;
+  background: var(--superficie);
+  border: 1px solid var(--borde);
+  border-radius: var(--radio);
+}
+.servicio h3 {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 650;
+}
+.servicio p {
+  grid-column: 1;
+  margin: 0;
   color: var(--texto-suave);
   font-size: 15px;
 }
-footer p { margin: 4px 0; }
-
-/* Página de privacidad: texto corrido, sin cajas. */
-.texto h1 { font-size: 27px; margin: 6px 0 4px; letter-spacing: -0.01em; }
-.texto h2 {
-  margin: 30px 0 8px;
-  font-size: 18px;
-  text-transform: none;
-  letter-spacing: normal;
-  color: var(--texto);
+.servicio .precio {
+  grid-column: 2;
+  grid-row: 1 / span 2;
+  font-family: 'Cinzel', 'Times New Roman', serif;
+  font-weight: 700;
+  font-size: 22px;
+  color: var(--oro);
+  white-space: nowrap;
 }
-.texto header { padding: 36px 0 0; }
+
+.horarios li {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 14px 0;
+  border-bottom: 1px solid var(--borde);
+}
+.horarios li:last-child { border-bottom: 0; }
+.horarios li span:first-child { font-weight: 600; }
+.horarios li span:last-child { color: var(--texto-suave); }
+.horarios li.cerrado span { color: #6f655d; }
+
+.ubicacion .direccion { margin: 0 0 6px; font-size: 18px; font-weight: 600; }
+.ubicacion .direccion a { color: var(--texto); text-decoration: none; }
+.ubicacion .boton-secundario { margin-top: 14px; }
+.contacto { margin-top: 18px; color: var(--texto-suave); font-size: 15px; }
+.contacto li { padding: 3px 0; }
+
+.pasos ol { counter-reset: paso; display: grid; gap: 12px; }
+.pasos li {
+  counter-increment: paso;
+  position: relative;
+  padding: 18px 20px 18px 66px;
+  background: var(--superficie);
+  border: 1px solid var(--borde);
+  border-radius: var(--radio);
+  color: var(--texto-suave);
+}
+.pasos li b { color: var(--texto); }
+.pasos li::before {
+  content: counter(paso);
+  position: absolute;
+  left: 18px;
+  top: 16px;
+  width: 32px;
+  height: 32px;
+  display: grid;
+  place-items: center;
+  border: 1px solid var(--oro);
+  border-radius: 50%;
+  font-weight: 700;
+  font-size: 15px;
+  color: var(--oro);
+}
+
+.tenue { color: var(--texto-suave); font-size: 15px; margin: 16px 0 0; }
+
+.llamado {
+  margin: 48px 0 0;
+  padding: 40px 20px;
+  text-align: center;
+  border: 1px solid var(--borde);
+  border-radius: calc(var(--radio) + 6px);
+  background:
+    radial-gradient(ellipse 60% 80% at 50% 0%, rgba(212, 166, 74, 0.14), transparent 70%),
+    var(--superficie);
+}
+.llamado p {
+  margin: 0 0 18px;
+  font-family: 'Cinzel', 'Times New Roman', serif;
+  font-weight: 700;
+  font-size: 24px;
+  letter-spacing: 0.04em;
+}
+
+/* --- Pie ---------------------------------------------------------------- */
+
+.pie {
+  margin-top: 56px;
+  padding: 36px 16px 110px;
+  text-align: center;
+  border-top: 1px solid var(--borde);
+  color: var(--texto-suave);
+  font-size: 14px;
+}
+.pie p { margin: 4px 0; }
+.logo-pie { width: 72px; height: 72px; display: block; margin: 0 auto 12px; opacity: 0.9; }
+
+/* Botón fijo de WhatsApp: en el celular siempre a mano. */
+.whatsapp-flotante {
+  position: fixed;
+  right: 16px;
+  bottom: 16px;
+  z-index: 10;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  height: 52px;
+  padding: 0 20px 0 16px;
+  border-radius: 999px;
+  background: #25d366;
+  color: #062b14;
+  font-weight: 700;
+  text-decoration: none;
+  box-shadow: 0 10px 28px rgba(0, 0, 0, 0.45);
+}
+.whatsapp-flotante .icono { width: 24px; height: 24px; }
+
+/* --- Pantallas grandes -------------------------------------------------- */
+
+@media (min-width: 760px) {
+  .portada { padding: 80px 24px 96px; }
+  .logo { width: 220px; height: 220px; }
+  .sitio { padding: 0 24px 56px; }
+  .destacados { grid-template-columns: repeat(3, 1fr); margin-top: -44px; }
+  .servicios { grid-template-columns: repeat(3, 1fr); }
+  .servicio { grid-template-columns: 1fr; align-content: start; }
+  .servicio .precio { grid-column: 1; grid-row: auto; margin-top: 12px; }
+  .dos-columnas { display: grid; grid-template-columns: 1fr 1fr; gap: 48px; }
+  .horarios li { flex-direction: row; justify-content: space-between; gap: 16px; }
+  .horarios li span:last-child { text-align: right; }
+  .whatsapp-flotante { display: none; }
+  .pie { padding-bottom: 40px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  .boton-turno, .boton-secundario { transition: none; }
+}
+
+/* --- Página de privacidad: texto corrido, sin cajas -------------------- */
+
+.texto { max-width: 680px; }
+.texto h1 {
+  font-family: 'Cinzel', 'Times New Roman', serif;
+  font-size: 28px;
+  margin: 6px 0 4px;
+  letter-spacing: 0.04em;
+}
+.texto h2 {
+  margin: 32px 0 8px;
+  font-family: 'Inter', system-ui, sans-serif;
+  font-size: 18px;
+  letter-spacing: normal;
+  display: block;
+}
+.texto h2::after { display: none; }
+.texto header { padding: 40px 0 0; }
 .texto p { margin: 0 0 12px; }
 .texto ul { margin: 0 0 12px; padding-left: 20px; list-style: disc; }
 .texto li { padding: 3px 0; }
 .texto .volver { font-size: 15px; margin: 0 0 18px; }
-.texto footer { margin-top: 40px; border-top: 1px solid var(--borde); }
+.texto footer {
+  margin-top: 40px;
+  padding: 24px 0 0;
+  border-top: 1px solid var(--borde);
+  color: var(--texto-suave);
+  font-size: 15px;
+}

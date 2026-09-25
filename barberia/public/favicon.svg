@@ -1,5 +1,14 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" role="img" aria-label="Barbería">
-  <rect width="32" height="32" rx="7" fill="#14110f"/>
-  <path d="M8 6v9a8 8 0 0 0 16 0V6" fill="none" stroke="#d9a441" stroke-width="2.6" stroke-linecap="round"/>
-  <path d="M16 23v3" fill="none" stroke="#d9a441" stroke-width="2.6" stroke-linecap="round"/>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="62 56 116 116" role="img" aria-label="Barbería">
+  <rect x="62" y="56" width="116" height="116" rx="24" fill="#14110f"/>
+  <g>
+    <circle cx="103" cy="155" r="10.5" fill="none" stroke="#d4a64a" stroke-width="5.5"/>
+    <path d="M110.5 147.5 L119 130" fill="none" stroke="#d4a64a" stroke-width="6" stroke-linecap="round"/>
+    <path d="M114.5 125 L125.5 129 Q132 104 139 66 Q127 96 114.5 125 Z" fill="#d4a64a"/>
+  </g>
+  <g transform="translate(240 0) scale(-1 1)">
+    <circle cx="103" cy="155" r="10.5" fill="none" stroke="#d4a64a" stroke-width="5.5"/>
+    <path d="M110.5 147.5 L119 130" fill="none" stroke="#d4a64a" stroke-width="6" stroke-linecap="round"/>
+    <path d="M114.5 125 L125.5 129 Q132 104 139 66 Q127 96 114.5 125 Z" fill="#d4a64a"/>
+  </g>
+  <circle cx="120" cy="127" r="4" fill="#14110f" stroke="#d4a64a" stroke-width="2.5"/>
 </svg>

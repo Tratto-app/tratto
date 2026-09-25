@@ -53,6 +53,11 @@ describe('portada', () => {
     assert.ok(/1[0-9]:00/.test(html));
   });
 
+  test('lleva el logo con el nombre del negocio', () => {
+    assert.match(html, /<svg class="logo"[^>]*aria-label="Logo de Barberia Test"/);
+    assert.ok(html.includes('BARBERIA TEST'));
+  });
+
   test('enlaza la política de privacidad, que es lo que pide Meta', () => {
     assert.ok(html.includes('href="/privacidad"'));
   });
