@@ -1,0 +1,21 @@
+# Revisión mínima en cada cambio: sintaxis de la app, JSON y credenciales.
+name: CI
+
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  revisar:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Revisar
+        run: python3 tools/ci/revisar.py

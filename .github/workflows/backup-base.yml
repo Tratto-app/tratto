@@ -1,0 +1,73 @@
+# Backup diario de la base de producción, cifrado.
+#
+# El plan Free de Supabase no hace backups. Esto saca uno por día con pg_dump,
+# lo verifica, lo cifra con age (clave pública) y lo guarda 30 días como
+# artefacto del workflow. El repo es público: el archivo SOLO se puede abrir
+# con la clave privada, que nunca está en GitHub.
+#
+# Queda apagado hasta que se configure (ver docs/DISASTER_RECOVERY.md):
+#   Secrets:  SUPABASE_DB_URL        cadena de conexión del pooler (modo sesión)
+#             BACKUP_AGE_RECIPIENT   clave pública de age (age1...)
+#   Variable: BACKUP_ACTIVO = si
+name: Backup de la base
+
+on:
+  schedule:
+    - cron: '30 6 * * *'     # 03:30 hora argentina
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: backup-base
+  cancel-in-progress: false
+
+jobs:
+  backup:
+    if: ${{ vars.BACKUP_ACTIVO == 'si' }}
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    steps:
+      - name: Instalar pg_dump 17 y age
+        run: |
+          set -euo pipefail
+          sudo install -d /usr/share/postgresql-common/pgdg
+          sudo curl -fsSLo /usr/share/postgresql-common/pgdg/apt.postgresql.org.asc https://www.postgresql.org/media/keys/ACCC4CF8.asc
+          echo "deb [signed-by=/usr/share/postgresql-common/pgdg/apt.postgresql.org.asc] https://apt.postgresql.org/pub/repos/apt $(lsb_release -cs)-pgdg main" \
+            | sudo tee /etc/apt/sources.list.d/pgdg.list >/dev/null
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq postgresql-client-17 age
+
+      - name: Volcar, verificar y cifrar
+        env:
+          DB_URL: ${{ secrets.SUPABASE_DB_URL }}
+          AGE_RECIPIENT: ${{ secrets.BACKUP_AGE_RECIPIENT }}
+        run: |
+          set -euo pipefail
+          test -n "$DB_URL" || { echo "::error::Falta el secret SUPABASE_DB_URL"; exit 1; }
+          test -n "$AGE_RECIPIENT" || { echo "::error::Falta el secret BACKUP_AGE_RECIPIENT"; exit 1; }
+          PG=/usr/lib/postgresql/17/bin
+          umask 077
+          mkdir -p salida
+          f="tratto-$(date -u +%Y%m%d-%H%M)"
+          # 1) Esquema y datos propios de la app
+          $PG/pg_dump "$DB_URL" -Fc --no-owner --no-privileges -n public -n privado -f "$f-app.dump"
+          # 2) Cuentas de usuario (solo datos: el esquema auth lo crea Supabase)
+          $PG/pg_dump "$DB_URL" -Fc --data-only -t auth.users -t auth.identities -f "$f-cuentas.dump"
+          # Verificación: los archivos se pueden leer y tienen las tablas esperadas
+          for x in "$f-app.dump" "$f-cuentas.dump"; do $PG/pg_restore --list "$x" > /dev/null; done
+          $PG/pg_restore --list "$f-app.dump" | grep -q "TABLE DATA public solicitudes" \
+            || { echo "::error::El backup no tiene la tabla solicitudes"; exit 1; }
+          tar -cf "$f.tar" "$f-app.dump" "$f-cuentas.dump"
+          age -r "$AGE_RECIPIENT" -o "salida/$f.tar.age" "$f.tar"
+          rm -f "$f.tar" "$f-app.dump" "$f-cuentas.dump"
+          echo "Backup cifrado: $(du -h salida/$f.tar.age | cut -f1)"
+
+      - name: Guardar 30 días
+        uses: actions/upload-artifact@v4
+        with:
+          name: backup-base
+          path: salida/*.age
+          retention-days: 30
+          if-no-files-found: error
