@@ -29,7 +29,7 @@ Detalle técnico en los otros documentos de esta carpeta.
 - `index.html`: sondeo del chat más liviano con Realtime, conteo de visitas
   por encabezado, mensajes claros cuando se llega a un tope.
 - `.github/workflows/ci.yml` (revisión en cada cambio) y
-  `backup-base.yml` (apagado hasta configurarlo).
+  `backup-base.yml` (activo desde el 2026-09-28: diario 03:30 ART, 30 días).
 - `supabase/migrations/`, `supabase/tests/`, `tools/carga/`,
   `tools/supabase-functions/`, `docs/`.
 
@@ -37,10 +37,10 @@ Detalle técnico en los otros documentos de esta carpeta.
 
 | # | Qué | Quién | Por qué |
 |---|---|---|---|
-| 1 | **Brevo → Security → Authorized IPs: desactivar el bloqueo** (o autorizar las IPs de n8n Cloud) | Dueño | Los mails que manda el matching fallan con 401 desde el 25/09 (verificado en las ejecuciones de n8n). Las conexiones se crean, pero nadie recibe el mail |
-| 2 | Mergear el PR con el frontend nuevo | Dueño | Sin eso, la app muestra "error 400" genérico cuando alguien llega a un tope |
-| 3 | Rotar las credenciales indicadas en el informe privado de auditoría | Dueño | Ver SECURITY.md → "Si se filtra una credencial" |
-| 4 | Activar el backup diario (DISASTER_RECOVERY.md, ~15 min) | Dueño | Hoy no hay ningún backup |
+| 1 | ~~Brevo → Security → Authorized IPs~~ **Hecho** (IPs de n8n autorizadas, verificado 200) | Dueño | Los mails que manda el matching fallan con 401 desde el 25/09 (verificado en las ejecuciones de n8n). Las conexiones se crean, pero nadie recibe el mail |
+| 2 | ~~Mergear el PR con el frontend nuevo~~ **Hecho** (PR #12) | Dueño | Sin eso, la app muestra "error 400" genérico cuando alguien llega a un tope |
+| 3 | Rotar las credenciales del informe privado: Supabase y Mercado Pago **hechas** (la clave vieja da 401); **falta OpenAI** | Dueño | Ver SECURITY.md → "Si se filtra una credencial" |
+| 4 | ~~Activar el backup diario~~ **Hecho** 2026-09-28 (primera corrida OK, 154 kB). Falta una prueba de restauración en staging con la llave del dueño | Dueño | DISASTER_RECOVERY.md |
 | 5 | Supabase Pro antes de cualquier campaña | Dueño | Capacidad medida (LOAD_TESTING.md) + backups + protección de contraseñas filtradas |
 | 6 | Aprobar la limpieza automática de fotos | Dueño | La función está lista; la primera corrida borraría 6 fotos (756 kB) de cuentas que ya no existen. No se activó sin confirmación porque es irreversible |
 | 7 | UptimeRobot + tope de gasto en OpenAI | Dueño | MONITORING.md |
