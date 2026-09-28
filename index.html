@@ -2396,6 +2396,16 @@ let sesion = null;
 const cab = x => Object.assign({
   'apikey':SUPABASE_ANON, 'Authorization':'Bearer '+sesion.access_token, 'Content-Type':'application/json'
 }, x||{});
+/* Los topes anti-abuso de la base responden "LIMITE: <texto para la persona>".
+   Devuelve ese texto, o null si el error es otro. */
+function limiteDe(crudo){
+  const t = String(crudo || '');
+  try{
+    const j = JSON.parse(t.slice(t.indexOf('{')));
+    if(j && typeof j.message === 'string' && j.message.startsWith('LIMITE: ')) return j.message.slice(8);
+  }catch(e){}
+  return null;
+}
 async function api(ruta){
   const r = await fetch(SUPABASE_URL + '/rest/v1/' + ruta, {headers:cab()});
   if(!r.ok) throw new Error(r.status + ': ' + await r.text());
@@ -2520,7 +2530,7 @@ $('s-foto-archivo').addEventListener('change', async e => {
     pintarFotoPedido();
   }catch(err){
     console.error(err);
-    avisar('s-aviso','No se pudo subir la foto. Probá de nuevo.','mal');
+    avisar('s-aviso', limiteDe(err.message) || 'No se pudo subir la foto. Probá de nuevo.','mal');
   }finally{
     subiendoFoto = false;
     $('s-foto-txt').textContent = 'Sacar o elegir una foto';
@@ -2961,7 +2971,7 @@ $('s-enviar').addEventListener('click', async () => {
       })
     });
     if(res.status===401){ avisar('s-aviso','Tu sesión venció. Volvé a entrar.','mal'); return; }
-    if(!res.ok){ console.error(await res.text()); avisar('s-aviso','No se pudo enviar (error '+res.status+').','mal'); return; }
+    if(!res.ok){ const t = await res.text(); console.error(t); avisar('s-aviso', limiteDe(t) || 'No se pudo enviar (error '+res.status+').','mal'); return; }
     CS.forEach(c => $(c).value=''); $('s-email').value = sesion.user.email;
     fotoPedido = null; pintarFotoPedido(); $('tasar-resultado').innerHTML = '';
     resumenPedido(); await cargarPedidos(); ir('inicio','entra');
@@ -3028,7 +3038,7 @@ $('p-enviar').addEventListener('click', async () => {
       })
     });
     if(res.status===401){ avisar('p-aviso','Tu sesión venció. Volvé a entrar.','mal'); return; }
-    if(!res.ok){ console.error(await res.text()); avisar('p-aviso','No se pudo publicar (error '+res.status+').','mal'); return; }
+    if(!res.ok){ const t = await res.text(); console.error(t); avisar('p-aviso', limiteDe(t) || 'No se pudo publicar (error '+res.status+').','mal'); return; }
     try{
       await apiEnviar('perfil_proveedor?on_conflict=user_id','POST',
         {user_id:sesion.user.id, nombre:v('p-nombre')},
@@ -3371,11 +3381,15 @@ function escuchar(matchId){
             {event:'UPDATE', schema:'public', table:'mensajes', filter:'match_id=eq.'+matchId},
             carga => { if(carga.new) actualizarPresu(carga.new); })
         .subscribe(estado => {
-          if(estado === 'CHANNEL_ERROR' || estado === 'TIMED_OUT') arrancarSondeo();
+          /* Con Realtime conectado los mensajes llegan solos; el sondeo queda
+             como red de seguridad lenta. Si Realtime se cae (o el plan llegó a
+             su tope de conexiones simultáneas) volvemos al sondeo rápido. */
+          if(estado === 'SUBSCRIBED') arrancarSondeo(30000);
+          else if(estado === 'CHANNEL_ERROR' || estado === 'TIMED_OUT' || estado === 'CLOSED') arrancarSondeo();
         });
     }catch(e){ console.error(e); arrancarSondeo(); }
   }
-  arrancarSondeo(6000);   // red de seguridad
+  arrancarSondeo(6000);   // red de seguridad hasta que Realtime confirme
 }
 
 function arrancarSondeo(ms){
@@ -3442,7 +3456,12 @@ $('cp-enviar').addEventListener('click', async () => {
         tipo:'presupuesto', monto, incluye, plazo, estado_presupuesto:'pendiente'
       })
     });
-    if(!res.ok){ console.error(await res.text()); return; }
+    if(!res.ok){
+      const t = await res.text(); console.error(t);
+      $('ch-aviso').textContent = limiteDe(t) || 'No se pudo mandar el presupuesto. Probá de nuevo.';
+      $('ch-aviso').className = 'aviso-chat visible';
+      return;
+    }
     const [msg] = await res.json();
     if(msg.id > ultimoId) agregarMensaje(msg);
     $('ch-presu-panel').classList.add('oculto');
@@ -3683,8 +3702,8 @@ $('ch-enviar').addEventListener('click', async () => {
       })
     });
     if(!r.ok){
-      console.error(await r.text());
-      $('ch-aviso').textContent = 'No se pudo enviar el mensaje. Probá de nuevo.';
+      const t = await r.text(); console.error(t);
+      $('ch-aviso').textContent = limiteDe(t) || 'No se pudo enviar el mensaje. Probá de nuevo.';
       $('ch-aviso').className = 'aviso-chat visible';
       return;
     }
@@ -4020,7 +4039,7 @@ $('cr-guardar').addEventListener('click', async () => {
     });
     await cargarPerfilProv();
     abrirFicha(sesion.user.id, true);
-  }catch(e){ console.error(e); avisar('cr-aviso','No se pudo guardar. Probá de nuevo.','mal'); }
+  }catch(e){ console.error(e); avisar('cr-aviso', limiteDe(e.message) || 'No se pudo guardar. Probá de nuevo.','mal'); }
   finally{ b.disabled=false; b.classList.remove('cargando'); $('cr-txt').textContent='Agregar a mi perfil'; }
 });
 
@@ -4076,7 +4095,14 @@ async function subirFoto(archivo){
     headers: {'apikey':SUPABASE_ANON, 'Authorization':'Bearer '+sesion.access_token, 'Content-Type':'image/jpeg'},
     body: chico
   });
-  if(!r.ok) throw new Error(await r.text());
+  if(!r.ok){
+    const t = await r.text();
+    /* La carpeta siempre es la propia, así que un rechazo de la política solo
+       puede ser el tope de fotos por usuario (ver supabase/migrations). */
+    if(t.includes('row-level security'))
+      throw new Error(JSON.stringify({message:'LIMITE: Llegaste al máximo de fotos que se pueden subir por ahora. Si necesitás más, escribinos a trattoapp1@gmail.com.'}));
+    throw new Error(t);
+  }
   return SUPABASE_URL + '/storage/v1/object/public/publicaciones/' + nombre;
 }
 
@@ -4105,7 +4131,12 @@ $('pb-archivo').addEventListener('change', async e => {
   for(const archivo of elegidas){
     if(!archivo.type.startsWith('image/')) continue;
     try{ fotosPub.push(await subirFoto(archivo)); pintarPrevias(); }
-    catch(err){ console.error(err); $('e-pb-fotos').classList.add('visible'); }
+    catch(err){
+      console.error(err);
+      const lim = limiteDe(err.message);
+      if(lim){ avisar('pb-aviso', lim, 'mal'); break; }
+      $('e-pb-fotos').classList.add('visible');
+    }
   }
   b.disabled = false; b.querySelector('b').textContent = 'Agregar fotos';
 });
@@ -4144,7 +4175,7 @@ $('pb-guardar').addEventListener('click', async () => {
     });
     await cargarPerfilProv();
     abrirFicha(sesion.user.id, true);
-  }catch(e){ console.error(e); avisar('pb-aviso','No se pudo publicar. Probá de nuevo.','mal'); }
+  }catch(e){ console.error(e); avisar('pb-aviso', limiteDe(e.message) || 'No se pudo publicar. Probá de nuevo.','mal'); }
   finally{ b.disabled=false; b.classList.remove('cargando'); $('pb-txt').textContent='Publicar'; }
 });
 
@@ -4434,8 +4465,12 @@ async function cargarPanel(){
 
   let visitas = 0, leads = 0, presus = 0, cerrados = 0, monto = 0;
   try{
-    const v = await api('visitas_perfil?perfil_user_id=eq.'+sesion.user.id+'&select=id');
-    visitas = v.length;
+    /* Solo el número: bajar todas las filas era lento y además se cortaba en
+       1000 (el tope de filas por respuesta de Supabase). */
+    const r = await fetch(SUPABASE_URL + '/rest/v1/visitas_perfil?perfil_user_id=eq.'+sesion.user.id+'&select=id',
+      {method:'HEAD', headers:cab({'Prefer':'count=exact'})});
+    if(!r.ok) throw new Error(r.status);
+    visitas = Number((r.headers.get('content-range') || '').split('/')[1]) || 0;
   }catch(e){}
   try{
     const ids = misPerfiles.map(p => p.id);
@@ -4565,7 +4600,7 @@ $('lista-abiertos').addEventListener('click', async e => {
       console.error(crudo);
       b.textContent = crudo.includes('cupo completo')
         ? 'Ya se completó'
-        : 'No se pudo. Probá de nuevo.';
+        : (limiteDe(crudo) || 'No se pudo. Probá de nuevo.');
       setTimeout(cargarPedidosAbiertos, 1600);
       return;
     }
