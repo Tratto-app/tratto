@@ -53,13 +53,47 @@ jobs:
           sudo apt-get update -qq
           sudo apt-get install -y -qq postgresql-client-17 age
 
-      - name: Volcar, verificar y cifrar
+      # Los servidores de GitHub no tienen IPv6 y la conexión directa de
+      # Supabase (db.<proyecto>.supabase.co) es solo IPv6. Si el secret trae esa
+      # dirección, se arma la del pooler (IPv4) con el mismo usuario y
+      # contraseña, y se usa la primera que conecte.
+      - name: Elegir la conexión
         if: steps.config.outputs.listo == 'si'
         env:
           DB_URL: ${{ secrets.SUPABASE_DB_URL }}
+          REGION: sa-east-1
+        run: |
+          set -euo pipefail
+          PG=/usr/lib/postgresql/17/bin
+          candidatas=$(python3 - <<'PY'
+          import os, re
+          u = os.environ['DB_URL'].strip()
+          m = re.match(r'^postgres(?:ql)?://([^:@/]+):(.*)@db\.([a-z0-9]+)\.supabase\.co(?::\d+)?/(\w+)', u)
+          if not m:
+              print(u)
+          else:
+              usuario, clave, ref, base = m.groups()
+              for n in (0, 1):
+                  print(f"postgresql://{usuario}.{ref}:{clave}@aws-{n}-{os.environ['REGION']}.pooler.supabase.com:5432/{base}")
+          PY
+          )
+          while IFS= read -r c; do
+            echo "::add-mask::$c"
+            if $PG/psql "$c" -tAc 'select 1' >/dev/null 2>err.txt; then
+              echo "CONEXION=$c" >> "$GITHUB_ENV"; rm -f err.txt; echo "Conexión lista"; exit 0
+            fi
+            echo "No conectó: $(sed -E 's#postgres(ql)?://[^ ]*#<oculto>#g' err.txt | head -1)"
+          done <<< "$candidatas"
+          rm -f err.txt
+          echo "::error::No se pudo conectar a la base con SUPABASE_DB_URL"; exit 1
+
+      - name: Volcar, verificar y cifrar
+        if: steps.config.outputs.listo == 'si'
+        env:
           AGE_RECIPIENT: ${{ secrets.BACKUP_AGE_RECIPIENT || env.AGE_PUBLICA }}
         run: |
           set -euo pipefail
+          DB_URL="$CONEXION"
           PG=/usr/lib/postgresql/17/bin
           umask 077
           mkdir -p salida

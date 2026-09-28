@@ -22,8 +22,10 @@ perder hasta un día de datos), RTO 4 h (volver a funcionar en 4 horas).
    Su clave pública ya está en el workflow (`AGE_PUBLICA`).
    Si se pierde: `age-keygen -o tratto-backup.key` genera otra y se reemplaza
    `AGE_PUBLICA` (los backups viejos quedan ilegibles).
-2. Supabase → botón **Connect** → **Session pooler** (URI). Reemplazar
-   `[YOUR-PASSWORD]` por la contraseña de la base.
+2. Supabase → botón **Connect** → la cadena de conexión (URI), directa o
+   **Session pooler**. Reemplazar `[YOUR-PASSWORD]` por la contraseña de la
+   base. Si es la directa (`db.<proyecto>.supabase.co`, solo IPv6), el
+   workflow arma sola la del pooler, porque GitHub no tiene IPv6.
 3. GitHub → el repo → Settings → Secrets and variables → Actions → Secrets →
    New repository secret: `SUPABASE_DB_URL` = la URI del paso 2.
 4. Actions → "Backup de la base" → *Run workflow*. Tiene que terminar en verde
