@@ -14,20 +14,21 @@
 **Objetivos (propuestos, a confirmar por el dueño):** RPO 24 h (se puede
 perder hasta un día de datos), RTO 4 h (volver a funcionar en 4 horas).
 
-## Activar el backup diario (una sola vez, ~15 min)
+## Activar el backup diario (una sola vez, ~5 min)
 
-1. Instalar `age` en tu computadora (https://age-encryption.org) y crear el par:
-   `age-keygen -o tratto-backup.key` → muestra la clave pública (`age1...`).
-   **Guardá `tratto-backup.key` fuera de GitHub** (gestor de contraseñas + una
-   copia offline). Sin esa clave los backups no se pueden abrir.
-2. Supabase → Project Settings → Database → Connection string → **Session
-   pooler** (URI). Reemplazar `[YOUR-PASSWORD]` por la contraseña de la base.
-3. GitHub → el repo → Settings → Secrets and variables → Actions:
-   - Secret `SUPABASE_DB_URL` = la URI del paso 2
-   - Secret `BACKUP_AGE_RECIPIENT` = la clave pública `age1...`
-   - Variable `BACKUP_ACTIVO` = `si`
+1. La llave para abrir los backups es el archivo `tratto-backup.key` (se le
+   entregó al dueño el 2026-09-28). **Se guarda fuera de GitHub** (gestor de
+   contraseñas + una copia offline). Sin ella los backups no se pueden abrir.
+   Su clave pública ya está en el workflow (`AGE_PUBLICA`).
+   Si se pierde: `age-keygen -o tratto-backup.key` genera otra y se reemplaza
+   `AGE_PUBLICA` (los backups viejos quedan ilegibles).
+2. Supabase → botón **Connect** → **Session pooler** (URI). Reemplazar
+   `[YOUR-PASSWORD]` por la contraseña de la base.
+3. GitHub → el repo → Settings → Secrets and variables → Actions → Secrets →
+   New repository secret: `SUPABASE_DB_URL` = la URI del paso 2.
 4. Actions → "Backup de la base" → *Run workflow*. Tiene que terminar en verde
-   y dejar un artefacto `backup-base`.
+   y dejar un artefacto `backup-base`. Sin el secret, termina con el aviso
+   "Backup apagado".
 
 El workflow verifica cada backup (`pg_restore --list` y que tenga la tabla
 `solicitudes`) antes de cifrarlo. Guarda 30 días.
