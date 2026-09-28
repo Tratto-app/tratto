@@ -2440,7 +2440,11 @@ function ir(p, efecto){
     p = modo === 'proveedor' ? 'panel' : 'inicio';
     efecto = 'entra';
   }
-  if(DEL_ROL[p] && DEL_ROL[p] !== modo){
+  /* La ficha es de proveedor solo cuando es la propia (con los botones para
+     editarla). La de otro es de solo lectura y la abre el cliente desde su
+     pedido o desde el chat: sin esta excepción volvía al Inicio. */
+  const fichaAjena = p === 'ficha' && !fichaPropia;
+  if(DEL_ROL[p] && DEL_ROL[p] !== modo && !fichaAjena){
     p = modo === 'proveedor' ? 'panel' : 'inicio';
     efecto = 'entra';
   }
