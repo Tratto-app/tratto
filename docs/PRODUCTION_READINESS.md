@@ -39,7 +39,7 @@ Detalle técnico en los otros documentos de esta carpeta.
 |---|---|---|---|
 | 1 | ~~Brevo → Security → Authorized IPs~~ **Hecho** (IPs de n8n autorizadas, verificado 200) | Dueño | Los mails que manda el matching fallan con 401 desde el 25/09 (verificado en las ejecuciones de n8n). Las conexiones se crean, pero nadie recibe el mail |
 | 2 | ~~Mergear el PR con el frontend nuevo~~ **Hecho** (PR #12) | Dueño | Sin eso, la app muestra "error 400" genérico cuando alguien llega a un tope |
-| 3 | ~~Rotar las credenciales del informe privado~~ **Hecho** 2026-09-28: Supabase, Mercado Pago y OpenAI (las claves viejas dan 401) | Dueño | Ver SECURITY.md → "Si se filtra una credencial" |
+| 3 | Rotar las credenciales del informe privado: Supabase y OpenAI **hechas** (las claves viejas dan 401). **Mercado Pago pendiente**: el 2026-09-28 22:38 UTC el client secret que está en n8n daba 400 (inválido) y el anterior volvía a ser válido; hay que renovarlo de nuevo en Mercado Pago y cargarlo | Dueño | Ver SECURITY.md → "Si se filtra una credencial" |
 | 4 | ~~Activar el backup diario~~ **Hecho** 2026-09-28 (primera corrida OK, 154 kB). Falta una prueba de restauración en staging con la llave del dueño | Dueño | DISASTER_RECOVERY.md |
 | 5 | Supabase Pro antes de cualquier campaña | Dueño | Capacidad medida (LOAD_TESTING.md) + backups + protección de contraseñas filtradas |
 | 6 | Aprobar la limpieza automática de fotos | Dueño | La función está lista; la primera corrida borraría 6 fotos (756 kB) de cuentas que ya no existen. No se activó sin confirmación porque es irreversible |
