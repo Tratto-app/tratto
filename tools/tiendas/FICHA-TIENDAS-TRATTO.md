@@ -74,6 +74,7 @@ propios fines: los proveedores técnicos (Supabase, Vercel, Brevo, OpenAI,
 Mercado Pago) procesan en nombre de Tratto, y Google no considera eso "compartir".
 - **¿Cifrado en tránsito?** Sí.
 - **¿Se pueden pedir que se borren?** Sí, desde la app (Cuenta → Borrar mi cuenta) o por mail.
+- **Link para pedir que se borre la cuenta** (Google lo pide aparte, en "Eliminación de datos"): `https://www.trattoapp.com.ar/privacidad.html#derechos`
 
 | Tipo de dato | ¿Se recopila? | Obligatorio | Para qué |
 |---|---|---|---|
