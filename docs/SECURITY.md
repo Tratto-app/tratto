@@ -31,6 +31,7 @@ procedimientos; los hallazgos de auditoría pendientes se manejan en privado
 | Esquema `privado` no expuesto por la API | funciones internas y tablas de control |
 | Reportes de contenido: cada uno carga los suyos (a su nombre), nadie los lee desde la app, 10 por día; cada reporte avisa por mail al equipo | tabla `reportes` (migración `reportes`) |
 | Cuentas demo aisladas de las reales | `docs/DEMO_ACCOUNTS.md` |
+| Bloquear desde el chat: entre bloqueados no hay mensajes, ni aceptar/pagar presupuestos desde la app, ni conexiones nuevas, ni pedidos en el feed. A quien bloquean ve "conversación cerrada". La tabla no se toca desde la app, solo por funciones | tabla `bloqueos`, `bloquear_conversacion()`, `desbloquear_conversacion()`, `chats_bloqueados()` (migración `bloqueos`) |
 
 ## Controles fuera de la base
 

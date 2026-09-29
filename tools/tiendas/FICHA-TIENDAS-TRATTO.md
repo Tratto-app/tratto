@@ -138,7 +138,7 @@ Tratto conecta a personas que necesitan un arreglo en su casa con proveedores de
 Cuenta de prueba (cliente con un pedido y dos presupuestos): [la completamos antes de enviar]
 
 Funciones nativas: notificaciones push (APNs) cuando llega un presupuesto, lo aceptan o se termina un trabajo; cámara y fotos para cargar la foto del pedido.
-Moderación: filtro de palabras en el chat, botón "Reportar" en cada perfil y publicación, y borrado de cuenta desde Cuenta → Borrar mi cuenta.
+Moderación: filtro de palabras en el chat, botón "Reportar" en cada perfil, publicación y conversación (en el chat: "Ver ficha" → Reportar), bloqueo de usuarios desde el chat ("Ver ficha" → Bloquear), avisos al equipo por mail en cada reporte y borrado de cuenta desde Cuenta → Borrar mi cuenta.
 ```
 
 ### Capturas

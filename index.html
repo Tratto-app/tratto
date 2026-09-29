@@ -480,6 +480,25 @@
   .aviso-chat{padding:8px 16px;font-size:12.5px;background:var(--alerta-luz);
     color:#7C2A12;text-align:center;display:none}
   .aviso-chat.visible{display:block}
+  /* Reportar y bloquear viven dentro de la ficha del chat ("Ver ficha"):
+     discretos, como el "Reportar" de los perfiles, para no competir con la
+     conversación, pero siempre a dos toques. */
+  .cf-acciones{display:flex;gap:4px;margin-top:12px;padding-top:9px;border-top:1px solid var(--noche-3)}
+  .cf-accion{background:none;border:none;font:inherit;font-size:12px;color:var(--gris-2);
+    cursor:pointer;padding:6px 12px 6px 0;display:inline-flex;align-items:center;gap:6px}
+  .cf-accion svg{width:14px;height:14px}
+  .cf-accion:active{color:var(--alerta-luz)}
+  /* Conversación cerrada por un bloqueo: ocupa el lugar de la barra de envío,
+     así queda claro por qué no se puede escribir. */
+  .chat-cerrado{flex:none;background:var(--claro);border-top:1px solid var(--linea);
+    padding:14px 16px calc(14px + var(--sb));text-align:center;font-size:13px;
+    color:var(--gris);line-height:1.5}
+  #p-chat.cerrada .hilo-msg .presu-acciones{display:none}
+  .chat-cerrado b{display:block;font-family:'IBM Plex Sans Condensed',sans-serif;
+    font-size:15px;color:var(--tinta);margin-bottom:3px}
+  .chat-cerrado button{margin-top:10px;background:none;border:1px solid var(--linea-fuerte);
+    border-radius:99px;font:inherit;font-size:12.5px;font-weight:600;color:var(--verde);
+    padding:7px 16px;cursor:pointer}
 
   /* ═══════════ PRESUPUESTO EN EL CHAT ═══════════ */
   /* El presupuesto sale de la conversación: ocupa el ancho completo y no se
@@ -1164,6 +1183,21 @@
     <button class="btn lleno" id="rep-enviar" type="button">
       <span class="rueda"></span><span id="rep-txt">Enviar reporte</span></button>
     <button class="btn vacio-b" id="rep-cerrar" type="button">Cancelar</button>
+  </div>
+</div>
+
+<!-- ═══════════ BLOQUEAR ═══════════ -->
+<div class="telon" id="telon-bloquear">
+  <div class="hoja">
+    <div class="hoja-tit">¿Bloquear a <span id="bl-nombre">esta persona</span>?</div>
+    <div class="hoja-txt">No van a poder mandarse más mensajes y no te va a volver a aparecer en Tratto.
+      No le avisamos que la bloqueaste. Si cambiás de idea, podés desbloquearla desde esta misma conversación.</div>
+    <div class="hoja-txt">Si además te faltó el respeto o hizo algo fuera de lugar, reportalo desde "Ver ficha" para que lo revisemos.</div>
+    <div class="presu-acciones">
+      <button class="btn vacio-b" id="bl-cancelar" type="button" style="flex:1">Cancelar</button>
+      <button class="btn lleno" id="bl-confirmar" type="button" style="flex:1">
+        <span class="rueda"></span><span id="bl-txt">Bloquear</span></button>
+    </div>
   </div>
 </div>
 
@@ -1890,6 +1924,14 @@
         <div class="cf-detalle cerrada" id="ch-detalle">
           <div id="ch-desc">—</div>
           <div class="cf-datos" id="ch-datos"></div>
+          <div class="cf-acciones">
+            <button class="cf-accion" id="ch-reportar" type="button">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M5 21V4"/><path d="M5 4.5h11l-2 3.5 2 3.5H5"/></svg>
+              Reportar</button>
+            <button class="cf-accion" id="ch-bloquear" type="button">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8.5"/><path d="M6 6l12 12"/></svg>
+              Bloquear</button>
+          </div>
         </div>
       </div>
       <div class="aviso-chat" id="ch-aviso"></div>
@@ -1930,6 +1972,11 @@
         <button class="enviar-msg" id="ch-enviar" type="button" aria-label="Enviar">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12h15M13 6l6 6-6 6"/></svg>
         </button>
+      </div>
+      <div class="chat-cerrado oculto" id="ch-cerrado">
+        <b id="ch-cerrado-tit">Esta conversación está cerrada</b>
+        <span id="ch-cerrado-txt">No se pueden mandar más mensajes.</span>
+        <div><button class="oculto" id="ch-desbloquear" type="button">Desbloquear</button></div>
       </div>
     </section>
 
@@ -3145,6 +3192,7 @@ async function cargarConexiones(){
 
   conexiones = {};
   [...comoCliente, ...comoProv].forEach(m => conexiones[m.id] = m);
+  if(comoCliente.length || comoProv.length) await cargarChatsCerrados();
 
   $('lista-cliente').innerHTML = comoCliente.length
     ? comoCliente.map(m => filaConexion(m,
@@ -3180,7 +3228,8 @@ function filaConexion(m, titulo, meta){
      app, "interesado" lo pidió el proveedor por su cuenta, y "aceptado" ya es
      una conversación abierta. Decirle "te lo recomendamos" a alguien que se
      ofreció solo sería falso. */
-  const sello = m.estado === 'aceptado'   ? ['verde','Conectados']
+  const sello = (m.id in chatsCerrados)   ? ['gris','Cerrada']
+              : m.estado === 'aceptado'   ? ['verde','Conectados']
               : m.estado === 'interesado' ? ['oro','Se ofreció']
               :                             ['oro','Te lo recomendamos'];
   return '<button class="item" data-match="'+m.id+'" type="button"><div class="item-top">' +
@@ -3247,6 +3296,9 @@ async function abrirChat(matchId, desde){
   ir('chat');
   $('tb-tit').textContent = soyCliente ? m.proveedores.nombre : m.solicitudes.nombre_cliente;
 
+  pintarCierreChat();
+  await cargarChatsCerrados();
+  pintarCierreChat();
   await traerMensajes(true);
   escuchar(matchId);
 }
@@ -3418,6 +3470,86 @@ function cerrarEscucha(){
   if(sondeo){ clearInterval(sondeo); sondeo = null; }
 }
 function cerrarChat(){ cerrarEscucha(); chatActual = null; }
+
+/* ══════════════════ BLOQUEAR Y REPORTAR DESDE EL CHAT ══════════════════ */
+/* Qué conversaciones mías están cerradas por un bloqueo, y si el bloqueo lo
+   hice yo. La base resuelve quién es "el otro" a partir de la conversación:
+   la app nunca necesita el id de la otra persona. */
+let chatsCerrados = {};
+async function cargarChatsCerrados(){
+  try{
+    const r = await fetch(SUPABASE_URL + '/rest/v1/rpc/chats_bloqueados', {method:'POST', headers:cab(), body:'{}'});
+    if(!r.ok) throw new Error(r.status + ': ' + await r.text());
+    const filas = await r.json();
+    chatsCerrados = {};
+    filas.forEach(f => chatsCerrados[f.match_id] = f.bloqueaste);
+  }catch(e){ console.error(e); }
+}
+async function rpcChat(funcion){
+  const r = await fetch(SUPABASE_URL + '/rest/v1/rpc/' + funcion, {
+    method:'POST', headers:cab(), body: JSON.stringify({mid: chatActual.id})});
+  if(!r.ok) throw new Error(r.status + ': ' + await r.text());
+}
+/* A quien bloquearon no se le dice que lo bloquearon: ve la conversación
+   cerrada, como cualquier chat que ya no sigue. */
+function pintarCierreChat(){
+  const cerrado = !!chatActual && (chatActual.id in chatsCerrados);
+  const loHiceYo = cerrado && chatsCerrados[chatActual.id];
+  $('p-chat').classList.toggle('cerrada', cerrado);   // oculta aceptar / pagar en los presupuestos
+  document.querySelector('#p-chat .barra-envio').classList.toggle('oculto', cerrado);
+  $('ch-cerrado').classList.toggle('oculto', !cerrado);
+  $('ch-bloquear').classList.toggle('oculto', cerrado);
+  if(!cerrado) return;
+  $('ch-presu-abrir').classList.add('oculto');
+  $('ch-presu-panel').classList.add('oculto');
+  $('ch-cerrado-tit').textContent = loHiceYo ? 'Bloqueaste a esta persona' : 'Esta conversación está cerrada';
+  $('ch-cerrado-txt').textContent = loHiceYo
+    ? 'No se pueden mandar mensajes y no te va a volver a aparecer.'
+    : 'No se pueden mandar más mensajes.';
+  $('ch-desbloquear').classList.toggle('oculto', !loHiceYo);
+}
+
+$('ch-reportar').addEventListener('click', () => {
+  if(chatActual) abrirReporte({tipo:'usuario', referencia: chatActual.id});
+});
+$('ch-bloquear').addEventListener('click', () => {
+  if(!chatActual) return;
+  $('bl-nombre').textContent = $('ch-nom').textContent || 'esta persona';
+  $('bl-txt').textContent = 'Bloquear';
+  $('telon-bloquear').classList.add('abierto');
+});
+function cerrarHojaBloqueo(){ $('telon-bloquear').classList.remove('abierto'); }
+$('bl-cancelar').addEventListener('click', cerrarHojaBloqueo);
+$('telon-bloquear').addEventListener('click', e => { if(e.target.id === 'telon-bloquear') cerrarHojaBloqueo(); });
+$('bl-confirmar').addEventListener('click', async () => {
+  if(!chatActual) return;
+  const b = $('bl-confirmar'); b.disabled = true; b.classList.add('cargando');
+  $('bl-txt').textContent = 'Bloqueando…';
+  try{
+    await rpcChat('bloquear_conversacion');
+    await cargarChatsCerrados();
+    cerrarHojaBloqueo();
+    $('ch-detalle').classList.add('cerrada');
+    $('ch-abrir').textContent = 'Ver ficha';
+    pintarCierreChat();
+  }catch(e){
+    console.error(e);
+    $('bl-txt').textContent = 'No se pudo. Probá de nuevo';
+  }finally{ b.disabled = false; b.classList.remove('cargando'); }
+});
+$('ch-desbloquear').addEventListener('click', async () => {
+  if(!chatActual) return;
+  const b = $('ch-desbloquear'); b.disabled = true;
+  try{
+    await rpcChat('desbloquear_conversacion');
+    await cargarChatsCerrados();
+    pintarCierreChat();
+  }catch(e){
+    console.error(e);
+    $('ch-aviso').textContent = 'No se pudo desbloquear. Probá de nuevo.';
+    $('ch-aviso').className = 'aviso-chat visible';
+  }finally{ b.disabled = false; }
+});
 
 $('ch-abrir').addEventListener('click', () => {
   const d = $('ch-detalle'), cerrada = d.classList.contains('cerrada');
@@ -3710,6 +3842,8 @@ $('ch-enviar').addEventListener('click', async () => {
       const t = await r.text(); console.error(t);
       $('ch-aviso').textContent = limiteDe(t) || 'No se pudo enviar el mensaje. Probá de nuevo.';
       $('ch-aviso').className = 'aviso-chat visible';
+      /* La otra persona pudo haber cerrado la conversación mientras escribías. */
+      if(t.includes('conversación está cerrada')){ await cargarChatsCerrados(); pintarCierreChat(); }
       return;
     }
     const [msg] = await r.json();
