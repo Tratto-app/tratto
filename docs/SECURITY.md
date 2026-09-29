@@ -29,6 +29,8 @@ procedimientos; los hallazgos de auditoría pendientes se manejan en privado
 | Asistente con IA: 40 preguntas/día con sesión, 15/día por IP sin sesión, 500/día entre todos los anónimos | `public.asistente_permitido` (la IP se guarda con hash y sal) |
 | Borrar la cuenta borra o anonimiza todos los datos personales | `borrar_mi_cuenta()`; las fotos las borra `limpieza-fotos` |
 | Esquema `privado` no expuesto por la API | funciones internas y tablas de control |
+| Reportes de contenido: cada uno carga los suyos (a su nombre), nadie los lee desde la app, 10 por día; cada reporte avisa por mail al equipo | tabla `reportes` (migración `reportes`) |
+| Cuentas demo aisladas de las reales | `docs/DEMO_ACCOUNTS.md` |
 
 ## Controles fuera de la base
 

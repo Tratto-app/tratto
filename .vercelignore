@@ -12,3 +12,9 @@ lapeluquerie
 
 # Configuración de la compilación en la nube de la app de iPhone
 codemagic.yaml
+
+# Documentación, migraciones, esquema de la base y CI: están en el repo para
+# quien lo mantiene; no tienen por qué servirse en el dominio de la app
+docs
+supabase
+.github
