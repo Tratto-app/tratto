@@ -46,7 +46,7 @@ Android**. Así las dos terminan más o menos juntas.
 ## Paso 3 · Completar "Configurar tu app" (el panel te marca cada tarea)
 Todas las respuestas están en la ficha, sección "1. Google Play":
 1. 🟢 **Política de privacidad:** `https://www.trattoapp.com.ar/privacidad.html`
-2. 🔵 **Acceso a la app:** te creo una **cuenta de prueba para los revisores** con un pedido y presupuestos, y te paso el mail y la contraseña para pegar ahí. **Avisame cuando llegues a este punto.**
+2. ✅ **Acceso a la app:** usá la cuenta demo de cliente (`trattoapp1+demo-cliente@gmail.com`) y la contraseña que te pasé. Detalle en `docs/DEMO_ACCOUNTS.md`.
 3. 🟢 **Anuncios:** No.
 4. 🟢 **Clasificación de contenido:** el cuestionario, con las respuestas de la ficha.
 5. 🟢 **Público objetivo:** 18 años o más.
@@ -154,8 +154,8 @@ En App Store Connect → **Usuarios y acceso → Integraciones → App Store Con
 
 ## Paso 7 · Mandar a revisión (⏳ 1 a 3 días)
 Antes de este paso:
-- 🔵 **Bloquear usuarios** (Apple lo exige en apps con chat): te lo agrego si me decís que sí.
-- 🔵 **Cuenta de prueba para el revisor**: la misma que para Google.
+- ✅ **Bloquear usuarios y reportar desde el chat** (Apple lo exige en apps con chat): hecho el 29/09.
+- ✅ **Cuenta de prueba para el revisor**: las cuentas demo (ver `docs/DEMO_ACCOUNTS.md`), las mismas que para Google.
 
 En App Store Connect → la app → **versión 1.0**:
 1. 🟢 Textos, palabras clave, URLs y capturas `ios-1.png` a `ios-5.png` (sección "2. App Store" de la ficha).
