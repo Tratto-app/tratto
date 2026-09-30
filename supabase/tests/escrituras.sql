@@ -33,7 +33,7 @@ begin
     sal := sal || '3.visita propia (espera permitida): PERMITIDA' || E'\n';
   exception when others then sal := sal || '3.visita propia (espera permitida): RECHAZADA ' || sqlerrm || E'\n'; end;
   begin
-    insert into public.solicitudes (user_id, servicio_necesitado, estado) values (otro, 'Plomería', 'pendiente');
+    insert into public.solicitudes (user_id, servicio_necesitado, estado) values (otro, 'Plomería y destapaciones', 'pendiente');
     sal := sal || '4.pedido a nombre de otro (espera rechazo): PERMITIDO' || E'\n';
   exception when others then sal := sal || '4.pedido a nombre de otro (espera rechazo): RECHAZADO' || E'\n'; end;
   begin
