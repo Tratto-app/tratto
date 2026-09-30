@@ -21,7 +21,7 @@ process.env.GOOGLE_CLIENT_SECRET = 'secreto-falso';
 process.env.GOOGLE_REFRESH_TOKEN = 'refresh-falso';
 process.env.SHEETS_HABILITADO = 'true';
 
-const { crearTurno, cancelarTurno, crearHold, confirmarHold } = await import('../src/booking/servicio.js');
+const { crearTurno, cancelarTurno, crearHold, confirmarHold, turnosDeCliente } = await import('../src/booking/servicio.js');
 const { procesarMensaje } = await import('../src/conversation/orquestador.js');
 const { sincronizarPendientes, resincronizarTodo, reiniciarCacheDeEstructura } = await import('../src/google/sync.js');
 const { outboxRepo } = await import('../src/database/repositories/outbox.js');
@@ -354,5 +354,41 @@ describe('el cliente con descuento se ve distinto en la planilla', () => {
     const pintadas = google.formatos.filter((f) => f.hoja === 'Agenda semanal');
     assert.ok(pintadas.length >= 1, 'la celda del cliente premiado tiene que quedar pintada');
     assert.ok(pintadas[0]!.color.green > pintadas[0]!.color.red, 'el color es verdoso, distinto del resto');
+  });
+});
+
+describe('limpieza de turnos de prueba', () => {
+  test('borra lo de la semana indicada en la base y en la planilla, y deja lo que viene', async () => {
+    const { limpiarPruebas } = await import('../src/mantenimiento/limpiar-pruebas.js');
+    const { resumenesRepo } = await import('../src/database/repositories/resumenes.js');
+    const { calcularResumenSemanal } = await import('../src/reportes/semanal.js');
+    const prueba = await crearTurno(ctx, {
+      telefono: TELEFONO_B, nombre: 'Prueba', servicioId: 'corte', fecha: '2026-09-15', hora: '11:00', origen: 'panel', forzar: true,
+    });
+    const real = await crearTurno(ctx, {
+      telefono: TELEFONO_A, nombre: 'Ana', servicioId: 'corte', fecha: SABADO, hora: '17:00', origen: 'whatsapp',
+    });
+    await sincronizarPendientes(ctx);
+    const resumen = await calcularResumenSemanal(ctx, { desde: '2026-09-14', incluirFuturos: true });
+    await resumenesRepo.guardar(ctx.db, resumen, new Date().toISOString());
+    google.hojas.set('Balance semanal', [['Semana'], ['2026-09-14 al 2026-09-20', '1'], ['2026-09-21 al 2026-09-27', '3']]);
+
+    const r = await limpiarPruebas(ctx, '2026-09-16');
+    assert.equal(r.turnos, 1);
+    assert.equal(r.semanas, 1);
+    assert.equal(r.clientes, 1, 'el cliente que solo tenía el turno de prueba');
+    assert.equal(r.filasTurnos, 1);
+    assert.equal(r.filasBalance, 1);
+
+    assert.equal(filaDe(prueba.id), undefined);
+    assert.ok(filaDe(real.id), 'el turno real sigue en la planilla');
+    assert.deepEqual(google.filas('Balance semanal').map((f) => f[0]), ['Semana', '2026-09-21 al 2026-09-27']);
+    const clientes = google.filas('Clientes').flat().join(' | ');
+    assert.doesNotMatch(clientes, /Prueba/);
+    assert.match(clientes, /Ana/);
+    assert.equal((await turnosDeCliente(ctx, TELEFONO_A)).length, 1);
+
+    const otraVez = await limpiarPruebas(ctx, '2026-09-16');
+    assert.deepEqual(otraVez, { turnos: 0, semanas: 0, clientes: 0, filasTurnos: 0, filasBalance: 0 }, 'correrla de nuevo no hace nada');
   });
 });

@@ -52,6 +52,14 @@ async function arrancar(): Promise<void> {
   // resultado en el log (acceso del token al número y suscripción de la cuenta).
   void diagnosticarWhatsApp().catch((e) => log.error({ err: String(e) }, 'diagnóstico de WhatsApp falló'));
 
+  // Limpieza de una sola vez de los turnos de prueba (se activa con la
+  // variable LIMPIAR_PRUEBAS_HASTA y se saca después de usarla).
+  const limpiarHasta = process.env.LIMPIAR_PRUEBAS_HASTA?.trim();
+  if (limpiarHasta) {
+    const { limpiarPruebas } = await import('./mantenimiento/limpiar-pruebas.js');
+    void limpiarPruebas(ctx, limpiarHasta).catch((e) => log.error({ err: e instanceof Error ? e.message : String(e) }, 'la limpieza de pruebas falló'));
+  }
+
   const apagar = async (senal: string) => {
     log.info({ senal }, 'apagando');
     for (const w of workers) w.detener();
