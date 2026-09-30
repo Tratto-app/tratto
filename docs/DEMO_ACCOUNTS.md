@@ -15,7 +15,7 @@ proyecto, y en la base solo se guarda su hash (`privado.config`, clave
 
 ## Qué hay cargado
 
-Rubro "Techos y humedades", zona GBA Oeste:
+Rubro "Techos e impermeabilización", zona GBA Oeste:
 
 - **Pedido con dos presupuestos** ($ 68.000 y $ 54.000) y chat con cada
   proveedor: para mostrar la comparación y la conversación.
