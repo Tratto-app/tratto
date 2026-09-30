@@ -107,7 +107,7 @@ Presupuestos de tu zona
 ```
 **Texto promocional** (máx. 170, se puede cambiar sin revisión):
 ```
-Sacale una foto a lo que se rompió, recibí presupuestos de proveedores de tu zona y compará qué incluye cada uno. Gratis para el que pide.
+Sacale una foto a lo que se rompió o contá lo que necesitás, recibí presupuestos de proveedores de tu zona y compará qué incluye cada uno. Gratis para el que pide.
 ```
 **Descripción:** la misma que en Google Play.
 

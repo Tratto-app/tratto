@@ -726,7 +726,7 @@
 
   /* ═══════════ TASADOR ═══════════ */
   .tasar{background:var(--noche);color:var(--claro);border-radius:var(--r);padding:18px;
-    margin-bottom:26px;position:relative;overflow:hidden;cursor:pointer;border:none;
+    margin-bottom:26px;position:relative;overflow:hidden;border:none;
     width:100%;text-align:left;font:inherit;display:block}
   .tasar::after{content:'';position:absolute;inset:0;pointer-events:none;
     background:radial-gradient(120% 100% at 100% 0%, rgba(43,126,98,.30), transparent 60%)}
@@ -742,7 +742,20 @@
   .tasar-tit{display:block;font-family:'IBM Plex Sans Condensed',sans-serif;font-weight:700;
     font-size:17px;line-height:1.2}
   .tasar-txt{display:block;font-size:12.5px;color:var(--gris-2);margin-top:5px;line-height:1.45}
-  .tasar:active{transform:scale(.99)}
+  /* Las dos puertas del tasador: mismo peso visual, cada una dice para qué sirve. */
+  .tasar-modos{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-top:15px}
+  .tasar-modo{background:var(--noche-2);border:1px solid var(--noche-4);border-radius:12px;
+    padding:12px 12px 13px;color:var(--claro);font:inherit;text-align:left;cursor:pointer;
+    display:flex;flex-direction:column;align-items:flex-start;gap:3px;min-width:0}
+  .tasar-modo svg{width:20px;height:20px;color:var(--verde-luz);stroke-width:1.8;margin-bottom:5px}
+  .tasar-modo b{font-family:'IBM Plex Sans Condensed',sans-serif;font-weight:700;font-size:15px;line-height:1.2}
+  .tasar-modo span{font-size:11.5px;color:var(--gris-2);line-height:1.35}
+  .tasar-modo:active{transform:scale(.98)}
+  .tasar-modo.activo{border-color:var(--laton)}
+  .tasar-modo.activo svg{color:var(--laton)}
+  .tasar-texto{margin-top:12px}
+  .tasar-texto textarea{width:100%;min-height:86px;font-size:15px}
+  .tasar-texto .btn{margin-top:9px}
 
   .diag{background:var(--claro);border:1px solid var(--linea-fuerte);border-left:3px solid var(--laton);
     border-radius:var(--r);padding:17px;margin-bottom:22px;box-shadow:var(--sombra)}
@@ -752,6 +765,7 @@
   .diag-precio{font-family:'IBM Plex Sans Condensed',sans-serif;font-weight:700;font-size:24px;
     letter-spacing:-.015em;margin-top:12px}
   .diag-nota{font-size:12.5px;color:var(--gris);margin-top:7px;line-height:1.45}
+  .diag-unidad{font-family:'IBM Plex Sans',sans-serif;font-weight:500;font-size:14px;color:var(--gris);letter-spacing:0}
   .diag-foto{width:100%;border-radius:var(--r-ch);margin-top:13px;display:block;
     max-height:200px;object-fit:cover}
   .diag-baja{border-left-color:var(--gris-3)}
@@ -1669,16 +1683,31 @@
       <h1>¿Qué necesitás?</h1>
       <p class="bajada">Buscamos proveedores de tu rubro, en tu zona y dentro de tu presupuesto.</p>
 
-      <button class="tasar" id="tasar-abrir" type="button" style="margin-top:22px">
-        <span class="tasar-top">
-          <span class="tasar-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7.5h3l1.5-2h7L17 7.5h3a1 1 0 0 1 1 1v9a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1v-9a1 1 0 0 1 1-1z"/><circle cx="12" cy="13" r="3.4"/></svg></span>
-          <span style="min-width:0">
-            <span class="tasar-kicker">Empezá por acá &nbsp;<span class="ia-sello"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v3M12 18v3M3 12h3M18 12h3M6.3 6.3l2.1 2.1M15.6 15.6l2.1 2.1M17.7 6.3l-2.1 2.1M8.4 15.6l-2.1 2.1"/><circle cx="12" cy="12" r="3.2"/></svg>Con IA</span></span>
-            <span class="tasar-tit">Sacale una foto y te damos una idea del precio</span>
-            <span class="tasar-txt">Una IA mira la foto y estima cuánto suele salir ese trabajo en el mercado. No son precios de esta app.</span>
-          </span>
-        </span>
-      </button>
+      <!-- Dos puertas a la misma estimación: la foto sirve para lo que se ve
+           (una pérdida, una mancha, algo roto); para una clase de inglés o un
+           evento no hay nada que fotografiar, así que también se puede contar. -->
+      <div class="tasar" style="margin-top:22px">
+        <span class="tasar-kicker">Empezá por acá &nbsp;<span class="ia-sello"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v3M12 18v3M3 12h3M18 12h3M6.3 6.3l2.1 2.1M15.6 15.6l2.1 2.1M17.7 6.3l-2.1 2.1M8.4 15.6l-2.1 2.1"/><circle cx="12" cy="12" r="3.2"/></svg>Con IA</span></span>
+        <span class="tasar-tit">Contanos qué necesitás y te damos una idea del precio</span>
+        <span class="tasar-txt">Sacale una foto o escribilo con tus palabras. Una IA estima cuánto suele salir en el mercado. No son precios de esta app.</span>
+        <div class="tasar-modos">
+          <button class="tasar-modo" id="tasar-abrir" type="button">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7.5h3l1.5-2h7L17 7.5h3a1 1 0 0 1 1 1v9a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1v-9a1 1 0 0 1 1-1z"/><circle cx="12" cy="13" r="3.4"/></svg>
+            <b>Sacar una foto</b>
+            <span>Para arreglos: una pérdida, una mancha, algo roto</span>
+          </button>
+          <button class="tasar-modo" id="tasar-escribir" type="button">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20h4L19 9l-4-4L4 16v4z"/><path d="M13.5 6.5l4 4"/></svg>
+            <b>Escribirlo</b>
+            <span>Para todo lo demás: clases, eventos, un diseño</span>
+          </button>
+        </div>
+        <div class="tasar-texto oculto" id="tasar-texto-caja">
+          <textarea id="tasar-texto" maxlength="500" placeholder="Ej: Busco profesor de inglés para mi hijo de 12 años, dos clases por semana"></textarea>
+          <button class="btn lleno" id="tasar-enviar" type="button">
+            <span class="rueda"></span><span id="tasar-enviar-txt">Estimar precio</span></button>
+        </div>
+      </div>
       <input type="file" id="tasar-archivo" accept="image/*" capture="environment" class="oculto">
       <div id="tasar-resultado"></div>
 
@@ -2523,7 +2552,7 @@ $('tabs').addEventListener('click', e => {
 });
 $('volver').addEventListener('click', () => ir(volverA, 'entra'));
 $('ir-pedido').addEventListener('click', () => {
-  volverA='inicio'; $('tasar-resultado').innerHTML=''; ir('nuevo-pedido');
+  volverA='inicio'; $('tasar-resultado').innerHTML=''; limpiarTasadorTexto(); ir('nuevo-pedido');
 });
 $('ir-proveedor').addEventListener('click', () => {
   volverA='perfil';
@@ -3025,7 +3054,7 @@ $('s-enviar').addEventListener('click', async () => {
     if(res.status===401){ avisar('s-aviso','Tu sesión venció. Volvé a entrar.','mal'); return; }
     if(!res.ok){ const t = await res.text(); console.error(t); avisar('s-aviso', limiteDe(t) || 'No se pudo enviar (error '+res.status+').','mal'); return; }
     CS.forEach(c => $(c).value=''); $('s-email').value = sesion.user.email;
-    fotoPedido = null; pintarFotoPedido(); $('tasar-resultado').innerHTML = '';
+    fotoPedido = null; pintarFotoPedido(); $('tasar-resultado').innerHTML = ''; limpiarTasadorTexto();
     resumenPedido(); await cargarPedidos(); ir('inicio','entra');
   }catch(e){ console.error(e); avisar('s-aviso','No se pudo conectar. Probá de nuevo.','mal'); }
   finally{ b.disabled=false; b.classList.remove('cargando'); $('s-txt').textContent='Buscar proveedores'; }
@@ -5430,9 +5459,72 @@ function htmlReputacion(lista){
       '</div>').join('') + '</div>';
 }
 
-/* ══════════════════ TASADOR POR FOTO ══════════════════ */
+/* ══════════════════ TASADOR (FOTO O TEXTO) ══════════════════ */
+/* Dos formas de pedir la misma estimación: una foto (lo que se ve: una
+   pérdida, una mancha) o el pedido escrito (una clase, un evento, un diseño,
+   donde no hay nada que fotografiar). El workflow es el mismo; recibe una
+   cosa o la otra. */
 const URL_TASADOR = 'https://marketplace-servicios.app.n8n.cloud/webhook/tasar';
 let tasando = false;
+
+function diagAviso(etiqueta, texto, baja){
+  $('tasar-resultado').innerHTML =
+    '<div class="diag' + (baja ? ' diag-baja' : '') + '"><div class="diag-eti">' + etiqueta + '</div>' +
+    '<div class="diag-que">' + texto + '</div></div>';
+}
+
+/* Mandamos el token de sesión para que el workflow pueda exigir un usuario
+   logueado (sin eso cualquiera podría generar costo de IA sin límite). */
+async function llamarTasador(cuerpo){
+  const r = await fetch(URL_TASADOR, {
+    method:'POST', headers:{'Content-Type':'application/json'},
+    body: JSON.stringify(Object.assign({ zona: $('s-zona').value || null, token: sesion.access_token }, cuerpo))
+  });
+  return r.json();
+}
+
+/* Completa el formulario de abajo con lo que entendió la IA y muestra la
+   estimación. La persona revisa y cambia lo que haga falta. */
+function mostrarTasacion(d, origen){
+  const porFoto = origen.foto;
+  if(d.rubro && [...$('s-servicio').options].some(o => o.textContent === d.rubro))
+    $('s-servicio').value = d.rubro;
+  if(d.descripcion) $('s-desc').value = d.descripcion;
+  else if(origen.texto) $('s-desc').value = origen.texto;
+  if(d.urgencia && [...$('s-urgencia').options].some(o => o.textContent === d.urgencia))
+    $('s-urgencia').value = d.urgencia;
+  /* El campo "Presupuesto" es lo que el cliente piensa gastar en total. Si el
+     precio estimado es por clase, por hora o por evento, ponerlo ahí haría
+     leer al proveedor que el cliente tiene en mente ese monto para todo. */
+  const porTrabajo = !d.unidad || d.unidad === 'por trabajo';
+  if(d.sugerido && porTrabajo) $('s-presupuesto').value = Number(d.sugerido).toLocaleString('es-AR');
+  resumenPedido();
+
+  /* Una clase se cobra por clase y un evento por evento: el rango sin la
+     unidad se lee como el precio de todo. */
+  const unidad = d.unidad && d.unidad !== 'por trabajo' ? ' <span class="diag-unidad">' + esc(d.unidad) + '</span>' : '';
+  const baja = d.confianza === 'baja';
+  $('tasar-resultado').innerHTML =
+    '<div class="diag' + (baja ? ' diag-baja' : '') + '">' +
+    '<div class="diag-eti">' + (baja ? 'No estoy seguro' : (porFoto ? 'Esto vimos' : 'Esto entendimos')) + '</div>' +
+    '<div class="diag-que">' + esc(d.detectado) + '</div>' +
+    (d.precio_min && d.precio_max
+      ? '<div class="diag-precio">' + pesos(d.precio_min) + ' – ' + pesos(d.precio_max) + unidad + '</div>'
+      : '') +
+    (d.aclaracion ? '<div class="diag-nota">' + esc(d.aclaracion) + '</div>' : '') +
+    '<div class="diag-nota">Es una referencia de mercado que estima una inteligencia artificial ' +
+    (porFoto ? 'mirando la foto' : 'leyendo lo que escribiste') +
+    ', <b>no un precio de esta app ni un presupuesto</b>. Puede estar equivocada. ' +
+    'El precio real lo pone cada proveedor.</div>' +
+    '<div class="diag-nota">Completamos el pedido abajo con lo que entendimos: revisalo y cambiá lo que haga falta.' +
+    (porTrabajo ? '' : ' Dejamos el presupuesto vacío porque ese precio es ' + esc(d.unidad) + ': si querés, cargá cuánto pensás gastar en total.') +
+    '</div>' +
+    (porFoto ? '<img class="diag-foto" src="' + esc(porFoto) + '" alt="">' : '') +
+    '</div>';
+  $('tasar-resultado').scrollIntoView({block:'nearest', behavior:'smooth'});
+}
+
+/* ── Con foto ── */
 $('tasar-abrir').addEventListener('click', () => {
   if(tasando) return;
   /* El navegador solo abre el selector de archivos si el toque viene del
@@ -5440,9 +5532,7 @@ $('tasar-abrir').addEventListener('click', () => {
      no lo abrimos solos: le pedimos que toque de nuevo. */
   if(permisoIA()){ $('tasar-archivo').click(); return; }
   pedirPermisoIA(() => {
-    $('tasar-resultado').innerHTML =
-      '<div class="diag"><div class="diag-eti">Listo</div>' +
-      '<div class="diag-que">Ya tenemos tu permiso. Tocá otra vez el recuadro de arriba para elegir la foto.</div></div>';
+    diagAviso('Listo', 'Ya tenemos tu permiso. Tocá otra vez "Sacar una foto" para elegirla.');
   });
 });
 
@@ -5452,10 +5542,7 @@ $('tasar-archivo').addEventListener('change', async e => {
   if(!archivo || !archivo.type.startsWith('image/')) return;
 
   tasando = true;
-  $('tasar-resultado').innerHTML =
-    '<div class="diag"><div class="diag-eti">Mirando la foto</div>' +
-    '<div class="diag-que">Dame unos segundos…</div></div>';
-
+  diagAviso('Mirando la foto', 'Dame unos segundos…');
   try{
     // la subimos a nuestro depósito para poder mostrársela a la IA
     const url = await subirFoto(archivo);
@@ -5463,54 +5550,64 @@ $('tasar-archivo').addEventListener('change', async e => {
        para cotizar, y así no se sube dos veces ni queda huérfana en el depósito. */
     fotoPedido = url;
     pintarFotoPedido();
-    /* Mandamos el token de sesión para que el workflow pueda exigir un
-       usuario logueado (antes se podía llamar a este webhook sin sesión y
-       generar costo de IA sin límite). */
-    const r = await fetch(URL_TASADOR, {
-      method:'POST', headers:{'Content-Type':'application/json'},
-      body: JSON.stringify({ foto: url, zona: $('s-zona').value || null, token: sesion.access_token })
-    });
-    const d = await r.json();
-
+    const d = await llamarTasador({ foto: url });
     if(!d || !d.ok){
-      $('tasar-resultado').innerHTML =
-        '<div class="diag diag-baja"><div class="diag-eti">No pude leerla</div>' +
-        '<div class="diag-que">' + esc((d && d.motivo) || 'Probá con otra foto o cargá el pedido a mano.') + '</div></div>';
+      diagAviso('No pude leerla', esc((d && d.motivo) || 'Probá con otra foto, contalo por escrito o cargá el pedido a mano.'), true);
       return;
     }
-
-    // completamos el formulario con lo que entendió
-    if(d.rubro && [...$('s-servicio').options].some(o => o.textContent === d.rubro))
-      $('s-servicio').value = d.rubro;
-    if(d.descripcion) $('s-desc').value = d.descripcion;
-    if(d.urgencia && [...$('s-urgencia').options].some(o => o.textContent === d.urgencia))
-      $('s-urgencia').value = d.urgencia;
-    if(d.sugerido) $('s-presupuesto').value = Number(d.sugerido).toLocaleString('es-AR');
-    resumenPedido();
-
-    const baja = d.confianza === 'baja';
-    $('tasar-resultado').innerHTML =
-      '<div class="diag' + (baja ? ' diag-baja' : '') + '">' +
-      '<div class="diag-eti">' + (baja ? 'No estoy seguro' : 'Esto vimos') + '</div>' +
-      '<div class="diag-que">' + esc(d.detectado) + '</div>' +
-      (d.precio_min && d.precio_max
-        ? '<div class="diag-precio">' + pesos(d.precio_min) + ' – ' + pesos(d.precio_max) + '</div>'
-        : '') +
-      (d.aclaracion ? '<div class="diag-nota">' + esc(d.aclaracion) + '</div>' : '') +
-      '<div class="diag-nota">Es una referencia de mercado que estima una inteligencia artificial ' +
-      'mirando la foto, <b>no un precio de esta app ni un presupuesto</b>. Puede estar equivocada. ' +
-      'El precio real lo pone cada proveedor después de ver el trabajo.</div>' +
-      '<div class="diag-nota">Completamos el pedido abajo con lo que entendimos: revisalo y cambiá lo que haga falta.</div>' +
-      '<img class="diag-foto" src="' + esc(url) + '" alt="">' +
-      '</div>';
-    $('tasar-resultado').scrollIntoView({block:'nearest', behavior:'smooth'});
-
+    mostrarTasacion(d, { foto: url });
   }catch(err){
     console.error(err);
-    $('tasar-resultado').innerHTML =
-      '<div class="diag diag-baja"><div class="diag-eti">No se pudo</div>' +
-      '<div class="diag-que">Revisá tu conexión y probá de nuevo, o cargá el pedido a mano.</div></div>';
+    diagAviso('No se pudo', 'Revisá tu conexión y probá de nuevo, o cargá el pedido a mano.', true);
   }finally{ tasando = false; }
+});
+
+/* ── Escrito ── */
+function limpiarTasadorTexto(){
+  $('tasar-texto').value = '';
+  $('tasar-texto-caja').classList.add('oculto');
+  $('tasar-escribir').classList.remove('activo');
+}
+$('tasar-escribir').addEventListener('click', () => {
+  const abrir = $('tasar-texto-caja').classList.contains('oculto');
+  $('tasar-texto-caja').classList.toggle('oculto', !abrir);
+  $('tasar-escribir').classList.toggle('activo', abrir);
+  if(abrir) $('tasar-texto').focus();
+});
+
+async function tasarTexto(texto){
+  tasando = true;
+  const b = $('tasar-enviar'); b.disabled = true; b.classList.add('cargando');
+  $('tasar-enviar-txt').textContent = 'Leyendo…';
+  diagAviso('Leyendo tu pedido', 'Dame unos segundos…');
+  try{
+    /* Como todo texto que sale hacia la IA, sin datos de contacto. */
+    const d = await llamarTasador({ texto: limpiarDatos(texto) });
+    if(!d || !d.ok){
+      diagAviso('No lo pude entender', esc((d && d.motivo) || 'Probá contándolo con otras palabras o cargá el pedido a mano.'), true);
+      return;
+    }
+    mostrarTasacion(d, { texto });
+  }catch(err){
+    console.error(err);
+    diagAviso('No se pudo', 'Revisá tu conexión y probá de nuevo, o cargá el pedido a mano.', true);
+  }finally{
+    tasando = false; b.disabled = false; b.classList.remove('cargando');
+    $('tasar-enviar-txt').textContent = 'Estimar precio';
+  }
+}
+
+$('tasar-enviar').addEventListener('click', () => {
+  if(tasando) return;
+  const texto = $('tasar-texto').value.trim();
+  if(texto.length < 10){
+    diagAviso('Contanos un poco más', 'Qué necesitás, para cuándo y cualquier detalle que sirva para estimar el precio.', true);
+    return;
+  }
+  /* Acá no hay selector de archivos, así que después de dar el permiso
+     seguimos solos. */
+  if(permisoIA()) tasarTexto(texto);
+  else pedirPermisoIA(() => tasarTexto(texto));
 });
 
 /* ══════════════════ ASISTENTE ══════════════════ */
