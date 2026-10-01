@@ -38,7 +38,7 @@ Android**. Así las dos terminan más o menos juntas.
 
 ## Paso 2 · Crear la app en Play Console
 1. 🟢 **Crear app**:
-   - Nombre: `Tratto: arreglos del hogar`
+   - Nombre: `Tratto: servicios cerca tuyo`
    - Idioma: **Español (Latinoamérica) – es-419**
    - App o juego: **App** · Gratis o pagada: **Gratis**
    - Tildá las dos declaraciones y tocá **Crear app**.
@@ -124,7 +124,7 @@ En **developer.apple.com/account** → **Certificates, IDs & Profiles**:
 
 ## Paso 3 · Crear la app en App Store Connect
 En **appstoreconnect.apple.com** → **Apps → + → Nueva app**:
-1. 🟢 Plataforma **iOS** · Nombre `Tratto: arreglos del hogar` · Idioma **Español (México)** (es el español latinoamericano de Apple) · Bundle ID `ar.com.trattoapp` · SKU `tratto-ios` · Acceso completo.
+1. 🟢 Plataforma **iOS** · Nombre `Tratto: servicios cerca tuyo` · Idioma **Español (México)** (es el español latinoamericano de Apple) · Bundle ID `ar.com.trattoapp` · SKU `tratto-ios` · Acceso completo.
 2. 🟢 En **Información de la app**, copiá el **Apple ID** (un número de 10 dígitos) y pasámelo.
 3. 🔵 Lo pongo en la configuración de Codemagic.
 
