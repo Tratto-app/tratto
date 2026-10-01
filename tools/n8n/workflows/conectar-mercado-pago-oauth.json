@@ -1,0 +1,463 @@
+{
+  "id": "1pUukpDBezIS0IW6",
+  "name": "Conectar Mercado Pago (OAuth)",
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false,
+    "errorWorkflow": "LcYeloX0BIWbs3vN"
+  },
+  "nodes": [
+    {
+      "id": "d0238a29-0074-403e-80d8-7f62395aec6f",
+      "name": "Vuelve de Mercado Pago1",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        144,
+        144
+      ],
+      "parameters": {
+        "path": "mp-conectar",
+        "responseMode": "responseNode",
+        "options": {}
+      }
+    },
+    {
+      "id": "07829f64-c3c5-4acf-b9b5-e9a225d7ab0d",
+      "name": "Configuracion1",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        368,
+        144
+      ],
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "a1",
+              "name": "clientId",
+              "value": "2729660226133986",
+              "type": "string"
+            },
+            {
+              "id": "a2",
+              "name": "clientSecret",
+              "value": "<SECRETO_EN_N8N>",
+              "type": "string"
+            },
+            {
+              "id": "a3",
+              "name": "redirectUri",
+              "value": "https://marketplace-servicios.app.n8n.cloud/webhook/mp-conectar",
+              "type": "string"
+            },
+            {
+              "id": "a4",
+              "name": "supabaseUrl",
+              "value": "https://qglsonbcsncgekzbfafk.supabase.co",
+              "type": "string"
+            },
+            {
+              "id": "a5",
+              "name": "serviceRole",
+              "value": "<SECRETO_EN_N8N>",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      }
+    },
+    {
+      "id": "a8565f8d-c21f-47b7-a70b-668bb55dd3cd",
+      "name": "Canjear codigo por token1",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1008,
+        144
+      ],
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.mercadopago.com/oauth/token",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ client_id: $('Configuracion1').first().json.clientId, client_secret: $('Configuracion1').first().json.clientSecret, grant_type: 'authorization_code', code: String($('Vuelve de Mercado Pago1').first().json.query.code || ''), redirect_uri: $('Configuracion1').first().json.redirectUri, test_token: true }) }}",
+        "options": {
+          "response": {
+            "response": {
+              "neverError": true
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "1c2ad614-3b44-4b8d-9b17-25245233a782",
+      "name": "Guardar la cuenta1",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1448,
+        144
+      ],
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $('Configuracion1').first().json.supabaseUrl }}/rest/v1/cuentas_mp?on_conflict=user_id",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "apikey",
+              "value": "={{ $('Configuracion1').first().json.serviceRole }}"
+            },
+            {
+              "name": "Authorization",
+              "value": "=Bearer {{ $('Configuracion1').first().json.serviceRole }}"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            },
+            {
+              "name": "Prefer",
+              "value": "resolution=merge-duplicates,return=representation"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ user_id: $('Buscar el nonce').first().json.body[0].user_id, mp_user_id: String($json.user_id), access_token: $json.access_token, refresh_token: $json.refresh_token, public_key: $json.public_key, estado: 'conectada' }) }}",
+        "options": {}
+      }
+    },
+    {
+      "id": "396979aa-6c21-40aa-8aa7-23537626a297",
+      "name": "Avisar que salio bien1",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [
+        1888,
+        144
+      ],
+      "parameters": {
+        "respondWith": "text",
+        "responseBody": "<!DOCTYPE html><html lang=\"es-AR\"><head><meta charset=\"UTF-8\"><meta name=\"viewport\" content=\"width=device-width,initial-scale=1\"><title>Cuenta conectada</title><style>body{margin:0;min-height:100vh;display:flex;align-items:center;justify-content:center;background:#0C2620;color:#FCFBF8;font-family:system-ui,-apple-system,sans-serif;padding:24px}.c{max-width:340px;text-align:center}.t{font-size:24px;font-weight:700;line-height:1.15;margin-bottom:12px}.p{font-size:15px;line-height:1.55;color:#9AA69B}.b{width:56px;height:56px;border-radius:50%;background:#1B4B40;margin:0 auto 20px;display:flex;align-items:center;justify-content:center;font-size:28px;color:#8FD9BC}</style></head><body><div class=\"c\"><div class=\"b\">&#10003;</div><div class=\"t\">Listo, ya podes cobrar por la app</div><div class=\"p\">Tu cuenta de Mercado Pago quedo conectada. Volve a la app para seguir.</div></div></body></html>",
+        "options": {
+          "responseCode": 200,
+          "responseHeaders": {
+            "entries": [
+              {
+                "name": "Content-Type",
+                "value": "text/html; charset=utf-8"
+              }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "id": "9757740b-baaf-45b1-b771-c5500fc509b8",
+      "name": "Buscar el nonce",
+      "notes": "El state que vuelve de Mercado Pago es un nonce de un solo uso creado por mp-iniciar para un usuario con sesion valida. Vence a los 30 minutos.",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        568,
+        364
+      ],
+      "parameters": {
+        "url": "={{ $('Configuracion1').first().json.supabaseUrl }}/rest/v1/oauth_states?nonce=eq.{{ encodeURIComponent(String($('Vuelve de Mercado Pago1').first().json.query.state || 'x')) }}&proveedor=eq.mercadopago&creado_en=gte.{{ encodeURIComponent(new Date(Date.now() - 30*60*1000).toISOString()) }}&select=user_id",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "apikey",
+              "value": "={{ $('Configuracion1').first().json.serviceRole }}"
+            },
+            {
+              "name": "Authorization",
+              "value": "=Bearer {{ $('Configuracion1').first().json.serviceRole }}"
+            }
+          ]
+        },
+        "options": {
+          "response": {
+            "response": {
+              "fullResponse": true,
+              "neverError": true
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "f4eaa3bf-7ecb-452b-8584-25f12a2529c1",
+      "name": "¿Nonce valido?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        788,
+        364
+      ],
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "fd2bd5aa-b906-478a-91f1-5d062f036241",
+              "leftValue": "={{ Array.isArray($json.body) && $json.body.length === 1 && !!$json.body[0].user_id && !!$('Vuelve de Mercado Pago1').first().json.query.code }}",
+              "rightValue": true,
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      }
+    },
+    {
+      "id": "e2da8b94-1508-46df-80b5-33941d54571c",
+      "name": "¿Mercado Pago acepto?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        1228,
+        364
+      ],
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "74b16eda-35b3-4fc7-bac1-9874ab5afc85",
+              "leftValue": "={{ !!$json.access_token }}",
+              "rightValue": true,
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      }
+    },
+    {
+      "id": "d4d4e1cc-dea6-409a-a79a-e16800ad9388",
+      "name": "Borrar el nonce",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1668,
+        144
+      ],
+      "parameters": {
+        "method": "DELETE",
+        "url": "={{ $('Configuracion1').first().json.supabaseUrl }}/rest/v1/oauth_states?nonce=eq.{{ encodeURIComponent(String($('Vuelve de Mercado Pago1').first().json.query.state)) }}",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "apikey",
+              "value": "={{ $('Configuracion1').first().json.serviceRole }}"
+            },
+            {
+              "name": "Authorization",
+              "value": "=Bearer {{ $('Configuracion1').first().json.serviceRole }}"
+            }
+          ]
+        },
+        "options": {
+          "response": {
+            "response": {
+              "neverError": true
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "ced059f6-1108-4a0f-8738-f86f9d58001e",
+      "name": "Enlace vencido",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [
+        1008,
+        584
+      ],
+      "parameters": {
+        "respondWith": "text",
+        "responseBody": "<!DOCTYPE html><html lang=\"es-AR\"><head><meta charset=\"UTF-8\"><meta name=\"viewport\" content=\"width=device-width,initial-scale=1\"><title>No se pudo conectar</title><style>body{margin:0;min-height:100vh;display:flex;align-items:center;justify-content:center;background:#0C2620;color:#FCFBF8;font-family:system-ui,-apple-system,sans-serif;padding:24px}.c{max-width:340px;text-align:center}.t{font-size:24px;font-weight:700;line-height:1.15;margin-bottom:12px}.p{font-size:15px;line-height:1.55;color:#9AA69B}.b{width:56px;height:56px;border-radius:50%;background:#1B4B40;margin:0 auto 20px;display:flex;align-items:center;justify-content:center;font-size:28px;color:#C9A227}</style></head><body><div class=\"c\"><div class=\"b\">!</div><div class=\"t\">No pudimos conectar tu cuenta</div><div class=\"p\">El enlace vencio o ya se uso. Volve a la app y toca otra vez Conectar Mercado Pago.</div></div></body></html>",
+        "options": {
+          "responseCode": 400,
+          "responseHeaders": {
+            "entries": [
+              {
+                "name": "Content-Type",
+                "value": "text/html; charset=utf-8"
+              }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "id": "452da15b-bfc7-4d4a-81c9-232c1afe5610",
+      "name": "Mercado Pago rechazo",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [
+        1448,
+        584
+      ],
+      "parameters": {
+        "respondWith": "text",
+        "responseBody": "<!DOCTYPE html><html lang=\"es-AR\"><head><meta charset=\"UTF-8\"><meta name=\"viewport\" content=\"width=device-width,initial-scale=1\"><title>No se pudo conectar</title><style>body{margin:0;min-height:100vh;display:flex;align-items:center;justify-content:center;background:#0C2620;color:#FCFBF8;font-family:system-ui,-apple-system,sans-serif;padding:24px}.c{max-width:340px;text-align:center}.t{font-size:24px;font-weight:700;line-height:1.15;margin-bottom:12px}.p{font-size:15px;line-height:1.55;color:#9AA69B}.b{width:56px;height:56px;border-radius:50%;background:#1B4B40;margin:0 auto 20px;display:flex;align-items:center;justify-content:center;font-size:28px;color:#C9A227}</style></head><body><div class=\"c\"><div class=\"b\">!</div><div class=\"t\">No pudimos conectar tu cuenta</div><div class=\"p\">El enlace vencio o ya se uso. Volve a la app y toca otra vez Conectar Mercado Pago.</div></div></body></html>",
+        "options": {
+          "responseCode": 400,
+          "responseHeaders": {
+            "entries": [
+              {
+                "name": "Content-Type",
+                "value": "text/html; charset=utf-8"
+              }
+            ]
+          }
+        }
+      }
+    }
+  ],
+  "connections": {
+    "Vuelve de Mercado Pago1": {
+      "main": [
+        [
+          {
+            "node": "Configuracion1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Configuracion1": {
+      "main": [
+        [
+          {
+            "node": "Buscar el nonce",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Buscar el nonce": {
+      "main": [
+        [
+          {
+            "node": "¿Nonce valido?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "¿Nonce valido?": {
+      "main": [
+        [
+          {
+            "node": "Canjear codigo por token1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Enlace vencido",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Canjear codigo por token1": {
+      "main": [
+        [
+          {
+            "node": "¿Mercado Pago acepto?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "¿Mercado Pago acepto?": {
+      "main": [
+        [
+          {
+            "node": "Guardar la cuenta1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Mercado Pago rechazo",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Guardar la cuenta1": {
+      "main": [
+        [
+          {
+            "node": "Borrar el nonce",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Borrar el nonce": {
+      "main": [
+        [
+          {
+            "node": "Avisar que salio bien1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  }
+}

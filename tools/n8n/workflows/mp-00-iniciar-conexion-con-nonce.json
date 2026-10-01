@@ -1,0 +1,274 @@
+{
+  "id": "KQpgCLlyZPU7FuYE",
+  "name": "MP - 00 Iniciar conexion (con nonce)",
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "errorWorkflow": "LcYeloX0BIWbs3vN"
+  },
+  "nodes": [
+    {
+      "id": "53c0226f-20c9-4129-8980-334025c9e1fb",
+      "name": "Webhook mp-iniciar",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        -880,
+        128
+      ],
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "mp-iniciar",
+        "responseMode": "responseNode",
+        "options": {
+          "allowedOrigins": "https://www.trattoapp.com.ar,https://trattoapp.com.ar"
+        }
+      }
+    },
+    {
+      "id": "517d9637-3805-4dbf-97f8-d9f7224e79c9",
+      "name": "Configuracion",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -656,
+        128
+      ],
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "c1",
+              "name": "supabaseUrl",
+              "value": "https://qglsonbcsncgekzbfafk.supabase.co",
+              "type": "string"
+            },
+            {
+              "id": "c2",
+              "name": "serviceRole",
+              "value": "<SECRETO_EN_N8N>",
+              "type": "string"
+            },
+            {
+              "id": "c3",
+              "name": "mpClientId",
+              "value": "2729660226133986",
+              "type": "string"
+            },
+            {
+              "id": "c4",
+              "name": "mpRedirectUri",
+              "value": "https://marketplace-servicios.app.n8n.cloud/webhook/mp-conectar",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      }
+    },
+    {
+      "id": "9cd1ded3-5c93-4d22-9127-77bdb659ab25",
+      "name": "Validar token de sesion",
+      "notes": "Si el token es invalido o vencio, Supabase devuelve un error en vez de un usuario: por eso el nodo siguiente revisa si hay un id.",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -448,
+        128
+      ],
+      "parameters": {
+        "url": "={{ $('Configuracion').first().json.supabaseUrl }}/auth/v1/user",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "apikey",
+              "value": "={{ $('Configuracion').first().json.serviceRole }}"
+            },
+            {
+              "name": "Authorization",
+              "value": "=Bearer {{ $json.body.token }}"
+            }
+          ]
+        },
+        "options": {
+          "response": {
+            "response": {
+              "neverError": true
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "741b5ba1-2a93-4b7e-a25f-17e503c5c7fe",
+      "name": "¿Sesion valida?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        -224,
+        128
+      ],
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "cond1",
+              "leftValue": "={{ !!$json.id }}",
+              "rightValue": true,
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      }
+    },
+    {
+      "id": "ca51fdac-40aa-492f-b2d4-c5418da7dc02",
+      "name": "Crear nonce",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        0,
+        0
+      ],
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $('Configuracion').first().json.supabaseUrl }}/rest/v1/oauth_states",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "apikey",
+              "value": "={{ $('Configuracion').first().json.serviceRole }}"
+            },
+            {
+              "name": "Authorization",
+              "value": "=Bearer {{ $('Configuracion').first().json.serviceRole }}"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            },
+            {
+              "name": "Prefer",
+              "value": "return=representation"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ user_id: $json.id, proveedor: 'mercadopago' }) }}",
+        "options": {}
+      }
+    },
+    {
+      "id": "89bbcd06-4d3a-4199-81cb-8c29db26b8a5",
+      "name": "Responder con la URL",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [
+        224,
+        0
+      ],
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ JSON.stringify({ url: 'https://auth.mercadopago.com.ar/authorization?client_id=' + $('Configuracion').first().json.mpClientId + '&response_type=code&platform_id=mp&redirect_uri=' + encodeURIComponent($('Configuracion').first().json.mpRedirectUri) + '&state=' + $json[0].nonce }) }}",
+        "options": {}
+      }
+    },
+    {
+      "id": "a1e0bd46-f2c6-414f-9368-078f24fed202",
+      "name": "401 sesion invalida",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [
+        0,
+        240
+      ],
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ JSON.stringify({ error: 'Sesion invalida. Volve a entrar y proba de nuevo.' }) }}",
+        "options": {
+          "responseCode": 401
+        }
+      }
+    }
+  ],
+  "connections": {
+    "Webhook mp-iniciar": {
+      "main": [
+        [
+          {
+            "node": "Configuracion",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Configuracion": {
+      "main": [
+        [
+          {
+            "node": "Validar token de sesion",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Validar token de sesion": {
+      "main": [
+        [
+          {
+            "node": "¿Sesion valida?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "¿Sesion valida?": {
+      "main": [
+        [
+          {
+            "node": "Crear nonce",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "401 sesion invalida",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Crear nonce": {
+      "main": [
+        [
+          {
+            "node": "Responder con la URL",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  }
+}

@@ -56,9 +56,17 @@ Tratto no admite rubros que requieran matrícula (gas, electricidad, salud).
 - **App de noticias:** No. **App de salud:** No. **Préstamos o finanzas:** No.
 
 ### Acceso a la app (para los revisores)
-"Toda la funcionalidad requiere iniciar sesión". Antes de mandar a revisión te
-creo una cuenta de prueba con un pedido y presupuestos cargados, y ponemos acá
-el email y la contraseña.
+Elegí "Toda la funcionalidad o parte de ella está restringida" → Agregar instrucciones:
+- Nombre: Cuenta de prueba (cliente)
+- Usuario: `trattoapp1+demo-cliente@gmail.com`
+- Contraseña: la de las cuentas demo (la tiene el dueño; no va en el repo)
+- Instrucciones: "Tocá Iniciar sesión e ingresá con este email y contraseña.
+  La cuenta ya tiene un pedido con dos presupuestos, chats y un trabajo
+  calificado. Para ver la app como proveedor:
+  trattoapp1+demo-techista@gmail.com con la misma contraseña."
+
+Detalle de las cuentas en `docs/DEMO_ACCOUNTS.md`. Antes de mandar a revisión,
+reponer los datos con `select privado.reponer_demo();`.
 
 ### Clasificación de contenido (cuestionario IARC)
 - Categoría: **Todas las demás apps**

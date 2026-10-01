@@ -1,0 +1,612 @@
+{
+  "id": "95uCF0Cu4dAXTgpd",
+  "name": "MP - Reservar el pago con comision (mp-pagar)",
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "errorWorkflow": "LcYeloX0BIWbs3vN"
+  },
+  "nodes": [
+    {
+      "id": "ec1ada79-c5fa-45be-9fbb-e57a66eb0c6f",
+      "name": "Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        -2080,
+        336
+      ],
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "mp-pagar",
+        "responseMode": "responseNode",
+        "options": {
+          "allowedOrigins": "https://www.trattoapp.com.ar,https://trattoapp.com.ar"
+        }
+      }
+    },
+    {
+      "id": "66687679-552e-4fae-a118-415f92d3f055",
+      "name": "Configuracion",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -1872,
+        336
+      ],
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "w1",
+              "name": "supabaseUrl",
+              "value": "https://qglsonbcsncgekzbfafk.supabase.co",
+              "type": "string"
+            },
+            {
+              "id": "w2",
+              "name": "serviceRole",
+              "value": "<SECRETO_EN_N8N>",
+              "type": "string"
+            },
+            {
+              "id": "w3",
+              "name": "anonKey",
+              "value": "<SECRETO_EN_N8N>",
+              "type": "string"
+            },
+            {
+              "id": "w4",
+              "name": "comisionPorc",
+              "value": 3,
+              "type": "number"
+            },
+            {
+              "id": "w5",
+              "name": "mensajeId",
+              "value": "={{ $json.body.mensaje_id }}",
+              "type": "string"
+            },
+            {
+              "id": "w6",
+              "name": "tokenUsuario",
+              "value": "={{ $json.body.token }}",
+              "type": "string"
+            },
+            {
+              "id": "w7",
+              "name": "cardToken",
+              "value": "={{ $json.body.card_token }}",
+              "type": "string"
+            },
+            {
+              "id": "w8",
+              "name": "medioPago",
+              "value": "={{ $json.body.payment_method_id }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      }
+    },
+    {
+      "id": "e565d833-7d57-4818-ba40-5acab132b17a",
+      "name": "Quien pide",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -1664,
+        336
+      ],
+      "parameters": {
+        "url": "={{ $('Configuracion').first().json.supabaseUrl }}/auth/v1/user",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "apikey",
+              "value": "={{ $('Configuracion').first().json.anonKey }}"
+            },
+            {
+              "name": "Authorization",
+              "value": "=Bearer {{ $('Configuracion').first().json.tokenUsuario }}"
+            }
+          ]
+        },
+        "options": {
+          "response": {
+            "response": {
+              "fullResponse": true,
+              "neverError": true
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "d1a2ccfc-bd41-4db1-8759-675b389e614b",
+      "name": "Sesion valida",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        -1456,
+        336
+      ],
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "c-sesion",
+              "leftValue": "={{ $json.statusCode }}",
+              "rightValue": 200,
+              "operator": {
+                "type": "number",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      }
+    },
+    {
+      "id": "38f55bef-149b-45a4-96ef-e405964ea2a3",
+      "name": "Traer presupuesto",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -1248,
+        224
+      ],
+      "parameters": {
+        "url": "={{ $('Configuracion').first().json.supabaseUrl }}/rest/v1/mensajes?id=eq.{{ $('Configuracion').first().json.mensajeId }}&select=id,match_id,monto,estado_presupuesto,pago_estado",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "apikey",
+              "value": "={{ $('Configuracion').first().json.serviceRole }}"
+            },
+            {
+              "name": "Authorization",
+              "value": "=Bearer {{ $('Configuracion').first().json.serviceRole }}"
+            }
+          ]
+        },
+        "options": {}
+      }
+    },
+    {
+      "id": "f68e9232-61b5-478f-a436-acbc25ce2120",
+      "name": "Traer las partes",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -1040,
+        224
+      ],
+      "parameters": {
+        "url": "={{ $('Configuracion').first().json.supabaseUrl }}/rest/v1/matches?id=eq.{{ ($('Traer presupuesto').first().json[0] ?? $('Traer presupuesto').first().json).match_id }}&select=id,solicitudes(user_id),proveedores(user_id)",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "apikey",
+              "value": "={{ $('Configuracion').first().json.serviceRole }}"
+            },
+            {
+              "name": "Authorization",
+              "value": "=Bearer {{ $('Configuracion').first().json.serviceRole }}"
+            }
+          ]
+        },
+        "options": {}
+      }
+    },
+    {
+      "id": "76e3285f-7cab-488f-899d-8acd90755524",
+      "name": "Puede pagarlo",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        -832,
+        224
+      ],
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "c-cliente",
+              "leftValue": "={{ ($('Traer las partes').first().json[0] ?? $('Traer las partes').first().json).solicitudes.user_id }}",
+              "rightValue": "={{ $('Quien pide').first().json.body.id }}",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            },
+            {
+              "id": "c-aceptado",
+              "leftValue": "={{ ($('Traer presupuesto').first().json[0] ?? $('Traer presupuesto').first().json).estado_presupuesto }}",
+              "rightValue": "aceptado",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            },
+            {
+              "id": "c-sinpagar",
+              "leftValue": "={{ ($('Traer presupuesto').first().json[0] ?? $('Traer presupuesto').first().json).pago_estado || '' }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      }
+    },
+    {
+      "id": "d96634c0-528a-4ebf-a337-df30c569086e",
+      "name": "Traer token del proveedor",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -624,
+        112
+      ],
+      "parameters": {
+        "url": "={{ $('Configuracion').first().json.supabaseUrl }}/rest/v1/cuentas_mp?user_id=eq.{{ ($('Traer las partes').first().json[0] ?? $('Traer las partes').first().json).proveedores.user_id }}&select=access_token",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "apikey",
+              "value": "={{ $('Configuracion').first().json.serviceRole }}"
+            },
+            {
+              "name": "Authorization",
+              "value": "=Bearer {{ $('Configuracion').first().json.serviceRole }}"
+            }
+          ]
+        },
+        "options": {}
+      }
+    },
+    {
+      "id": "b032f76c-bba5-4598-89cd-a9e60808a5cd",
+      "name": "Reservar en Mercado Pago",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -416,
+        112
+      ],
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.mercadopago.com/v1/payments",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "=Bearer {{ ($('Traer token del proveedor').first().json[0] ?? $('Traer token del proveedor').first().json).access_token }}"
+            },
+            {
+              "name": "X-Idempotency-Key",
+              "value": "={{ 'tratto-' + $('Configuracion').first().json.mensajeId + '-' + $('Configuracion').first().json.cardToken }}"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({\n  transaction_amount: Number(($('Traer presupuesto').first().json[0] ?? $('Traer presupuesto').first().json).monto),\n  token: $('Configuracion').first().json.cardToken,\n  description: 'Tratto - presupuesto ' + $('Configuracion').first().json.mensajeId,\n  installments: 1,\n  payment_method_id: $('Configuracion').first().json.medioPago,\n  payer: { email: $('Quien pide').first().json.body.email },\n  capture: false,\n  application_fee: Math.round(Number(($('Traer presupuesto').first().json[0] ?? $('Traer presupuesto').first().json).monto) * $('Configuracion').first().json.comisionPorc / 100)\n}) }}",
+        "options": {
+          "response": {
+            "response": {
+              "fullResponse": true,
+              "neverError": true
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "95a9e67c-d6b2-4def-9350-94096f8ca06c",
+      "name": "Quedo reservado",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        -208,
+        112
+      ],
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "c-autorizado",
+              "leftValue": "={{ $json.body.status }}",
+              "rightValue": "authorized",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      }
+    },
+    {
+      "id": "80f1fd3a-1590-48d6-8ab6-06bd54c7f86e",
+      "name": "Guardar el pago",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        0,
+        0
+      ],
+      "parameters": {
+        "method": "PATCH",
+        "url": "={{ $('Configuracion').first().json.supabaseUrl }}/rest/v1/mensajes?id=eq.{{ $('Configuracion').first().json.mensajeId }}",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "apikey",
+              "value": "={{ $('Configuracion').first().json.serviceRole }}"
+            },
+            {
+              "name": "Authorization",
+              "value": "=Bearer {{ $('Configuracion').first().json.serviceRole }}"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            },
+            {
+              "name": "Prefer",
+              "value": "return=minimal"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ pago_id: String($('Reservar en Mercado Pago').first().json.body.id), pago_estado: 'reservado' }) }}",
+        "options": {}
+      }
+    },
+    {
+      "id": "eca497eb-4cc7-4c75-bd59-bf931d8ca05e",
+      "name": "Avisar que salio bien",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [
+        208,
+        0
+      ],
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ JSON.stringify({ estado: 'reservado', pago_id: String($('Reservar en Mercado Pago').first().json.body.id) }) }}",
+        "options": {}
+      }
+    },
+    {
+      "id": "1e2813f4-4312-4521-91b7-20afbde036a4",
+      "name": "Pago rechazado",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [
+        0,
+        224
+      ],
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ JSON.stringify({ estado: 'rechazado', detalle: ($('Reservar en Mercado Pago').first().json.body.message) || ($('Reservar en Mercado Pago').first().json.body.status_detail) || 'Mercado Pago rechazo el pago.' }) }}",
+        "options": {}
+      }
+    },
+    {
+      "id": "364e009a-a8c2-4d3d-afbf-b257b966c171",
+      "name": "No autorizado",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [
+        -624,
+        336
+      ],
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ JSON.stringify({ estado: 'no', detalle: 'Este presupuesto no se puede pagar.' }) }}",
+        "options": {}
+      }
+    },
+    {
+      "id": "381cc0a9-94ee-4aac-914e-adbdd1c10f4d",
+      "name": "Sesion invalida",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [
+        -1248,
+        464
+      ],
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ JSON.stringify({ estado: 'no', detalle: 'Tu sesion vencio. Volve a entrar.' }) }}",
+        "options": {}
+      }
+    }
+  ],
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Configuracion",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Configuracion": {
+      "main": [
+        [
+          {
+            "node": "Quien pide",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Quien pide": {
+      "main": [
+        [
+          {
+            "node": "Sesion valida",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Sesion valida": {
+      "main": [
+        [
+          {
+            "node": "Traer presupuesto",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Sesion invalida",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Traer presupuesto": {
+      "main": [
+        [
+          {
+            "node": "Traer las partes",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Traer las partes": {
+      "main": [
+        [
+          {
+            "node": "Puede pagarlo",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Puede pagarlo": {
+      "main": [
+        [
+          {
+            "node": "Traer token del proveedor",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "No autorizado",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Traer token del proveedor": {
+      "main": [
+        [
+          {
+            "node": "Reservar en Mercado Pago",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Reservar en Mercado Pago": {
+      "main": [
+        [
+          {
+            "node": "Quedo reservado",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Quedo reservado": {
+      "main": [
+        [
+          {
+            "node": "Guardar el pago",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Pago rechazado",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Guardar el pago": {
+      "main": [
+        [
+          {
+            "node": "Avisar que salio bien",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  }
+}

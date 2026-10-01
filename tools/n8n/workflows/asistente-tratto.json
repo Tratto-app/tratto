@@ -1,0 +1,422 @@
+{
+  "id": "ache8Xuj6vyBBijf",
+  "name": "Asistente Tratto",
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false,
+    "errorWorkflow": "LcYeloX0BIWbs3vN"
+  },
+  "nodes": [
+    {
+      "id": "6bdb388e-9fc7-4e7c-81a3-2d4b4f7ce9b0",
+      "name": "Llega una consulta",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        0,
+        0
+      ],
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "asistente",
+        "responseMode": "responseNode",
+        "options": {
+          "allowedOrigins": "https://www.trattoapp.com.ar,https://trattoapp.com.ar"
+        }
+      }
+    },
+    {
+      "id": "fcc2048b-b48d-476a-b970-ba780b153143",
+      "name": "Configuracion",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        208,
+        0
+      ],
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "c1",
+              "name": "openaiKey",
+              "value": "<SECRETO_EN_N8N>",
+              "type": "string"
+            },
+            {
+              "id": "c2",
+              "name": "modelo",
+              "value": "gpt-4o-mini",
+              "type": "string"
+            },
+            {
+              "id": "c3",
+              "name": "conocimiento",
+              "value": "Sos el asistente de Tratto, una app argentina que conecta clientes con proveedores de servicios.\nHablás en español rioplatense, de vos, con frases cortas. Nunca usás \"tú\" ni \"usted\".\n\nQUÉ ES TRATTO\nEl cliente publica qué necesita (rubro, zona, presupuesto, urgencia).\nLa app busca sola entre los proveedores registrados y conecta hasta 3 que califiquen.\nSe hablan por un chat privado dentro de la app.\nEl cliente no paga nada por usar la app. El proveedor paga una comisión sobre el trabajo cobrado.\n\nCÓMO SE CONECTA UN PEDIDO CON UN PROVEEDOR\nSe conectan si se cumplen las tres:\n1. El rubro es el mismo.\n2. La zona es la misma, es una zona cercana de la misma región, o el proveedor trabaja a distancia.\n3. El precio desde del proveedor no supera el presupuesto en más de 20%.\nSe muestran hasta 3 por pedido, primero los de tu zona y del más barato al más caro.\nSi un pedido no encuentra a nadie, queda en Buscando. Cuando se registra un proveedor\nque califica, se conecta solo, aunque el pedido sea viejo.\n\nPARA EL CLIENTE\n- Pedís un servicio desde Inicio, con el botón Pedir un servicio.\n- Cuando te conectamos proveedores, el pedido pasa a Con proveedores y te llega un mail.\n- Desde el pedido podés abrir el chat de cada proveedor o ver su perfil completo.\n- El proveedor te manda un presupuesto formal dentro del chat: monto, qué incluye y plazo.\n  Lo aceptás o lo rechazás con un toque.\n- Por cada trabajo cerrado ganás 100 puntos. Con 500 canjeás 5% de descuento,\n  con 1200 el 10%, con 2500 el 15%. El descuento lo cubre la app: el proveedor cobra completo.\n\nPARA EL PROVEEDOR\n- Publicás tu servicio con rubro, zona, rango de precios y disponibilidad.\n- Si tu servicio no está en la lista, elegís \"Otro (lo escribo yo)\" y lo escribís.\n- Tu perfil público muestra tu descripción, estudios y trayectoria, y tus publicaciones.\n  Cuanto más completo, más te contratan.\n- Podés publicar trabajos que hiciste, promociones o novedades, con hasta 4 fotos.\n- El Panel te muestra visitas a tu perfil, clientes conectados, presupuestos enviados y cerrados.\n- Ganás medallas por trabajos hechos: Bronce a los 10, Plata a los 30, Oro a los 50, Diamante a los 100.\n\nMODOS\nAl entrar elegís si necesitás un servicio o si ofrecés uno. Podés cambiar de modo\ncuando quieras desde Cuenta. Con la misma cuenta podés ser las dos cosas.\n\nQUÉ NO SE PUEDE PUBLICAR\nTeléfonos, mails o enlaces en el perfil o las publicaciones: el contacto va por el chat.\nInsultos o contenido fuera de lugar. Si algo se rechaza, hay que escribirlo de otra forma.\n\nREGLAS PARA VOS\n- Respondé corto, en dos o tres frases. Si necesita más, ofrecé seguir.\n- Si no sabés algo o el usuario tiene un problema con su cuenta, un cobro o un reclamo\n  con otra persona, decile que lo va a ver alguien del equipo y que le van a responder.\n  Nunca inventes.\n- No prometas plazos ni devoluciones.\n- Si te preguntan por pagos dentro de la app, decí que la función está en camino.\n- Nunca pidas contraseñas ni datos de tarjeta.\n",
+              "type": "string"
+            },
+            {
+              "id": "c4",
+              "name": "supabaseUrl",
+              "value": "https://qglsonbcsncgekzbfafk.supabase.co",
+              "type": "string"
+            },
+            {
+              "id": "c5",
+              "name": "serviceRole",
+              "value": "<SECRETO_EN_N8N>",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      }
+    },
+    {
+      "id": "9d6d40c0-f9f5-490c-ad07-5f855e4790a6",
+      "name": "Armar conversacion",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1060,
+        0
+      ],
+      "parameters": {
+        "jsCode": "// Arma el pedido para OpenAI con el historial de la conversación\nconst cfg = $('Configuracion').first().json;\nconst ev  = $('Llega una consulta').first().json.body || {};\n\nconst historial = Array.isArray(ev.historial) ? ev.historial.slice(-8) : [];\nconst pregunta  = (ev.pregunta || '').toString().slice(0, 1000);\n\nif (!pregunta.trim()) {\n  return [{ json: { vacio: true } }];\n}\n\nconst mensajes = [\n  { role: 'system', content: cfg.conocimiento }\n];\nhistorial.forEach(m => {\n  if (m && m.rol && m.texto) {\n    mensajes.push({ role: m.rol === 'bot' ? 'assistant' : 'user', content: String(m.texto).slice(0, 1000) });\n  }\n});\nmensajes.push({ role: 'user', content: pregunta });\n\nreturn [{ json: {\n  mensajes,\n  pregunta,\n  // el user_id sale del token validado por Supabase, nunca del cuerpo del pedido\n  userId: $('Ver quien pregunta').first().json.id || null,\n  modo: ev.modo || null\n} }];"
+      }
+    },
+    {
+      "id": "77c45853-50b1-4bbc-8279-b01c3a84f973",
+      "name": "Preguntarle a la IA",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "onError": "continueRegularOutput",
+      "position": [
+        1268,
+        0
+      ],
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.openai.com/v1/chat/completions",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "=Bearer {{ $('Configuracion').first().json.openaiKey }}"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ model: $('Configuracion').first().json.modelo, messages: $json.mensajes, max_tokens: 350, temperature: 0.4 }) }}",
+        "options": {}
+      }
+    },
+    {
+      "id": "04a01cc0-3626-419b-a9b2-aaad38374f24",
+      "name": "Preparar respuesta",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1460,
+        0
+      ],
+      "parameters": {
+        "jsCode": "// Saca la respuesta y decide si hay que avisarle a Agustín\nconst salida = $input.first().json;\nconst ctx    = $('Armar conversacion').first().json;\n\nlet respuesta = '';\ntry {\n  respuesta = salida.choices[0].message.content.trim();\n} catch (e) {\n  respuesta = 'Ahora mismo no puedo responderte. Probá en un rato o escribinos y te contestamos.';\n}\n\n// Si el bot no supo o el tema es delicado, queda registrado para revisar\nconst derivar = /no s[eé]|equipo|no puedo|reclamo|cobro|pago|estafa|problema con mi cuenta/i.test(respuesta + ' ' + ctx.pregunta);\n\nreturn [{ json: {\n  respuesta,\n  derivar,\n  pregunta: ctx.pregunta,\n  userId: ctx.userId,\n  modo: ctx.modo\n} }];"
+      }
+    },
+    {
+      "id": "5d431ae4-2f6e-4849-816e-4bf616c04ac4",
+      "name": "Guardar la consulta",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "onError": "continueRegularOutput",
+      "position": [
+        1668,
+        0
+      ],
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $('Configuracion').first().json.supabaseUrl }}/rest/v1/consultas",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "apikey",
+              "value": "={{ $('Configuracion').first().json.serviceRole }}"
+            },
+            {
+              "name": "Authorization",
+              "value": "=Bearer {{ $('Configuracion').first().json.serviceRole }}"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            },
+            {
+              "name": "Prefer",
+              "value": "return=minimal"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ user_id: $json.userId, modo: $json.modo, pregunta: $json.pregunta, respuesta: $json.respuesta, revisar: $json.derivar }) }}",
+        "options": {}
+      }
+    },
+    {
+      "id": "81d7cb6b-8aab-4423-9c3c-f03ff91d3933",
+      "name": "Devolver a la app",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [
+        1860,
+        0
+      ],
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ JSON.stringify({ respuesta: $('Preparar respuesta').first().json.respuesta }) }}",
+        "options": {}
+      }
+    },
+    {
+      "id": "f1fba7e3-0b93-4ea1-b8d4-3bf4d2fc5f9f",
+      "name": "Ver quien pregunta",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        318,
+        200
+      ],
+      "parameters": {
+        "url": "={{ $('Configuracion').first().json.supabaseUrl }}/auth/v1/user",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "apikey",
+              "value": "={{ $('Configuracion').first().json.serviceRole }}"
+            },
+            {
+              "name": "Authorization",
+              "value": "=Bearer {{ $('Llega una consulta').first().json.body.token || 'sin-token' }}"
+            }
+          ]
+        },
+        "options": {
+          "response": {
+            "response": {
+              "neverError": true
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "3ce10a4d-6671-430b-97d7-a8db9f638e3f",
+      "name": "Controlar uso",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        538,
+        200
+      ],
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $('Configuracion').first().json.supabaseUrl }}/rest/v1/rpc/asistente_permitido",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "apikey",
+              "value": "={{ $('Configuracion').first().json.serviceRole }}"
+            },
+            {
+              "name": "Authorization",
+              "value": "=Bearer {{ $('Configuracion').first().json.serviceRole }}"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ p_usuario: $('Ver quien pregunta').first().json.id || null, p_ip: ($('Llega una consulta').first().json.headers || {})['x-forwarded-for'] || null }) }}",
+        "options": {
+          "response": {
+            "response": {
+              "neverError": true,
+              "responseFormat": "text"
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "5a0c9575-2c0e-4613-bd8f-dd32de388469",
+      "name": "Puede preguntar",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        758,
+        200
+      ],
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "permitido",
+              "leftValue": "={{ String($json.data).trim() }}",
+              "rightValue": "false",
+              "operator": {
+                "type": "string",
+                "operation": "notEquals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      }
+    },
+    {
+      "id": "5eeb93d7-f517-49b4-b352-f08e8dc5b4cb",
+      "name": "Avisar tope",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [
+        978,
+        400
+      ],
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ JSON.stringify({ respuesta: 'Por hoy llegaste al máximo de preguntas al asistente. Mañana podés seguir, o mirá las preguntas frecuentes. Si es urgente, escribinos a trattoapp1@gmail.com.' }) }}",
+        "options": {}
+      }
+    }
+  ],
+  "connections": {
+    "Llega una consulta": {
+      "main": [
+        [
+          {
+            "node": "Configuracion",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Configuracion": {
+      "main": [
+        [
+          {
+            "node": "Ver quien pregunta",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Armar conversacion": {
+      "main": [
+        [
+          {
+            "node": "Preguntarle a la IA",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Preguntarle a la IA": {
+      "main": [
+        [
+          {
+            "node": "Preparar respuesta",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Preparar respuesta": {
+      "main": [
+        [
+          {
+            "node": "Guardar la consulta",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Guardar la consulta": {
+      "main": [
+        [
+          {
+            "node": "Devolver a la app",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Ver quien pregunta": {
+      "main": [
+        [
+          {
+            "node": "Controlar uso",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Controlar uso": {
+      "main": [
+        [
+          {
+            "node": "Puede preguntar",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Puede preguntar": {
+      "main": [
+        [
+          {
+            "node": "Armar conversacion",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Avisar tope",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  }
+}

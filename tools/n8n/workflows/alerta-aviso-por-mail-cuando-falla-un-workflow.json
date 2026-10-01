@@ -1,0 +1,84 @@
+{
+  "id": "LcYeloX0BIWbs3vN",
+  "name": "ALERTA - Aviso por mail cuando falla un workflow",
+  "active": true,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "nodes": [
+    {
+      "id": "30c45f17-d84d-4812-9976-654bc4ab61c9",
+      "name": "Falló un workflow",
+      "type": "n8n-nodes-base.errorTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        0
+      ],
+      "parameters": {}
+    },
+    {
+      "id": "dceb694a-54a9-4253-a85c-a7c354ef7e52",
+      "name": "Armar aviso",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        240,
+        0
+      ],
+      "parameters": {
+        "jsCode": "// Arma el mail de alerta. Un aviso por workflow cada 30 minutos como máximo,\n// para que una falla repetida no llene la casilla.\nconst e  = $input.first().json;\nconst wf = e.workflow || {};\nconst ex = e.execution || {};\nconst est = $getWorkflowStaticData('global');\nest.ultimos = est.ultimos || {};\nconst k = String(wf.id || wf.name || 'desconocido');\nconst ahora = Date.now();\nif (est.ultimos[k] && ahora - est.ultimos[k] < 30 * 60 * 1000) return [];\nest.ultimos[k] = ahora;\nconst err  = ex.error || e.trigger?.error || {};\nconst msg  = String(err.message || err.description || 'sin detalle').slice(0, 600);\nconst nodo = ex.lastNodeExecuted || err.node?.name || '?';\nreturn [{ json: {\n  asunto: `[Tratto] Falló \"${wf.name || k}\"`,\n  texto: `Workflow: ${wf.name} (${wf.id})\\nNodo: ${nodo}\\nError: ${msg}\\nEjecución: ${ex.url || ex.id || '?'}\\nHora: ${new Date().toISOString()}\\n\\n` +\n         `No se manda otro aviso de este workflow por 30 minutos. Qué hacer: docs/MONITORING.md en el repositorio.`\n} }];"
+      }
+    },
+    {
+      "id": "1282bee0-8d1c-4b55-adb8-ca25bd7ec3af",
+      "name": "Mandar mail",
+      "type": "n8n-nodes-base.emailSend",
+      "typeVersion": 2.1,
+      "position": [
+        480,
+        0
+      ],
+      "parameters": {
+        "fromEmail": "Tratto alertas <info@trattoapp.com.ar>",
+        "toEmail": "trattoapp1@gmail.com",
+        "subject": "={{ $json.asunto }}",
+        "emailFormat": "text",
+        "text": "={{ $json.texto }}",
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "credentials": {
+        "smtp": {
+          "id": "NLd0bxspbVGiMdMH",
+          "name": "Brevo SMTP (alertas)"
+        }
+      }
+    }
+  ],
+  "connections": {
+    "Falló un workflow": {
+      "main": [
+        [
+          {
+            "node": "Armar aviso",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Armar aviso": {
+      "main": [
+        [
+          {
+            "node": "Mandar mail",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  }
+}

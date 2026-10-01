@@ -1,0 +1,426 @@
+{
+  "id": "DedJkClK9Llod9M5",
+  "name": "Matching automatico + avisos",
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false,
+    "errorWorkflow": "LcYeloX0BIWbs3vN"
+  },
+  "nodes": [
+    {
+      "id": "405b6188-4c16-411e-8902-6e2bfe9dce5c",
+      "name": "Aviso de Supabase",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        -416,
+        -160
+      ],
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "matching",
+        "options": {}
+      }
+    },
+    {
+      "id": "bb1fe6b1-75cb-4c95-9b43-05e5f20ce789",
+      "name": "Configuracion",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -192,
+        -160
+      ],
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "a1",
+              "name": "supabaseUrl",
+              "value": "https://qglsonbcsncgekzbfafk.supabase.co",
+              "type": "string"
+            },
+            {
+              "id": "a2",
+              "name": "serviceKey",
+              "value": "<SECRETO_EN_N8N>",
+              "type": "string"
+            },
+            {
+              "id": "a3",
+              "name": "brevoKey",
+              "value": "<SECRETO_EN_N8N>",
+              "type": "string"
+            },
+            {
+              "id": "a4",
+              "name": "remitenteNombre",
+              "value": "Tratto",
+              "type": "string"
+            },
+            {
+              "id": "a5",
+              "name": "remitenteEmail",
+              "value": "info@trattoapp.com.ar",
+              "type": "string"
+            },
+            {
+              "id": "a6",
+              "name": "appUrl",
+              "value": "",
+              "type": "string"
+            },
+            {
+              "id": "a7",
+              "name": "tolerancia",
+              "value": 0.2,
+              "type": "number"
+            },
+            {
+              "id": "a8",
+              "name": "maxSugeridos",
+              "value": 3,
+              "type": "number"
+            }
+          ]
+        },
+        "options": {}
+      }
+    },
+    {
+      "id": "627477f7-950c-4cdc-8813-56e92d6fc38c",
+      "name": "Preparar consulta",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        32,
+        -160
+      ],
+      "parameters": {
+        "jsCode": "\n// ═══ Normaliza el aviso que manda Supabase ═══\nconst cfg = $('Configuracion').first().json;\nconst tabla = $('Verificar origen').first().json.tabla;\nconst filas = $input.first().json.body;\nconst registro = Array.isArray(filas) && filas.length === 1 ? filas[0] : null;\nif (!registro || !tabla) return [];\n\nlet tipo, url;\nif (tabla === 'solicitudes') {\n  tipo = 'solicitud';\n  url = cfg.supabaseUrl + '/rest/v1/proveedores'\n      + '?rubro=eq.' + encodeURIComponent(registro.servicio_necesitado)\n      + '&demo=eq.false'\n      + '&order=precio_desde.asc';\n} else if (tabla === 'proveedores') {\n  tipo = 'proveedor';\n  url = cfg.supabaseUrl + '/rest/v1/solicitudes'\n      + '?servicio_necesitado=eq.' + encodeURIComponent(registro.rubro)\n      + '&estado=eq.pendiente'\n      + '&demo=eq.false';\n} else { return []; }\n\nreturn [{ json: { tipo, registro, url } }];\n"
+      }
+    },
+    {
+      "id": "59afeffc-5042-4754-beff-7c659baebbb5",
+      "name": "Traer candidatos",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        256,
+        -160
+      ],
+      "parameters": {
+        "url": "={{ $json.url }}",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "=apikey",
+              "value": "={{ $('Configuracion').first().json.serviceKey }}"
+            },
+            {
+              "name": "=Authorization",
+              "value": "=Bearer {{ $('Configuracion').first().json.serviceKey }}"
+            }
+          ]
+        },
+        "options": {}
+      }
+    },
+    {
+      "id": "2fff1179-03ea-4680-b6e0-cb39964aaf2b",
+      "name": "Calcular matches",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        464,
+        -160
+      ],
+      "parameters": {
+        "jsCode": "// ═══ Aplica las reglas de matching ═══\nconst cfg = $('Configuracion').first().json;\nconst ev  = $('Preparar consulta').first().json;\n\nconst TOL    = Number(cfg.tolerancia);\nconst MAX    = Number(cfg.maxSugeridos);\nconst REMOTO = 'Todo el país (remoto)';\n\n// Zonas que se consideran cercanas entre sí.\n// Un cliente de CABA puede recibir proveedores de GBA, y viceversa.\nconst REGIONES = {\n  AMBA:      ['CABA','GBA Norte','GBA Oeste','GBA Sur'],\n  Centro:    ['Buenos Aires (interior)','Córdoba','Santa Fe','Entre Ríos'],\n  Cuyo:      ['Mendoza'],\n  NOA:       ['Tucumán','Salta'],\n  NEA:       ['Chaco','Corrientes','Misiones'],\n  Patagonia: ['Neuquén','Río Negro','Chubut','Santa Cruz']\n};\n\nfunction regionDe(z) {\n  for (const r in REGIONES) if (REGIONES[r].includes(z)) return r;\n  return null;\n}\n\n// 0 = misma zona · 1 = remoto · 2 = zona cercana · null = no califica\nfunction cercania(zonaCliente, zonaProv) {\n  if (zonaProv === zonaCliente) return 0;\n  if (zonaProv === REMOTO)      return 1;\n  const a = regionDe(zonaCliente), b = regionDe(zonaProv);\n  if (a && b && a === b)        return 2;\n  return null;\n}\n\nconst candidatos = $input.all().map(i => i.json);\n\nfunction califica(sol, prov) {\n  if (prov.rubro !== sol.servicio_necesitado) return false;\n  if (cercania(sol.zona, prov.zona) === null) return false;\n  return Number(prov.precio_desde) <= Number(sol.presupuesto) * (1 + TOL);\n}\n\n// Orden: primero por cercanía, después los que entran en presupuesto,\n// y dentro de cada grupo del más barato al más caro.\nfunction ordenar(sol, lista) {\n  return lista.slice().sort((a, b) => {\n    const ca = cercania(sol.zona, a.zona), cb = cercania(sol.zona, b.zona);\n    if (ca !== cb) return ca - cb;\n    const ea = Number(a.precio_desde) > Number(sol.presupuesto);\n    const eb = Number(b.precio_desde) > Number(sol.presupuesto);\n    if (ea !== eb) return ea ? 1 : -1;\n    return Number(a.precio_desde) - Number(b.precio_desde);\n  });\n}\n\nconst matches = [], ids = [], pares = [];\n\nif (ev.tipo === 'solicitud') {\n  const sol = ev.registro;\n  const aptos = ordenar(sol, candidatos.filter(p => califica(sol, p))).slice(0, MAX);\n  aptos.forEach(p => {\n    matches.push({ solicitud_id: sol.id, proveedor_id: p.id, estado: 'sugerido' });\n    pares.push({ sol, prov: p });\n  });\n  if (aptos.length) ids.push(sol.id);\n} else {\n  const prov = ev.registro;\n  candidatos.forEach(sol => {\n    if (califica(sol, prov)) {\n      matches.push({ solicitud_id: sol.id, proveedor_id: prov.id, estado: 'sugerido' });\n      pares.push({ sol, prov });\n      ids.push(sol.id);\n    }\n  });\n}\n\nif (!matches.length) return [];\n\nreturn [{ json: {\n  matches, pares,\n  idsSolicitudes: [...new Set(ids)],\n  cantidad: matches.length,\n  disparador: ev.tipo\n} }];"
+      }
+    },
+    {
+      "id": "52a6aab0-5add-406d-99bd-8f1f4f0cc496",
+      "name": "Crear conexiones",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        688,
+        -160
+      ],
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $('Configuracion').first().json.supabaseUrl }}/rest/v1/matches?on_conflict=solicitud_id,proveedor_id",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "=apikey",
+              "value": "={{ $('Configuracion').first().json.serviceKey }}"
+            },
+            {
+              "name": "=Authorization",
+              "value": "={{ $('Configuracion').first().json.serviceKey }}"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            },
+            {
+              "name": "Prefer",
+              "value": "return=representation,resolution=ignore-duplicates"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify($json.matches) }}",
+        "options": {}
+      }
+    },
+    {
+      "id": "c6b872a5-944f-4add-bdba-0910eda26284",
+      "name": "Marcar como conectado",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        912,
+        -160
+      ],
+      "parameters": {
+        "method": "PATCH",
+        "url": "={{ $('Configuracion').first().json.supabaseUrl }}/rest/v1/solicitudes?id=in.({{ $('Calcular matches').first().json.idsSolicitudes.join(',') }})",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "=apikey",
+              "value": "={{ $('Configuracion').first().json.serviceKey }}"
+            },
+            {
+              "name": "=Authorization",
+              "value": "=Bearer {{ $('Configuracion').first().json.serviceKey }}"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({estado:'con_match'}) }}",
+        "options": {}
+      }
+    },
+    {
+      "id": "c52384f9-e10e-445a-9c16-0fc5e207e890",
+      "name": "Armar avisos",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1136,
+        -160
+      ],
+      "parameters": {
+        "jsCode": "\n// ═══ Arma un mail por destinatario ═══\nconst cfg   = $('Configuracion').first().json;\nconst pares = ($('Calcular matches').first().json.pares) || [];\nif (!pares.length) return [];\n\nconst pesos = n => '$' + Number(n).toLocaleString('es-AR');\nconst esc = t => String(t == null ? '' : t)\n  .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');\n\nconst V = '#1E5D49', OSC = '#0C2620', GRIS = '#68766F', LIN = '#E0DCD0';\n\nfunction envoltura(titulo, cuerpo) {\n  const cta = cfg.appUrl\n    ? '<tr><td style=\"padding:0 28px 30px\"><a href=\"' + cfg.appUrl + '\" style=\"display:inline-block;background:' + V + ';color:#fff;text-decoration:none;font-weight:600;font-size:15px;padding:13px 26px;border-radius:8px\">Abrir la app</a></td></tr>'\n    : '<tr><td style=\"padding:0 28px 30px;color:' + GRIS + ';font-size:13px\">Entrá a la app para responder.</td></tr>';\n  return '<!DOCTYPE html><html><body style=\"margin:0;background:#F2F0E9;font-family:Helvetica,Arial,sans-serif\">'\n    + '<table width=\"100%\" cellpadding=\"0\" cellspacing=\"0\"><tr><td align=\"center\" style=\"padding:26px 12px\">'\n    + '<table width=\"100%\" style=\"max-width:560px;background:#FCFBF8;border-radius:10px;overflow:hidden;border:1px solid ' + LIN + '\" cellpadding=\"0\" cellspacing=\"0\">'\n    + '<tr><td style=\"background:' + OSC + ';padding:22px 28px\">'\n    + '<div style=\"color:#9AA69B;font-size:10px;letter-spacing:2.6px;text-transform:uppercase\">Marketplace de servicios</div>'\n    + '<div style=\"color:#FCFBF8;font-size:21px;font-weight:bold;margin-top:8px;line-height:1.25\">' + titulo + '</div>'\n    + '</td></tr>' + cuerpo + cta\n    + '<tr><td style=\"padding:16px 28px;background:#F2F0E9;color:' + GRIS + ';font-size:11.5px;border-top:1px solid ' + LIN + '\">Recibís este aviso porque tenés una cuenta activa en el marketplace.</td></tr>'\n    + '</table></td></tr></table></body></html>';\n}\n\nconst fila = (k, v) => '<tr><td style=\"padding:9px 0;border-bottom:1px solid ' + LIN + ';color:' + GRIS + ';font-size:13.5px\">' + k\n  + '</td><td style=\"padding:9px 0;border-bottom:1px solid ' + LIN + ';text-align:right;font-size:13.5px;font-weight:bold\">' + v + '</td></tr>';\n\nconst salida = [];\n\n// ── 1. Aviso a cada proveedor ──\npares.forEach(({ sol, prov }) => {\n  const cuerpo = '<tr><td style=\"padding:24px 28px 8px\">'\n    + '<p style=\"margin:0 0 16px;font-size:15px;line-height:1.6\">Hola ' + esc(prov.nombre) + ', alguien está buscando justo lo que ofrecés.</p>'\n    + '<div style=\"background:#F2F0E9;border-radius:8px;padding:16px;font-size:14px;line-height:1.6;color:#0E1815\">' + esc(sol.descripcion) + '</div>'\n    + '<table width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" style=\"margin-top:18px\">'\n    + fila('Servicio', esc(sol.servicio_necesitado))\n    + fila('Zona', esc(sol.zona))\n    + fila('Presupuesto', pesos(sol.presupuesto))\n    + fila('Urgencia', esc(sol.urgencia))\n    + '</table>'\n    + '<p style=\"margin:18px 0 0;font-size:13px;color:' + GRIS + '\">Respondé rápido: le sugerimos hasta 3 proveedores y suele elegir al primero que contesta.</p>'\n    + '</td></tr>';\n  salida.push({\n    para: prov.email,\n    nombre: prov.nombre,\n    asunto: 'Un cliente busca ' + sol.servicio_necesitado + ' en ' + sol.zona,\n    html: envoltura('Te llegó un cliente', cuerpo)\n  });\n});\n\n// ── 2. Un aviso por cliente, agrupando sus proveedores ──\nconst porSol = {};\npares.forEach(({ sol, prov }) => {\n  if (!porSol[sol.id]) porSol[sol.id] = { sol, provs: [] };\n  porSol[sol.id].provs.push(prov);\n});\n\nObject.keys(porSol).forEach(k => {\n  const { sol, provs } = porSol[k];\n  const tarjetas = provs.map(p => {\n    const sobre = Number(p.precio_desde) > Number(sol.presupuesto);\n    const chapa = sobre\n      ? '<span style=\"font-size:10px;color:#8A6E10;border:1px solid rgba(201,162,39,.6);border-radius:99px;padding:3px 9px\">' + Math.round((Number(p.precio_desde)/Number(sol.presupuesto)-1)*100) + '% sobre presupuesto</span>'\n      : '<span style=\"font-size:10px;color:' + V + ';border:1px solid ' + V + ';border-radius:99px;padding:3px 9px\">Entra en presupuesto</span>';\n    return '<div style=\"border:1px solid ' + LIN + ';border-radius:8px;padding:15px;margin-bottom:10px\">'\n      + '<div style=\"font-size:16px;font-weight:bold;margin-bottom:7px\">' + esc(p.nombre) + '</div>' + chapa\n      + '<div style=\"margin-top:10px;font-size:13.5px;color:' + GRIS + ';line-height:1.55\">' + esc(p.descripcion) + '</div>'\n      + '<div style=\"margin-top:10px;font-size:13px\"><b>' + pesos(p.precio_desde) + ' – ' + pesos(p.precio_hasta) + '</b> · ' + esc(p.zona) + ' · ' + esc(p.disponibilidad) + '</div>'\n      + '</div>';\n  }).join('');\n\n  const plural = provs.length === 1 ? 'proveedor' : 'proveedores';\n  const cuerpo = '<tr><td style=\"padding:24px 28px 8px\">'\n    + '<p style=\"margin:0 0 18px;font-size:15px;line-height:1.6\">Hola ' + esc(sol.nombre_cliente) + ', encontramos ' + provs.length + ' ' + plural + ' para tu pedido de ' + esc(sol.servicio_necesitado) + ' en ' + esc(sol.zona) + '.</p>'\n    + tarjetas\n    + '<p style=\"margin:16px 0 0;font-size:13px;color:' + GRIS + '\">Ya podés escribirles desde el chat de la app y pedirles presupuesto.</p>'\n    + '</td></tr>';\n\n  salida.push({\n    para: sol.email_cliente,\n    nombre: sol.nombre_cliente,\n    asunto: 'Encontramos ' + provs.length + ' ' + plural + ' para tu pedido',\n    html: envoltura('Tenemos ' + plural + ' para vos', cuerpo)\n  });\n});\n\nreturn salida.filter(a => a.para).map(a => ({ json: a }));\n"
+      }
+    },
+    {
+      "id": "a2212b98-2a9e-47c2-903e-12da876baee8",
+      "name": "Enviar aviso por mail",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1344,
+        -160
+      ],
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.brevo.com/v3/smtp/email",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "api-key",
+              "value": "={{ $('Configuracion').first().json.brevoKey }}"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            },
+            {
+              "name": "accept",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ sender: { name: $('Configuracion').first().json.remitenteNombre, email: $('Configuracion').first().json.remitenteEmail }, to: [{ email: $json.para, name: $json.nombre }], subject: $json.asunto, htmlContent: $json.html }) }}",
+        "options": {}
+      }
+    },
+    {
+      "id": "48613488-ddcb-4a32-9b81-334653016eb0",
+      "name": "Verificar origen",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -82,
+        40
+      ],
+      "parameters": {
+        "jsCode": "// Solo se acepta el aviso que manda la base de datos (trae el encabezado secreto).\n// Del aviso se usa solamente la tabla y el id: el registro se vuelve a leer de\n// la base, asi nadie puede inventar un pedido o un proveedor.\nconst w = $('Aviso de Supabase').first().json;\nconst h = w.headers || {};\nif (h['x-tratto-secreto'] !== '<SECRETO_EN_N8N>') return [];\nconst p = w.body || {};\nconst id = Number(p.record && p.record.id);\nif (!Number.isInteger(id) || id <= 0) return [];\nconst cfg = $('Configuracion').first().json;\nlet url;\nif (p.table === 'solicitudes') url = cfg.supabaseUrl + '/rest/v1/solicitudes?id=eq.' + id + '&estado=eq.pendiente&demo=eq.false&select=*';\nelse if (p.table === 'proveedores') url = cfg.supabaseUrl + '/rest/v1/proveedores?id=eq.' + id + '&demo=eq.false&select=*';\nelse return [];\nreturn [{ json: { tabla: p.table, url } }];\n"
+      }
+    },
+    {
+      "id": "51368dfa-ee91-48c5-b9b6-57b746bec7c1",
+      "name": "Releer de la base",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        138,
+        40
+      ],
+      "parameters": {
+        "url": "={{ $json.url }}",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "apikey",
+              "value": "={{ $('Configuracion').first().json.serviceKey }}"
+            },
+            {
+              "name": "Authorization",
+              "value": "=Bearer {{ $('Configuracion').first().json.serviceKey }}"
+            }
+          ]
+        },
+        "options": {
+          "response": {
+            "response": {
+              "fullResponse": true
+            }
+          }
+        }
+      }
+    }
+  ],
+  "connections": {
+    "Aviso de Supabase": {
+      "main": [
+        [
+          {
+            "node": "Configuracion",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Configuracion": {
+      "main": [
+        [
+          {
+            "node": "Verificar origen",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Preparar consulta": {
+      "main": [
+        [
+          {
+            "node": "Traer candidatos",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Traer candidatos": {
+      "main": [
+        [
+          {
+            "node": "Calcular matches",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Calcular matches": {
+      "main": [
+        [
+          {
+            "node": "Crear conexiones",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Crear conexiones": {
+      "main": [
+        [
+          {
+            "node": "Marcar como conectado",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Marcar como conectado": {
+      "main": [
+        [
+          {
+            "node": "Armar avisos",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Armar avisos": {
+      "main": [
+        [
+          {
+            "node": "Enviar aviso por mail",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Verificar origen": {
+      "main": [
+        [
+          {
+            "node": "Releer de la base",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Releer de la base": {
+      "main": [
+        [
+          {
+            "node": "Preparar consulta",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  }
+}
