@@ -92,12 +92,14 @@ Mercado Pago) procesan en nombre de Tratto, y Google no considera eso "compartir
 | Nombre | Sí | Sí | Funcionalidad de la app, administración de la cuenta |
 | Email | Sí | Sí | Administración de la cuenta, comunicaciones |
 | Teléfono | Sí | Sí | Funcionalidad de la app (contacto entre cliente y proveedor) |
+| Otra información personal: CUIT/CUIL y condición frente al IVA (solo proveedores) | Sí | No (los clientes no lo cargan) | Funcionalidad de la app (facturar la comisión) |
 | Fotos | Sí | No | Funcionalidad de la app (foto del pedido) |
 | Otros contenidos del usuario (mensajes del chat, pedidos, calificaciones) | Sí | Sí | Funcionalidad de la app |
 | Información financiera: historial de compras (trabajos cobrados por la app) | Sí | No | Funcionalidad de la app |
 | ID de dispositivo (para notificaciones) | Sí | No | Funcionalidad de la app |
 | Interacciones con la app (estadísticas de visitas, anónimas y sin cookies) | Sí | Sí | Estadísticas |
 | Ubicación precisa o aproximada del dispositivo | **No** | | |
+| ID de publicidad | **No** (la app no pide el permiso AD_ID) | | |
 
 ### Gráficos
 - Ícono: `play-icono-512.png`
