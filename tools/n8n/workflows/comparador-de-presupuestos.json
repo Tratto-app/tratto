@@ -1,0 +1,394 @@
+{
+  "id": "0tDqVsTaz4n39QsG",
+  "name": "Comparador de presupuestos",
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false,
+    "errorWorkflow": "LcYeloX0BIWbs3vN"
+  },
+  "nodes": [
+    {
+      "id": "376d3fa9-dfc0-424d-8578-b4a10eb0cc67",
+      "name": "Llega el pedido",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        0,
+        0
+      ],
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "comparar",
+        "responseMode": "responseNode",
+        "options": {
+          "allowedOrigins": "https://www.trattoapp.com.ar,https://trattoapp.com.ar"
+        }
+      }
+    },
+    {
+      "id": "13f29089-1daa-44b2-99ce-85621737e521",
+      "name": "Configuracion",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        208,
+        0
+      ],
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "c1",
+              "name": "openaiKey",
+              "value": "<SECRETO_EN_N8N>",
+              "type": "string"
+            },
+            {
+              "id": "c2",
+              "name": "modelo",
+              "value": "gpt-4o-mini",
+              "type": "string"
+            },
+            {
+              "id": "c3",
+              "name": "instruccion",
+              "value": "Comparás presupuestos de distintos proveedores para un mismo trabajo, en Argentina.\nEl que lee es el cliente, que no es del rubro y necesita entender las diferencias.\n\nRespondés SOLO con un objeto JSON, sin texto antes ni después.\nFormato exacto:\n{\n  \"items\": [\n    {\n      \"id\": el id que te pasaron,\n      \"incluye\": [\"cosa\", \"cosa\"],\n      \"no_incluye\": [\"cosa\"],\n      \"plazo\": \"cómo queda el plazo, en pocas palabras\",\n      \"etiqueta\": \"El más barato\" | \"El más completo\" | \"El más rápido\" | \"\"\n    }\n  ],\n  \"resumen\": \"dos o tres frases explicando la diferencia real entre las opciones\",\n  \"ojo\": \"una cosa a tener en cuenta antes de decidir, o cadena vacía\"\n}\n\nREGLAS\n- No elijas un ganador. Mostrá las diferencias y que decida el cliente.\n- Las etiquetas son hechos, no opiniones: el más barato es el de menor monto, y punto.\n  Si dos empatan o no aplica, dejá la etiqueta vacía.\n- Si un presupuesto no aclara si incluye materiales, ponelo en \"no_incluye\" como\n  \"no aclara si incluye materiales\". Es la duda más común y la más cara.\n- incluye y no_incluye: máximo 3 cosas cada uno, cortas, sin repetir.\n- En \"incluye\" va SOLO lo que el proveedor hace. Si el presupuesto dice \"sin X\" o \"no incluye X\",\n  X va en \"no_incluye\", escrito en positivo (\"pintura del cielorraso\"), nunca \"sin pintura\" en \"incluye\".\n- El resumen va en español rioplatense, de vos, sin adornos.\n  Comparás plata contra alcance: \"el de X es más barato pero no cubre Y\".\n- No inventes nada que no esté escrito en el presupuesto.\n- No menciones teléfonos, direcciones ni datos personales.\n",
+              "type": "string"
+            },
+            {
+              "id": "c4",
+              "name": "supabaseUrl",
+              "value": "https://qglsonbcsncgekzbfafk.supabase.co",
+              "type": "string"
+            },
+            {
+              "id": "c5",
+              "name": "serviceRole",
+              "value": "<SECRETO_EN_N8N>",
+              "type": "string"
+            },
+            {
+              "id": "c6",
+              "name": "anonKey",
+              "value": "<SECRETO_EN_N8N>",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      }
+    },
+    {
+      "id": "fbb6a3b2-a96d-4920-859e-fb5152cf5bc6",
+      "name": "Verificar quien pide",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "onError": "continueRegularOutput",
+      "position": [
+        400,
+        0
+      ],
+      "parameters": {
+        "url": "={{ $('Configuracion').first().json.supabaseUrl }}/auth/v1/user",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "apikey",
+              "value": "={{ $('Configuracion').first().json.anonKey }}"
+            },
+            {
+              "name": "Authorization",
+              "value": "=Bearer {{ $('Llega el pedido').first().json.body.token }}"
+            }
+          ]
+        },
+        "options": {}
+      }
+    },
+    {
+      "id": "631a5022-08a8-40f2-aa7f-2b45d58ef96a",
+      "name": "Traer el pedido",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "onError": "continueRegularOutput",
+      "position": [
+        608,
+        0
+      ],
+      "parameters": {
+        "url": "={{ $('Configuracion').first().json.supabaseUrl }}/rest/v1/solicitudes?id=eq.{{ $('Llega el pedido').first().json.body.solicitudId }}&select=id,user_id,servicio_necesitado,presupuesto",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "apikey",
+              "value": "={{ $('Configuracion').first().json.serviceRole }}"
+            },
+            {
+              "name": "Authorization",
+              "value": "=Bearer {{ $('Configuracion').first().json.serviceRole }}"
+            }
+          ]
+        },
+        "options": {}
+      }
+    },
+    {
+      "id": "f415a57b-3929-4e4e-a435-7e015503e5ee",
+      "name": "Traer los matches",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "onError": "continueRegularOutput",
+      "position": [
+        800,
+        0
+      ],
+      "parameters": {
+        "url": "={{ $('Configuracion').first().json.supabaseUrl }}/rest/v1/matches?solicitud_id=eq.{{ $('Llega el pedido').first().json.body.solicitudId }}&select=id,proveedores(nombre)",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "apikey",
+              "value": "={{ $('Configuracion').first().json.serviceRole }}"
+            },
+            {
+              "name": "Authorization",
+              "value": "=Bearer {{ $('Configuracion').first().json.serviceRole }}"
+            }
+          ]
+        },
+        "options": {}
+      }
+    },
+    {
+      "id": "705297a3-1e46-4478-beb2-6992ef725bd0",
+      "name": "Validar",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1008,
+        0
+      ],
+      "parameters": {
+        "jsCode": "// Valida al cliente y junta los presupuestos de todos los proveedores\nconst ev    = $('Llega el pedido').first().json.body || {};\nconst quien = $('Verificar quien pide').first().json;\n\nfunction juntar(nodo) {\n  try { return $(nodo).all().map(i => i.json).flat().filter(x => x && typeof x === 'object'); }\n  catch(e) { return []; }\n}\n\nif (!quien || !quien.id) return [{ json: { ok:false, motivo:'sesion' } }];\n\nconst sol = juntar('Traer el pedido')[0];\nif (!sol) return [{ json: { ok:false, motivo:'pedido' } }];\nif (sol.user_id !== quien.id) return [{ json: { ok:false, motivo:'permiso' } }];\n\nconst matches = juntar('Traer los matches');\nif (!matches.length) return [{ json: { ok:false, motivo:'sin' } }];\n\nconst nombres = {};\nmatches.forEach(m => { nombres[m.id] = (m.proveedores && m.proveedores.nombre) || 'Proveedor'; });\n\nreturn [{ json: {\n  ok: true,\n  ids: matches.map(m => m.id).join(','),\n  nombres,\n  servicio: sol.servicio_necesitado,\n  presupuestoCliente: sol.presupuesto\n} }];"
+      }
+    },
+    {
+      "id": "a9b48eb6-41f7-4651-9a88-6fb4f63d7a89",
+      "name": "Traer presupuestos",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "onError": "continueRegularOutput",
+      "position": [
+        1200,
+        0
+      ],
+      "parameters": {
+        "url": "={{ $('Configuracion').first().json.supabaseUrl }}/rest/v1/mensajes?match_id=in.({{ $json.ids }})&tipo=eq.presupuesto&order=created_at.desc&select=id,match_id,monto,incluye,plazo,estado_presupuesto",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "apikey",
+              "value": "={{ $('Configuracion').first().json.serviceRole }}"
+            },
+            {
+              "name": "Authorization",
+              "value": "=Bearer {{ $('Configuracion').first().json.serviceRole }}"
+            }
+          ]
+        },
+        "options": {}
+      }
+    },
+    {
+      "id": "1dcce9ab-58c9-45f4-81a0-90c9837e981f",
+      "name": "Armar comparacion",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1408,
+        0
+      ],
+      "parameters": {
+        "jsCode": "const ctx = $('Validar').first().json;\nif (!ctx.ok) return [{ json: ctx }];\n\nfunction juntar(nodo) {\n  try { return $(nodo).all().map(i => i.json).flat().filter(x => x && typeof x === 'object'); }\n  catch(e) { return []; }\n}\n\n// uno por proveedor: el más reciente de cada uno\nconst todos = juntar('Traer presupuestos').filter(p => p.monto);\nconst porMatch = {};\ntodos.forEach(p => { if (!porMatch[p.match_id]) porMatch[p.match_id] = p; });\nconst lista = Object.values(porMatch);\n\nif (lista.length < 2) return [{ json: { ok:false, motivo:'pocos' } }];\n\nconst texto = lista.map(p =>\n  `id ${p.id} | ${ctx.nombres[p.match_id] || 'Proveedor'} | $${p.monto}\\n` +\n  `  incluye: ${p.incluye || 'no aclara'}\\n` +\n  `  plazo: ${p.plazo || 'no aclara'}`\n).join('\\n\\n');\n\nreturn [{ json: {\n  ok: true,\n  texto: `Trabajo: ${ctx.servicio}. El cliente había puesto un presupuesto de $${ctx.presupuestoCliente}.\\n\\nPRESUPUESTOS:\\n${texto}`,\n  crudos: lista.map(p => ({ id: p.id, matchId: p.match_id, nombre: ctx.nombres[p.match_id] || 'Proveedor',\n                            monto: p.monto, estado: p.estado_presupuesto }))\n} }];"
+      }
+    },
+    {
+      "id": "fd5f6c5c-c811-405c-af8f-c32d6ce3a4d6",
+      "name": "Comparar con IA",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "onError": "continueRegularOutput",
+      "position": [
+        1600,
+        0
+      ],
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.openai.com/v1/chat/completions",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "=Bearer {{ $('Configuracion').first().json.openaiKey }}"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ model: $('Configuracion').first().json.modelo, max_tokens: 700, temperature: 0.3, response_format: { type: 'json_object' }, messages: [ { role: 'system', content: $('Configuracion').first().json.instruccion }, { role: 'user', content: $json.texto } ] }) }}",
+        "options": {}
+      }
+    },
+    {
+      "id": "c5d13fdf-9afa-459e-b8f3-96593db17fc3",
+      "name": "Preparar resultado",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1808,
+        0
+      ],
+      "parameters": {
+        "jsCode": "const ctx = $('Armar comparacion').first().json;\nif (!ctx.ok) return [{ json: ctx }];\n\nlet r = {};\ntry { r = JSON.parse($input.first().json.choices[0].message.content.replace(/```json|```/g,'').trim()); }\ncatch(e) { return [{ json: { ok:false, motivo:'ia' } }]; }\n\nconst porId = {};\n(Array.isArray(r.items) ? r.items : []).forEach(x => { porId[String(x.id)] = x; });\n\n// Red de seguridad: si la IA pone \"sin X\" dentro de \"incluye\", el cliente ve\n// un ✓ al lado de algo que NO se hace. Eso se mueve a \"no_incluye\".\nconst NEGACION = /^(sin|no incluye)\\s+/i;\nfunction separar(inc, no) {\n  const si = [], nada = (Array.isArray(no) ? no : []).map(String);\n  (Array.isArray(inc) ? inc : []).map(String).forEach(t => {\n    const s = t.trim();\n    if (NEGACION.test(s)) { const r = s.replace(NEGACION, ''); nada.push(r.charAt(0).toUpperCase() + r.slice(1)); }\n    else si.push(s);\n  });\n  return [si.slice(0,3), nada.slice(0,3)];\n}\n\nconst items = ctx.crudos.map(c => {\n  const x = porId[String(c.id)] || {};\n  const [inc, noInc] = separar(x.incluye, x.no_incluye);\n  return {\n    nombre: c.nombre,\n    monto: c.monto,\n    estado: c.estado,\n    incluye: inc,\n    no_incluye: noInc,\n    plazo: String(x.plazo || ''),\n    etiqueta: String(x.etiqueta || '')\n  };\n}).sort((a,b) => Number(a.monto) - Number(b.monto));\n\nreturn [{ json: {\n  ok: true,\n  items,\n  resumen: String(r.resumen || '').slice(0,500),\n  ojo: String(r.ojo || '').slice(0,250)\n} }];"
+      }
+    },
+    {
+      "id": "30939a3f-760c-45e4-ba9f-1a454805e878",
+      "name": "Devolver a la app",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [
+        2000,
+        0
+      ],
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ JSON.stringify($json) }}",
+        "options": {}
+      }
+    }
+  ],
+  "connections": {
+    "Llega el pedido": {
+      "main": [
+        [
+          {
+            "node": "Configuracion",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Configuracion": {
+      "main": [
+        [
+          {
+            "node": "Verificar quien pide",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Verificar quien pide": {
+      "main": [
+        [
+          {
+            "node": "Traer el pedido",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Traer el pedido": {
+      "main": [
+        [
+          {
+            "node": "Traer los matches",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Traer los matches": {
+      "main": [
+        [
+          {
+            "node": "Validar",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Validar": {
+      "main": [
+        [
+          {
+            "node": "Traer presupuestos",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Traer presupuestos": {
+      "main": [
+        [
+          {
+            "node": "Armar comparacion",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Armar comparacion": {
+      "main": [
+        [
+          {
+            "node": "Comparar con IA",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Comparar con IA": {
+      "main": [
+        [
+          {
+            "node": "Preparar resultado",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Preparar resultado": {
+      "main": [
+        [
+          {
+            "node": "Devolver a la app",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  }
+}

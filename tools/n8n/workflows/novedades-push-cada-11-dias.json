@@ -1,0 +1,174 @@
+{
+  "id": "o4oaCLS6pXHjJT30",
+  "name": "NOVEDADES - Push cada 11 dias",
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "errorWorkflow": "LcYeloX0BIWbs3vN"
+  },
+  "nodes": [
+    {
+      "id": "9ef8e291-e084-42d8-80e6-2aee49e26f79",
+      "name": "Cada 11 dias a las 11",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        0,
+        0
+      ],
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "daysInterval": 11,
+              "triggerAtHour": 11
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "9007fefb-7715-4fb3-9584-313158fa0bae",
+      "name": "Configuracion",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        224,
+        0
+      ],
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "c1",
+              "name": "supabaseUrl",
+              "value": "https://qglsonbcsncgekzbfafk.supabase.co",
+              "type": "string"
+            },
+            {
+              "id": "c2",
+              "name": "serviceRole",
+              "value": "<SECRETO_EN_N8N>",
+              "type": "string"
+            },
+            {
+              "id": "c3",
+              "name": "pushSecreto",
+              "value": "<SECRETO_EN_N8N>",
+              "type": "string"
+            },
+            {
+              "id": "c4",
+              "name": "intervaloDias",
+              "value": 11,
+              "type": "number"
+            }
+          ]
+        },
+        "options": {}
+      }
+    },
+    {
+      "id": "318992f8-4958-47cc-a013-b351e42c63ba",
+      "name": "A quien le toca hoy",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        448,
+        0
+      ],
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $('Configuracion').first().json.supabaseUrl }}/rest/v1/rpc/novedades_a_mandar",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "apikey",
+              "value": "={{ $('Configuracion').first().json.serviceRole }}"
+            },
+            {
+              "name": "Authorization",
+              "value": "=Bearer {{ $('Configuracion').first().json.serviceRole }}"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ p_canal: 'push', p_intervalo_dias: $('Configuracion').first().json.intervaloDias }) }}",
+        "options": {}
+      }
+    },
+    {
+      "id": "3700e549-85f1-499e-b137-90520d593859",
+      "name": "Mandar el push",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        880,
+        0
+      ],
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $('Configuracion').first().json.supabaseUrl }}/functions/v1/quick-service",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "x-tratto-firma",
+              "value": "={{ $('Configuracion').first().json.pushSecreto }}"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ user_id: $json.destinatario, titulo: $json.titulo, cuerpo: $json.cuerpo, url: '/', tipo: 'publicidad', canal: 'push' }) }}",
+        "options": {}
+      }
+    }
+  ],
+  "connections": {
+    "Cada 11 dias a las 11": {
+      "main": [
+        [
+          {
+            "node": "Configuracion",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Configuracion": {
+      "main": [
+        [
+          {
+            "node": "A quien le toca hoy",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "A quien le toca hoy": {
+      "main": [
+        [
+          {
+            "node": "Mandar el push",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  }
+}

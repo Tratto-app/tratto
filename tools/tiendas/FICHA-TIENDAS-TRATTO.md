@@ -12,29 +12,32 @@ Links que piden las dos tiendas:
 ### Ficha principal
 **Nombre de la app** (máx. 30):
 ```
-Tratto: arreglos del hogar
+Tratto: servicios cerca tuyo
 ```
 **Descripción breve** (máx. 80):
 ```
-Sacale una foto a lo que se rompió y recibí presupuestos de gente de tu zona.
+Pedí lo que necesitás y recibí presupuestos de profesionales de tu zona.
 ```
 **Descripción completa:**
 ```
-¿Se te rompió algo en casa y no sabés cuánto sale arreglarlo? Con Tratto pedís el arreglo, te conectamos con gente de tu zona que hace ese trabajo y elegís el presupuesto que más te conviene. Sin llamar a diez personas.
+¿Necesitás a alguien para un trabajo y no sabés a quién llamar ni cuánto debería costar? En Tratto contás qué necesitás, te conectamos con gente de tu zona que hace ese trabajo y elegís el presupuesto que más te conviene. Sin llamar a diez personas.
 
 CÓMO FUNCIONA
-1. Pedís: contás qué necesitás arreglar. Si subís una foto, te damos un precio de referencia al toque.
+1. Pedís: contás qué necesitás o le sacás una foto. Te damos un precio de referencia al toque.
 2. Te cotizan: proveedores de tu zona y de ese rubro te mandan su presupuesto por el chat.
 3. Elegís vos: comparás qué incluye cada uno, cuánto sale y cuándo puede.
 
-LO QUE VAS A ENCONTRAR
-• Plomería y destapaciones
-• Techos, humedades e impermeabilización
-• Pintura, albañilería y refacciones
-• Cerrajería, herrería, carpintería y más
+MÁS DE 40 RUBROS
+• Hogar: plomería, pintura, albañilería, techos, cerrajería, aire acondicionado, jardinería y más
+• Limpieza de casas, oficinas y consorcios
+• Autos y traslados: mecánica, gomería, lavado, fletes y mudanzas
+• Clases: apoyo escolar, idiomas, música, computación, manejo
+• Eventos: catering, DJ, animación y organización
+• Digital: diseño, programación, redes sociales, fotografía y video, soporte técnico
+• Trámites, contabilidad, belleza, entrenamiento, mascotas y mucho más
 
-PENSADO PARA QUE NO TE VEAN LA CARA
-• Precio de referencia a partir de una foto, para saber si un presupuesto tiene sentido.
+PENSADO PARA QUE ELIJAS TRANQUILO
+• Precio de referencia a partir de una foto o de lo que escribís, para saber si un presupuesto tiene sentido.
 • Comparador de presupuestos con inteligencia artificial: te muestra qué incluye y qué no incluye cada uno.
 • Chat privado dentro de la app: tus datos no quedan expuestos.
 • Calificaciones de otros clientes en el perfil de cada proveedor.
@@ -42,8 +45,8 @@ PENSADO PARA QUE NO TE VEAN LA CARA
 PARA EL QUE PIDE ES GRATIS
 Pedir un servicio, chatear y recibir presupuestos no cuesta nada.
 
-¿TENÉS UN OFICIO?
-Registrate gratis y recibí pedidos de vecinos de tu zona y de tu rubro. Sin abono mensual.
+¿OFRECÉS UN SERVICIO?
+Registrate gratis y recibí pedidos de gente de tu zona y de tu rubro. Sin abono mensual.
 
 Tratto no admite rubros que requieran matrícula (gas, electricidad, salud).
 ```
@@ -56,9 +59,17 @@ Tratto no admite rubros que requieran matrícula (gas, electricidad, salud).
 - **App de noticias:** No. **App de salud:** No. **Préstamos o finanzas:** No.
 
 ### Acceso a la app (para los revisores)
-"Toda la funcionalidad requiere iniciar sesión". Antes de mandar a revisión te
-creo una cuenta de prueba con un pedido y presupuestos cargados, y ponemos acá
-el email y la contraseña.
+Elegí "Toda la funcionalidad o parte de ella está restringida" → Agregar instrucciones:
+- Nombre: Cuenta de prueba (cliente)
+- Usuario: `trattoapp1+demo-cliente@gmail.com`
+- Contraseña: la de las cuentas demo (la tiene el dueño; no va en el repo)
+- Instrucciones: "Tocá Iniciar sesión e ingresá con este email y contraseña.
+  La cuenta ya tiene un pedido con dos presupuestos, chats y un trabajo
+  calificado. Para ver la app como proveedor:
+  trattoapp1+demo-techista@gmail.com con la misma contraseña."
+
+Detalle de las cuentas en `docs/DEMO_ACCOUNTS.md`. Antes de mandar a revisión,
+reponer los datos con `select privado.reponer_demo();`.
 
 ### Clasificación de contenido (cuestionario IARC)
 - Categoría: **Todas las demás apps**
@@ -99,7 +110,7 @@ Mercado Pago) procesan en nombre de Tratto, y Google no considera eso "compartir
 
 **Nombre** (máx. 30):
 ```
-Tratto: arreglos del hogar
+Tratto: servicios cerca tuyo
 ```
 **Subtítulo** (máx. 30):
 ```
@@ -113,7 +124,7 @@ Sacale una foto a lo que se rompió o contá lo que necesitás, recibí presupue
 
 **Palabras clave** (máx. 100 caracteres, separadas por comas, sin espacios):
 ```
-plomero,techista,pintor,cerrajero,albañil,humedad,presupuesto,arreglos,hogar,oficios,reparaciones
+plomero,pintor,cerrajero,albañil,flete,limpieza,mecanico,profesor,clases,presupuesto,oficios
 ```
 - **Categoría principal:** Estilo de vida. **Secundaria:** Productividad.
 - **Precio:** Gratis. **Disponibilidad:** Argentina.

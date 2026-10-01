@@ -1,0 +1,407 @@
+{
+  "id": "kNw8mTqUiWvPbZw2",
+  "name": "MP - Clave publica del proveedor (mp-clave)",
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "errorWorkflow": "LcYeloX0BIWbs3vN"
+  },
+  "nodes": [
+    {
+      "id": "e332e8bd-8f42-426a-8121-c3f17de9f1e2",
+      "name": "Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        -1456,
+        224
+      ],
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "mp-clave",
+        "responseMode": "responseNode",
+        "options": {
+          "allowedOrigins": "https://www.trattoapp.com.ar,https://trattoapp.com.ar"
+        }
+      }
+    },
+    {
+      "id": "699bebc8-2e97-436d-a25b-6faa9b5d84d7",
+      "name": "Configuracion",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -1248,
+        224
+      ],
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "v1",
+              "name": "supabaseUrl",
+              "value": "https://qglsonbcsncgekzbfafk.supabase.co",
+              "type": "string"
+            },
+            {
+              "id": "v2",
+              "name": "serviceRole",
+              "value": "<SECRETO_EN_N8N>",
+              "type": "string"
+            },
+            {
+              "id": "v3",
+              "name": "anonKey",
+              "value": "<SECRETO_EN_N8N>",
+              "type": "string"
+            },
+            {
+              "id": "v4",
+              "name": "mensajeId",
+              "value": "={{ $json.body.mensaje_id }}",
+              "type": "string"
+            },
+            {
+              "id": "v5",
+              "name": "tokenUsuario",
+              "value": "={{ $json.body.token }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      }
+    },
+    {
+      "id": "a9094ed6-a8c1-49c5-93e6-cf7c0b2ef9e9",
+      "name": "Quien pide",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -1040,
+        224
+      ],
+      "parameters": {
+        "url": "={{ $('Configuracion').first().json.supabaseUrl }}/auth/v1/user",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "apikey",
+              "value": "={{ $('Configuracion').first().json.anonKey }}"
+            },
+            {
+              "name": "Authorization",
+              "value": "=Bearer {{ $('Configuracion').first().json.tokenUsuario }}"
+            }
+          ]
+        },
+        "options": {
+          "response": {
+            "response": {
+              "fullResponse": true,
+              "neverError": true
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "1ae7d4da-839e-4ac7-aa11-5233539d8c6c",
+      "name": "Sesion valida",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        -832,
+        224
+      ],
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "c-sesion",
+              "leftValue": "={{ $json.statusCode }}",
+              "rightValue": 200,
+              "operator": {
+                "type": "number",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      }
+    },
+    {
+      "id": "3f06026e-d17b-4eb5-a4e4-84885573520b",
+      "name": "Traer presupuesto",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -624,
+        112
+      ],
+      "parameters": {
+        "url": "={{ $('Configuracion').first().json.supabaseUrl }}/rest/v1/mensajes?id=eq.{{ $('Configuracion').first().json.mensajeId }}&select=id,match_id,monto,estado_presupuesto,pago_estado",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "apikey",
+              "value": "={{ $('Configuracion').first().json.serviceRole }}"
+            },
+            {
+              "name": "Authorization",
+              "value": "=Bearer {{ $('Configuracion').first().json.serviceRole }}"
+            }
+          ]
+        },
+        "options": {}
+      }
+    },
+    {
+      "id": "3b4b96ac-bd8a-48ac-aa30-5dde34e239b6",
+      "name": "Traer las partes",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -416,
+        112
+      ],
+      "parameters": {
+        "url": "={{ $('Configuracion').first().json.supabaseUrl }}/rest/v1/matches?id=eq.{{ ($('Traer presupuesto').first().json[0] ?? $('Traer presupuesto').first().json).match_id }}&select=id,solicitudes(user_id),proveedores(user_id)",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "apikey",
+              "value": "={{ $('Configuracion').first().json.serviceRole }}"
+            },
+            {
+              "name": "Authorization",
+              "value": "=Bearer {{ $('Configuracion').first().json.serviceRole }}"
+            }
+          ]
+        },
+        "options": {}
+      }
+    },
+    {
+      "id": "c70f40b5-3031-42e4-870c-e55f2e383797",
+      "name": "Es el cliente del match",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        -208,
+        112
+      ],
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "c-cliente",
+              "leftValue": "={{ ($('Traer las partes').first().json[0] ?? $('Traer las partes').first().json).solicitudes.user_id }}",
+              "rightValue": "={{ $('Quien pide').first().json.body.id }}",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      }
+    },
+    {
+      "id": "f692e958-5335-442e-932d-256a84040005",
+      "name": "Traer clave publica",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        0,
+        0
+      ],
+      "parameters": {
+        "url": "={{ $('Configuracion').first().json.supabaseUrl }}/rest/v1/cuentas_mp?user_id=eq.{{ ($('Traer las partes').first().json[0] ?? $('Traer las partes').first().json).proveedores.user_id }}&select=public_key",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "apikey",
+              "value": "={{ $('Configuracion').first().json.serviceRole }}"
+            },
+            {
+              "name": "Authorization",
+              "value": "=Bearer {{ $('Configuracion').first().json.serviceRole }}"
+            }
+          ]
+        },
+        "options": {}
+      }
+    },
+    {
+      "id": "f2042f10-a1b6-4c61-8512-7faf2d062037",
+      "name": "Devolver la clave",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [
+        208,
+        0
+      ],
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ JSON.stringify({ public_key: ($json[0] ?? $json).public_key || null, error: ($json[0] ?? $json).public_key ? null : 'El proveedor todavia no conecto su cuenta de Mercado Pago.' }) }}",
+        "options": {}
+      }
+    },
+    {
+      "id": "d0c8d6de-6e54-4b5c-864a-ee27c8d7f781",
+      "name": "No autorizado",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [
+        0,
+        224
+      ],
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ JSON.stringify({ error: 'No podes pagar este presupuesto.' }) }}",
+        "options": {}
+      }
+    },
+    {
+      "id": "8c4a237c-8759-4c52-93c8-440f85472f24",
+      "name": "Sesion invalida",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [
+        -624,
+        352
+      ],
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ JSON.stringify({ error: 'Tu sesion vencio. Volve a entrar.' }) }}",
+        "options": {}
+      }
+    }
+  ],
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Configuracion",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Configuracion": {
+      "main": [
+        [
+          {
+            "node": "Quien pide",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Quien pide": {
+      "main": [
+        [
+          {
+            "node": "Sesion valida",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Sesion valida": {
+      "main": [
+        [
+          {
+            "node": "Traer presupuesto",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Sesion invalida",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Traer presupuesto": {
+      "main": [
+        [
+          {
+            "node": "Traer las partes",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Traer las partes": {
+      "main": [
+        [
+          {
+            "node": "Es el cliente del match",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Es el cliente del match": {
+      "main": [
+        [
+          {
+            "node": "Traer clave publica",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "No autorizado",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Traer clave publica": {
+      "main": [
+        [
+          {
+            "node": "Devolver la clave",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  }
+}

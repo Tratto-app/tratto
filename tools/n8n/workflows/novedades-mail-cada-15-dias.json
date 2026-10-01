@@ -1,0 +1,174 @@
+{
+  "id": "nif9j3ICvEPYpkmf",
+  "name": "NOVEDADES - Mail cada 15 dias",
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "errorWorkflow": "LcYeloX0BIWbs3vN"
+  },
+  "nodes": [
+    {
+      "id": "0117b3da-a784-484d-8bf9-2705de8cb8ce",
+      "name": "Cada 15 dias a las 11",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        0,
+        0
+      ],
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "daysInterval": 15,
+              "triggerAtHour": 11
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "56b3bed0-d0f8-4ffd-a35e-fd630ce91667",
+      "name": "Configuracion",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        224,
+        0
+      ],
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "c1",
+              "name": "supabaseUrl",
+              "value": "https://qglsonbcsncgekzbfafk.supabase.co",
+              "type": "string"
+            },
+            {
+              "id": "c2",
+              "name": "serviceRole",
+              "value": "<SECRETO_EN_N8N>",
+              "type": "string"
+            },
+            {
+              "id": "c3",
+              "name": "pushSecreto",
+              "value": "<SECRETO_EN_N8N>",
+              "type": "string"
+            },
+            {
+              "id": "c4",
+              "name": "intervaloDias",
+              "value": 15,
+              "type": "number"
+            }
+          ]
+        },
+        "options": {}
+      }
+    },
+    {
+      "id": "d5362174-37c1-42c9-a9ca-80d080488a86",
+      "name": "A quien le toca hoy",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        448,
+        0
+      ],
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $('Configuracion').first().json.supabaseUrl }}/rest/v1/rpc/novedades_a_mandar",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "apikey",
+              "value": "={{ $('Configuracion').first().json.serviceRole }}"
+            },
+            {
+              "name": "Authorization",
+              "value": "=Bearer {{ $('Configuracion').first().json.serviceRole }}"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ p_canal: 'mail', p_intervalo_dias: $('Configuracion').first().json.intervaloDias }) }}",
+        "options": {}
+      }
+    },
+    {
+      "id": "65829c6a-1f3b-408d-8dee-86d79d1758bb",
+      "name": "Mandar el mail",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        880,
+        0
+      ],
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $('Configuracion').first().json.supabaseUrl }}/functions/v1/quick-service",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "x-tratto-firma",
+              "value": "={{ $('Configuracion').first().json.pushSecreto }}"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ user_id: $json.destinatario, titulo: $json.titulo, cuerpo: $json.cuerpo, url: '/', tipo: 'publicidad', canal: 'mail' }) }}",
+        "options": {}
+      }
+    }
+  ],
+  "connections": {
+    "Cada 15 dias a las 11": {
+      "main": [
+        [
+          {
+            "node": "Configuracion",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Configuracion": {
+      "main": [
+        [
+          {
+            "node": "A quien le toca hoy",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "A quien le toca hoy": {
+      "main": [
+        [
+          {
+            "node": "Mandar el mail",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  }
+}
