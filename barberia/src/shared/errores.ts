@@ -53,6 +53,13 @@ export const errores = {
       `${accion === 'cancelar' ? 'Cancelacion' : 'Cambio'} dentro de las ${horas} horas previas`,
       `Falta muy poco para el turno y ya no lo puedo ${accion} por acá 🙏 Si querés, le aviso al barbero para que lo vea él.`,
     ),
+  diaCompleto: (maximo: number) =>
+    new ErrorDeNegocio(
+      'DIA_COMPLETO',
+      `El dia ya tiene ${maximo} turnos (tope diario)`,
+      'Ese día ya está completo 😕 Te busco el horario más cercano de los próximos días.',
+      { httpStatus: 409 },
+    ),
   holdVencido: () =>
     new ErrorDeNegocio('HOLD_VENCIDO', 'La reserva temporal expiro', 'Se me venció la reserva del horario 😅 ¿Lo buscamos de nuevo?', { httpStatus: 409 }),
   datosInvalidos: (detalle: string, mensajeCliente = 'Me faltan datos para poder seguir.') =>

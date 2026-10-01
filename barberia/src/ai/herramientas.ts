@@ -426,10 +426,25 @@ async function ejecutarSinRegistro(
             horarios_para_ofrecer: r.horarios_sugeridos,
             todos_los_horarios_libres: r.horarios,
             hay_lugar: r.total_disponibles > 0,
+            ...(r.dia_completo
+              ? {
+                  dia_completo: true,
+                  aviso:
+                    'Ese día ya llegó al máximo de turnos del barbero, aunque la agenda tenga huecos. Decíselo así ("ese día ya está completo") y ofrecele el primer_horario_libre.',
+                }
+              : {}),
             proximos_dias_con_lugar: r.proximos_dias_con_lugar.map((f) => ({
               fecha: f,
               dia: fechaHumana(DateTime.fromISO(f, { zone: zona })),
             })),
+            ...(r.primer_horario_libre
+              ? {
+                  primer_horario_libre: {
+                    ...r.primer_horario_libre,
+                    dia: fechaHumana(DateTime.fromISO(r.primer_horario_libre.fecha, { zone: zona })),
+                  },
+                }
+              : {}),
           },
         };
       }

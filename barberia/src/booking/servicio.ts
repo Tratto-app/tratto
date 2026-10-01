@@ -153,6 +153,17 @@ export interface ResultadoDisponibilidad {
   horarios_sugeridos: string[];
   total_disponibles: number;
   proximos_dias_con_lugar: Fecha[];
+  /** El día está abierto pero ya llegó al tope de turnos diarios. */
+  dia_completo?: boolean;
+  /** Cuando ese día no hay lugar: el horario libre más cercano en los días siguientes. */
+  primer_horario_libre?: { fecha: Fecha; hora: Hora } | null;
+}
+
+/** ¿El día ya llegó al tope de turnos diarios (`reglas.max_turnos_por_dia`)? */
+async function diaCompleto(ex: Ejecutor, ctx: Contexto, fecha: Fecha, excluirTurnoId?: string): Promise<boolean> {
+  const maximo = ctx.cfg.reglas.max_turnos_por_dia;
+  if (!maximo) return false;
+  return (await turnosRepo.cantidadDelDia(ex, fecha, ctx.ahora().toMillis(), excluirTurnoId)) >= maximo;
 }
 
 /** Consulta de disponibilidad. Lectura pura: no reserva nada. */
@@ -169,6 +180,7 @@ export async function consultarDisponibilidad(
   };
 
   if (!dia.abierto) {
+    const proximos = await diasConLugar(ctx, consulta.fecha, servicio);
     return {
       ...base,
       abierto: false,
@@ -176,7 +188,24 @@ export async function consultarDisponibilidad(
       horarios: [],
       horarios_sugeridos: [],
       total_disponibles: 0,
-      proximos_dias_con_lugar: await diasConLugar(ctx, consulta.fecha, servicio),
+      proximos_dias_con_lugar: proximos,
+      primer_horario_libre: await primerHorarioLibre(ctx, proximos[0], servicio),
+    };
+  }
+
+  // Tope diario: aunque queden huecos, el día no recibe más turnos.
+  if (await diaCompleto(ctx.db, ctx, consulta.fecha, consulta.excluirTurnoId)) {
+    const proximos = await diasConLugar(ctx, consulta.fecha, servicio);
+    return {
+      ...base,
+      abierto: true,
+      motivo_cerrado: '',
+      dia_completo: true,
+      horarios: [],
+      horarios_sugeridos: [],
+      total_disponibles: 0,
+      proximos_dias_con_lugar: proximos,
+      primer_horario_libre: await primerHorarioLibre(ctx, proximos[0], servicio),
     };
   }
 
@@ -199,8 +228,21 @@ export async function consultarDisponibilidad(
     horarios: libres.map((h) => h.hora),
     horarios_sugeridos: repartirOpciones(libres, ctx.cfg.reglas.max_opciones_horarios).map((h) => h.hora),
     total_disponibles: libres.length,
-    proximos_dias_con_lugar: libres.length ? [] : await diasConLugar(ctx, consulta.fecha, servicio),
+    ...(libres.length
+      ? { proximos_dias_con_lugar: [] }
+      : await (async () => {
+          const proximos = await diasConLugar(ctx, consulta.fecha, servicio);
+          return { proximos_dias_con_lugar: proximos, primer_horario_libre: await primerHorarioLibre(ctx, proximos[0], servicio) };
+        })()),
   };
+}
+
+/** Primer horario libre de un día (el más temprano). */
+async function primerHorarioLibre(ctx: Contexto, fecha: Fecha | undefined, servicio: Servicio): Promise<{ fecha: Fecha; hora: Hora } | null> {
+  if (!fecha) return null;
+  const { turnos, bloqueos } = await cargarAgendaDelDia(ctx.db, ctx, fecha);
+  const libres = horariosDisponibles(ctx.cfg, fecha, servicio, { ahora: ctx.ahora(), turnosOcupados: turnos, bloqueos });
+  return libres[0] ? { fecha, hora: libres[0].hora } : null;
 }
 
 /** Proximos dias (a partir del siguiente) que tengan al menos un horario libre. */
@@ -210,6 +252,7 @@ async function diasConLugar(ctx: Contexto, desde: Fecha, servicio: Servicio, can
   const candidatos = proximosDiasAbiertos(ctx.cfg, fechaDe(DateTime.fromISO(desde, { zone: zona }).plus({ days: 1 })), 10);
   const salida: Fecha[] = [];
   for (const f of candidatos) {
+    if (await diaCompleto(ctx.db, ctx, f)) continue;
     const { turnos, bloqueos } = await cargarAgendaDelDia(ctx.db, ctx, f);
     const libres = horariosDisponibles(ctx.cfg, f, servicio, { ahora, turnosOcupados: turnos, bloqueos });
     if (libres.length > 0) salida.push(f);
@@ -289,6 +332,12 @@ async function validarYConstruir(
       case 'lejano':
         throw errores.demasiadoLejos(ctx.cfg.reglas.anticipacion_maxima_dias);
     }
+  }
+
+  // Tope diario. El panel (forzar) puede pasarlo: es el barbero el que decide
+  // hacerle un lugar a alguien más.
+  if (!datos.forzar && (await diaCompleto(tx, ctx, datos.fecha, opciones.excluirTurnoId))) {
+    throw errores.diaCompleto(ctx.cfg.reglas.max_turnos_por_dia);
   }
 
   if (!datos.forzar) {
@@ -753,7 +802,9 @@ export async function agendaDelDia(ctx: Contexto, fecha: Fecha, servicioParaHuec
     bloqueosRepo.porFecha(ctx.db, fecha),
   ]);
   const servicio = servicioParaHuecos ? servicioPorId(ctx.cfg, servicioParaHuecos) : serviciosActivos(ctx.cfg)[0];
-  const huecos = servicio
+  // Con el tope diario alcanzado, el día no tiene lugares libres aunque queden huecos.
+  const completo = await diaCompleto(ctx.db, ctx, fecha);
+  const huecos = servicio && !completo
     ? horariosDisponibles(ctx.cfg, fecha, servicio, {
         ahora: ctx.ahora(),
         turnosOcupados: turnos.filter((t) => ['pendiente', 'reservado', 'confirmado'].includes(t.estado)),

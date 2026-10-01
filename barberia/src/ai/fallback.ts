@@ -218,6 +218,18 @@ async function ofrecerHorarios(ctx: Contexto, estado: EstadoFallback): Promise<R
     };
   }
   const horarios = r.horarios_sugeridos.length ? r.horarios_sugeridos : r.horarios.slice(0, 8);
+  // Sin lugar ese día (completo o sin horarios): se pasa directo al día más
+  // cercano que tenga lugar y se le marca el primer horario libre.
+  if (horarios.length === 0 && r.primer_horario_libre) {
+    const primero = r.primer_horario_libre;
+    const motivo = r.dia_completo ? 'Ese día ya está completo 😕' : 'Uy, ese día ya no me queda lugar 😕';
+    estado.fecha = primero.fecha;
+    const otro = await ofrecerHorarios(ctx, estado);
+    return {
+      ...otro,
+      texto: `${motivo}\nEl turno más cercano que tengo es el *${dia(ctx, primero.fecha)} a las ${primero.hora} hs*.\n\n${otro.texto}`,
+    };
+  }
   if (horarios.length === 0) {
     estado.paso = 'elegir_dia';
     estado.opciones = r.proximos_dias_con_lugar;

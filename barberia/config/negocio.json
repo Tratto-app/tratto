@@ -184,6 +184,7 @@
     "margen_entre_turnos_min": 0,
     "grilla_min": 30,
     "max_turnos_futuros_por_cliente": 2,
+    "max_turnos_por_dia": 7,
     "cancelacion_minima_horas": 2,
     "politica_cancelacion": "Podés cancelar o reprogramar hasta 2 horas antes del turno escribiendo por acá.",
     "hold_minutos": 10,

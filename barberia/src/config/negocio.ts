@@ -63,6 +63,8 @@ const negocioSchema = z.object({
     margen_entre_turnos_min: z.number().int().min(0).default(0),
     grilla_min: z.number().int().positive().default(15),
     max_turnos_futuros_por_cliente: z.number().int().positive().default(2),
+    /** Tope de turnos por día. Con ese número, el día se da por completo aunque queden huecos. 0 = sin tope. */
+    max_turnos_por_dia: z.number().int().min(0).default(0),
     cancelacion_minima_horas: z.number().min(0).default(2),
     politica_cancelacion: z.string().default(''),
     hold_minutos: z.number().int().positive().default(10),

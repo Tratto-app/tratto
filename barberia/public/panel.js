@@ -583,6 +583,7 @@ async function cargarAjustes() {
     $('#a-anticipacion').value = config.reglas.anticipacion_minima_min;
     $('#a-maximo').value = config.reglas.anticipacion_maxima_dias;
     $('#a-max-turnos').value = config.reglas.max_turnos_futuros_por_cliente;
+    $('#a-max-dia').value = config.reglas.max_turnos_por_dia ?? 0;
     $('#a-cancelacion').value = config.reglas.cancelacion_minima_horas;
     $('#a-margen').value = config.reglas.margen_entre_turnos_min;
 
@@ -723,6 +724,7 @@ $('#guardar-ajustes').addEventListener('click', async () => {
   nueva.reglas.anticipacion_minima_min = Number($('#a-anticipacion').value);
   nueva.reglas.anticipacion_maxima_dias = Number($('#a-maximo').value);
   nueva.reglas.max_turnos_futuros_por_cliente = Number($('#a-max-turnos').value);
+  nueva.reglas.max_turnos_por_dia = Number($('#a-max-dia').value) || 0;
   nueva.reglas.cancelacion_minima_horas = Number($('#a-cancelacion').value);
   nueva.reglas.margen_entre_turnos_min = Number($('#a-margen').value);
 

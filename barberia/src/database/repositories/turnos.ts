@@ -100,6 +100,22 @@ export const turnosRepo = {
     return filas.map(mapearTurno);
   },
 
+  /**
+   * Cuántos turnos cuentan para el tope diario de una fecha: los que el
+   * barbero atiende o atendió ese día, más los horarios que alguien tiene
+   * apartados ahora mismo (si no, dos clientes podrían pasar el tope a la vez).
+   */
+  async cantidadDelDia(ex: Ejecutor, fecha: string, ahoraMs: number, excluirId = ''): Promise<number> {
+    const filas = await ex.query<{ n: number | string }>(
+      `SELECT COUNT(*) AS n FROM turnos
+       WHERE fecha = ? AND id <> ?
+         AND (estado IN ('reservado','confirmado','completado','no_show')
+              OR (estado = 'pendiente' AND (hold_vence_ms IS NULL OR hold_vence_ms > ?)))`,
+      [fecha, excluirId, ahoraMs],
+    );
+    return Number(filas[0]?.n ?? 0);
+  },
+
   /** Todos los turnos de un dia (incluye cancelados: el barbero quiere verlos). */
   async porFecha(ex: Ejecutor, fecha: string): Promise<Turno[]> {
     const filas = await ex.query<FilaTurno>(

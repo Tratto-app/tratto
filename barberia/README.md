@@ -234,6 +234,13 @@ Los horarios vienen configurados como pidió el enunciado: **martes a sábado, d
 10:00 a 13:00 y de 15:00 a 20:00; lunes y domingo cerrado.** Se cambian en
 `horarios.dias` (`1` = lunes … `7` = domingo) o desde el panel.
 
+**Tope diario:** `reglas.max_turnos_por_dia` (hoy en **7**). Cuando un día llega
+a ese número, el bot y el menú no dan más turnos ese día aunque queden huecos, y
+le ofrecen al cliente el horario libre más cercano de los días siguientes. Los
+horarios apartados mientras alguien confirma también cuentan, así dos clientes no
+pasan el tope a la vez. Desde el panel el barbero sí puede cargar uno más. `0` =
+sin tope. Se cambia en *Ajustes*.
+
 Otras secciones: `horarios_especiales` (un día puntual con otro horario),
 `feriados`, `vacaciones` (rango cerrado), `reglas` (anticipación mínima y máxima,
 máximo de turnos por cliente, margen entre turnos, duración del hold),
