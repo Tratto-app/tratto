@@ -124,7 +124,7 @@ Sacale una foto a lo que se rompió o contá lo que necesitás, recibí presupue
 
 **Palabras clave** (máx. 100 caracteres, separadas por comas, sin espacios):
 ```
-plomero,pintor,cerrajero,albañil,flete,limpieza,mecanico,profesor,clases,fotografo,presupuesto,oficios
+plomero,pintor,cerrajero,albañil,flete,limpieza,mecanico,profesor,clases,presupuesto,oficios
 ```
 - **Categoría principal:** Estilo de vida. **Secundaria:** Productividad.
 - **Precio:** Gratis. **Disponibilidad:** Argentina.
