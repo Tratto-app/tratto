@@ -18,3 +18,7 @@ codemagic.yaml
 docs
 supabase
 .github
+
+# Growth OS: panel interno separado (React + Vite) con su propio despliegue;
+# no se sirve desde el dominio de la app
+growth
