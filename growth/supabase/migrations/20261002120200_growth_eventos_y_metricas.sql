@@ -336,7 +336,8 @@ begin
            least(p.installed_at, p.registered_at, p.activated_at) r6,
            least(p.registered_at, p.activated_at) r7,
            p.activated_at r8,
-           case when u.last_seen_at >= now() - make_interval(days => coalesce(w, 7)) then u.last_seen_at end r9
+           -- Activo = ya se activó y usó la app dentro de la ventana (subconjunto de "Activaron")
+           case when p.activated_at is not null and u.last_seen_at >= now() - make_interval(days => coalesce(w, 7)) then u.last_seen_at end r9
       from public.growth_prospects p
       left join public.growth_app_users u on u.id = p.app_user_id
      where p.workspace_id = ws and p.created_at < t
@@ -636,18 +637,19 @@ end $$;
 create or replace function public.growth_store_stats(ws uuid, p_from timestamptz, p_to timestamptz)
 returns table (platform text, clicks bigint, installs bigint, registrations bigint, activations bigint)
 language plpgsql stable security definer set search_path = '' as $$
+-- (el destino del click se llama "destino" para no chocar con la variable del rango)
 declare f timestamptz := coalesce(p_from, '-infinity'); t timestamptz := coalesce(p_to, now());
 begin
   perform public.growth_check(ws);
   return query
   select x.p,
-    (select count(*) from public.growth_link_clicks k where k.workspace_id = ws and k.target = x.t and k.created_at >= f and k.created_at < t),
+    (select count(*) from public.growth_link_clicks k where k.workspace_id = ws and k.target = x.destino and k.created_at >= f and k.created_at < t),
     (select count(*) from public.growth_installations i where i.workspace_id = ws and i.platform = x.p and i.installed_at >= f and i.installed_at < t),
     (select count(*) from public.growth_registrations r join public.growth_app_users u on u.id = r.app_user_id
       where r.workspace_id = ws and u.platform = x.p and r.registered_at >= f and r.registered_at < t),
     (select count(*) from public.growth_activations a join public.growth_app_users u on u.id = a.app_user_id
       where a.workspace_id = ws and u.platform = x.p and a.activated_at >= f and a.activated_at < t)
-  from (values ('android','play'), ('ios','appstore'), ('web','web')) x(p, t);
+  from (values ('android','play'), ('ios','appstore'), ('web','web')) x(p, destino);
 end $$;
 
 -- ── Segmentos ──

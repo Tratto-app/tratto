@@ -19,3 +19,36 @@ jobs:
           node-version: 22
       - name: Revisar
         run: python3 tools/ci/revisar.py
+
+  # Growth OS (carpeta growth/): tipos, tests unitarios, build del panel y
+  # chequeo de las Edge Functions. No usa secretos ni toca ninguna base.
+  growth:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    defaults:
+      run:
+        working-directory: growth/web
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: growth/web/package-lock.json
+      - name: Instalar dependencias
+        run: npm ci --no-audit --no-fund
+        env:
+          PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: '1'
+      - name: Tipos y tests unitarios
+        run: npx tsc -b && npx vitest run
+      - name: Build
+        run: npx vite build
+        env:
+          VITE_SUPABASE_URL: https://example.supabase.co
+          VITE_SUPABASE_ANON_KEY: ci-sin-clave
+      - uses: denoland/setup-deno@v2
+        with:
+          deno-version: v2.x
+      - name: Edge Functions (deno check + lint)
+        working-directory: growth/supabase/functions
+        run: deno check */index.ts && deno lint
