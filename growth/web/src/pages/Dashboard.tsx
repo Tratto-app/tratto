@@ -35,6 +35,11 @@ export default function Dashboard() {
       <PageHeader title={`Hola 👋 así viene ${app?.app_name || 'tu app'}`}
         desc="Todo se calcula en vivo desde la base para el período elegido arriba, y se compara con el período anterior de igual duración."
         actions={<><Link className="btn" to="/prospects?new=1">+ Prospecto</Link><Link className="btn primario" to="/campaigns">Campañas</Link></>} />
+      {app?.sending_paused !== false && (
+        <div className="aviso" style={{ marginBottom: 14 }}>
+          <b>Envíos en pausa.</b> El sistema recibe registros y prepara las automatizaciones, pero no envía ningún mensaje todavía. Activalos en Settings → Workspace cuando la app esté publicada en las tiendas.
+        </div>
+      )}
       <ErrorBox error={k.error} onRetry={k.reload} />
       {k.loading && !k.data ? <Loading /> : c && (
         <div className="grid g6">

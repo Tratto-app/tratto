@@ -5,9 +5,10 @@ export interface AppSettings {
   audience: string | null; value_prop: string | null; features: string | null; benefits: string | null;
   price: string | null; monetization: string | null; deep_link_base: string | null;
   activation_event: string; active_window_days: number;
+  contact_phone: string | null; sending_paused: boolean;
 }
 export interface Prospect {
-  id: string; workspace_id: string; ref: string; first_name: string | null; last_name: string | null; company: string | null;
+  id: string; workspace_id: string; ref: string; kind: 'provider' | 'customer'; rubro: string | null; zona: string | null; first_name: string | null; last_name: string | null; company: string | null;
   instagram: string | null; facebook: string | null; tiktok: string | null; email: string | null; phone: string | null;
   city: string | null; country: string | null; source_id: string | null; campaign_id: string | null; segment_label: string | null;
   status: string; score: number; score_manual: boolean; ai_score: number | null; ai_summary: string | null; next_action: string | null;

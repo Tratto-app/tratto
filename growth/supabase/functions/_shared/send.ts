@@ -65,3 +65,9 @@ export function personalLink(slug: string, ref: string): string {
   const base = Deno.env.get('GROWTH_LINK_BASE') || `${Deno.env.get('SUPABASE_URL')}/functions/v1/growth-go`;
   return `${base.replace(/\/$/, '')}/${slug}?r=${ref}`;
 }
+
+// ¿El workspace tiene los envíos en pausa (hasta el lanzamiento)?
+export async function sendingPaused(db: SupabaseClient, ws: string): Promise<boolean> {
+  const { data } = await db.from('growth_app_settings').select('sending_paused').eq('workspace_id', ws).maybeSingle();
+  return data?.sending_paused !== false; // ante la duda, pausado
+}

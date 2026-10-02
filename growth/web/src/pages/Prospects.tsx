@@ -11,7 +11,7 @@ import { useWs } from '../lib/workspace';
 import { parseCsv } from '../lib/csv';
 
 const PAGE = 50;
-const COLS = 'id,ref,first_name,last_name,company,email,phone,instagram,city,status,score,ai_score,interest,consent,do_not_contact,tags,source_id,campaign_id,contact_count,last_contact_at,last_reply_at,next_action,created_at';
+const COLS = 'id,ref,kind,rubro,zona,first_name,last_name,company,email,phone,instagram,city,status,score,ai_score,interest,consent,do_not_contact,tags,source_id,campaign_id,contact_count,last_contact_at,last_reply_at,next_action,created_at';
 
 export default function Prospects() {
   const { ws, toast } = useWs();
@@ -20,6 +20,7 @@ export default function Prospects() {
   const [q, setQ] = useState('');
   const dq = useDebounced(q);
   const [status, setStatus] = useState(sp.get('status') || '');
+  const [kind, setKind] = useState(sp.get('kind') || '');
   const [source, setSource] = useState('');
   const [campaign, setCampaign] = useState('');
   const [minScore, setMinScore] = useState(sp.get('min') || '');
@@ -41,7 +42,7 @@ export default function Prospects() {
     return { sources: (s.data || []) as Source[], campaigns: (c.data || []) as Campaign[], workflows: (w.data || []) as Workflow[], segments: g.data || [] };
   }, [ws!.id]);
 
-  useEffect(() => { setPage(0); setSel(new Set()); }, [dq, status, source, campaign, minScore, segment, order]);
+  useEffect(() => { setPage(0); setSel(new Set()); }, [dq, status, kind, source, campaign, minScore, segment, order]);
 
   const list = useAsync(async () => {
     let ids: string[] | null = null;
@@ -57,6 +58,7 @@ export default function Prospects() {
       qy = qy.or(`first_name.ilike.%${t}%,last_name.ilike.%${t}%,email.ilike.%${t}%,instagram.ilike.%${t}%,company.ilike.%${t}%,phone.ilike.%${t}%,ref.eq.${t}`);
     }
     if (status) qy = qy.eq('status', status);
+    if (kind) qy = qy.eq('kind', kind);
     if (source) qy = qy.eq('source_id', source);
     if (campaign) qy = campaign === 'none' ? qy.is('campaign_id', null) : qy.eq('campaign_id', campaign);
     if (minScore) qy = qy.gte('score', Number(minScore));
@@ -65,7 +67,7 @@ export default function Prospects() {
     const { data, error, count } = await qy;
     if (error) throw new Error(error.message);
     return { rows: (data || []) as unknown as Prospect[], total: count || 0 };
-  }, [ws!.id, dq, status, source, campaign, minScore, segment, order, page]);
+  }, [ws!.id, dq, status, kind, source, campaign, minScore, segment, order, page]);
 
   const srcName = useMemo(() => Object.fromEntries((meta.data?.sources || []).map((s) => [s.id, s.name])), [meta.data]);
   const campName = useMemo(() => Object.fromEntries((meta.data?.campaigns || []).map((s) => [s.id, s.name])), [meta.data]);
@@ -97,6 +99,9 @@ export default function Prospects() {
       <Card>
         <div className="fila" style={{ marginBottom: 12 }}>
           <input className="crece" placeholder="Buscar por nombre, email, @usuario, empresa, teléfono o código…" value={q} onChange={(e) => setQ(e.target.value)} aria-label="Buscar" />
+          <select style={{ width: 150 }} value={kind} onChange={(e) => setKind(e.target.value)} aria-label="Tipo">
+            <option value="">Proveedores y clientes</option><option value="provider">Proveedores</option><option value="customer">Clientes</option>
+          </select>
           <select style={{ width: 160 }} value={status} onChange={(e) => setStatus(e.target.value)} aria-label="Estado">
             <option value="">Todos los estados</option>
             {STATUS_ORDER.map((s) => <option key={s} value={s}>{STATUS[s].label}</option>)}
@@ -149,7 +154,7 @@ export default function Prospects() {
                     <td>
                       <Link to={`/prospects/${r.id}`} onClick={(e) => e.stopPropagation()}>{nombre(r)}</Link>
                       {r.do_not_contact && <> <Badge tone="rojo" title="No contactar">No contactar</Badge></>}
-                      <div className="muted pequeño">{[r.company, r.instagram, r.email, r.city].filter(Boolean).join(' · ')}</div>
+                      <div className="muted pequeño">{[r.kind === 'provider' ? 'Proveedor' : 'Cliente', r.rubro, r.zona || r.city, r.company, r.email].filter(Boolean).join(' · ')}</div>
                     </td>
                     <td><StatusBadge status={r.status} /></td>
                     <td><Score value={r.score} /></td>

@@ -11,7 +11,7 @@ import { loadContext, logRun, runAi } from '../_shared/ai.ts';
 import type { Channel } from '../_shared/channels.ts';
 import { renderTemplate } from '../_shared/engine-core.ts';
 import { admin, cors, json, requireMember } from '../_shared/http.ts';
-import { personalLink, sendToProspect } from '../_shared/send.ts';
+import { personalLink, sendingPaused, sendToProspect } from '../_shared/send.ts';
 
 const CHANNELS: Channel[] = ['instagram', 'whatsapp', 'email', 'sms', 'tiktok', 'facebook', 'other'];
 const UUID = /^[0-9a-f-]{36}$/i;
@@ -36,6 +36,12 @@ Deno.serve(async (req) => {
     .eq('id', pid).eq('workspace_id', ws).maybeSingle();
   if (!p) return json(req, { error: 'Prospecto inexistente' }, 404);
   const body = typeof b.body === 'string' ? b.body.slice(0, 4000) : '';
+
+  // Interruptor de lanzamiento: mientras los envíos estén en pausa, solo se
+  // permite cargar respuestas recibidas (inbound). No sale ningún mensaje.
+  if (action !== 'inbound' && await sendingPaused(db, ws)) {
+    return json(req, { ok: false, paused: true, error: 'Los envíos de este workspace están en pausa hasta el lanzamiento. Activalos en Settings → Workspace.' }, 409);
+  }
 
   if (action === 'inbound') {
     if (!body.trim()) return json(req, { error: 'El mensaje está vacío' }, 400);

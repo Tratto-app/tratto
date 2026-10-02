@@ -4,11 +4,13 @@ import { fecha } from '../lib/format';
 import { useAsync } from '../lib/hooks';
 import { supabase } from '../lib/supabase';
 import { useWs } from '../lib/workspace';
+import { SUPABASE_URL } from '../lib/supabase';
 
 export default function SettingsWorkspace() {
-  const { ws, session, workspaces, reloadWorkspaces, setWs, toast } = useWs();
+  const { ws, app, session, workspaces, reloadWorkspaces, reloadApp, setWs, toast } = useWs();
   const [name, setName] = useState(ws!.name);
   const [nuevo, setNuevo] = useState('');
+  const [phone, setPhone] = useState(app?.contact_phone || '');
   const members = useAsync(async () => {
     const { data, error } = await supabase.from('growth_members').select('user_id,role,created_at').eq('workspace_id', ws!.id).order('created_at');
     if (error) throw new Error(error.message);
@@ -27,10 +29,45 @@ export default function SettingsWorkspace() {
     if (error) return toast(error.message, true);
     await reloadWorkspaces(); setWs(data.id); setNuevo(''); toast('Workspace creado');
   };
+  const paused = app?.sending_paused !== false;
+  const togglePausa = async (nuevoPausado: boolean) => {
+    if (!nuevoPausado && !confirm('Vas a ACTIVAR los envíos reales de este workspace. A partir de ahora las automatizaciones empezarán a escribirles a los registrados. ¿Seguro?')) return;
+    const { error } = await supabase.from('growth_app_settings').update({ sending_paused: nuevoPausado }).eq('workspace_id', ws!.id);
+    if (error) toast(error.message, true); else { toast(nuevoPausado ? 'Envíos en pausa' : 'Envíos activados'); reloadApp(); }
+  };
+  const guardarTel = async () => {
+    const { error } = await supabase.from('growth_app_settings').update({ contact_phone: phone.trim() || null }).eq('workspace_id', ws!.id);
+    if (error) toast(error.message, true); else { toast('Teléfono guardado'); reloadApp(); }
+  };
+  const base = (import.meta.env.VITE_GROWTH_LANDING_BASE as string | undefined) || `${SUPABASE_URL}/registro`;
+  const linkRegistro = `${base}?ws=${ws!.slug}`;
+
   return (
     <>
       <PageHeader title="Settings · Workspace" desc="Cada workspace es una app distinta, con sus propios datos. Nadie ve datos de un workspace del que no es miembro (lo garantiza la base con RLS)." />
-      <div className="grid g2">
+
+      <Card title="Lanzamiento" className={paused ? '' : 'mt'} actions={<Badge tone={paused ? 'laton' : 'verde'}>{paused ? 'En pausa' : 'Enviando'}</Badge>}>
+        <p className="texto-2" style={{ marginTop: 0 }}>
+          Mientras esté <b>en pausa</b>, el sistema recibe registros y los prepara, pero <b>no envía ningún mensaje</b>: las automatizaciones quedan esperando. Activá los envíos recién cuando la app esté publicada en Play Store y App Store.
+        </p>
+        <div className="fila">
+          {paused
+            ? <button className="btn laton" disabled={!admin} onClick={() => togglePausa(false)}>Activar envíos (lanzar)</button>
+            : <button className="btn peligro" disabled={!admin} onClick={() => togglePausa(true)}>Volver a pausar</button>}
+          <span className="muted pequeño">Afecta a todo el workspace. Los registros y el resto del panel funcionan igual en los dos modos.</span>
+        </div>
+        <div className="sep" />
+        <div className="grid g2">
+          <Field label="Teléfono de contacto" hint="Puede aparecer en los mensajes ({{contact_phone}}). No se guarda en el código.">
+            <div className="fila"><input className="crece" value={phone} onChange={(e) => setPhone(e.target.value)} placeholder="+54 9 11 …" disabled={!admin} /><button className="btn" disabled={!admin} onClick={guardarTel}>Guardar</button></div>
+          </Field>
+          <Field label="Link de registro (para redes, bio y QR)" hint="Lleva a la página donde proveedores y clientes se anotan con su permiso.">
+            <div className="fila"><input className="crece mono" readOnly value={linkRegistro} onFocus={(e) => e.target.select()} /><button className="btn" onClick={() => { navigator.clipboard?.writeText(linkRegistro); toast('Link copiado'); }}>Copiar</button></div>
+          </Field>
+        </div>
+      </Card>
+
+      <div className="grid g2 mt">
         <Card title="Este workspace">
           <div className="grid">
             <Field label="Nombre"><div className="fila"><input className="crece" value={name} onChange={(e) => setName(e.target.value)} disabled={!admin} /><button className="btn" disabled={!admin || !name.trim()} onClick={renombrar}>Guardar</button></div></Field>

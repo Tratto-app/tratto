@@ -11,7 +11,7 @@ import { loadContext, logRun, runAi } from '../_shared/ai.ts';
 import type { Channel } from '../_shared/channels.ts';
 import { matchCond, nextPosition, renderTemplate, waitMs, type Cond, type Step } from '../_shared/engine-core.ts';
 import { admin, cors, json, requireMember, safeEqual, sha256Hex } from '../_shared/http.ts';
-import { personalLink, sendToProspect } from '../_shared/send.ts';
+import { personalLink, sendingPaused, sendToProspect } from '../_shared/send.ts';
 import type { SupabaseClient } from 'npm:@supabase/supabase-js@2.117.0';
 
 const UUID = /^[0-9a-f-]{36}$/i;
@@ -68,14 +68,23 @@ Deno.serve(async (req) => {
 
   const results: Record<string, unknown>[] = [];
   const stepsCache = new Map<string, Step[]>();
+  const pausedCache = new Map<string, boolean>();
+  const phoneCache = new Map<string, string>();
   for (const run of (runs || []) as Run[]) {
     // Reclamo optimista: si otra invocación ya la tomó, updated_at cambió.
     const { data: claimed } = await db.from('growth_workflow_runs').update({ updated_at: new Date().toISOString() })
       .eq('id', run.id).eq('updated_at', run.updated_at).select('updated_at').maybeSingle();
     if (!claimed) continue;
     run.updated_at = claimed.updated_at;
+    if (!pausedCache.has(run.workspace_id)) pausedCache.set(run.workspace_id, await sendingPaused(db, run.workspace_id));
+    const paused = pausedCache.get(run.workspace_id)!;
+    if (!phoneCache.has(run.workspace_id)) {
+      const { data: st } = await db.from('growth_app_settings').select('contact_phone').eq('workspace_id', run.workspace_id).maybeSingle();
+      phoneCache.set(run.workspace_id, st?.contact_phone || '');
+    }
+    const contactPhone = phoneCache.get(run.workspace_id)!;
     try {
-      results.push({ run: run.id, ...(await advance(db, run, stepsCache)) });
+      results.push({ run: run.id, ...(await advance(db, run, stepsCache, paused, contactPhone)) });
     } catch (e) {
       const msg = e instanceof Error ? e.message : String(e);
       await db.from('growth_workflow_runs').update({ status: 'failed', error: msg.slice(0, 500), finished_at: new Date().toISOString() }).eq('id', run.id);
@@ -98,7 +107,7 @@ async function getSteps(db: SupabaseClient, wf: string, cache: Map<string, Step[
   return cache.get(wf)!;
 }
 
-async function advance(db: SupabaseClient, run: Run, cache: Map<string, Step[]>) {
+async function advance(db: SupabaseClient, run: Run, cache: Map<string, Step[]>, paused: boolean, contactPhone: string) {
   const steps = await getSteps(db, run.workflow_id, cache);
   const log = Array.isArray(run.log) ? [...run.log] : [];
   const save = (patch: Record<string, unknown>) =>
@@ -156,6 +165,13 @@ async function advance(db: SupabaseClient, run: Run, cache: Map<string, Step[]>)
         break;
       }
       case 'send_message': case 'send_link': {
+        if (paused) {
+          // Envíos en pausa: la secuencia espera sin mandar nada ni marcar contacto.
+          const until = new Date(Date.now() + 6 * 3600_000).toISOString();
+          log.push({ ...entry, info: 'En pausa hasta el lanzamiento: el mensaje queda en espera' });
+          await save({ status: 'waiting', current_step: pos, wait_until: until, waiting_reply: false });
+          return { status: 'paused', until };
+        }
         const channel = String(cfg.channel || 'email') as Channel;
         let link: string | null = null;
         let campaign: string | null = null;
@@ -177,7 +193,7 @@ async function advance(db: SupabaseClient, run: Run, cache: Map<string, Step[]>)
           body = String(res.output.message || '');
         }
         if (link && !body.includes('{{link}}') && !body.includes(link)) body += ' {{link}}';
-        const text = renderTemplate(body, { ...p, link });
+        const text = renderTemplate(body, { ...p, link, contact_phone: contactPhone });
         const r = await sendToProspect(db, run.workspace_id, p.id, {
           channel, body: text, subject: cfg.subject ? String(cfg.subject) : undefined,
           template_key: cfg.template_key ? String(cfg.template_key) : `wf:${run.workflow_id.slice(0, 8)}:${pos}`,
