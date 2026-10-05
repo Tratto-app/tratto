@@ -6,6 +6,8 @@
 // Corre en Codemagic (workflow "ios-ficha"), que ya tiene la clave de Apple en
 // la integración "Tratto App Store Connect". Para correrlo en otra máquina:
 //   ASC_ISSUER_ID=... ASC_KEY_ID=... ASC_PRIVATE_KEY_PATH=archivo.p8 node subir-ficha-ios.mjs
+// Opcionales: ASC_CONTACT_PHONE y ASC_DEMO_PASSWORD (datos para el revisor),
+// PASOS=textos,capturas,... para correr solo algunos pasos.
 //
 // Lo que Apple no deja cargar por la API (cuestionario de privacidad) y lo que
 // no va en el repo (contraseña de la cuenta demo, teléfono) se completa a mano.
@@ -162,11 +164,15 @@ await paso('Clasificación por edad', async () => {
 }, 'edad');
 
 await paso('Datos para el revisor', async () => {
+  // El teléfono y la contraseña demo no van en el repo (es público): se pasan al correrlo
+  const attrs = { ...ficha.revision };
+  if (process.env.ASC_CONTACT_PHONE) attrs.contactPhone = process.env.ASC_CONTACT_PHONE;
+  if (process.env.ASC_DEMO_PASSWORD) attrs.demoAccountPassword = process.env.ASC_DEMO_PASSWORD;
   const actual = await api('GET', `/v1/appStoreVersions/${version.id}/appStoreReviewDetail`).catch(() => null);
   if (actual && actual.data) {
-    await api('PATCH', `/v1/appStoreReviewDetails/${actual.data.id}`, { data: { type: 'appStoreReviewDetails', id: actual.data.id, attributes: ficha.revision } });
+    await api('PATCH', `/v1/appStoreReviewDetails/${actual.data.id}`, { data: { type: 'appStoreReviewDetails', id: actual.data.id, attributes: attrs } });
   } else {
-    await api('POST', '/v1/appStoreReviewDetails', { data: { type: 'appStoreReviewDetails', attributes: ficha.revision,
+    await api('POST', '/v1/appStoreReviewDetails', { data: { type: 'appStoreReviewDetails', attributes: attrs,
       relationships: { appStoreVersion: { data: { type: 'appStoreVersions', id: version.id } } } } });
   }
 }, 'revision');
