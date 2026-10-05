@@ -4521,16 +4521,22 @@ $('ed-pub').addEventListener('click', abrirPublicacion);
    valida el token de sesión. */
 const URL_MP_INICIAR = 'https://marketplace-servicios.app.n8n.cloud/webhook/mp-iniciar';
 
-async function conectarMP(){
+async function conectarMP(boton){
   /* El popup se abre ACÁ, dentro del gesto del click, porque recién después
      vamos a saber a qué URL mandarlo (necesita el viaje de ida y vuelta a
      n8n) y para entonces el navegador ya no deja abrir ventanas nuevas.
      Sin noopener a propósito: si lo lleváramos, no podríamos navegarlo
      nosotros a la URL real cuando llegue. El destino es Mercado Pago, no una
      página nuestra, así que el riesgo de que la pestaña reabra la nuestra es
-     el mismo que en cualquier link que abre un banco en pestaña nueva. */
+     el mismo que en cualquier link que abre un banco en pestaña nueva.
+     Dentro de la app de iPhone (y si el navegador bloquea popups) no hay
+     ventana: entonces se navega directo a Mercado Pago, que en la app se abre
+     en Safari. Al volver a la app, el visibilitychange de abajo relee el estado. */
   const ventana = window.open('', '_blank');
-  if(!ventana) return;  // el navegador bloqueó el popup
+  const textoBoton = boton ? boton.textContent : '';
+  if(boton){ boton.disabled = true; boton.textContent = 'Abriendo Mercado Pago…'; }
+  const error = boton && boton.parentElement.querySelector('.cobros-error');
+  if(error) error.remove();
   try{
     const r = await fetch(URL_MP_INICIAR, {
       method:'POST', headers:{'Content-Type':'application/json'},
@@ -4538,10 +4544,15 @@ async function conectarMP(){
     });
     const d = await r.json().catch(() => null);
     if(!r.ok || !d || !d.url) throw new Error((d && d.error) || 'no se pudo iniciar la conexión');
-    ventana.location = d.url;
+    if(ventana) ventana.location = d.url;
+    else location.href = d.url;
   }catch(e){
     console.error(e);
-    ventana.close();
+    if(ventana) ventana.close();
+    if(boton) boton.insertAdjacentHTML('afterend',
+      '<div class="cobros-nota cobros-error">No pudimos abrir Mercado Pago. Revisá tu conexión y probá de nuevo.</div>');
+  }finally{
+    if(boton){ boton.disabled = false; boton.textContent = textoBoton; }
   }
 }
 
@@ -4603,8 +4614,9 @@ async function cargarCobros(){
    el proveedor vuelve a mirar la app. */
 ['panel-cobros','perfil-cobros'].forEach(id => {
   $(id).addEventListener('click', e => {
-    if(!e.target.closest('[data-cobros-conectar]')) return;
-    conectarMP();
+    const boton = e.target.closest('[data-cobros-conectar]');
+    if(!boton || boton.disabled) return;
+    conectarMP(boton);
   });
 });
 document.addEventListener('visibilitychange', () => {
