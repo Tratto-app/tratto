@@ -83,7 +83,7 @@
         },
         "sendBody": true,
         "specifyBody": "json",
-        "jsonBody": "={{ JSON.stringify({ client_id: $('Configuracion1').first().json.clientId, grant_type: 'authorization_code', code: String($('Vuelve de Mercado Pago1').first().json.query.code || ''), redirect_uri: $('Configuracion1').first().json.redirectUri, test_token: true }) }}",
+        "jsonBody": "={{ JSON.stringify({ client_id: $('Configuracion1').first().json.clientId, grant_type: 'authorization_code', code: String($('Vuelve de Mercado Pago1').first().json.query.code || ''), redirect_uri: $('Configuracion1').first().json.redirectUri }) }}",
         "options": {
           "response": {
             "response": {
