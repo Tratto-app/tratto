@@ -54,7 +54,8 @@
           "id": "NLd0bxspbVGiMdMH",
           "name": "Brevo SMTP (alertas)"
         }
-      }
+      },
+      "webhookId": "46dfa67a-522c-4460-a254-f84595501812"
     }
   ],
   "connections": {

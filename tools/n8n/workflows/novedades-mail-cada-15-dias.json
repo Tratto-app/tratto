@@ -47,18 +47,6 @@
               "type": "string"
             },
             {
-              "id": "c2",
-              "name": "serviceRole",
-              "value": "<SECRETO_EN_N8N>",
-              "type": "string"
-            },
-            {
-              "id": "c3",
-              "name": "pushSecreto",
-              "value": "<SECRETO_EN_N8N>",
-              "type": "string"
-            },
-            {
               "id": "c4",
               "name": "intervaloDias",
               "value": 15,
@@ -85,14 +73,6 @@
         "headerParameters": {
           "parameters": [
             {
-              "name": "apikey",
-              "value": "={{ $('Configuracion').first().json.serviceRole }}"
-            },
-            {
-              "name": "Authorization",
-              "value": "=Bearer {{ $('Configuracion').first().json.serviceRole }}"
-            },
-            {
               "name": "Content-Type",
               "value": "application/json"
             }
@@ -101,7 +81,15 @@
         "sendBody": true,
         "specifyBody": "json",
         "jsonBody": "={{ JSON.stringify({ p_canal: 'mail', p_intervalo_dias: $('Configuracion').first().json.intervaloDias }) }}",
-        "options": {}
+        "options": {},
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "supabaseApi"
+      },
+      "credentials": {
+        "supabaseApi": {
+          "id": "xVc2ROmkhPTCf2XK",
+          "name": "Tratto · Supabase (service role)"
+        }
       }
     },
     {
@@ -120,10 +108,6 @@
         "headerParameters": {
           "parameters": [
             {
-              "name": "x-tratto-firma",
-              "value": "={{ $('Configuracion').first().json.pushSecreto }}"
-            },
-            {
               "name": "Content-Type",
               "value": "application/json"
             }
@@ -132,7 +116,15 @@
         "sendBody": true,
         "specifyBody": "json",
         "jsonBody": "={{ JSON.stringify({ user_id: $json.destinatario, titulo: $json.titulo, cuerpo: $json.cuerpo, url: '/', tipo: 'publicidad', canal: 'mail' }) }}",
-        "options": {}
+        "options": {},
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth"
+      },
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "yUN91m87dLXjsw5j",
+          "name": "Tratto · Firma de novedades (x-tratto-firma)"
+        }
       }
     }
   ],

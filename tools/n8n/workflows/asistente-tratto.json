@@ -12,6 +12,7 @@
     {
       "id": "6bdb388e-9fc7-4e7c-81a3-2d4b4f7ce9b0",
       "name": "Llega una consulta",
+      "webhookId": "asistente-tratto",
       "type": "n8n-nodes-base.webhook",
       "typeVersion": 2,
       "position": [
@@ -40,12 +41,6 @@
         "assignments": {
           "assignments": [
             {
-              "id": "c1",
-              "name": "openaiKey",
-              "value": "<SECRETO_EN_N8N>",
-              "type": "string"
-            },
-            {
               "id": "c2",
               "name": "modelo",
               "value": "gpt-4o-mini",
@@ -64,8 +59,8 @@
               "type": "string"
             },
             {
-              "id": "c5",
-              "name": "serviceRole",
+              "id": "anon",
+              "name": "anonKey",
               "value": "<SECRETO_EN_N8N>",
               "type": "string"
             }
@@ -104,10 +99,6 @@
         "headerParameters": {
           "parameters": [
             {
-              "name": "Authorization",
-              "value": "=Bearer {{ $('Configuracion').first().json.openaiKey }}"
-            },
-            {
               "name": "Content-Type",
               "value": "application/json"
             }
@@ -116,7 +107,15 @@
         "sendBody": true,
         "specifyBody": "json",
         "jsonBody": "={{ JSON.stringify({ model: $('Configuracion').first().json.modelo, messages: $json.mensajes, max_tokens: 350, temperature: 0.4 }) }}",
-        "options": {}
+        "options": {},
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "openAiApi"
+      },
+      "credentials": {
+        "openAiApi": {
+          "id": "UNySLvC0hCgEOrj9",
+          "name": "Tratto · OpenAI"
+        }
       }
     },
     {
@@ -149,14 +148,6 @@
         "headerParameters": {
           "parameters": [
             {
-              "name": "apikey",
-              "value": "={{ $('Configuracion').first().json.serviceRole }}"
-            },
-            {
-              "name": "Authorization",
-              "value": "=Bearer {{ $('Configuracion').first().json.serviceRole }}"
-            },
-            {
               "name": "Content-Type",
               "value": "application/json"
             },
@@ -169,7 +160,15 @@
         "sendBody": true,
         "specifyBody": "json",
         "jsonBody": "={{ JSON.stringify({ user_id: $json.userId, modo: $json.modo, pregunta: $json.pregunta, respuesta: $json.respuesta, revisar: $json.derivar }) }}",
-        "options": {}
+        "options": {},
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "supabaseApi"
+      },
+      "credentials": {
+        "supabaseApi": {
+          "id": "xVc2ROmkhPTCf2XK",
+          "name": "Tratto · Supabase (service role)"
+        }
       }
     },
     {
@@ -203,7 +202,7 @@
           "parameters": [
             {
               "name": "apikey",
-              "value": "={{ $('Configuracion').first().json.serviceRole }}"
+              "value": "={{ $('Configuracion').first().json.anonKey }}"
             },
             {
               "name": "Authorization",
@@ -236,14 +235,6 @@
         "headerParameters": {
           "parameters": [
             {
-              "name": "apikey",
-              "value": "={{ $('Configuracion').first().json.serviceRole }}"
-            },
-            {
-              "name": "Authorization",
-              "value": "=Bearer {{ $('Configuracion').first().json.serviceRole }}"
-            },
-            {
               "name": "Content-Type",
               "value": "application/json"
             }
@@ -259,6 +250,14 @@
               "responseFormat": "text"
             }
           }
+        },
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "supabaseApi"
+      },
+      "credentials": {
+        "supabaseApi": {
+          "id": "xVc2ROmkhPTCf2XK",
+          "name": "Tratto · Supabase (service role)"
         }
       }
     },

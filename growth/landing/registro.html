@@ -1,0 +1,167 @@
+<!doctype html>
+<html lang="es-AR">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Sumate a Tratto</title>
+<meta name="description" content="Registrate en Tratto: pedí servicios o sumá tu oficio y recibí pedidos de tu zona." />
+<!-- Página de registro del Growth OS. Es estática: envía a la Edge Function
+     growth-signup, que guarda a la persona con su consentimiento. Los datos de
+     configuración (workspace, tiendas) se leen de los atributos data-* de abajo.
+     NO se envía ningún mensaje desde acá: eso lo hace el sistema cuando se
+     active el lanzamiento. -->
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Condensed:wght@600;700&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet" />
+<style>
+  :root{
+    --verde:#1E5D49; --verde-vivo:#2B7E62; --verde-luz:#8FD9BC; --laton:#C9A227; --laton-luz:#E3C45C;
+    --tinta:#0E1815; --sup:#13201C; --sup2:#182a25; --borde:#26403a; --texto:#eef4f1; --texto2:#a9bbb3; --rojo:#e07a6b;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;min-height:100vh;background:
+      radial-gradient(1100px 520px at 15% -10%, rgba(43,126,98,.22), transparent),
+      radial-gradient(900px 500px at 110% 10%, rgba(201,162,39,.10), transparent), var(--tinta);
+    color:var(--texto);font:16px/1.55 'IBM Plex Sans',system-ui,sans-serif;display:grid;place-items:center;padding:20px}
+  .wrap{width:100%;max-width:560px}
+  .marca{display:flex;align-items:center;gap:10px;margin-bottom:18px}
+  .sello{width:34px;height:34px;border-radius:9px;background:var(--verde);display:grid;place-items:center;box-shadow:0 0 0 1px rgba(201,162,39,.4) inset}
+  .marca b{font-family:'IBM Plex Sans Condensed',sans-serif;font-size:19px;letter-spacing:.01em}
+  .card{background:var(--sup);border:1px solid var(--borde);border-radius:16px;padding:26px;box-shadow:0 18px 50px rgba(0,0,0,.35)}
+  h1{font-family:'IBM Plex Sans Condensed',sans-serif;font-size:26px;margin:0 0 6px}
+  .sub{color:var(--texto2);margin:0 0 18px}
+  .hilo{height:2px;border-radius:2px;background:linear-gradient(90deg,var(--laton),var(--verde-vivo) 42%,transparent);margin:0 0 20px}
+  .tabs{display:flex;gap:8px;background:var(--tinta);border:1px solid var(--borde);border-radius:11px;padding:4px;margin-bottom:18px}
+  .tabs button{flex:1;border:0;background:transparent;color:var(--texto2);padding:10px;border-radius:8px;font:600 14px 'IBM Plex Sans',sans-serif;cursor:pointer}
+  .tabs button[aria-selected=true]{background:var(--sup2);color:var(--texto);box-shadow:inset 0 0 0 1px var(--borde)}
+  label{display:block;font-size:13px;color:var(--texto2);margin:12px 0 5px}
+  input,select{width:100%;background:var(--tinta);border:1px solid var(--borde);color:var(--texto);border-radius:9px;padding:11px 12px;font:15px 'IBM Plex Sans',sans-serif}
+  input:focus,select:focus{outline:none;border-color:var(--verde-vivo)}
+  .row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+  @media(max-width:460px){.row{grid-template-columns:1fr}}
+  .hp{position:absolute;left:-9999px;width:1px;height:1px;opacity:0}
+  .consent{display:flex;gap:9px;align-items:flex-start;margin:16px 0 4px;font-size:13.5px;color:var(--texto2)}
+  .consent input{width:auto;margin-top:3px}
+  .btn{width:100%;margin-top:16px;background:var(--verde-vivo);border:0;color:#fff;padding:13px;border-radius:10px;font:600 16px 'IBM Plex Sans',sans-serif;cursor:pointer}
+  .btn:hover{background:#31906f}.btn:disabled{opacity:.6;cursor:not-allowed}
+  .pie{color:var(--texto2);font-size:12.5px;margin-top:14px;text-align:center}
+  .msg{margin-top:14px;padding:12px;border-radius:9px;font-size:14px;display:none}
+  .msg.ok{display:block;background:rgba(43,126,98,.14);border:1px solid rgba(43,126,98,.4);color:var(--verde-luz)}
+  .msg.err{display:block;background:rgba(224,122,107,.12);border:1px solid rgba(224,122,107,.4);color:#f2b3a9}
+  .ok-box{display:none;text-align:center;padding:10px 0}
+  .ok-box .tick{width:52px;height:52px;border-radius:14px;background:var(--verde);display:inline-grid;place-items:center;margin-bottom:12px}
+  .solo-prov{display:none}
+</style>
+</head>
+<body
+  data-workspace="tratto"
+  data-endpoint="https://hbnwrlflgpupeqnqajzo.supabase.co/functions/v1/growth-signup">
+  <div class="wrap">
+    <div class="marca">
+      <span class="sello"><svg width="18" height="18" viewBox="0 0 32 32"><path d="M5 23l7-8 6 4 9-12" stroke="#C9A227" stroke-width="3.4" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+      <b>Tratto</b>
+    </div>
+    <div class="card">
+      <div id="form-view">
+        <h1 id="titulo">Sumate a Tratto</h1>
+        <p class="sub" id="bajada">Elegí cómo querés usar Tratto y dejanos tus datos. Te avisamos cuando esté todo listo.</p>
+        <div class="hilo"></div>
+        <div class="tabs" role="tablist">
+          <button role="tab" id="t-customer" aria-selected="true">Busco un servicio</button>
+          <button role="tab" id="t-provider" aria-selected="false">Ofrezco un servicio</button>
+        </div>
+        <form id="form" novalidate>
+          <div class="row">
+            <div><label>Nombre</label><input name="first_name" autocomplete="given-name" /></div>
+            <div><label>Apellido</label><input name="last_name" autocomplete="family-name" /></div>
+          </div>
+          <label>Email</label>
+          <input name="email" type="email" autocomplete="email" placeholder="tu@email.com" />
+          <label>WhatsApp / teléfono</label>
+          <input name="phone" type="tel" autocomplete="tel" placeholder="+54 9 11 …" />
+          <div class="row">
+            <div><label>Zona</label><select name="zona" id="zona"></select></div>
+            <div><label id="lbl-rubro">Rubro que te interesa</label><select name="rubro" id="rubro"></select></div>
+          </div>
+          <div class="solo-prov" id="prov-extra">
+            <label>Nombre del negocio (opcional)</label>
+            <input name="company" />
+          </div>
+          <!-- Trampa anti-bots: invisible para personas -->
+          <input class="hp" tabindex="-1" autocomplete="off" name="website_hp" aria-hidden="true" />
+          <label class="consent">
+            <input type="checkbox" id="consent" />
+            <span id="consent-txt">Acepto que Tratto me contacte por email o WhatsApp sobre la app y entiendo que puedo darme de baja cuando quiera.</span>
+          </label>
+          <button class="btn" id="enviar" type="submit">Quiero sumarme</button>
+          <div class="msg" id="msg"></div>
+          <p class="pie">Protegemos tus datos según la Ley 25.326. No compartimos tu información con terceros.</p>
+        </form>
+      </div>
+      <div class="ok-box" id="ok-view">
+        <span class="tick"><svg width="26" height="26" viewBox="0 0 32 32"><path d="M6 17l6 6 14-14" stroke="#fff" stroke-width="3.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+        <h1>¡Listo, te anotamos!</h1>
+        <p class="sub" id="ok-txt">Te vamos a escribir cuando la app esté disponible. ¡Gracias por sumarte a Tratto!</p>
+      </div>
+    </div>
+  </div>
+
+<script>
+(function(){
+  var body=document.body, WS=body.dataset.workspace, URL_FN=body.dataset.endpoint;
+  // Mismas zonas y rubros que la app (si cambian en la app, actualizar acá).
+  var ZONAS=['CABA','GBA Norte','GBA Oeste','GBA Sur','Buenos Aires (interior)','Otra'];
+  var RUBROS=['Plomería y destapaciones','Albañilería y refacciones','Pintura','Carpintería y muebles','Herrería y soldadura','Techos e impermeabilización','Durlock y yeso','Pisos y revestimientos','Vidrios y aberturas','Cerrajería','Aire acondicionado','Service de electrodomésticos','Jardinería y piletas','Arreglos generales','Servicios de limpieza','Mecánica del automotor','Chapa y pintura','Gomería y auxilio','Lavado de autos','Fletes y mudanzas','Contabilidad e impuestos','Gestoría y trámites','Asistente administrativo','Diseño gráfico','Programación y desarrollo','Marketing y redes sociales','Fotografía y video','Reparación y soporte técnico','Estética, maquillaje y peinados','Personal trainer, yoga y pilates','Masajes','Cuidado de adultos mayores','Catering y pastelería','Música y sonido (DJ)','Animación y organización de eventos','Apoyo escolar y universitario','Idiomas','Clases de música','Computación y capacitación','Clases de manejo','Paseo y cuidado de mascotas','Peluquería y adiestramiento canino','Costura y arreglos de ropa','Tapicería y restauración','Decoración e interiores','Mandados y compras','Otro'];
+  function fill(sel,arr,ph){ sel.innerHTML='<option value="">'+ph+'</option>'+arr.map(function(x){return '<option>'+x+'</option>';}).join(''); }
+  fill(document.getElementById('zona'),ZONAS,'Elegí tu zona');
+  fill(document.getElementById('rubro'),RUBROS,'Elegí un rubro');
+
+  var kind='customer';
+  var tC=document.getElementById('t-customer'), tP=document.getElementById('t-provider');
+  function setKind(k){
+    kind=k;
+    tC.setAttribute('aria-selected', k==='customer'); tP.setAttribute('aria-selected', k==='provider');
+    document.getElementById('titulo').textContent = k==='provider' ? 'Sumá tu oficio a Tratto' : 'Encontrá quien te resuelva';
+    document.getElementById('bajada').textContent = k==='provider'
+      ? 'Registrate gratis y recibí pedidos de gente de tu zona y tu rubro. Te avisamos cuando puedas empezar.'
+      : 'Dejanos tus datos y te avisamos apenas puedas pedir presupuestos de profesionales de tu zona.';
+    document.getElementById('lbl-rubro').textContent = k==='provider' ? 'Tu rubro' : 'Rubro que te interesa';
+    document.getElementById('prov-extra').style.display = k==='provider' ? 'block' : 'none';
+    document.getElementById('consent-txt').textContent = k==='provider'
+      ? 'Acepto que Tratto me contacte por email o WhatsApp sobre cómo sumar mi oficio, y entiendo que puedo darme de baja cuando quiera.'
+      : 'Acepto que Tratto me contacte por email o WhatsApp sobre la app y entiendo que puedo darme de baja cuando quiera.';
+  }
+  tC.onclick=function(){setKind('customer');}; tP.onclick=function(){setKind('provider');};
+  setKind('customer');
+
+  document.getElementById('form').addEventListener('submit', function(e){
+    e.preventDefault();
+    var f=e.target, msg=document.getElementById('msg'), btn=document.getElementById('enviar');
+    msg.className='msg'; msg.textContent='';
+    var email=f.email.value.trim(), phone=f.phone.value.trim();
+    if(!email && !phone){ msg.className='msg err'; msg.textContent='Dejanos al menos un email o un teléfono.'; return; }
+    if(!document.getElementById('consent').checked){ msg.className='msg err'; msg.textContent='Necesitamos tu permiso para poder avisarte.'; return; }
+    btn.disabled=true; btn.textContent='Enviando…';
+    var payload={ workspace:WS, kind:kind, consent:true, website_hp:f.website_hp.value,
+      first_name:f.first_name.value.trim(), last_name:f.last_name.value.trim(), email:email, phone:phone,
+      zona:f.zona.value, rubro:f.rubro.value, company:(f.company?f.company.value.trim():''), source:'organic' };
+    fetch(URL_FN,{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify(payload)})
+      .then(function(r){return r.json().then(function(j){return {ok:r.ok,j:j};});})
+      .then(function(res){
+        if(res.ok && res.j.ok){
+          document.getElementById('form-view').style.display='none';
+          document.getElementById('ok-view').style.display='block';
+          document.getElementById('ok-txt').textContent = kind==='provider'
+            ? '¡Gracias! Te vamos a escribir para ayudarte a sumar tu oficio cuando la app esté disponible.'
+            : 'Te vamos a avisar apenas puedas empezar a pedir presupuestos. ¡Gracias por sumarte!';
+        } else {
+          msg.className='msg err'; msg.textContent=res.j.error || 'No pudimos registrarte. Probá de nuevo en un rato.';
+          btn.disabled=false; btn.textContent='Quiero sumarme';
+        }
+      })
+      .catch(function(){ msg.className='msg err'; msg.textContent='No pudimos conectar. Revisá tu conexión e intentá de nuevo.'; btn.disabled=false; btn.textContent='Quiero sumarme'; });
+  });
+})();
+</script>
+</body>
+</html>

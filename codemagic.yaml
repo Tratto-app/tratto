@@ -3,6 +3,7 @@
 # Requisitos (una sola vez), ver tools/ios-app/README.md:
 #   - integración "Tratto App Store Connect" (clave API de App Store Connect)
 #   - APP_STORE_APPLE_ID: el número de la app en App Store Connect
+#   - grupo de variables "ios_firma" con CERTIFICATE_PRIVATE_KEY (secreta)
 workflows:
   ios-testflight:
     name: Tratto iOS → TestFlight
@@ -12,11 +13,11 @@ workflows:
     integrations:
       app_store_connect: Tratto App Store Connect
     environment:
-      ios_signing:
-        distribution_type: app_store
-        bundle_identifier: ar.com.trattoapp
+      groups:
+        - ios_firma   # CERTIFICATE_PRIVATE_KEY (secreta): clave RSA con la que se crea el certificado de distribución
       vars:
-        APP_STORE_APPLE_ID: 0   # reemplazar por el Apple ID numérico de la app
+        APP_STORE_APPLE_ID: 6819329487   # Apple ID numérico de la app en App Store Connect
+        BUNDLE_ID: ar.com.trattoapp
       xcode: latest
       node: 22
     scripts:
@@ -24,8 +25,16 @@ workflows:
         script: npm ci
       - name: Sincronizar Capacitor
         script: npx cap sync ios
-      - name: Perfiles de firma
-        script: xcode-project use-profiles
+      - name: Preparar firma (crea certificado y perfil la primera vez)
+        script: |
+          set -e
+          keychain initialize
+          app-store-connect fetch-signing-files "$BUNDLE_ID" \
+            --type IOS_APP_STORE \
+            --certificate-key=@env:CERTIFICATE_PRIVATE_KEY \
+            --create
+          keychain add-certificates
+          xcode-project use-profiles
       - name: Número de build
         script: |
           ULTIMO=$(app-store-connect get-latest-testflight-build-number "$APP_STORE_APPLE_ID" 2>/dev/null || echo 0)
@@ -38,3 +47,18 @@ workflows:
       app_store_connect:
         auth: integration
         submit_to_testflight: true
+
+  # Sube la ficha de la App Store (textos, capturas, categorías, clasificación
+  # por edad, datos para el revisor y la build) desde tools/tiendas. No compila
+  # nada y tarda un par de minutos. Ver tools/tiendas/subir-ficha-ios.mjs.
+  ios-ficha:
+    name: Tratto iOS → ficha de la App Store
+    max_build_duration: 15
+    instance_type: mac_mini_m2
+    integrations:
+      app_store_connect: Tratto App Store Connect
+    environment:
+      node: 22
+    scripts:
+      - name: Subir la ficha
+        script: node tools/tiendas/subir-ficha-ios.mjs

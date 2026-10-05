@@ -11,6 +11,7 @@
     {
       "id": "53c0226f-20c9-4129-8980-334025c9e1fb",
       "name": "Webhook mp-iniciar",
+      "webhookId": "0b08d7e2-6bf2-4830-8d29-13f4724f1745",
       "type": "n8n-nodes-base.webhook",
       "typeVersion": 2,
       "position": [
@@ -45,21 +46,21 @@
               "type": "string"
             },
             {
-              "id": "c2",
-              "name": "serviceRole",
-              "value": "<SECRETO_EN_N8N>",
-              "type": "string"
-            },
-            {
               "id": "c3",
               "name": "mpClientId",
-              "value": "2729660226133986",
+              "value": "2631534334320257",
               "type": "string"
             },
             {
               "id": "c4",
               "name": "mpRedirectUri",
               "value": "https://marketplace-servicios.app.n8n.cloud/webhook/mp-conectar",
+              "type": "string"
+            },
+            {
+              "id": "anon",
+              "name": "anonKey",
+              "value": "<SECRETO_EN_N8N>",
               "type": "string"
             }
           ]
@@ -84,11 +85,11 @@
           "parameters": [
             {
               "name": "apikey",
-              "value": "={{ $('Configuracion').first().json.serviceRole }}"
+              "value": "={{ $('Configuracion').first().json.anonKey }}"
             },
             {
               "name": "Authorization",
-              "value": "=Bearer {{ $json.body.token }}"
+              "value": "=Bearer {{ $('Webhook mp-iniciar').first().json.body.token }}"
             }
           ]
         },
@@ -151,14 +152,6 @@
         "headerParameters": {
           "parameters": [
             {
-              "name": "apikey",
-              "value": "={{ $('Configuracion').first().json.serviceRole }}"
-            },
-            {
-              "name": "Authorization",
-              "value": "=Bearer {{ $('Configuracion').first().json.serviceRole }}"
-            },
-            {
               "name": "Content-Type",
               "value": "application/json"
             },
@@ -171,7 +164,15 @@
         "sendBody": true,
         "specifyBody": "json",
         "jsonBody": "={{ JSON.stringify({ user_id: $json.id, proveedor: 'mercadopago' }) }}",
-        "options": {}
+        "options": {},
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "supabaseApi"
+      },
+      "credentials": {
+        "supabaseApi": {
+          "id": "xVc2ROmkhPTCf2XK",
+          "name": "Tratto · Supabase (service role)"
+        }
       }
     },
     {
@@ -185,7 +186,7 @@
       ],
       "parameters": {
         "respondWith": "json",
-        "responseBody": "={{ JSON.stringify({ url: 'https://auth.mercadopago.com.ar/authorization?client_id=' + $('Configuracion').first().json.mpClientId + '&response_type=code&platform_id=mp&redirect_uri=' + encodeURIComponent($('Configuracion').first().json.mpRedirectUri) + '&state=' + $json[0].nonce }) }}",
+        "responseBody": "={{ JSON.stringify({ url: 'https://auth.mercadopago.com.ar/authorization?client_id=' + $('Configuracion').first().json.mpClientId + '&response_type=code&platform_id=mp&redirect_uri=' + encodeURIComponent($('Configuracion').first().json.mpRedirectUri) + '&state=' + ($json[0] ? $json[0].nonce : $json.nonce) }) }}",
         "options": {}
       }
     },

@@ -91,13 +91,17 @@ Mercado Pago) procesan en nombre de Tratto, y Google no considera eso "compartir
 |---|---|---|---|
 | Nombre | Sí | Sí | Funcionalidad de la app, administración de la cuenta |
 | Email | Sí | Sí | Administración de la cuenta, comunicaciones |
+| ID de usuario (el identificador de la cuenta) | Sí | Sí | Funcionalidad de la app, administración de la cuenta |
 | Teléfono | Sí | Sí | Funcionalidad de la app (contacto entre cliente y proveedor) |
+| Otra información personal: CUIT/CUIL y condición frente al IVA (solo proveedores) | Sí | No (los clientes no lo cargan) | Funcionalidad de la app (facturar la comisión) |
 | Fotos | Sí | No | Funcionalidad de la app (foto del pedido) |
 | Otros contenidos del usuario (mensajes del chat, pedidos, calificaciones) | Sí | Sí | Funcionalidad de la app |
+| Información de pago (la tarjeta se carga en el formulario de Mercado Pago dentro de la app) | Sí | No | Funcionalidad de la app; seguridad, cumplimiento y prevención de fraudes |
 | Información financiera: historial de compras (trabajos cobrados por la app) | Sí | No | Funcionalidad de la app |
 | ID de dispositivo (para notificaciones) | Sí | No | Funcionalidad de la app |
-| Interacciones con la app (estadísticas de visitas, anónimas y sin cookies) | Sí | Sí | Estadísticas |
+| Interacciones con la app (estadísticas de uso y visitas a perfiles) | Sí | No | Funcionalidad de la app, estadísticas |
 | Ubicación precisa o aproximada del dispositivo | **No** | | |
+| ID de publicidad | **No** (la app no pide el permiso AD_ID) | | |
 
 ### Gráficos
 - Ícono: `play-icono-512.png`
@@ -153,6 +157,7 @@ Moderación: filtro de palabras en el chat, botón "Reportar" en cada perfil, pu
 ```
 
 ### Capturas
-iPhone 6,9": `ios-1.png` … `ios-5.png` (1290×2796). Con eso alcanza para
+iPhone 6,9": `ios-1.png` … `ios-5.png` (1290×2796). Si App Store Connect
+muestra el casillero de 6,5" (pide 1242×2688 o 1284×2778), usar `ios65-1.png` … `ios65-5.png`. Con eso alcanza para
 todos los tamaños de iPhone. La app es solo para iPhone, así que no hacen falta
 capturas de iPad.

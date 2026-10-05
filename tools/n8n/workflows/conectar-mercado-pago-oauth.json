@@ -12,6 +12,7 @@
     {
       "id": "d0238a29-0074-403e-80d8-7f62395aec6f",
       "name": "Vuelve de Mercado Pago1",
+      "webhookId": "mp-conectar-oauth",
       "type": "n8n-nodes-base.webhook",
       "typeVersion": 2,
       "position": [
@@ -39,13 +40,7 @@
             {
               "id": "a1",
               "name": "clientId",
-              "value": "2729660226133986",
-              "type": "string"
-            },
-            {
-              "id": "a2",
-              "name": "clientSecret",
-              "value": "<SECRETO_EN_N8N>",
+              "value": "2631534334320257",
               "type": "string"
             },
             {
@@ -58,12 +53,6 @@
               "id": "a4",
               "name": "supabaseUrl",
               "value": "https://qglsonbcsncgekzbfafk.supabase.co",
-              "type": "string"
-            },
-            {
-              "id": "a5",
-              "name": "serviceRole",
-              "value": "<SECRETO_EN_N8N>",
               "type": "string"
             }
           ]
@@ -94,13 +83,21 @@
         },
         "sendBody": true,
         "specifyBody": "json",
-        "jsonBody": "={{ JSON.stringify({ client_id: $('Configuracion1').first().json.clientId, client_secret: $('Configuracion1').first().json.clientSecret, grant_type: 'authorization_code', code: String($('Vuelve de Mercado Pago1').first().json.query.code || ''), redirect_uri: $('Configuracion1').first().json.redirectUri, test_token: true }) }}",
+        "jsonBody": "={{ JSON.stringify({ client_id: $('Configuracion1').first().json.clientId, grant_type: 'authorization_code', code: String($('Vuelve de Mercado Pago1').first().json.query.code || ''), redirect_uri: $('Configuracion1').first().json.redirectUri }) }}",
         "options": {
           "response": {
             "response": {
               "neverError": true
             }
           }
+        },
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpCustomAuth"
+      },
+      "credentials": {
+        "httpCustomAuth": {
+          "id": "pCqaaM8WQO961rLV",
+          "name": "Tratto · Mercado Pago client secret"
         }
       }
     },
@@ -120,14 +117,6 @@
         "headerParameters": {
           "parameters": [
             {
-              "name": "apikey",
-              "value": "={{ $('Configuracion1').first().json.serviceRole }}"
-            },
-            {
-              "name": "Authorization",
-              "value": "=Bearer {{ $('Configuracion1').first().json.serviceRole }}"
-            },
-            {
               "name": "Content-Type",
               "value": "application/json"
             },
@@ -140,7 +129,15 @@
         "sendBody": true,
         "specifyBody": "json",
         "jsonBody": "={{ JSON.stringify({ user_id: $('Buscar el nonce').first().json.body[0].user_id, mp_user_id: String($json.user_id), access_token: $json.access_token, refresh_token: $json.refresh_token, public_key: $json.public_key, estado: 'conectada' }) }}",
-        "options": {}
+        "options": {},
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "supabaseApi"
+      },
+      "credentials": {
+        "supabaseApi": {
+          "id": "xVc2ROmkhPTCf2XK",
+          "name": "Tratto · Supabase (service role)"
+        }
       }
     },
     {
@@ -154,7 +151,7 @@
       ],
       "parameters": {
         "respondWith": "text",
-        "responseBody": "<!DOCTYPE html><html lang=\"es-AR\"><head><meta charset=\"UTF-8\"><meta name=\"viewport\" content=\"width=device-width,initial-scale=1\"><title>Cuenta conectada</title><style>body{margin:0;min-height:100vh;display:flex;align-items:center;justify-content:center;background:#0C2620;color:#FCFBF8;font-family:system-ui,-apple-system,sans-serif;padding:24px}.c{max-width:340px;text-align:center}.t{font-size:24px;font-weight:700;line-height:1.15;margin-bottom:12px}.p{font-size:15px;line-height:1.55;color:#9AA69B}.b{width:56px;height:56px;border-radius:50%;background:#1B4B40;margin:0 auto 20px;display:flex;align-items:center;justify-content:center;font-size:28px;color:#8FD9BC}</style></head><body><div class=\"c\"><div class=\"b\">&#10003;</div><div class=\"t\">Listo, ya podes cobrar por la app</div><div class=\"p\">Tu cuenta de Mercado Pago quedo conectada. Volve a la app para seguir.</div></div></body></html>",
+        "responseBody": "<!DOCTYPE html><html lang=\"es-AR\"><head><meta charset=\"UTF-8\"><meta name=\"viewport\" content=\"width=device-width,initial-scale=1\"><title>Cuenta conectada</title><style>body{margin:0;min-height:100vh;display:flex;align-items:center;justify-content:center;background:#0C2620;color:#FCFBF8;font-family:system-ui,-apple-system,sans-serif;padding:24px}.c{max-width:340px;text-align:center}.t{font-size:24px;font-weight:700;line-height:1.15;margin-bottom:12px}.p{font-size:15px;line-height:1.55;color:#9AA69B}.b{width:56px;height:56px;border-radius:50%;background:#1B4B40;margin:0 auto 20px;display:flex;align-items:center;justify-content:center;font-size:28px;color:#8FD9BC}.v{display:inline-block;margin-top:22px;padding:13px 22px;border-radius:12px;background:#2B7E62;color:#FCFBF8;font-weight:700;text-decoration:none}</style></head><body><div class=\"c\"><div class=\"b\">&#10003;</div><div class=\"t\">Listo, ya podes cobrar por la app</div><div class=\"p\">Tu cuenta de Mercado Pago quedo conectada. Volve a la app para seguir.</div><a class=\"v\" href=\"https://www.trattoapp.com.ar/\">Volver a Tratto</a></div></body></html>",
         "options": {
           "responseCode": 200,
           "responseHeaders": {
@@ -180,19 +177,7 @@
       ],
       "parameters": {
         "url": "={{ $('Configuracion1').first().json.supabaseUrl }}/rest/v1/oauth_states?nonce=eq.{{ encodeURIComponent(String($('Vuelve de Mercado Pago1').first().json.query.state || 'x')) }}&proveedor=eq.mercadopago&creado_en=gte.{{ encodeURIComponent(new Date(Date.now() - 30*60*1000).toISOString()) }}&select=user_id",
-        "sendHeaders": true,
-        "headerParameters": {
-          "parameters": [
-            {
-              "name": "apikey",
-              "value": "={{ $('Configuracion1').first().json.serviceRole }}"
-            },
-            {
-              "name": "Authorization",
-              "value": "=Bearer {{ $('Configuracion1').first().json.serviceRole }}"
-            }
-          ]
-        },
+        "sendHeaders": false,
         "options": {
           "response": {
             "response": {
@@ -200,6 +185,14 @@
               "neverError": true
             }
           }
+        },
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "supabaseApi"
+      },
+      "credentials": {
+        "supabaseApi": {
+          "id": "xVc2ROmkhPTCf2XK",
+          "name": "Tratto · Supabase (service role)"
         }
       }
     },
@@ -283,25 +276,21 @@
       "parameters": {
         "method": "DELETE",
         "url": "={{ $('Configuracion1').first().json.supabaseUrl }}/rest/v1/oauth_states?nonce=eq.{{ encodeURIComponent(String($('Vuelve de Mercado Pago1').first().json.query.state)) }}",
-        "sendHeaders": true,
-        "headerParameters": {
-          "parameters": [
-            {
-              "name": "apikey",
-              "value": "={{ $('Configuracion1').first().json.serviceRole }}"
-            },
-            {
-              "name": "Authorization",
-              "value": "=Bearer {{ $('Configuracion1').first().json.serviceRole }}"
-            }
-          ]
-        },
+        "sendHeaders": false,
         "options": {
           "response": {
             "response": {
               "neverError": true
             }
           }
+        },
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "supabaseApi"
+      },
+      "credentials": {
+        "supabaseApi": {
+          "id": "xVc2ROmkhPTCf2XK",
+          "name": "Tratto · Supabase (service role)"
         }
       }
     },
@@ -316,7 +305,7 @@
       ],
       "parameters": {
         "respondWith": "text",
-        "responseBody": "<!DOCTYPE html><html lang=\"es-AR\"><head><meta charset=\"UTF-8\"><meta name=\"viewport\" content=\"width=device-width,initial-scale=1\"><title>No se pudo conectar</title><style>body{margin:0;min-height:100vh;display:flex;align-items:center;justify-content:center;background:#0C2620;color:#FCFBF8;font-family:system-ui,-apple-system,sans-serif;padding:24px}.c{max-width:340px;text-align:center}.t{font-size:24px;font-weight:700;line-height:1.15;margin-bottom:12px}.p{font-size:15px;line-height:1.55;color:#9AA69B}.b{width:56px;height:56px;border-radius:50%;background:#1B4B40;margin:0 auto 20px;display:flex;align-items:center;justify-content:center;font-size:28px;color:#C9A227}</style></head><body><div class=\"c\"><div class=\"b\">!</div><div class=\"t\">No pudimos conectar tu cuenta</div><div class=\"p\">El enlace vencio o ya se uso. Volve a la app y toca otra vez Conectar Mercado Pago.</div></div></body></html>",
+        "responseBody": "<!DOCTYPE html><html lang=\"es-AR\"><head><meta charset=\"UTF-8\"><meta name=\"viewport\" content=\"width=device-width,initial-scale=1\"><title>No se pudo conectar</title><style>body{margin:0;min-height:100vh;display:flex;align-items:center;justify-content:center;background:#0C2620;color:#FCFBF8;font-family:system-ui,-apple-system,sans-serif;padding:24px}.c{max-width:340px;text-align:center}.t{font-size:24px;font-weight:700;line-height:1.15;margin-bottom:12px}.p{font-size:15px;line-height:1.55;color:#9AA69B}.b{width:56px;height:56px;border-radius:50%;background:#1B4B40;margin:0 auto 20px;display:flex;align-items:center;justify-content:center;font-size:28px;color:#C9A227}.v{display:inline-block;margin-top:22px;padding:13px 22px;border-radius:12px;background:#2B7E62;color:#FCFBF8;font-weight:700;text-decoration:none}</style></head><body><div class=\"c\"><div class=\"b\">!</div><div class=\"t\">No pudimos conectar tu cuenta</div><div class=\"p\">El enlace vencio o ya se uso. Volve a la app y toca otra vez Conectar Mercado Pago.</div><a class=\"v\" href=\"https://www.trattoapp.com.ar/\">Volver a Tratto</a></div></body></html>",
         "options": {
           "responseCode": 400,
           "responseHeaders": {
@@ -341,7 +330,7 @@
       ],
       "parameters": {
         "respondWith": "text",
-        "responseBody": "<!DOCTYPE html><html lang=\"es-AR\"><head><meta charset=\"UTF-8\"><meta name=\"viewport\" content=\"width=device-width,initial-scale=1\"><title>No se pudo conectar</title><style>body{margin:0;min-height:100vh;display:flex;align-items:center;justify-content:center;background:#0C2620;color:#FCFBF8;font-family:system-ui,-apple-system,sans-serif;padding:24px}.c{max-width:340px;text-align:center}.t{font-size:24px;font-weight:700;line-height:1.15;margin-bottom:12px}.p{font-size:15px;line-height:1.55;color:#9AA69B}.b{width:56px;height:56px;border-radius:50%;background:#1B4B40;margin:0 auto 20px;display:flex;align-items:center;justify-content:center;font-size:28px;color:#C9A227}</style></head><body><div class=\"c\"><div class=\"b\">!</div><div class=\"t\">No pudimos conectar tu cuenta</div><div class=\"p\">El enlace vencio o ya se uso. Volve a la app y toca otra vez Conectar Mercado Pago.</div></div></body></html>",
+        "responseBody": "<!DOCTYPE html><html lang=\"es-AR\"><head><meta charset=\"UTF-8\"><meta name=\"viewport\" content=\"width=device-width,initial-scale=1\"><title>No se pudo conectar</title><style>body{margin:0;min-height:100vh;display:flex;align-items:center;justify-content:center;background:#0C2620;color:#FCFBF8;font-family:system-ui,-apple-system,sans-serif;padding:24px}.c{max-width:340px;text-align:center}.t{font-size:24px;font-weight:700;line-height:1.15;margin-bottom:12px}.p{font-size:15px;line-height:1.55;color:#9AA69B}.b{width:56px;height:56px;border-radius:50%;background:#1B4B40;margin:0 auto 20px;display:flex;align-items:center;justify-content:center;font-size:28px;color:#C9A227}.v{display:inline-block;margin-top:22px;padding:13px 22px;border-radius:12px;background:#2B7E62;color:#FCFBF8;font-weight:700;text-decoration:none}</style></head><body><div class=\"c\"><div class=\"b\">!</div><div class=\"t\">No pudimos conectar tu cuenta</div><div class=\"p\">El enlace vencio o ya se uso. Volve a la app y toca otra vez Conectar Mercado Pago.</div><a class=\"v\" href=\"https://www.trattoapp.com.ar/\">Volver a Tratto</a></div></body></html>",
         "options": {
           "responseCode": 400,
           "responseHeaders": {

@@ -1,0 +1,33 @@
+{
+  "appId": "6819329487",
+  "locale": "es-MX",
+  "version": {
+    "copyright": "2026 Tratto",
+    "releaseType": "MANUAL"
+  },
+  "localizacion": {
+    "promotionalText": "Sacale una foto a lo que se rompió o contá lo que necesitás, recibí presupuestos de proveedores de tu zona y compará qué incluye cada uno. Gratis para el que pide.",
+    "keywords": "plomero,pintor,cerrajero,albañil,flete,limpieza,mecanico,profesor,clases,presupuesto,oficios",
+    "supportUrl": "https://www.trattoapp.com.ar",
+    "marketingUrl": "https://www.trattoapp.com.ar",
+    "description": "¿Necesitás a alguien para un trabajo y no sabés a quién llamar ni cuánto debería costar? En Tratto contás qué necesitás, te conectamos con gente de tu zona que hace ese trabajo y elegís el presupuesto que más te conviene. Sin llamar a diez personas.\n\nCÓMO FUNCIONA\n1. Pedís: contás qué necesitás o le sacás una foto. Te damos un precio de referencia al toque.\n2. Te cotizan: proveedores de tu zona y de ese rubro te mandan su presupuesto por el chat.\n3. Elegís vos: comparás qué incluye cada uno, cuánto sale y cuándo puede.\n\nMÁS DE 40 RUBROS\n• Hogar: plomería, pintura, albañilería, techos, cerrajería, aire acondicionado, jardinería y más\n• Limpieza de casas, oficinas y consorcios\n• Autos y traslados: mecánica, gomería, lavado, fletes y mudanzas\n• Clases: apoyo escolar, idiomas, música, computación, manejo\n• Eventos: catering, DJ, animación y organización\n• Digital: diseño, programación, redes sociales, fotografía y video, soporte técnico\n• Trámites, contabilidad, belleza, entrenamiento, mascotas y mucho más\n\nPENSADO PARA QUE ELIJAS TRANQUILO\n• Precio de referencia a partir de una foto o de lo que escribís, para saber si un presupuesto tiene sentido.\n• Comparador de presupuestos con inteligencia artificial: te muestra qué incluye y qué no incluye cada uno.\n• Chat privado dentro de la app: tus datos no quedan expuestos.\n• Calificaciones de otros clientes en el perfil de cada proveedor.\n\nPARA EL QUE PIDE ES GRATIS\nPedir un servicio, chatear y recibir presupuestos no cuesta nada.\n\n¿OFRECÉS UN SERVICIO?\nRegistrate gratis y recibí pedidos de gente de tu zona y de tu rubro. Sin abono mensual.\n\nTratto no admite rubros que requieran matrícula (gas, electricidad, salud)."
+  },
+  "infoApp": {
+    "subtitle": "Presupuestos de tu zona",
+    "privacyPolicyUrl": "https://www.trattoapp.com.ar/privacidad.html",
+    "categoriaPrincipal": "LIFESTYLE",
+    "categoriaSecundaria": "PRODUCTIVITY"
+  },
+  "capturas": {
+    "tipo": "APP_IPHONE_65",
+    "archivos": ["ios65-1.png", "ios65-2.png", "ios65-3.png", "ios65-4.png", "ios65-5.png"]
+  },
+  "revision": {
+    "contactFirstName": "Agustin",
+    "contactLastName": "Omelenicki",
+    "contactEmail": "trattoapp1@gmail.com",
+    "demoAccountName": "trattoapp1+demo-cliente@gmail.com",
+    "demoAccountRequired": true,
+    "notes": "Tratto conecta a personas que necesitan un servicio con proveedores de su zona en Argentina. Los trabajos son servicios físicos que se pagan fuera de la app o por Mercado Pago (guideline 3.1.3(e)), por eso no se usa In-App Purchase.\n\nThe demo account above is a customer with an open request, two quotes, chats and a rated job. To see the provider side, log in with trattoapp1+demo-techista@gmail.com and the same password.\n\nNative features: push notifications (APNs) when a quote arrives, is accepted or a job is finished; camera and photo library to attach a photo to a request.\nModeration: word filter in chat, \"Reportar\" button on every profile, request and conversation, user blocking from chat (\"Ver ficha\" → Bloquear), email alerts to the team on every report, and account deletion from Cuenta → Borrar mi cuenta."
+  }
+}

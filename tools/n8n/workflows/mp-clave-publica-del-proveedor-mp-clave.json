@@ -11,6 +11,7 @@
     {
       "id": "e332e8bd-8f42-426a-8121-c3f17de9f1e2",
       "name": "Webhook",
+      "webhookId": "mp-clave-0001",
       "type": "n8n-nodes-base.webhook",
       "typeVersion": 2,
       "position": [
@@ -42,12 +43,6 @@
               "id": "v1",
               "name": "supabaseUrl",
               "value": "https://qglsonbcsncgekzbfafk.supabase.co",
-              "type": "string"
-            },
-            {
-              "id": "v2",
-              "name": "serviceRole",
-              "value": "<SECRETO_EN_N8N>",
               "type": "string"
             },
             {
@@ -151,20 +146,16 @@
       ],
       "parameters": {
         "url": "={{ $('Configuracion').first().json.supabaseUrl }}/rest/v1/mensajes?id=eq.{{ $('Configuracion').first().json.mensajeId }}&select=id,match_id,monto,estado_presupuesto,pago_estado",
-        "sendHeaders": true,
-        "headerParameters": {
-          "parameters": [
-            {
-              "name": "apikey",
-              "value": "={{ $('Configuracion').first().json.serviceRole }}"
-            },
-            {
-              "name": "Authorization",
-              "value": "=Bearer {{ $('Configuracion').first().json.serviceRole }}"
-            }
-          ]
-        },
-        "options": {}
+        "sendHeaders": false,
+        "options": {},
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "supabaseApi"
+      },
+      "credentials": {
+        "supabaseApi": {
+          "id": "xVc2ROmkhPTCf2XK",
+          "name": "Tratto · Supabase (service role)"
+        }
       }
     },
     {
@@ -178,20 +169,16 @@
       ],
       "parameters": {
         "url": "={{ $('Configuracion').first().json.supabaseUrl }}/rest/v1/matches?id=eq.{{ ($('Traer presupuesto').first().json[0] ?? $('Traer presupuesto').first().json).match_id }}&select=id,solicitudes(user_id),proveedores(user_id)",
-        "sendHeaders": true,
-        "headerParameters": {
-          "parameters": [
-            {
-              "name": "apikey",
-              "value": "={{ $('Configuracion').first().json.serviceRole }}"
-            },
-            {
-              "name": "Authorization",
-              "value": "=Bearer {{ $('Configuracion').first().json.serviceRole }}"
-            }
-          ]
-        },
-        "options": {}
+        "sendHeaders": false,
+        "options": {},
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "supabaseApi"
+      },
+      "credentials": {
+        "supabaseApi": {
+          "id": "xVc2ROmkhPTCf2XK",
+          "name": "Tratto · Supabase (service role)"
+        }
       }
     },
     {
@@ -238,20 +225,16 @@
       ],
       "parameters": {
         "url": "={{ $('Configuracion').first().json.supabaseUrl }}/rest/v1/cuentas_mp?user_id=eq.{{ ($('Traer las partes').first().json[0] ?? $('Traer las partes').first().json).proveedores.user_id }}&select=public_key",
-        "sendHeaders": true,
-        "headerParameters": {
-          "parameters": [
-            {
-              "name": "apikey",
-              "value": "={{ $('Configuracion').first().json.serviceRole }}"
-            },
-            {
-              "name": "Authorization",
-              "value": "=Bearer {{ $('Configuracion').first().json.serviceRole }}"
-            }
-          ]
-        },
-        "options": {}
+        "sendHeaders": false,
+        "options": {},
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "supabaseApi"
+      },
+      "credentials": {
+        "supabaseApi": {
+          "id": "xVc2ROmkhPTCf2XK",
+          "name": "Tratto · Supabase (service role)"
+        }
       }
     },
     {

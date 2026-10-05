@@ -12,6 +12,7 @@
     {
       "id": "21c0a8ee-8425-40a1-8c45-f64e10e88827",
       "name": "Llega una calificacion",
+      "webhookId": "calificar-tratto",
       "type": "n8n-nodes-base.webhook",
       "typeVersion": 2,
       "position": [
@@ -40,12 +41,6 @@
         "assignments": {
           "assignments": [
             {
-              "id": "c1",
-              "name": "openaiKey",
-              "value": "<SECRETO_EN_N8N>",
-              "type": "string"
-            },
-            {
               "id": "c2",
               "name": "modelo",
               "value": "gpt-4o-mini",
@@ -61,12 +56,6 @@
               "id": "c4",
               "name": "supabaseUrl",
               "value": "https://qglsonbcsncgekzbfafk.supabase.co",
-              "type": "string"
-            },
-            {
-              "id": "c5",
-              "name": "serviceRole",
-              "value": "<SECRETO_EN_N8N>",
               "type": "string"
             },
             {
@@ -120,20 +109,16 @@
       ],
       "parameters": {
         "url": "={{ $('Configuracion').first().json.supabaseUrl }}/rest/v1/matches?id=eq.{{ $('Llega una calificacion').first().json.body.matchId }}&select=id,proveedores(user_id),solicitudes(user_id)",
-        "sendHeaders": true,
-        "headerParameters": {
-          "parameters": [
-            {
-              "name": "apikey",
-              "value": "={{ $('Configuracion').first().json.serviceRole }}"
-            },
-            {
-              "name": "Authorization",
-              "value": "=Bearer {{ $('Configuracion').first().json.serviceRole }}"
-            }
-          ]
-        },
-        "options": {}
+        "sendHeaders": false,
+        "options": {},
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "supabaseApi"
+      },
+      "credentials": {
+        "supabaseApi": {
+          "id": "xVc2ROmkhPTCf2XK",
+          "name": "Tratto · Supabase (service role)"
+        }
       }
     },
     {
@@ -148,20 +133,16 @@
       ],
       "parameters": {
         "url": "={{ $('Configuracion').first().json.supabaseUrl }}/rest/v1/mensajes?match_id=eq.{{ $('Llega una calificacion').first().json.body.matchId }}&order=created_at.asc&select=remitente_tipo,contenido,created_at,tipo,estado_presupuesto",
-        "sendHeaders": true,
-        "headerParameters": {
-          "parameters": [
-            {
-              "name": "apikey",
-              "value": "={{ $('Configuracion').first().json.serviceRole }}"
-            },
-            {
-              "name": "Authorization",
-              "value": "=Bearer {{ $('Configuracion').first().json.serviceRole }}"
-            }
-          ]
-        },
-        "options": {}
+        "sendHeaders": false,
+        "options": {},
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "supabaseApi"
+      },
+      "credentials": {
+        "supabaseApi": {
+          "id": "xVc2ROmkhPTCf2XK",
+          "name": "Tratto · Supabase (service role)"
+        }
       }
     },
     {
@@ -194,10 +175,6 @@
         "headerParameters": {
           "parameters": [
             {
-              "name": "Authorization",
-              "value": "=Bearer {{ $('Configuracion').first().json.openaiKey }}"
-            },
-            {
               "name": "Content-Type",
               "value": "application/json"
             }
@@ -206,7 +183,15 @@
         "sendBody": true,
         "specifyBody": "json",
         "jsonBody": "={{ JSON.stringify({ model: $('Configuracion').first().json.modelo, max_tokens: 350, temperature: 0.3, response_format: { type: 'json_object' }, messages: [ { role: 'system', content: $('Configuracion').first().json.instruccion }, { role: 'user', content: 'Conversación:\\n' + $json.charla + ($json.minutos !== null ? ('\\n\\nEl proveedor tardó en promedio ' + $json.minutos + ' minutos en responder.') : '') } ] }) }}",
-        "options": {}
+        "options": {},
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "openAiApi"
+      },
+      "credentials": {
+        "openAiApi": {
+          "id": "UNySLvC0hCgEOrj9",
+          "name": "Tratto · OpenAI"
+        }
       }
     },
     {
@@ -239,14 +224,6 @@
         "headerParameters": {
           "parameters": [
             {
-              "name": "apikey",
-              "value": "={{ $('Configuracion').first().json.serviceRole }}"
-            },
-            {
-              "name": "Authorization",
-              "value": "=Bearer {{ $('Configuracion').first().json.serviceRole }}"
-            },
-            {
               "name": "Content-Type",
               "value": "application/json"
             },
@@ -259,7 +236,15 @@
         "sendBody": true,
         "specifyBody": "json",
         "jsonBody": "={{ JSON.stringify({ match_id: $json.matchId, proveedor_user_id: $json.proveedorUserId, cliente_user_id: $json.clienteUserId, puntaje: $json.puntaje, atributos: $json.atributos, resumen: $json.resumen, comentario: $json.comentario }) }}",
-        "options": {}
+        "options": {},
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "supabaseApi"
+      },
+      "credentials": {
+        "supabaseApi": {
+          "id": "xVc2ROmkhPTCf2XK",
+          "name": "Tratto · Supabase (service role)"
+        }
       }
     },
     {
