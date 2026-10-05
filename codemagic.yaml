@@ -47,3 +47,18 @@ workflows:
       app_store_connect:
         auth: integration
         submit_to_testflight: true
+
+  # Sube la ficha de la App Store (textos, capturas, categorías, clasificación
+  # por edad, datos para el revisor y la build) desde tools/tiendas. No compila
+  # nada: corre en Linux y tarda un par de minutos. Ver tools/tiendas/subir-ficha-ios.mjs.
+  ios-ficha:
+    name: Tratto iOS → ficha de la App Store
+    max_build_duration: 15
+    instance_type: linux_x2
+    integrations:
+      app_store_connect: Tratto App Store Connect
+    environment:
+      node: 22
+    scripts:
+      - name: Subir la ficha
+        script: node tools/tiendas/subir-ficha-ios.mjs
