@@ -23,7 +23,7 @@ cada uno.
 | Archivo | Qué hace | Cómo arranca |
 |---|---|---|
 | `matching-automatico-avisos.json` | Conecta pedidos con proveedores y avisa por mail | Webhook `matching` (lo llama la base) |
-| `tasador-por-foto.json` | Precio de referencia por foto o por texto (IA) | Webhook `tasar` (app) |
+| `tasador-por-foto.json` | Precio de referencia por foto o por texto (IA), con base en la tabla `precios_referencia` ajustada por inflación | Webhook `tasar` (app) |
 | `comparador-de-presupuestos.json` | Compara presupuestos con IA | Webhook `comparar` (app) |
 | `asistente-tratto.json` | Asistente con IA | Webhook `asistente` (app) |
 | `reputacion-desde-el-chat.json` | Calificaciones a partir del chat | Webhook `calificar` (app) |
