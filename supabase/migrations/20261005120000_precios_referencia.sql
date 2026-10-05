@@ -43,6 +43,8 @@ insert into public.precios_referencia (rubro, servicio, unidad, precio_min, prec
   ('Plomería y destapaciones', 'Visita y diagnóstico', 'por trabajo', 17000, 25000, '2026-10-01', 'Clickie, precios oct 2026'),
   ('Plomería y destapaciones', 'Destapación simple (pileta o inodoro)', 'por trabajo', 36000, 52000, '2026-10-01', 'Clickie, precios oct 2026'),
   ('Plomería y destapaciones', 'Destapación urgente o de guardia', 'por trabajo', 50000, 95000, '2026-10-01', 'Clickie, precios oct 2026'),
+  ('Plomería y destapaciones', 'Cambio o arreglo de canilla', 'por trabajo', 35000, 60000, '2026-10-01', 'Clickie, precios oct 2026'),
+  ('Plomería y destapaciones', 'Cambio de inodoro', 'por trabajo', 48000, 65000, '2026-10-01', 'Clickie, precios oct 2026'),
   ('Albañilería y refacciones', 'Jornal de albañil oficial', 'por día', 45000, 65000, '2026-04-01', 'Ellaburante, abr 2026'),
   ('Albañilería y refacciones', 'Jornal de ayudante', 'por día', 25000, 35000, '2026-04-01', 'Ellaburante, abr 2026'),
   ('Albañilería y refacciones', 'Pared de ladrillo', 'por m²', 30000, 50000, '2026-04-01', 'Ellaburante, abr 2026'),
@@ -105,6 +107,7 @@ insert into public.precios_referencia (rubro, servicio, unidad, precio_min, prec
   ('Lavado de autos', 'Detailing', 'por trabajo', 100000, 195000, '2026-04-01', 'Ellaburante, abr 2026'),
   ('Fletes y mudanzas', 'Flete en furgón chico', 'por hora', 23500, 32500, '2026-04-01', 'Ellaburante, abr 2026'),
   ('Fletes y mudanzas', 'Flete con 2 peones', 'por hora', 71500, 117000, '2026-04-01', 'Ellaburante, abr 2026'),
+  ('Fletes y mudanzas', 'Flete chico (pocos muebles, misma ciudad, unas 2 horas)', 'por trabajo', 47000, 65000, '2026-04-01', 'Ellaburante, abr 2026: 2 horas de furgón chico'),
   ('Fletes y mudanzas', 'Mudanza de monoambiente', 'por trabajo', 156000, 234000, '2026-04-01', 'Ellaburante, abr 2026'),
   ('Fletes y mudanzas', 'Mudanza de 2 ambientes', 'por trabajo', 234000, 364000, '2026-04-01', 'Ellaburante, abr 2026'),
   -- Oficina y profesionales
