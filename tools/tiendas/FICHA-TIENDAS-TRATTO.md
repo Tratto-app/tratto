@@ -157,6 +157,7 @@ Moderación: filtro de palabras en el chat, botón "Reportar" en cada perfil, pu
 ```
 
 ### Capturas
-iPhone 6,9": `ios-1.png` … `ios-5.png` (1290×2796). Con eso alcanza para
+iPhone 6,9": `ios-1.png` … `ios-5.png` (1290×2796). Si App Store Connect
+muestra el casillero de 6,5" (pide 1242×2688 o 1284×2778), usar `ios65-1.png` … `ios65-5.png`. Con eso alcanza para
 todos los tamaños de iPhone. La app es solo para iPhone, así que no hacen falta
 capturas de iPad.
