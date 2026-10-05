@@ -5,18 +5,33 @@ para tener historial en git y poder reconstruirlos si alguien rompe uno en el
 editor. **n8n sigue siendo la fuente de verdad**: lo que corre es lo que está
 allá, no estos archivos.
 
-## Sin secretos
+## Las claves están en credenciales de n8n
 
-El repo es público. Al exportar, todo valor que sea una clave (Supabase,
-OpenAI, Brevo, Mercado Pago, secretos de webhooks y de push) se reemplaza por
-`<SECRETO_EN_N8N>`. Se verificó que ningún valor real quedó en los archivos y
-el CI (`tools/ci/revisar.py`) los revisa en cada cambio.
+Desde el 2026-10-05 ningún workflow tiene claves escritas en sus nodos: todas
+están en **credenciales** de n8n (Overview → Credentials), que n8n guarda
+cifradas y no aparecen en el editor, en las exportaciones ni en el historial
+de ejecuciones. Para cambiar una clave se edita la credencial y listo: todos
+los workflows que la usan toman el valor nuevo.
 
-Para restaurar uno: importarlo en n8n (*Import from file*) y volver a cargar
-los valores marcados con `<SECRETO_EN_N8N>`. Están en los nodos
-"Configuracion" o en los encabezados de los nodos HTTP. Ver
+| Credencial | Tipo | Qué guarda | La usan |
+|---|---|---|---|
+| Tratto · Supabase (service role) | Supabase API | URL y clave service role | casi todos (lecturas y escrituras en la base) |
+| Tratto · OpenAI | OpenAI | API key | tasador, comparador, asistente, reputación |
+| Tratto · Brevo API | Brevo | API key | matching (mail de aviso) |
+| Tratto · Firma de novedades (x-tratto-firma) | Header Auth | secreto de la función `quick-service` | novedades por mail y por push |
+| Tratto · Secreto del aviso de matching (x-tratto-secreto) | Header Auth | secreto que manda la base | webhook `matching` (si no coincide, n8n responde 403) |
+| Tratto · Mercado Pago client secret | Custom Auth | `{"body":{"client_secret":"…"}}` | canje del código de OAuth |
+| Brevo SMTP (alertas) | SMTP | usuario y clave SMTP | alerta de errores |
+
+La validación de sesión (`/auth/v1/user`) usa la clave **pública** de Supabase
+(`anonKey`, en los nodos "Configuracion"): con el token del usuario alcanza.
+
+El repo es público: al exportar, la clave pública también se tapa con
+`<SECRETO_EN_N8N>` y el CI (`tools/ci/revisar.py`) revisa cada cambio. Para
+restaurar un workflow: importarlo, volver a poner la `anonKey` donde dice
+`<SECRETO_EN_N8N>` y elegir las credenciales en los nodos que las piden. Ver
 `docs/SECURITY.md` → "Si se filtra una credencial" para saber de dónde sale
-cada uno.
+cada valor.
 
 ## Qué hay
 
@@ -45,4 +60,4 @@ Exportar de nuevo desde la API de n8n después de cambiar un workflow, tapando
 los secretos de la misma forma, y correr `python3 tools/ci/revisar.py` antes
 del commit.
 
-Última exportación: 2026-10-01.
+Última exportación: 2026-10-05 (claves pasadas a credenciales).

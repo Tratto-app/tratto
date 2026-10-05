@@ -12,6 +12,7 @@
     {
       "id": "94792f34-1591-4b8e-8885-faf572cdccb4",
       "name": "Llega una foto",
+      "webhookId": "tasador-tratto",
       "type": "n8n-nodes-base.webhook",
       "typeVersion": 2,
       "position": [
@@ -40,12 +41,6 @@
         "assignments": {
           "assignments": [
             {
-              "id": "c1",
-              "name": "openaiKey",
-              "value": "<SECRETO_EN_N8N>",
-              "type": "string"
-            },
-            {
               "id": "c2",
               "name": "modelo",
               "value": "gpt-4o-mini",
@@ -64,15 +59,15 @@
               "type": "string"
             },
             {
-              "id": "c5",
-              "name": "serviceRole",
-              "value": "<SECRETO_EN_N8N>",
-              "type": "string"
-            },
-            {
               "id": "c9",
               "name": "ajusteMensual",
               "value": "0.02",
+              "type": "string"
+            },
+            {
+              "id": "anon",
+              "name": "anonKey",
+              "value": "<SECRETO_EN_N8N>",
               "type": "string"
             }
           ]
@@ -85,6 +80,7 @@
       "name": "Traer precios reales",
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
+      "alwaysOutputData": true,
       "onError": "continueRegularOutput",
       "position": [
         976,
@@ -92,22 +88,17 @@
       ],
       "parameters": {
         "url": "={{ $('Configuracion').first().json.supabaseUrl }}/rest/v1/proveedores?select=rubro,precio_desde,precio_hasta&or=(demo.is.null,demo.is.false)",
-        "sendHeaders": true,
-        "headerParameters": {
-          "parameters": [
-            {
-              "name": "apikey",
-              "value": "={{ $('Configuracion').first().json.serviceRole }}"
-            },
-            {
-              "name": "Authorization",
-              "value": "=Bearer {{ $('Configuracion').first().json.serviceRole }}"
-            }
-          ]
-        },
-        "options": {}
+        "sendHeaders": false,
+        "options": {},
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "supabaseApi"
       },
-      "alwaysOutputData": true
+      "credentials": {
+        "supabaseApi": {
+          "id": "xVc2ROmkhPTCf2XK",
+          "name": "Tratto · Supabase (service role)"
+        }
+      }
     },
     {
       "id": "df6f0e34-95c0-437f-b1c4-10317375b51b",
@@ -139,10 +130,6 @@
         "headerParameters": {
           "parameters": [
             {
-              "name": "Authorization",
-              "value": "=Bearer {{ $('Configuracion').first().json.openaiKey }}"
-            },
-            {
               "name": "Content-Type",
               "value": "application/json"
             }
@@ -151,7 +138,15 @@
         "sendBody": true,
         "specifyBody": "json",
         "jsonBody": "={{ JSON.stringify({ model: $('Configuracion').first().json.modelo, max_tokens: 500, temperature: 0.3, response_format: { type: 'json_object' }, messages: $('Armar el pedido').first().json.mensajes }) }}",
-        "options": {}
+        "options": {},
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "openAiApi"
+      },
+      "credentials": {
+        "openAiApi": {
+          "id": "UNySLvC0hCgEOrj9",
+          "name": "Tratto · OpenAI"
+        }
       }
     },
     {
@@ -198,7 +193,7 @@
           "parameters": [
             {
               "name": "apikey",
-              "value": "={{ $('Configuracion').first().json.serviceRole }}"
+              "value": "={{ $('Configuracion').first().json.anonKey }}"
             },
             {
               "name": "Authorization",
@@ -267,23 +262,6 @@
       }
     },
     {
-      "parameters": {
-        "url": "={{ $('Configuracion').first().json.supabaseUrl }}/rest/v1/precios_referencia?select=rubro,servicio,unidad,precio_min,precio_max,relevado&order=rubro,id",
-        "sendHeaders": true,
-        "headerParameters": {
-          "parameters": [
-            {
-              "name": "apikey",
-              "value": "={{ $('Configuracion').first().json.serviceRole }}"
-            },
-            {
-              "name": "Authorization",
-              "value": "=Bearer {{ $('Configuracion').first().json.serviceRole }}"
-            }
-          ]
-        },
-        "options": {}
-      },
       "id": "97dbc7a6-78cb-4a9e-9ec5-b6afd48e0618",
       "name": "Traer precios de mercado",
       "type": "n8n-nodes-base.httpRequest",
@@ -294,7 +272,20 @@
       "position": [
         1080,
         -560
-      ]
+      ],
+      "parameters": {
+        "url": "={{ $('Configuracion').first().json.supabaseUrl }}/rest/v1/precios_referencia?select=rubro,servicio,unidad,precio_min,precio_max,relevado&order=rubro,id",
+        "sendHeaders": false,
+        "options": {},
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "supabaseApi"
+      },
+      "credentials": {
+        "supabaseApi": {
+          "id": "xVc2ROmkhPTCf2XK",
+          "name": "Tratto · Supabase (service role)"
+        }
+      }
     }
   ],
   "connections": {

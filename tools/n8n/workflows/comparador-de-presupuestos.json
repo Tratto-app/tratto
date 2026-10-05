@@ -12,6 +12,7 @@
     {
       "id": "376d3fa9-dfc0-424d-8578-b4a10eb0cc67",
       "name": "Llega el pedido",
+      "webhookId": "comparador-tratto",
       "type": "n8n-nodes-base.webhook",
       "typeVersion": 2,
       "position": [
@@ -40,12 +41,6 @@
         "assignments": {
           "assignments": [
             {
-              "id": "c1",
-              "name": "openaiKey",
-              "value": "<SECRETO_EN_N8N>",
-              "type": "string"
-            },
-            {
               "id": "c2",
               "name": "modelo",
               "value": "gpt-4o-mini",
@@ -61,12 +56,6 @@
               "id": "c4",
               "name": "supabaseUrl",
               "value": "https://qglsonbcsncgekzbfafk.supabase.co",
-              "type": "string"
-            },
-            {
-              "id": "c5",
-              "name": "serviceRole",
-              "value": "<SECRETO_EN_N8N>",
               "type": "string"
             },
             {
@@ -120,20 +109,16 @@
       ],
       "parameters": {
         "url": "={{ $('Configuracion').first().json.supabaseUrl }}/rest/v1/solicitudes?id=eq.{{ $('Llega el pedido').first().json.body.solicitudId }}&select=id,user_id,servicio_necesitado,presupuesto",
-        "sendHeaders": true,
-        "headerParameters": {
-          "parameters": [
-            {
-              "name": "apikey",
-              "value": "={{ $('Configuracion').first().json.serviceRole }}"
-            },
-            {
-              "name": "Authorization",
-              "value": "=Bearer {{ $('Configuracion').first().json.serviceRole }}"
-            }
-          ]
-        },
-        "options": {}
+        "sendHeaders": false,
+        "options": {},
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "supabaseApi"
+      },
+      "credentials": {
+        "supabaseApi": {
+          "id": "xVc2ROmkhPTCf2XK",
+          "name": "Tratto · Supabase (service role)"
+        }
       }
     },
     {
@@ -148,20 +133,16 @@
       ],
       "parameters": {
         "url": "={{ $('Configuracion').first().json.supabaseUrl }}/rest/v1/matches?solicitud_id=eq.{{ $('Llega el pedido').first().json.body.solicitudId }}&select=id,proveedores(nombre)",
-        "sendHeaders": true,
-        "headerParameters": {
-          "parameters": [
-            {
-              "name": "apikey",
-              "value": "={{ $('Configuracion').first().json.serviceRole }}"
-            },
-            {
-              "name": "Authorization",
-              "value": "=Bearer {{ $('Configuracion').first().json.serviceRole }}"
-            }
-          ]
-        },
-        "options": {}
+        "sendHeaders": false,
+        "options": {},
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "supabaseApi"
+      },
+      "credentials": {
+        "supabaseApi": {
+          "id": "xVc2ROmkhPTCf2XK",
+          "name": "Tratto · Supabase (service role)"
+        }
       }
     },
     {
@@ -189,20 +170,16 @@
       ],
       "parameters": {
         "url": "={{ $('Configuracion').first().json.supabaseUrl }}/rest/v1/mensajes?match_id=in.({{ $json.ids }})&tipo=eq.presupuesto&order=created_at.desc&select=id,match_id,monto,incluye,plazo,estado_presupuesto",
-        "sendHeaders": true,
-        "headerParameters": {
-          "parameters": [
-            {
-              "name": "apikey",
-              "value": "={{ $('Configuracion').first().json.serviceRole }}"
-            },
-            {
-              "name": "Authorization",
-              "value": "=Bearer {{ $('Configuracion').first().json.serviceRole }}"
-            }
-          ]
-        },
-        "options": {}
+        "sendHeaders": false,
+        "options": {},
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "supabaseApi"
+      },
+      "credentials": {
+        "supabaseApi": {
+          "id": "xVc2ROmkhPTCf2XK",
+          "name": "Tratto · Supabase (service role)"
+        }
       }
     },
     {
@@ -235,10 +212,6 @@
         "headerParameters": {
           "parameters": [
             {
-              "name": "Authorization",
-              "value": "=Bearer {{ $('Configuracion').first().json.openaiKey }}"
-            },
-            {
               "name": "Content-Type",
               "value": "application/json"
             }
@@ -247,7 +220,15 @@
         "sendBody": true,
         "specifyBody": "json",
         "jsonBody": "={{ JSON.stringify({ model: $('Configuracion').first().json.modelo, max_tokens: 700, temperature: 0.3, response_format: { type: 'json_object' }, messages: [ { role: 'system', content: $('Configuracion').first().json.instruccion }, { role: 'user', content: $json.texto } ] }) }}",
-        "options": {}
+        "options": {},
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "openAiApi"
+      },
+      "credentials": {
+        "openAiApi": {
+          "id": "UNySLvC0hCgEOrj9",
+          "name": "Tratto · OpenAI"
+        }
       }
     },
     {

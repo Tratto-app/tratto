@@ -12,6 +12,7 @@
     {
       "id": "405b6188-4c16-411e-8902-6e2bfe9dce5c",
       "name": "Aviso de Supabase",
+      "webhookId": "matching-marketplace",
       "type": "n8n-nodes-base.webhook",
       "typeVersion": 2,
       "position": [
@@ -21,7 +22,14 @@
       "parameters": {
         "httpMethod": "POST",
         "path": "matching",
-        "options": {}
+        "options": {},
+        "authentication": "headerAuth"
+      },
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "7YhmkFPzCCwcNKsR",
+          "name": "Tratto · Secreto del aviso de matching (x-tratto-secreto)"
+        }
       }
     },
     {
@@ -40,18 +48,6 @@
               "id": "a1",
               "name": "supabaseUrl",
               "value": "https://qglsonbcsncgekzbfafk.supabase.co",
-              "type": "string"
-            },
-            {
-              "id": "a2",
-              "name": "serviceKey",
-              "value": "<SECRETO_EN_N8N>",
-              "type": "string"
-            },
-            {
-              "id": "a3",
-              "name": "brevoKey",
-              "value": "<SECRETO_EN_N8N>",
               "type": "string"
             },
             {
@@ -113,20 +109,16 @@
       ],
       "parameters": {
         "url": "={{ $json.url }}",
-        "sendHeaders": true,
-        "headerParameters": {
-          "parameters": [
-            {
-              "name": "=apikey",
-              "value": "={{ $('Configuracion').first().json.serviceKey }}"
-            },
-            {
-              "name": "=Authorization",
-              "value": "=Bearer {{ $('Configuracion').first().json.serviceKey }}"
-            }
-          ]
-        },
-        "options": {}
+        "sendHeaders": false,
+        "options": {},
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "supabaseApi"
+      },
+      "credentials": {
+        "supabaseApi": {
+          "id": "xVc2ROmkhPTCf2XK",
+          "name": "Tratto · Supabase (service role)"
+        }
       }
     },
     {
@@ -158,14 +150,6 @@
         "headerParameters": {
           "parameters": [
             {
-              "name": "=apikey",
-              "value": "={{ $('Configuracion').first().json.serviceKey }}"
-            },
-            {
-              "name": "=Authorization",
-              "value": "={{ $('Configuracion').first().json.serviceKey }}"
-            },
-            {
               "name": "Content-Type",
               "value": "application/json"
             },
@@ -178,7 +162,15 @@
         "sendBody": true,
         "specifyBody": "json",
         "jsonBody": "={{ JSON.stringify($json.matches) }}",
-        "options": {}
+        "options": {},
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "supabaseApi"
+      },
+      "credentials": {
+        "supabaseApi": {
+          "id": "xVc2ROmkhPTCf2XK",
+          "name": "Tratto · Supabase (service role)"
+        }
       }
     },
     {
@@ -197,14 +189,6 @@
         "headerParameters": {
           "parameters": [
             {
-              "name": "=apikey",
-              "value": "={{ $('Configuracion').first().json.serviceKey }}"
-            },
-            {
-              "name": "=Authorization",
-              "value": "=Bearer {{ $('Configuracion').first().json.serviceKey }}"
-            },
-            {
               "name": "Content-Type",
               "value": "application/json"
             }
@@ -213,7 +197,15 @@
         "sendBody": true,
         "specifyBody": "json",
         "jsonBody": "={{ JSON.stringify({estado:'con_match'}) }}",
-        "options": {}
+        "options": {},
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "supabaseApi"
+      },
+      "credentials": {
+        "supabaseApi": {
+          "id": "xVc2ROmkhPTCf2XK",
+          "name": "Tratto · Supabase (service role)"
+        }
       }
     },
     {
@@ -245,10 +237,6 @@
         "headerParameters": {
           "parameters": [
             {
-              "name": "api-key",
-              "value": "={{ $('Configuracion').first().json.brevoKey }}"
-            },
-            {
               "name": "Content-Type",
               "value": "application/json"
             },
@@ -261,7 +249,15 @@
         "sendBody": true,
         "specifyBody": "json",
         "jsonBody": "={{ JSON.stringify({ sender: { name: $('Configuracion').first().json.remitenteNombre, email: $('Configuracion').first().json.remitenteEmail }, to: [{ email: $json.para, name: $json.nombre }], subject: $json.asunto, htmlContent: $json.html }) }}",
-        "options": {}
+        "options": {},
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "sendInBlueApi"
+      },
+      "credentials": {
+        "sendInBlueApi": {
+          "id": "N0mWeP803ItBoUBn",
+          "name": "Tratto · Brevo API"
+        }
       }
     },
     {
@@ -274,7 +270,7 @@
         40
       ],
       "parameters": {
-        "jsCode": "// Solo se acepta el aviso que manda la base de datos (trae el encabezado secreto).\n// Del aviso se usa solamente la tabla y el id: el registro se vuelve a leer de\n// la base, asi nadie puede inventar un pedido o un proveedor.\nconst w = $('Aviso de Supabase').first().json;\nconst h = w.headers || {};\nif (h['x-tratto-secreto'] !== '<SECRETO_EN_N8N>') return [];\nconst p = w.body || {};\nconst id = Number(p.record && p.record.id);\nif (!Number.isInteger(id) || id <= 0) return [];\nconst cfg = $('Configuracion').first().json;\nlet url;\nif (p.table === 'solicitudes') url = cfg.supabaseUrl + '/rest/v1/solicitudes?id=eq.' + id + '&estado=eq.pendiente&demo=eq.false&select=*';\nelse if (p.table === 'proveedores') url = cfg.supabaseUrl + '/rest/v1/proveedores?id=eq.' + id + '&demo=eq.false&select=*';\nelse return [];\nreturn [{ json: { tabla: p.table, url } }];\n"
+        "jsCode": "// Solo se acepta el aviso que manda la base de datos (trae el encabezado secreto).\n// Del aviso se usa solamente la tabla y el id: el registro se vuelve a leer de\n// la base, asi nadie puede inventar un pedido o un proveedor.\nconst w = $('Aviso de Supabase').first().json;\nconst h = w.headers || {};\n// El encabezado secreto lo verifica el webhook (credencial de n8n); si no coincide, no llega acá.\nconst p = w.body || {};\nconst id = Number(p.record && p.record.id);\nif (!Number.isInteger(id) || id <= 0) return [];\nconst cfg = $('Configuracion').first().json;\nlet url;\nif (p.table === 'solicitudes') url = cfg.supabaseUrl + '/rest/v1/solicitudes?id=eq.' + id + '&estado=eq.pendiente&demo=eq.false&select=*';\nelse if (p.table === 'proveedores') url = cfg.supabaseUrl + '/rest/v1/proveedores?id=eq.' + id + '&demo=eq.false&select=*';\nelse return [];\nreturn [{ json: { tabla: p.table, url } }];\n"
       }
     },
     {
@@ -288,25 +284,21 @@
       ],
       "parameters": {
         "url": "={{ $json.url }}",
-        "sendHeaders": true,
-        "headerParameters": {
-          "parameters": [
-            {
-              "name": "apikey",
-              "value": "={{ $('Configuracion').first().json.serviceKey }}"
-            },
-            {
-              "name": "Authorization",
-              "value": "=Bearer {{ $('Configuracion').first().json.serviceKey }}"
-            }
-          ]
-        },
+        "sendHeaders": false,
         "options": {
           "response": {
             "response": {
               "fullResponse": true
             }
           }
+        },
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "supabaseApi"
+      },
+      "credentials": {
+        "supabaseApi": {
+          "id": "xVc2ROmkhPTCf2XK",
+          "name": "Tratto · Supabase (service role)"
         }
       }
     }

@@ -12,6 +12,7 @@
     {
       "id": "d0238a29-0074-403e-80d8-7f62395aec6f",
       "name": "Vuelve de Mercado Pago1",
+      "webhookId": "mp-conectar-oauth",
       "type": "n8n-nodes-base.webhook",
       "typeVersion": 2,
       "position": [
@@ -43,12 +44,6 @@
               "type": "string"
             },
             {
-              "id": "a2",
-              "name": "clientSecret",
-              "value": "<SECRETO_EN_N8N>",
-              "type": "string"
-            },
-            {
               "id": "a3",
               "name": "redirectUri",
               "value": "https://marketplace-servicios.app.n8n.cloud/webhook/mp-conectar",
@@ -58,12 +53,6 @@
               "id": "a4",
               "name": "supabaseUrl",
               "value": "https://qglsonbcsncgekzbfafk.supabase.co",
-              "type": "string"
-            },
-            {
-              "id": "a5",
-              "name": "serviceRole",
-              "value": "<SECRETO_EN_N8N>",
               "type": "string"
             }
           ]
@@ -94,13 +83,21 @@
         },
         "sendBody": true,
         "specifyBody": "json",
-        "jsonBody": "={{ JSON.stringify({ client_id: $('Configuracion1').first().json.clientId, client_secret: $('Configuracion1').first().json.clientSecret, grant_type: 'authorization_code', code: String($('Vuelve de Mercado Pago1').first().json.query.code || ''), redirect_uri: $('Configuracion1').first().json.redirectUri, test_token: true }) }}",
+        "jsonBody": "={{ JSON.stringify({ client_id: $('Configuracion1').first().json.clientId, grant_type: 'authorization_code', code: String($('Vuelve de Mercado Pago1').first().json.query.code || ''), redirect_uri: $('Configuracion1').first().json.redirectUri, test_token: true }) }}",
         "options": {
           "response": {
             "response": {
               "neverError": true
             }
           }
+        },
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpCustomAuth"
+      },
+      "credentials": {
+        "httpCustomAuth": {
+          "id": "pCqaaM8WQO961rLV",
+          "name": "Tratto · Mercado Pago client secret"
         }
       }
     },
@@ -120,14 +117,6 @@
         "headerParameters": {
           "parameters": [
             {
-              "name": "apikey",
-              "value": "={{ $('Configuracion1').first().json.serviceRole }}"
-            },
-            {
-              "name": "Authorization",
-              "value": "=Bearer {{ $('Configuracion1').first().json.serviceRole }}"
-            },
-            {
               "name": "Content-Type",
               "value": "application/json"
             },
@@ -140,7 +129,15 @@
         "sendBody": true,
         "specifyBody": "json",
         "jsonBody": "={{ JSON.stringify({ user_id: $('Buscar el nonce').first().json.body[0].user_id, mp_user_id: String($json.user_id), access_token: $json.access_token, refresh_token: $json.refresh_token, public_key: $json.public_key, estado: 'conectada' }) }}",
-        "options": {}
+        "options": {},
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "supabaseApi"
+      },
+      "credentials": {
+        "supabaseApi": {
+          "id": "xVc2ROmkhPTCf2XK",
+          "name": "Tratto · Supabase (service role)"
+        }
       }
     },
     {
@@ -180,19 +177,7 @@
       ],
       "parameters": {
         "url": "={{ $('Configuracion1').first().json.supabaseUrl }}/rest/v1/oauth_states?nonce=eq.{{ encodeURIComponent(String($('Vuelve de Mercado Pago1').first().json.query.state || 'x')) }}&proveedor=eq.mercadopago&creado_en=gte.{{ encodeURIComponent(new Date(Date.now() - 30*60*1000).toISOString()) }}&select=user_id",
-        "sendHeaders": true,
-        "headerParameters": {
-          "parameters": [
-            {
-              "name": "apikey",
-              "value": "={{ $('Configuracion1').first().json.serviceRole }}"
-            },
-            {
-              "name": "Authorization",
-              "value": "=Bearer {{ $('Configuracion1').first().json.serviceRole }}"
-            }
-          ]
-        },
+        "sendHeaders": false,
         "options": {
           "response": {
             "response": {
@@ -200,6 +185,14 @@
               "neverError": true
             }
           }
+        },
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "supabaseApi"
+      },
+      "credentials": {
+        "supabaseApi": {
+          "id": "xVc2ROmkhPTCf2XK",
+          "name": "Tratto · Supabase (service role)"
         }
       }
     },
@@ -283,25 +276,21 @@
       "parameters": {
         "method": "DELETE",
         "url": "={{ $('Configuracion1').first().json.supabaseUrl }}/rest/v1/oauth_states?nonce=eq.{{ encodeURIComponent(String($('Vuelve de Mercado Pago1').first().json.query.state)) }}",
-        "sendHeaders": true,
-        "headerParameters": {
-          "parameters": [
-            {
-              "name": "apikey",
-              "value": "={{ $('Configuracion1').first().json.serviceRole }}"
-            },
-            {
-              "name": "Authorization",
-              "value": "=Bearer {{ $('Configuracion1').first().json.serviceRole }}"
-            }
-          ]
-        },
+        "sendHeaders": false,
         "options": {
           "response": {
             "response": {
               "neverError": true
             }
           }
+        },
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "supabaseApi"
+      },
+      "credentials": {
+        "supabaseApi": {
+          "id": "xVc2ROmkhPTCf2XK",
+          "name": "Tratto · Supabase (service role)"
         }
       }
     },
