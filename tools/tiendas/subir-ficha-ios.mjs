@@ -21,9 +21,10 @@ const API = 'https://api.appstoreconnect.apple.com';
 
 const issuer = process.env.ASC_ISSUER_ID || process.env.APP_STORE_CONNECT_ISSUER_ID;
 const keyId = process.env.ASC_KEY_ID || process.env.APP_STORE_CONNECT_KEY_IDENTIFIER;
-const clave = process.env.ASC_PRIVATE_KEY_PATH
+// En Codemagic la clave puede llegar con los saltos de línea escritos como "\n"
+const clave = (process.env.ASC_PRIVATE_KEY_PATH
   ? fs.readFileSync(process.env.ASC_PRIVATE_KEY_PATH, 'utf8')
-  : process.env.APP_STORE_CONNECT_PRIVATE_KEY;
+  : process.env.APP_STORE_CONNECT_PRIVATE_KEY || '').replace(/\\n/g, '\n');
 if (!issuer || !keyId || !clave) {
   console.error('Faltan las credenciales de App Store Connect (issuer, key id o clave privada).');
   process.exit(1);
@@ -54,9 +55,12 @@ async function api(metodo, ruta, cuerpo) {
   return j;
 }
 
+// PASOS=textos,capturas,... corre solo esos (por defecto, todos)
+const SOLO = process.env.PASOS ? process.env.PASOS.split(',') : null;
 const pasos = [];
-async function paso(nombre, fn) {
-  try { const extra = await fn(); console.log(`✓ ${nombre}${extra ? ` (${extra})` : ''}`); pasos.push([nombre, true]); }
+async function paso(nombre, fn, clave) {
+  if (SOLO && !SOLO.includes(clave)) return;
+  try { const extra = await fn(); console.log(`✓ ${nombre}${typeof extra === 'string' ? ` (${extra})` : ''}`); pasos.push([nombre, true]); }
   catch (e) { console.log(`✗ ${nombre}: ${e.message}`); pasos.push([nombre, false]); }
 }
 
@@ -80,13 +84,13 @@ await paso('Build', async () => {
   }
   await api('PATCH', `/v1/appStoreVersions/${version.id}/relationships/build`, { data: { type: 'builds', id: build.id } });
   return `versión ${numero}, build ${build.attributes.version}`;
-});
+}, 'build');
 
 await paso('Derechos de autor y publicación manual', () =>
-  api('PATCH', `/v1/appStoreVersions/${version.id}`, { data: { type: 'appStoreVersions', id: version.id, attributes: ficha.version } }));
+  api('PATCH', `/v1/appStoreVersions/${version.id}`, { data: { type: 'appStoreVersions', id: version.id, attributes: ficha.version } }), 'version');
 
 await paso('Descripción, palabras clave, texto promocional y URLs', () =>
-  api('PATCH', `/v1/appStoreVersionLocalizations/${loc.id}`, { data: { type: 'appStoreVersionLocalizations', id: loc.id, attributes: ficha.localizacion } }));
+  api('PATCH', `/v1/appStoreVersionLocalizations/${loc.id}`, { data: { type: 'appStoreVersionLocalizations', id: loc.id, attributes: ficha.localizacion } }), 'textos');
 
 await paso('Capturas de pantalla', async () => {
   const sets = await api('GET', `/v1/appStoreVersionLocalizations/${loc.id}/appScreenshotSets`);
@@ -110,7 +114,7 @@ await paso('Capturas de pantalla', async () => {
     await api('PATCH', `/v1/appScreenshots/${res.id}`, { data: { type: 'appScreenshots', id: res.id, attributes: { uploaded: true, sourceFileChecksum: md5 } } });
   }
   // Apple procesa cada imagen; se espera a que estén todas listas
-  for (let i = 0; i < 30; i++) {
+  for (let i = 0; i < 75; i++) {
     const ahora = await api('GET', `/v1/appScreenshotSets/${set.id}/appScreenshots`);
     const estados = ahora.data.map((s) => s.attributes.assetDeliveryState?.state);
     if (estados.some((e) => e === 'FAILED')) {
@@ -121,7 +125,7 @@ await paso('Capturas de pantalla', async () => {
     await new Promise((r) => setTimeout(r, 4000));
   }
   throw new Error('Apple sigue procesando las capturas; revisar en unos minutos');
-});
+}, 'capturas');
 
 // Información de la app (la que está en edición)
 const infos = await api('GET', `/v1/apps/${ficha.appId}/appInfos`);
@@ -132,11 +136,11 @@ await paso('Subtítulo y política de privacidad', async () => {
   const l = il.data.find((x) => x.attributes.locale === ficha.locale) || il.data[0];
   await api('PATCH', `/v1/appInfoLocalizations/${l.id}`, { data: { type: 'appInfoLocalizations', id: l.id,
     attributes: { subtitle: ficha.infoApp.subtitle, privacyPolicyUrl: ficha.infoApp.privacyPolicyUrl } } });
-});
+}, 'info');
 
 await paso('Categorías', () => api('PATCH', `/v1/appInfos/${info.id}`, { data: { type: 'appInfos', id: info.id, relationships: {
   primaryCategory: { data: { type: 'appCategories', id: ficha.infoApp.categoriaPrincipal } },
-  secondaryCategory: { data: { type: 'appCategories', id: ficha.infoApp.categoriaSecundaria } } } } }));
+  secondaryCategory: { data: { type: 'appCategories', id: ficha.infoApp.categoriaSecundaria } } } } }), 'categorias');
 
 await paso('Clasificación por edad', async () => {
   const decl = (await api('GET', `/v1/appInfos/${info.id}/ageRatingDeclaration`)).data;
@@ -155,7 +159,7 @@ await paso('Clasificación por edad', async () => {
     else if (SI.includes(k)) valores[k] = true;
   }
   await api('PATCH', `/v1/ageRatingDeclarations/${decl.id}`, { data: { type: 'ageRatingDeclarations', id: decl.id, attributes: valores } });
-});
+}, 'edad');
 
 await paso('Datos para el revisor', async () => {
   const actual = await api('GET', `/v1/appStoreVersions/${version.id}/appStoreReviewDetail`).catch(() => null);
@@ -165,9 +169,34 @@ await paso('Datos para el revisor', async () => {
     await api('POST', '/v1/appStoreReviewDetails', { data: { type: 'appStoreReviewDetails', attributes: ficha.revision,
       relationships: { appStoreVersion: { data: { type: 'appStoreVersions', id: version.id } } } } });
   }
-});
+}, 'revision');
+
+await paso('Precio gratis', async () => {
+  const puntos = await api('GET', `/v1/apps/${ficha.appId}/appPricePoints?filter[territory]=USA&limit=200`);
+  const gratis = puntos.data.find((p) => Number(p.attributes.customerPrice) === 0);
+  if (!gratis) throw new Error('no encontré el precio gratis');
+  await api('POST', '/v1/appPriceSchedules', {
+    data: { type: 'appPriceSchedules', relationships: {
+      app: { data: { type: 'apps', id: ficha.appId } },
+      baseTerritory: { data: { type: 'territories', id: 'USA' } },
+      manualPrices: { data: [{ type: 'appPrices', id: '${precio}' }] } } },
+    included: [{ type: 'appPrices', id: '${precio}', attributes: { startDate: null },
+      relationships: { appPricePoint: { data: { type: 'appPricePoints', id: gratis.id } } } }] });
+}, 'precio');
+
+await paso('Disponible solo en Argentina', async () => {
+  // Apple pide la lista completa de países, cada uno marcado como disponible o no
+  const paises = (await api('GET', '/v1/territories?limit=200')).data.map((t) => t.id);
+  await api('POST', '/v2/appAvailabilities', {
+    data: { type: 'appAvailabilities', attributes: { availableInNewTerritories: false }, relationships: {
+      app: { data: { type: 'apps', id: ficha.appId } },
+      territoryAvailabilities: { data: paises.map((p) => ({ type: 'territoryAvailabilities', id: '${' + p + '}' })) } } },
+    included: paises.map((p) => ({ type: 'territoryAvailabilities', id: '${' + p + '}', attributes: { available: p === 'ARG' },
+      relationships: { territory: { data: { type: 'territories', id: p } } } })) });
+  return `${paises.length} países, disponible en ARG`;
+}, 'disponibilidad');
 
 const fallas = pasos.filter((p) => !p[1]).length;
 console.log(`\n${pasos.length - fallas} de ${pasos.length} pasos bien.`);
-console.log('Falta a mano: contraseña de la cuenta demo y teléfono (datos para el revisor), cuestionario de privacidad, precio y disponibilidad.');
+console.log('Falta a mano: contraseña de la cuenta demo y teléfono (datos para el revisor) y el cuestionario de privacidad.');
 process.exit(fallas ? 1 : 0);
