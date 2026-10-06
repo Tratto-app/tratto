@@ -1,0 +1,91 @@
+{
+  "nombre": "Tratto",
+  "cuentas": {
+    "instagram": "@trattoapp_",
+    "web": "www.trattoapp.com.ar"
+  },
+  "que_es": "Marketplace de servicios de Argentina: la persona cuenta qué necesita (o le saca una foto), recibe presupuestos de proveedores de su zona y de ese rubro, y elige el que más le conviene.",
+  "propuesta_valor": "Pedí lo que necesitás y recibí presupuestos de profesionales de tu zona, sin llamar a diez personas",
+  "diferenciales": [
+    "Precio de referencia al toque, a partir de una foto o de lo que escribís",
+    "Comparador de presupuestos con IA: qué incluye y qué no cada uno",
+    "Chat privado dentro de la app: tus datos no quedan expuestos",
+    "Calificaciones de otros clientes en el perfil de cada proveedor",
+    "Más de 40 rubros",
+    "Gratis para el que pide; para el proveedor, sin abono mensual"
+  ],
+  "modelo": "Gratis para quien pide. Comisión del 3% al proveedor solo cuando cobra a través de la app.",
+  "tono": {
+    "descripcion": "Cercano, claro y confiable, como un vecino que sabe del tema. Directo, sin exagerar.",
+    "rasgos": [
+      "rioplatense con voseo",
+      "concreto (números, objetos, situaciones)",
+      "tranquilizador sin ser solemne",
+      "humor liviano sobre situaciones cotidianas"
+    ],
+    "evitar": [
+      "tono corporativo o publicitario",
+      "promesas absolutas ('el mejor', 'garantizado')",
+      "anglicismos innecesarios",
+      "burlarse de los oficios o de los clientes"
+    ]
+  },
+  "palabras_no": [
+    "solución integral",
+    "potenciá",
+    "revolucionario",
+    "disruptivo",
+    "el mejor del mercado",
+    "garantizado",
+    "profes"
+  ],
+  "restricciones": [
+    "No ofrecer ni mostrar rubros que requieren matrícula: gas, electricidad, salud.",
+    "No prometer plazos ni precios exactos: los fija cada proveedor.",
+    "No mostrar datos personales de clientes ni de proveedores reales sin su permiso.",
+    "Los precios que se mencionen tienen que salir de la tabla de referencia del tasador o de un relevamiento con fecha."
+  ],
+  "cta_principal": "Pedí gratis en www.trattoapp.com.ar",
+  "identidad_visual": "La define la skill disenador-marketplace (verde bosque, latón, IBM Plex). Las placas se producen con tools/piezas-redes.",
+  "alertas": [
+    {
+      "palabras": [
+        "gasista",
+        "gasistas",
+        "instalacion de gas",
+        "electricista",
+        "electricistas",
+        "instalacion electrica",
+        "medico",
+        "medica",
+        "enfermera",
+        "enfermero",
+        "kinesiologo",
+        "psicologo"
+      ],
+      "motivo": "Rubro con matrícula: Tratto no lo admite. No mostrarlo como servicio disponible."
+    },
+    {
+      "palabras": [
+        "en minutos",
+        "en 24 horas",
+        "en el dia",
+        "al instante",
+        "inmediato",
+        "inmediata",
+        "ya mismo"
+      ],
+      "motivo": "Promesa de plazo: los tiempos los define cada proveedor."
+    },
+    {
+      "palabras": [
+        "precio fijo",
+        "precio exacto",
+        "te cobra",
+        "cuesta exactamente"
+      ],
+      "motivo": "Promesa de precio: los precios los fija cada proveedor; usar rangos de la tabla de referencia con fecha."
+    }
+  ],
+  "nota_alertas": "El motor marca como advertencia cualquier texto que contenga estas palabras (sin tildes, minúsculas). Agregá o sacá palabras acá."
+}

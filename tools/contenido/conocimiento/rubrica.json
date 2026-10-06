@@ -1,0 +1,217 @@
+{
+  "version": 1,
+  "descripcion": "Rúbrica única de análisis de contenido. La usan las skills (para puntuar cada dimensión con evidencia) y el motor (para validar y calcular el total). Cambiar un peso o un tope acá lo cambia para todo el sistema.",
+  "escala": "Cada dimensión va de 0 a 100. El puntaje tiene que caer en el nivel cuyo criterio describe lo que se observa en el contenido, y la evidencia tiene que citar o señalar el fragmento concreto.",
+  "evidencia": {
+    "minimo_caracteres": 15,
+    "minimo_caracteres_extremos": 30,
+    "extremos": "Un puntaje de 20 o menos, o de 81 o más, exige una evidencia más larga: los extremos son los que más se inventan."
+  },
+  "dimensiones": {
+    "hook": {
+      "nombre": "Hook",
+      "pregunta": "¿Los primeros 1 a 3 segundos (o el primer slide, o la primera línea) hacen que alguien de este público deje de deslizar?",
+      "niveles": [
+        [0, 20, "No hay gancho: arranca con saludo, contexto, logo o una frase que podría ir en cualquier cuenta."],
+        [21, 40, "Hay un tema, pero no una razón para quedarse: es una etiqueta ('Tips de plomería') y no una tensión."],
+        [41, 60, "Plantea algo relevante pero previsible o largo (más de 12 palabras para leer o 3 segundos para entender)."],
+        [61, 80, "Concreto, corto y con tensión (pregunta, contradicción, costo, resultado), dirigido a alguien en particular."],
+        [81, 100, "Imposible de ignorar para el público objetivo: específico, visual o verbal en menos de 2 segundos, y abre una brecha que solo se cierra mirando."]
+      ],
+      "senales": ["especificidad (números, objetos, situaciones)", "tensión o contradicción", "a quién le habla", "cuánto tarda en entenderse", "coherencia texto-imagen"]
+    },
+    "retencion": {
+      "nombre": "Retención",
+      "pregunta": "¿Cada tramo da un motivo para seguir mirando o pasar al siguiente slide?",
+      "niveles": [
+        [0, 20, "El valor está todo al principio o todo al final, con relleno en el medio; o se adivina el final."],
+        [21, 40, "Un solo motivo para quedarse, que se resuelve demasiado pronto."],
+        [41, 60, "Avanza, pero con tramos planos (repeticiones, explicaciones largas, slides de texto denso)."],
+        [61, 80, "Ritmo sostenido: cada tramo agrega algo y hay al menos un loop abierto que se cierra tarde."],
+        [81, 100, "Arquitectura de retención clara: loops encadenados, cambios de atención cada pocos segundos o slides, y el cierre premia haber llegado."]
+      ],
+      "senales": ["loops abiertos y dónde se cierran", "cambios de atención (plano, texto, giro, ejemplo)", "densidad por slide o por segundo", "si el final se adivina"]
+    },
+    "claridad": {
+      "nombre": "Claridad",
+      "pregunta": "¿Alguien que no te conoce entiende la idea en una sola pasada, sin sonido si es video?",
+      "niveles": [
+        [0, 20, "No se entiende qué se dice ni para quién."],
+        [21, 40, "Mezcla varias ideas o usa jerga que el público no maneja."],
+        [41, 60, "Se entiende con esfuerzo: frases largas, orden confuso o depende del audio."],
+        [61, 80, "Una idea, orden lógico, lenguaje del público."],
+        [81, 100, "Se entiende de un vistazo y se puede explicar en una frase; funciona sin sonido."]
+      ],
+      "senales": ["una sola idea central", "vocabulario del público", "texto en pantalla o subtítulos", "orden"]
+    },
+    "valor": {
+      "nombre": "Valor",
+      "pregunta": "¿Qué se lleva concretamente la persona (saber, ahorrar, decidir, sentirse entendida)?",
+      "niveles": [
+        [0, 20, "Nada aprovechable: autopromoción o frases hechas."],
+        [21, 40, "Valor genérico que ya sabe todo el mundo ('pedí varios presupuestos')."],
+        [41, 60, "Útil pero poco específico: falta el cómo, el número o el ejemplo."],
+        [61, 80, "Concreto y aplicable: un criterio, un precio de referencia, un paso, un error a evitar."],
+        [81, 100, "Información que cambia una decisión o ahorra plata/tiempo de forma verificable, difícil de encontrar en otro lado."]
+      ],
+      "senales": ["especificidad", "aplicabilidad inmediata", "originalidad del dato", "relación con un problema real del público"]
+    },
+    "curiosidad": {
+      "nombre": "Curiosidad",
+      "pregunta": "¿Abre una brecha entre lo que la persona sabe y lo que quiere saber, y la sostiene?",
+      "niveles": [
+        [0, 20, "No hay nada que descubrir: todo se dice de entrada."],
+        [21, 40, "Una pregunta obvia o con respuesta predecible."],
+        [41, 60, "Brecha real pero que se cierra rápido o no importa mucho."],
+        [61, 80, "Brecha relevante para el público que se sostiene hasta un punto avanzado."],
+        [81, 100, "Brecha fuerte y específica, con payoff que supera la expectativa."]
+      ],
+      "senales": ["qué falta saber", "cuándo se revela", "si el payoff cumple la promesa"]
+    },
+    "emocion": {
+      "nombre": "Emoción",
+      "pregunta": "¿Genera una emoción concreta (alivio, bronca, gracia, sorpresa, orgullo, miedo) con intensidad?",
+      "niveles": [
+        [0, 20, "Neutro, informativo, sin carga."],
+        [21, 40, "Emoción insinuada o genérica ('qué lindo')."],
+        [41, 60, "Emoción identificable pero de baja intensidad."],
+        [61, 80, "Emoción clara y bien construida (situación, detalle, remate)."],
+        [81, 100, "Emoción de alta activación (sorpresa, gracia, indignación justa, ternura) que dan ganas de mostrar a alguien."]
+      ],
+      "senales": ["qué emoción y en qué momento", "si es de alta o baja activación", "detalle concreto que la dispara"]
+    },
+    "identificacion": {
+      "nombre": "Identificación",
+      "pregunta": "¿La persona piensa 'esto me pasa a mí' o 'esto es tan de mi vida'?",
+      "niveles": [
+        [0, 20, "Le habla a nadie en particular."],
+        [21, 40, "Público amplio y situaciones abstractas."],
+        [41, 60, "Situación reconocible pero contada de forma genérica."],
+        [61, 80, "Situación específica del público, con detalles que reconoce."],
+        [81, 100, "Retrato exacto de una experiencia del público, con el lenguaje que usa: genera etiquetas y 'soy yo'."]
+      ],
+      "senales": ["detalles de la vida del público", "lenguaje propio del público", "rol claro (cliente, proveedor)"]
+    },
+    "novedad": {
+      "nombre": "Novedad",
+      "pregunta": "¿Es un ángulo que el público no vio mil veces?",
+      "niveles": [
+        [0, 20, "Contenido repetido, visto en todas las cuentas del rubro."],
+        [21, 40, "Tema común con ejecución común."],
+        [41, 60, "Tema común con un detalle propio."],
+        [61, 80, "Ángulo poco habitual, dato propio o formato inesperado."],
+        [81, 100, "Contraintuitivo o inédito para este público, y verdadero."]
+      ],
+      "senales": ["dato propio", "ángulo contraintuitivo", "formato inesperado"]
+    },
+    "autoridad": {
+      "nombre": "Autoridad",
+      "pregunta": "¿Por qué creerle? ¿Hay prueba, experiencia, dato o demostración?",
+      "niveles": [
+        [0, 20, "Afirmaciones sin respaldo o que suenan inventadas."],
+        [21, 40, "Opinión sin fundamento visible."],
+        [41, 60, "Algún respaldo implícito (experiencia, tono seguro)."],
+        [61, 80, "Prueba concreta: dato, ejemplo real, demostración, testimonio."],
+        [81, 100, "Prueba difícil de discutir y verificable (antes/después, números propios, demostración en cámara)."]
+      ],
+      "senales": ["datos con fuente", "demostración", "experiencia real", "testimonios"]
+    },
+    "cta": {
+      "nombre": "CTA",
+      "pregunta": "¿Pide una acción clara, específica, de baja fricción y coherente con lo que se dio?",
+      "niveles": [
+        [0, 20, "No hay llamado, o pide algo que no tiene que ver."],
+        [21, 40, "CTA genérico ('seguinos para más')."],
+        [41, 60, "CTA claro pero de alta fricción o sin motivo."],
+        [61, 80, "Una sola acción concreta, con motivo ('guardalo para cuando...')."],
+        [81, 100, "Acción natural, específica y con beneficio inmediato, integrada al contenido (no pegada al final)."]
+      ],
+      "senales": ["una sola acción", "motivo para hacerla", "fricción", "coherencia con el objetivo"]
+    },
+    "comentarios": {
+      "nombre": "Potencial de comentarios",
+      "pregunta": "¿Hay un motivo concreto para comentar (opinar, contar su caso, completar, discrepar, etiquetar)?",
+      "niveles": [
+        [0, 20, "Nada que responder."],
+        [21, 40, "Pregunta forzada al final ('¿qué opinan?')."],
+        [41, 60, "Tema que invita a opinar pero sin disparador concreto."],
+        [61, 80, "Disparador claro: elegir entre opciones, contar su experiencia, completar una frase."],
+        [81, 100, "Postura o situación que genera conversación entre la gente, no solo con la cuenta (sin ser agresiva)."]
+      ],
+      "senales": ["opciones para elegir", "experiencias para contar", "postura discutible", "etiquetas"]
+    },
+    "compartidos": {
+      "nombre": "Potencial de compartidos",
+      "pregunta": "¿A quién se lo mandaría la persona, y qué dice de ella mandarlo?",
+      "niveles": [
+        [0, 20, "No hay a quién mandárselo."],
+        [21, 40, "Podría interesarle a alguien, sin un motivo fuerte."],
+        [41, 60, "Útil para alguien en particular ('esto le sirve a mi viejo')."],
+        [61, 80, "Motivo claro: ayuda, gracia, 'somos nosotros', advertencia."],
+        [81, 100, "Mandarlo da estatus o resuelve algo urgente a otro; se comparte por DM y en historias."]
+      ],
+      "senales": ["destinatario obvio", "moneda social", "utilidad para terceros", "humor compartible"]
+    },
+    "guardados": {
+      "nombre": "Potencial de guardados",
+      "pregunta": "¿Vale la pena volver a esto más adelante?",
+      "niveles": [
+        [0, 20, "Consumo de una vez, sin nada para volver."],
+        [21, 40, "Algo de info, pero se recuerda sin guardarlo."],
+        [41, 60, "Referencia útil pero incompleta."],
+        [61, 80, "Lista, guía, precio o checklist que se usa en un momento futuro concreto."],
+        [81, 100, "Material de consulta que resuelve una situación recurrente; se guarda 'para cuando lo necesite'."]
+      ],
+      "senales": ["listas y checklists", "precios y rangos", "pasos", "momento futuro de uso"]
+    }
+  },
+  "formatos": {
+    "reel": {
+      "nombre": "Reel / video corto",
+      "pesos": { "hook": 18, "retencion": 18, "curiosidad": 8, "emocion": 8, "identificacion": 8, "compartidos": 12, "guardados": 6, "comentarios": 6, "valor": 6, "claridad": 4, "novedad": 3, "autoridad": 1, "cta": 2 },
+      "por_que": "La distribución de un video depende de que lo miren entero y lo manden: hook y retención pesan más; compartidos es la señal más fuerte de alcance fuera de los seguidores."
+    },
+    "carrusel": {
+      "nombre": "Carrusel",
+      "pesos": { "hook": 16, "retencion": 14, "valor": 14, "guardados": 14, "compartidos": 10, "claridad": 8, "curiosidad": 6, "identificacion": 6, "emocion": 3, "novedad": 3, "autoridad": 2, "comentarios": 2, "cta": 2 },
+      "por_que": "El carrusel vive del deslizamiento y del guardado: primer slide, que se llegue al final y que valga la pena volver."
+    },
+    "historia": {
+      "nombre": "Historias (secuencia)",
+      "pesos": { "retencion": 16, "comentarios": 18, "cta": 14, "hook": 12, "identificacion": 10, "claridad": 8, "emocion": 8, "valor": 8, "curiosidad": 6 },
+      "por_que": "Las historias se ven solo entre seguidores: el objetivo es que no salteen y que respondan (encuestas, preguntas, DM). Compartidos, guardados y novedad no aplican."
+    },
+    "publicacion": {
+      "nombre": "Publicación de imagen o texto",
+      "pesos": { "hook": 16, "valor": 12, "compartidos": 12, "claridad": 10, "identificacion": 10, "emocion": 10, "guardados": 10, "comentarios": 10, "curiosidad": 4, "novedad": 3, "autoridad": 1, "cta": 2 },
+      "por_que": "Una sola pieza: tiene que frenar el scroll y dar un motivo de interacción en un vistazo; retención no aplica."
+    },
+    "idea": {
+      "nombre": "Idea de contenido (sin producir)",
+      "pesos": { "hook": 15, "identificacion": 14, "valor": 14, "curiosidad": 12, "novedad": 12, "compartidos": 12, "emocion": 10, "guardados": 6, "comentarios": 5 },
+      "por_que": "De una idea se puede juzgar el ángulo y el potencial, no la ejecución: retención, claridad, autoridad y CTA dependen de cómo se produzca."
+    }
+  },
+  "topes": [
+    { "id": "hook_debil", "si": { "dimension": "hook", "menor_que": 40 }, "formatos": ["reel", "carrusel", "publicacion"], "maximo": 55, "motivo": "Si el hook no frena el scroll, el resto casi no se ve: el contenido no puede tener alto potencial aunque lo demás sea bueno." },
+    { "id": "retencion_debil", "si": { "dimension": "retencion", "menor_que": 40 }, "formatos": ["reel", "carrusel", "historia"], "maximo": 60, "motivo": "Sin retención, la plataforma deja de mostrarlo después de los primeros segundos o slides." },
+    { "id": "confuso", "si": { "dimension": "claridad", "menor_que": 30 }, "formatos": ["reel", "carrusel", "historia", "publicacion"], "maximo": 50, "motivo": "Lo que no se entiende no se comparte ni se guarda." },
+    { "id": "sin_motivo_de_accion", "si": { "maximo_de": ["compartidos", "guardados", "comentarios"], "menor_que": 40 }, "formatos": ["reel", "carrusel", "publicacion"], "maximo": 65, "motivo": "Sin un motivo fuerte para compartir, guardar o comentar, el contenido no genera las señales que lo empujan fuera de los seguidores." }
+  ],
+  "bandas": [
+    [0, 39, "bajo", "No conviene publicarlo así: rehacer el ángulo o el hook."],
+    [40, 59, "medio", "Tiene base, pero con estos problemas va a rendir por debajo del promedio."],
+    [60, 74, "bueno", "Publicable; las mejoras marcadas pueden subirlo una banda."],
+    [75, 89, "alto", "Buen potencial para este público."],
+    [90, 100, "excepcional", "Potencial de salir de los seguidores; cuidar la producción."]
+  ],
+  "insumos": {
+    "metricas": { "confianza": "alta", "nota": "Hay métricas reales: el análisis explica resultados, no los predice." },
+    "video": { "confianza": "alta", "nota": "Se vieron fotogramas y se tiene el texto o la transcripción." },
+    "carrusel": { "confianza": "alta", "nota": "Están todos los slides." },
+    "guion": { "confianza": "media", "nota": "Sin ver la ejecución: ritmo, imagen y actuación pueden cambiar mucho el resultado." },
+    "texto": { "confianza": "media", "nota": "Solo el texto: falta lo visual." },
+    "descripcion": { "confianza": "baja", "nota": "Descripción de segunda mano: retención y hook se estiman, no se observan." },
+    "idea": { "confianza": "baja", "nota": "Es una idea: se juzga el ángulo, no la ejecución." }
+  }
+}
