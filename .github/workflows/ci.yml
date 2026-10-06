@@ -19,6 +19,10 @@ jobs:
           node-version: 22
       - name: Revisar
         run: python3 tools/ci/revisar.py
+      - name: Motor de contenido (tests y validación)
+        run: |
+          node --test 'tools/contenido/test/*.test.mjs'
+          node tools/contenido/cli.mjs validar
 
   # Growth OS (carpeta growth/): tipos, tests unitarios, build del panel y
   # chequeo de las Edge Functions. No usa secretos ni toca ninguna base.

@@ -1,0 +1,28 @@
+{
+  "version": 1,
+  "revisado_el": "2026-10-06",
+  "descripcion": "Límites (lo que la plataforma no permite: el motor marca error) y guías (lo que conviene: el motor marca advertencia). Instagram cambia sus límites; si alguno no coincide con lo que ves en la app, corregilo acá y queda corregido para todo el sistema.",
+  "palabras_por_segundo": 3,
+  "formatos": {
+    "reel": {
+      "limites": { "duracion_max_seg": 180 },
+      "guias": { "hook_max_palabras": 10, "hook_max_seg": 3, "duracion_recomendada_seg": [15, 60], "oracion_max_palabras": 20 }
+    },
+    "carrusel": {
+      "limites": { "slides_min": 2, "slides_max": 20 },
+      "guias": { "slides_recomendados": [5, 10], "primer_slide_max_palabras": 12, "slide_max_palabras": 40, "proporcion": "4:5 (1080×1350)" }
+    },
+    "historia": {
+      "limites": { "duracion_max_seg": 60 },
+      "guias": { "texto_max_palabras": 25, "secuencia_recomendada": [3, 8] }
+    },
+    "publicacion": {
+      "limites": { "texto_max_caracteres": 2200 },
+      "guias": { "primera_linea_max_palabras": 12 }
+    },
+    "perfil": {
+      "limites": { "bio_max_caracteres": 150, "usuario_max_caracteres": 30 },
+      "guias": { "nombre_max_caracteres": 30, "destacadas_titulo_max_caracteres": 15, "destacadas_recomendadas": [3, 7] }
+    }
+  }
+}

@@ -19,3 +19,34 @@ leen bien y que la redirección a `www` conserva esos parámetros.
 
 Para cambiar un texto: editar `piezas.html` y correr `python3 render.py`
 (Playwright + Chromium). Las imágenes quedan en `salida/`.
+
+## Reels animados (`reels/`)
+
+Reels de texto animado con la misma identidad, en 1080×1920 y listos para
+subir a TikTok o Instagram. Cada reel es un HTML con una función `render(t)`.
+`render-reel.py` lo dibuja cuadro por cuadro y lo pasa a MP4 con ffmpeg:
+
+```bash
+cd tools/piezas-redes/reels && python3 render-reel.py reel-pintura.html --segundos 33
+```
+
+Salen `salida/<nombre>.mp4` (sin audio: el sonido se elige al subirlo, mejor
+uno en tendencia) y `salida/<nombre>-portada.jpg`. El texto queda dentro de
+la zona que no tapan los botones de la app: entre y=260 e y=1460, sin pasar
+de x=930.
+
+| Reel | Guion |
+|---|---|
+| `reel-pintura` | "¿Te pidieron $250.000 por pintar una pieza?" (memoria de contenido `c-20261006-bc4d69`). Solo texto, sin voz. |
+| `reel-tratto-voz` | Qué es Tratto, con la voz del fundador, subtítulos palabra por palabra, 11 escenas animadas y efectos de sonido. |
+
+Reel con voz:
+
+```bash
+python3 sonido.py audio/tratto-voz.m4a audio/reel-tratto-voz.efectos.json audio/reel-tratto-voz-mezcla.m4a --segundos 37.5
+python3 render-reel.py reel-tratto-voz.html --segundos 37.5 --palabras audio/tratto-voz.palabras.json --audio audio/reel-tratto-voz-mezcla.m4a
+```
+
+- `audio/*.palabras.json`: cada palabra con su inicio y fin en segundos, para los subtítulos y para sincronizar las animaciones.
+- `audio/*.efectos.json`: qué efecto suena en qué segundo y a qué volumen. Los efectos se sintetizan en `sonido.py`, sin bancos de sonido ni licencias.
+- `--previa 0,5.2,13.4` saca solo esos cuadros en PNG, para revisar antes del render completo, que tarda unos 4 minutos.

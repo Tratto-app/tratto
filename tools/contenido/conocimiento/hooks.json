@@ -1,0 +1,155 @@
+{
+  "version": 1,
+  "descripcion": "Categorías de hooks. Cada una es un mecanismo psicológico distinto: generar variantes de varias categorías evita que todas las alternativas sean la misma frase con otras palabras. Las plantillas son esqueletos, no frases para copiar: hay que llenarlas con detalles reales del público.",
+  "categorias": {
+    "curiosidad": {
+      "mecanismo": "Abre una brecha de información específica que solo se cierra mirando.",
+      "plantillas": [
+        "Lo que nadie te dice antes de {situación}",
+        "Por qué {resultado inesperado} (y cómo evitarlo)",
+        "El detalle de {objeto/situación} que {consecuencia}"
+      ],
+      "cuando": "Temas con un dato poco conocido o una explicación que sorprende.",
+      "riesgo": "Clickbait si el payoff no cumple: baja la confianza y la retención."
+    },
+    "contrarian": {
+      "mecanismo": "Contradice una creencia que el público da por cierta.",
+      "plantillas": [
+        "Dejá de {práctica común}",
+        "{Creencia común} es un error (y te sale caro)",
+        "No, {afirmación popular} no es así"
+      ],
+      "cuando": "Cuando hay una práctica extendida que de verdad perjudica al público.",
+      "riesgo": "Si la contradicción no es verdadera o no se justifica, genera rechazo."
+    },
+    "problema": {
+      "mecanismo": "Nombra un dolor concreto que el público tiene ahora.",
+      "plantillas": [
+        "Si {síntoma concreto}, mirá esto",
+        "¿{Problema} otra vez?",
+        "Cuando {situación frustrante} pasa esto"
+      ],
+      "cuando": "Contenido de solución; ideal para el público que ya tiene el problema.",
+      "riesgo": "Si el dolor es genérico, no genera identificación."
+    },
+    "resultado": {
+      "mecanismo": "Muestra el final deseado primero y promete el cómo.",
+      "plantillas": [
+        "Así {resultado concreto} en {tiempo/costo}",
+        "De {situación A} a {situación B}",
+        "{Número} {resultado} sin {costo habitual}"
+      ],
+      "cuando": "Hay un resultado demostrable (antes/después, ahorro, tiempo).",
+      "riesgo": "Promesas exageradas o no verificables."
+    },
+    "error": {
+      "mecanismo": "Señala un error que el público probablemente está cometiendo.",
+      "plantillas": [
+        "El error que comete casi todo el que {acción}",
+        "{Número} errores al {acción} que te cuestan {costo}",
+        "Si hacés {acción} así, estás perdiendo {algo}"
+      ],
+      "cuando": "Contenido educativo con consecuencias claras.",
+      "riesgo": "Tono acusador; mejor 'casi todos' que 'vos'."
+    },
+    "lista": {
+      "mecanismo": "Promete una cantidad concreta y cerrada de valor (fácil de consumir y guardar).",
+      "plantillas": [
+        "{Número} {cosas} antes de {decisión}",
+        "{Número} señales de que {situación}",
+        "{Número} preguntas para hacerle a {persona}"
+      ],
+      "cuando": "Checklists, comparaciones, guías: buen formato para carruseles y guardados.",
+      "riesgo": "Listas largas con ítems de relleno; el número tiene que ser honesto."
+    },
+    "historia": {
+      "mecanismo": "Arranca en medio de una situación con stakes, y la persona quiere saber cómo termina.",
+      "plantillas": [
+        "{Persona} me pidió {cosa} y {giro}",
+        "Ayer pasó esto con {situación}",
+        "Le cobraron {monto} por {trabajo}. Esto es lo que pasó"
+      ],
+      "cuando": "Casos reales, testimonios, anécdotas del rubro.",
+      "riesgo": "Arrancar por el contexto en vez de por el conflicto."
+    },
+    "pregunta": {
+      "mecanismo": "Hace una pregunta que el público se responde mentalmente y quiere comparar.",
+      "plantillas": [
+        "¿Cuánto debería salir {servicio}?",
+        "¿Vos {acción} o {acción alternativa}?",
+        "¿Sabías que {dato}?"
+      ],
+      "cuando": "Preguntas con respuesta no obvia o que dividen opiniones.",
+      "riesgo": "Preguntas retóricas o de sí/no previsible."
+    },
+    "shock": {
+      "mecanismo": "Dato, imagen o cifra que rompe la expectativa de forma inmediata.",
+      "plantillas": [
+        "{Cifra sorprendente} por {algo cotidiano}",
+        "Esto encontré cuando {acción}",
+        "Nadie esperaba {resultado}"
+      ],
+      "cuando": "Hay un dato o imagen genuinamente sorprendente y verdadero.",
+      "riesgo": "Sensacionalismo; perder credibilidad con un dato dudoso."
+    },
+    "autoridad": {
+      "mecanismo": "Presta credibilidad (experiencia, datos propios, años de oficio) para que se escuche lo que sigue.",
+      "plantillas": [
+        "Después de {número} {experiencias}, esto es lo que aprendí",
+        "Un {oficio} con {años} años te explica {tema}",
+        "Analizamos {número} {casos}: esto encontramos"
+      ],
+      "cuando": "Hay datos propios o una persona con experiencia real.",
+      "riesgo": "Autoridad inventada o no verificable."
+    },
+    "identificacion": {
+      "mecanismo": "Retrata una experiencia exacta del público para que piense 'soy yo'.",
+      "plantillas": [
+        "Cuando {situación muy específica que todos vivieron}",
+        "POV: {situación del público}",
+        "Nadie habla de lo que pasa cuando {situación}"
+      ],
+      "cuando": "Humor o empatía sobre situaciones cotidianas del público.",
+      "riesgo": "Situación demasiado amplia: si es de todos, no es de nadie."
+    },
+    "intriga": {
+      "mecanismo": "Insinúa que algo va a pasar o se va a revelar, sin decir qué.",
+      "plantillas": [
+        "Esperá a ver {qué}",
+        "No hagas {acción} hasta ver esto",
+        "Lo que pasó después nadie lo vio venir"
+      ],
+      "cuando": "Hay un giro o una revelación real más adelante.",
+      "riesgo": "Promesa vacía; si no hay giro, castiga la retención."
+    }
+  },
+  "aperturas_genericas": [
+    "hola a todos",
+    "hola chicos",
+    "bienvenidos",
+    "en este video",
+    "en este post",
+    "hoy les vengo a",
+    "hoy te voy a",
+    "les quiero contar",
+    "les traigo",
+    "como estan",
+    "como andan",
+    "buenas buenas",
+    "no te olvides de seguirnos",
+    "sabias que hay muchos",
+    "tips",
+    "consejos",
+    "te cuento",
+    "hablemos de",
+    "les comparto",
+    "hoy vamos a"
+  ],
+  "criterios_seleccion": {
+    "retencion": "¿Obliga a seguir mirando para cerrar lo que abre?",
+    "claridad": "¿Se entiende en menos de 2 segundos sin contexto?",
+    "curiosidad": "¿La brecha es específica y relevante para el público?",
+    "identificacion": "¿El público se reconoce en la situación o el lenguaje?",
+    "viralidad": "¿Da un motivo para compartir o guardar desde el primer segundo?"
+  }
+}

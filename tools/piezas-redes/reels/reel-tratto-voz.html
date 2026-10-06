@@ -1,0 +1,410 @@
+<!doctype html><html lang="es"><head><meta charset="utf-8">
+<title>Reel · Tratto con la voz del fundador</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@500;600&family=IBM+Plex+Sans+Condensed:wght@600;700&family=IBM+Plex+Sans:wght@400;500;600&family=Montserrat:wght@500;600&display=block" rel="stylesheet">
+<!--
+  Reel 1080×1920, 37,5 s, con la voz grabada (audio/tratto-voz.m4a) y
+  subtítulos palabra por palabra (audio/tratto-voz.palabras.json, que el
+  renderizador inyecta como window.PALABRAS).
+  Todo se dibuja con render(t): el video sale igual cada vez.
+  Zona segura: ilustración entre y=300 e y=1060, subtítulos entre y=1110 e y=1420,
+  nada importante a la derecha de x=930.
+-->
+<style>
+:root{--noche:#0C2620;--noche-2:#123830;--noche-3:#1B4B40;--claro:#FCFBF8;--papel:#F4F1EA;
+  --gris:#5E6B65;--gris-2:#94A19B;--gris-3:#B9C2BC;--laton:#C9A227;--laton-cl:#F7CA55;--laton-osc:#8A6E10;
+  --verde:#1E5D49;--verde-vivo:#2B7E62;--verde-luz:#8FD9BC;--tinta:#0E1815;--agua:#7CC3E8}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{width:1080px;height:1920px;overflow:hidden;background:var(--noche)}
+body{font-family:'IBM Plex Sans',sans-serif;color:var(--claro)}
+#lienzo{position:relative;width:1080px;height:1920px;overflow:hidden;background:var(--noche)}
+.mancha-fondo{position:absolute;border-radius:50%;filter:blur(90px);opacity:.55}
+#grano{position:absolute;inset:-40px;opacity:.07;pointer-events:none;z-index:40}
+.cond{font-family:'IBM Plex Sans Condensed',sans-serif;font-weight:700;letter-spacing:-.02em}
+.mono{font-family:'IBM Plex Mono',monospace;font-weight:500;text-transform:uppercase;letter-spacing:.14em}
+.marca{position:absolute;left:90px;top:170px;display:flex;align-items:center;gap:16px;z-index:30}
+.marca span{font-family:'Montserrat',sans-serif;font-weight:500;letter-spacing:.3em;font-size:26px;color:#E8EBEA}
+
+#escenario{position:absolute;left:0;top:0;width:1080px;height:1920px;transform-origin:540px 700px;z-index:10}
+.sc{position:absolute;left:90px;top:300px;width:840px;height:760px;opacity:0}
+.sc svg{overflow:visible}
+.c{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%)}
+
+/* subtítulos */
+#subs{position:absolute;left:90px;width:840px;top:1110px;height:320px;display:flex;align-items:center;justify-content:center;z-index:20}
+#linea{font-family:'IBM Plex Sans Condensed',sans-serif;font-weight:700;font-size:108px;line-height:1.02;text-align:center;letter-spacing:-.02em;
+  text-shadow:0 6px 0 rgba(6,20,16,.85),0 0 28px rgba(6,20,16,.7)}
+#linea span{display:inline-block;margin:0 .12em;transform-origin:50% 70%}
+#linea span.ya{color:var(--claro)}
+#linea span.no{color:rgba(252,251,248,.38)}
+#linea span.ahora{color:var(--laton-cl)}
+
+/* piezas */
+.burbuja{background:var(--claro);color:var(--tinta);border-radius:34px;padding:22px 34px;font-family:'IBM Plex Sans Condensed';font-weight:700;font-size:78px;box-shadow:0 18px 40px rgba(0,0,0,.35);white-space:nowrap}
+.burbuja.l{background:var(--laton-cl)}
+.tel{width:300px;height:560px;border-radius:52px;background:#0A1512;border:10px solid #22302B;box-shadow:0 30px 70px rgba(0,0,0,.5);overflow:hidden}
+.tarjeta{background:var(--noche-2);border:3px solid var(--noche-3);border-radius:30px;padding:30px 36px;box-shadow:0 22px 50px rgba(0,0,0,.35)}
+.sello{display:inline-block;font-family:'IBM Plex Mono',monospace;font-weight:600;letter-spacing:.14em;text-transform:uppercase;
+  color:var(--laton);border:4px solid var(--laton);border-radius:16px;padding:14px 26px}
+#flash{position:absolute;inset:0;background:#fff;opacity:0;z-index:35;pointer-events:none}
+#negro{position:absolute;inset:0;background:#06120F;opacity:0;z-index:5}
+</style></head><body><div id="lienzo">
+
+<div class="mancha-fondo" id="bg1" style="width:900px;height:900px;background:#2B7E62;left:-300px;top:-200px"></div>
+<div class="mancha-fondo" id="bg2" style="width:700px;height:700px;background:#C9A227;left:600px;top:1300px;opacity:.22"></div>
+<div class="mancha-fondo" id="bg3" style="width:600px;height:600px;background:#1E5D49;left:500px;top:500px;opacity:.4"></div>
+<div id="negro"></div>
+
+<div class="marca"><svg width='48' height='48' viewBox='0 0 32 32' fill='none'><defs><linearGradient id='gx' gradientUnits='userSpaceOnUse' x1='10.3' y1='10.37' x2='22.54' y2='22.46'><stop offset='0' stop-color='#96E7CE'/><stop offset='1' stop-color='#62AD98'/></linearGradient></defs><path d='M10.3 10.37 L22.54 22.46' stroke='url(#gx)' stroke-width='2.39'/><circle cx='7.47' cy='7.58' r='5.23' stroke='#9EECD4' stroke-width='2.5'/><path d='M10.3 10.37 L12.08 12.13' stroke='#96E7CE' stroke-width='2.39'/><circle cx='25.12' cy='25.02' r='4.76' stroke='#F7CA55' stroke-width='2.24'/><path d='M20.95 20.89 L22.54 22.46' stroke='#9EECD4' stroke-opacity='.32' stroke-width='2.39'/></svg><span>TRATTO</span></div>
+
+<div id="escenario">
+
+<!-- 1 · casa que se rompe -->
+<div class="sc" id="s1"><svg class="c" width="620" height="620" viewBox="0 0 620 620">
+  <g id="casa" style="transform-origin:310px 560px">
+    <path d="M90 300 L310 110 L530 300 L530 560 L90 560 Z" fill="#123830" stroke="#F4F1EA" stroke-width="16" stroke-linejoin="round"/>
+    <rect x="250" y="400" width="120" height="160" rx="10" fill="#0C2620" stroke="#F4F1EA" stroke-width="12"/>
+    <rect x="140" y="340" width="90" height="80" rx="8" fill="#8FD9BC" opacity=".9"/>
+    <rect x="390" y="340" width="90" height="80" rx="8" fill="#8FD9BC" opacity=".9"/>
+    <path id="grieta" d="M430 120 L405 190 L440 230 L395 300 L425 345 L392 400" fill="none" stroke="#F7CA55" stroke-width="12" stroke-linecap="round" stroke-linejoin="round" pathLength="1" stroke-dasharray="1" stroke-dashoffset="1"/>
+  </g>
+</svg>
+<div class="c cond" id="plata" style="font-size:300px;color:var(--laton-cl);opacity:0;text-shadow:0 14px 0 rgba(0,0,0,.3)">$?</div>
+<div class="c cond q" style="font-size:120px;color:var(--claro);opacity:0" data-x="-300" data-y="-220">?</div>
+<div class="c cond q" style="font-size:150px;color:var(--verde-luz);opacity:0" data-x="290" data-y="-180">?</div>
+<div class="c cond q" style="font-size:110px;color:var(--claro);opacity:0" data-x="320" data-y="230">?</div>
+<div class="c cond q" style="font-size:130px;color:var(--laton-cl);opacity:0" data-x="-310" data-y="210">?</div>
+</div>
+
+<!-- 2 · caño que gotea -->
+<div class="sc" id="s2"><svg class="c" width="700" height="680" viewBox="0 0 700 680">
+  <path d="M0 160 L430 160 Q500 160 500 230 L500 330" fill="none" stroke="#B9C2BC" stroke-width="70" stroke-linecap="butt"/>
+  <path d="M0 160 L430 160 Q500 160 500 230 L500 330" fill="none" stroke="#F4F1EA" stroke-width="22" opacity=".35" transform="translate(0,-16)"/>
+  <rect x="455" y="300" width="90" height="46" rx="10" fill="#94A19B"/>
+  <rect x="200" y="120" width="40" height="80" rx="8" fill="#94A19B"/>
+  <g id="gotas"></g>
+  <ellipse id="charco" cx="500" cy="610" rx="10" ry="4" fill="#7CC3E8" opacity=".75"/>
+</svg></div>
+
+<!-- 3 · mancha en el techo -->
+<div class="sc" id="s3"><svg class="c" width="760" height="680" viewBox="0 0 760 680">
+  <path d="M20 40 L740 40 L740 120 L20 120 Z" fill="#E9E4D8"/>
+  <rect x="20" y="120" width="720" height="520" fill="#F4F1EA"/>
+  <rect x="20" y="114" width="720" height="14" fill="#D6CFBF"/>
+  <g id="humedad" style="transform-origin:380px 160px">
+    <circle cx="380" cy="150" r="150" fill="#8A7A4C" opacity=".22"/>
+    <circle cx="330" cy="140" r="110" fill="#7B6A3E" opacity=".28"/>
+    <circle cx="430" cy="170" r="95" fill="#6E5E35" opacity=".3"/>
+    <circle cx="380" cy="150" r="70" fill="#5E5030" opacity=".35"/>
+  </g>
+  <circle id="gotat" cx="380" cy="240" r="16" fill="#7CC3E8" opacity="0"/>
+  <path d="M60 640 L700 640" stroke="#D6CFBF" stroke-width="6"/>
+</svg></div>
+
+<!-- 4 · dos llamadas, dos números -->
+<div class="sc" id="s4">
+  <div class="c" id="tel1" style="margin-left:-210px"><div class="tel" style="width:240px;height:440px;display:flex;align-items:center;justify-content:center"><svg width="110" height="110" viewBox="0 0 24 24"><path fill="#8FD9BC" d="M6.6 10.8a15.1 15.1 0 0 0 6.6 6.6l2.2-2.2a1 1 0 0 1 1-.25 11.4 11.4 0 0 0 3.6.57 1 1 0 0 1 1 1V20a1 1 0 0 1-1 1A17 17 0 0 1 3 4a1 1 0 0 1 1-1h3.5a1 1 0 0 1 1 1c0 1.25.2 2.45.57 3.6a1 1 0 0 1-.25 1z"/></svg></div></div>
+  <div class="c" id="tel2" style="margin-left:210px"><div class="tel" style="width:240px;height:440px;display:flex;align-items:center;justify-content:center"><svg width="110" height="110" viewBox="0 0 24 24"><path fill="#F7CA55" d="M6.6 10.8a15.1 15.1 0 0 0 6.6 6.6l2.2-2.2a1 1 0 0 1 1-.25 11.4 11.4 0 0 0 3.6.57 1 1 0 0 1 1 1V20a1 1 0 0 1-1 1A17 17 0 0 1 3 4a1 1 0 0 1 1-1h3.5a1 1 0 0 1 1 1c0 1.25.2 2.45.57 3.6a1 1 0 0 1-.25 1z"/></svg></div></div>
+  <div class="c" id="num1" style="margin-left:-210px;margin-top:-300px;opacity:0"><div class="burbuja">$38.000</div></div>
+  <div class="c" id="num2" style="margin-left:210px;margin-top:-300px;opacity:0"><div class="burbuja l">$120.000</div></div>
+  <div class="c cond" id="distinto" style="font-size:260px;color:var(--laton-cl);opacity:0;margin-top:40px;text-shadow:0 12px 0 rgba(0,0,0,.35)">≠</div>
+</div>
+
+<!-- 5 · para eso está Tratto -->
+<div class="sc" id="s5">
+  <svg class="c" width="900" height="900" viewBox="0 0 900 900" style="overflow:visible">
+    <circle id="onda1" cx="450" cy="450" r="200" fill="none" stroke="#C9A227" stroke-width="10" opacity="0"/>
+    <circle id="onda2" cx="450" cy="450" r="200" fill="none" stroke="#8FD9BC" stroke-width="8" opacity="0"/>
+  </svg>
+  <div class="c" id="logo" style="opacity:0;text-align:center">
+    <svg width="330" height="330" viewBox="0 0 32 32" fill="none"><defs><linearGradient id='gy' gradientUnits='userSpaceOnUse' x1='10.3' y1='10.37' x2='22.54' y2='22.46'><stop offset='0' stop-color='#96E7CE'/><stop offset='1' stop-color='#62AD98'/></linearGradient></defs><path d='M10.3 10.37 L22.54 22.46' stroke='url(#gy)' stroke-width='2.39'/><circle cx='7.47' cy='7.58' r='5.23' stroke='#9EECD4' stroke-width='2.5'/><path d='M10.3 10.37 L12.08 12.13' stroke='#96E7CE' stroke-width='2.39'/><circle cx='25.12' cy='25.02' r='4.76' stroke='#F7CA55' stroke-width='2.24'/><path d='M20.95 20.89 L22.54 22.46' stroke='#9EECD4' stroke-opacity='.32' stroke-width='2.39'/></svg>
+    <div style="font-family:Montserrat;font-weight:600;letter-spacing:.32em;font-size:92px;margin-top:30px;padding-left:.32em">TRATTO</div>
+  </div>
+</div>
+
+<!-- 6 · foto y precio de referencia -->
+<div class="sc" id="s6">
+  <div class="c" id="celu"><div class="tel" style="position:relative">
+    <svg width="280" height="540" viewBox="0 0 280 540" style="position:absolute;left:0;top:0">
+      <rect width="280" height="540" fill="#1B2A26"/>
+      <path d="M0 200 L170 200 Q215 200 215 245 L215 330" fill="none" stroke="#B9C2BC" stroke-width="44"/>
+      <ellipse cx="215" cy="440" rx="70" ry="14" fill="#7CC3E8" opacity=".7"/>
+      <circle cx="215" cy="380" r="10" fill="#7CC3E8"/>
+      <rect x="20" y="20" width="240" height="500" fill="none" stroke="#F4F1EA" stroke-width="3" stroke-dasharray="40 160 40 0" opacity=".7" rx="12"/>
+      <rect id="escaneo" x="0" y="0" width="280" height="6" fill="#8FD9BC" opacity="0"/>
+    </svg>
+  </div></div>
+  <div class="c mono" id="analiza" style="font-size:26px;color:var(--verde-luz);margin-top:330px;opacity:0;white-space:nowrap">Calculando precio…</div>
+  <div class="c" id="precio" style="opacity:0;white-space:nowrap">
+    <div class="tarjeta" style="border-color:var(--laton);text-align:left">
+      <div class="mono" style="font-size:24px;color:var(--laton)">Precio de referencia</div>
+      <div class="cond" style="font-size:100px;line-height:1;margin:16px 0 10px;color:var(--claro);white-space:nowrap">$36.000 – $52.000</div>
+      <div style="font-size:30px;color:var(--gris-3)">Destapación simple · relevado oct. 2026</div>
+    </div>
+  </div>
+</div>
+
+<!-- 7 · gente de tu zona -->
+<div class="sc" id="s7"><svg class="c" width="800" height="740" viewBox="0 0 800 740">
+  <g stroke="#1B4B40" stroke-width="22" stroke-linecap="round">
+    <path d="M40 140 L760 120"/><path d="M40 380 L760 400"/><path d="M60 620 L740 600"/>
+    <path d="M160 40 L190 700"/><path d="M420 30 L400 710"/><path d="M640 40 L660 700"/>
+  </g>
+  <circle id="radio" cx="400" cy="380" r="40" fill="#2B7E62" opacity="0"/>
+  <g id="pines"></g>
+  <g id="yo" style="transform-origin:400px 380px;opacity:0">
+    <circle cx="400" cy="380" r="46" fill="#F7CA55" stroke="#0C2620" stroke-width="8"/>
+    <text x="400" y="394" text-anchor="middle" font-family="IBM Plex Sans Condensed" font-weight="700" font-size="40" fill="#0E1815">Vos</text>
+  </g>
+</svg></div>
+
+<!-- 8 · oficios -->
+<div class="sc" id="s8">
+  <div id="oficios" style="display:grid;grid-template-columns:1fr 1fr;gap:28px;width:840px;margin-top:20px"></div>
+</div>
+
+<!-- 9 · pedís, te cotizan, elegís -->
+<div class="sc" id="s9">
+  <div class="c" id="pedido" style="margin-top:-250px;opacity:0"><div class="burbuja" style="font-size:52px;border-radius:30px 30px 30px 6px">Se me tapó la pileta</div></div>
+  <div class="c" id="cot1" style="opacity:0"><div class="tarjeta" style="width:270px;padding:26px 10px;text-align:center"><div class="mono" style="font-size:20px;color:var(--gris-2)">Presupuesto</div><div class="cond" style="font-size:68px">$42.000</div></div></div>
+  <div class="c" id="cot2" style="opacity:0"><div class="tarjeta" style="width:270px;padding:26px 10px;text-align:center"><div class="mono" style="font-size:20px;color:var(--gris-2)">Presupuesto</div><div class="cond" style="font-size:68px">$47.000</div></div></div>
+  <div class="c" id="cot3" style="opacity:0"><div class="tarjeta" style="width:270px;padding:26px 10px;text-align:center"><div class="mono" style="font-size:20px;color:var(--gris-2)">Presupuesto</div><div class="cond" style="font-size:68px">$50.000</div></div></div>
+  <div class="c" id="tilde" style="opacity:0"><svg width="120" height="120" viewBox="0 0 120 120"><circle cx="60" cy="60" r="56" fill="#F7CA55"/><path d="M34 62 L52 80 L88 42" fill="none" stroke="#0E1815" stroke-width="12" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+</div>
+
+<!-- 10 · sin llamar a diez -->
+<div class="sc" id="s10">
+  <div id="telefonos" style="position:absolute;left:20px;top:60px;width:800px;display:grid;grid-template-columns:repeat(5,1fr);gap:26px"></div>
+  <div class="c" id="recibo" style="opacity:0"><div style="width:440px;background:var(--papel);color:var(--tinta);border-radius:14px;padding:44px 40px;box-shadow:0 26px 60px rgba(0,0,0,.45);text-align:left">
+    <div class="mono" style="font-size:22px;color:var(--gris)">Presupuesto</div>
+    <div style="height:14px;background:#E4DFD3;border-radius:7px;margin:22px 0 14px"></div>
+    <div style="height:14px;width:70%;background:#E4DFD3;border-radius:7px;margin-bottom:14px"></div>
+    <div style="height:14px;width:85%;background:#E4DFD3;border-radius:7px"></div>
+    <div class="cond" style="font-size:96px;margin-top:30px">¿Pagué de más?</div>
+  </div></div>
+  <div class="c" id="estampa" style="opacity:0;margin-top:300px"><div class="sello" style="font-size:46px;background:rgba(12,38,32,.85)">Sin dudas</div></div>
+</div>
+
+<!-- 11 · cierre -->
+<div class="sc" id="s11" style="top:330px">
+  <div class="c" style="text-align:center;width:840px">
+    <div id="fin-logo" style="opacity:0"><svg width="210" height="210" viewBox="0 0 32 32" fill="none"><defs><linearGradient id='gz' gradientUnits='userSpaceOnUse' x1='10.3' y1='10.37' x2='22.54' y2='22.46'><stop offset='0' stop-color='#96E7CE'/><stop offset='1' stop-color='#62AD98'/></linearGradient></defs><path d='M10.3 10.37 L22.54 22.46' stroke='url(#gz)' stroke-width='2.39'/><circle cx='7.47' cy='7.58' r='5.23' stroke='#9EECD4' stroke-width='2.5'/><path d='M10.3 10.37 L12.08 12.13' stroke='#96E7CE' stroke-width='2.39'/><circle cx='25.12' cy='25.02' r='4.76' stroke='#F7CA55' stroke-width='2.24'/><path d='M20.95 20.89 L22.54 22.46' stroke='#9EECD4' stroke-opacity='.32' stroke-width='2.39'/></svg>
+      <div style="font-family:Montserrat;font-weight:600;letter-spacing:.32em;font-size:70px;margin-top:20px;padding-left:.32em">TRATTO</div></div>
+    <div class="cond" id="fin-a" style="font-size:96px;line-height:1.02;margin-top:70px;opacity:0">Del pedido al presupuesto,</div>
+    <div class="cond" id="fin-b" style="font-size:96px;line-height:1.02;color:var(--laton-cl);opacity:0">sin vueltas.</div>
+    <div id="fin-c" style="margin-top:70px;display:flex;gap:22px;justify-content:center;align-items:center;opacity:0">
+      <span class="mono" style="font-size:36px;letter-spacing:.06em;color:var(--verde-luz)">trattoapp.com.ar</span>
+      <span class="sello" style="font-size:24px;padding:10px 20px;border-width:3px">Pedí gratis</span>
+    </div>
+  </div>
+</div>
+
+</div><!-- /escenario -->
+
+<div id="subs"><div id="linea"></div></div>
+<div id="flash"></div>
+<svg id="grano" width="1160" height="2000"><filter id="ruido"><feTurbulence type="fractalNoise" baseFrequency=".9" numOctaves="2" stitchTiles="stitch"/></filter><rect width="100%" height="100%" filter="url(#ruido)"/></svg>
+</div>
+
+<script>
+// ---------- utilidades ----------
+const cl = (x) => Math.min(Math.max(x, 0), 1);
+const P = (t, a, b) => cl((t - a) / (b - a));
+const eo = (x) => 1 - Math.pow(1 - cl(x), 3);
+const back = (x) => { x = cl(x); const c = 1.9; return 1 + (c + 1) * Math.pow(x - 1, 3) + c * Math.pow(x - 1, 2); };
+const $ = (id) => document.getElementById(id);
+const set = (el, o, tr) => { el.style.opacity = o; if (tr !== undefined) el.style.transform = tr; };
+// aparece con rebote; base = transform previo (por ejemplo el centrado)
+const pop = (el, t, a, base = '', dur = 0.38) => { const s = back(P(t, a, a + dur)); set(el, P(t, a, a + 0.1), `${base} scale(${Math.max(s, 0)})`); };
+const C = 'translate(-50%,-50%)';
+
+// ---------- escenas: [id, entra, sale] ----------
+const ESCENAS = [['s1', -1, 3.95], ['s2', 3.95, 5.12], ['s3', 5.12, 7.2], ['s4', 7.2, 11.95], ['s5', 12.05, 14.5],
+  ['s6', 14.5, 18.8], ['s7', 18.8, 23.0], ['s8', 23.0, 25.82], ['s9', 25.82, 29.08], ['s10', 29.08, 33.1], ['s11', 33.1, 99]];
+// golpes de cámara (zoom corto) en las palabras que importan
+const GOLPES = [0.76, 3.12, 4.74, 6.56, 8.6, 10.52, 13.36, 15.22, 17.34, 21.02, 27.84, 29.94, 32.3, 33.24];
+
+// ---------- piezas generadas ----------
+const gotas = $('gotas');
+for (let i = 0; i < 4; i++) gotas.insertAdjacentHTML('beforeend', `<path d="M500 0 C 488 22 486 34 500 40 C 514 34 512 22 500 0Z" fill="#7CC3E8" data-i="${i}"/>`);
+const PINES = [[170, 150, 20.0], [640, 130, 20.3], [180, 610, 20.6], [650, 610, 21.6], [420, 140, 21.9], [130, 390, 22.2], [670, 400, 22.4]];
+const pines = $('pines');
+PINES.forEach(([x, y]) => pines.insertAdjacentHTML('beforeend',
+  `<g style="transform-origin:${x}px ${y}px;opacity:0"><path d="M${x} ${y} c-34 -38 -34 -86 0 -86 c34 0 34 48 0 86z" transform="translate(0,-4)" fill="#8FD9BC" stroke="#0C2620" stroke-width="6"/><circle cx="${x}" cy="${y - 52}" r="13" fill="#0C2620"/></g>`));
+const OFICIOS = [
+  ['Plomeros', 23.14, '<path d="M14 4h20v10H14zM20 14h8v8h12v8H20z" fill="#7CC3E8"/><path d="M40 30c0 6-3 10-6 14-3-4-6-8-6-14z" fill="#7CC3E8"/>'],
+  ['Pintores', 23.62, '<rect x="6" y="6" width="30" height="14" rx="4" fill="#F7CA55"/><path d="M36 13h6v12H22v8" fill="none" stroke="#F4F1EA" stroke-width="4"/><rect x="18" y="33" width="8" height="12" rx="2" fill="#F4F1EA"/>'],
+  ['Albañiles', 24.18, '<g fill="#D9825B"><rect x="4" y="8" width="18" height="9" rx="1"/><rect x="25" y="8" width="18" height="9" rx="1"/><rect x="14" y="20" width="18" height="9" rx="1"/><rect x="4" y="32" width="18" height="9" rx="1"/><rect x="25" y="32" width="18" height="9" rx="1"/></g>'],
+  ['Cerrajeros', 24.68, '<circle cx="15" cy="24" r="10" fill="none" stroke="#F7CA55" stroke-width="5"/><path d="M25 24h18M37 24v8M43 24v6" stroke="#F7CA55" stroke-width="5" fill="none"/>'],
+];
+OFICIOS.forEach(([n]) => $('oficios').insertAdjacentHTML('beforeend',
+  `<div class="tarjeta" style="opacity:0;display:flex;flex-direction:column;align-items:center;gap:18px;padding:40px 20px"><svg width="150" height="150" viewBox="0 0 48 48">${OFICIOS.find((o) => o[0] === n)[2]}</svg><div class="cond" style="font-size:62px">${n}</div></div>`));
+for (let i = 0; i < 10; i++) $('telefonos').insertAdjacentHTML('beforeend',
+  `<div style="position:relative;height:200px;opacity:0"><div class="tel" style="width:120px;height:200px;border-radius:24px;border-width:6px;margin:0 auto;display:flex;align-items:center;justify-content:center"><svg width="56" height="56" viewBox="0 0 24 24"><path fill="#94A19B" d="M6.6 10.8a15.1 15.1 0 0 0 6.6 6.6l2.2-2.2a1 1 0 0 1 1-.25 11.4 11.4 0 0 0 3.6.57 1 1 0 0 1 1 1V20a1 1 0 0 1-1 1A17 17 0 0 1 3 4a1 1 0 0 1 1-1h3.5a1 1 0 0 1 1 1c0 1.25.2 2.45.57 3.6a1 1 0 0 1-.25 1z"/></svg></div><svg class="cruz" width="140" height="140" viewBox="0 0 140 140" style="position:absolute;left:50%;top:50%;transform:translate(-50%,-50%) scale(0)"><path d="M20 20L120 120M120 20L20 120" stroke="#F7CA55" stroke-width="16" stroke-linecap="round"/></svg></div>`);
+
+// ---------- subtítulos: grupos de hasta 3 palabras ----------
+const W = window.PALABRAS || [];
+const GRUPOS = [];
+{
+  let g = [];
+  W.forEach(([a, b, w], i) => {
+    g.push([a, b, w]);
+    const sig = W[i + 1];
+    const corte = /[.,?!]$/.test(w) || g.length >= 3 || !sig || sig[0] - b > 0.3;
+    if (corte) { GRUPOS.push(g); g = []; }
+  });
+}
+// en la escena del logo y en el cierre, el texto grande reemplaza a los subtítulos
+const SIN_SUBS = [[12.05, 14.5], [33.1, 99]];
+const linea = $('linea');
+let grupoActual = -1;
+function subtitulos(t) {
+  const oculto = SIN_SUBS.some(([a, b]) => t >= a && t < b);
+  let gi = -1;
+  for (let i = 0; i < GRUPOS.length; i++) {
+    const ini = GRUPOS[i][0][0] - 0.05;
+    const fin = i + 1 < GRUPOS.length ? Math.min(GRUPOS[i + 1][0][0] - 0.05, GRUPOS[i].at(-1)[1] + 0.6) : GRUPOS[i].at(-1)[1] + 0.6;
+    if (t >= ini && t < fin) { gi = i; break; }
+  }
+  if (oculto || gi < 0) { linea.style.opacity = 0; return; }
+  if (gi !== grupoActual) {
+    linea.innerHTML = GRUPOS[gi].map(([, , w]) => `<span>${w}</span>`).join(' ');
+    grupoActual = gi;
+  }
+  const g = GRUPOS[gi];
+  const entra = eo(P(t, g[0][0] - 0.05, g[0][0] + 0.12));
+  linea.style.opacity = 1;
+  linea.style.transform = `translateY(${(1 - entra) * 30}px) scale(${0.92 + 0.08 * entra})`;
+  [...linea.children].forEach((sp, k) => {
+    const [a, b] = g[k];
+    const activa = t >= a && t < b + 0.08;
+    sp.className = t >= a ? (activa ? 'ahora' : 'ya') : 'no';
+    const s = activa ? 1 + 0.12 * Math.exp(-(t - a) * 9) : 1;
+    sp.style.transform = `scale(${s})`;
+  });
+}
+
+// ---------- render ----------
+window.render = function (t) {
+  // fondo vivo
+  $('bg1').style.transform = `translate(${Math.sin(t * 0.5) * 80}px,${Math.cos(t * 0.4) * 60}px)`;
+  $('bg2').style.transform = `translate(${Math.cos(t * 0.35) * 90}px,${Math.sin(t * 0.45) * 70}px)`;
+  $('bg3').style.transform = `translate(${Math.sin(t * 0.3 + 1) * 120}px,${Math.cos(t * 0.5) * 90}px)`;
+  $('grano').style.transform = `translate(${(Math.floor(t * 24) * 37) % 40 - 20}px,${(Math.floor(t * 24) * 53) % 40 - 20}px)`;
+
+  // escenas con entrada "latigazo" y salida rápida
+  for (const [id, a, b] of ESCENAS) {
+    const el = $(id);
+    if (t < a - 0.01 || t > b + 0.01) { el.style.opacity = 0; continue; }
+    const e = a < 0 ? 1 : eo(P(t, a, a + 0.3));
+    const s = 1 - P(t, b - 0.12, b);
+    el.style.opacity = Math.min(e, s);
+    el.style.transform = `translateX(${(1 - e) * 220}px) scale(${0.94 + 0.06 * e + (1 - s) * 0.08}) rotate(${(1 - e) * 3}deg)`;
+    el.style.filter = e < 0.98 ? `blur(${(1 - e) * 14}px)` : 'none';
+  }
+  // golpe de cámara
+  let golpe = 0;
+  for (const g of GOLPES) if (t >= g) golpe = Math.max(golpe, 0.05 * Math.exp(-(t - g) * 7));
+  $('escenario').style.transform = `scale(${1 + golpe})`;
+
+  // 1 · casa
+  const temb = t > 0.76 && t < 1.5 ? Math.sin(t * 90) * 8 * (1 - P(t, 0.76, 1.5)) : 0;
+  $('casa').style.transform = `rotate(${temb * 0.4}deg) translateX(${temb}px)`;
+  $('grieta').style.strokeDashoffset = 1 - eo(P(t, 0.8, 1.25));
+  $('casa').parentNode.style.opacity = 1 - 0.75 * P(t, 2.7, 2.95);
+  pop($('plata'), t, 2.8, C + ` rotate(${-8 + 8 * eo(P(t, 2.8, 3.3))}deg)`);
+  document.querySelectorAll('#s1 .q').forEach((q, i) => {
+    const a = 2.95 + i * 0.12;
+    const fl = Math.sin(t * 4 + i) * 10;
+    pop(q, t, a, `${C} translate(${q.dataset.x}px,${+q.dataset.y + fl}px) rotate(${(i % 2 ? 1 : -1) * 14}deg)`);
+  });
+
+  // 2 · caño
+  gotas.querySelectorAll('path').forEach((g, i) => {
+    const ciclo = ((t - 3.9) * 1.6 + i * 0.25) % 1;
+    const y = 350 + ciclo * 230;
+    g.setAttribute('transform', `translate(0,${t > 3.9 ? y : 350})`);
+    g.setAttribute('opacity', t > 3.9 && ciclo < 0.92 ? 1 : 0);
+  });
+  const ch = eo(P(t, 4.1, 5.1));
+  $('charco').setAttribute('rx', 10 + ch * 150); $('charco').setAttribute('ry', 4 + ch * 26);
+
+  // 3 · mancha que crece
+  $('humedad').style.transform = `scale(${0.15 + 0.85 * eo(P(t, 5.3, 6.9))})`;
+  const gd = ((t - 6.2) * 1.4) % 1;
+  $('gotat').setAttribute('cy', 240 + gd * 380); $('gotat').setAttribute('opacity', t > 6.2 && t < 7.2 ? 1 - gd * 0.3 : 0);
+
+  // 4 · llamadas
+  const ring = (t0, t1) => (t > t0 && t < t1 ? Math.sin(t * 70) * 7 : 0);
+  $('tel1').style.transform = `${C} rotate(${ring(7.28, 8.5)}deg)`;
+  $('tel2').style.transform = `${C} rotate(${ring(8.98, 10.2)}deg)`;
+  const tiembla = t > 10.52 ? Math.sin(t * 60) * 6 * Math.exp(-(t - 10.52) * 3) : 0;
+  pop($('num1'), t, 8.6, `${C} translate(${tiembla}px,0) rotate(-6deg)`);
+  pop($('num2'), t, 10.28, `${C} translate(${-tiembla}px,0) rotate(5deg)`);
+  pop($('distinto'), t, 10.52, C, 0.45);
+  $('tel1').style.opacity = $('tel2').style.opacity = 1;
+
+  // 5 · negro + logo
+  const neg = t >= 12.0 && t < 14.6 ? Math.min(eo(P(t, 12.0, 12.25)), 1 - P(t, 14.4, 14.6)) : 0;
+  $('negro').style.opacity = neg * 0.92;
+  const lp = back(P(t, 13.36, 13.75));
+  set($('logo'), P(t, 13.36, 13.45), `${C} scale(${0.3 + 0.7 * lp})`);
+  [['onda1', 13.36], ['onda2', 13.5]].forEach(([id, a]) => {
+    const p = P(t, a, a + 0.9);
+    $(id).setAttribute('r', 200 + p * 420); $(id).setAttribute('opacity', t >= a ? (1 - p) * 0.9 : 0);
+  });
+
+  // 6 · foto, escaneo, precio
+  $('flash').style.opacity = t >= 15.22 ? Math.max(0, 0.95 - (t - 15.22) * 6) : 0;
+  const esc = P(t, 15.6, 16.9);
+  $('escaneo').setAttribute('y', 20 + ((esc * 2) % 1) * 500);
+  $('escaneo').setAttribute('opacity', esc > 0 && esc < 1 ? 0.9 : 0);
+  set($('analiza'), esc > 0 && t < 17.3 ? 1 : 0);
+  const sube = eo(P(t, 17.3, 17.75));
+  $('celu').style.transform = `${C} translateY(${-sube * 120}px) scale(${1 - sube * 0.25})`;
+  $('celu').style.opacity = 1 - sube * 0.75;
+  set($('precio'), P(t, 17.3, 17.42), `${C} translateY(${(1 - sube) * 260 + 120}px) scale(${back(P(t, 17.3, 17.75))})`);
+
+  // 7 · zona
+  pop($('yo'), t, 19.34, '');
+  const rp = P(t, 21.02, 22.2);
+  $('radio').setAttribute('r', 40 + eo(rp) * 330);
+  $('radio').setAttribute('opacity', t >= 21.02 ? 0.35 * (1 - rp * 0.5) : 0);
+  pines.querySelectorAll('g').forEach((g, i) => pop(g, t, PINES[i][2], ''));
+
+  // 8 · oficios
+  $('oficios').querySelectorAll('.tarjeta').forEach((c, i) => pop(c, t, OFICIOS[i][1], `rotate(${i % 2 ? 2 : -2}deg)`));
+
+  // 9 · pedido → cotizaciones → elegís
+  pop($('pedido'), t, 25.94, C);
+  const abre = eo(P(t, 26.8, 27.3));
+  [['cot1', -300, 26.8], ['cot2', 0, 26.95], ['cot3', 300, 27.1]].forEach(([id, x, a], i) => {
+    const elegido = id === 'cot2';
+    const sel = eo(P(t, 27.84, 28.2));
+    const esc = elegido ? 1 + 0.18 * sel : 1 - 0.12 * sel;
+    pop($(id), t, a, `${C} translate(${x * abre}px,${120 + (elegido ? -30 * sel : 0)}px) scale(${esc})`);
+    if (!elegido && t > 27.84) $(id).style.opacity = 1 - 0.55 * sel;
+  });
+  pop($('tilde'), t, 27.84, `${C} translate(105px,20px)`);
+
+  // 10 · diez teléfonos tachados → recibo con sello
+  const tels = $('telefonos').children;
+  [...tels].forEach((d, i) => {
+    pop(d, t, 29.18 + i * 0.04, '');
+    const cx = d.querySelector('.cruz');
+    cx.style.transform = `translate(-50%,-50%) scale(${back(P(t, 29.94 + i * 0.07, 30.14 + i * 0.07))})`;
+    if (t > 30.7) d.style.opacity = 1 - P(t, 30.7, 30.95);
+  });
+  pop($('recibo'), t, 30.86, `${C} rotate(-3deg)`);
+  const est = P(t, 32.3, 32.5);
+  set($('estampa'), est > 0 ? 1 : 0, `${C} rotate(-12deg) scale(${2.2 - 1.2 * eo(est)})`);
+
+  // 11 · cierre
+  pop($('fin-logo'), t, 33.24, '');
+  set($('fin-a'), eo(P(t, 34.1, 34.35)), `translateY(${(1 - eo(P(t, 34.1, 34.4))) * 40}px)`);
+  pop($('fin-b'), t, 35.28, '');
+  set($('fin-c'), eo(P(t, 35.9, 36.2)), `translateY(${(1 - eo(P(t, 35.9, 36.2))) * 30}px)`);
+
+  subtitulos(t);
+};
+render(0);
+</script></body></html>
