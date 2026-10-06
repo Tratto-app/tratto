@@ -21,7 +21,7 @@ Antes: actualizá el iPhone a la última versión de iOS (lo pide Apple), activ�
 5. **Abrir el pedido existente**: los dos presupuestos, el comparador y el chat con un proveedor.
 6. **Reportar y bloquear**: en el chat, "Ver ficha" → mostrar "Reportar" (abrir el formulario) y "Bloquear" (mostrar la confirmación y **cancelar**, para no romper la cuenta demo).
 7. **Calificar** un trabajo terminado y **Pagar**: abrir el checkout de Mercado Pago y volver sin pagar.
-8. **Lado proveedor**: cerrar sesión, entrar con trattoapp1+demo-techista@gmail.com, abrir el pedido de techos recién creado y mandarle un presupuesto.
+8. **Lado proveedor**: cerrar sesión, entrar con trattoapp1+demo-techos@gmail.com, abrir el pedido de techos recién creado y mandarle un presupuesto.
 9. **Borrar cuenta**: cerrar sesión, entrar con la cuenta creada en el paso 2 → "Cuenta" → "Borrar mi cuenta" → escribir BORRAR → confirmar. Terminar ahí.
 
 ## Respuesta (pegar en "Responder al equipo de revisión de apps")
@@ -32,15 +32,15 @@ Hello App Review team,
 Thank you for reviewing Tratto. Below is the information you requested. We also added it to the Notes field of the App Review Information section.
 
 1. SCREEN RECORDING
-Recorded on a physical iPhone running the latest iOS: [VIDEO]
-It starts by launching the app and shows sign up, log in, creating a request with a photo and the reference price, quotes and the AI comparison, the chat, reporting and blocking a user, rating a job, the Mercado Pago checkout, the provider side and account deletion.
+Recorded on a physical iPhone: [VIDEO]
+It shows logging in with the demo customer account, creating a request with a photo from the photo library and the AI reference price, the request being matched with demo providers, the chat, reporting and blocking a user, the provider side (log in, dashboard, profile, account settings and sending a quote), accepting the quote, rating the provider and account deletion. Passwords are hidden in the video; the demo password is in the password field of the App Review Information section.
 
 PURPOSE AND AUDIENCE
 Tratto is a services marketplace for Argentina. Adults (18+) who need a service post a request, describing it or attaching a photo, and receive quotes from independent providers in their area and category. They compare the quotes, chat privately and choose one. Tratto covers more than 40 categories: home repairs, cleaning, car services and moving, private lessons, events, digital services, paperwork, accounting, beauty, fitness and pet care. Problem: people do not know whom to call or how much a job should cost, and providers depend on word of mouth. Value: a free reference price from a photo, quotes from nearby providers, an AI summary of what each quote includes and excludes, private in-app chat (no phone numbers exposed) and ratings from other customers. Licensed trades (gas, electrical, health) are not accepted.
 
 DEMO ACCOUNTS (same password for both, see the password field)
 Customer: trattoapp1+demo-cliente@gmail.com (open request with two quotes, chats and a rated job)
-Provider: trattoapp1+demo-techista@gmail.com
+Provider: trattoapp1+demo-techos@gmail.com (Diego, roofing; the provider shown in the video)
 
 HOW TO REVIEW
 1. Open the app, tap "Iniciar sesión" and log in with the customer account.
@@ -85,7 +85,7 @@ Tratto is a services marketplace for Argentina. Adults (18+) who need a service 
 
 DEMO ACCOUNTS (same password for both, see the password field)
 Customer: trattoapp1+demo-cliente@gmail.com (open request with two quotes, chats and a rated job)
-Provider: trattoapp1+demo-techista@gmail.com
+Provider: trattoapp1+demo-techos@gmail.com (Diego, roofing; the provider shown in the video)
 
 HOW TO REVIEW
 1. Open the app, tap "Iniciar sesión" and log in with the customer account.
