@@ -37,4 +37,16 @@ de x=930.
 
 | Reel | Guion |
 |---|---|
-| `reel-pintura` | "¿Te pidieron $250.000 por pintar una pieza?" (memoria de contenido `c-20261006-bc4d69`) |
+| `reel-pintura` | "¿Te pidieron $250.000 por pintar una pieza?" (memoria de contenido `c-20261006-bc4d69`). Solo texto, sin voz. |
+| `reel-tratto-voz` | Qué es Tratto, con la voz del fundador, subtítulos palabra por palabra, 11 escenas animadas y efectos de sonido. |
+
+Reel con voz:
+
+```bash
+python3 sonido.py audio/tratto-voz.m4a audio/reel-tratto-voz.efectos.json audio/reel-tratto-voz-mezcla.m4a --segundos 37.5
+python3 render-reel.py reel-tratto-voz.html --segundos 37.5 --palabras audio/tratto-voz.palabras.json --audio audio/reel-tratto-voz-mezcla.m4a
+```
+
+- `audio/*.palabras.json`: cada palabra con su inicio y fin en segundos, para los subtítulos y para sincronizar las animaciones.
+- `audio/*.efectos.json`: qué efecto suena en qué segundo y a qué volumen. Los efectos se sintetizan en `sonido.py`, sin bancos de sonido ni licencias.
+- `--previa 0,5.2,13.4` saca solo esos cuadros en PNG, para revisar antes del render completo, que tarda unos 4 minutos.
