@@ -64,7 +64,7 @@ Español rioplatense con voseo, como habla el público. Concreto: números (de l
 
 ## 9. Conectores (si están en la sesión)
 
-**Metricool** (marca `7270470`, zona horaria America/Buenos_Aires). Hoy tiene conectado **TikTok** (@trattoapp); Instagram todavía no.
+**Metricool** (marca `7270470`, zona horaria America/Buenos_Aires). Tiene conectados **TikTok** (@trattoapp, cuenta de empresa) e **Instagram** (@trattoapp_, desde el 2026-10-06).
 
 - *Traer resultados*: `getAnalyticsDataByMetrics` con `brandId 7270470` y las métricas de `posts` de la red (TikTok: `TKPO02` fecha, `TKPO05` descripción, `TKPO07` reproducciones, `TKPO08` likes, `TKPO09` comentarios, `TKPO10` compartidos, `TKPO11` alcance, `TKPO15` tiempo promedio visto, `TKPO13` % visto completo). Para cada video, buscar el `contenido` de la memoria que corresponde (por hook o descripción; si no hay uno claro, preguntar) y `registrar resultado` con `plataforma: tiktok`, `fuente: metricool`, `alcance`, `reproducciones`, `me_gusta`, `comentarios`, `compartidos`, `retencion_promedio_seg`. TikTok no informa guardados: no inventarlos. Lo que devuelve Metricool es dato.
 - *Mejor horario*: `getBestTimeToPostByNetwork`; guardar el resumen en `config/estrategia.json` → `horarios` con la fecha.

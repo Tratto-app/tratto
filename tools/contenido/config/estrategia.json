@@ -60,7 +60,7 @@
       "fuente": "Metricool, mejor horario para publicar, consultado el 2026-10-06 con la cuenta recién conectada (todavía sin historial propio: refleja el comportamiento general de TikTok). Volver a consultar cuando haya publicaciones."
     },
     "instagram": {
-      "mejores": "Sin datos: conectar Instagram a Metricool.",
+      "mejores": "Todavía sin datos propios: Instagram se conectó a Metricool el 2026-10-06. Consultar getBestTimeToPostByNetwork cuando haya publicaciones.",
       "fuente": ""
     }
   }
