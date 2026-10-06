@@ -99,3 +99,11 @@ En producción:
 
 El workflow de n8n no se pudo probar en ejecución: la cuota mensual está
 agotada hasta el 1/10. Queda para ese día.
+
+## Video para la revisión de Apple
+
+`revision/tratto-app-review.mp4` se sirve en
+https://www.trattoapp.com.ar/revision/tratto-app-review.mp4 (sin indexar:
+`X-Robots-Tag: noindex` en `vercel.json`). Es el link que va en la respuesta a
+Apple (Guideline 2.1). Muestra las cuentas demo con la contraseña oculta. Se
+puede borrar cuando la app quede aprobada.
