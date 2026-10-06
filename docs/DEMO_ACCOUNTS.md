@@ -1,6 +1,6 @@
 # Cuentas demo
 
-Cinco cuentas permanentes en producción para los revisores de Google Play y
+Seis cuentas permanentes en producción para los revisores de Google Play y
 App Store y para filmar la app, sin mezclarse con usuarios reales.
 
 | Email | Rol | Nombre |
@@ -10,6 +10,7 @@ App Store y para filmar la app, sin mezclarse con usuarios reales.
 | `trattoapp1+demo-humedades@gmail.com` | proveedor | Sergio Medina (humedades) |
 | `trattoapp1+demo-pintura@gmail.com` | proveedor | Lucía Benítez (Pintura, CABA) |
 | `trattoapp1+demo-limpieza@gmail.com` | proveedor | Rosa Giménez (Limpieza, CABA) |
+| `trattoapp1+demo-techos@gmail.com` | proveedor | Diego Ferreyra (Techos, CABA) |
 
 Todas usan la misma contraseña. **No está en el repo**: la tiene el dueño del
 proyecto, y en la base solo se guarda su hash (`privado.config`, clave
@@ -56,7 +57,7 @@ Si un revisor borra la cuenta o cambia datos, o después de filmar:
 
 ```sql
 select privado.reponer_demo();        -- cliente, techista y humedades
-select privado.reponer_demo_extra();  -- pintura y limpieza (solo agrega lo que falte)
+select privado.reponer_demo_extra();  -- pintura, limpieza y techista de CABA (solo agrega lo que falte)
 ```
 
 Esto vuelve a crear las cuentas que falten y deja los datos como nuevos. Lo
