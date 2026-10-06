@@ -187,7 +187,7 @@ async function main(argv) {
         const r = { contenidos: filas, medianas: medianas(filas) };
         const texto = filas.length
           ? ['Rendimiento por interacción (guardados + compartidos + comentarios sobre alcance):', '',
-            ...filas.map((f, i) => `${i + 1}. ${f.interaccion_por_alcance}% · ${f.formato} · ${f.titulo} (guardados ${f.guardados_por_alcance}%, compartidos ${f.compartidos_por_alcance}%, alcance ${f.alcance})`),
+            ...filas.map((f, i) => `${i + 1}. ${f.interaccion_por_alcance}% · ${f.plataforma} · ${f.formato} · ${f.titulo} (guardados ${f.guardados_por_alcance}%, compartidos ${f.compartidos_por_alcance}%, alcance ${f.alcance})`),
             '', `Medianas: ${JSON.stringify(r.medianas)}`].join('\n')
           : 'Todavía no hay resultados registrados. Cargalos con: registrar resultado';
         salida(op, r, texto);

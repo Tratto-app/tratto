@@ -106,3 +106,16 @@ test('contexto vacío funciona sin memoria', () => {
   assert.match(r.markdown, /\(sin registros\)/);
   assert.equal(r.segmento, 'clientes');
 });
+
+test('resultados de TikTok vía Metricool: sin guardados y separados de Instagram', () => {
+  const c = contenido({ titulo: 'Pintar una pieza' });
+  registrar('resultado', { contenido_id: c.id, fecha: '2026-10-08', plataforma: 'instagram', alcance: 1000, comentarios: 5, compartidos: 10, guardados: 20 });
+  const tk = registrar('resultado', { contenido_id: c.id, fecha: '2026-10-08', plataforma: 'tiktok', fuente: 'metricool', alcance: 4000, reproducciones: 5200, me_gusta: 300, comentarios: 12, compartidos: 40, retencion_promedio_seg: 9.4 });
+  assert.equal(tk.guardados, undefined);
+  const filas = rendimiento(leer('contenido').registros, leer('resultado').registros);
+  assert.equal(filas.length, 2);
+  const t = filas.find((f) => f.plataforma === 'tiktok');
+  assert.equal(t.compartidos_por_alcance, 1);
+  assert.equal(t.guardados_por_alcance, undefined);
+  falla(() => registrar('resultado', { contenido_id: c.id, fecha: '2026-10-08', plataforma: 'youtube', alcance: 10, comentarios: 0, compartidos: 0 }), 'plataforma');
+});

@@ -54,7 +54,7 @@ test('flujo de memoria: registrar, listar, actualizar, métricas, validar', () =
   assert.equal(JSON.parse(correr(['memoria', 'hook']).stdout).length, 1);
   assert.equal(correr(['actualizar', 'contenido', c.id], { estado: 'publicado' }).status, 0);
   assert.equal(correr(['registrar', 'resultado'], { contenido_id: c.id, fecha: '2026-10-05', alcance: 500, comentarios: 3, compartidos: 6, guardados: 20 }).status, 0);
-  assert.match(correr(['metricas']).stdout, /5\.8% · carrusel/);
+  assert.match(correr(['metricas']).stdout, /5\.8% · instagram · carrusel/);
   const comparado = JSON.parse(correr(['metricas', '--comparar'], { alcance: 500, comentarios: 1, compartidos: 1, guardados: 1 }).stdout);
   assert.ok(comparado.comparacion.guardados_por_alcance);
   const v = correr(['validar']);

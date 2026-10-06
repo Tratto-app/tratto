@@ -87,10 +87,11 @@ Los datos de producto coinciden con el workspace de Growth OS
 
 | Capacidad | Estado | Qué hace falta |
 |---|---|---|
-| Leer métricas de Instagram solo | No | Cuenta profesional (Business o Creator) vinculada a una página de Facebook, una app en developers.facebook.com con los permisos `instagram_basic` e `instagram_manage_insights` (revisión de Meta), y un token de larga duración guardado como secreto. Con eso se puede agregar un comando que traiga insights y los registre con `fuente: instagram_api`. Mientras tanto, las métricas se pegan a mano. |
+| Leer métricas | TikTok sí (Metricool) · Instagram pendiente | Conector de Metricool en claude.ai. TikTok ya está conectado. Para Instagram: pasar la cuenta a profesional (Empresa o Creador) y conectarla en Metricool con "Conectar con Instagram" (no requiere página de Facebook). Ver `conocimiento/protocolo.md`, sección 9. |
+| Programar publicaciones | Sí, con aprobación | Metricool `createScheduledPost`; necesita el video subido a una URL pública. |
+| Diseñar piezas | Sí | Conector de Canva (sin kit de marca: la identidad va en el pedido) o `tools/piezas-redes`. |
 | Transcribir el audio de un video | No | Un servicio de transcripción (por ejemplo, Whisper de OpenAI: el proyecto ya tiene cuenta de OpenAI por Growth OS; la clave iría como secreto) o pasar los subtítulos. Hoy se pide la transcripción. |
 | Abrir links de Instagram/TikTok | No | Las plataformas exigen sesión; se sube el archivo o capturas. |
-| Publicar o programar | No | Lo hace la persona (o Meta Business Suite). |
 | Generar video | Aparte | `tools/video-ia-n8n` (guion con Claude + video con Veo), no conectado a estas skills. |
 | Piezas gráficas | Sí, aparte | Skill `disenador-marketplace` + `tools/piezas-redes`. |
 

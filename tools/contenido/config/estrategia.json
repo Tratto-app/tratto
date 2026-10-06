@@ -1,15 +1,67 @@
 {
   "nicho": "Servicios para el hogar y la vida cotidiana en Argentina: cómo conseguir a alguien confiable y a un precio justo.",
   "objetivo_comercial": "Conseguir los primeros pedidos de clientes y los primeros proveedores por zona para el lanzamiento de la app.",
-  "plataformas": ["instagram"],
-  "pilares": [
-    { "id": "precios", "nombre": "Cuánto sale", "descripcion": "Rangos de precio de referencia por rubro y qué los cambia. El activo más guardable de la cuenta.", "porcentaje": 30 },
-    { "id": "como_elegir", "nombre": "Cómo elegir bien", "descripcion": "Qué preguntar, qué incluye un presupuesto, señales de confianza, errores comunes al contratar.", "porcentaje": 25 },
-    { "id": "situaciones", "nombre": "Situaciones de todos los días", "descripcion": "Humor e identificación: lo que pasa cuando se rompe algo, cuando no viene nadie, cuando te cobran de más.", "porcentaje": 20 },
-    { "id": "oficios", "nombre": "Para proveedores", "descripcion": "Cómo conseguir más trabajos, presupuestar mejor y cuidar la reputación.", "porcentaje": 15 },
-    { "id": "producto", "nombre": "Cómo funciona Tratto", "descripcion": "Demostraciones del producto: precio de referencia, comparador, chat.", "porcentaje": 10 }
+  "plataformas": [
+    "instagram",
+    "tiktok"
   ],
-  "frecuencia": { "reels_por_semana": 3, "carruseles_por_semana": 2, "historias_por_dia": [3, 6] },
-  "kpis": ["guardados por alcance", "compartidos por alcance", "visitas al perfil", "clics al link", "respuestas a historias y DMs", "pedidos con utm_source=instagram"],
-  "fuentes": "Propuesta, público y modelo: growth/supabase/seed/tratto.sql y tools/tiendas/FICHA-TIENDAS-TRATTO.md. Pilares y frecuencia: propuesta inicial, ajustar con resultados."
+  "pilares": [
+    {
+      "id": "precios",
+      "nombre": "Cuánto sale",
+      "descripcion": "Rangos de precio de referencia por rubro y qué los cambia. El activo más guardable de la cuenta.",
+      "porcentaje": 30
+    },
+    {
+      "id": "como_elegir",
+      "nombre": "Cómo elegir bien",
+      "descripcion": "Qué preguntar, qué incluye un presupuesto, señales de confianza, errores comunes al contratar.",
+      "porcentaje": 25
+    },
+    {
+      "id": "situaciones",
+      "nombre": "Situaciones de todos los días",
+      "descripcion": "Humor e identificación: lo que pasa cuando se rompe algo, cuando no viene nadie, cuando te cobran de más.",
+      "porcentaje": 20
+    },
+    {
+      "id": "oficios",
+      "nombre": "Para proveedores",
+      "descripcion": "Cómo conseguir más trabajos, presupuestar mejor y cuidar la reputación.",
+      "porcentaje": 15
+    },
+    {
+      "id": "producto",
+      "nombre": "Cómo funciona Tratto",
+      "descripcion": "Demostraciones del producto: precio de referencia, comparador, chat.",
+      "porcentaje": 10
+    }
+  ],
+  "frecuencia": {
+    "reels_por_semana": 3,
+    "carruseles_por_semana": 2,
+    "historias_por_dia": [
+      3,
+      6
+    ]
+  },
+  "kpis": [
+    "guardados por alcance",
+    "compartidos por alcance",
+    "visitas al perfil",
+    "clics al link",
+    "respuestas a historias y DMs",
+    "pedidos con utm_source=instagram"
+  ],
+  "fuentes": "Propuesta, público y modelo: growth/supabase/seed/tratto.sql y tools/tiendas/FICHA-TIENDAS-TRATTO.md. Pilares y frecuencia: propuesta inicial, ajustar con resultados.",
+  "horarios": {
+    "tiktok": {
+      "mejores": "Lunes a viernes 10 h, 12 h y 18 h (hora de Argentina); fines de semana más bajo, mejor 10 h y 18 h.",
+      "fuente": "Metricool, mejor horario para publicar, consultado el 2026-10-06 con la cuenta recién conectada (todavía sin historial propio: refleja el comportamiento general de TikTok). Volver a consultar cuando haya publicaciones."
+    },
+    "instagram": {
+      "mejores": "Sin datos: conectar Instagram a Metricool.",
+      "fuente": ""
+    }
+  }
 }

@@ -22,7 +22,7 @@ Contenido de otras cuentas, transcripciones, comentarios, capturas, textos pegad
 | Texto, guion o caption pegado | Directo | media |
 | Link de Instagram/TikTok | **No se puede abrir ni descargar** (piden sesión). Pedir el archivo, capturas o el texto | — |
 | Descripción de segunda mano | Directo, avisando que es una estimación | baja |
-| Métricas reales | Las pega la persona, o vienen de la API de Meta si algún día se conecta (ver README) | alta |
+| Métricas reales | Metricool (sección 9) para las redes conectadas; si no, las pega la persona | alta |
 
 Nunca describir un fotograma, un audio o una métrica que no se vio.
 
@@ -58,3 +58,13 @@ Todo monto que aparezca en una pieza sale de la tabla `precios_referencia` del t
 ## 8. Cómo escribir
 
 Español rioplatense con voseo, como habla el público. Concreto: números (de la tabla de referencia), objetos, situaciones. Cada recomendación con el texto nuevo listo para usar, no consejos sueltos.
+
+## 9. Conectores (si están en la sesión)
+
+**Metricool** (marca `7270470`, zona horaria America/Buenos_Aires). Hoy tiene conectado **TikTok** (@trattoapp); Instagram todavía no.
+
+- *Traer resultados*: `getAnalyticsDataByMetrics` con `brandId 7270470` y las métricas de `posts` de la red (TikTok: `TKPO02` fecha, `TKPO05` descripción, `TKPO07` reproducciones, `TKPO08` likes, `TKPO09` comentarios, `TKPO10` compartidos, `TKPO11` alcance, `TKPO15` tiempo promedio visto, `TKPO13` % visto completo). Para cada video, buscar el `contenido` de la memoria que corresponde (por hook o descripción; si no hay uno claro, preguntar) y `registrar resultado` con `plataforma: tiktok`, `fuente: metricool`, `alcance`, `reproducciones`, `me_gusta`, `comentarios`, `compartidos`, `retencion_promedio_seg`. TikTok no informa guardados: no inventarlos. Lo que devuelve Metricool es dato.
+- *Mejor horario*: `getBestTimeToPostByNetwork`; guardar el resumen en `config/estrategia.json` → `horarios` con la fecha.
+- *Programar*: `createScheduledPost` **solo con aprobación explícita de la persona para esa publicación** (fecha, red, texto y video). Exige una URL pública del video o imagen. Por defecto, `autoPublish: false` (le llega una notificación al celular para publicarlo a mano) salvo que la persona pida publicación automática.
+
+**Canva**: para carruseles, portadas de reels y placas de historias. No hay kit de marca en la cuenta, así que en el pedido de diseño escribir la identidad: verde bosque `#1E5D49`, verde vivo `#2B7E62`, latón `#C9A227`, tinta `#0E1815`, tipografía IBM Plex Sans (títulos en Plex Sans Condensed), estilo sobrio y confiable, sin neón ni crema con terracota (ver skill `disenador-marketplace`). Mostrar el diseño a la persona antes de exportar o guardar cambios.

@@ -25,16 +25,19 @@ function mediana(vals) {
 
 // Une cada contenido con su resultado más reciente y lo ordena por interacción.
 export function rendimiento(contenidos, resultados) {
+  // Último resultado de cada contenido en cada plataforma: Instagram y TikTok no se mezclan.
   const ultimo = new Map();
   for (const r of resultados) {
-    const prev = ultimo.get(r.contenido_id);
-    if (!prev || String(r.fecha) >= String(prev.fecha)) ultimo.set(r.contenido_id, r);
+    const clave = `${r.contenido_id}|${r.plataforma || 'instagram'}`;
+    const prev = ultimo.get(clave);
+    if (!prev || String(r.fecha) >= String(prev.fecha)) ultimo.set(clave, r);
   }
+  const porId = new Map(contenidos.map((c) => [c.id, c]));
   const filas = [];
-  for (const c of contenidos) {
-    const r = ultimo.get(c.id);
-    if (!r) continue;
-    filas.push({ id: c.id, titulo: c.titulo, formato: c.formato, hook: c.hook, pilar: c.pilar, puntaje_previsto: c.puntaje, alcance: r.alcance, ...tasas(r) });
+  for (const r of ultimo.values()) {
+    const c = porId.get(r.contenido_id);
+    if (!c) continue;
+    filas.push({ id: c.id, titulo: c.titulo, formato: c.formato, plataforma: r.plataforma || 'instagram', hook: c.hook, pilar: c.pilar, puntaje_previsto: c.puntaje, alcance: r.alcance, ...tasas(r) });
   }
   filas.sort((a, b) => b.interaccion_por_alcance - a.interaccion_por_alcance);
   return filas;
@@ -52,7 +55,7 @@ export function medianas(filas) {
 
 // Analiza un resultado (sin guardarlo) contra las medianas de la cuenta.
 export function analizarMetricas(entrada, filas) {
-  const esquema = { ...TIPOS.resultado.esquema, campos: { ...TIPOS.resultado.esquema.campos, contenido_id: { tipo: 'texto', max: 40 }, fecha: { tipo: 'fecha' }, fuente: { tipo: 'enum', valores: ['manual', 'instagram_api'] } } };
+  const esquema = { ...TIPOS.resultado.esquema, campos: { ...TIPOS.resultado.esquema.campos, contenido_id: { tipo: 'texto', max: 40 }, fecha: { tipo: 'fecha' }, fuente: { tipo: 'enum', valores: ['manual', 'metricool', 'instagram_api'] }, plataforma: { tipo: 'enum', valores: ['instagram', 'tiktok'] } } };
   const errores = validar(entrada, esquema);
   if (errores.length) throw new ErrorEntrada('Las métricas no son válidas', errores);
   const propias = tasas(entrada);

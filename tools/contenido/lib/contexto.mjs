@@ -74,6 +74,8 @@ export function armarContexto({ segmento: idSeg, limite = 15 } = {}) {
     l.push(`- ${p.id} · ${p.nombre}: ${p.porcentaje}% → ${totalPilares ? real + '%' : 'sin datos'} — ${p.descripcion}`);
   }
   if (estrategia.frecuencia) l.push(`Frecuencia: ${JSON.stringify(estrategia.frecuencia)}`);
+  l.push(`Plataformas: ${estrategia.plataformas.join(', ')}`);
+  for (const [red, h] of Object.entries(estrategia.horarios || {})) l.push(`Mejor horario ${red}: ${h.mejores}`);
   l.push('');
   l.push('## Memoria');
   l.push(`Registros: ${mem.contenido.length} contenidos, ${mem.hook.length} hooks, ${mem.resultado.length} resultados, ${mem.aprendizaje.length} aprendizajes, ${mem.idea.length} ideas.`);
@@ -81,7 +83,7 @@ export function armarContexto({ segmento: idSeg, limite = 15 } = {}) {
   l.push('');
   l.push(bloqueDatos(`Contenidos recientes (${recientes.length})`, recientes.map((c) => `${c.id} · ${c.formato} · ${c.estado}${c.pilar ? ' · ' + c.pilar : ''}${c.puntaje !== undefined ? ' · previsto ' + c.puntaje : ''} · ${una(c.titulo)}`)));
   l.push(bloqueDatos('Hooks ya usados (no repetir ni parafrasear)', mem.hook.slice(-limite * 2).map((h) => `${h.categoria ? '[' + h.categoria + '] ' : ''}${una(h.texto)}`)));
-  const fmt = (f) => `${f.id} · ${f.formato} · interacción ${f.interaccion_por_alcance}% · guardados ${f.guardados_por_alcance}% · compartidos ${f.compartidos_por_alcance}% · alcance ${f.alcance} · ${una(f.titulo, 80)}`;
+  const fmt = (f) => `${f.id} · ${f.plataforma} · ${f.formato} · interacción ${f.interaccion_por_alcance}% · guardados ${f.guardados_por_alcance}% · compartidos ${f.compartidos_por_alcance}% · alcance ${f.alcance} · ${una(f.titulo, 80)}`;
   if (filas.length) {
     l.push(`Medianas de la cuenta (por alcance): ${Object.entries(base).map(([k, v]) => `${k.replace('_por_alcance', '')} ${v}%`).join(' · ')}`);
     l.push('');

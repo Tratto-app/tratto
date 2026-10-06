@@ -60,12 +60,14 @@ export const TIPOS = {
       campos: {
         contenido_id: T(40, true),
         fecha: { tipo: 'fecha', requerido: true },
-        fuente: { tipo: 'enum', valores: ['manual', 'instagram_api'], requerido: true },
+        plataforma: { tipo: 'enum', valores: ['instagram', 'tiktok'], requerido: true },
+        fuente: { tipo: 'enum', valores: ['manual', 'metricool', 'instagram_api'], requerido: true },
         alcance: { ...N, min: 1, requerido: true },
         reproducciones: N, me_gusta: N,
         comentarios: { ...N, requerido: true },
         compartidos: { ...N, requerido: true },
-        guardados: { ...N, requerido: true },
+        // TikTok (vía Metricool) no informa guardados: es opcional.
+        guardados: N,
         visitas_perfil: N, seguidores_nuevos: N, clics_link: N, respuestas: N,
         retencion_promedio_seg: { tipo: 'numero', min: 0, max: 3600 },
         notas: T(1000),
@@ -176,6 +178,7 @@ export function registrar(tipo, datos, { config, ahora = new Date() } = {}) {
   if (tipo === 'contenido' && limpio.estado === undefined) limpio.estado = 'borrador';
   if (tipo === 'idea' && limpio.estado === undefined) limpio.estado = 'pendiente';
   if (tipo === 'resultado' && limpio.fuente === undefined) limpio.fuente = 'manual';
+  if (tipo === 'resultado' && limpio.plataforma === undefined) limpio.plataforma = 'instagram';
   const errores = [...validar(limpio, def.esquema), ...validarReferencias(tipo, limpio, config)];
   if (errores.length) throw new ErrorEntrada(`El ${tipo} no es válido`, errores);
 

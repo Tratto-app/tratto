@@ -37,7 +37,9 @@ razonable según `config/estrategia.json` y decilo.
 | "Haceme un reel / guion sobre…" | contenido-hooks → guion (estructura de `conocimiento/estructuras.md`) → `verificar` → puntuar → mejora si < 75 |
 | "Historias para…" | contenido-historias |
 | "Mejorá el perfil / la bio" | contenido-perfil |
-| "Estos son los resultados de…" | `registrar resultado` → contenido-analisis con insumo `metricas` → aprendizaje |
+| "Estos son los resultados de…" / "traé los resultados" | Metricool (protocolo, sección 9) o lo que pegue la persona → `registrar resultado` → contenido-analisis con insumo `metricas` → aprendizaje |
+| "Programalo" | Metricool `createScheduledPost` con aprobación explícita (protocolo, sección 9) |
+| "Diseñalo" (carrusel, portada, placa) | Canva con la identidad de marca (protocolo, sección 9) o `tools/piezas-redes` |
 | "¿Qué publico esta semana?" | `contexto` + `metricas` → plan por pilares (ver abajo) |
 
 Para un reel sin skill propia: escribir el guion por tramos con tiempos
@@ -46,8 +48,8 @@ correr `verificar` con `formato: reel` y puntuar con `insumo: guion`.
 
 ## 3. Plan semanal
 
-1. `contexto` y `metricas`: qué pilares están por debajo de su porcentaje, qué funcionó (mejores tasas de guardados y compartidos) y qué ideas pendientes hay.
-2. Proponer las piezas de la semana según `config/estrategia.json` (frecuencia y pilares), cada una con: formato, pilar, segmento, ángulo en una frase, hook elegido y por qué ahora.
+1. `contexto` y `metricas` (antes, traer de Metricool lo publicado desde la última vez): qué pilares están por debajo de su porcentaje, qué funcionó (mejores tasas de guardados y compartidos) y qué ideas pendientes hay.
+2. Proponer las piezas de la semana según `config/estrategia.json` (frecuencia, pilares, plataformas y horarios), cada una con: formato, red, día y hora, pilar, segmento, ángulo en una frase, hook elegido y por qué ahora. Un mismo video vertical puede ir a Instagram y TikTok.
 3. Registrar cada pieza como `idea` (o `contenido` en `borrador` si ya está escrita).
 
 ## 4. Cerrar
@@ -60,7 +62,7 @@ Cada entrega termina con:
 
 ## Límites del sistema
 
-- No publica ni programa nada en Instagram: entrega textos, guiones y diseños para que la persona los publique.
-- No lee métricas de Instagram solo: se pegan a mano o requieren conectar la API de Meta (ver `tools/contenido/README.md`).
+- Programa en Metricool solo lo que la persona aprueba, y solo en las redes conectadas ahí (hoy TikTok).
+- Lee métricas solo de las redes conectadas a Metricool; las demás se pegan a mano.
 - No transcribe audio ni abre links de redes.
 - Para piezas gráficas usar la skill `disenador-marketplace` y `tools/piezas-redes`.
