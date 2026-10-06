@@ -1,0 +1,201 @@
+<!doctype html><html lang="es"><head><meta charset="utf-8">
+<title>Reel · Dos plomeros, el mismo caño</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@500;600&family=IBM+Plex+Sans+Condensed:wght@600;700&family=IBM+Plex+Sans:wght@400;500;600&family=Montserrat:wght@500;600&display=block" rel="stylesheet">
+<link rel="stylesheet" href="comun-voz.css">
+<!--
+  Reel 1080×1920, 31,1 s, voz del fundador (audio/voz-dos-plomeros.m4a),
+  subtítulos de audio/voz-dos-plomeros.palabras.json. Mismo formato que
+  reel-tratto-voz.html (base en comun-voz.css y comun-voz.js).
+  Memoria de contenido: c-20261006-5c331a.
+  Ojo: en la grabación el precio dicho es "entre sesenta y setenta mil";
+  la tabla de precios de referencia (oct. 2026) dice $36.000 – $52.000.
+  Por eso la tarjeta de la app no muestra números.
+-->
+<style>
+.avatar{width:190px;height:190px;border-radius:50%;background:var(--noche-2);border:6px solid var(--noche-3);display:flex;align-items:center;justify-content:center;box-shadow:0 18px 40px rgba(0,0,0,.35)}
+</style></head><body><div id="lienzo"><div id="escenario">
+
+<!-- 1 · dos plomeros, un caño tapado -->
+<div class="sc" id="s1">
+  <div class="c" id="av1" style="opacity:0"><div class="avatar"><svg width="110" height="110" viewBox="0 0 48 48"><path d="M14 4h20v10H14zM20 14h8v8h12v8H20z" fill="#7CC3E8"/><path d="M40 30c0 6-3 10-6 14-3-4-6-8-6-14z" fill="#7CC3E8"/></svg></div></div>
+  <div class="c" id="av2" style="opacity:0"><div class="avatar" style="border-color:var(--laton)"><svg width="110" height="110" viewBox="0 0 48 48"><path d="M14 4h20v10H14zM20 14h8v8h12v8H20z" fill="#F7CA55"/><path d="M40 30c0 6-3 10-6 14-3-4-6-8-6-14z" fill="#F7CA55"/></svg></div></div>
+  <svg class="c" id="cano" width="760" height="300" viewBox="0 0 760 300" style="opacity:0;margin-top:220px">
+    <rect x="0" y="90" width="760" height="120" rx="20" fill="#B9C2BC"/>
+    <rect x="0" y="80" width="760" height="22" fill="#F4F1EA" opacity=".35"/>
+    <rect x="300" y="70" width="60" height="160" rx="10" fill="#94A19B"/>
+    <rect id="agua" x="20" y="110" width="0" height="80" rx="14" fill="#7CC3E8" opacity=".8"/>
+    <g id="tapon" style="transform-origin:560px 150px"><circle cx="560" cy="150" r="56" fill="#5E5030"/><circle cx="530" cy="130" r="30" fill="#6E5E35"/><circle cx="590" cy="170" r="26" fill="#4A3F26"/></g>
+  </svg>
+</div>
+
+<!-- 2 · dos números -->
+<div class="sc" id="s2">
+  <div class="c" id="tel1" style="margin-left:-210px"><div class="tel" style="width:240px;height:440px;display:flex;align-items:center;justify-content:center" id="tel1i"></div></div>
+  <div class="c" id="tel2" style="margin-left:210px"><div class="tel" style="width:240px;height:440px;display:flex;align-items:center;justify-content:center" id="tel2i"></div></div>
+  <div class="c" id="num1" style="margin-left:-210px;margin-top:-300px;opacity:0"><div class="burbuja">$40.000</div></div>
+  <div class="c" id="num2" style="margin-left:210px;margin-top:-300px;opacity:0"><div class="burbuja l">$120.000</div></div>
+  <div class="c cond" id="distinto" style="font-size:260px;color:var(--laton-cl);opacity:0;margin-top:40px;text-shadow:0 12px 0 rgba(0,0,0,.35)">≠</div>
+</div>
+
+<!-- 3 · ¿cuál te está viendo la cara? -->
+<div class="sc" id="s3">
+  <svg class="c" id="ojos" width="640" height="340" viewBox="0 0 640 340" style="opacity:0;margin-top:-60px">
+    <ellipse cx="170" cy="170" rx="140" ry="160" fill="#FCFBF8"/><ellipse cx="470" cy="170" rx="140" ry="160" fill="#FCFBF8"/>
+    <g id="pupilas"><circle cx="170" cy="190" r="62" fill="#0E1815"/><circle cx="470" cy="190" r="62" fill="#0E1815"/>
+      <circle cx="190" cy="168" r="18" fill="#FCFBF8"/><circle cx="490" cy="168" r="18" fill="#FCFBF8"/></g>
+  </svg>
+  <div class="c cond" id="q3" style="font-size:240px;color:var(--laton-cl);opacity:0;margin-top:270px;text-shadow:0 12px 0 rgba(0,0,0,.35)">?</div>
+</div>
+
+<!-- 4 · lo que sale hoy -->
+<div class="sc" id="s4">
+  <div class="c" id="rango" style="opacity:0;white-space:nowrap"><div class="tarjeta" style="border-color:var(--laton);text-align:left;padding:40px 44px">
+    <div class="mono" style="font-size:26px;color:var(--laton)">Destapación simple · hoy</div>
+    <div class="cond" style="font-size:104px;line-height:1;margin-top:18px;white-space:nowrap"><span id="r60" style="opacity:0;display:inline-block">$60.000</span> <span id="r70" style="opacity:0;display:inline-block;color:var(--laton-cl)">– $70.000</span></div>
+  </div></div>
+</div>
+
+<!-- 5 · ¿cómo lo sabés? foto en Tratto -->
+<div class="sc" id="s5">
+  <div class="c cond" id="q5" style="font-size:330px;color:var(--laton-cl);opacity:0;text-shadow:0 14px 0 rgba(0,0,0,.3)">?</div>
+  <div class="c" id="celu" style="opacity:0"><div class="tel" style="position:relative">
+    <svg width="280" height="540" viewBox="0 0 280 540" style="position:absolute;left:0;top:0">
+      <rect width="280" height="540" fill="#1B2A26"/>
+      <path d="M0 200 L170 200 Q215 200 215 245 L215 330" fill="none" stroke="#B9C2BC" stroke-width="44"/>
+      <ellipse cx="215" cy="440" rx="70" ry="14" fill="#7CC3E8" opacity=".7"/>
+      <circle cx="215" cy="380" r="10" fill="#7CC3E8"/>
+      <rect x="20" y="20" width="240" height="500" fill="none" stroke="#F4F1EA" stroke-width="3" stroke-dasharray="40 160 40 0" opacity=".7" rx="12"/>
+      <rect id="escaneo" x="0" y="0" width="280" height="6" fill="#8FD9BC" opacity="0"/>
+    </svg>
+  </div></div>
+  <div class="c mono" id="analiza" style="font-size:26px;color:var(--verde-luz);margin-top:330px;opacity:0;white-space:nowrap">Calculando precio…</div>
+  <div class="c" id="listo" style="opacity:0;white-space:nowrap"><div class="tarjeta fila" style="border-color:var(--laton);gap:24px;padding:30px 40px">
+    <span id="tilde5"></span><div><div class="mono" style="font-size:24px;color:var(--laton)">Precio de referencia</div><div class="cond" style="font-size:64px">Listo al toque</div></div></div></div>
+</div>
+
+<!-- 6 · plomeros de tu zona -->
+<div class="sc" id="s6"><svg class="c" width="800" height="740" viewBox="0 0 800 740">
+  <g stroke="#1B4B40" stroke-width="22" stroke-linecap="round">
+    <path d="M40 140 L760 120"/><path d="M40 380 L760 400"/><path d="M60 620 L740 600"/>
+    <path d="M160 40 L190 700"/><path d="M420 30 L400 710"/><path d="M640 40 L660 700"/>
+  </g>
+  <circle id="radio" cx="400" cy="380" r="40" fill="#2B7E62" opacity="0"/>
+  <g id="pines"></g>
+  <g id="yo" style="transform-origin:400px 380px;opacity:0">
+    <circle cx="400" cy="380" r="46" fill="#F7CA55" stroke="#0C2620" stroke-width="8"/>
+    <text x="400" y="394" text-anchor="middle" font-family="IBM Plex Sans Condensed" font-weight="700" font-size="40" fill="#0E1815">Vos</text>
+  </g>
+</svg></div>
+
+<!-- 7 · qué incluye cada uno, elegís vos -->
+<div class="sc" id="s7">
+  <div class="c" id="cot1" style="opacity:0"></div>
+  <div class="c" id="cot2" style="opacity:0"></div>
+  <div class="c" id="cot3" style="opacity:0"></div>
+  <div class="c" id="tilde" style="opacity:0"></div>
+</div>
+
+<!-- 8 · mandáselo a ese amigo -->
+<div class="sc" id="s8">
+  <svg class="c" id="avion" width="200" height="200" viewBox="0 0 24 24" style="opacity:0"><path d="M2 11.5L21 3l-6.5 18-3.2-7.3z" fill="#F7CA55" stroke="#0C2620" stroke-width="1" stroke-linejoin="round"/><path d="M11.3 13.7L21 3" stroke="#0C2620" stroke-width="1"/></svg>
+  <div class="c" id="amigo" style="opacity:0;margin-top:-40px;margin-left:200px"><div class="avatar" style="width:240px;height:240px;border-color:var(--laton)"><svg width="150" height="150" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4.2" fill="#F4F1EA"/><path d="M4 21c0-4.4 3.6-7.5 8-7.5s8 3.1 8 7.5z" fill="#F4F1EA"/></svg></div></div>
+  <div id="billetes"></div>
+  <div class="c" id="demas" style="opacity:0;margin-top:250px;margin-left:200px"><span class="sello" style="font-size:40px;background:rgba(12,38,32,.9)">Paga de más</span></div>
+</div>
+
+</div></div>
+<script>
+window.REEL = {
+  escenas: [['s1', -1, 2.9], ['s2', 2.9, 6.35], ['s3', 6.35, 8.45], ['s4', 8.45, 12.7], ['s5', 12.7, 17.0], ['s6', 17.0, 20.3], ['s7', 20.3, 23.3], ['s8', 23.3, 25.95]],
+  golpes: [0.64, 2.06, 3.48, 4.8, 5.3, 7.58, 8.7, 10.66, 11.48, 14.7, 16.24, 18.86, 22.12, 25.26, 26.05],
+  sinSubs: [],
+  cierre: { entra: 25.95, logo: 26.05, a: ['Pedí gratis en', 26.95], b: ['trattoapp.com.ar', 27.8], sello: ['Sin vueltas', 28.5] },
+  animar,
+};
+const PINES = [[170, 150, 18.34], [640, 130, 18.5], [180, 610, 18.66], [650, 610, 18.86], [420, 140, 19.0], [130, 390, 19.2], [670, 400, 19.42]];
+function animar(t) {
+  // 1 · dos plomeros, caño tapado
+  pop($('av1'), t, 0.16, `${C} translate(-170px,-220px)`);
+  pop($('av2'), t, 0.64, `${C} translate(170px,-220px)`);
+  pop($('cano'), t, 1.4, C);
+  $('agua').setAttribute('width', 470 * eo(P(t, 1.6, 2.5)));
+  const temb = t > 2.06 && t < 2.6 ? Math.sin(t * 90) * 6 : 0;
+  $('tapon').style.transform = `translateX(${temb}px) scale(${back(P(t, 2.06, 2.4)) || 0.0001})`;
+
+  // 2 · llamadas y precios
+  const ring = (t0, t1) => (t > t0 && t < t1 ? Math.sin(t * 70) * 7 : 0);
+  $('tel1').style.transform = `${C} rotate(${ring(2.98, 3.6)}deg)`;
+  $('tel2').style.transform = `${C} rotate(${ring(4.22, 4.9)}deg)`;
+  const tiembla = t > 5.3 ? Math.sin(t * 60) * 6 * Math.exp(-(t - 5.3) * 3) : 0;
+  pop($('num1'), t, 3.48, `${C} translate(${tiembla}px,0) rotate(-6deg)`);
+  pop($('num2'), t, 4.8, `${C} translate(${-tiembla}px,0) rotate(5deg)`);
+  pop($('distinto'), t, 5.3, C, 0.45);
+
+  // 3 · ojos que miran a uno y a otro
+  pop($('ojos'), t, 6.44, C);
+  $('pupilas').setAttribute('transform', `translate(${Math.sin((t - 6.44) * 5) * 46},0)`);
+  pop($('q3'), t, 7.58, `${C} rotate(${-10 + 10 * eo(P(t, 7.58, 8.0))}deg)`);
+
+  // 4 · rango de precio
+  pop($('rango'), t, 8.7, C);
+  pop($('r60'), t, 10.66, '');
+  pop($('r70'), t, 11.48, '');
+
+  // 5 · ¿cómo lo sabés? → foto → listo
+  pop($('q5'), t, 12.84, C);
+  if (t > 13.9) $('q5').style.opacity = 1 - P(t, 13.9, 14.1);
+  set($('celu'), P(t, 14.1, 14.3), `${C} scale(${0.9 + 0.1 * eo(P(t, 14.1, 14.4))})`);
+  $('flash').style.opacity = t >= 14.7 ? Math.max(0, 0.95 - (t - 14.7) * 6) : 0;
+  const esc = P(t, 14.95, 16.1);
+  $('escaneo').setAttribute('y', 20 + ((esc * 2) % 1) * 500);
+  $('escaneo').setAttribute('opacity', esc > 0 && esc < 1 ? 0.9 : 0);
+  set($('analiza'), esc > 0 && t < 16.24 ? 1 : 0);
+  const sube = eo(P(t, 16.24, 16.6));
+  if (t > 14.1) {
+    $('celu').style.transform = `${C} translateY(${-sube * 120}px) scale(${1 - sube * 0.25})`;
+    $('celu').style.opacity = 1 - sube * 0.75;
+  }
+  set($('listo'), P(t, 16.24, 16.34), `${C} translateY(${(1 - sube) * 260 + 120}px) scale(${back(P(t, 16.24, 16.6))})`);
+
+  // 6 · zona
+  pop($('yo'), t, 17.34, '');
+  const rp = P(t, 18.86, 19.9);
+  $('radio').setAttribute('r', 40 + eo(rp) * 330);
+  $('radio').setAttribute('opacity', t >= 18.86 ? 0.35 * (1 - rp * 0.5) : 0);
+  $('pines').querySelectorAll('g').forEach((g, i) => pop(g, t, PINES[i][2], ''));
+
+  // 7 · cotizaciones
+  const abre = eo(P(t, 20.46, 20.9));
+  [['cot1', -280, 20.46], ['cot2', 0, 20.56], ['cot3', 280, 20.66]].forEach(([id, x, a]) => {
+    const elegido = id === 'cot2';
+    const sel = eo(P(t, 22.12, 22.45));
+    pop($(id), t, a, `${C} translate(${x * abre}px,${(elegido ? -30 * sel : 0)}px) scale(${elegido ? 1 + 0.16 * sel : 1 - 0.1 * sel})`);
+    if (!elegido && t > 22.12) $(id).style.opacity = 1 - 0.55 * sel;
+    $(id).querySelectorAll('.inc').forEach((x, k) => set(x, eo(P(t, 20.86 + k * 0.1, 21.1 + k * 0.1))));
+  });
+  pop($('tilde'), t, 22.12, `${C} translate(105px,-190px)`);
+
+  // 8 · mandáselo
+  const v = eo(P(t, 23.48, 24.1));
+  set($('avion'), t >= 23.48 && t < 24.2 ? 1 : 0, `${C} translate(${-380 + v * 520}px,${120 - v * 160}px) rotate(${-10 + v * 10}deg) scale(${0.6 + 0.4 * v})`);
+  pop($('amigo'), t, 24.1, C);
+  $('billetes').querySelectorAll('div').forEach((b, i) => {
+    const a = 24.78 + i * 0.1, p = P(t, a, a + 0.9);
+    set(b, t >= a ? 1 - p : 0, `${C} translate(${200 + (i - 1.5) * 90 + p * (i - 1.5) * 60}px,${-40 - p * 260}px) rotate(${(i - 1.5) * 12}deg)`);
+  });
+  pop($('demas'), t, 25.26, `${C} rotate(-8deg)`);
+}
+</script>
+<script src="comun-voz.js"></script>
+<script>
+$('tel1i').innerHTML = TEL('#8FD9BC'); $('tel2i').innerHTML = TEL('#F7CA55');
+$('tilde').innerHTML = TILDE(120); $('tilde5').innerHTML = TILDE(90);
+PINES.forEach(([x, y]) => $('pines').insertAdjacentHTML('beforeend',
+  `<g style="transform-origin:${x}px ${y}px;opacity:0"><path d="M${x} ${y} c-34 -38 -34 -86 0 -86 c34 0 34 48 0 86z" transform="translate(0,-4)" fill="#8FD9BC" stroke="#0C2620" stroke-width="6"/><circle cx="${x}" cy="${y - 52}" r="13" fill="#0C2620"/></g>`));
+const INC = (s) => `<div class="inc mono" style="font-size:18px;letter-spacing:.06em;color:${s[0] === '✓' ? 'var(--verde-luz)' : '#F08A6C'};opacity:0;margin-top:6px">${s}</div>`;
+[['cot1', '$68.000', ['✓ Destapación', '✗ Visita aparte']], ['cot2', '$64.000', ['✓ Destapación', '✓ Visita']], ['cot3', '$70.000', ['✓ Destapación', '✗ Garantía']]].forEach(([id, p, inc]) =>
+  $(id).innerHTML = `<div class="tarjeta" style="width:260px;padding:26px 14px;text-align:center"><div class="mono" style="font-size:20px;color:var(--gris-2)">Presupuesto</div><div class="cond" style="font-size:64px">${p}</div>${inc.map(INC).join('')}</div>`);
+for (let i = 0; i < 4; i++) $('billetes').insertAdjacentHTML('beforeend', `<div class="c cond" style="opacity:0;font-size:90px;color:var(--laton-cl)">$</div>`);
+render(0);
+</script>
+</body></html>

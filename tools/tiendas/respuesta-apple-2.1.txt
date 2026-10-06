@@ -1,0 +1,38 @@
+Hello App Review team,
+
+Thank you for reviewing Tratto. Here is the information you requested. It is also in the Notes field of App Review Information.
+
+1. SCREEN RECORDING (physical iPhone, attached and at this link)
+https://www.trattoapp.com.ar/revision/tratto-app-review.mp4
+It shows login with the demo customer account, a new request with a photo from the library and the AI reference price, the request matched with demo providers, the chat, reporting and blocking a user, the provider side (login, dashboard, profile, account settings, sending a quote), accepting the quote, rating the provider and account deletion. Passwords are hidden; the demo password is in the password field of App Review Information.
+
+2. PURPOSE AND AUDIENCE
+Tratto is a services marketplace for Argentina for adults (18+). Customers post a request (text or photo) and receive quotes from independent providers in their area and category, compare them, chat privately and choose one. It covers more than 40 categories (home repairs, cleaning, cars, moving, lessons, events, digital services, paperwork, beauty, fitness, pet care). Value: a free reference price from a photo, nearby quotes, an AI summary of each quote, private chat without exposing phone numbers, and ratings. Licensed trades (gas, electrical, health) are not accepted.
+
+3. DEMO ACCOUNTS (same password for both)
+Customer: trattoapp1+demo-cliente@gmail.com
+Provider: trattoapp1+demo-techos@gmail.com
+
+4. HOW TO REVIEW
+- Log in with the customer account ("Iniciar sesión").
+- "Pedir un servicio": describe a job or attach a photo (camera or library); a reference price appears in seconds.
+- Create the request in "Techos e impermeabilización", "Pintura" or "Limpieza" (any zone): it is matched with demo providers within about 30 seconds. Demo accounts only match demo providers.
+- Open the request, chat with a provider. "Ver ficha" gives "Reportar" and "Bloquear".
+- Log in with the provider account to see the request and send a quote; as the customer, accept it and rate the provider.
+- "Pagar" opens the Mercado Pago checkout (no need to complete it).
+- Sign up: "Crear cuenta" (email code). Account deletion: "Cuenta" > "Borrar mi cuenta", type BORRAR to confirm; it deletes the user and all their data.
+
+5. PAYMENTS
+Jobs are physical services performed outside the app, paid to the provider through Mercado Pago or directly (Guideline 3.1.3(e)). No digital content is sold, so In-App Purchase does not apply.
+
+6. EXTERNAL SERVICES
+Supabase (auth, database, storage, chat), OpenAI gpt-4o-mini via n8n Cloud (reference price and quote summary), n8n Cloud (automations), Mercado Pago (payments), Apple Push Notification service, Brevo (email), Vercel (hosting and anonymous analytics).
+
+7. REGIONS
+Built for Argentina (Spanish, Argentine pesos, local providers). Features are the same everywhere; outside Argentina requests receive no quotes because there are no providers.
+
+8. REGULATION AND CONTENT
+Not a regulated industry; no protected third-party material. Providers are independent and regulated trades are excluded. Moderation: chat word filter, "Reportar" on profiles, requests and chats, user blocking, and an email alert to the team on every report.
+
+Thank you,
+Agustin Omelenicki, Tratto

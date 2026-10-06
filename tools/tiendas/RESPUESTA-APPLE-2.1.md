@@ -32,7 +32,7 @@ Hello App Review team,
 Thank you for reviewing Tratto. Below is the information you requested. We also added it to the Notes field of the App Review Information section.
 
 1. SCREEN RECORDING
-Recorded on a physical iPhone: [VIDEO]
+Recorded on a physical iPhone: https://www.trattoapp.com.ar/revision/tratto-app-review.mp4
 It shows logging in with the demo customer account, creating a request with a photo from the photo library and the AI reference price, the request being matched with demo providers, the chat, reporting and blocking a user, the provider side (log in, dashboard, profile, account settings and sending a quote), accepting the quote, rating the provider and account deletion. Passwords are hidden in the video; the demo password is in the password field of the App Review Information section.
 
 PURPOSE AND AUDIENCE

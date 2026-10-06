@@ -15,7 +15,7 @@
       ]
     },
     {
-      "source": "/revision/(.*)",
+      "source": "/(revision|redes)/(.*)",
       "headers": [
         { "key": "X-Robots-Tag", "value": "noindex, nofollow" }
       ]

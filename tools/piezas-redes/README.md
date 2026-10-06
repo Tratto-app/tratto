@@ -39,6 +39,10 @@ de x=930.
 |---|---|
 | `reel-pintura` | "¿Te pidieron $250.000 por pintar una pieza?" (memoria de contenido `c-20261006-bc4d69`). Solo texto, sin voz. |
 | `reel-tratto-voz` | Qué es Tratto, con la voz del fundador, subtítulos palabra por palabra, 11 escenas animadas y efectos de sonido. |
+| `reel-dos-plomeros` | "Dos plomeros, el mismo caño tapado" (voz, 31 s, `c-20261006-5c331a`). |
+| `reel-presupuesto-barato` | "El presupuesto más barato te puede salir el doble" (voz, 31 s, `c-20261006-c448fd`). |
+| `reel-manana-paso` | "Mañana a primera hora paso" (voz, 27 s, `c-20261006-b4aded`). |
+| `reel-proveedores` | "Si ofrecés un servicio y el teléfono no suena" (voz, 37 s, para proveedores de todos los rubros, `c-20261006-b1b538`). |
 
 Reel con voz:
 
@@ -50,3 +54,18 @@ python3 render-reel.py reel-tratto-voz.html --segundos 37.5 --palabras audio/tra
 - `audio/*.palabras.json`: cada palabra con su inicio y fin en segundos, para los subtítulos y para sincronizar las animaciones.
 - `audio/*.efectos.json`: qué efecto suena en qué segundo y a qué volumen. Los efectos se sintetizan en `sonido.py`, sin bancos de sonido ni licencias.
 - `--previa 0,5.2,13.4` saca solo esos cuadros en PNG, para revisar antes del render completo, que tarda unos 4 minutos.
+
+Los cuatro reels de la serie con voz (`reel-dos-plomeros`, `reel-presupuesto-barato`,
+`reel-manana-paso`, `reel-proveedores`) usan la misma base que `reel-tratto-voz`:
+`comun-voz.css` y `comun-voz.js` ponen el fondo, la marca, los subtítulos, la
+entrada de las escenas, los golpes de cámara y el cierre; cada HTML define solo
+sus escenas en `window.REEL`. La voz pasa por `tools/voz-en-off/voz_en_off.py`
+(la cadena aprobada) y los tiempos de cada palabra salen de faster-whisper,
+corregidos contra el guion:
+
+```bash
+python3 sonido.py audio/voz-dos-plomeros.m4a audio/reel-dos-plomeros.efectos.json audio/reel-dos-plomeros-mezcla.m4a --segundos 31.1
+python3 render-reel.py reel-dos-plomeros.html --segundos 31.1 --palabras audio/voz-dos-plomeros.palabras.json --audio audio/reel-dos-plomeros-mezcla.m4a
+```
+
+Duraciones: dos-plomeros 31.1, presupuesto-barato 31.4, manana-paso 26.6, proveedores 37.1.

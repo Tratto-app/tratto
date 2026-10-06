@@ -1,0 +1,222 @@
+<!doctype html><html lang="es"><head><meta charset="utf-8">
+<title>Reel · Mañana a primera hora paso</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@500;600&family=IBM+Plex+Sans+Condensed:wght@600;700&family=IBM+Plex+Sans:wght@400;500;600&family=Montserrat:wght@500;600&display=block" rel="stylesheet">
+<link rel="stylesheet" href="comun-voz.css">
+<!--
+  Reel 1080×1920, 26,6 s, voz del fundador (audio/voz-manana-paso.m4a),
+  subtítulos de audio/voz-manana-paso.palabras.json. Mismo formato que
+  reel-tratto-voz.html (base en comun-voz.css y comun-voz.js).
+  Memoria de contenido: c-20261006-b4aded.
+-->
+<style>
+.msg{background:var(--claro);color:var(--tinta);border-radius:34px 34px 34px 8px;padding:26px 36px;font-family:'IBM Plex Sans Condensed';font-weight:700;font-size:56px;line-height:1.05;white-space:nowrap;box-shadow:0 18px 40px rgba(0,0,0,.35)}
+.msg.yo{background:var(--verde-vivo);color:var(--claro);border-radius:34px 34px 8px 34px}
+.hora{font-family:'IBM Plex Mono';font-size:24px;color:var(--gris);margin-top:10px;text-align:right}
+.perdida{display:flex;align-items:center;gap:24px;background:var(--noche-2);border:3px solid var(--noche-3);border-radius:26px;padding:22px 30px;width:640px}
+</style></head><body><div id="lienzo"><div id="escenario">
+
+<!-- 1 · el mensaje -->
+<div class="sc" id="s1">
+  <div class="c fila" id="contacto" style="margin-top:-330px;opacity:0;gap:18px">
+    <div style="width:84px;height:84px;border-radius:50%;background:var(--noche-3);display:flex;align-items:center;justify-content:center" class="cond"><span style="font-size:44px;color:var(--verde-luz)">J</span></div>
+    <div><div class="cond" style="font-size:48px">Juan</div><div class="mono" style="font-size:20px;color:var(--verde-luz)">en línea</div></div>
+  </div>
+  <div class="c" id="eco2" style="opacity:0"><div class="msg" style="opacity:.35">Mañana a primera hora paso</div></div>
+  <div class="c" id="eco1" style="opacity:0"><div class="msg" style="opacity:.6">Mañana a primera hora paso</div></div>
+  <div class="c" id="m1" style="opacity:0"><div class="msg">Mañana a primera hora paso</div><div class="hora">22:14</div></div>
+  <div class="c cond" id="q1" style="font-size:260px;color:var(--laton-cl);opacity:0;text-shadow:0 12px 0 rgba(0,0,0,.35)">?</div>
+</div>
+
+<!-- 2 · toda la mañana -->
+<div class="sc" id="s2">
+  <svg class="c" width="520" height="520" viewBox="0 0 520 520" style="margin-top:-40px">
+    <circle cx="260" cy="260" r="230" fill="#123830" stroke="#F4F1EA" stroke-width="16"/>
+    <g id="marcas"></g>
+    <line id="aguja-h" x1="260" y1="260" x2="260" y2="140" stroke="#F7CA55" stroke-width="20" stroke-linecap="round"/>
+    <line id="aguja-m" x1="260" y1="260" x2="260" y2="80" stroke="#F4F1EA" stroke-width="12" stroke-linecap="round"/>
+    <circle cx="260" cy="260" r="18" fill="#F7CA55"/>
+  </svg>
+  <div class="c mono" id="reloj-txt" style="font-size:56px;color:var(--verde-luz);margin-top:330px;white-space:nowrap">8:00</div>
+</div>
+
+<!-- 3 · no vino, no contesta -->
+<div class="sc" id="s3">
+  <div class="c" style="display:flex;flex-direction:column;gap:22px;margin-top:-40px" id="perdidas"></div>
+  <div class="c" id="sinresp" style="opacity:0;margin-top:250px"><div class="sello" style="font-size:52px;background:rgba(12,38,32,.9)">Sin respuesta</div></div>
+</div>
+
+<!-- 4 · te deja en visto -->
+<div class="sc" id="s4">
+  <div class="c" id="m2" style="opacity:0;margin-left:100px;margin-top:-40px"><div class="msg yo" style="font-size:96px;padding:30px 50px">¿Venís?</div>
+    <div class="hora" id="visto" style="opacity:0;font-size:40px;color:var(--verde-luz);white-space:nowrap">18:32 · Visto ✓✓</div></div>
+  <div class="c mono" id="tarde" style="opacity:0;margin-top:-330px;font-size:34px;color:var(--laton-cl)">A la tarde</div>
+</div>
+
+<!-- 5 · ya lo viviste -->
+<div class="sc" id="s5">
+  <div class="c" id="p1" style="opacity:0"><div class="msg">Mañana paso</div></div>
+  <div class="c" id="p2" style="opacity:0"><div class="msg">Mañana a primera hora</div></div>
+  <div class="c" id="p3" style="opacity:0"><div class="msg">Mañana a primera hora paso</div></div>
+</div>
+
+<!-- 6 · Tratto -->
+<div class="sc" id="s6">
+  <svg class="c" width="900" height="900" viewBox="0 0 900 900" style="overflow:visible">
+    <circle id="onda1" cx="450" cy="450" r="200" fill="none" stroke="#C9A227" stroke-width="10" opacity="0"/>
+    <circle id="onda2" cx="450" cy="450" r="200" fill="none" stroke="#8FD9BC" stroke-width="8" opacity="0"/>
+  </svg>
+  <div class="c" id="logo" style="opacity:0;text-align:center"><span id="logo-svg"></span>
+    <div style="font-family:Montserrat;font-weight:600;letter-spacing:.32em;font-size:92px;margin-top:30px;padding-left:.32em">TRATTO</div></div>
+</div>
+
+<!-- 7 · calificaciones de otros clientes -->
+<div class="sc" id="s7">
+  <div class="c" id="perfil-bueno" style="opacity:0;margin-top:-90px"><div class="tarjeta" style="width:720px;border-color:var(--laton)">
+    <div class="fila"><div class="cond" style="width:96px;height:96px;border-radius:50%;background:var(--noche-3);display:flex;align-items:center;justify-content:center;font-size:52px;color:var(--verde-luz)">M</div>
+      <div><div class="cond" style="font-size:56px">Martín R.</div><div class="mono" style="font-size:22px;color:var(--gris-2)">37 calificaciones</div></div></div>
+    <div class="fila" id="estrellas-b" style="margin-top:26px;gap:12px"></div>
+  </div></div>
+  <div class="c" id="r1" style="opacity:0;margin-top:190px;margin-left:-190px"><span class="chip">Llegó puntual</span></div>
+  <div class="c" id="r2" style="opacity:0;margin-top:300px;margin-left:150px"><span class="chip">Cumplió</span></div>
+  <div class="c" id="r3" style="opacity:0;margin-top:300px;margin-left:-250px"><span class="chip">Prolijo</span></div>
+  <div class="c" id="tilde7" style="opacity:0"></div>
+</div>
+
+<!-- 8 · si alguien deja gente plantada, se sabe -->
+<div class="sc" id="s8">
+  <div class="c" id="perfil-malo" style="opacity:0;margin-top:-90px"><div class="tarjeta" style="width:720px">
+    <div class="fila"><div class="cond" style="width:96px;height:96px;border-radius:50%;background:var(--noche-3);display:flex;align-items:center;justify-content:center;font-size:52px;color:var(--gris-2)">P</div>
+      <div><div class="cond" style="font-size:56px">Pablo G.</div><div class="mono" style="font-size:22px;color:var(--gris-2)">12 calificaciones</div></div></div>
+    <div class="fila" id="estrellas-m" style="margin-top:26px;gap:12px"></div>
+  </div></div>
+  <div class="c" id="resena" style="opacity:0;margin-top:250px"><div class="msg" style="font-size:50px;border-radius:28px">“Nunca vino. Ni avisó.”</div></div>
+  <div class="c" id="sesabe" style="opacity:0;margin-top:20px"><div class="sello" style="font-size:72px;background:rgba(12,38,32,.88)">Se sabe</div></div>
+</div>
+
+<!-- 9 · chat de la app, sin pasar tu número -->
+<div class="sc" id="s9">
+  <div class="c" style="margin-top:-120px"><div class="tel" style="width:440px;height:440px;padding:40px 26px;display:flex;flex-direction:column;gap:22px">
+    <div class="mono" style="font-size:20px;color:var(--verde-luz);text-align:center">Chat en Tratto</div>
+    <div id="c1" style="opacity:0;align-self:flex-start"><div class="msg" style="font-size:36px;padding:16px 22px">¿Mañana 9 h?</div></div>
+    <div id="c2" style="opacity:0;align-self:flex-end"><div class="msg yo" style="font-size:36px;padding:16px 22px">Dale, te espero</div></div>
+  </div></div>
+  <div class="c" id="numero" style="opacity:0;margin-top:210px"><div class="tarjeta fila" style="padding:22px 34px;gap:20px">
+    <svg width="54" height="54" viewBox="0 0 24 24"><rect x="5" y="10" width="14" height="11" rx="2" fill="#F7CA55"/><path d="M8 10V7a4 4 0 0 1 8 0v3" fill="none" stroke="#F7CA55" stroke-width="2.4"/></svg>
+    <span class="mono" style="font-size:34px;letter-spacing:.06em">11 ●●●● ●●●●</span></div></div>
+  <div class="c" id="privado" style="opacity:0;margin-top:325px"><div class="sello" style="font-size:36px;background:rgba(12,38,32,.9)">Tu número no se comparte</div></div>
+</div>
+
+<!-- 10 · etiquetá al que está esperando -->
+<div class="sc" id="s10">
+  <div class="c cond" id="arroba" style="opacity:0;font-size:300px;color:var(--laton-cl);margin-top:-170px;text-shadow:0 14px 0 rgba(0,0,0,.3)">@</div>
+  <svg class="c" id="espera" width="520" height="360" viewBox="0 0 520 360" style="opacity:0;margin-top:190px">
+    <rect x="120" y="170" width="190" height="24" rx="8" fill="#94A19B"/><rect x="130" y="194" width="16" height="130" fill="#94A19B"/><rect x="284" y="194" width="16" height="130" fill="#94A19B"/>
+    <rect x="270" y="60" width="22" height="134" rx="8" fill="#94A19B"/>
+    <circle cx="200" cy="70" r="40" fill="#F4F1EA"/><path d="M150 170 Q150 112 200 112 Q250 112 250 170 Z" fill="#F4F1EA"/>
+    <g id="zzz" font-family="IBM Plex Sans Condensed" font-weight="700" fill="#8FD9BC"><text x="260" y="40" font-size="40">z</text><text x="296" y="10" font-size="52">z</text><text x="340" y="-26" font-size="64">z</text></g>
+    <g transform="translate(410 150)"><circle r="62" fill="#123830" stroke="#F7CA55" stroke-width="8"/><line id="mini-h" x1="0" y1="0" x2="0" y2="-32" stroke="#F7CA55" stroke-width="8" stroke-linecap="round"/><line id="mini-m" x1="0" y1="0" x2="0" y2="-46" stroke="#F4F1EA" stroke-width="5" stroke-linecap="round"/></g>
+  </svg>
+</div>
+
+</div></div>
+<script>
+window.REEL = {
+  escenas: [['s1', -1, 3.1], ['s2', 3.1, 4.45], ['s3', 4.45, 5.75], ['s4', 5.75, 7.4], ['s5', 7.4, 8.55], ['s6', 8.55, 9.34],
+    ['s7', 9.34, 12.4], ['s8', 12.4, 15.2], ['s9', 15.2, 18.6], ['s10', 18.6, 21.6]],
+  golpes: [1.24, 2.64, 4.5, 5.04, 6.78, 7.7, 9.06, 10.0, 11.7, 13.52, 14.36, 16.76, 17.72, 18.96, 21.74],
+  sinSubs: [],
+  cierre: { entra: 21.6, logo: 21.74, a: ['Pedí gratis en', 22.5], b: ['trattoapp.com.ar', 23.36], sello: ['Sin vueltas', 24.1] },
+  animar,
+};
+function animar(t) {
+  // 1 · mensaje
+  pop($('contacto'), t, 0.0, C);
+  pop($('m1'), t, 0.05, C);
+  pop($('eco1'), t, 2.1, `${C} translate(-40px,-120px) rotate(-4deg)`);
+  pop($('eco2'), t, 2.3, `${C} translate(40px,-225px) rotate(3deg)`);
+  pop($('q1'), t, 2.64, `${C} translate(300px,180px) rotate(${-8 + 8 * eo(P(t, 2.64, 3.1))}deg)`);
+
+  // 2 · reloj de 8 a 12
+  const avance = eo(P(t, 3.18, 4.4));
+  const min = avance * 240; // 8:00 → 12:00
+  $('aguja-m').setAttribute('transform', `rotate(${min * 6} 260 260)`);
+  $('aguja-h').setAttribute('transform', `rotate(${240 + min * 0.5} 260 260)`);
+  const h = 8 + Math.floor(min / 60), m = Math.floor(min % 60);
+  $('reloj-txt').textContent = `${h}:${String(m).padStart(2, '0')}`;
+
+  // 3 · llamadas perdidas
+  [...$('perdidas').children].forEach((f, i) => pop(f, t, [4.5, 4.75, 5.02][i], ''));
+  const est = P(t, 5.04, 5.22);
+  set($('sinresp'), est > 0 ? 1 : 0, `${C} rotate(-10deg) scale(${2.2 - 1.2 * eo(est)})`);
+
+  // 4 · visto
+  pop($('m2'), t, 5.9, C);
+  set($('tarde'), eo(P(t, 6.08, 6.3)), C);
+  pop($('visto'), t, 6.78, '');
+
+  // 5 · otra vez lo mismo
+  pop($('p1'), t, 7.5, `${C} translate(-60px,-190px) rotate(-6deg)`);
+  pop($('p2'), t, 7.6, `${C} translate(50px,-20px) rotate(4deg)`);
+  pop($('p3'), t, 7.7, `${C} translate(-20px,150px) rotate(-2deg)`);
+
+  // 6 · negro + logo
+  const neg = t >= 8.5 && t < 9.4 ? Math.min(eo(P(t, 8.5, 8.7)), 1 - P(t, 9.25, 9.4)) : 0;
+  $('negro').style.opacity = neg * 0.92;
+  const lp = back(P(t, 9.06, 9.4));
+  set($('logo'), P(t, 9.06, 9.12), `${C} scale(${0.3 + 0.7 * lp})`);
+  [['onda1', 9.06], ['onda2', 9.16]].forEach(([id, a]) => {
+    const p = P(t, a, a + 0.7);
+    $(id).setAttribute('r', 200 + p * 420); $(id).setAttribute('opacity', t >= a ? (1 - p) * 0.9 : 0);
+  });
+
+  // 7 · calificaciones
+  pop($('perfil-bueno'), t, 9.4, C);
+  [...$('estrellas-b').children].forEach((e, i) => {
+    const a = 10.0 + i * 0.1;
+    e.innerHTML = ESTRELLA(64, t >= a);
+    e.style.transform = `scale(${t >= a ? 1 + 0.35 * Math.exp(-(t - a) * 10) : 1})`;
+  });
+  pop($('r1'), t, 10.88, `${C} rotate(-3deg)`);
+  pop($('r2'), t, 11.1, `${C} rotate(2deg)`);
+  pop($('r3'), t, 11.36, `${C} rotate(-2deg)`);
+  pop($('tilde7'), t, 11.7, `${C} translate(330px,-230px)`);
+
+  // 8 · plantados
+  pop($('perfil-malo'), t, 12.45, C);
+  [...$('estrellas-m').children].forEach((e, i) => { e.innerHTML = ESTRELLA(64, i === 0 && t >= 12.86); });
+  pop($('resena'), t, 13.52, `${C} rotate(-2deg)`);
+  const ss = P(t, 14.36, 14.56);
+  set($('sesabe'), ss > 0 ? 1 : 0, `${C} rotate(-12deg) scale(${2.2 - 1.2 * eo(ss)})`);
+
+  // 9 · chat sin número
+  pop($('c1'), t, 15.6, '');
+  pop($('c2'), t, 16.08, '');
+  pop($('numero'), t, 16.92, C);
+  pop($('privado'), t, 17.72, `${C} rotate(-4deg)`);
+
+  // 10 · etiquetá
+  pop($('arroba'), t, 18.96, `${C} rotate(${-10 + 10 * eo(P(t, 18.96, 19.5))}deg)`);
+  pop($('espera'), t, 20.38, C);
+  $('zzz').setAttribute('transform', `translate(0,${-((t * 30) % 30)})`);
+  $('zzz').setAttribute('opacity', 0.6 + 0.4 * Math.sin(t * 4));
+  const gira = (t - 20.38) * 900;
+  $('mini-m').setAttribute('transform', `rotate(${gira})`);
+  $('mini-h').setAttribute('transform', `rotate(${gira / 12})`);
+}
+</script>
+<script src="comun-voz.js"></script>
+<script>
+// piezas generadas
+{
+  let s = '';
+  for (let i = 0; i < 12; i++) { const a = i * Math.PI / 6; s += `<line x1="${260 + Math.sin(a) * 190}" y1="${260 - Math.cos(a) * 190}" x2="${260 + Math.sin(a) * 210}" y2="${260 - Math.cos(a) * 210}" stroke="#94A19B" stroke-width="${i % 3 ? 6 : 12}" stroke-linecap="round"/>`; }
+  document.getElementById('marcas').innerHTML = s;
+  document.getElementById('perdidas').innerHTML = ['22:40', '9:15', '11:52'].map((h) =>
+    `<div class="perdida" style="opacity:0">${TEL('#F08A6C', 70)}<div><div class="cond" style="font-size:46px">Juan</div><div class="mono" style="font-size:22px;color:#F08A6C">Llamada perdida · ${h}</div></div></div>`).join('');
+  for (let i = 0; i < 5; i++) { document.getElementById('estrellas-b').insertAdjacentHTML('beforeend', '<span style="display:inline-block"></span>'); document.getElementById('estrellas-m').insertAdjacentHTML('beforeend', '<span></span>'); }
+  document.getElementById('tilde7').innerHTML = TILDE(130);
+}
+document.getElementById('logo-svg').innerHTML = LOGO(330, 'gy');
+render(0);
+</script>
+</body></html>

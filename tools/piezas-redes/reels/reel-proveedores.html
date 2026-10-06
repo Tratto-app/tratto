@@ -1,0 +1,219 @@
+<!doctype html><html lang="es"><head><meta charset="utf-8">
+<title>Reel · Si ofrecés un servicio</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@500;600&family=IBM+Plex+Sans+Condensed:wght@600;700&family=IBM+Plex+Sans:wght@400;500;600&family=Montserrat:wght@500;600&display=block" rel="stylesheet">
+<link rel="stylesheet" href="comun-voz.css">
+<!--
+  Reel 1080×1920, 37,1 s, voz del fundador (audio/voz-proveedores.m4a),
+  subtítulos de audio/voz-proveedores.palabras.json. Mismo formato que
+  reel-tratto-voz.html (base en comun-voz.css y comun-voz.js).
+  Memoria de contenido: c-20261006-b1b538. Para todos los rubros: los
+  ejemplos mezclan categorías (regla de marca: Tratto no es solo oficios).
+-->
+<style>
+.papel{width:560px;background:var(--papel);color:var(--tinta);border-radius:14px;padding:40px 40px;box-shadow:0 26px 60px rgba(0,0,0,.45);text-align:left}
+.renglon{display:flex;justify-content:space-between;font-family:'IBM Plex Sans Condensed';font-weight:700;font-size:44px;padding:12px 0;border-bottom:3px dashed #D6CFBF}
+.check{display:flex;align-items:center;justify-content:space-between;gap:30px;width:720px}
+</style></head><body><div id="lienzo"><div id="escenario">
+
+<!-- 1 · el teléfono no suena -->
+<div class="sc" id="s1">
+  <div class="c" id="servicio" style="opacity:0;margin-top:-330px"><span class="chip l">Tu servicio</span></div>
+  <div class="c" id="celu1" style="opacity:0;margin-top:30px"><div class="tel" style="width:320px;height:520px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px">
+    <div class="cond" style="font-size:180px;color:var(--gris-2);line-height:1">0</div>
+    <div class="mono" style="font-size:22px;color:var(--gris-2)">pedidos nuevos</div></div></div>
+  <svg class="c" id="mudo" width="150" height="150" viewBox="0 0 24 24" style="opacity:0;margin-top:-190px;margin-left:210px">
+    <circle cx="12" cy="12" r="11.5" fill="#0C2620"/><path d="M12 4.5a5 5 0 0 0-5 5v3.5L5.5 15.5h13L17 13V9.5a5 5 0 0 0-5-5zM10 17.5a2 2 0 0 0 4 0" fill="#F7CA55"/><path d="M4.5 4.5l15 15" stroke="#F08A6C" stroke-width="2.4" stroke-linecap="round"/></svg>
+</div>
+
+<!-- 2 · esto es para vos -->
+<div class="sc" id="s2">
+  <svg class="c" width="900" height="900" viewBox="0 0 900 900" style="overflow:visible">
+    <circle id="o1" cx="450" cy="450" r="160" fill="none" stroke="#C9A227" stroke-width="10" opacity="0"/>
+    <circle id="o2" cx="450" cy="450" r="160" fill="none" stroke="#8FD9BC" stroke-width="8" opacity="0"/>
+  </svg>
+  <div class="c" id="vos" style="opacity:0"><div class="cond" style="width:320px;height:320px;border-radius:50%;background:var(--laton-cl);color:var(--tinta);display:flex;align-items:center;justify-content:center;font-size:130px;box-shadow:0 22px 50px rgba(0,0,0,.4)">Vos</div></div>
+</div>
+
+<!-- 3 · te cobran aunque no consigas trabajo -->
+<div class="sc" id="s3">
+  <div class="c" id="factura" style="opacity:0;margin-top:-50px"><div class="papel">
+    <div class="mono" style="font-size:22px;color:var(--gris)">Otra plataforma · factura</div>
+    <div class="renglon" style="margin-top:18px"><span>Abono mensual</span><span>$ $ $</span></div>
+    <div class="renglon" id="trabajos" style="opacity:0;border-bottom:none"><span>Trabajos conseguidos</span><span style="color:#C2502E">0</span></div>
+  </div></div>
+  <div class="c" id="cobrado" style="opacity:0;margin-top:250px;margin-left:120px"><span class="sello" style="font-size:52px;background:rgba(12,38,32,.9)">Cobrado igual</span></div>
+</div>
+
+<!-- 4 · en Tratto es al revés -->
+<div class="sc" id="s4">
+  <svg class="c" width="900" height="900" viewBox="0 0 900 900" style="overflow:visible">
+    <circle id="onda1" cx="450" cy="450" r="200" fill="none" stroke="#C9A227" stroke-width="10" opacity="0"/>
+    <circle id="onda2" cx="450" cy="450" r="200" fill="none" stroke="#8FD9BC" stroke-width="8" opacity="0"/>
+  </svg>
+  <div class="c" id="logo" style="opacity:0;text-align:center;margin-top:-60px"><span id="logo-svg"></span>
+    <div style="font-family:Montserrat;font-weight:600;letter-spacing:.32em;font-size:92px;margin-top:30px;padding-left:.32em">TRATTO</div></div>
+  <div class="c cond" id="reves" style="opacity:0;font-size:150px;color:var(--laton-cl);margin-top:300px">⇄</div>
+</div>
+
+<!-- 5 · si no laburás, no pagás nada -->
+<div class="sc" id="s5">
+  <div class="c mono" id="sintrabajo" style="opacity:0;margin-top:-300px;font-size:34px;color:var(--verde-luz);white-space:nowrap">Sin trabajos este mes</div>
+  <div class="c cond" id="cero" style="opacity:0;font-size:380px;color:var(--laton-cl);text-shadow:0 16px 0 rgba(0,0,0,.3)">$0</div>
+</div>
+
+<!-- 6 · la gente de tu zona pide -->
+<div class="sc" id="s6"><svg class="c" width="800" height="740" viewBox="0 0 800 740">
+  <g stroke="#1B4B40" stroke-width="22" stroke-linecap="round">
+    <path d="M40 140 L760 120"/><path d="M40 380 L760 400"/><path d="M60 620 L740 600"/>
+    <path d="M160 40 L190 700"/><path d="M420 30 L400 710"/><path d="M640 40 L660 700"/>
+  </g>
+  <circle id="radio" cx="400" cy="380" r="40" fill="#2B7E62" opacity="0"/>
+  <g id="pines"></g>
+</svg>
+  <div class="c" id="pedido" style="opacity:0;margin-top:-140px"><div class="burbuja" style="font-size:52px;border-radius:30px 30px 30px 6px">Busco profe de inglés</div></div>
+</div>
+
+<!-- 7 · vos le mandás un presupuesto -->
+<div class="sc" id="s7">
+  <div class="c" id="pedido2" style="margin-top:-250px"><div class="burbuja" style="font-size:52px;border-radius:30px 30px 30px 6px">Busco profe de inglés</div></div>
+  <div class="c" id="mipres" style="opacity:0"><div class="tarjeta" style="width:440px;padding:30px 20px;text-align:center;border-color:var(--laton)">
+    <div class="mono" style="font-size:22px;color:var(--laton)">Tu presupuesto</div><div class="cond" style="font-size:84px">$45.000</div>
+    <div class="mono" style="font-size:20px;color:var(--gris-2)">4 clases · a domicilio</div></div></div>
+  <div class="c" id="enviado" style="opacity:0;margin-top:290px"><span class="sello" style="font-size:40px;background:rgba(12,38,32,.9)">Enviado</span></div>
+</div>
+
+<!-- 8 · gratis, sin abono -->
+<div class="sc" id="s8">
+  <div class="c" style="display:flex;flex-direction:column;gap:30px">
+    <div class="tarjeta check" id="k1" style="opacity:0"><span class="cond" style="font-size:60px">Registro</span><span class="fila"><span class="cond" style="font-size:60px;color:var(--verde-luz)">Gratis</span><span class="ic"></span></span></div>
+    <div class="tarjeta check" id="k2" style="opacity:0"><span class="cond" style="font-size:60px">Abono mensual</span><span class="fila"><span class="cond" style="font-size:60px;color:var(--verde-luz)">$0</span><span class="ic"></span></span></div>
+  </div>
+</div>
+
+<!-- 9 · solo 3 % cuando cobrás -->
+<div class="sc" id="s9">
+  <div class="c cond" id="tres" style="opacity:0;font-size:360px;color:var(--laton-cl);margin-top:-80px;text-shadow:0 16px 0 rgba(0,0,0,.3)">3%</div>
+  <div class="c" id="cuando" style="opacity:0;margin-top:220px"><span class="chip" style="font-size:46px">Solo cuando cobrás por la app</span></div>
+</div>
+
+<!-- 10 · calificaciones que traen clientes -->
+<div class="sc" id="s10">
+  <div class="c" id="perfil" style="opacity:0;margin-top:-120px"><div class="tarjeta" style="width:700px;border-color:var(--laton)">
+    <div class="mono" style="font-size:24px;color:var(--gris-2)">Tu perfil</div>
+    <div class="fila" id="estrellas" style="margin-top:18px;gap:12px"></div></div></div>
+  <div class="c" id="clientes" style="margin-top:200px;display:flex;gap:26px"></div>
+</div>
+
+<!-- 11 · más de 40 rubros -->
+<div class="sc" id="s11">
+  <div class="c" id="rubros" style="width:860px;display:flex;flex-wrap:wrap;gap:18px;justify-content:center;margin-top:-30px"></div>
+  <div class="c cond" id="mas40" style="opacity:0;font-size:260px;color:var(--laton-cl);text-shadow:0 16px 0 rgba(0,0,0,.45)">+40</div>
+  <svg class="c" id="lupa" width="220" height="220" viewBox="0 0 24 24" style="opacity:0"><circle cx="10" cy="10" r="6.5" fill="rgba(143,217,188,.18)" stroke="#F4F1EA" stroke-width="2.2"/><path d="M15 15l6 6" stroke="#F4F1EA" stroke-width="2.6" stroke-linecap="round"/></svg>
+</div>
+
+</div></div>
+<script>
+window.REEL = {
+  escenas: [['s1', -1, 2.95], ['s2', 2.95, 4.25], ['s3', 4.25, 7.75], ['s4', 7.75, 9.55], ['s5', 9.55, 11.75], ['s6', 11.75, 14.75], ['s7', 14.75, 16.95],
+    ['s8', 16.95, 19.6], ['s9', 19.6, 23.2], ['s10', 23.2, 27.0], ['s11', 27.0, 31.5]],
+  golpes: [2.42, 3.64, 5.28, 6.84, 8.16, 8.98, 10.72, 13.78, 15.62, 17.76, 18.88, 20.6, 25.22, 28.44, 30.78, 31.66],
+  sinSubs: [],
+  cierre: { entra: 31.5, logo: 31.66, a: ['Registrate gratis en', 32.38], b: ['trattoapp.com.ar', 33.64], sello: ['Sin abono mensual', 34.4] },
+  animar,
+};
+const PINES = [[170, 150, 12.98], [640, 130, 13.1], [180, 610, 13.22], [650, 610, 13.34], [420, 140, 13.44], [130, 390, 13.54], [670, 400, 13.64]];
+const RUBROS = ['Clases de música', 'Fletes y mudanzas', 'Fotografía y video', 'Limpieza', 'Mecánica', 'Diseño gráfico', 'Paseo de mascotas',
+  'Catering', 'Pintura', 'Trámites', 'Programación', 'Masajes', 'Jardinería', 'Eventos', 'Contabilidad', 'Entrenamiento'];
+function animar(t) {
+  // 1 · teléfono mudo
+  pop($('servicio'), t, 0.86, C);
+  pop($('celu1'), t, 1.22, C);
+  pop($('mudo'), t, 2.42, `${C} rotate(${Math.sin(t * 30) * 6 * Math.exp(-(t - 2.42) * 3)}deg)`);
+
+  // 2 · vos
+  pop($('vos'), t, 3.08, C);
+  [['o1', 3.64], ['o2', 3.78]].forEach(([id, a]) => {
+    const p = P(t, a, a + 0.7);
+    $(id).setAttribute('r', 160 + p * 360); $(id).setAttribute('opacity', t >= a ? (1 - p) * 0.9 : 0);
+  });
+
+  // 3 · factura
+  pop($('factura'), t, 4.5, `${C} rotate(-2deg)`);
+  const ec = P(t, 5.28, 5.46);
+  set($('cobrado'), ec > 0 ? 1 : 0, `${C} rotate(-10deg) scale(${2.2 - 1.2 * eo(ec)})`);
+  set($('trabajos'), eo(P(t, 6.84, 7.0)), `translateX(${(1 - eo(P(t, 6.84, 7.1))) * 60}px)`);
+
+  // 4 · negro + logo + al revés
+  const neg = t >= 7.7 && t < 9.6 ? Math.min(eo(P(t, 7.7, 7.95)), 1 - P(t, 9.4, 9.6)) : 0;
+  $('negro').style.opacity = neg * 0.92;
+  const lp = back(P(t, 8.16, 8.5));
+  set($('logo'), P(t, 8.16, 8.24), `${C} scale(${0.3 + 0.7 * lp})`);
+  [['onda1', 8.16], ['onda2', 8.3]].forEach(([id, a]) => {
+    const p = P(t, a, a + 0.8);
+    $(id).setAttribute('r', 200 + p * 420); $(id).setAttribute('opacity', t >= a ? (1 - p) * 0.9 : 0);
+  });
+  pop($('reves'), t, 8.98, `${C} rotate(${180 - 180 * eo(P(t, 8.98, 9.4))}deg)`);
+
+  // 5 · $0
+  set($('sintrabajo'), eo(P(t, 9.94, 10.15)), C);
+  pop($('cero'), t, 10.72, `${C} rotate(${-8 + 8 * eo(P(t, 10.72, 11.2))}deg)`, 0.45);
+
+  // 6 · zona y pedido
+  const rp = P(t, 12.98, 13.9);
+  $('radio').setAttribute('r', 40 + eo(rp) * 330);
+  $('radio').setAttribute('opacity', t >= 12.98 ? 0.35 * (1 - rp * 0.5) : 0);
+  $('pines').querySelectorAll('g').forEach((g, i) => pop(g, t, PINES[i][2], ''));
+  pop($('pedido'), t, 13.78, C);
+
+  // 7 · presupuesto enviado
+  set($('pedido2'), 1, C);
+  const v = eo(P(t, 15.62, 16.0));
+  set($('mipres'), P(t, 15.5, 15.65), `${C} translateY(${(1 - v) * 420 + 60}px) rotate(${(1 - v) * 8 - 2}deg)`);
+  const en = P(t, 16.0, 16.18);
+  set($('enviado'), en > 0 ? 1 : 0, `${C} rotate(-8deg) scale(${2 - eo(en)})`);
+
+  // 8 · gratis, sin abono
+  pop($('k1'), t, 17.06, '');
+  pop($('k2'), t, 18.42, '');
+  $('k1').querySelector('.ic').style.transform = `scale(${back(P(t, 17.76, 18.1))})`;
+  $('k2').querySelector('.ic').style.transform = `scale(${back(P(t, 18.88, 19.2))})`;
+
+  // 9 · 3 %
+  pop($('tres'), t, 20.6, `${C} rotate(${-10 + 10 * eo(P(t, 20.6, 21.1))}deg)`, 0.45);
+  pop($('cuando'), t, 21.72, C);
+
+  // 10 · estrellas y clientes
+  pop($('perfil'), t, 23.38, C);
+  [...$('estrellas').children].forEach((e, i) => {
+    const a = 25.22 + i * 0.1;
+    e.innerHTML = ESTRELLA(84, t >= a);
+    e.style.transform = `scale(${t >= a ? 1 + 0.35 * Math.exp(-(t - a) * 10) : 1})`;
+  });
+  [...$('clientes').children].forEach((c, i) => pop(c, t, 26.0 + i * 0.14, ''));
+
+  // 11 · rubros, +40, lupa
+  [...$('rubros').children].forEach((c, i) => {
+    pop(c, t, 27.14 + i * 0.075, `rotate(${(i % 3 - 1) * 2}deg)`);
+    if (t > 28.44 && t < 29.6) c.style.opacity = 1 - 0.6 * P(t, 28.44, 28.6) + 0.6 * P(t, 29.4, 29.6);
+    const elegido = i === 9;
+    if (elegido && t > 30.78) { c.firstElementChild.classList.add('l'); c.style.transform = `scale(${1.3 + 0.1 * Math.exp(-(t - 30.78) * 6)}) rotate(-3deg)`; }
+  });
+  pop($('mas40'), t, 28.44, C, 0.4);
+  if (t > 29.5) $('mas40').style.opacity = 1 - P(t, 29.5, 29.7);
+  const lu = P(t, 29.6, 30.78);
+  set($('lupa'), t >= 29.6 ? 1 : 0, `${C} translate(${Math.cos(lu * 5) * 260}px,${Math.sin(lu * 7) * 200 - 40 + 80 * lu}px)`);
+}
+</script>
+<script src="comun-voz.js"></script>
+<script>
+$('logo-svg').innerHTML = LOGO(300, 'gy');
+$('fin-a').style.fontSize = '84px';
+PINES.forEach(([x, y]) => $('pines').insertAdjacentHTML('beforeend',
+  `<g style="transform-origin:${x}px ${y}px;opacity:0"><path d="M${x} ${y} c-34 -38 -34 -86 0 -86 c34 0 34 48 0 86z" transform="translate(0,-4)" fill="#8FD9BC" stroke="#0C2620" stroke-width="6"/><circle cx="${x}" cy="${y - 52}" r="13" fill="#0C2620"/></g>`));
+document.querySelectorAll('#s8 .ic').forEach((e) => { e.innerHTML = TILDE(70); e.style.display = 'inline-block'; });
+for (let i = 0; i < 5; i++) $('estrellas').insertAdjacentHTML('beforeend', '<span style="display:inline-block"></span>');
+for (let i = 0; i < 5; i++) $('clientes').insertAdjacentHTML('beforeend', `<div style="opacity:0;width:110px;height:110px;border-radius:50%;background:var(--noche-2);border:4px solid ${i === 4 ? 'var(--laton)' : 'var(--noche-3)'};display:flex;align-items:center;justify-content:center"><svg width="66" height="66" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4.2" fill="#F4F1EA"/><path d="M4 21c0-4.4 3.6-7.5 8-7.5s8 3.1 8 7.5z" fill="#F4F1EA"/></svg></div>`);
+RUBROS.forEach((r) => $('rubros').insertAdjacentHTML('beforeend', `<div style="opacity:0"><span class="chip" style="font-size:38px;padding:12px 24px">${r}</span></div>`));
+render(0);
+</script>
+</body></html>
