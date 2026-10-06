@@ -21,13 +21,13 @@
     {
       "id": "situaciones",
       "nombre": "Situaciones de todos los días",
-      "descripcion": "Humor e identificación: lo que pasa cuando se rompe algo, cuando no viene nadie, cuando te cobran de más.",
+      "descripcion": "Humor e identificación con situaciones de cualquier rubro: lo que pasa cuando se rompe algo, cuando no viene nadie, cuando te cobran de más, cuando buscás un profe, un flete o alguien para la mascota.",
       "porcentaje": 20
     },
     {
-      "id": "oficios",
-      "nombre": "Para proveedores",
-      "descripcion": "Cómo conseguir más trabajos, presupuestar mejor y cuidar la reputación.",
+      "id": "proveedores",
+      "nombre": "Para proveedores (todos los rubros)",
+      "descripcion": "Para quien ofrece cualquier servicio de los más de 40 rubros (no solo oficios del hogar): cómo conseguir más trabajos, presupuestar mejor y cuidar la reputación.",
       "porcentaje": 15
     },
     {

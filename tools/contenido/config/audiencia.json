@@ -8,56 +8,143 @@
       "nivel_conocimiento": "frio",
       "objetivo": "Que pidan su primer servicio en la app.",
       "problemas": [
-        { "texto": "No saben a quién llamar y no confían en cualquiera que encuentran", "validado": false },
-        { "texto": "No saben cuánto debería salir un trabajo y temen que les cobren de más", "validado": false },
-        { "texto": "Llamar a varios, que no contesten o no vengan", "validado": false },
-        { "texto": "Presupuestos que no se pueden comparar porque cada uno incluye cosas distintas", "validado": false }
+        {
+          "texto": "No saben a quién llamar y no confían en cualquiera que encuentran",
+          "validado": false
+        },
+        {
+          "texto": "No saben cuánto debería salir un trabajo y temen que les cobren de más",
+          "validado": false
+        },
+        {
+          "texto": "Llamar a varios, que no contesten o no vengan",
+          "validado": false
+        },
+        {
+          "texto": "Presupuestos que no se pueden comparar porque cada uno incluye cosas distintas",
+          "validado": false
+        }
       ],
       "deseos": [
-        { "texto": "Resolverlo rápido y sin vueltas", "validado": false },
-        { "texto": "Pagar un precio justo", "validado": false },
-        { "texto": "Que el que venga sea confiable y haga bien el trabajo", "validado": false }
+        {
+          "texto": "Resolverlo rápido y sin vueltas",
+          "validado": false
+        },
+        {
+          "texto": "Pagar un precio justo",
+          "validado": false
+        },
+        {
+          "texto": "Que el que venga sea confiable y haga bien el trabajo",
+          "validado": false
+        }
       ],
       "objeciones": [
-        { "texto": "¿Es seguro? ¿Quién es el que viene a mi casa?", "validado": false },
-        { "texto": "¿Me van a cobrar por usar la app?", "validado": false },
-        { "texto": "¿Hay proveedores en mi zona?", "validado": false },
-        { "texto": "Otra app más para descargar", "validado": false }
+        {
+          "texto": "¿Es seguro? ¿Quién es el que viene a mi casa?",
+          "validado": false
+        },
+        {
+          "texto": "¿Me van a cobrar por usar la app?",
+          "validado": false
+        },
+        {
+          "texto": "¿Hay proveedores en mi zona?",
+          "validado": false
+        },
+        {
+          "texto": "Otra app más para descargar",
+          "validado": false
+        }
       ],
       "lenguaje": [
-        { "texto": "se me rompió", "validado": false },
-        { "texto": "¿cuánto me sale?", "validado": false },
-        { "texto": "me cobraron una fortuna", "validado": false },
-        { "texto": "no me contesta nadie", "validado": false },
-        { "texto": "un arreglito", "validado": false }
+        {
+          "texto": "se me rompió",
+          "validado": false
+        },
+        {
+          "texto": "¿cuánto me sale?",
+          "validado": false
+        },
+        {
+          "texto": "me cobraron una fortuna",
+          "validado": false
+        },
+        {
+          "texto": "no me contesta nadie",
+          "validado": false
+        },
+        {
+          "texto": "un arreglito",
+          "validado": false
+        }
       ]
     },
     {
       "id": "proveedores",
       "nombre": "Quien ofrece un servicio",
-      "descripcion": "Trabajadores independientes y oficios de los rubros de la app (sin rubros matriculados) que quieren más clientes de su zona sin pagar publicidad ni abonos.",
+      "descripcion": "Trabajadores independientes de cualquiera de los más de 40 rubros de la app (hogar, limpieza, autos y traslados, clases, eventos, digital, trámites, contabilidad, belleza, entrenamiento, mascotas; sin rubros matriculados) que quieren más clientes de su zona sin pagar publicidad ni abonos.",
       "nivel_conocimiento": "frio",
       "objetivo": "Que se registren y publiquen su servicio.",
       "problemas": [
-        { "texto": "Dependen del boca en boca y tienen semanas flojas", "validado": false },
-        { "texto": "Pierden tiempo con consultas que no se concretan", "validado": false },
-        { "texto": "Las plataformas cobran abono o leads aunque no consigan el trabajo", "validado": false }
+        {
+          "texto": "Dependen del boca en boca y tienen semanas flojas",
+          "validado": false
+        },
+        {
+          "texto": "Pierden tiempo con consultas que no se concretan",
+          "validado": false
+        },
+        {
+          "texto": "Las plataformas cobran abono o leads aunque no consigan el trabajo",
+          "validado": false
+        }
       ],
       "deseos": [
-        { "texto": "Trabajos cerca de donde viven o trabajan", "validado": false },
-        { "texto": "Cobrar seguro y rápido", "validado": false },
-        { "texto": "Que la reputación de su trabajo les traiga más clientes", "validado": false }
+        {
+          "texto": "Trabajos cerca de donde viven o trabajan",
+          "validado": false
+        },
+        {
+          "texto": "Cobrar seguro y rápido",
+          "validado": false
+        },
+        {
+          "texto": "Que la reputación de su trabajo les traiga más clientes",
+          "validado": false
+        }
       ],
       "objeciones": [
-        { "texto": "¿Cuánto me cobran?", "validado": false },
-        { "texto": "Otra plataforma que no trae trabajo", "validado": false },
-        { "texto": "No tengo tiempo para estar con el celular", "validado": false }
+        {
+          "texto": "¿Cuánto me cobran?",
+          "validado": false
+        },
+        {
+          "texto": "Otra plataforma que no trae trabajo",
+          "validado": false
+        },
+        {
+          "texto": "No tengo tiempo para estar con el celular",
+          "validado": false
+        }
       ],
       "lenguaje": [
-        { "texto": "laburo", "validado": false },
-        { "texto": "presupuesto sin cargo", "validado": false },
-        { "texto": "la changa", "validado": false },
-        { "texto": "zona de trabajo", "validado": false }
+        {
+          "texto": "laburo",
+          "validado": false
+        },
+        {
+          "texto": "presupuesto sin cargo",
+          "validado": false
+        },
+        {
+          "texto": "la changa",
+          "validado": false
+        },
+        {
+          "texto": "zona de trabajo",
+          "validado": false
+        }
       ]
     }
   ]

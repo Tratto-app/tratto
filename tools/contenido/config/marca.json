@@ -40,6 +40,7 @@
     "profes"
   ],
   "restricciones": [
+    "Tratto tiene más de 40 rubros (46): hogar, limpieza, autos y traslados, clases, eventos, digital, trámites, contabilidad, belleza, entrenamiento, mascotas. No reducir la marca a oficios del hogar: cuando se hable de proveedores o de lo que se puede pedir, decir 'más de 40 rubros' o mostrar la variedad. Un oficio puntual (plomero, pintor) solo como ejemplo de un caso concreto, nunca como la lista de quiénes pueden sumarse. Pedido explícito del fundador (2026-10-06), no es la primera vez.",
     "No ofrecer ni mostrar rubros que requieren matrícula: gas, electricidad, salud.",
     "No prometer plazos ni precios exactos: los fija cada proveedor.",
     "No mostrar datos personales de clientes ni de proveedores reales sin su permiso.",
@@ -87,5 +88,49 @@
       "motivo": "Promesa de precio: los precios los fija cada proveedor; usar rangos de la tabla de referencia con fecha."
     }
   ],
-  "nota_alertas": "El motor marca como advertencia cualquier texto que contenga estas palabras (sin tildes, minúsculas). Agregá o sacá palabras acá."
+  "nota_alertas": "El motor marca como advertencia cualquier texto que contenga estas palabras (sin tildes, minúsculas). Agregá o sacá palabras acá.",
+  "rubros": {
+    "cantidad": 46,
+    "frase": "más de 40 rubros",
+    "categorias": [
+      "hogar",
+      "limpieza",
+      "autos y traslados",
+      "clases",
+      "eventos",
+      "digital",
+      "trámites",
+      "contabilidad",
+      "belleza",
+      "entrenamiento",
+      "mascotas"
+    ],
+    "fuente": "growth/supabase/seed/tratto.sql (Más de 40 rubros (46))"
+  },
+  "sesgo_oficios": {
+    "palabras": [
+      "plomero",
+      "plomeros",
+      "pintor",
+      "pintores",
+      "albañil",
+      "albañiles",
+      "cerrajero",
+      "cerrajeros",
+      "gasista",
+      "electricista",
+      "techista",
+      "techistas",
+      "carpintero",
+      "carpinteros",
+      "herrero",
+      "herreros"
+    ],
+    "minimo": 2,
+    "salvo": [
+      "rubros",
+      "rubro"
+    ],
+    "motivo": "Nombra solo oficios del hogar: Tratto tiene más de 40 rubros. Decí 'más de 40 rubros' o mostrá la variedad (clases, belleza, autos, mascotas, eventos, trámites…)."
+  }
 }

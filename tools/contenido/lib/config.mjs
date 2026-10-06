@@ -25,6 +25,8 @@ export const ESQUEMAS = {
       palabras_no: { tipo: 'lista', de: TEXTO, requerido: true },
       restricciones: { tipo: 'lista', de: TEXTO, requerido: true },
       cta_principal: { ...TEXTO, requerido: true },
+      rubros: { tipo: 'objeto', campos: { cantidad: { tipo: 'entero', min: 1 }, frase: TEXTO, categorias: { tipo: 'lista', de: TEXTO }, fuente: TEXTO } },
+      sesgo_oficios: { tipo: 'objeto', campos: { palabras: { tipo: 'lista', de: { tipo: 'texto', min: 1, max: 80 }, min: 1, requerido: true }, minimo: { tipo: 'entero', min: 1 }, salvo: { tipo: 'lista', de: TEXTO }, motivo: { ...TEXTO, requerido: true } } },
       alertas: {
         tipo: 'lista', max: 30,
         de: { tipo: 'objeto', campos: { palabras: { tipo: 'lista', de: { tipo: 'texto', min: 1, max: 80 }, min: 1, requerido: true }, motivo: { ...TEXTO, requerido: true } } },

@@ -57,6 +57,9 @@ Todo monto que aparezca en una pieza sale de la tabla `precios_referencia` del t
 
 ## 8. Cómo escribir
 
+**Tratto no es una app de oficios del hogar.** Tiene más de 40 rubros (ver `config/marca.json` → `rubros`). Cuando una pieza habla de proveedores o de qué se puede pedir, dice "más de 40 rubros" o muestra la variedad (clases, belleza, autos, mascotas, eventos, trámites…). Un plomero o un pintor sirven como ejemplo de un caso concreto, nunca como la lista de quiénes pueden sumarse. El verificador lo marca (`sesgo_oficios`). Es un pedido explícito del fundador.
+
+
 Español rioplatense con voseo, como habla el público. Concreto: números (de la tabla de referencia), objetos, situaciones. Cada recomendación con el texto nuevo listo para usar, no consejos sueltos.
 
 ## 9. Conectores (si están en la sesión)

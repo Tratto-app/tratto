@@ -69,3 +69,12 @@ test('anti-copia: un hook igual al del original no pasa', () => {
   assert.equal(r.hooks[1].apto, true);
   assert.throws(() => verificarHooks({ hooks: ['a b'], evitar: 'texto' }), /evitar/);
 });
+
+test('sesgo a oficios: marca la lista de oficios del hogar salvo que hable de los rubros', () => {
+  const r = verificarPieza({ formato: 'reel', guion: 'Plomeros, pintores, albañiles, cerrajeros: sumate. Registrate gratis.' }, marca);
+  assert.match(r.advertencias.join(), /más de 40 rubros/);
+  const ok = verificarPieza({ formato: 'reel', guion: 'Tenemos más de 40 rubros: entrá y fijate si está el tuyo. Registrate gratis.' }, marca);
+  assert.ok(!ok.advertencias.some((a) => a.includes('Oficios del hogar')));
+  const ejemplo = verificarPieza({ formato: 'reel', guion: 'Dos plomeros, el mismo caño. Pedí gratis.' }, marca);
+  assert.ok(!ejemplo.advertencias.some((a) => a.includes('Oficios del hogar')), 'un solo oficio como ejemplo no es sesgo');
+});

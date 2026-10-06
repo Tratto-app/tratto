@@ -18,6 +18,12 @@ function revisarMarca(textos, marca, adv) {
     const hallada = (a.palabras || []).find((p) => todo.includes(` ${normalizar(p)} `));
     if (hallada) adv.push(`"${hallada}": ${a.motivo}`);
   }
+  const sesgo = marca?.sesgo_oficios;
+  if (sesgo) {
+    const hallados = [...new Set((sesgo.palabras || []).filter((p) => todo.includes(` ${normalizar(p)} `)).map((p) => normalizar(p).replace(/(es|s)$/, '')))];
+    const salvo = (sesgo.salvo || []).some((p) => todo.includes(` ${normalizar(p)} `));
+    if (hallados.length >= (sesgo.minimo || 2) && !salvo) adv.push(`Oficios del hogar (${hallados.join(', ')}): ${sesgo.motivo}`);
+  }
   if (/\$\s?\d/.test(textos.join(' '))) adv.push('Menciona precios: verificá que salgan de la tabla de referencia del tasador o de un relevamiento con fecha.');
 }
 
