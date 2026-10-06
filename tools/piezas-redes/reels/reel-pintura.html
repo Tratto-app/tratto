@@ -1,0 +1,177 @@
+<!doctype html><html lang="es"><head><meta charset="utf-8">
+<title>Reel · ¿Te pidieron 250 mil por pintar una pieza?</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@500&family=IBM+Plex+Sans+Condensed:wght@600;700&family=IBM+Plex+Sans:wght@400;500;600&family=Montserrat:wght@500&display=block" rel="stylesheet">
+<!--
+  Reel 1080×1920, 33 s. Se renderiza cuadro por cuadro con render-reel.py:
+  la animación no depende del reloj, solo de render(t) (t en segundos).
+  Zona segura: el texto vive entre y=260 y y=1460 y no pasa de x=930
+  (TikTok e Instagram tapan arriba, abajo y el costado derecho).
+  Guion y puntaje: tools/contenido/memoria/contenidos.jsonl (c-20261006-bc4d69).
+-->
+<style>
+:root{--noche:#0C2620;--noche-2:#123830;--noche-3:#1B4B40;--claro:#FCFBF8;--papel:#F4F1EA;
+  --gris:#5E6B65;--gris-2:#94A19B;--gris-3:#B9C2BC;--laton:#C9A227;--laton-osc:#8A6E10;
+  --verde:#1E5D49;--verde-vivo:#2B7E62;--verde-luz:#8FD9BC;--tinta:#0E1815}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{width:1080px;height:1920px;overflow:hidden;background:var(--noche)}
+body{font-family:'IBM Plex Sans',sans-serif;color:var(--claro)}
+#lienzo{position:relative;width:1080px;height:1920px;overflow:hidden;background:var(--noche)}
+#lienzo::before{content:'';position:absolute;inset:0;
+  background:radial-gradient(90% 55% at 0% 0%, rgba(43,126,98,.45), transparent 62%),
+             radial-gradient(70% 45% at 100% 100%, rgba(201,162,39,.16), transparent 58%)}
+.cond{font-family:'IBM Plex Sans Condensed',sans-serif;font-weight:700;letter-spacing:-.025em}
+.mono{font-family:'IBM Plex Mono',monospace;font-weight:500;text-transform:uppercase;letter-spacing:.14em}
+em{font-style:normal;color:var(--laton)}
+.escena{position:absolute;left:90px;right:150px;top:300px;bottom:460px;display:flex;flex-direction:column;justify-content:center}
+[data-in]{opacity:0;will-change:transform,opacity}
+
+/* marca fija arriba */
+.marca{position:absolute;left:90px;top:170px;display:flex;align-items:center;gap:16px;z-index:5}
+.marca span{font-family:'Montserrat',sans-serif;font-weight:500;letter-spacing:.3em;font-size:26px;color:#E8EBEA}
+
+/* trazo de rodillo: el elemento firma del reel */
+.trazo{position:relative;display:inline-block;z-index:0}
+.trazo::before{content:'';position:absolute;left:-14px;right:-14px;bottom:.06em;height:.42em;z-index:-1;border-radius:6px 14px 8px 12px;
+  background:repeating-linear-gradient(90deg,rgba(255,255,255,.07) 0 3px,transparent 3px 9px),var(--pinta,var(--verde-vivo));
+  clip-path:inset(0 calc(100% - var(--p,0%)) 0 0)}
+.trazo.laton{--pinta:rgba(201,162,39,.38)}
+
+.grande{font-size:124px;line-height:1}
+.medio{font-size:100px;line-height:1.04}
+.chico{font-size:52px;line-height:1.32;color:var(--gris-3);font-weight:500}
+.monto{font-family:'IBM Plex Sans Condensed',sans-serif;font-weight:700;font-size:210px;line-height:.9;letter-spacing:-.04em;color:var(--laton)}
+.sello{display:inline-block;font-family:'IBM Plex Mono',monospace;font-weight:500;letter-spacing:.14em;text-transform:uppercase;
+  color:var(--laton);border:2px solid rgba(201,162,39,.55);border-radius:99px;font-size:24px;padding:12px 24px}
+.num{font-family:'IBM Plex Mono',monospace;font-weight:500;font-size:120px;color:var(--laton);line-height:1}
+.rol{font-size:24px;color:var(--gris-2);margin-bottom:18px}
+.tarjeta{background:var(--noche-2);border:2px solid var(--noche-3);border-radius:24px;padding:34px 38px}
+.fila{display:flex;justify-content:space-between;align-items:baseline;font-size:40px;padding:10px 0}
+.si{color:var(--verde-luz);font-weight:600}.no{color:var(--gris-2)}
+.puntos{position:absolute;left:90px;top:1500px;display:flex;gap:14px;z-index:5}
+.puntos i{display:block;width:56px;height:8px;border-radius:9px;background:var(--noche-3)}
+.puntos i.on{background:var(--laton)}
+.pared{position:relative;height:300px;border-radius:24px;overflow:hidden;background:#2A2F33;margin-top:56px;border:2px solid var(--noche-3)}
+.pared .mano{position:absolute;inset:0;background:repeating-linear-gradient(90deg,rgba(14,24,21,.05) 0 2px,transparent 2px 26px),var(--papel);clip-path:inset(0 calc(100% - var(--p,0%)) 0 0)}
+.pared .rodillo{position:absolute;top:0;bottom:0;width:26px;background:var(--laton);left:calc(var(--p,0%) - 13px);border-radius:8px;box-shadow:0 0 0 6px rgba(201,162,39,.25)}
+.pie-fuente{position:absolute;left:90px;top:1420px;font-size:22px;color:var(--gris-2)}
+</style></head><body><div id="lienzo">
+
+<div class="marca"><svg width='48' height='48' viewBox='0 0 32 32' fill='none'><defs><linearGradient id='gx' gradientUnits='userSpaceOnUse' x1='10.3' y1='10.37' x2='22.54' y2='22.46'><stop offset='0' stop-color='#96E7CE'/><stop offset='1' stop-color='#62AD98'/></linearGradient></defs><path d='M10.3 10.37 L22.54 22.46' stroke='url(#gx)' stroke-width='2.39'/><circle cx='7.47' cy='7.58' r='5.23' stroke='#9EECD4' stroke-width='2.5'/><path d='M10.3 10.37 L12.08 12.13' stroke='#96E7CE' stroke-width='2.39'/><circle cx='25.12' cy='25.02' r='4.76' stroke='#F7CA55' stroke-width='2.24'/><path d='M20.95 20.89 L22.54 22.46' stroke='#9EECD4' stroke-opacity='.32' stroke-width='2.39'/></svg><span>TRATTO</span></div>
+
+<!-- 1 · 0–2.2 s · hook: visible desde el primer cuadro -->
+<div class="escena">
+  <div data-in="-1" data-out="2.2" class="cond medio">¿Te pidieron</div>
+  <div data-in="-1" data-out="2.2" class="monto" style="margin:18px 0 14px">$250.000</div>
+  <div data-in="-1" data-out="2.2" class="cond" style="font-size:88px;line-height:1.05">por <span class="trazo laton" data-pinta="0.15,0.9">pintar una pieza?</span></div>
+</div>
+
+<!-- 2 · 2.2–4.3 s -->
+<div class="escena">
+  <div data-in="2.25" data-out="4.3" class="cond grande">Puede ser justo…</div>
+  <div data-in="2.95" data-out="4.3" class="cond grande" style="margin-top:40px">…o te están<br><span class="trazo" data-pinta="3.25,3.9"><em>viendo la cara.</em></span></div>
+</div>
+
+<!-- 3 · 4.3–7.2 s -->
+<div class="escena">
+  <div data-in="4.35" data-out="7.2" class="cond grande">Lo definen<br><span class="trazo" data-pinta="4.7,5.4">4 preguntas.</span></div>
+  <div data-in="5.5" data-out="7.2" class="chico" style="margin-top:44px;font-size:52px">Prestá atención a <em>la cuarta.</em></div>
+</div>
+
+<!-- 4 · 7.2–11.2 s · precio de referencia -->
+<div class="escena">
+  <div data-in="7.25" data-out="11.2" class="mono rol">Pintar una pieza de 3 × 3 m</div>
+  <div data-in="7.45" data-out="11.2" class="monto" style="font-size:150px">$100.000</div>
+  <div data-in="7.75" data-out="11.2" class="cond" style="font-size:64px;color:var(--gris-3);margin:6px 0">a</div>
+  <div data-in="7.95" data-out="11.2" class="monto" style="font-size:150px">$155.000</div>
+  <div data-in="8.6" data-out="11.2" style="margin-top:48px"><span class="sello">Precio de referencia · relevado abr. 2026</span></div>
+</div>
+
+<!-- 5 · 11.2–14 s -->
+<div class="escena">
+  <div data-in="11.25" data-out="14" class="num">01</div>
+  <div data-in="11.4" data-out="14" class="cond grande" style="margin-top:24px">¿Incluye la<br><span class="trazo" data-pinta="11.7,12.3">pintura?</span></div>
+  <div data-in="12.3" data-out="14" class="chico" style="margin-top:36px">¿O la comprás vos aparte?</div>
+</div>
+
+<!-- 6 · 14–17 s -->
+<div class="escena">
+  <div data-in="14.05" data-out="17" class="num">02</div>
+  <div data-in="14.2" data-out="17" class="cond grande" style="margin-top:24px">¿Hay que arreglar<br><span class="trazo" data-pinta="14.5,15.1">paredes?</span></div>
+  <div data-in="15.2" data-out="17" class="chico" style="margin-top:36px">Humedad, grietas, enduido.</div>
+</div>
+
+<!-- 7 · 17–19.5 s -->
+<div class="escena">
+  <div data-in="17.05" data-out="19.5" class="num">03</div>
+  <div data-in="17.2" data-out="19.5" class="cond grande" style="margin-top:24px">¿Va el <span class="trazo" data-pinta="17.5,18.1">techo?</span></div>
+</div>
+
+<!-- 8 · 19.5–24 s · la cuarta -->
+<div class="escena">
+  <div data-in="19.55" data-out="24" class="num">04</div>
+  <div data-in="19.7" data-out="24" class="cond grande" style="margin-top:24px">¿Pasás de <span style="color:#7E8A86">oscuro</span><br>a <span class="trazo laton" data-pinta="20.2,20.8">claro?</span></div>
+  <div data-in="20.6" data-out="24" class="pared" data-pared="20.9,22.6"><div class="mano"></div><div class="rodillo"></div></div>
+  <div data-in="22.5" data-out="24" class="chico" style="margin-top:36px">Más manos. <em>Más pintura.</em></div>
+</div>
+
+<!-- 9 · 24–29 s · comparador -->
+<div class="escena">
+  <div data-in="24.05" data-out="29" class="cond medio">Pedí presupuestos en <em>Tratto</em></div>
+  <div data-in="24.5" data-out="29" class="chico" style="margin:22px 0 40px">y te muestra qué incluye cada uno.</div>
+  <div data-in="25.1" data-out="29" class="tarjeta">
+    <div class="mono rol" style="font-size:24px">Presupuesto A · $120.000</div>
+    <div class="fila"><span>Pintura</span><span class="si">Incluida</span></div>
+    <div class="fila"><span>Arreglo de paredes</span><span class="no">No incluye</span></div>
+    <div class="fila"><span>Techo</span><span class="no">No incluye</span></div>
+  </div>
+  <div data-in="25.8" data-out="29" class="tarjeta" style="margin-top:22px;border-color:rgba(201,162,39,.55)">
+    <div class="mono rol" style="font-size:24px;color:var(--laton)">Presupuesto B · $150.000</div>
+    <div class="fila"><span>Pintura</span><span class="si">Incluida</span></div>
+    <div class="fila"><span>Arreglo de paredes</span><span class="si">Incluido</span></div>
+    <div class="fila"><span>Techo</span><span class="si">Incluido</span></div>
+  </div>
+  <div data-in="26.6" data-out="29" class="mono" style="font-size:20px;color:var(--gris-2);margin-top:20px">Ejemplo ilustrativo</div>
+</div>
+
+<!-- 10 · 29–33 s · cierre -->
+<div class="escena">
+  <div data-in="29.05" data-out="99" class="cond medio">Mandáselo a quien<br><span class="trazo" data-pinta="29.4,30">se está por mudar.</span></div>
+  <div data-in="30.3" data-out="99" class="cond medio" style="margin-top:56px;color:var(--laton)">¿A vos cuánto te pidieron?</div>
+  <div data-in="31.2" data-out="99" style="margin-top:64px;display:flex;align-items:center;gap:22px">
+    <span class="mono" style="font-size:34px;letter-spacing:.08em;color:var(--verde-luz)">trattoapp.com.ar</span>
+    <span class="sello">Pedí gratis</span>
+  </div>
+</div>
+
+<div class="puntos" data-puntos="11.2,24"><i></i><i></i><i></i><i></i></div>
+
+</div>
+<script>
+const ease = x => 1 - Math.pow(1 - Math.min(Math.max(x, 0), 1), 3);
+const els = [...document.querySelectorAll('[data-in]')];
+const trazos = [...document.querySelectorAll('[data-pinta]')];
+const pared = document.querySelector('[data-pared]');
+const puntos = document.querySelector('[data-puntos]');
+const preguntas = [11.2, 14, 17, 19.5];
+window.render = function (t) {
+  for (const el of els) {
+    const ini = +el.dataset.in, fin = +el.dataset.out;
+    const entra = ini < 0 ? 1 : ease((t - ini) / 0.35);
+    const sale = ease((fin - t) / 0.22);
+    const v = Math.min(entra, sale);
+    el.style.opacity = v;
+    el.style.transform = `translateY(${(1 - entra) * 46}px)`;
+  }
+  for (const el of trazos) {
+    const [a, b] = el.dataset.pinta.split(',').map(Number);
+    el.style.setProperty('--p', (ease((t - a) / (b - a)) * 100) + '%');
+  }
+  const [pa, pb] = pared.dataset.pared.split(',').map(Number);
+  pared.style.setProperty('--p', (ease((t - pa) / (pb - pa)) * 100) + '%');
+  const [qa, qb] = puntos.dataset.puntos.split(',').map(Number);
+  const visible = t >= qa && t < qb;
+  puntos.style.opacity = visible ? Math.min(ease((t - qa) / .3), ease((qb - t) / .22)) : 0;
+  puntos.querySelectorAll('i').forEach((p, i) => p.classList.toggle('on', t >= preguntas[i]));
+};
+render(0);
+</script></body></html>

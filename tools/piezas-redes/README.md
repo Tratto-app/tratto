@@ -19,3 +19,22 @@ leen bien y que la redirección a `www` conserva esos parámetros.
 
 Para cambiar un texto: editar `piezas.html` y correr `python3 render.py`
 (Playwright + Chromium). Las imágenes quedan en `salida/`.
+
+## Reels animados (`reels/`)
+
+Reels de texto animado con la misma identidad, en 1080×1920 y listos para
+subir a TikTok o Instagram. Cada reel es un HTML con una función `render(t)`.
+`render-reel.py` lo dibuja cuadro por cuadro y lo pasa a MP4 con ffmpeg:
+
+```bash
+cd tools/piezas-redes/reels && python3 render-reel.py reel-pintura.html --segundos 33
+```
+
+Salen `salida/<nombre>.mp4` (sin audio: el sonido se elige al subirlo, mejor
+uno en tendencia) y `salida/<nombre>-portada.jpg`. El texto queda dentro de
+la zona que no tapan los botones de la app: entre y=260 e y=1460, sin pasar
+de x=930.
+
+| Reel | Guion |
+|---|---|
+| `reel-pintura` | "¿Te pidieron $250.000 por pintar una pieza?" (memoria de contenido `c-20261006-bc4d69`) |
