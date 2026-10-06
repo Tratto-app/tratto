@@ -1,0 +1,169 @@
+<!doctype html><html lang="es"><head><meta charset="utf-8">
+<title>Reel · El presupuesto más barato</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@500;600&family=IBM+Plex+Sans+Condensed:wght@600;700&family=IBM+Plex+Sans:wght@400;500;600&family=Montserrat:wght@500;600&display=block" rel="stylesheet">
+<link rel="stylesheet" href="comun-voz.css">
+<!--
+  Reel 1080×1920, 31,4 s, voz del fundador (audio/voz-presupuesto-barato.m4a),
+  subtítulos de audio/voz-presupuesto-barato.palabras.json. Mismo formato que
+  reel-tratto-voz.html (base en comun-voz.css y comun-voz.js).
+  Memoria de contenido: c-20261006-c448fd.
+-->
+<style>
+.papel{width:480px;background:var(--papel);color:var(--tinta);border-radius:14px;padding:40px 40px;box-shadow:0 26px 60px rgba(0,0,0,.45);text-align:left}
+.raya{height:14px;background:#E4DFD3;border-radius:7px}
+.extra{display:flex;justify-content:space-between;align-items:center;font-family:'IBM Plex Sans Condensed';font-weight:700;font-size:40px;border-top:3px dashed #D6CFBF;padding-top:16px;margin-top:16px}
+.item{display:flex;align-items:center;gap:16px;font-family:'IBM Plex Sans Condensed';font-weight:700;font-size:30px;white-space:nowrap}
+</style></head><body><div id="lienzo"><div id="escenario">
+
+<!-- 1 · el más barato -->
+<div class="sc" id="s1">
+  <div class="c" id="recibo" style="opacity:0"><div class="papel">
+    <div class="mono" style="font-size:22px;color:var(--gris)">Presupuesto</div>
+    <div class="raya" style="margin:22px 0 14px"></div><div class="raya" style="width:70%;margin-bottom:14px"></div><div class="raya" style="width:85%"></div>
+    <div class="cond" style="font-size:92px;margin-top:26px">$ · · ·</div>
+  </div></div>
+  <div class="c" id="barato" style="opacity:0;margin-top:-260px;margin-left:200px"><span class="chip l" style="background:var(--noche);font-size:40px">El más barato</span></div>
+  <div class="c cond" id="doble" style="opacity:0;font-size:250px;color:var(--laton-cl);margin-top:210px;margin-left:250px;text-shadow:0 12px 0 rgba(0,0,0,.35)">×2</div>
+</div>
+
+<!-- 2 · pintor A vs pintor B, elegís A -->
+<div class="sc" id="s2">
+  <div class="c" id="ca" style="opacity:0"><div class="tarjeta" style="width:370px;text-align:center;padding:40px 20px">
+    <div class="mono" style="font-size:26px;color:var(--gris-2)">Pintor A</div>
+    <div class="cond" id="pa" style="font-size:84px;margin-top:14px;opacity:0">$120.000</div></div></div>
+  <div class="c" id="cb" style="opacity:0"><div class="tarjeta" style="width:370px;text-align:center;padding:40px 20px">
+    <div class="mono" style="font-size:26px;color:var(--gris-2)">Pintor B</div>
+    <div class="cond" id="pb" style="font-size:84px;margin-top:14px;opacity:0">$140.000</div></div></div>
+  <div class="c" id="tildeA" style="opacity:0"></div>
+  <div class="c" id="obvio" style="opacity:0;margin-top:260px;margin-left:-200px"><span class="sello" style="font-size:36px;background:rgba(12,38,32,.9)">Obvio</span></div>
+</div>
+
+<!-- 3 · a la semana aparecen los extras -->
+<div class="sc" id="s3">
+  <div class="c mono" id="semana" style="opacity:0;margin-top:-330px;font-size:34px;color:var(--laton-cl);white-space:nowrap">Una semana después</div>
+  <div class="c" id="reciboA" style="opacity:0;margin-top:40px"><div class="papel" style="width:620px">
+    <div class="mono" style="font-size:22px;color:var(--gris)">Pintor A</div>
+    <div class="extra" style="border-top:none;margin-top:10px;padding-top:0"><span>Mano de obra</span><span>$120.000</span></div>
+    <div class="extra" id="x1" style="opacity:0"><span>Pintura</span><span style="color:#C2502E">la ponés vos</span></div>
+    <div class="extra" id="x2" style="opacity:0"><span>Techo</span><span style="color:#C2502E">no incluido</span></div>
+  </div></div>
+</div>
+
+<!-- 4 · resultado -->
+<div class="sc" id="s4">
+  <svg class="c" width="700" height="640" viewBox="0 0 700 640" style="margin-top:-10px">
+    <line x1="60" y1="560" x2="640" y2="560" stroke="#94A19B" stroke-width="6"/>
+    <rect id="barA" x="130" y="560" width="170" height="0" rx="12" fill="#F08A6C"/>
+    <rect id="barB" x="400" y="560" width="170" height="0" rx="12" fill="#8FD9BC"/>
+    <text x="215" y="616" text-anchor="middle" font-family="IBM Plex Sans Condensed" font-weight="700" font-size="52" fill="#FCFBF8">A</text>
+    <text x="485" y="616" text-anchor="middle" font-family="IBM Plex Sans Condensed" font-weight="700" font-size="52" fill="#FCFBF8">B</text>
+    <text id="txtA" x="215" y="0" text-anchor="middle" font-family="IBM Plex Mono" font-weight="600" font-size="28" fill="#F08A6C" opacity="0">+ EXTRAS</text>
+    <text id="txtB" x="485" y="0" text-anchor="middle" font-family="IBM Plex Mono" font-weight="600" font-size="28" fill="#8FD9BC" opacity="0">$140.000</text>
+    <circle id="anilloB" cx="485" cy="400" r="120" fill="none" stroke="#F7CA55" stroke-width="10" opacity="0"/>
+  </svg>
+</div>
+
+<!-- 5 · preguntá qué incluye -->
+<div class="sc" id="s5">
+  <div class="c" id="lista" style="opacity:0"><div class="tarjeta" style="width:640px;border-color:var(--laton)">
+    <div class="cond" style="font-size:66px;margin-bottom:22px">¿Qué incluye?</div>
+    <div style="display:flex;flex-direction:column;gap:20px" id="items"></div>
+  </div></div>
+</div>
+
+<!-- 6 · en Tratto lo ves en cada presupuesto -->
+<div class="sc" id="s6">
+  <div class="c fila" id="cabecera" style="opacity:0;margin-top:-330px;gap:16px"><span id="mini-logo"></span><span class="mono" style="font-size:28px;color:var(--verde-luz)">Tus presupuestos</span></div>
+  <div class="c" style="display:flex;flex-direction:column;gap:22px;margin-top:40px" id="cots"></div>
+</div>
+
+<!-- 7 · guardalo -->
+<div class="sc" id="s7">
+  <svg class="c" id="marcador" width="300" height="380" viewBox="0 0 300 380" style="opacity:0;margin-top:-90px">
+    <path d="M40 20 H260 V360 L150 280 L40 360 Z" fill="#F7CA55" stroke="#0C2620" stroke-width="10" stroke-linejoin="round"/>
+  </svg>
+  <div class="c" id="guardado" style="opacity:0;margin-top:200px"><span class="sello" style="font-size:44px;background:rgba(12,38,32,.9)">Guardado</span></div>
+  <svg class="c" id="rodillo" width="260" height="260" viewBox="0 0 48 48" style="opacity:0;margin-top:-140px;margin-left:300px">
+    <rect x="6" y="6" width="30" height="14" rx="4" fill="#8FD9BC"/><path d="M36 13h6v12H22v8" fill="none" stroke="#F4F1EA" stroke-width="4"/><rect x="18" y="33" width="8" height="12" rx="2" fill="#F4F1EA"/>
+  </svg>
+</div>
+
+</div></div>
+<script>
+window.REEL = {
+  escenas: [['s1', -1, 2.75], ['s2', 2.75, 8.9], ['s3', 8.9, 13.2], ['s4', 13.2, 15.45], ['s5', 15.45, 18.25], ['s6', 18.25, 23.95], ['s7', 23.95, 26.2]],
+  golpes: [0.94, 2.28, 3.92, 5.78, 7.78, 10.42, 11.86, 13.34, 14.84, 17.36, 19.2, 22.06, 22.86, 24.18, 26.34],
+  sinSubs: [],
+  cierre: { entra: 26.2, logo: 26.34, a: ['Pedí gratis en', 27.32], b: ['trattoapp.com.ar', 28.22], sello: ['Sin vueltas', 28.9] },
+  animar,
+};
+function animar(t) {
+  // 1 · el más barato, ×2
+  const temb = t > 2.28 && t < 2.75 ? Math.sin(t * 80) * 8 * (1 - P(t, 2.28, 2.75)) : 0;
+  pop($('recibo'), t, 0.24, `${C} translateX(${temb}px) rotate(-3deg)`);
+  pop($('barato'), t, 0.94, `${C} rotate(6deg)`);
+  pop($('doble'), t, 2.28, `${C} rotate(${-12 + 6 * eo(P(t, 2.28, 2.7))}deg)`, 0.45);
+
+  // 2 · A contra B
+  const sel = eo(P(t, 7.78, 8.1));
+  pop($('ca'), t, 2.92, `${C} translate(-200px,-40px) scale(${1 + 0.12 * sel})`);
+  pop($('cb'), t, 4.9, `${C} translate(200px,-40px) scale(${1 - 0.1 * sel})`);
+  if (t > 7.78) $('cb').style.opacity = 1 - 0.55 * sel;
+  pop($('pa'), t, 3.92, '');
+  pop($('pb'), t, 5.78, '');
+  pop($('tildeA'), t, 7.78, `${C} translate(-60px,-170px)`);
+  pop($('obvio'), t, 8.26, `${C} rotate(-8deg)`);
+
+  // 3 · extras
+  set($('semana'), eo(P(t, 9.12, 9.4)), `${C} translateY(${(1 - eo(P(t, 9.12, 9.4))) * 20}px)`);
+  pop($('reciboA'), t, 9.0, `${C} rotate(-2deg)`);
+  [['x1', 10.42], ['x2', 11.86]].forEach(([id, a]) => {
+    set($(id), eo(P(t, a, a + 0.2)), `translateX(${(1 - eo(P(t, a, a + 0.3))) * 80}px)`);
+  });
+
+  // 4 · barras
+  const hA = 470 * eo(P(t, 13.34, 14.1)), hB = 330 * eo(P(t, 13.5, 14.0));
+  $('barA').setAttribute('y', 560 - hA); $('barA').setAttribute('height', hA);
+  $('barB').setAttribute('y', 560 - hB); $('barB').setAttribute('height', hB);
+  $('txtA').setAttribute('y', 540 - hA); $('txtA').setAttribute('opacity', P(t, 13.9, 14.1));
+  $('txtB').setAttribute('y', 540 - hB); $('txtB').setAttribute('opacity', P(t, 13.9, 14.1));
+  const ab = P(t, 14.84, 15.2);
+  $('anilloB').setAttribute('opacity', t >= 14.84 ? 1 - ab * 0.4 : 0);
+  $('anilloB').setAttribute('r', 120 + 30 * eo(ab));
+
+  // 5 · qué incluye
+  pop($('lista'), t, 15.6, C);
+  [...$('items').children].forEach((it, i) => pop(it, t, [16.58, 16.92, 17.14][i], ''));
+
+  // 6 · presupuestos en la app
+  pop($('cabecera'), t, 19.2, C);
+  [...$('cots').children].forEach((c, i) => {
+    const a = [19.78, 20.02, 20.12][i];
+    set(c, eo(P(t, a, a + 0.15)), `translateX(${(1 - eo(P(t, a, a + 0.35))) * 300}px)`);
+    c.querySelectorAll('.si').forEach((x) => pop(x, t, 22.06, ''));
+    c.querySelectorAll('.no').forEach((x) => pop(x, t, 22.86, ''));
+    const pulso = t > 23.14 + i * 0.08 ? 1 + 0.05 * Math.exp(-(t - 23.14 - i * 0.08) * 8) : 1;
+    c.firstElementChild.style.transform = `scale(${pulso})`;
+  });
+
+  // 7 · guardalo
+  pop($('marcador'), t, 24.18, `${C} rotate(-4deg)`);
+  pop($('guardado'), t, 24.66, `${C} rotate(-6deg)`);
+  pop($('rodillo'), t, 25.58, `${C} rotate(${12 * Math.sin(t * 6)}deg)`);
+}
+</script>
+<script src="comun-voz.js"></script>
+<script>
+$('tildeA').innerHTML = TILDE(120);
+$('mini-logo').innerHTML = LOGO(54, 'gm');
+$('items').innerHTML = ['Materiales', 'Preparación de paredes', 'Terminaciones'].map((n) =>
+  `<div class="item" style="font-size:44px;opacity:0"><svg width="54" height="54" viewBox="0 0 24 24"><circle cx="12" cy="12" r="11" fill="#2B7E62"/><path d="M7 12.5l3.2 3.2L17 9" fill="none" stroke="#FCFBF8" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg>${n}</div>`).join('');
+const OK = '<svg width="34" height="34" viewBox="0 0 24 24"><circle cx="12" cy="12" r="11" fill="#2B7E62"/><path d="M7 12.5l3.2 3.2L17 9" fill="none" stroke="#FCFBF8" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+const NO = '<svg width="34" height="34" viewBox="0 0 24 24"><circle cx="12" cy="12" r="11" fill="#C2502E"/><path d="M8 8l8 8M16 8l-8 8" stroke="#FCFBF8" stroke-width="2.6" stroke-linecap="round"/></svg>';
+$('cots').innerHTML = [['$128.000', [['si', 'Materiales'], ['no', 'Techo aparte']]], ['$145.000', [['si', 'Materiales'], ['si', 'Techo']]], ['$132.000', [['si', 'Techo'], ['no', 'Pintura aparte']]]]
+  .map(([p, its]) => `<div style="opacity:0"><div class="tarjeta" style="width:760px;padding:24px 30px;display:flex;justify-content:space-between;align-items:center">
+    <div><div class="mono" style="font-size:20px;color:var(--gris-2)">Presupuesto</div><div class="cond" style="font-size:60px">${p}</div></div>
+    <div style="display:flex;flex-direction:column;gap:10px">${its.map(([k, n]) => `<div class="item ${k}" style="opacity:0">${k === 'si' ? OK : NO}${n}</div>`).join('')}</div></div></div>`).join('');
+render(0);
+</script>
+</body></html>
