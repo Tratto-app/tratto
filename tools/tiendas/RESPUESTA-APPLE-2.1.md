@@ -17,7 +17,7 @@ Antes: actualizá el iPhone a la última versión de iOS (lo pide Apple), activ�
 1. **Arranque**: empezar en la pantalla de inicio del iPhone y tocar el ícono de Tratto.
 2. **Crear cuenta**: "Crear cuenta" con un mail de prueba nuevo (por ejemplo trattoapp1+revision@gmail.com). Completar y entrar.
 3. **Cerrar sesión** y entrar con la cuenta demo de cliente (trattoapp1+demo-cliente@gmail.com).
-4. **Precio de referencia** con foto (Fototeca o cámara) y después **Nuevo pedido** en el rubro **Techos e impermeabilización**, zona CABA o GBA, con presupuesto de 30.000 o más: en segundos queda conectado con los proveedores demo.
+4. **Precio de referencia** con foto (Fototeca o cámara) y después **Nuevo pedido** en **Techos e impermeabilización** (o Pintura o Limpieza): en unos 30 segundos queda conectado con los proveedores demo.
 5. **Abrir el pedido existente**: los dos presupuestos, el comparador y el chat con un proveedor.
 6. **Reportar y bloquear**: en el chat, "Ver ficha" → mostrar "Reportar" (abrir el formulario) y "Bloquear" (mostrar la confirmación y **cancelar**, para no romper la cuenta demo).
 7. **Calificar** un trabajo terminado y **Pagar**: abrir el checkout de Mercado Pago y volver sin pagar.
@@ -49,7 +49,7 @@ HOW TO REVIEW
 4. In a chat, "Ver ficha" gives "Reportar" and "Bloquear". Profiles, requests and conversations have "Reportar".
 5. "Calificar" rates a finished job.
 6. "Pagar" opens the Mercado Pago checkout to pay the provider for the service (no need to complete it).
-7. To see matching live: as the demo customer, create a request in the category "Techos e impermeabilización" in any Buenos Aires area zone (CABA or GBA). It is matched with the demo providers within seconds. Then log in with the demo provider account to see it and send a quote. Demo accounts only match demo providers, so real providers never receive test requests.
+7. To see matching live: as the demo customer, create a request in "Pintura", "Limpieza" or "Techos e impermeabilización" (any zone). It is matched with demo providers within about 30 seconds. Then log in with the demo provider account to see it and send a quote. Demo accounts only match demo providers, so real providers never receive test requests.
 8. Sign up: "Crear cuenta". Account deletion: "Cuenta" > "Borrar mi cuenta", type BORRAR to confirm; it deletes the user and their profile, requests, chats, photos and devices.
 
 PAYMENTS
@@ -94,7 +94,7 @@ HOW TO REVIEW
 4. In a chat, "Ver ficha" gives "Reportar" and "Bloquear". Profiles, requests and conversations have "Reportar".
 5. "Calificar" rates a finished job.
 6. "Pagar" opens the Mercado Pago checkout to pay the provider for the service (no need to complete it).
-7. To see matching live: as the demo customer, create a request in the category "Techos e impermeabilización" in any Buenos Aires area zone (CABA or GBA). It is matched with the demo providers within seconds. Then log in with the demo provider account to see it and send a quote. Demo accounts only match demo providers, so real providers never receive test requests.
+7. To see matching live: as the demo customer, create a request in "Pintura", "Limpieza" or "Techos e impermeabilización" (any zone). It is matched with demo providers within about 30 seconds. Then log in with the demo provider account to see it and send a quote. Demo accounts only match demo providers, so real providers never receive test requests.
 8. Sign up: "Crear cuenta". Account deletion: "Cuenta" > "Borrar mi cuenta", type BORRAR to confirm; it deletes the user and their profile, requests, chats, photos and devices.
 
 PAYMENTS
