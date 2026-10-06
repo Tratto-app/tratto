@@ -5,6 +5,7 @@ Con la misma identidad que la app: verde bosque, latón e IBM Plex.
 | Archivo | Uso | Tamaño |
 |---|---|---|
 | `01-foto-de-perfil.png` | Foto de perfil de Instagram, Facebook, TikTok y WhatsApp | 1080×1080 |
+| `01-foto-de-perfil-circular.png` | Foto de perfil para redes que recortan en círculo (TikTok, Instagram, WhatsApp): solo el símbolo, centrado. Sale de `foto-perfil.html`. | 1080×1080 |
 | `02-portada-facebook.png` | Portada de la página de Facebook | 1640×624 |
 | `03-post-presentacion.png` | Primer post: qué es Tratto | 1080×1350 |
 | `04-post-como-funciona.png` | Cómo funciona en 3 pasos | 1080×1350 |
