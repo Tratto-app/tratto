@@ -13,6 +13,12 @@
           "value": "default-src 'self'; script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://sdk.mercadopago.com https://*.mercadopago.com https://*.mlstatic.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com data:; img-src 'self' data: blob: https://qglsonbcsncgekzbfafk.supabase.co https://*.mlstatic.com https://*.mercadopago.com; connect-src 'self' https://qglsonbcsncgekzbfafk.supabase.co wss://qglsonbcsncgekzbfafk.supabase.co https://marketplace-servicios.app.n8n.cloud https://*.mercadopago.com https://*.mercadolibre.com https://*.mlstatic.com; frame-src https:; worker-src 'self'; manifest-src 'self'; object-src 'none'; base-uri 'none'; form-action 'self'; frame-ancestors 'none'; upgrade-insecure-requests"
         }
       ]
+    },
+    {
+      "source": "/revision/(.*)",
+      "headers": [
+        { "key": "X-Robots-Tag", "value": "noindex, nofollow" }
+      ]
     }
   ]
 }

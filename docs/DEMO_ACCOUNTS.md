@@ -1,6 +1,6 @@
 # Cuentas demo
 
-Tres cuentas permanentes en producción para los revisores de Google Play y
+Seis cuentas permanentes en producción para los revisores de Google Play y
 App Store y para filmar la app, sin mezclarse con usuarios reales.
 
 | Email | Rol | Nombre |
@@ -8,6 +8,9 @@ App Store y para filmar la app, sin mezclarse con usuarios reales.
 | `trattoapp1+demo-cliente@gmail.com` | cliente | Laura Fernández |
 | `trattoapp1+demo-techista@gmail.com` | proveedor | Martín Ríos (techista) |
 | `trattoapp1+demo-humedades@gmail.com` | proveedor | Sergio Medina (humedades) |
+| `trattoapp1+demo-pintura@gmail.com` | proveedor | Lucía Benítez (Pintura, CABA) |
+| `trattoapp1+demo-limpieza@gmail.com` | proveedor | Rosa Giménez (Limpieza, CABA) |
+| `trattoapp1+demo-techos@gmail.com` | proveedor | Diego Ferreyra (Techos, CABA) |
 
 Todas usan la misma contraseña. **No está en el repo**: la tiene el dueño del
 proyecto, y en la base solo se guarda su hash (`privado.config`, clave
@@ -33,9 +36,12 @@ Migración: `supabase/migrations/20260928120000_cuentas_demo.sql`.
   Si el cliente manda otro valor, se ignora.
 - Los triggers de matching (`matching_solicitudes`, `matching_proveedores`)
   tienen `WHEN (NOT new.demo)`: lo demo no llama a n8n.
-- En n8n, "Matching automatico + avisos" filtra `demo=eq.false`, tanto al
-  releer el registro ("Verificar origen") como al buscar candidatos
-  ("Preparar consulta").
+- **Los pedidos demo se conectan solos** con hasta 3 proveedores demo de su
+  rubro: tarea `matching-demo` cada 30 segundos (`privado.matching_demo_pendientes()`),
+  sin mails ni push. Hoy hay proveedores demo de Techos e impermeabilización,
+  Pintura y Limpieza; un pedido demo de otro rubro queda sin conexiones.
+- En n8n, "Matching automatico + avisos" busca demo con demo y real con real
+  (si alguna vez le llega un registro demo).
 - `pedidos_abiertos` muestra a cada proveedor solo los pedidos de su mismo
   tipo, demo o real (`privado.soy_demo()`).
 - La base descarta en silencio cualquier fila de `matches` o `interesados`
@@ -50,7 +56,8 @@ Migración: `supabase/migrations/20260928120000_cuentas_demo.sql`.
 Si un revisor borra la cuenta o cambia datos, o después de filmar:
 
 ```sql
-select privado.reponer_demo();
+select privado.reponer_demo();        -- cliente, techista y humedades
+select privado.reponer_demo_extra();  -- pintura, limpieza y techista de CABA (solo agrega lo que falte)
 ```
 
 Esto vuelve a crear las cuentas que falten y deja los datos como nuevos. Lo
