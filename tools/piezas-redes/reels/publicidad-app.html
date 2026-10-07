@@ -6,7 +6,7 @@
 // Publicidad general de la app (25 s, sin voz). Rubros variados, no solo hogar.
 const $ = (r, s) => r.querySelector(s), $$ = (r, s) => [...r.querySelectorAll(s)];
 const tel = (img, extra = '') => `<div class="escenario"><div class="tel" ${extra}><div class="isla"></div><div class="pantalla">${img}</div></div></div>`;
-window.PUBLI = { cierre: 20.6, escenas: [
+window.PUBLI = { cierre: 20.6, url: ['trattoapp.com.ar', 1.2], escenas: [
 { a: 0, b: 3.4, html: () => `
   <div class="abs centro t-xl" style="top:660px" id="a1">¿Necesitás</div>
   <div class="pila centro" style="position:absolute;top:830px;left:0;right:0;height:140px" id="a1p">
