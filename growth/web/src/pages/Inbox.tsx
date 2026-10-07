@@ -53,7 +53,7 @@ export default function Inbox() {
 
   return (
     <>
-      <PageHeader title="Inbox" desc="Todas las conversaciones en un lugar. Los canales sin credenciales se simulan (quedan marcados como 'Simulado'); las respuestas de canales sin API de lectura (como DMs de Instagram) se cargan a mano." />
+      <PageHeader title="Mensajes" desc="Todas las conversaciones en un lugar. Los canales sin credenciales se simulan (quedan marcados como 'Simulado'); las respuestas de canales sin API de lectura (como DMs de Instagram) se cargan a mano." />
       <div className="inbox">
         <div className="inbox-lista">
           <div style={{ padding: 10, borderBottom: '1px solid var(--borde)' }} className="grid">

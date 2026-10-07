@@ -13,7 +13,7 @@ export default function AnalyticsCampaigns() {
   const rows = [...(b.data || [])].filter((r) => r.prospects || r.installs || r.spend).sort((x, y) => y.activations - x.activations);
   return (
     <>
-      <PageHeader title="Campaigns · Analytics" desc={`Resultados por campaña en ${periodLabel(period)}. Los prospectos e instalaciones sin campaña aparecen como "Sin campaña".`} />
+      <PageHeader title="Campañas · Análisis" desc={`Resultados por campaña en ${periodLabel(period)}. Los prospectos e instalaciones sin campaña aparecen como "Sin campaña".`} />
       <ErrorBox error={b.error} onRetry={b.reload} />
       {!b.data ? (b.error ? null : <Loading />) : (
         <>

@@ -37,7 +37,7 @@ export default function Campaigns() {
 
   return (
     <>
-      <PageHeader title="Campaigns" desc="Cada campaña junta fuentes, un segmento, una automatización y una meta. Las métricas son desde que empezó."
+      <PageHeader title="Campañas" desc="Cada campaña junta fuentes, un segmento, una automatización y una meta. Las métricas son desde que empezó."
         actions={<button className="btn primario" onClick={() => setEdit('new')}>+ Campaña</button>} />
       <ErrorBox error={data.error} onRetry={data.reload} />
       {!data.data ? (data.error ? null : <Loading />) : !data.data.campaigns.length ? (
@@ -130,7 +130,7 @@ function Editor({ c, meta, onClose, onDone }: {
           <Field label="Meta"><select value={f.goal_metric} onChange={set('goal_metric')}>{Object.entries(GOALS).map(([k, v]) => <option key={k} value={k}>{v}</option>)}</select></Field>
           <Field label="Cantidad"><input type="number" min={1} value={f.goal_target} onChange={set('goal_target')} /></Field>
         </div>
-        <Field label="Presupuesto (ARS)" hint="El gasto real se carga en Sources"><input type="number" min={0} value={f.budget} onChange={set('budget')} /></Field>
+        <Field label="Presupuesto (ARS)" hint="El gasto real se carga en Fuentes"><input type="number" min={0} value={f.budget} onChange={set('budget')} /></Field>
         <div className="grid g2">
           <Field label="Inicio"><input type="date" value={f.start_date} onChange={set('start_date')} /></Field>
           <Field label="Fin"><input type="date" value={f.end_date} onChange={set('end_date')} /></Field>

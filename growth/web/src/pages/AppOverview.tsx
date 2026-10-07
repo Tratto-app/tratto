@@ -28,7 +28,7 @@ export default function AppOverview() {
   };
   return (
     <>
-      <PageHeader title="App Overview" desc="Todo lo que la IA y las métricas saben de la app sale de acá. La IA no usa información que no esté cargada en esta página o en la base de conocimiento."
+      <PageHeader title="La app" desc="Todo lo que la IA y las métricas saben de la app sale de acá. La IA no usa información que no esté cargada en esta página o en la base de conocimiento."
         actions={<button className="btn primario" onClick={guardar}>Guardar</button>} />
       <div className="grid g2">
         <Card title="La app">

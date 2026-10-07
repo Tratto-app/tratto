@@ -214,7 +214,7 @@ function LinksPersonales({ prospect, links, onDone }: { prospect: Prospect; link
   const { ws, toast } = useWs();
   return (
     <Card title="Links personales">
-      {!links.length ? <div className="muted">Creá un link en Tracking Links para poder mandarlo.</div> : (
+      {!links.length ? <div className="muted">Creá un link en Links con nombre para poder mandarlo.</div> : (
         <ul className="lista-simple">
           {links.map((l) => {
             const url = `${LINK_BASE}/${l.slug}?r=${prospect.ref}`;

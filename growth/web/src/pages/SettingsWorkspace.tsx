@@ -44,7 +44,7 @@ export default function SettingsWorkspace() {
 
   return (
     <>
-      <PageHeader title="Settings · Workspace" desc="Cada workspace es una app distinta, con sus propios datos. Nadie ve datos de un workspace del que no es miembro (lo garantiza la base con RLS)." />
+      <PageHeader title="Ajustes · Espacio de trabajo" desc="Cada workspace es una app distinta, con sus propios datos. Nadie ve datos de un workspace del que no es miembro (lo garantiza la base con RLS)." />
 
       <Card title="Lanzamiento" className={paused ? '' : 'mt'} actions={<Badge tone={paused ? 'laton' : 'verde'}>{paused ? 'En pausa' : 'Enviando'}</Badge>}>
         <p className="texto-2" style={{ marginTop: 0 }}>

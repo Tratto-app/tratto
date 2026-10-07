@@ -31,9 +31,9 @@ export default function Links() {
   const links = (data.data?.links || []).filter((l) => l.archived === archivados);
   return (
     <>
-      <PageHeader title="Tracking Links" desc="Un link por campaña o canal. Detecta el teléfono, manda a la tienda que corresponde y registra cada click. Agregando ?r=<código> queda atado a un prospecto."
+      <PageHeader title="Links con nombre" desc="Un link por campaña o canal. Detecta el teléfono, manda a la tienda que corresponde y registra cada click. Agregando ?r=<código> queda atado a un prospecto."
         actions={<><label className="check"><input type="checkbox" checked={archivados} onChange={(e) => setArchivados(e.target.checked)} /> Ver archivados</label><button className="btn primario" onClick={() => setEdit('new')}>+ Link</button></>} />
-      {faltan.length > 0 && <div className="aviso" style={{ marginBottom: 14 }}>Falta cargar la URL de {faltan.join(', ')} en App → Store Links. Mientras tanto, esos clicks van a la web (o a la otra tienda).</div>}
+      {faltan.length > 0 && <div className="aviso" style={{ marginBottom: 14 }}>Falta cargar la URL de {faltan.join(', ')} en La app → Tiendas. Mientras tanto, esos clicks van a la web (o a la otra tienda).</div>}
       <ErrorBox error={data.error} onRetry={data.reload} />
       {!data.data ? (data.error ? null : <Loading />) : !links.length ? (
         <Card><Empty title={archivados ? 'No hay links archivados' : 'Sin links'} action={!archivados && <button className="btn primario" onClick={() => setEdit('new')}>Crear link</button>} /></Card>

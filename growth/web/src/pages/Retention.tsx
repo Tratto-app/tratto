@@ -23,7 +23,7 @@ export default function Retention() {
 
   return (
     <>
-      <PageHeader title="Retention" desc="¿Vuelven? D1 = usó la app el día siguiente al registro; D7 = entre el día 7 y el 13; D30 = entre el 30 y el 59. Solo cuentan las cohortes que ya tuvieron tiempo de llegar a ese día." />
+      <PageHeader title="Retención" desc="¿Vuelven? D1 = usó la app el día siguiente al registro; D7 = entre el día 7 y el 13; D30 = entre el 30 y el 59. Solo cuentan las cohortes que ya tuvieron tiempo de llegar a ese día." />
       <ErrorBox error={r.error} onRetry={r.reload} />
       {!r.data ? (r.error ? null : <Loading />) : (
         <div className="grid g6">

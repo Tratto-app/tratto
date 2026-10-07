@@ -31,7 +31,7 @@ export default function Knowledge() {
   };
   return (
     <>
-      <PageHeader title="Knowledge Base" desc="Lo que la IA puede decir sobre la app. Si una respuesta no está acá (ni en App Overview), la IA tiene que decir que lo averigua, no inventarla." />
+      <PageHeader title="Base de conocimiento" desc="Lo que la IA puede decir sobre la app. Si una respuesta no está acá (ni en App Overview), la IA tiene que decir que lo averigua, no inventarla." />
       <ErrorBox error={data.error} onRetry={data.reload} />
       {!data.data ? (data.error ? null : <Loading />) : (
         <div className="grid g2">

@@ -28,7 +28,7 @@ export default function AnalyticsFunnel() {
 
   return (
     <>
-      <PageHeader title="Funnel" desc={`Prospectos que entraron en: ${periodLabel(period)}. Cada etapa cuenta a los de esa cohorte que llegaron a ella (o más lejos). "Antes" es el período anterior de igual duración.`} />
+      <PageHeader title="Embudo" desc={`Prospectos que entraron en: ${periodLabel(period)}. Cada etapa cuenta a los de esa cohorte que llegaron a ella (o más lejos). "Antes" es el período anterior de igual duración.`} />
       <ErrorBox error={f.error} onRetry={f.reload} />
       <div className="grid g3">
         <Card title="Prospecto → usuario activo" className="span2">{f.data ? <Funnel rows={f.data} /> : !f.error && <Loading />}</Card>

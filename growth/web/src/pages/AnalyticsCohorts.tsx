@@ -30,7 +30,7 @@ export default function AnalyticsCohorts() {
   const c = useAsync(() => rpc<CohortRow[]>('growth_cohorts', { ws: ws!.id, p_from: period.from, p_to: period.to, grain }), [ws!.id, period.from, period.to, grain]);
   return (
     <>
-      <PageHeader title="Cohorts" desc="Usuarios agrupados por la semana (o el mes) en que se registraron, y qué parte volvió a usar la app." actions={<Segmented value={grain} onChange={setGrain} options={[{ key: 'week', label: 'Semanas' }, { key: 'month', label: 'Meses' }]} />} />
+      <PageHeader title="Cohortes" desc="Usuarios agrupados por la semana (o el mes) en que se registraron, y qué parte volvió a usar la app." actions={<Segmented value={grain} onChange={setGrain} options={[{ key: 'week', label: 'Semanas' }, { key: 'month', label: 'Meses' }]} />} />
       <ErrorBox error={c.error} onRetry={c.reload} />
       <Card>{c.data ? <CohortTable rows={c.data} /> : !c.error && <Loading />}</Card>
     </>

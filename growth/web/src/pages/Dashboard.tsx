@@ -37,7 +37,7 @@ export default function Dashboard() {
         actions={<><Link className="btn" to="/prospects?new=1">+ Prospecto</Link><Link className="btn primario" to="/campaigns">Campañas</Link></>} />
       {app?.sending_paused !== false && (
         <div className="aviso" style={{ marginBottom: 14 }}>
-          <b>Envíos en pausa.</b> El sistema recibe registros y prepara las automatizaciones, pero no envía ningún mensaje todavía. Activalos en Settings → Workspace cuando la app esté publicada en las tiendas.
+          <b>Envíos en pausa.</b> El sistema recibe registros y prepara las automatizaciones, pero no envía ningún mensaje todavía. Activalos en Ajustes → Espacio de trabajo cuando la app esté publicada en las tiendas.
         </div>
       )}
       <ErrorBox error={k.error} onRetry={k.reload} />
@@ -58,7 +58,7 @@ export default function Dashboard() {
           <Kpi label="Prospecto → activación" value={rate(c.cohort_activated, c.prospects)} prev={rate(p?.cohort_activated, p?.prospects)} format={pct}
             help="De los prospectos que entraron en el período, qué % ya se activó." />
           <Kpi label="CAC por activación" value={ratio(c.spend, c.activations)} prev={ratio(p?.spend, p?.activations)} format={ars}
-            help="Gasto cargado en Sources / activaciones del período. Si no cargaste gasto, es $0." />
+            help="Gasto cargado en Fuentes / activaciones del período. Si no cargaste gasto, es $0." />
           <Kpi label="Ingresos" value={c.revenue} prev={p?.revenue} format={ars} help="Eventos 'purchase' enviados por la app." />
         </div>
       )}

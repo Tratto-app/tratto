@@ -73,7 +73,7 @@ export default function Agent() {
 
   return (
     <>
-      <PageHeader title="AI Agent" desc="El agente usa solo lo que cargaste en App Settings, la base de conocimiento y las objeciones. Si algo no está, no lo inventa."
+      <PageHeader title="Asistente IA" desc="El agente usa solo lo que cargaste en App Settings, la base de conocimiento y las objeciones. Si algo no está, no lo inventa."
         actions={<button className="btn" disabled={!!lote} onClick={analizarLote}>{lote ? `Analizando ${lote.n}/${lote.total}…` : 'Analizar 20 prospectos nuevos'}</button>} />
       <div className="grid g2">
         <Card title="Pedile algo al agente">
@@ -100,7 +100,7 @@ export default function Agent() {
               {pid && <Link className="btn chico" to={`/inbox?p=${pid}${res.output.message || res.output.suggested_reply ? `&draft=${encodeURIComponent(String(res.output.message || res.output.suggested_reply))}` : ''}`}>Abrir en Inbox</Link>}
             </div>
           )}
-          {res?.provider === 'mock' && <div className="aviso pequeño" style={{ marginTop: 12 }}>No hay <code>OPENAI_API_KEY</code> en las Edge Functions: las respuestas salen de reglas fijas. Configurala en Settings → AI para usar el modelo.</div>}
+          {res?.provider === 'mock' && <div className="aviso pequeño" style={{ marginTop: 12 }}>No hay <code>OPENAI_API_KEY</code> en las Edge Functions: las respuestas salen de reglas fijas. Configurala en Ajustes → IA para usar el modelo.</div>}
         </Card>
       </div>
       <Card title="Últimas ejecuciones de la IA" className="mt">
