@@ -2326,6 +2326,38 @@ const SUPABASE_URL  = 'https://qglsonbcsncgekzbfafk.supabase.co';
 const SUPABASE_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFnbHNvbmJjc25jZ2VremJmYWZrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODU3MDU2NzksImV4cCI6MjEwMTI4MTY3OX0.bdToh3Rt3XQaFOvHZmO0t1bHIlSKPv-YOVLHe3ljXiA';
 const CLAVE = 'mkt_sesion';
 
+/* ══════════════════ DE DÓNDE VINO LA VISITA ══════════════════
+   Para saber qué canal de marketing trae a cada usuario (TikTok, Instagram,
+   la calculadora, un mail del CRM...). Se guarda la última visita que llegó
+   con campaña (utm_*, el gid de un link con seguimiento o un sitio externo de
+   referencia) durante 30 días y viaja en el alta de la cuenta
+   (user_metadata.origen); de ahí la toma el CRM. No identifica a nadie: es lo
+   mismo que ya ve Vercel Analytics, y del sitio de referencia solo queda el
+   dominio. */
+const ORIGEN_CLAVE = 'tratto_origen';
+(function guardarOrigen(){
+  try{
+    const q = new URLSearchParams(location.search), o = {};
+    ['utm_source','utm_medium','utm_campaign','utm_content','gid'].forEach(k => {
+      const v = q.get(k); if(v) o[k] = v.slice(0, 80);
+    });
+    let host = '';
+    try{ host = document.referrer ? new URL(document.referrer).hostname : ''; }catch(e){}
+    if(host && !host.endsWith('trattoapp.com.ar')) o.referrer = host.slice(0, 80);
+    if(!Object.keys(o).length) return;   // visita directa: no pisa la anterior
+    o.landing = location.pathname.slice(0, 60);
+    o.fecha = new Date().toISOString();
+    localStorage.setItem(ORIGEN_CLAVE, JSON.stringify(o));
+  }catch(e){}
+})();
+function origenVisita(){
+  try{
+    const o = JSON.parse(localStorage.getItem(ORIGEN_CLAVE) || 'null');
+    if(!o || !(Date.now() - Date.parse(o.fecha) < 30 * 864e5)) return null;
+    return o;
+  }catch(e){ return null; }
+}
+
 /* Los rubros son generales a propósito (46; antes eran 121). Casi nadie se
    registra como "impermeabilizador" o "instalador de cámaras": se registra como
    techista o como "arreglos generales". Un rubro entra si hay gente que lo
@@ -2841,7 +2873,9 @@ $('a-enviar').addEventListener('click', async () => {
                   condicion_fiscal: rolElegido === 'proveedor' ? $('a-fiscal').value : null,
                   transfer_permiso:true, transfer_permiso_fecha:new Date().toISOString(),
                   legales_aceptados:true, legales_fecha:new Date().toISOString(),
-                  legales_version:VERSION_LEGALES, legales_rol:rolElegido }}
+                  legales_version:VERSION_LEGALES, legales_rol:rolElegido,
+                  /* Canal de marketing por el que llegó (ver origenVisita) */
+                  origen: origenVisita() }}
         : {email, password:pass})
     });
     const j = await res.json();

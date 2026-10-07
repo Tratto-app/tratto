@@ -2,7 +2,7 @@
 
 Panel interno para **conseguir usuarios para la app**: prospectos → contacto → interés → link a la tienda → instalación → registro → activación → retención. Todo lo que muestra se calcula desde la base; nada se escribe a mano.
 
-Está separado de la app de Tratto: vive en `growth/`, no se sirve desde `trattoapp.com.ar` (está en `.vercelignore`) y usa sus propias tablas `growth_*`. **Hoy está instalado solo en staging** (`hbnwrlflgpupeqnqajzo`). Producción no se tocó.
+El código vive en `growth/` y usa sus propias tablas `growth_*`. Está instalado en **staging** (`hbnwrlflgpupeqnqajzo`, con la demo) y, desde el 7/10/2026, en **producción** (`qglsonbcsncgekzbfafk`) como el **CRM de Tratto**: el panel compilado se sirve en `https://www.trattoapp.com.ar/crm/` (carpeta `crm/` en la raíz del repo). Cómo capta, qué guarda y cómo se opera: `docs/CAPTACION.md`.
 
 ```
 growth/
@@ -32,6 +32,7 @@ Comandos:
 | `npm run typecheck` | TypeScript estricto |
 | `npm test` | Tests unitarios (Vitest): motor de reglas, redirecciones, lectura de respuestas, períodos, CSV |
 | `npm run build` | Build de producción en `dist/` |
+| `npm run build:crm` | Build del CRM en `../../crm` (base `/crm/`). Con `VITE_SUPABASE_URL`, `VITE_SUPABASE_ANON_KEY` de producción y `VITE_SOLO_MIEMBROS=1` |
 | `npm run e2e` | Smoke test en navegador (Playwright) contra un proyecto real; necesita `GROWTH_DEMO_EMAIL`, `GROWTH_DEMO_PASSWORD` y el build hecho con las variables `VITE_*` |
 | `python3 growth/tests/e2e/flujo_completo.py` | Prueba de punta a punta de la API (prospecto → activación); ver variables en el archivo |
 
@@ -42,6 +43,8 @@ Comandos:
 3. Desplegar las funciones: `supabase functions deploy growth-go growth-event --no-verify-jwt` y `supabase functions deploy growth-ai growth-send` y `supabase functions deploy growth-automations --no-verify-jwt` (esta última valida su propio secreto o la sesión).
 4. Cargar los secrets que quieras usar (`supabase/functions/.env.example`).
 5. Opcional: `seed/demo.sql` (requiere el usuario `demo.growth@example.com`) y `seed/tratto.sql`.
+
+En producción además se aplicaron `supabase/migrations/20261007150000_crm_produccion.sql` y `20261007160000_crm_automatizaciones.sql` (las de la raíz del repo). Ojo con el MCP de Supabase: `apply_migration` se cuelga con `drop`, con `update` sueltos o con textos largos; la salida es crear funciones y llamarlas con `execute_sql`.
 
 ## Probar el recorrido Prospecto → Instalación → Registro → Activación
 
@@ -57,4 +60,4 @@ Comandos:
 
 ## Qué es real y qué es simulado
 
-Ver `docs/INTEGRACIONES.md`. En corto: base, métricas, RLS, links trackeados, ingesta de eventos, automatizaciones, cron y panel funcionan de verdad (probados en staging). Los envíos por email/WhatsApp/SMS/Instagram están implementados contra las APIs oficiales pero **sin probar en vivo** (no hay credenciales cargadas), así que hoy todo envío queda como *Simulado*. La IA, sin `OPENAI_API_KEY`, responde por reglas y lo dice. Las métricas de las consolas de Google Play y App Store no están conectadas y no se inventan.
+Ver `docs/INTEGRACIONES.md`. En corto: base, métricas, RLS, links trackeados, automatizaciones, cron, panel y **email por Brevo** funcionan de verdad en producción (mail de prueba recibido en Gmail, en la bandeja de entrada). WhatsApp/SMS/Instagram están implementados contra las APIs oficiales pero **sin probar en vivo** (no hay credenciales), así que esos envíos quedan como *Simulado*. La IA, sin `OPENAI_API_KEY`, responde por reglas y lo dice. Las métricas de las consolas de Google Play y App Store no están conectadas y no se inventan.

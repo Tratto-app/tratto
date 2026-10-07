@@ -246,7 +246,11 @@
   var MES = MESES[ahora.getUTCMonth()] + ' ' + ahora.getUTCFullYear();
 
   var qs = new URLSearchParams(location.search);
-  var ORIGEN = (qs.get('utm_source') || qs.get('origen') || 'directo').slice(0, 60);
+  // Sin utm, el sitio del que vino (solo el dominio) para que el CRM sepa el canal
+  var REF = '';
+  try { REF = document.referrer ? new URL(document.referrer).hostname : ''; } catch (e) {}
+  if (REF.slice(-16) === 'trattoapp.com.ar') REF = '';
+  var ORIGEN = (qs.get('utm_source') || qs.get('origen') || (REF ? 'ref:' + REF : 'directo')).slice(0, 60);
   var CAMPANA = (qs.get('utm_campaign') || '').slice(0, 80) || null;
 
   var $ = function(id){ return document.getElementById(id); };

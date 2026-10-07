@@ -4,14 +4,14 @@ import { Badge, Card, Empty, ErrorBox, Field, Loading, Modal, PageHeader, Pager,
 import { fn } from '../lib/api';
 import { hace, nombre, num } from '../lib/format';
 import { useAsync, useDebounced } from '../lib/hooks';
-import { CHANNELS, CONSENT, INTEREST, STATUS, STATUS_ORDER } from '../lib/labels';
+import { CHANNELS, CONSENT, ENTRADA, INTEREST, STATUS, STATUS_ORDER } from '../lib/labels';
 import { supabase } from '../lib/supabase';
 import type { Campaign, Prospect, Source, Workflow } from '../lib/types';
 import { useWs } from '../lib/workspace';
 import { parseCsv } from '../lib/csv';
 
 const PAGE = 50;
-const COLS = 'id,ref,kind,rubro,zona,first_name,last_name,company,email,phone,instagram,city,status,score,ai_score,interest,consent,do_not_contact,tags,source_id,campaign_id,contact_count,last_contact_at,last_reply_at,next_action,created_at';
+const COLS = 'id,ref,kind,entrada,utm_campaign,rubro,zona,first_name,last_name,company,email,phone,instagram,city,status,score,ai_score,interest,consent,do_not_contact,tags,source_id,campaign_id,contact_count,last_contact_at,last_reply_at,next_action,created_at';
 
 export default function Prospects() {
   const { ws, toast } = useWs();
@@ -22,6 +22,7 @@ export default function Prospects() {
   const [status, setStatus] = useState(sp.get('status') || '');
   const [kind, setKind] = useState(sp.get('kind') || '');
   const [source, setSource] = useState('');
+  const [entrada, setEntrada] = useState(sp.get('entrada') || '');
   const [campaign, setCampaign] = useState('');
   const [minScore, setMinScore] = useState(sp.get('min') || '');
   const [segment, setSegment] = useState(sp.get('seg') || '');
@@ -42,7 +43,7 @@ export default function Prospects() {
     return { sources: (s.data || []) as Source[], campaigns: (c.data || []) as Campaign[], workflows: (w.data || []) as Workflow[], segments: g.data || [] };
   }, [ws!.id]);
 
-  useEffect(() => { setPage(0); setSel(new Set()); }, [dq, status, kind, source, campaign, minScore, segment, order]);
+  useEffect(() => { setPage(0); setSel(new Set()); }, [dq, status, kind, source, entrada, campaign, minScore, segment, order]);
 
   const list = useAsync(async () => {
     let ids: string[] | null = null;
@@ -60,6 +61,8 @@ export default function Prospects() {
     if (status) qy = qy.eq('status', status);
     if (kind) qy = qy.eq('kind', kind);
     if (source) qy = qy.eq('source_id', source);
+    // Puerta de entrada: alguien puede haber entrado por más de una (queda en las etiquetas)
+    if (entrada) qy = qy.contains('tags', [entrada]);
     if (campaign) qy = campaign === 'none' ? qy.is('campaign_id', null) : qy.eq('campaign_id', campaign);
     if (minScore) qy = qy.gte('score', Number(minScore));
     if (ids) qy = qy.in('id', ids.slice(0, 1000));
@@ -67,7 +70,7 @@ export default function Prospects() {
     const { data, error, count } = await qy;
     if (error) throw new Error(error.message);
     return { rows: (data || []) as unknown as Prospect[], total: count || 0 };
-  }, [ws!.id, dq, status, kind, source, campaign, minScore, segment, order, page]);
+  }, [ws!.id, dq, status, kind, source, entrada, campaign, minScore, segment, order, page]);
 
   const srcName = useMemo(() => Object.fromEntries((meta.data?.sources || []).map((s) => [s.id, s.name])), [meta.data]);
   const campName = useMemo(() => Object.fromEntries((meta.data?.campaigns || []).map((s) => [s.id, s.name])), [meta.data]);
@@ -109,6 +112,10 @@ export default function Prospects() {
           <select style={{ width: 150 }} value={source} onChange={(e) => setSource(e.target.value)} aria-label="Fuente">
             <option value="">Todas las fuentes</option>
             {meta.data?.sources.map((s) => <option key={s.id} value={s.id}>{s.name}</option>)}
+          </select>
+          <select style={{ width: 170 }} value={entrada} onChange={(e) => setEntrada(e.target.value)} aria-label="Entrada">
+            <option value="">Todas las entradas</option>
+            {Object.entries(ENTRADA).map(([k, v]) => <option key={k} value={k}>{v}</option>)}
           </select>
           <select style={{ width: 180 }} value={campaign} onChange={(e) => setCampaign(e.target.value)} aria-label="Campaña">
             <option value="">Todas las campañas</option><option value="none">Sin campaña</option>
@@ -159,7 +166,8 @@ export default function Prospects() {
                     <td><StatusBadge status={r.status} /></td>
                     <td><Score value={r.score} /></td>
                     <td className="texto-2">{INTEREST[r.interest]}</td>
-                    <td className="texto-2">{(r.source_id && srcName[r.source_id]) || '—'}</td>
+                    <td className="texto-2">{(r.source_id && srcName[r.source_id]) || '—'}
+                      {r.entrada && <div className="muted pequeño">{ENTRADA[r.entrada] || r.entrada}{r.utm_campaign ? ` · ${r.utm_campaign}` : ''}</div>}</td>
                     <td className="texto-2">{(r.campaign_id && campName[r.campaign_id]) || '—'}</td>
                     <td className="num">{r.contact_count}</td>
                     <td className="muted nowrap">{hace(r.last_reply_at)}</td>

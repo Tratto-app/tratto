@@ -4,7 +4,7 @@ import { Badge, Card, ErrorBox, Field, Loading, Modal, MsgStatus, PageHeader, Sc
 import { fn, rpc } from '../lib/api';
 import { fecha, hace, nombre } from '../lib/format';
 import { useAsync } from '../lib/hooks';
-import { CHANNELS, CONSENT, INTEREST, STATUS, STATUS_ORDER } from '../lib/labels';
+import { CHANNELS, CONSENT, ENTRADA, INTEREST, STATUS, STATUS_ORDER } from '../lib/labels';
 import { LINK_BASE, supabase } from '../lib/supabase';
 import type { AppUser, Message, Prospect, TimelineItem, TrackingLink } from '../lib/types';
 import { useWs } from '../lib/workspace';
@@ -84,6 +84,21 @@ export default function ProspectDetail() {
           <div className="sep" />
           <div className="pequeño texto-2"><b>Próxima acción:</b> {x.next_action || '—'}</div>
           {x.ai_summary && <div className="pequeño texto-2" style={{ marginTop: 6 }}><b>IA:</b> {x.ai_summary} {x.ai_score !== null && <>· score IA <span className="mono">{x.ai_score}</span></>}</div>}
+        </Card>
+
+        <Card title="Cómo llegó">
+          <ul className="lista-simple pequeño">
+            <li><span className="muted" style={{ width: 110 }}>Medio</span>{x.source?.name || '—'}</li>
+            <li><span className="muted" style={{ width: 110 }}>Entró por</span>{x.entrada ? (ENTRADA[x.entrada] || x.entrada) : '—'}
+              {x.tags.filter((t) => ENTRADA[t] && t !== x.entrada).map((t) => <span key={t} className="muted"> · después {ENTRADA[t].toLowerCase()}</span>)}</li>
+            <li><span className="muted" style={{ width: 110 }}>Campaña</span>{[x.utm_campaign, x.utm_content].filter(Boolean).join(' · ') || x.campaign?.name || '—'}</li>
+            <li><span className="muted" style={{ width: 110 }}>Vino desde</span>{x.referrer || x.utm_source || '—'}</li>
+            <li><span className="muted" style={{ width: 110 }}>Permiso</span>{x.consent === 'opt_in' ? (x.consent_source || 'Sí') : CONSENT[x.consent]}</li>
+            {typeof x.datos?.calc_servicio === 'string' && (
+              <li><span className="muted" style={{ width: 110 }}>Calculadora</span>
+                {String(x.datos.calc_servicio)} · {String(x.datos.calc_precio_txt || '')} ({String(x.datos.calc_veredicto || '').replace('_', ' ')})</li>
+            )}
+          </ul>
         </Card>
 
         <Card title="Recorrido">

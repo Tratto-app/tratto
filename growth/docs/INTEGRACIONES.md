@@ -4,11 +4,12 @@ Regla del proyecto: ninguna credencial en el código ni en el navegador. Todo va
 
 | Integración | Estado | Probado | Detalle |
 |---|---|---|---|
-| Links trackeados (`growth-go`) | Real | Sí, en staging | Redirige por dispositivo, pasa UTM/`gid` a Play y `ct` a App Store |
+| Links trackeados (`growth-go`) | Real | Sí, en producción | Redirige por dispositivo, pasa UTM/`gid` a Play y `ct` a App Store |
 | Eventos de la app (`growth-event`) | Real | Sí, en staging | Falta que **la app de Tratto** los mande (no se tocó la app sin autorización) |
-| Automatizaciones + cron | Real | Sí, en staging (también disparado por `pg_cron`) | |
+| Automatizaciones + cron | Real | Sí, en producción (`pg_cron` cada 5 min) | |
+| Captura desde la app y la calculadora | Real | Sí, en producción | Triggers de la base (no hace falta `growth-event`); guardan el origen. Ver `CAPTACION.md` |
 | IA (OpenAI) | Implementado | Solo el modo por reglas | Staging no tiene `OPENAI_API_KEY` |
-| Email (Brevo) | Implementado | No en vivo | API transaccional oficial |
+| Email (Brevo) | Real | Sí, en producción | SMTP relay con la clave SMTP (`xsmtpsib…`) guardada en `config_app`; con una clave de API (`xkeysib…`) usa la API transaccional. Asuntos con tildes codificados a mano (`encodeSubject`) porque denomailer los rompía (error 554) |
 | WhatsApp Cloud API | Implementado | No en vivo | Necesita número aprobado por Meta; fuera de 24 h solo plantillas aprobadas; requiere opt-in |
 | SMS (Twilio) | Implementado | No en vivo | Requiere opt-in |
 | Instagram Messaging | Parcial | No en vivo | La API solo permite responder a quien escribió primero (IGSID). El primer DM es manual y la respuesta se carga en el Inbox |
@@ -17,7 +18,9 @@ Regla del proyecto: ninguna credencial en el código ni en el navegador. Todo va
 | Google Ads | No implementado | — | El gasto se carga a mano en Sources |
 | Install Referrer (atribución en Android) | Lado app | — | La app debe leer `gid` del referrer y mandarlo como `click_token` |
 
-## Conectar la app de Tratto (pendiente de autorización)
+## Conectar la app de Tratto
+
+**Hecho en producción (7/10/2026)** con triggers en la base: registro, permiso de publicidad, inicio de sesión y primer pedido/servicio llegan solos al CRM. Lo de abajo sigue sirviendo para el Install Referrer de Android y para otros proyectos.
 
 Mínimo necesario, sin cambiar la lógica actual de la app:
 1. En Settings → Integrations del workspace **Tratto**, generar la clave de ingesta.
@@ -28,4 +31,4 @@ Mínimo necesario, sin cambiar la lógica actual de la app:
    - `install` / `click_token` desde la app Android leyendo el Install Referrer.
 3. Cargar las URLs de Google Play / App Store cuando estén publicadas.
 
-Esto implica tocar producción o la app, por eso **no se hizo**: queda para cuando lo autorices.
+El Install Referrer (punto 2, último ítem) todavía no está: la app Android no lee el `gid`.

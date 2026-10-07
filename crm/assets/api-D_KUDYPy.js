@@ -1,0 +1,1 @@
+import{B as e}from"./index-nTndYoEY.js";async function t(t,n){let{data:r,error:i}=await e.rpc(t,n);if(i)throw Error(i.message);return r}async function n(t,n){let{data:r,error:i}=await e.functions.invoke(t,{body:n});if(i){let e=i.message,t=i.context;if(t&&typeof t.json==`function`)try{e=(await t.json()).error||e}catch{}throw Error(e)}return r}export{t as n,n as t};

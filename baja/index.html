@@ -1,0 +1,90 @@
+<!doctype html>
+<html lang="es-AR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Dejar de recibir mails · Tratto</title>
+<meta name="robots" content="noindex, nofollow">
+<meta name="theme-color" content="#0C2620">
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Condensed:wght@700&family=IBM+Plex+Sans:wght@400;600&display=swap" rel="stylesheet">
+<!-- Baja de los mails del CRM (Growth OS). El link de cada mail trae el
+     espacio (ws) y el código de la persona (r), nunca su mail. La baja la hace
+     la función growth-baja; esta página solo pide confirmación, así un
+     antivirus que abre los links del mail no da de baja a nadie. -->
+<style>
+  :root{
+    --noche:#0C2620; --claro:#FCFBF8; --tinta:#0E1815; --gris:#68766F;
+    --verde:#1E5D49; --laton:#C9A227; --linea:#E0DCD0; --alerta:#A63A1C;
+    --f-disp:"IBM Plex Sans Condensed","Arial Narrow",system-ui,sans-serif;
+    --f-texto:"IBM Plex Sans",system-ui,-apple-system,"Segoe UI",sans-serif;
+    color-scheme:light;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;min-height:100vh;background:var(--noche);color:var(--tinta);font:16px/1.55 var(--f-texto);
+       display:grid;place-items:center;padding:24px 16px}
+  .tarjeta{width:100%;max-width:440px;background:var(--claro);border-radius:20px;padding:28px 24px 26px;box-shadow:0 24px 60px rgba(0,0,0,.35)}
+  .marca{display:flex;align-items:center;gap:10px;margin-bottom:18px;text-decoration:none}
+  .marca img{width:30px;height:30px;border-radius:8px}
+  .marca b{font:700 1.15rem/1 var(--f-disp);color:var(--tinta)}
+  .hilo{height:2px;border-radius:2px;background:linear-gradient(90deg,var(--laton),#2B7E62 45%,transparent);margin:0 0 20px}
+  h1{font:700 1.7rem/1.1 var(--f-disp);margin:0 0 10px}
+  p{margin:0 0 18px;color:#3A4A43}
+  button{width:100%;border:0;border-radius:12px;padding:15px 18px;font:600 1rem/1 var(--f-texto);cursor:pointer;
+         background:var(--verde);color:var(--claro)}
+  button[disabled]{opacity:.6;cursor:default}
+  .chica{font-size:.86rem;color:var(--gris);margin:14px 0 0}
+  .error{color:var(--alerta)}
+  [hidden]{display:none!important}
+</style>
+</head>
+<body>
+<main class="tarjeta">
+  <a class="marca" href="/"><img src="/icon-192.png" alt=""><b>Tratto</b></a>
+  <div class="hilo"></div>
+
+  <section id="pedir">
+    <h1>¿Dejar de recibir mails de Tratto?</h1>
+    <p>Vamos a dejar de mandarte novedades y recordatorios. Los avisos de tus pedidos dentro de la app siguen llegando igual.</p>
+    <button id="confirmar" type="button">Sí, no quiero recibir más mails</button>
+    <p class="chica" id="estado" role="status"></p>
+  </section>
+
+  <section id="listo" hidden>
+    <h1>Listo, te diste de baja</h1>
+    <p>No vas a recibir más mails nuestros. Si cambiás de idea, podés volver a activarlos desde la app, en tu cuenta.</p>
+    <a href="/">Ir a Tratto</a>
+  </section>
+
+  <section id="invalido" hidden>
+    <h1>Este link no es válido</h1>
+    <p>Puede que se haya cortado al copiarlo. Escribinos a trattoapp1@gmail.com y te damos de baja a mano.</p>
+  </section>
+</main>
+<script>
+(function () {
+  var FN = 'https://qglsonbcsncgekzbfafk.supabase.co/functions/v1/growth-baja';
+  var q = new URLSearchParams(location.search);
+  var ws = (q.get('ws') || '').toLowerCase(), r = (q.get('r') || '').toLowerCase();
+  var $ = function (id) { return document.getElementById(id); };
+  if (!/^[a-z0-9-]{2,40}$/.test(ws) || !/^[a-z0-9]{6,16}$/.test(r)) {
+    $('pedir').hidden = true; $('invalido').hidden = false; return;
+  }
+  $('confirmar').addEventListener('click', function () {
+    var b = this; b.disabled = true; $('estado').textContent = 'Procesando…'; $('estado').className = 'chica';
+    // Pedido "simple" (sin cabeceras propias): no necesita preflight
+    fetch(FN + '?ws=' + encodeURIComponent(ws) + '&r=' + encodeURIComponent(r), { method: 'POST' })
+      .then(function (res) { if (!res.ok) throw new Error(res.status); })
+      .then(function () { $('pedir').hidden = true; $('listo').hidden = false; })
+      .catch(function () {
+        b.disabled = false;
+        $('estado').textContent = 'No pudimos procesar la baja. Probá de nuevo o escribinos a trattoapp1@gmail.com.';
+        $('estado').className = 'chica error';
+      });
+  });
+})();
+</script>
+</body>
+</html>

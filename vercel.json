@@ -15,10 +15,13 @@
       ]
     },
     {
-      "source": "/(revision|redes)/(.*)",
+      "source": "/(revision|redes|crm|baja)/(.*)",
       "headers": [
         { "key": "X-Robots-Tag", "value": "noindex, nofollow" }
       ]
     }
+  ],
+  "rewrites": [
+    { "source": "/crm/:ruta*", "destination": "/crm/index.html" }
   ]
 }

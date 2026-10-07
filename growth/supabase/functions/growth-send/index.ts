@@ -32,7 +32,7 @@ Deno.serve(async (req) => {
   if (who instanceof Response) return who;
 
   const db = admin();
-  const { data: p } = await db.from('growth_prospects').select('id,ref,first_name,last_name,company,city,status,campaign_id')
+  const { data: p } = await db.from('growth_prospects').select('id,ref,first_name,last_name,company,city,zona,rubro,status,campaign_id,datos')
     .eq('id', pid).eq('workspace_id', ws).maybeSingle();
   if (!p) return json(req, { error: 'Prospecto inexistente' }, 404);
   const body = typeof b.body === 'string' ? b.body.slice(0, 4000) : '';
@@ -85,7 +85,7 @@ Deno.serve(async (req) => {
     if (!link || link.archived) return json(req, { error: 'Link inexistente o archivado' }, 404);
     const url = personalLink(link.slug, p.ref);
     const tpl = body.trim() || 'Hola {{first_name}}! Te dejo el link para descargar la app: {{link}}';
-    const text = renderTemplate(tpl.includes('{{link}}') ? tpl : `${tpl} {{link}}`, { ...p, link: url });
+    const text = renderTemplate(tpl.includes('{{link}}') ? tpl : `${tpl} {{link}}`, { ...(p.datos || {}), ...p, link: url });
     const r = await sendToProspect(db, ws, pid, { channel, body: text, template_key: (b.template_key as string) || 'link', campaign_id: link.campaign_id });
     if (r.result.status !== 'blocked' && r.result.status !== 'failed') await db.rpc('growth_advance', { pid, st: 'link_sent' });
     return json(req, { ok: r.result.status !== 'failed' && r.result.status !== 'blocked', link: url, ...r });
@@ -93,9 +93,10 @@ Deno.serve(async (req) => {
 
   if (action === 'send') {
     if (!body.trim()) return json(req, { error: 'El mensaje está vacío' }, 400);
-    const text = renderTemplate(body, p);
+    const vars = { ...(p.datos || {}), ...p };
+    const text = renderTemplate(body, vars);
     const r = await sendToProspect(db, ws, pid, {
-      channel, body: text, subject: typeof b.subject === 'string' ? b.subject.slice(0, 200) : undefined,
+      channel, body: text, subject: typeof b.subject === 'string' ? renderTemplate(b.subject.slice(0, 200), vars) : undefined,
       template_key: typeof b.template_key === 'string' ? b.template_key.slice(0, 60) : null,
       ai_generated: b.ai_generated === true, ai_run_id: UUID.test(String(b.ai_run_id || '')) ? String(b.ai_run_id) : null,
     });

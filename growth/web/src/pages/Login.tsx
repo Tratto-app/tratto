@@ -25,7 +25,9 @@ export default function Login() {
         <label className="campo">Contraseña<input type="password" autoComplete="current-password" required value={password} onChange={(e) => setPassword(e.target.value)} /></label>
         {error && <div className="error" role="alert">{error}</div>}
         <button className="btn primario" disabled={cargando}>{cargando ? 'Entrando…' : 'Entrar'}</button>
-        <p className="muted pequeño" style={{ margin: 0 }}>Acceso solo para el equipo. Las cuentas se crean desde Supabase Auth.</p>
+        <p className="muted pequeño" style={{ margin: 0 }}>{import.meta.env.VITE_SOLO_MIEMBROS === '1'
+          ? 'Entrá con tu cuenta de Tratto (la misma de la app). Solo ven datos las cuentas del equipo.'
+          : 'Acceso solo para el equipo. Las cuentas se crean desde Supabase Auth.'}</p>
       </form>
     </div>
   );
