@@ -20,8 +20,9 @@ def apify(nombre, actor, cuerpo, x, tope):
          **({"credentials": {"httpHeaderAuth": APIFY_CRED}} if APIFY_CRED else {})})
 
 BUSQUEDAS = r"""
-// Plan gratis de Apify (USD 5/mes): 2 hashtags y 2 búsquedas por día, 100
-// comentarios por red y un tope de gasto en cada llamada (~USD 0,15 por día).
+// Plan gratis de Apify (USD 5/mes) rindiendo como uno pago: herramientas más
+// baratas para buscar posts, 4 hashtags y 4 búsquedas por día, ~150 comentarios
+// por red y un tope de gasto en cada llamada (~USD 0,15 por día).
 // Qué buscar hoy: rota por día entre muchos rubros (Tratto no es solo oficios
 // del hogar). Instagram por hashtag, TikTok por búsqueda. Sin gas, electricidad
 // ni salud: son matriculados y Tratto no los acepta.
@@ -38,22 +39,38 @@ const TT = ['cuanto cobra un pintor argentina','presupuesto reforma departamento
   'catering para eventos precio'];
 const dia = Math.floor(Date.now() / 86400000);
 const tomar = (lista, n) => Array.from({ length: n }, (_, i) => lista[(dia * n + i) % lista.length]);
-return [{ json: { hashtags: tomar(IG, 2), busquedas: tomar(TT, 2) } }];
+return [{ json: { hashtags: tomar(IG, 4), busquedas: tomar(TT, 4) } }];
 """
 
 ELEGIR_POSTS = r"""
-// Los posts con más comentarios: ahí está la gente que pregunta.
+// Elige los posts donde más rinde cada comentario que se paga: los que hablan
+// de precio o de pedir un servicio, y con una cantidad de comentarios normal
+// (los virales se llenan de chistes y emojis). Lee varios nombres de campo
+// porque cada herramienta de Apify los llama distinto.
 const red = '%RED%';
 const posts = $input.all().map(i => i.json).filter(p => p && !p.error);
-const url = p => red === 'ig' ? (p.url || (p.shortCode ? `https://www.instagram.com/p/${p.shortCode}/` : null)) : (p.webVideoUrl || p.url);
-const coms = p => Number(red === 'ig' ? p.commentsCount : p.commentCount) || 0;
-const duenio = p => red === 'ig' ? p.ownerUsername : (p.authorMeta && p.authorMeta.name);
-const elegidos = posts.filter(p => url(p) && coms(p) >= 3).sort((a, b) => coms(b) - coms(a)).slice(0, 6);
+const norm = s => String(s || '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+const codigo = p => p.shortCode || p.shortcode || p.code;
+const url = p => red === 'ig'
+  ? (p.url || p.postUrl || p.link || (codigo(p) ? `https://www.instagram.com/p/${codigo(p)}/` : null))
+  : (p.webVideoUrl || p.url || p.postUrl || p.link || p.videoUrl);
+const coms = p => Number(p.commentsCount ?? p.commentCount ?? p.comments_count ?? (p.stats && (p.stats.commentCount ?? p.stats.comments)) ?? (typeof p.comments === 'number' ? p.comments : 0)) || 0;
+const texto = p => norm((p.caption && (p.caption.text || p.caption)) || p.description || p.title || p.text || p.desc || '');
+const duenio = p => (p.owner && p.owner.username) || p.ownerUsername || (p.user && (p.user.username || p.user.uniqueId)) ||
+  (p.channel && (p.channel.username || p.channel.uniqueId)) || (p.author && (p.author.uniqueId || p.author.username)) || (p.authorMeta && p.authorMeta.name);
+const CLAVES = ['precio', 'cuanto', 'presupuesto', 'cobra', 'sale', 'servicio', 'turno', 'consulta', 'zona', 'caba', 'argentina', 'buenos aires'];
+const valor = p => {
+  const c = coms(p);
+  if (c < 3) return -1;
+  const enRango = c <= 400 ? Math.log(c + 1) : Math.log(400) - 1;   // los virales rinden menos
+  return enRango + 2 * CLAVES.filter(k => texto(p).includes(k)).length;
+};
+const elegidos = posts.filter(p => url(p) && valor(p) >= 0).sort((a, b) => valor(b) - valor(a)).slice(0, 10);
 return [{ json: { urls: elegidos.map(url), duenios: elegidos.map(duenio).filter(Boolean) } }];
 """
 
 ELEGIR = r"""
-// Elige 25 cuentas por red entre la gente que comentó. Puntúa la intención de
+// Elige 50 cuentas por red entre la gente que comentó. Puntúa la intención de
 // pedir un servicio (pregunta precio, busca, dice la zona), que hable como en
 // Argentina y que el comentario diga algo. Saca spam, links, las cuentas
 // dueñas de los posts, las nuestras y las ya sugeridas en los últimos 60 días.
@@ -97,7 +114,7 @@ function elegir(red, nodo, nodoPosts) {
     const previo = porUsuario.get(u);
     if (!previo || puntaje > previo.puntaje) porUsuario.set(u, { red, usuario, comentario: String(texto).slice(0, 220), post_url: post, puntaje });
   }
-  return [...porUsuario.values()].sort((a, b) => b.puntaje - a.puntaje).slice(0, 25);
+  return [...porUsuario.values()].sort((a, b) => b.puntaje - a.puntaje).slice(0, 50);
 }
 
 const ig = elegir('instagram', 'IG: comentarios', 'IG: elegir reels');
@@ -106,7 +123,7 @@ return [{ json: { filas: [...ig, ...tt], ig, tt } }];
 """
 
 MAIL = r"""
-const { ig, tt } = $('Elegir 25 por red').first().json;
+const { ig, tt } = $('Elegir 50 por red').first().json;
 const b = $('Busquedas del dia').first().json;
 const esc = s => String(s || '').replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
 const link = (red, u) => red === 'instagram' ? `https://www.instagram.com/${encodeURIComponent(u)}/` : `https://www.tiktok.com/@${encodeURIComponent(u)}`;
@@ -139,18 +156,18 @@ def armar(apify_cred=None):
         nodo("Todos los dias 8:30", "n8n-nodes-base.scheduleTrigger", 1.2,
              {"rule": {"interval": [{"field": "cronExpression", "expression": "30 8 * * *"}]}}, 0),
         code("Busquedas del dia", BUSQUEDAS, 220),
-        apify("IG: reels por hashtag", "apify~instagram-hashtag-scraper",
-              "={{ JSON.stringify({ hashtags: $json.hashtags, resultsType: 'reels', resultsLimit: 6 }) }}", 440, 0.04),
+        apify("IG: reels por hashtag", "apidojo~instagram-hashtag-scraper",
+              "={{ JSON.stringify({ startUrls: $json.hashtags.map(h => 'https://www.instagram.com/explore/tags/' + h + '/'), getReels: true, getPosts: true, maxItems: 48 }) }}", 440, 0.025),
         code("IG: elegir reels", ELEGIR_POSTS.replace('%RED%', 'ig'), 660),
         apify("IG: comentarios", "apidojo~instagram-comments-scraper",
-              "={{ JSON.stringify({ startUrls: $json.urls, maxItems: 100 }) }}", 880, 0.06),
-        apify("TT: videos por busqueda", "clockworks~tiktok-scraper",
-              "={{ JSON.stringify({ searchQueries: $('Busquedas del dia').first().json.busquedas, searchSection: '/video', resultsPerPage: 4, shouldDownloadVideos: false, shouldDownloadCovers: false, shouldDownloadAvatars: false }) }}", 1100, 0.04),
+              "={{ JSON.stringify({ startUrls: $json.urls, maxItems: 130 }) }}", 880, 0.07),
+        apify("TT: videos por busqueda", "xmolodtsov~tiktok-search-scraper",
+              "={{ JSON.stringify({ keywords: $('Busquedas del dia').first().json.busquedas, maxItems: 40, maxItemsPerKeyword: 10, location: 'AR' }) }}", 1100, 0.015),
         code("TT: elegir videos", ELEGIR_POSTS.replace('%RED%', 'tt'), 1320),
         apify("TT: comentarios", "apidojo~tiktok-comments-scraper",
-              "={{ JSON.stringify({ startUrls: $json.urls, maxItems: 100, includeReplies: false }) }}", 1540, 0.04),
+              "={{ JSON.stringify({ startUrls: $json.urls, maxItems: 160, includeReplies: false }) }}", 1540, 0.05),
         supa("Ya sugeridos", "GET", f"{SB}/rest/v1/radar_redes?select=red,usuario&limit=50000", 1760),
-        code("Elegir 25 por red", ELEGIR, 1980),
+        code("Elegir 50 por red", ELEGIR, 1980),
         supa("Guardar sugeridos", "POST", f"{SB}/rest/v1/radar_redes", 2200,
              cuerpo="={{ JSON.stringify($json.filas.map(f => ({ red: f.red, usuario: f.usuario, comentario: f.comentario, post_url: f.post_url, puntaje: f.puntaje }))) }}",
              prefer="resolution=ignore-duplicates,return=minimal"),
@@ -166,5 +183,5 @@ def armar(apify_cred=None):
     C = {}
     for a, b in zip(N, N[1:]):
         C[a["name"]] = {"main": [[{"node": b["name"], "type": "main", "index": 0}]]}
-    return {"name": "RADAR - 25 cuentas por red para seguir a mano", "nodes": N, "connections": C,
+    return {"name": "RADAR - 50 cuentas por red para seguir a mano", "nodes": N, "connections": C,
             "settings": {"executionOrder": "v1", "timezone": "America/Argentina/Buenos_Aires", "errorWorkflow": "LcYeloX0BIWbs3vN"}}
