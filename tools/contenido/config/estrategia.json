@@ -60,8 +60,8 @@
       "fuente": "Metricool, mejor horario para publicar, consultado el 2026-10-06 con la cuenta recién conectada (todavía sin historial propio: refleja el comportamiento general de TikTok). Volver a consultar cuando haya publicaciones."
     },
     "instagram": {
-      "mejores": "Todavía sin datos propios: Instagram se conectó a Metricool el 2026-10-06. Consultar getBestTimeToPostByNetwork cuando haya publicaciones.",
-      "fuente": ""
+      "mejores": "Todos los días 10 h (el pico); lunes a viernes también 11-12 h y 18 h; sábado y domingo 10 h y, el domingo, 18-19 h (hora de Argentina). Lo más bajo: de 21 h a 7 h.",
+      "fuente": "Metricool, mejor horario para publicar en Instagram, consultado el 2026-10-07 para la semana 8-14/10 (la cuenta @trattoapp_ tiene 2 reels publicados: refleja el comportamiento general de Instagram, no datos propios). Volver a consultar cuando haya historial."
     }
   }
 }
