@@ -155,7 +155,7 @@
         -128
       ],
       "parameters": {
-        "jsCode": "// Chequea que quien califica sea el cliente de ese trabajo, y arma el texto\nconst ev    = $('Llega una calificacion').first().json.body || {};\nconst quien = $('Verificar quien pide').first().json;\n\nif (!quien || !quien.id) {\n  return [{ json: { ok:false, motivo:'sesion' } }];\n}\n\n// n8n parte las listas en items: los juntamos de nuevo\nfunction juntar(nodo) {\n  try {\n    const items = $(nodo).all().map(i => i.json);\n    return items.flat().filter(x => x && typeof x === 'object');\n  } catch (e) { return []; }\n}\n\nconst m = juntar('Traer el match')[0];\nif (!m || !m.solicitudes || !m.proveedores) {\n  return [{ json: { ok:false, motivo:'match' } }];\n}\n\n// solo el cliente dueño del pedido puede calificar\nif (m.solicitudes.user_id !== quien.id) {\n  return [{ json: { ok:false, motivo:'permiso' } }];\n}\n\nconst msgs = juntar('Traer la conversacion');\nif (msgs.length < 2) {\n  return [{ json: { ok:false, motivo:'corta' } }];\n}\n\n// medimos el tiempo de respuesta del proveedor, que es dato duro\nlet sumas = 0, veces = 0, ultimoCliente = null;\nmsgs.forEach(x => {\n  if (x.remitente_tipo === 'cliente') ultimoCliente = new Date(x.created_at);\n  else if (ultimoCliente) {\n    sumas += (new Date(x.created_at) - ultimoCliente) / 60000;\n    veces++; ultimoCliente = null;\n  }\n});\nconst minutos = veces ? Math.round(sumas / veces) : null;\n\nconst charla = msgs.map(x => {\n  const quienEs = x.remitente_tipo === 'cliente' ? 'CLIENTE' : 'PROVEEDOR';\n  if (x.tipo === 'presupuesto') return `${quienEs} [envió un presupuesto formal]`;\n  return `${quienEs}: ${String(x.contenido || '').slice(0, 400)}`;\n}).join('\\n').slice(0, 6000);\n\nreturn [{ json: {\n  ok: true,\n  charla,\n  minutos,\n  matchId: ev.matchId,\n  puntaje: Math.min(5, Math.max(1, Number(ev.puntaje) || 5)),\n  comentario: String(ev.comentario || '').slice(0, 400),\n  proveedorUserId: m.proveedores.user_id,\n  clienteUserId: quien.id\n} }];"
+        "jsCode": "// Chequea que quien califica sea el cliente de ese trabajo, y arma el texto\nconst ev    = $('Llega una calificacion').first().json.body || {};\nconst quien = $('Verificar quien pide').first().json;\n\nif (!quien || !quien.id) {\n  return [{ json: { ok:false, motivo:'sesion' } }];\n}\n\n// n8n parte las listas en items: los juntamos de nuevo\nfunction juntar(nodo) {\n  try {\n    const items = $(nodo).all().map(i => i.json);\n    return items.flat().filter(x => x && typeof x === 'object');\n  } catch (e) { return []; }\n}\n\nconst m = juntar('Traer el match')[0];\nif (!m || !m.solicitudes || !m.proveedores) {\n  return [{ json: { ok:false, motivo:'match' } }];\n}\n\n// solo el cliente dueño del pedido puede calificar\nif (m.solicitudes.user_id !== quien.id) {\n  return [{ json: { ok:false, motivo:'permiso' } }];\n}\n\nconst msgs = juntar('Traer la conversacion');\n// Alcanza con dos mensajes o con un presupuesto aceptado: la app ofrece\n// calificar apenas se acepta, y ahí la charla puede ser solo el presupuesto.\nconst aceptado = msgs.some(x => x.tipo === 'presupuesto' && x.estado_presupuesto === 'aceptado');\nif (msgs.length < 2 && !aceptado) {\n  return [{ json: { ok:false, motivo:'corta' } }];\n}\n\n// medimos el tiempo de respuesta del proveedor, que es dato duro\nlet sumas = 0, veces = 0, ultimoCliente = null;\nmsgs.forEach(x => {\n  if (x.remitente_tipo === 'cliente') ultimoCliente = new Date(x.created_at);\n  else if (ultimoCliente) {\n    sumas += (new Date(x.created_at) - ultimoCliente) / 60000;\n    veces++; ultimoCliente = null;\n  }\n});\nconst minutos = veces ? Math.round(sumas / veces) : null;\n\nconst charla = msgs.map(x => {\n  const quienEs = x.remitente_tipo === 'cliente' ? 'CLIENTE' : 'PROVEEDOR';\n  if (x.tipo === 'presupuesto') return `${quienEs} [envió un presupuesto formal]`;\n  return `${quienEs}: ${String(x.contenido || '').slice(0, 400)}`;\n}).join('\\n').slice(0, 6000);\n\nreturn [{ json: {\n  ok: true,\n  charla,\n  minutos,\n  matchId: ev.matchId,\n  puntaje: Math.min(5, Math.max(1, Number(ev.puntaje) || 5)),\n  comentario: String(ev.comentario || '').slice(0, 400),\n  proveedorUserId: m.proveedores.user_id,\n  clienteUserId: quien.id\n} }];"
       }
     },
     {
@@ -261,6 +261,54 @@
         "responseBody": "={{ JSON.stringify($('Preparar resultado').first().json) }}",
         "options": {}
       }
+    },
+    {
+      "id": "a1f0c9e2-5b7d-4c11-9d1e-7f0a2b3c4d51",
+      "name": "Se puede calificar?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [
+        1728,
+        -320
+      ],
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose"
+          },
+          "conditions": [
+            {
+              "id": "se-puede",
+              "leftValue": "={{ $json.ok }}",
+              "rightValue": true,
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      }
+    },
+    {
+      "id": "b2e1d0f3-6c8e-4d22-8e2f-8a1b3c4d5e62",
+      "name": "Devolver el motivo",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [
+        1936,
+        -320
+      ],
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ JSON.stringify($json) }}",
+        "options": {}
+      }
     }
   ],
   "connections": {
@@ -323,7 +371,7 @@
       "main": [
         [
           {
-            "node": "Analizar la charla",
+            "node": "Se puede calificar?",
             "type": "main",
             "index": 0
           }
@@ -357,6 +405,24 @@
         [
           {
             "node": "Devolver a la app",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Se puede calificar?": {
+      "main": [
+        [
+          {
+            "node": "Analizar la charla",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Devolver el motivo",
             "type": "main",
             "index": 0
           }
