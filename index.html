@@ -2871,6 +2871,7 @@ $('a-enviar').addEventListener('click', async () => {
     modo = rolElegido;
     $('a-pass').value='';
     entrarApp();
+    setTimeout(() => sincronizarAvisos(true), 900);
   }catch(e){ console.error(e); avisar('a-aviso','No se pudo conectar. Revisá tu conexión.','mal'); }
   finally{
     b.disabled=false; b.classList.remove('cargando');
@@ -2950,7 +2951,7 @@ async function confirmarCodigo(){
     /* Recién creó la cuenta: es el momento de ofrecerle los avisos, no un
        rincón de Ajustes al que no va a entrar. Va con retraso para que la
        app termine de pintarse y no le aparezca encima de la pantalla vacía. */
-    setTimeout(ofrecerAvisos, 900);
+    setTimeout(() => sincronizarAvisos(true), 900);
   }catch(e){ console.error(e); avisar('a-aviso','No se pudo conectar. Revisá tu conexión.','mal'); }
   finally{
     confirmando = false;
@@ -2991,6 +2992,9 @@ $('a-otro-email').addEventListener('click', () => {
 });
 
 $('salir').addEventListener('click', async () => {
+  /* Que los avisos de esta cuenta no le sigan llegando a este teléfono cuando
+     entre otra persona. Con tope de tiempo: salir no puede quedar colgado. */
+  try{ await Promise.race([desactivarPush(), new Promise(r => setTimeout(r, 3000))]); }catch(e){}
   try{ await fetch(SUPABASE_URL+'/auth/v1/logout',{method:'POST',headers:cab()}); }catch(e){}
   store.borrar(); sesion=null; pararLatido();
   $('a-email').value=''; $('a-pass').value='';
@@ -5052,11 +5056,15 @@ async function permisoPush(){
   }catch(e){ return 'default'; }
 }
 
+/* Los oyentes se sacan al terminar: ahora esto corre cada vez que alguien
+   entra, y si quedaran colgados se irían acumulando. */
 function tokenDeApple(){
-  return new Promise((ok, mal) => {
-    const corte = setTimeout(() => mal(new Error('sin_token')), 15000);
-    PN.addListener('registration', t => { clearTimeout(corte); ok(t.value); });
-    PN.addListener('registrationError', e => { clearTimeout(corte); mal(new Error(e.error || 'registro')); });
+  return new Promise(async (ok, mal) => {
+    const manejos = [];
+    const fin = (f, v) => { clearTimeout(corte); manejos.forEach(h => { try{ h.remove(); }catch(e){} }); f(v); };
+    const corte = setTimeout(() => fin(mal, new Error('sin_token')), 15000);
+    manejos.push(await PN.addListener('registration', t => fin(ok, t.value)));
+    manejos.push(await PN.addListener('registrationError', e => fin(mal, new Error(e.error || 'registro'))));
     PN.register();
   });
 }
@@ -5202,6 +5210,24 @@ async function ofrecerAvisos(){
   if(!PUSH_SOPORTADO) return;                    // iPhone sin instalar: no hay nada que pedir
   if(await permisoPush() !== 'default') return;  // ya contestó alguna vez
   $('telon-avisos').classList.add('abierto');
+}
+
+/* Cada vez que alguien entra (cuenta nueva, inicio de sesión o al abrir la app
+   con la sesión guardada). Si este teléfono ya dio permiso, el aparato queda a
+   nombre de quien entró, sin preguntar nada: el cartel del sistema no vuelve a
+   salir. Si nunca contestó, se ofrece la pantalla de avisos, pero solo al entrar
+   (ofrecer), no cada vez que abre la app. Antes solo se ofrecía al confirmar una
+   cuenta nueva: en un teléfono que ya había dado permiso, la cuenta nueva quedaba
+   sin avisos, y al iniciar sesión en un teléfono nuevo nunca se preguntaba. */
+async function sincronizarAvisos(ofrecer){
+  if(!PUSH_SOPORTADO || !sesion) return;
+  const permiso = await permisoPush();
+  if(permiso === 'granted'){
+    try{ await activarPush(); }catch(e){ console.error(e); }
+    pintarPush();
+  }else if(permiso === 'default' && ofrecer){
+    ofrecerAvisos();
+  }
 }
 
 function cerrarOfertaAvisos(){
@@ -5989,6 +6015,7 @@ function bajarTelon(){
     if(!r.ok){ store.borrar(); ir('auth','entra'); bajarTelon(); return; }
     sesion = {access_token:s.access_token, user: await r.json()};
     entrarApp();
+    sincronizarAvisos(false);
   }catch(e){ console.error(e); ir('auth','entra'); }
   finally{ bajarTelon(); }
 })();
