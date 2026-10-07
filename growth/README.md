@@ -2,7 +2,7 @@
 
 Panel interno para **conseguir usuarios para la app**: prospectos → contacto → interés → link a la tienda → instalación → registro → activación → retención. Todo lo que muestra se calcula desde la base; nada se escribe a mano.
 
-El código vive en `growth/` y usa sus propias tablas `growth_*`. Está instalado en **staging** (`hbnwrlflgpupeqnqajzo`, con la demo) y, desde el 7/10/2026, en **producción** (`qglsonbcsncgekzbfafk`) como el **CRM de Tratto**: el panel compilado se sirve en `https://www.trattoapp.com.ar/crm/` (carpeta `crm/` en la raíz del repo). Cómo capta, qué guarda y cómo se opera: `docs/CAPTACION.md`.
+El código vive en `growth/` y usa sus propias tablas `growth_*`. Está instalado en **staging** (`hbnwrlflgpupeqnqajzo`, con la demo) y, desde el 7/10/2026, en **producción** (`qglsonbcsncgekzbfafk`) como el **CRM de Tratto**: el panel compilado se sirve en `https://www.trattoapp.com.ar/crm/` (carpeta `crm/` en la raíz del repo). Cómo capta, qué guarda y cómo se opera: `docs/CAPTACION.md`. El equipo de marketing con Claude Code (CMO + 5 departamentos) que trabaja sobre este CRM: `docs/EQUIPO-MARKETING.md`.
 
 ```
 growth/

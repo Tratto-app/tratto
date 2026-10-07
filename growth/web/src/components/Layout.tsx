@@ -34,6 +34,7 @@ const ICON = {
   gear: I('M12 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6zM19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68 1.65 1.65 0 0 0 10 3.17V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z'),
   bell: I('M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9M13.73 21a2 2 0 0 1-3.46 0'),
   menu: I('M3 12h18M3 6h18M3 18h18'),
+  team: I('M12 3a3 3 0 1 0 0 6 3 3 0 0 0 0-6zM12 9v4M5 13h14M5 13v3M12 13v3M19 13v3M5 21a2 2 0 1 0 0-4 2 2 0 0 0 0 4zM12 21a2 2 0 1 0 0-4 2 2 0 0 0 0 4zM19 21a2 2 0 1 0 0-4 2 2 0 0 0 0 4z'),
 };
 
 
@@ -134,7 +135,7 @@ export default function Layout() {
               <input type="date" aria-label="Hasta" style={{ width: 'auto' }} value={custom.to || ''} onChange={(e) => setPeriod('custom', { ...custom, to: e.target.value })} />
             </>
           )}
-          <span className="muted pequeño nowrap" title="Período aplicado a todas las métricas">{periodLabel(period)}</span>
+          <span className="muted pequeño nowrap rango" title="Período aplicado a todas las métricas">{periodLabel(period)}</span>
           <Notificaciones />
         </header>
         <main className="contenido">
