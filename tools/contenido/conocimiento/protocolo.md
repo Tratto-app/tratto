@@ -62,6 +62,15 @@ Todo monto que aparezca en una pieza sale de la tabla `precios_referencia` del t
 
 Español rioplatense con voseo, como habla el público. Concreto: números (de la tabla de referencia), objetos, situaciones. Cada recomendación con el texto nuevo listo para usar, no consejos sueltos.
 
+## 8.1. Estilo de los videos
+
+Para cualquier video, reel o publicidad **nueva**, el estilo por defecto es el
+de "presentación de producto" que eligió el fundador el 2026-10-07: fondo
+claro con color en movimiento, títulos que entran con desenfoque, palabras que
+se reemplazan, lista con íconos, pantallas reales en 3D, cierre oscuro con el
+logo y música propia, sin voz. Se hace con la skill `video-publicidad`. Solo se
+usa otro estilo (por ejemplo, la serie con voz en off) si la persona lo pide.
+
 ## 9. Conectores (si están en la sesión)
 
 **Metricool** (marca `7270470`, zona horaria America/Buenos_Aires). Tiene conectados **TikTok** (@trattoapp, cuenta de empresa) e **Instagram** (@trattoapp_, desde el 2026-10-06).
