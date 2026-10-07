@@ -193,9 +193,11 @@ async function advance(db: SupabaseClient, run: Run, cache: Map<string, Step[]>,
           body = String(res.output.message || '');
         }
         if (link && !body.includes('{{link}}') && !body.includes(link)) body += ' {{link}}';
-        const text = renderTemplate(body, { ...p, link, contact_phone: contactPhone });
+        // Variables: datos guardados (por ejemplo, el resultado de la calculadora) + la ficha
+        const vars = { ...((p.datos as Record<string, unknown>) || {}), ...p, link, contact_phone: contactPhone };
+        const text = renderTemplate(body, vars);
         const r = await sendToProspect(db, run.workspace_id, p.id, {
-          channel, body: text, subject: cfg.subject ? String(cfg.subject) : undefined,
+          channel, body: text, subject: cfg.subject ? renderTemplate(String(cfg.subject), vars) : undefined,
           template_key: cfg.template_key ? String(cfg.template_key) : `wf:${run.workflow_id.slice(0, 8)}:${pos}`,
           ai_generated: !!aiRun, ai_run_id: aiRun, workflow_id: run.workflow_id, campaign_id: campaign,
         });

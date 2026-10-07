@@ -17,6 +17,9 @@ export interface Prospect {
   contacted_at: string | null; replied_at: string | null; interested_at: string | null; link_sent_at: string | null; clicked_at: string | null;
   installed_at: string | null; registered_at: string | null; activated_at: string | null; app_user_id: string | null; notes: string | null;
   created_at: string; updated_at: string;
+  // Origen (CRM de Tratto): por qué puerta entró y de qué campaña vino
+  entrada?: string | null; utm_source?: string | null; utm_medium?: string | null; utm_campaign?: string | null;
+  utm_content?: string | null; referrer?: string | null; datos?: Record<string, unknown>;
 }
 export interface Source { id: string; key: string; name: string; kind: string }
 export interface Campaign {

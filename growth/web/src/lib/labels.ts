@@ -19,6 +19,11 @@ export const STATUS_ORDER = ['new', 'uncontacted', 'contacted', 'replied', 'inte
 
 export const INTEREST: Record<string, string> = { unknown: 'Sin datos', none: 'Ninguno', low: 'Bajo', medium: 'Medio', high: 'Alto' };
 export const CONSENT: Record<string, string> = { unknown: 'Sin dato', opt_in: 'Aceptó mensajes', opt_out: 'Pidió la baja' };
+// Por qué puerta entró la persona al CRM
+export const ENTRADA: Record<string, string> = {
+  calculadora: 'Calculadora', registro_app: 'Registro en la app', registro_web: 'Registro en la web',
+  pedido_web: 'Pedido sin cuenta', manual: 'Carga manual',
+};
 
 export const CHANNELS: Record<string, string> = {
   instagram: 'Instagram', whatsapp: 'WhatsApp', email: 'Email', sms: 'SMS', tiktok: 'TikTok', facebook: 'Facebook', other: 'Otro',
@@ -78,6 +83,8 @@ export const FIELDS_PROSPECT: { key: string; label: string; type: 'text' | 'numb
   { key: 'phone', label: 'Teléfono', type: 'text' },
   { key: 'instagram', label: 'Instagram', type: 'text' },
   { key: 'tags', label: 'Etiquetas', type: 'tags' },
+  { key: 'entrada', label: 'Entrada', type: 'enum', options: ['calculadora', 'registro_app', 'registro_web', 'pedido_web', 'manual'] },
+  { key: 'utm_campaign', label: 'Campaña (utm)', type: 'text' },
   { key: 'contact_count', label: 'Veces contactado', type: 'number' },
   { key: 'created_at', label: 'Alta', type: 'date' },
   { key: 'last_contact_at', label: 'Último contacto', type: 'date' },

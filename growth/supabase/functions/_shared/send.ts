@@ -1,7 +1,8 @@
 // Envío de un mensaje a un prospecto, con las reglas de contacto aplicadas.
 // Lo usan growth-send (panel) y growth-automations (secuencias).
 import type { SupabaseClient } from 'npm:@supabase/supabase-js@2.117.0';
-import { sendVia, type Channel } from './channels.ts';
+import { sendVia, type Channel, type SendInput } from './channels.ts';
+import { emailHtml, emailText } from './email-html.ts';
 
 export interface SendOptions {
   channel: Channel;
@@ -15,7 +16,33 @@ export interface SendOptions {
   whatsappTemplate?: { name: string; language: string } | null;
 }
 
-const LIMITE_DIARIO = Number(Deno.env.get('GROWTH_DAILY_SEND_LIMIT') || 200);
+// Brevo gratis da 300 mails por día y los comparte con los avisos de la app:
+// el CRM usa como mucho 150 por día salvo que se configure otro tope.
+const LIMITE_DIARIO = Number(Deno.env.get('GROWTH_DAILY_SEND_LIMIT') || 150);
+
+// Credenciales de mail: la clave de Brevo que usan los avisos de la app
+// (config_app, la que se mantiene al día) o, si no está, el secret de la
+// función; y el remitente verificado.
+async function emailCreds(db: SupabaseClient): Promise<SendInput['creds']> {
+  const { data } = await db.from('config_app').select('clave,valor').in('clave', ['brevo_api_key', 'brevo_smtp_user']);
+  const cfg = Object.fromEntries((data || []).map((r: { clave: string; valor: string | null }) => [r.clave, (r.valor || '').trim()]));
+  const key = cfg.brevo_api_key || Deno.env.get('BREVO_API_KEY') || Deno.env.get('BREVO-API-KEY') || '';
+  return {
+    brevoKey: key || null,
+    smtpUser: cfg.brevo_smtp_user || null,
+    from: Deno.env.get('GROWTH_EMAIL_FROM') || 'info@trattoapp.com.ar',
+    fromName: Deno.env.get('GROWTH_EMAIL_FROM_NAME') || 'Tratto',
+  };
+}
+
+// Links de baja de un prospecto (por su código, sin exponer el mail en la URL):
+// la página del sitio (pie del mail) y la función (baja de un click del cliente de correo)
+export function unsubscribeLink(wsSlug: string, ref: string, oneClick = false): string {
+  const q = `ws=${encodeURIComponent(wsSlug)}&r=${encodeURIComponent(ref)}`;
+  return oneClick
+    ? `${Deno.env.get('SUPABASE_URL')}/functions/v1/growth-baja?${q}`
+    : `${Deno.env.get('GROWTH_BAJA_URL') || 'https://www.trattoapp.com.ar/baja/'}?${q}`;
+}
 
 export async function sendToProspect(db: SupabaseClient, ws: string, prospectId: string, o: SendOptions) {
   const { data: p, error } = await db.from('growth_prospects').select('*').eq('id', prospectId).eq('workspace_id', ws).single();
@@ -28,6 +55,9 @@ export async function sendToProspect(db: SupabaseClient, ws: string, prospectId:
   if (p.do_not_contact || p.consent === 'opt_out') blocked = 'Pidió no ser contactado';
   else if (mode === 'live' && (o.channel === 'whatsapp' || o.channel === 'sms') && p.consent !== 'opt_in')
     blocked = 'WhatsApp y SMS requieren consentimiento previo (opt-in)';
+  // Tratto: publicidad solo con permiso propio (art. 27, Ley 25.326), también por mail
+  else if (mode === 'live' && o.channel === 'email' && p.consent !== 'opt_in')
+    blocked = 'Esta persona no dio permiso para recibir mails (casilla de novedades o permiso de publicidad)';
   if (!blocked && mode === 'live') {
     const desde = new Date(Date.now() - 86_400_000).toISOString();
     const { count } = await db.from('growth_messages').select('id', { count: 'exact', head: true })
@@ -35,9 +65,21 @@ export async function sendToProspect(db: SupabaseClient, ws: string, prospectId:
     if ((count || 0) >= LIMITE_DIARIO) blocked = `Se alcanzó el tope diario de ${LIMITE_DIARIO} envíos reales`;
   }
 
-  let body = o.body.trim();
-  if (o.channel === 'email' && !/baja|desuscrib|no (quer[eé]s|recibir)/i.test(body)) {
-    body += '\n\nSi no querés recibir más mensajes, respondé "baja".';
+  const body = o.body.trim();
+  // Mail: HTML con el pie de baja (link personal + List-Unsubscribe de un click)
+  let extra: Partial<SendInput> = {};
+  if (o.channel === 'email') {
+    const { data: w } = await db.from('growth_workspaces').select('slug').eq('id', ws).single();
+    const baja = unsubscribeLink(w?.slug || '', p.ref);
+    const reason = p.consent === 'opt_in' && p.consent_source
+      ? `Te llega este mail porque nos diste permiso para escribirte (${String(p.consent_source).toLowerCase()}).`
+      : undefined;
+    extra = {
+      html: emailHtml(body, { unsubscribeUrl: baja, reason }),
+      headers: { 'List-Unsubscribe': `<${unsubscribeLink(w?.slug || '', p.ref, true)}>`, 'List-Unsubscribe-Post': 'List-Unsubscribe=One-Click' },
+      creds: await emailCreds(db),
+    };
+    extra.body = emailText(body, { unsubscribeUrl: baja, reason });
   }
 
   // Conversación del canal (una por prospecto y canal)
@@ -49,7 +91,7 @@ export async function sendToProspect(db: SupabaseClient, ws: string, prospectId:
 
   const res = blocked ? { status: 'blocked' as const, provider: 'none', error: blocked }
     : await sendVia({ channel: o.channel, to: { email: p.email, phone: p.phone, name: p.first_name, igsid: null },
-                      body, subject: o.subject, whatsappTemplate: o.whatsappTemplate }, mode);
+                      body, subject: o.subject, whatsappTemplate: o.whatsappTemplate, ...extra }, mode);
 
   const { data: msg } = await db.from('growth_messages').insert({
     workspace_id: ws, conversation_id: conv!.id, prospect_id: prospectId, direction: 'out', channel: o.channel,
