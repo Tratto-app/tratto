@@ -7,7 +7,8 @@ import './styles.css';
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
-    <BrowserRouter>
+    {/* En producción el panel vive en trattoapp.com.ar/crm/ (vite --base /crm/) */}
+    <BrowserRouter basename={import.meta.env.BASE_URL.replace(/\/$/, '')}>
       <WorkspaceProvider>
         <App />
       </WorkspaceProvider>

@@ -1,54 +1,97 @@
-# Captación de proveedores y clientes (preparado, en pausa hasta el lanzamiento)
+# Captación 24/7 (CRM de Tratto, en producción)
 
-El sistema **no le escribe a desconocidos**. Capta gente que se registra por su
-cuenta (y así da su consentimiento). Todo está armado y probado, pero **con los
-envíos en pausa**: no sale ningún mensaje hasta que lo actives, cuando la app
-esté publicada en Play Store y App Store.
+Desde el 7/10/2026 el Growth OS está instalado en **producción**
+(`qglsonbcsncgekzbfafk`) como el CRM de Tratto. Junta en una sola base a toda la
+gente que llega, guarda **por qué medio llegó** y le escribe sola por mail,
+solo si dio permiso.
 
-## Cómo entra la gente
+Panel: **https://www.trattoapp.com.ar/crm/** — se entra con la cuenta de la app
+(dueño y admin del workspace "Tratto"). Una cuenta que no es miembro ve "Esta
+cuenta no tiene acceso" y la base no le devuelve nada (RLS).
 
-Página de registro: `growth/landing/registro.html` (estática). Tiene dos
-solapas: "Busco un servicio" (cliente) y "Ofrezco un servicio" (proveedor), con
-rubro y zona (los mismos de la app). Al enviar llama a la Edge Function
-`growth-signup`, que guarda a la persona con `consent = opt_in` y de dónde vino.
-Hay una trampa anti-bots (campo oculto) y validación de email/teléfono.
+## Cómo entra la gente (sin cargar nada a mano)
 
-Dónde poner el link (lo da Settings → Workspace, botón Copiar):
-anuncios de Instagram/Facebook, link de la bio, cartel con QR, y para mandar a
-tus propios contactos.
+Triggers en la base de la app (migración `supabase/migrations/20261007150000_crm_produccion.sql`).
+Todos están envueltos en un manejo de errores: si el CRM falla, la app sigue igual.
 
-## El interruptor de lanzamiento
+| Entrada (`entrada`) | Cuándo | Datos que guarda |
+|---|---|---|
+| `calculadora` | Alguien usa `/calculadora/` y deja el mail | Servicio, zona, precio que le pasaron, rango, veredicto |
+| `registro_app` | Se crea una cuenta en la app | Cliente o proveedor, permiso de publicidad |
+| `pedido_web` | Un invitado deja un pedido sin cuenta | El pedido |
+| `manual` | Se carga desde el panel | Lo que se cargue |
 
-`growth_app_settings.sending_paused` (arranca en `true`). Mientras está en pausa:
-- los registros entran y las automatizaciones se crean, pero **ningún paso de
-  envío se ejecuta**: la secuencia queda "esperando" y reintenta sola;
-- el envío manual desde el Inbox queda bloqueado con un aviso;
-- el resto del panel funciona igual (ves los registrados, sus datos, el funnel).
+Además, el primer pedido o servicio publicado cuenta como **activación**
+(`first_action`), y cada inicio de sesión como `session_start`.
 
-Se activa desde **Settings → Workspace → Lanzamiento** (pide confirmación).
-Probado: con pausa, 0 mensajes; al activar, las automatizaciones empiezan a
-enviar (en staging, en modo simulado porque no hay credenciales).
+Se excluyen las cuentas demo (`privado.es_demo`) y las pruebas de la
+calculadora (`origen = 'prueba'`). Las cuentas `trattoapp1+…` quedan con la
+etiqueta `interno` y sin contacto.
 
-## Las dos automatizaciones (en el workspace Tratto)
+## De dónde vino (origen = primer contacto)
 
-Creadas y activas, con los textos **en borrador** (`[COMPLETAR]`), para terminar
-juntos cuando la app esté publicada:
-- **Bienvenida a proveedores** — se dispara solo para `kind = provider`.
-- **Bienvenida a clientes** — se dispara solo para `kind = customer`.
+- La web guarda la última visita de campaña (`utm_*`, `gid` de un link
+  trackeado, o el dominio desde el que llegó) en `localStorage`
+  (`tratto_origen`, 30 días) y la manda al registrarse.
+- La calculadora manda sus UTM o, si no hay, `ref:<dominio>`.
+- `crm_fuente()` lo traduce a un medio: instagram, tiktok, facebook, google,
+  whatsapp, email, referral, influencers, ia, meta_ads, google_ads, organic…
+  Sin datos queda como "Directo / sin campaña".
+- Si la persona vuelve por otro medio, **no se pisa** el origen: se guarda el
+  primero. En el panel se ve en la ficha ("Cómo llegó") y se filtra en Prospects.
 
-Cada una: mail de bienvenida → espera 3 días → si no instaló, recordatorio. Los
-mensajes usan `{{first_name}}` y `{{contact_phone}}` (el teléfono se carga en
-Settings → Workspace, no en el código).
+## Permiso (Ley 25.326, art. 27)
 
-## Baja
+Solo se le escribe a quien tiene `consent = opt_in`, que sale únicamente de:
+- la casilla de novedades de la calculadora, o
+- el permiso de publicidad de la app (`user_metadata.publicidad_permiso`).
 
-Cada mail lleva un link a `growth-baja`, que marca `opt_out`: la persona no
-recibe nada más y se cortan sus automatizaciones (Ley 25.326).
+Si alguien apaga el permiso en la app, pasa a `opt_out`. Si se da de baja desde
+un mail, también se apaga el permiso en la app (`crm_apagar_publicidad`). El
+envío real por mail está bloqueado en el código para quien no tenga `opt_in`.
 
-## Lo que falta para encender (juntos, al lanzar)
+## Las automatizaciones (activas)
 
-1. Publicar la app en las tiendas y cargar las URLs (App → Store Links).
-2. Escribir los mails definitivos (hoy están en borrador) y el teléfono de contacto.
-3. Comprar un dominio de envío y cargar las credenciales de Brevo (secrets).
-4. Publicar `registro.html` y armar los anuncios / el QR.
-5. Activar el interruptor de lanzamiento.
+Migración `supabase/migrations/20261007160000_crm_automatizaciones.sql`:
+
+1. **Calculadora → primer pedido**: mail con su comparación al instante; a los
+   3 días, si no se registró, otro mail con los rubros.
+2. **Cliente registrado → primer pedido**: a los 2 días, si no hizo ningún
+   pedido, un mail para hacer el primero.
+3. **Proveedor registrado → publicar servicio**: a los 2 días, si no publicó,
+   un mail para publicar.
+
+Cada mail lleva un link trackeado (`growth-go`): el click queda registrado y la
+persona pasa a "Hizo click". Los textos se editan en el panel (Automations).
+
+## Envío
+
+- Brevo por SMTP (`smtp-relay.brevo.com:465`), remitente
+  `Tratto <info@trattoapp.com.ar>`. Las credenciales están en la base
+  (`config_app`), no en el código.
+- Tope propio: **150 mails por día** (el plan gratis de Brevo da 300 y se
+  comparten con los mails de la app).
+- HTML con el estilo de Tratto (`_shared/email-html.ts`) + versión en texto.
+- Baja: link al pie → `https://www.trattoapp.com.ar/baja/` (pide confirmar,
+  así un antivirus que abre links no da de baja a nadie) y baja de un click
+  desde Gmail/Outlook (`List-Unsubscribe-Post`).
+
+## Operación (SQL Editor de Supabase)
+
+```sql
+select crm_envios(false);              -- pausar todos los envíos
+select crm_envios(true);               -- reanudarlos
+select crm_reintentar('<id del run>'); -- reintentar una automatización trabada
+```
+
+El cron (`pg_cron`, job `growth-automations`) corre cada 5 minutos.
+
+## Lo que todavía no hace
+
+- WhatsApp e Instagram: el código está, pero necesitan la verificación de
+  negocio de Meta (número aprobado / app revisada).
+- La IA está en modo por reglas (no hay `OPENAI_API_KEY` en los secrets).
+- `growth-event` y `growth-signup` no están desplegadas en producción: la
+  captura se hace con los triggers de la base, que no las necesitan.
+- Anuncios de captación de Meta (Lead Ads), referidos y páginas por rubro × zona:
+  próximas etapas.
