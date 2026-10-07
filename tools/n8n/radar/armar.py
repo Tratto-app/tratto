@@ -20,27 +20,24 @@ def apify(nombre, actor, cuerpo, x, tope):
          **({"credentials": {"httpHeaderAuth": APIFY_CRED}} if APIFY_CRED else {})})
 
 BUSQUEDAS = r"""
-// Plan gratis de Apify (USD 5/mes). Muchas herramientas baratas de Apify le dan
-// solo 10 resultados a las cuentas gratis; estas no tienen ese límite. 1 hashtag
-// y 1 búsqueda por día, unos 45 comentarios por red repartidos entre varios
-// posts, y un tope de gasto en cada llamada (menos de USD 0,16 por día).
-// Qué buscar hoy: rota por día entre muchos rubros (Tratto no es solo oficios
-// del hogar). Instagram por hashtag, TikTok por búsqueda. Sin gas, electricidad
-// ni salud: son matriculados y Tratto no los acepta.
-const IG = ['reformasargentina','remodelacioncaba','pinturadeinteriores','plomeriabuenosaires','mudanzascaba',
-  'fletesbuenosaires','limpiezadecasas','clasesparticulares','clasesdeingles','profesorparticular',
-  'fotografoargentina','eventosbuenosaires','cateringbuenosaires','peluqueriacanina','paseadordeperros',
-  'entrenadorpersonal','contadorpublico','monotributo','tramitesargentina','disenograficoargentina',
-  'jardineriaencasa','mecanicaautomotriz','djparafiestas','emprendedoresargentinos'];
-const TT = ['cuanto cobra un pintor argentina','presupuesto reforma departamento caba','mudanza caba precio',
-  'clases particulares precio argentina','cuanto cobra un contador monotributo','peluqueria canina a domicilio',
-  'entrenador personal precio argentina','dj para cumpleaños precio','fotografo para eventos precio argentina',
-  'limpieza de casa por hora precio','plomero urgente caba','gestor tramites argentina',
-  'jardinero precio argentina','mecanico a domicilio buenos aires','diseño de logo precio argentina',
-  'catering para eventos precio'];
+// Qué buscar hoy, rotando por día. Todo apunta a Buenos Aires y a muchos rubros
+// (Tratto no es solo oficios; sin gas, electricidad ni salud: son matriculados).
+// TikTok: búsquedas como las que haría alguien de CABA/GBA; después se quedan
+// solo los videos subidos desde Argentina que hablan de Buenos Aires.
+// Instagram: el plan gratis acepta un hashtag por día y trae ~10 posts; se
+// quedan solo los de proveedores de Buenos Aires (teléfono 11, CABA, zonas).
+const IG = ['mudanzascaba', 'fletescaba', 'pintorcaba', 'fletes', 'mudanzas', 'clasesdeingles', 'peluqueriacanina',
+  'manicura', 'paseadordeperros', 'reformas', 'jardineria', 'catering', 'fotografiadeeventos', 'personaltrainer',
+  'cerrajeria', 'clasesparticulares'];
+const TT = ['pintor caba', 'plomero zona oeste', 'mudanzas zona sur', 'fletes zona norte', 'clases particulares caba',
+  'profesora de ingles caba', 'peluqueria canina a domicilio caba', 'paseador de perros palermo', 'personal trainer caba',
+  'fotografo de eventos buenos aires', 'catering para eventos buenos aires', 'dj para fiestas buenos aires',
+  'limpieza de casas caba', 'jardinero zona norte', 'mecanico a domicilio caba', 'manicura a domicilio caba',
+  'contador monotributo caba', 'gestor del automotor caba', 'cerrajero caba', 'reformas de departamentos caba',
+  'maquilladora a domicilio caba', 'mudanza de oficina caba'];
 const dia = Math.floor(Date.now() / 86400000);
 const tomar = (lista, n) => Array.from({ length: n }, (_, i) => lista[(dia * n + i) % lista.length]);
-return [{ json: { hashtags: tomar(IG, 1), busquedas: tomar(TT, 1) } }];   // el plan gratis acepta un hashtag por búsqueda
+return [{ json: { hashtags: tomar(IG, 1), busquedas: tomar(TT, 2) } }];
 """
 
 ELEGIR_POSTS = r"""
@@ -49,7 +46,8 @@ ELEGIR_POSTS = r"""
 // (los virales se llenan de chistes y emojis). Lee varios nombres de campo
 // porque cada herramienta de Apify los llama distinto.
 const red = '%RED%';
-const posts = $input.all().map(i => i.json).filter(p => p && !p.error);
+const fuente = red === 'tt' ? [...$('TT: videos por busqueda').all(), ...$('TT: videos por busqueda 2').all()] : $input.all();
+const posts = fuente.map(i => i.json).filter(p => p && !p.error);
 const norm = s => String(s || '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
 const codigo = p => p.shortCode || p.shortcode || p.short_code || p.code;
 const url = p => red === 'ig'
@@ -67,78 +65,104 @@ const valor = p => {
   const enRango = c <= 400 ? Math.log(c + 1) : Math.log(400) - 1;   // los virales rinden menos
   return enRango + 2 * CLAVES.filter(k => texto(p).includes(k)).length;
 };
-const elegidos = posts.filter(p => url(p) && valor(p) >= 0).sort((a, b) => valor(b) - valor(a)).slice(0, red === 'ig' ? 6 : 8);
+// Solo Buenos Aires: en TikTok, video subido desde Argentina; en los dos, que el
+// texto o el lugar hablen de CABA/GBA o traigan un teléfono 11.
+const BA = /caba|capital federal|buenos aires|bs ?as|zona (norte|sur|oeste)|\bgba\b|conurbano|palermo|belgrano|caballito|flores|almagro|recoleta|nu[nñ]ez|devoto|villa |san isidro|vicente lopez|olivos|tigre|pilar|quilmes|lan[uú]s|avellaneda|lomas|banfield|adrogu[eé]|mor[oó]n|haedo|ramos mej[ií]a|castelar|ituzaing[oó]|merlo|moreno|san justo|la matanza|tres de febrero|caseros|san mart[ií]n|\b11[ -]?\d{4}|\+?54 ?9? ?11/;
+const lugar = p => norm(JSON.stringify((p.aweme_info && p.aweme_info.poi_data) || p.location || ''));
+const deBA = p => {
+  if (red === 'tt' && p.aweme_info && p.aweme_info.region && p.aweme_info.region !== 'AR') return false;
+  return BA.test(texto(p)) || BA.test(lugar(p)) || (red === 'tt' && p.aweme_info && p.aweme_info.region === 'AR');
+};
+const elegidos = posts.filter(p => url(p) && valor(p) >= 0 && deBA(p)).sort((a, b) => valor(b) - valor(a)).slice(0, red === 'ig' ? 6 : 10);
 return [{ json: { urls: elegidos.map(url), duenios: elegidos.map(duenio).filter(Boolean) } }];
 """
 
 ELEGIR = r"""
-// Elige 50 cuentas por red entre la gente que comentó. Puntúa la intención de
-// pedir un servicio (pregunta precio, busca, dice la zona), que hable como en
-// Argentina y que el comentario diga algo. Saca spam, links, las cuentas
-// dueñas de los posts, las nuestras y las ya sugeridas en los últimos 60 días.
+// Primer filtro, sin IA: saca links, emojis sueltos, las cuentas dueñas de los
+// posts, las de Tratto y las ya sugeridas en los últimos 60 días. Arma la lista
+// de candidatos (hasta 160) con el texto del post como contexto para la IA.
 const norm = s => String(s || '').toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '');
-const INTENCION = ['cuanto', 'precio', 'presupuesto', 'cobra', 'cobran', 'sale ', 'necesito', 'busco', 'buscando',
-  'recomiend', 'alguien que', 'donde', 'zona', 'caba', 'capital', 'gba', 'provincia', 'conurbano',
-  'me pasas', 'contacto', 'numero', 'whatsapp', 'info', 'hacen', 'trabajan', 'a domicilio', 'turno'];
-const ARGENTINA = ['che ', 'laburo', 'posta', 'vos ', 'sos ', 'tenes', 'podes', 'queres', 'sabes', 'buenos aires',
-  'argentina', 'mendoza', 'cordoba', 'rosario', 'la plata', 'mar del plata', 'tucuman'];
 const NUESTRAS = ['trattoapp', 'trattoapp_'];
 const ya = new Set($('Ya sugeridos').all().map(i => i.json).filter(x => x && x.usuario).map(x => x.red + ':' + norm(x.usuario)));
-
-function puntuar(texto) {
-  const t = ' ' + norm(texto) + ' ';
-  if (/https?:|www\.|\.com/.test(t)) return -99;
-  const letras = (t.match(/[a-z]/g) || []).length;
-  if (letras < 4) return -99;
-  let p = 0;
-  p += Math.min(9, INTENCION.filter(k => t.includes(k)).length * 3);
-  if (ARGENTINA.some(k => t.includes(k))) p += 2;
-  if (t.includes('?')) p += 1;
-  if (letras > 20) p += 1;
-  return p;
-}
-
-function elegir(red, nodo, nodoPosts) {
-  const duenios = new Set(((($(nodoPosts).first() || {}).json || {}).duenios || []).map(norm));
-  const items = $(nodo).all().map(i => i.json).filter(x => x && !x.error);
-  const porUsuario = new Map();
-  for (const it of items) {
-    const usuario = red === 'instagram'
-      ? (it.owner && it.owner.username) || it.ownerUsername || it.username || (it.user && it.user.username) || (it.author && it.author.username)
-      : (it.user && (it.user.uniqueId || it.user.username)) || (it.author && it.author.uniqueId) || it.uniqueId || it.username || (it.authorMeta && it.authorMeta.name);
-    if (it.content_type === 'caption') continue;   // el texto del post, no un comentario
-    const texto = it.text || it.message || it.comment || it.content || '';
-    const post = it.postUrl || it.videoWebUrl || it.input_url || it.videoUrl || it.url || it.inputUrl || it.inputSource || '';
-    if (!usuario) continue;
-    const u = norm(usuario);
-    if (NUESTRAS.includes(u) || duenios.has(u) || ya.has(red + ':' + u)) continue;
-    const puntaje = puntuar(texto);
-    if (puntaje < 0) continue;
-    const previo = porUsuario.get(u);
-    if (!previo || puntaje > previo.puntaje) porUsuario.set(u, { red, usuario, comentario: String(texto).slice(0, 220), post_url: post, puntaje });
+const contexto = {};
+function postsDe(nodo, red) {
+  for (const i of $(nodo).all()) {
+    const p = i.json || {}, a = p.aweme_info || {};
+    const u = red === 'tiktok' && a.aweme_id && a.author ? `https://www.tiktok.com/@${a.author.unique_id}/video/${a.aweme_id}` : (p.url || '');
+    const t = (p.caption && (p.caption.text || p.caption)) || a.desc || p.description || '';
+    if (u) contexto[u] = String(t).slice(0, 160);
   }
-  return [...porUsuario.values()].sort((a, b) => b.puntaje - a.puntaje).slice(0, 50);
 }
+postsDe('IG: reels por hashtag', 'instagram'); postsDe('TT: videos por busqueda', 'tiktok'); postsDe('TT: videos por busqueda 2', 'tiktok');
 
-const ig = elegir('instagram', 'IG: comentarios', 'IG: elegir reels');
-const tt = elegir('tiktok', 'TT: comentarios', 'TT: elegir videos');
-return [{ json: { filas: [...ig, ...tt], ig, tt } }];
+function candidatos(red, nodo, nodoPosts) {
+  const duenios = new Set(((($(nodoPosts).first() || {}).json || {}).duenios || []).map(norm));
+  const vistos = new Set(), out = [];
+  for (const it of $(nodo).all().map(i => i.json).filter(x => x && !x.error)) {
+    if (it.content_type === 'caption') continue;
+    const usuario = red === 'instagram'
+      ? it.username || (it.owner && it.owner.username) || it.ownerUsername || (it.user && it.user.username)
+      : it.uniqueId || (it.user && (it.user.uniqueId || it.user.username)) || (it.author && it.author.uniqueId) || it.username;
+    const texto = String(it.text || it.message || it.comment || it.content || '').trim();
+    const post = it.postUrl || it.videoWebUrl || it.input_url || it.submittedVideoUrl || it.inputSource || it.url || '';
+    const u = norm(usuario);
+    if (!usuario || vistos.has(u) || NUESTRAS.includes(u) || duenios.has(u) || ya.has(red + ':' + u)) continue;
+    if (/https?:|www\.|\.com/.test(texto) || (norm(texto).match(/[a-z]/g) || []).length < 6) continue;
+    vistos.add(u);
+    out.push({ red, usuario, nombre: it.full_name || (it.user && it.user.full_name) || '', comentario: texto.slice(0, 220), post_url: post, post_texto: contexto[post] || '' });
+  }
+  return out.slice(0, 80);
+}
+const lista = [...candidatos('instagram', 'IG: comentarios', 'IG: elegir reels'), ...candidatos('tiktok', 'TT: comentarios', 'TT: elegir videos')];
+return [{ json: { candidatos: lista.map((c, i) => ({ i, ...c })) } }];
+"""
+
+INSTRUCCION_IA = """Revisás comentarios de Instagram y TikTok para Tratto, una app de Buenos Aires (Argentina) donde la gente pide un servicio y recibe presupuestos de proveedores de su zona: arreglos y reformas, mudanzas y fletes, limpieza, clases, eventos, mascotas, belleza, entrenamiento, trámites, contadores, diseño, autos y más.
+
+Para cada comentario decidí:
+- "argentina": "si" si habla claramente como en Argentina (voseo: vos, tenés, querés, podés, sabés; che, laburo, posta, re, mangos, lucas, guita) o nombra lugares de Argentina (CABA, zona norte/sur/oeste, barrios o partidos del GBA, provincias argentinas). "probable" si es neutro pero el post es de Buenos Aires y nada indica otro país. "no" si hay señales de otro país (México: wey, güey, chido, neta, ahorita, órale; Chile: cachai, po, weón, bacán, fome; Perú/Venezuela/Colombia: pana, chévere, causa, parce; España: vale, tío, vosotros) o nombra lugares o monedas de otro país.
+- "intencion": la pregunta es si esta persona podría CONTRATAR un servicio pronto.
+  3 = lo pide o lo necesita: pide precio o presupuesto para ella, contacto, WhatsApp, turno, "¿me pasás info?", "necesito uno", "¿cuánto me sale…?", "¿vienen a mi casa?".
+  2 = está evaluando contratar: pregunta si trabajan en su zona o barrio, si tienen disponibilidad, si hacen tal trabajo, cómo contratarlos, o cuenta que tiene ese problema en su casa ("se me rompió…", "tengo humedad…").
+  1 = curiosidad o comentario sin intención de contratar: preguntas técnicas de cómo se hace ("¿qué material usaste?", "¿cómo sacaste…?"), opiniones sobre precios ajenos, anécdotas.
+  0 = nada que ver: chistes, elogios, emojis, discusiones, spam; quien quiere aprender el oficio o pregunta cuánto se gana; otro proveedor o empresa ofreciendo lo suyo; preguntas sobre otra profesión.
+Ante la duda entre dos valores, elegí el más bajo.
+
+Respondé SOLO con JSON: {"resultados":[{"i":0,"argentina":"si|probable|no","intencion":0,"motivo":"en 6 palabras o menos"}]}"""
+
+
+FINAL = r"""
+// Se queda solo con quien la IA marcó de Argentina (o probable) y con ganas
+// concretas de contratar algo (intención 2 o 3). Si la IA falla, no manda
+// nada antes que mandar cualquiera. Hasta 50 por red, primero los más claros.
+const cands = $('Candidatos').first().json.candidatos || [];
+let res = [];
+try { res = JSON.parse($input.first().json.choices[0].message.content).resultados || []; } catch (e) { res = []; }
+const porI = new Map(res.map(r => [Number(r.i), r]));
+const puntaje = r => Number(r.intencion) * 10 + (r.argentina === 'si' ? 3 : 0);
+const buenos = cands.map(c => ({ c, r: porI.get(c.i) }))
+  .filter(x => x.r && ['si', 'probable'].includes(x.r.argentina) && Number(x.r.intencion) >= 2)   // 2 = evaluando contratar, 3 = lo pide
+  .map(x => ({ red: x.c.red, usuario: x.c.usuario, comentario: x.c.comentario, post_url: x.c.post_url, puntaje: puntaje(x.r), motivo: String(x.r.motivo || '').slice(0, 60) }))
+  .sort((a, b) => b.puntaje - a.puntaje);
+const ig = buenos.filter(x => x.red === 'instagram').slice(0, 50);
+const tt = buenos.filter(x => x.red === 'tiktok').slice(0, 50);
+return [{ json: { filas: [...ig, ...tt], ig, tt, revisados: cands.length, ia_ok: res.length > 0 } }];
 """
 
 MAIL = r"""
-const { ig, tt } = $('Elegir 50 por red').first().json;
+const { ig, tt, revisados, ia_ok } = $('Elegir 50 por red').first().json;
 const b = $('Busquedas del dia').first().json;
 const esc = s => String(s || '').replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
 const link = (red, u) => red === 'instagram' ? `https://www.instagram.com/${encodeURIComponent(u)}/` : `https://www.tiktok.com/@${encodeURIComponent(u)}`;
 const tabla = (titulo, lista) => `<h2 style="font-family:Arial;color:#1E5D49">${titulo} (${lista.length})</h2>` +
   (lista.length ? '<table cellpadding="6" style="border-collapse:collapse;font-family:Arial;font-size:14px">' + lista.map((x, i) =>
     `<tr style="border-bottom:1px solid #eee"><td>${i + 1}</td><td><a href="${link(x.red, x.usuario)}"><b>@${esc(x.usuario)}</b></a></td>` +
-    `<td style="color:#555">“${esc(x.comentario)}”${x.post_url ? ` · <a href="${esc(x.post_url)}">post</a>` : ''}</td></tr>`).join('') + '</table>'
+    `<td style="color:#555">“${esc(x.comentario)}”${x.motivo ? ` <span style="color:#1E5D49">(${esc(x.motivo)})</span>` : ''}${x.post_url ? ` · <a href="${esc(x.post_url)}">post</a>` : ''}</td></tr>`).join('') + '</table>'
   : '<p style="font-family:Arial">Hoy no encontré cuentas nuevas acá.</p>');
 const html = `<div style="max-width:760px">
 <p style="font-family:Arial">Hola! Estas son las cuentas de hoy para seguir <b>a mano</b>, de a poco y desde el celular.
 Salen de gente que comentó publicaciones de: ${esc(b.hashtags.map(h => '#' + h).join(', '))} (Instagram) y ${esc(b.busquedas.join(' · '))} (TikTok).
-Arriba están las que más intención muestran de pedir un servicio.</p>
+Revisé ${revisados} comentarios y quedaron solo los de gente de Argentina que muestra ganas de contratar algo (pregunta precio, contacto o si cubren su zona); arriba, los más claros.${ia_ok ? '' : ' <b>Hoy falló el filtro con IA, así que no mandé ninguna.</b>'}</p>
 ${tabla('Instagram', ig)}${tabla('TikTok', tt)}
 <p style="font-family:Arial;color:#888;font-size:12px">Radar de Tratto. Seguí sin apuro (no todas de corrido) y, si podés, dejá un comentario útil en su post: suma más que el follow solo.</p></div>`;
 return [{ json: { asunto: `Radar: ${ig.length} de Instagram y ${tt.length} de TikTok para seguir hoy`, html } }];
@@ -166,12 +190,23 @@ def armar(apify_cred=None):
               "={{ JSON.stringify({ code_or_id_or_url: $json.urls, max_comments: 7, scrape_replies: false }) }}", 880, 0.07),
         apify("TT: videos por busqueda", "novi~tiktok-search-api",
               "={{ JSON.stringify({ keyword: $('Busquedas del dia').first().json.busquedas[0], limit: 20, region: 'AR' }) }}", 1100, 0.012),
+        apify("TT: videos por busqueda 2", "novi~tiktok-search-api",
+              "={{ JSON.stringify({ keyword: $('Busquedas del dia').first().json.busquedas[1], limit: 20, region: 'AR' }) }}", 1210, 0.012),
         code("TT: elegir videos", ELEGIR_POSTS.replace('%RED%', 'tt'), 1320),
         apify("TT: comentarios", "clockworks~tiktok-comments-scraper",
-              "={{ JSON.stringify({ postURLs: $json.urls, commentsPerPost: 6 }) }}", 1540, 0.065),
+              "={{ JSON.stringify({ postURLs: $json.urls, commentsPerPost: 6 }) }}", 1540, 0.075),
         supa("Ya sugeridos", "GET", f"{SB}/rest/v1/radar_redes?select=red,usuario&limit=50000", 1760),
-        code("Elegir 50 por red", ELEGIR, 1980),
-        supa("Guardar sugeridos", "POST", f"{SB}/rest/v1/radar_redes", 2200,
+        code("Candidatos", ELEGIR, 1980),
+        nodo("IA: Argentina e intencion", "n8n-nodes-base.httpRequest", 4.2, {
+            "method": "POST", "url": "https://api.openai.com/v1/chat/completions",
+            "authentication": "predefinedCredentialType", "nodeCredentialType": "openAiApi",
+            "sendBody": True, "specifyBody": "json",
+            "jsonBody": "={{ JSON.stringify({ model: 'gpt-4o-mini', temperature: 0, response_format: { type: 'json_object' }, max_tokens: 6000, messages: [ { role: 'system', content: " + json.dumps(INSTRUCCION_IA) + " }, { role: 'user', content: JSON.stringify($json.candidatos.map(c => ({ i: c.i, red: c.red, usuario: c.usuario, nombre: c.nombre, comentario: c.comentario, post: c.post_texto }))) } ] }) }}",
+            "options": {"timeout": 120000}}, 2090,
+            {"credentials": {"openAiApi": {"id": "UNySLvC0hCgEOrj9", "name": "Tratto · OpenAI"}},
+             "alwaysOutputData": True, "onError": "continueRegularOutput", "executeOnce": True}),
+        code("Elegir 50 por red", FINAL, 2200),
+        supa("Guardar sugeridos", "POST", f"{SB}/rest/v1/radar_redes", 2310,
              cuerpo="={{ JSON.stringify($json.filas.map(f => ({ red: f.red, usuario: f.usuario, comentario: f.comentario, post_url: f.post_url, puntaje: f.puntaje }))) }}",
              prefer="resolution=ignore-duplicates,return=minimal"),
         supa("Borrar mas de 60 dias", "DELETE",

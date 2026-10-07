@@ -32,7 +32,7 @@
         0
       ],
       "parameters": {
-        "jsCode": "// Plan gratis de Apify (USD 5/mes). Muchas herramientas baratas de Apify le dan\n// solo 10 resultados a las cuentas gratis; estas no tienen ese límite. 1 hashtag\n// y 1 búsqueda por día, unos 45 comentarios por red repartidos entre varios\n// posts, y un tope de gasto en cada llamada (menos de USD 0,16 por día).\n// Qué buscar hoy: rota por día entre muchos rubros (Tratto no es solo oficios\n// del hogar). Instagram por hashtag, TikTok por búsqueda. Sin gas, electricidad\n// ni salud: son matriculados y Tratto no los acepta.\nconst IG = ['reformasargentina','remodelacioncaba','pinturadeinteriores','plomeriabuenosaires','mudanzascaba',\n  'fletesbuenosaires','limpiezadecasas','clasesparticulares','clasesdeingles','profesorparticular',\n  'fotografoargentina','eventosbuenosaires','cateringbuenosaires','peluqueriacanina','paseadordeperros',\n  'entrenadorpersonal','contadorpublico','monotributo','tramitesargentina','disenograficoargentina',\n  'jardineriaencasa','mecanicaautomotriz','djparafiestas','emprendedoresargentinos'];\nconst TT = ['cuanto cobra un pintor argentina','presupuesto reforma departamento caba','mudanza caba precio',\n  'clases particulares precio argentina','cuanto cobra un contador monotributo','peluqueria canina a domicilio',\n  'entrenador personal precio argentina','dj para cumpleaños precio','fotografo para eventos precio argentina',\n  'limpieza de casa por hora precio','plomero urgente caba','gestor tramites argentina',\n  'jardinero precio argentina','mecanico a domicilio buenos aires','diseño de logo precio argentina',\n  'catering para eventos precio'];\nconst dia = Math.floor(Date.now() / 86400000);\nconst tomar = (lista, n) => Array.from({ length: n }, (_, i) => lista[(dia * n + i) % lista.length]);\nreturn [{ json: { hashtags: tomar(IG, 1), busquedas: tomar(TT, 1) } }];   // el plan gratis acepta un hashtag por búsqueda"
+        "jsCode": "// Qué buscar hoy, rotando por día. Todo apunta a Buenos Aires y a muchos rubros\n// (Tratto no es solo oficios; sin gas, electricidad ni salud: son matriculados).\n// TikTok: búsquedas como las que haría alguien de CABA/GBA; después se quedan\n// solo los videos subidos desde Argentina que hablan de Buenos Aires.\n// Instagram: el plan gratis acepta un hashtag por día y trae ~10 posts; se\n// quedan solo los de proveedores de Buenos Aires (teléfono 11, CABA, zonas).\nconst IG = ['mudanzascaba', 'fletescaba', 'pintorcaba', 'fletes', 'mudanzas', 'clasesdeingles', 'peluqueriacanina',\n  'manicura', 'paseadordeperros', 'reformas', 'jardineria', 'catering', 'fotografiadeeventos', 'personaltrainer',\n  'cerrajeria', 'clasesparticulares'];\nconst TT = ['pintor caba', 'plomero zona oeste', 'mudanzas zona sur', 'fletes zona norte', 'clases particulares caba',\n  'profesora de ingles caba', 'peluqueria canina a domicilio caba', 'paseador de perros palermo', 'personal trainer caba',\n  'fotografo de eventos buenos aires', 'catering para eventos buenos aires', 'dj para fiestas buenos aires',\n  'limpieza de casas caba', 'jardinero zona norte', 'mecanico a domicilio caba', 'manicura a domicilio caba',\n  'contador monotributo caba', 'gestor del automotor caba', 'cerrajero caba', 'reformas de departamentos caba',\n  'maquilladora a domicilio caba', 'mudanza de oficina caba'];\nconst dia = Math.floor(Date.now() / 86400000);\nconst tomar = (lista, n) => Array.from({ length: n }, (_, i) => lista[(dia * n + i) % lista.length]);\nreturn [{ json: { hashtags: tomar(IG, 1), busquedas: tomar(TT, 2) } }];"
       }
     },
     {
@@ -76,7 +76,7 @@
         0
       ],
       "parameters": {
-        "jsCode": "// Elige los posts donde más rinde cada comentario que se paga: los que hablan\n// de precio o de pedir un servicio, y con una cantidad de comentarios normal\n// (los virales se llenan de chistes y emojis). Lee varios nombres de campo\n// porque cada herramienta de Apify los llama distinto.\nconst red = 'ig';\nconst posts = $input.all().map(i => i.json).filter(p => p && !p.error);\nconst norm = s => String(s || '').toLowerCase().normalize('NFD').replace(/[\\u0300-\\u036f]/g, '');\nconst codigo = p => p.shortCode || p.shortcode || p.short_code || p.code;\nconst url = p => red === 'ig'\n  ? (p.url || p.postUrl || p.link || (codigo(p) ? `https://www.instagram.com/p/${codigo(p)}/` : null))\n  : (p.webVideoUrl || p.url || p.postUrl || p.link || p.videoUrl ||\n     (p.aweme_info && p.aweme_info.aweme_id && p.aweme_info.author ? `https://www.tiktok.com/@${p.aweme_info.author.unique_id}/video/${p.aweme_info.aweme_id}` : null));\nconst coms = p => Number(p.commentsCount ?? p.commentCount ?? p.comments_count ?? p.comment_count ?? (p.aweme_info && p.aweme_info.statistics && p.aweme_info.statistics.comment_count) ?? (p.stats && (p.stats.commentCount ?? p.stats.comments)) ?? (typeof p.comments === 'number' ? p.comments : 0)) || 0;\nconst texto = p => norm((p.caption && (p.caption.text || p.caption)) || p.description || p.title || p.text || p.desc || (p.aweme_info && p.aweme_info.desc) || '');\nconst duenio = p => (p.owner && p.owner.username) || p.ownerUsername || p.owner_username || (p.aweme_info && p.aweme_info.author && p.aweme_info.author.unique_id) || (p.user && (p.user.username || p.user.uniqueId)) ||\n  (p.channel && (p.channel.username || p.channel.uniqueId)) || (p.author && (p.author.uniqueId || p.author.username)) || (p.authorMeta && p.authorMeta.name);\nconst CLAVES = ['precio', 'cuanto', 'presupuesto', 'cobra', 'sale', 'servicio', 'turno', 'consulta', 'zona', 'caba', 'argentina', 'buenos aires'];\nconst valor = p => {\n  const c = coms(p);\n  if (c < 3) return -1;\n  const enRango = c <= 400 ? Math.log(c + 1) : Math.log(400) - 1;   // los virales rinden menos\n  return enRango + 2 * CLAVES.filter(k => texto(p).includes(k)).length;\n};\nconst elegidos = posts.filter(p => url(p) && valor(p) >= 0).sort((a, b) => valor(b) - valor(a)).slice(0, red === 'ig' ? 6 : 8);\nreturn [{ json: { urls: elegidos.map(url), duenios: elegidos.map(duenio).filter(Boolean) } }];"
+        "jsCode": "// Elige los posts donde más rinde cada comentario que se paga: los que hablan\n// de precio o de pedir un servicio, y con una cantidad de comentarios normal\n// (los virales se llenan de chistes y emojis). Lee varios nombres de campo\n// porque cada herramienta de Apify los llama distinto.\nconst red = 'ig';\nconst fuente = red === 'tt' ? [...$('TT: videos por busqueda').all(), ...$('TT: videos por busqueda 2').all()] : $input.all();\nconst posts = fuente.map(i => i.json).filter(p => p && !p.error);\nconst norm = s => String(s || '').toLowerCase().normalize('NFD').replace(/[\\u0300-\\u036f]/g, '');\nconst codigo = p => p.shortCode || p.shortcode || p.short_code || p.code;\nconst url = p => red === 'ig'\n  ? (p.url || p.postUrl || p.link || (codigo(p) ? `https://www.instagram.com/p/${codigo(p)}/` : null))\n  : (p.webVideoUrl || p.url || p.postUrl || p.link || p.videoUrl ||\n     (p.aweme_info && p.aweme_info.aweme_id && p.aweme_info.author ? `https://www.tiktok.com/@${p.aweme_info.author.unique_id}/video/${p.aweme_info.aweme_id}` : null));\nconst coms = p => Number(p.commentsCount ?? p.commentCount ?? p.comments_count ?? p.comment_count ?? (p.aweme_info && p.aweme_info.statistics && p.aweme_info.statistics.comment_count) ?? (p.stats && (p.stats.commentCount ?? p.stats.comments)) ?? (typeof p.comments === 'number' ? p.comments : 0)) || 0;\nconst texto = p => norm((p.caption && (p.caption.text || p.caption)) || p.description || p.title || p.text || p.desc || (p.aweme_info && p.aweme_info.desc) || '');\nconst duenio = p => (p.owner && p.owner.username) || p.ownerUsername || p.owner_username || (p.aweme_info && p.aweme_info.author && p.aweme_info.author.unique_id) || (p.user && (p.user.username || p.user.uniqueId)) ||\n  (p.channel && (p.channel.username || p.channel.uniqueId)) || (p.author && (p.author.uniqueId || p.author.username)) || (p.authorMeta && p.authorMeta.name);\nconst CLAVES = ['precio', 'cuanto', 'presupuesto', 'cobra', 'sale', 'servicio', 'turno', 'consulta', 'zona', 'caba', 'argentina', 'buenos aires'];\nconst valor = p => {\n  const c = coms(p);\n  if (c < 3) return -1;\n  const enRango = c <= 400 ? Math.log(c + 1) : Math.log(400) - 1;   // los virales rinden menos\n  return enRango + 2 * CLAVES.filter(k => texto(p).includes(k)).length;\n};\n// Solo Buenos Aires: en TikTok, video subido desde Argentina; en los dos, que el\n// texto o el lugar hablen de CABA/GBA o traigan un teléfono 11.\nconst BA = /caba|capital federal|buenos aires|bs ?as|zona (norte|sur|oeste)|\\bgba\\b|conurbano|palermo|belgrano|caballito|flores|almagro|recoleta|nu[nñ]ez|devoto|villa |san isidro|vicente lopez|olivos|tigre|pilar|quilmes|lan[uú]s|avellaneda|lomas|banfield|adrogu[eé]|mor[oó]n|haedo|ramos mej[ií]a|castelar|ituzaing[oó]|merlo|moreno|san justo|la matanza|tres de febrero|caseros|san mart[ií]n|\\b11[ -]?\\d{4}|\\+?54 ?9? ?11/;\nconst lugar = p => norm(JSON.stringify((p.aweme_info && p.aweme_info.poi_data) || p.location || ''));\nconst deBA = p => {\n  if (red === 'tt' && p.aweme_info && p.aweme_info.region && p.aweme_info.region !== 'AR') return false;\n  return BA.test(texto(p)) || BA.test(lugar(p)) || (red === 'tt' && p.aweme_info && p.aweme_info.region === 'AR');\n};\nconst elegidos = posts.filter(p => url(p) && valor(p) >= 0 && deBA(p)).sort((a, b) => valor(b) - valor(a)).slice(0, red === 'ig' ? 6 : 10);\nreturn [{ json: { urls: elegidos.map(url), duenios: elegidos.map(duenio).filter(Boolean) } }];"
       }
     },
     {
@@ -142,6 +142,37 @@
       }
     },
     {
+      "id": "522e799f-c8bf-59f3-98ac-07a3cdb56fa9",
+      "name": "TT: videos por busqueda 2",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "executeOnce": true,
+      "alwaysOutputData": true,
+      "onError": "continueRegularOutput",
+      "position": [
+        1210,
+        0
+      ],
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.apify.com/v2/acts/novi~tiktok-search-api/run-sync-get-dataset-items?timeout=280&maxTotalChargeUsd=0.012",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ keyword: $('Busquedas del dia').first().json.busquedas[1], limit: 20, region: 'AR' }) }}",
+        "options": {
+          "timeout": 300000
+        }
+      },
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "dvJWWFfl3l35KrOF",
+          "name": "Tratto · Apify"
+        }
+      }
+    },
+    {
       "id": "0dffe93b-4a75-5a25-beaf-cbbcc902588c",
       "name": "TT: elegir videos",
       "type": "n8n-nodes-base.code",
@@ -151,7 +182,7 @@
         0
       ],
       "parameters": {
-        "jsCode": "// Elige los posts donde más rinde cada comentario que se paga: los que hablan\n// de precio o de pedir un servicio, y con una cantidad de comentarios normal\n// (los virales se llenan de chistes y emojis). Lee varios nombres de campo\n// porque cada herramienta de Apify los llama distinto.\nconst red = 'tt';\nconst posts = $input.all().map(i => i.json).filter(p => p && !p.error);\nconst norm = s => String(s || '').toLowerCase().normalize('NFD').replace(/[\\u0300-\\u036f]/g, '');\nconst codigo = p => p.shortCode || p.shortcode || p.short_code || p.code;\nconst url = p => red === 'ig'\n  ? (p.url || p.postUrl || p.link || (codigo(p) ? `https://www.instagram.com/p/${codigo(p)}/` : null))\n  : (p.webVideoUrl || p.url || p.postUrl || p.link || p.videoUrl ||\n     (p.aweme_info && p.aweme_info.aweme_id && p.aweme_info.author ? `https://www.tiktok.com/@${p.aweme_info.author.unique_id}/video/${p.aweme_info.aweme_id}` : null));\nconst coms = p => Number(p.commentsCount ?? p.commentCount ?? p.comments_count ?? p.comment_count ?? (p.aweme_info && p.aweme_info.statistics && p.aweme_info.statistics.comment_count) ?? (p.stats && (p.stats.commentCount ?? p.stats.comments)) ?? (typeof p.comments === 'number' ? p.comments : 0)) || 0;\nconst texto = p => norm((p.caption && (p.caption.text || p.caption)) || p.description || p.title || p.text || p.desc || (p.aweme_info && p.aweme_info.desc) || '');\nconst duenio = p => (p.owner && p.owner.username) || p.ownerUsername || p.owner_username || (p.aweme_info && p.aweme_info.author && p.aweme_info.author.unique_id) || (p.user && (p.user.username || p.user.uniqueId)) ||\n  (p.channel && (p.channel.username || p.channel.uniqueId)) || (p.author && (p.author.uniqueId || p.author.username)) || (p.authorMeta && p.authorMeta.name);\nconst CLAVES = ['precio', 'cuanto', 'presupuesto', 'cobra', 'sale', 'servicio', 'turno', 'consulta', 'zona', 'caba', 'argentina', 'buenos aires'];\nconst valor = p => {\n  const c = coms(p);\n  if (c < 3) return -1;\n  const enRango = c <= 400 ? Math.log(c + 1) : Math.log(400) - 1;   // los virales rinden menos\n  return enRango + 2 * CLAVES.filter(k => texto(p).includes(k)).length;\n};\nconst elegidos = posts.filter(p => url(p) && valor(p) >= 0).sort((a, b) => valor(b) - valor(a)).slice(0, red === 'ig' ? 6 : 8);\nreturn [{ json: { urls: elegidos.map(url), duenios: elegidos.map(duenio).filter(Boolean) } }];"
+        "jsCode": "// Elige los posts donde más rinde cada comentario que se paga: los que hablan\n// de precio o de pedir un servicio, y con una cantidad de comentarios normal\n// (los virales se llenan de chistes y emojis). Lee varios nombres de campo\n// porque cada herramienta de Apify los llama distinto.\nconst red = 'tt';\nconst fuente = red === 'tt' ? [...$('TT: videos por busqueda').all(), ...$('TT: videos por busqueda 2').all()] : $input.all();\nconst posts = fuente.map(i => i.json).filter(p => p && !p.error);\nconst norm = s => String(s || '').toLowerCase().normalize('NFD').replace(/[\\u0300-\\u036f]/g, '');\nconst codigo = p => p.shortCode || p.shortcode || p.short_code || p.code;\nconst url = p => red === 'ig'\n  ? (p.url || p.postUrl || p.link || (codigo(p) ? `https://www.instagram.com/p/${codigo(p)}/` : null))\n  : (p.webVideoUrl || p.url || p.postUrl || p.link || p.videoUrl ||\n     (p.aweme_info && p.aweme_info.aweme_id && p.aweme_info.author ? `https://www.tiktok.com/@${p.aweme_info.author.unique_id}/video/${p.aweme_info.aweme_id}` : null));\nconst coms = p => Number(p.commentsCount ?? p.commentCount ?? p.comments_count ?? p.comment_count ?? (p.aweme_info && p.aweme_info.statistics && p.aweme_info.statistics.comment_count) ?? (p.stats && (p.stats.commentCount ?? p.stats.comments)) ?? (typeof p.comments === 'number' ? p.comments : 0)) || 0;\nconst texto = p => norm((p.caption && (p.caption.text || p.caption)) || p.description || p.title || p.text || p.desc || (p.aweme_info && p.aweme_info.desc) || '');\nconst duenio = p => (p.owner && p.owner.username) || p.ownerUsername || p.owner_username || (p.aweme_info && p.aweme_info.author && p.aweme_info.author.unique_id) || (p.user && (p.user.username || p.user.uniqueId)) ||\n  (p.channel && (p.channel.username || p.channel.uniqueId)) || (p.author && (p.author.uniqueId || p.author.username)) || (p.authorMeta && p.authorMeta.name);\nconst CLAVES = ['precio', 'cuanto', 'presupuesto', 'cobra', 'sale', 'servicio', 'turno', 'consulta', 'zona', 'caba', 'argentina', 'buenos aires'];\nconst valor = p => {\n  const c = coms(p);\n  if (c < 3) return -1;\n  const enRango = c <= 400 ? Math.log(c + 1) : Math.log(400) - 1;   // los virales rinden menos\n  return enRango + 2 * CLAVES.filter(k => texto(p).includes(k)).length;\n};\n// Solo Buenos Aires: en TikTok, video subido desde Argentina; en los dos, que el\n// texto o el lugar hablen de CABA/GBA o traigan un teléfono 11.\nconst BA = /caba|capital federal|buenos aires|bs ?as|zona (norte|sur|oeste)|\\bgba\\b|conurbano|palermo|belgrano|caballito|flores|almagro|recoleta|nu[nñ]ez|devoto|villa |san isidro|vicente lopez|olivos|tigre|pilar|quilmes|lan[uú]s|avellaneda|lomas|banfield|adrogu[eé]|mor[oó]n|haedo|ramos mej[ií]a|castelar|ituzaing[oó]|merlo|moreno|san justo|la matanza|tres de febrero|caseros|san mart[ií]n|\\b11[ -]?\\d{4}|\\+?54 ?9? ?11/;\nconst lugar = p => norm(JSON.stringify((p.aweme_info && p.aweme_info.poi_data) || p.location || ''));\nconst deBA = p => {\n  if (red === 'tt' && p.aweme_info && p.aweme_info.region && p.aweme_info.region !== 'AR') return false;\n  return BA.test(texto(p)) || BA.test(lugar(p)) || (red === 'tt' && p.aweme_info && p.aweme_info.region === 'AR');\n};\nconst elegidos = posts.filter(p => url(p) && valor(p) >= 0 && deBA(p)).sort((a, b) => valor(b) - valor(a)).slice(0, red === 'ig' ? 6 : 10);\nreturn [{ json: { urls: elegidos.map(url), duenios: elegidos.map(duenio).filter(Boolean) } }];"
       }
     },
     {
@@ -168,7 +199,7 @@
       ],
       "parameters": {
         "method": "POST",
-        "url": "https://api.apify.com/v2/acts/clockworks~tiktok-comments-scraper/run-sync-get-dataset-items?timeout=280&maxTotalChargeUsd=0.065",
+        "url": "https://api.apify.com/v2/acts/clockworks~tiktok-comments-scraper/run-sync-get-dataset-items?timeout=280&maxTotalChargeUsd=0.075",
         "authentication": "genericCredentialType",
         "genericAuthType": "httpHeaderAuth",
         "sendBody": true,
@@ -212,8 +243,8 @@
       }
     },
     {
-      "id": "be9b31e7-9bf3-5e34-8442-9364fe01a7e7",
-      "name": "Elegir 50 por red",
+      "id": "338a0157-e72d-5cd5-a9dd-7d7216313ecb",
+      "name": "Candidatos",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
@@ -221,7 +252,51 @@
         0
       ],
       "parameters": {
-        "jsCode": "// Elige 50 cuentas por red entre la gente que comentó. Puntúa la intención de\n// pedir un servicio (pregunta precio, busca, dice la zona), que hable como en\n// Argentina y que el comentario diga algo. Saca spam, links, las cuentas\n// dueñas de los posts, las nuestras y las ya sugeridas en los últimos 60 días.\nconst norm = s => String(s || '').toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '');\nconst INTENCION = ['cuanto', 'precio', 'presupuesto', 'cobra', 'cobran', 'sale ', 'necesito', 'busco', 'buscando',\n  'recomiend', 'alguien que', 'donde', 'zona', 'caba', 'capital', 'gba', 'provincia', 'conurbano',\n  'me pasas', 'contacto', 'numero', 'whatsapp', 'info', 'hacen', 'trabajan', 'a domicilio', 'turno'];\nconst ARGENTINA = ['che ', 'laburo', 'posta', 'vos ', 'sos ', 'tenes', 'podes', 'queres', 'sabes', 'buenos aires',\n  'argentina', 'mendoza', 'cordoba', 'rosario', 'la plata', 'mar del plata', 'tucuman'];\nconst NUESTRAS = ['trattoapp', 'trattoapp_'];\nconst ya = new Set($('Ya sugeridos').all().map(i => i.json).filter(x => x && x.usuario).map(x => x.red + ':' + norm(x.usuario)));\n\nfunction puntuar(texto) {\n  const t = ' ' + norm(texto) + ' ';\n  if (/https?:|www\\.|\\.com/.test(t)) return -99;\n  const letras = (t.match(/[a-z]/g) || []).length;\n  if (letras < 4) return -99;\n  let p = 0;\n  p += Math.min(9, INTENCION.filter(k => t.includes(k)).length * 3);\n  if (ARGENTINA.some(k => t.includes(k))) p += 2;\n  if (t.includes('?')) p += 1;\n  if (letras > 20) p += 1;\n  return p;\n}\n\nfunction elegir(red, nodo, nodoPosts) {\n  const duenios = new Set(((($(nodoPosts).first() || {}).json || {}).duenios || []).map(norm));\n  const items = $(nodo).all().map(i => i.json).filter(x => x && !x.error);\n  const porUsuario = new Map();\n  for (const it of items) {\n    const usuario = red === 'instagram'\n      ? (it.owner && it.owner.username) || it.ownerUsername || it.username || (it.user && it.user.username) || (it.author && it.author.username)\n      : (it.user && (it.user.uniqueId || it.user.username)) || (it.author && it.author.uniqueId) || it.uniqueId || it.username || (it.authorMeta && it.authorMeta.name);\n    if (it.content_type === 'caption') continue;   // el texto del post, no un comentario\n    const texto = it.text || it.message || it.comment || it.content || '';\n    const post = it.postUrl || it.videoWebUrl || it.input_url || it.videoUrl || it.url || it.inputUrl || it.inputSource || '';\n    if (!usuario) continue;\n    const u = norm(usuario);\n    if (NUESTRAS.includes(u) || duenios.has(u) || ya.has(red + ':' + u)) continue;\n    const puntaje = puntuar(texto);\n    if (puntaje < 0) continue;\n    const previo = porUsuario.get(u);\n    if (!previo || puntaje > previo.puntaje) porUsuario.set(u, { red, usuario, comentario: String(texto).slice(0, 220), post_url: post, puntaje });\n  }\n  return [...porUsuario.values()].sort((a, b) => b.puntaje - a.puntaje).slice(0, 50);\n}\n\nconst ig = elegir('instagram', 'IG: comentarios', 'IG: elegir reels');\nconst tt = elegir('tiktok', 'TT: comentarios', 'TT: elegir videos');\nreturn [{ json: { filas: [...ig, ...tt], ig, tt } }];"
+        "jsCode": "// Primer filtro, sin IA: saca links, emojis sueltos, las cuentas dueñas de los\n// posts, las de Tratto y las ya sugeridas en los últimos 60 días. Arma la lista\n// de candidatos (hasta 160) con el texto del post como contexto para la IA.\nconst norm = s => String(s || '').toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '');\nconst NUESTRAS = ['trattoapp', 'trattoapp_'];\nconst ya = new Set($('Ya sugeridos').all().map(i => i.json).filter(x => x && x.usuario).map(x => x.red + ':' + norm(x.usuario)));\nconst contexto = {};\nfunction postsDe(nodo, red) {\n  for (const i of $(nodo).all()) {\n    const p = i.json || {}, a = p.aweme_info || {};\n    const u = red === 'tiktok' && a.aweme_id && a.author ? `https://www.tiktok.com/@${a.author.unique_id}/video/${a.aweme_id}` : (p.url || '');\n    const t = (p.caption && (p.caption.text || p.caption)) || a.desc || p.description || '';\n    if (u) contexto[u] = String(t).slice(0, 160);\n  }\n}\npostsDe('IG: reels por hashtag', 'instagram'); postsDe('TT: videos por busqueda', 'tiktok'); postsDe('TT: videos por busqueda 2', 'tiktok');\n\nfunction candidatos(red, nodo, nodoPosts) {\n  const duenios = new Set(((($(nodoPosts).first() || {}).json || {}).duenios || []).map(norm));\n  const vistos = new Set(), out = [];\n  for (const it of $(nodo).all().map(i => i.json).filter(x => x && !x.error)) {\n    if (it.content_type === 'caption') continue;\n    const usuario = red === 'instagram'\n      ? it.username || (it.owner && it.owner.username) || it.ownerUsername || (it.user && it.user.username)\n      : it.uniqueId || (it.user && (it.user.uniqueId || it.user.username)) || (it.author && it.author.uniqueId) || it.username;\n    const texto = String(it.text || it.message || it.comment || it.content || '').trim();\n    const post = it.postUrl || it.videoWebUrl || it.input_url || it.submittedVideoUrl || it.inputSource || it.url || '';\n    const u = norm(usuario);\n    if (!usuario || vistos.has(u) || NUESTRAS.includes(u) || duenios.has(u) || ya.has(red + ':' + u)) continue;\n    if (/https?:|www\\.|\\.com/.test(texto) || (norm(texto).match(/[a-z]/g) || []).length < 6) continue;\n    vistos.add(u);\n    out.push({ red, usuario, nombre: it.full_name || (it.user && it.user.full_name) || '', comentario: texto.slice(0, 220), post_url: post, post_texto: contexto[post] || '' });\n  }\n  return out.slice(0, 80);\n}\nconst lista = [...candidatos('instagram', 'IG: comentarios', 'IG: elegir reels'), ...candidatos('tiktok', 'TT: comentarios', 'TT: elegir videos')];\nreturn [{ json: { candidatos: lista.map((c, i) => ({ i, ...c })) } }];"
+      }
+    },
+    {
+      "id": "8b714edb-bdc1-5d18-9e64-86865b355c39",
+      "name": "IA: Argentina e intencion",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "executeOnce": true,
+      "alwaysOutputData": true,
+      "onError": "continueRegularOutput",
+      "position": [
+        2090,
+        0
+      ],
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.openai.com/v1/chat/completions",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "openAiApi",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ model: 'gpt-4o-mini', temperature: 0, response_format: { type: 'json_object' }, max_tokens: 6000, messages: [ { role: 'system', content: \"Revis\\u00e1s comentarios de Instagram y TikTok para Tratto, una app de Buenos Aires (Argentina) donde la gente pide un servicio y recibe presupuestos de proveedores de su zona: arreglos y reformas, mudanzas y fletes, limpieza, clases, eventos, mascotas, belleza, entrenamiento, tr\\u00e1mites, contadores, dise\\u00f1o, autos y m\\u00e1s.\\n\\nPara cada comentario decid\\u00ed:\\n- \\\"argentina\\\": \\\"si\\\" si habla claramente como en Argentina (voseo: vos, ten\\u00e9s, quer\\u00e9s, pod\\u00e9s, sab\\u00e9s; che, laburo, posta, re, mangos, lucas, guita) o nombra lugares de Argentina (CABA, zona norte/sur/oeste, barrios o partidos del GBA, provincias argentinas). \\\"probable\\\" si es neutro pero el post es de Buenos Aires y nada indica otro pa\\u00eds. \\\"no\\\" si hay se\\u00f1ales de otro pa\\u00eds (M\\u00e9xico: wey, g\\u00fcey, chido, neta, ahorita, \\u00f3rale; Chile: cachai, po, we\\u00f3n, bac\\u00e1n, fome; Per\\u00fa/Venezuela/Colombia: pana, ch\\u00e9vere, causa, parce; Espa\\u00f1a: vale, t\\u00edo, vosotros) o nombra lugares o monedas de otro pa\\u00eds.\\n- \\\"intencion\\\": la pregunta es si esta persona podr\\u00eda CONTRATAR un servicio pronto.\\n  3 = lo pide o lo necesita: pide precio o presupuesto para ella, contacto, WhatsApp, turno, \\\"\\u00bfme pas\\u00e1s info?\\\", \\\"necesito uno\\\", \\\"\\u00bfcu\\u00e1nto me sale\\u2026?\\\", \\\"\\u00bfvienen a mi casa?\\\".\\n  2 = est\\u00e1 evaluando contratar: pregunta si trabajan en su zona o barrio, si tienen disponibilidad, si hacen tal trabajo, c\\u00f3mo contratarlos, o cuenta que tiene ese problema en su casa (\\\"se me rompi\\u00f3\\u2026\\\", \\\"tengo humedad\\u2026\\\").\\n  1 = curiosidad o comentario sin intenci\\u00f3n de contratar: preguntas t\\u00e9cnicas de c\\u00f3mo se hace (\\\"\\u00bfqu\\u00e9 material usaste?\\\", \\\"\\u00bfc\\u00f3mo sacaste\\u2026?\\\"), opiniones sobre precios ajenos, an\\u00e9cdotas.\\n  0 = nada que ver: chistes, elogios, emojis, discusiones, spam; quien quiere aprender el oficio o pregunta cu\\u00e1nto se gana; otro proveedor o empresa ofreciendo lo suyo; preguntas sobre otra profesi\\u00f3n.\\nAnte la duda entre dos valores, eleg\\u00ed el m\\u00e1s bajo.\\n\\nRespond\\u00e9 SOLO con JSON: {\\\"resultados\\\":[{\\\"i\\\":0,\\\"argentina\\\":\\\"si|probable|no\\\",\\\"intencion\\\":0,\\\"motivo\\\":\\\"en 6 palabras o menos\\\"}]}\" }, { role: 'user', content: JSON.stringify($json.candidatos.map(c => ({ i: c.i, red: c.red, usuario: c.usuario, nombre: c.nombre, comentario: c.comentario, post: c.post_texto }))) } ] }) }}",
+        "options": {
+          "timeout": 120000
+        }
+      },
+      "credentials": {
+        "openAiApi": {
+          "id": "UNySLvC0hCgEOrj9",
+          "name": "Tratto · OpenAI"
+        }
+      }
+    },
+    {
+      "id": "be9b31e7-9bf3-5e34-8442-9364fe01a7e7",
+      "name": "Elegir 50 por red",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2200,
+        0
+      ],
+      "parameters": {
+        "jsCode": "// Se queda solo con quien la IA marcó de Argentina (o probable) y con ganas\n// concretas de contratar algo (intención 2 o 3). Si la IA falla, no manda\n// nada antes que mandar cualquiera. Hasta 50 por red, primero los más claros.\nconst cands = $('Candidatos').first().json.candidatos || [];\nlet res = [];\ntry { res = JSON.parse($input.first().json.choices[0].message.content).resultados || []; } catch (e) { res = []; }\nconst porI = new Map(res.map(r => [Number(r.i), r]));\nconst puntaje = r => Number(r.intencion) * 10 + (r.argentina === 'si' ? 3 : 0);\nconst buenos = cands.map(c => ({ c, r: porI.get(c.i) }))\n  .filter(x => x.r && ['si', 'probable'].includes(x.r.argentina) && Number(x.r.intencion) >= 2)   // 2 = evaluando contratar, 3 = lo pide\n  .map(x => ({ red: x.c.red, usuario: x.c.usuario, comentario: x.c.comentario, post_url: x.c.post_url, puntaje: puntaje(x.r), motivo: String(x.r.motivo || '').slice(0, 60) }))\n  .sort((a, b) => b.puntaje - a.puntaje);\nconst ig = buenos.filter(x => x.red === 'instagram').slice(0, 50);\nconst tt = buenos.filter(x => x.red === 'tiktok').slice(0, 50);\nreturn [{ json: { filas: [...ig, ...tt], ig, tt, revisados: cands.length, ia_ok: res.length > 0 } }];"
       }
     },
     {
@@ -233,7 +308,7 @@
       "alwaysOutputData": true,
       "onError": "continueRegularOutput",
       "position": [
-        2200,
+        2310,
         0
       ],
       "parameters": {
@@ -307,7 +382,7 @@
         0
       ],
       "parameters": {
-        "jsCode": "const { ig, tt } = $('Elegir 50 por red').first().json;\nconst b = $('Busquedas del dia').first().json;\nconst esc = s => String(s || '').replace(/[&<>\"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '\"': '&quot;' }[c]));\nconst link = (red, u) => red === 'instagram' ? `https://www.instagram.com/${encodeURIComponent(u)}/` : `https://www.tiktok.com/@${encodeURIComponent(u)}`;\nconst tabla = (titulo, lista) => `<h2 style=\"font-family:Arial;color:#1E5D49\">${titulo} (${lista.length})</h2>` +\n  (lista.length ? '<table cellpadding=\"6\" style=\"border-collapse:collapse;font-family:Arial;font-size:14px\">' + lista.map((x, i) =>\n    `<tr style=\"border-bottom:1px solid #eee\"><td>${i + 1}</td><td><a href=\"${link(x.red, x.usuario)}\"><b>@${esc(x.usuario)}</b></a></td>` +\n    `<td style=\"color:#555\">“${esc(x.comentario)}”${x.post_url ? ` · <a href=\"${esc(x.post_url)}\">post</a>` : ''}</td></tr>`).join('') + '</table>'\n  : '<p style=\"font-family:Arial\">Hoy no encontré cuentas nuevas acá.</p>');\nconst html = `<div style=\"max-width:760px\">\n<p style=\"font-family:Arial\">Hola! Estas son las cuentas de hoy para seguir <b>a mano</b>, de a poco y desde el celular.\nSalen de gente que comentó publicaciones de: ${esc(b.hashtags.map(h => '#' + h).join(', '))} (Instagram) y ${esc(b.busquedas.join(' · '))} (TikTok).\nArriba están las que más intención muestran de pedir un servicio.</p>\n${tabla('Instagram', ig)}${tabla('TikTok', tt)}\n<p style=\"font-family:Arial;color:#888;font-size:12px\">Radar de Tratto. Seguí sin apuro (no todas de corrido) y, si podés, dejá un comentario útil en su post: suma más que el follow solo.</p></div>`;\nreturn [{ json: { asunto: `Radar: ${ig.length} de Instagram y ${tt.length} de TikTok para seguir hoy`, html } }];"
+        "jsCode": "const { ig, tt, revisados, ia_ok } = $('Elegir 50 por red').first().json;\nconst b = $('Busquedas del dia').first().json;\nconst esc = s => String(s || '').replace(/[&<>\"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '\"': '&quot;' }[c]));\nconst link = (red, u) => red === 'instagram' ? `https://www.instagram.com/${encodeURIComponent(u)}/` : `https://www.tiktok.com/@${encodeURIComponent(u)}`;\nconst tabla = (titulo, lista) => `<h2 style=\"font-family:Arial;color:#1E5D49\">${titulo} (${lista.length})</h2>` +\n  (lista.length ? '<table cellpadding=\"6\" style=\"border-collapse:collapse;font-family:Arial;font-size:14px\">' + lista.map((x, i) =>\n    `<tr style=\"border-bottom:1px solid #eee\"><td>${i + 1}</td><td><a href=\"${link(x.red, x.usuario)}\"><b>@${esc(x.usuario)}</b></a></td>` +\n    `<td style=\"color:#555\">“${esc(x.comentario)}”${x.motivo ? ` <span style=\"color:#1E5D49\">(${esc(x.motivo)})</span>` : ''}${x.post_url ? ` · <a href=\"${esc(x.post_url)}\">post</a>` : ''}</td></tr>`).join('') + '</table>'\n  : '<p style=\"font-family:Arial\">Hoy no encontré cuentas nuevas acá.</p>');\nconst html = `<div style=\"max-width:760px\">\n<p style=\"font-family:Arial\">Hola! Estas son las cuentas de hoy para seguir <b>a mano</b>, de a poco y desde el celular.\nSalen de gente que comentó publicaciones de: ${esc(b.hashtags.map(h => '#' + h).join(', '))} (Instagram) y ${esc(b.busquedas.join(' · '))} (TikTok).\nRevisé ${revisados} comentarios y quedaron solo los de gente de Argentina que muestra ganas de contratar algo (pregunta precio, contacto o si cubren su zona); arriba, los más claros.${ia_ok ? '' : ' <b>Hoy falló el filtro con IA, así que no mandé ninguna.</b>'}</p>\n${tabla('Instagram', ig)}${tabla('TikTok', tt)}\n<p style=\"font-family:Arial;color:#888;font-size:12px\">Radar de Tratto. Seguí sin apuro (no todas de corrido) y, si podés, dejá un comentario útil en su post: suma más que el follow solo.</p></div>`;\nreturn [{ json: { asunto: `Radar: ${ig.length} de Instagram y ${tt.length} de TikTok para seguir hoy`, html } }];"
       }
     },
     {
@@ -335,7 +410,7 @@
           "name": "Brevo SMTP (alertas)"
         }
       },
-      "webhookId": "5333fa31-f862-4f77-979a-1ea780c6215e"
+      "webhookId": "fbbef5e4-881f-46cd-a9e4-aad564a6e489"
     }
   ],
   "connections": {
@@ -398,6 +473,17 @@
       "main": [
         [
           {
+            "node": "TT: videos por busqueda 2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "TT: videos por busqueda 2": {
+      "main": [
+        [
+          {
             "node": "TT: elegir videos",
             "type": "main",
             "index": 0
@@ -428,6 +514,28 @@
       ]
     },
     "Ya sugeridos": {
+      "main": [
+        [
+          {
+            "node": "Candidatos",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Candidatos": {
+      "main": [
+        [
+          {
+            "node": "IA: Argentina e intencion",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "IA: Argentina e intencion": {
       "main": [
         [
           {

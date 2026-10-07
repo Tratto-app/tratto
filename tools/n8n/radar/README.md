@@ -5,19 +5,28 @@ Workflow de n8n `RADAR - 50 cuentas por red para seguir a mano`
 
 Todos los días a las 8:30 (hora de Argentina):
 
-1. Elige 1 hashtag de Instagram y 1 búsqueda de TikTok, rotando entre muchos
-   rubros (no solo oficios; sin gas, electricidad ni salud).
-2. Con Apify trae los reels y videos de esas búsquedas y elige los mejores posts de cada
-   red donde más rinde cada comentario: los que hablan de precio o de pedir un
-   servicio, con una cantidad normal de comentarios (los virales se llenan de
-   chistes). Baja ~45 comentarios por red.
-3. Puntúa a cada persona que comentó: pregunta precio, busca un servicio, dice
-   la zona, habla como en Argentina. Saca links, spam, los dueños de los posts,
-   las cuentas de Tratto y a quien ya se sugirió en los últimos 60 días
+1. Elige 1 hashtag de Instagram y 2 búsquedas de TikTok, rotando entre muchos
+   rubros, todas apuntadas a Buenos Aires (sin gas, electricidad ni salud).
+2. Se queda solo con posts de Buenos Aires: en TikTok, videos subidos desde
+   Argentina; en los dos, que el texto o el lugar hablen de CABA/GBA o traigan
+   un teléfono 11. Baja ~6 comentarios por video/post.
+3. Primer filtro sin IA: saca links, emojis sueltos, dueños de los posts,
+   cuentas de Tratto y a quien ya se sugirió en los últimos 60 días
    (tabla `public.radar_redes`).
-4. Manda a trattoapp1@gmail.com hasta 50 cuentas de cada red, ordenadas por
-   intención, con link al perfil, el comentario y el post. **Se siguen a mano
-   desde el celular**: el workflow no sigue a nadie ni entra a las cuentas.
+4. **Filtro con IA** (gpt-4o-mini, credencial `Tratto · OpenAI`): por cada
+   comentario decide si la persona es de Argentina (voseo, lunfardo, lugares;
+   descarta señales de México, Chile, Perú, España, etc.) y si quiere contratar
+   (3 = pide precio/contacto/turno, 2 = pregunta si cubren su zona o cuenta que
+   tiene el problema). Quedan solo Argentina/probable con intención 2 o 3. Si la
+   IA falla, no manda ninguna.
+5. Manda a trattoapp1@gmail.com hasta 50 cuentas por red, con link al perfil,
+   el comentario, el motivo y el post. **Se siguen a mano desde el celular**:
+   el workflow no sigue a nadie ni entra a las cuentas.
+
+Prueba del 2026-10-07 (mudanzas y maquillaje en CABA): 46 comentarios
+revisados, 18 cuentas de TikTok, casi todas pidiendo precio o información.
+Instagram en el plan gratis casi no trae posts de Buenos Aires (un hashtag por
+día y ~10 posts): ese día, 0.
 
 Necesita la credencial de n8n **Apify** (tipo Header Auth, nombre
 `Authorization`, valor `Bearer <token de Apify>`).
