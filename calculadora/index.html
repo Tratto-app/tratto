@@ -1,0 +1,517 @@
+<!doctype html>
+<html lang="es-AR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>¿Te cobraron de más? · Calculadora de precios · Tratto</title>
+<meta name="description" content="Compará lo que pagaste o te presupuestaron por un servicio con los precios de referencia del mes en el AMBA. Gratis, en 20 segundos.">
+<link rel="canonical" href="https://www.trattoapp.com.ar/calculadora/">
+<meta name="theme-color" content="#0C2620">
+<meta property="og:type" content="website">
+<meta property="og:locale" content="es_AR">
+<meta property="og:site_name" content="Tratto">
+<meta property="og:title" content="¿Te cobraron de más?">
+<meta property="og:description" content="Compará lo que pagaste por un servicio con los precios de referencia del mes. Gratis, en 20 segundos.">
+<meta property="og:url" content="https://www.trattoapp.com.ar/calculadora/">
+<meta property="og:image" content="https://www.trattoapp.com.ar/og-image.png?v=2">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<!-- Vercel Web Analytics: se manda la URL sin parámetros, salvo los utm_ -->
+<script>
+  window.va = function () { (window.vaq = window.vaq || []).push(arguments); };
+  window.va('beforeSend', function (event) {
+    var url = new URL(event.url);
+    var utm = new URLSearchParams();
+    url.searchParams.forEach(function (v, k) { if (k.indexOf('utm_') === 0) utm.set(k, v); });
+    url.search = utm.toString();
+    url.hash = '';
+    event.url = url.toString();
+    return event;
+  });
+</script>
+<script defer src="/_vercel/insights/script.js"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans+Condensed:wght@600;700&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  /* Misma identidad que la app: noche + verde bosque + latón como sello. */
+  :root{
+    --noche:#0C2620; --noche-2:#123830; --noche-3:#1B4B40;
+    --claro:#FCFBF8; --claro-2:#F2F0E9; --claro-3:#E8E5DB;
+    --tinta:#0E1815; --gris:#68766F; --gris-2:#94A19B;
+    --verde:#1E5D49; --verde-vivo:#2B7E62; --verde-luz:#8FD9BC;
+    --laton:#C9A227; --laton-osc:#8A6E10; --laton-luz:#F3E7BC;
+    --linea:#E0DCD0; --alerta:#A63A1C; --alerta-luz:#F9EAE4;
+    --f-disp:"IBM Plex Sans Condensed","Arial Narrow",system-ui,sans-serif;
+    --f-texto:"IBM Plex Sans",system-ui,-apple-system,"Segoe UI",sans-serif;
+    --f-mono:"IBM Plex Mono",ui-monospace,Menlo,monospace;
+    color-scheme:light;
+  }
+  *{box-sizing:border-box}
+  html{-webkit-text-size-adjust:100%}
+  body{margin:0;background:var(--noche);color:var(--tinta);font:16px/1.55 var(--f-texto);-webkit-font-smoothing:antialiased;
+       padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+  a{color:var(--verde)}
+  button,input,select{font:inherit}
+  :focus-visible{outline:3px solid var(--laton);outline-offset:2px}
+
+  .tope{max-width:560px;margin:0 auto;padding:18px 18px 0;display:flex;align-items:center;gap:10px}
+  .tope img{width:30px;height:30px;border-radius:8px}
+  .tope b{font:700 1.2rem/1 var(--f-disp);color:var(--claro);letter-spacing:.01em}
+  .tope a{display:flex;align-items:center;gap:10px;text-decoration:none}
+
+  .hero{max-width:560px;margin:0 auto;padding:26px 18px 22px;color:var(--claro)}
+  .ceja{font:500 .74rem/1.3 var(--f-mono);letter-spacing:.12em;text-transform:uppercase;color:var(--laton);margin:0 0 10px}
+  h1{font:700 clamp(2.4rem,11vw,3.4rem)/.98 var(--f-disp);margin:0 0 12px;letter-spacing:-.01em;text-wrap:balance}
+  .hero p.sub{margin:0;color:#C9D6D0;font-size:1.04rem;max-width:42ch}
+
+  .hoja{background:var(--claro);border-radius:22px 22px 0 0;min-height:60vh}
+  .hoja-in{max-width:560px;margin:0 auto;padding:26px 18px 40px;display:grid;gap:22px}
+
+  .campo{display:grid;gap:8px}
+  .campo > label,.campo > .etq{font:600 .95rem/1.3 var(--f-texto)}
+  .ayuda{font-size:.84rem;color:var(--gris)}
+  select,input[type=text],input[type=email],input[type=tel]{width:100%;appearance:none;-webkit-appearance:none;background:#fff;border:1.5px solid var(--linea);border-radius:12px;padding:14px 14px;color:var(--tinta);font-size:1rem}
+  select{background-image:linear-gradient(45deg,transparent 50%,var(--gris) 50%),linear-gradient(135deg,var(--gris) 50%,transparent 50%);background-position:calc(100% - 20px) 50%,calc(100% - 14px) 50%;background-size:6px 6px;background-repeat:no-repeat;padding-right:38px}
+  select:focus,input:focus{border-color:var(--verde-vivo);outline:none;box-shadow:0 0 0 3px rgba(43,126,98,.18)}
+  select:disabled{background-color:var(--claro-2);color:var(--gris-2)}
+  .precio{position:relative}
+  .precio span.signo{position:absolute;left:14px;top:50%;transform:translateY(-50%);font:600 1.2rem/1 var(--f-mono);color:var(--gris)}
+  .precio input{padding-left:34px;font:600 1.35rem/1 var(--f-mono);letter-spacing:.01em}
+  .precio .unidad{position:absolute;right:14px;top:50%;transform:translateY(-50%);font:500 .78rem/1 var(--f-mono);color:var(--gris)}
+
+  .opciones{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+  .opciones input{position:absolute;opacity:0;pointer-events:none}
+  .opciones label{display:flex;align-items:center;justify-content:center;min-height:56px;line-height:1.25;text-align:center;padding:13px 10px;border:1.5px solid var(--linea);border-radius:12px;background:#fff;font-weight:500;cursor:pointer}
+  .opciones input:checked + label{border-color:var(--verde);background:var(--verde);color:#fff}
+  .opciones input:focus-visible + label{outline:3px solid var(--laton);outline-offset:2px}
+
+  .boton{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;border:0;border-radius:14px;padding:16px 18px;background:var(--verde);color:#fff;font:600 1.08rem/1.2 var(--f-texto);cursor:pointer;text-decoration:none;box-shadow:inset 0 -3px 0 rgba(0,0,0,.18)}
+  .boton:hover{background:var(--verde-vivo)}
+  .boton:disabled{opacity:.55;cursor:default}
+  .boton.laton{background:var(--laton);color:#1A1405}
+  .boton.claro{background:#fff;color:var(--verde);border:1.5px solid var(--linea);box-shadow:none}
+  .error{color:var(--alerta);background:var(--alerta-luz);border-radius:10px;padding:10px 12px;font-size:.92rem}
+
+  /* Paso del email */
+  .candado{background:#fff;border:1.5px solid var(--linea);border-radius:18px;padding:18px;display:grid;gap:14px}
+  .candado h2{font:700 1.45rem/1.1 var(--f-disp);margin:0}
+  .check{display:grid;grid-template-columns:22px 1fr;gap:10px;align-items:start;font-size:.92rem;color:var(--tinta)}
+  .check input{width:20px;height:20px;margin:1px 0 0;accent-color:var(--verde)}
+  .legal{font-size:.78rem;color:var(--gris);margin:0}
+
+  /* Resultado */
+  .resultado{display:grid;gap:18px}
+  .sello{justify-self:start;display:inline-flex;align-items:center;gap:8px;font:600 .78rem/1 var(--f-mono);letter-spacing:.1em;text-transform:uppercase;padding:8px 12px;border-radius:999px;border:2px solid currentColor}
+  .sello::before{content:"";width:9px;height:9px;border-radius:50%;background:currentColor}
+  .v-caro{color:var(--alerta)} .v-justo{color:var(--verde)} .v-barato{color:var(--laton-osc)}
+  .resultado h2{font:700 clamp(2rem,9vw,2.6rem)/1 var(--f-disp);margin:0;text-wrap:balance}
+  .resultado .detalle{margin:0;color:#34443E;font-size:1.02rem}
+  .escala{background:#fff;border:1.5px solid var(--linea);border-radius:18px;padding:18px 16px 14px}
+  .barra{position:relative;height:14px;border-radius:7px;background:linear-gradient(90deg,var(--laton-luz) 0 25%,var(--verde-luz) 25% 75%,var(--alerta-luz) 75% 100%);margin:34px 0 10px}
+  .barra .rango{position:absolute;left:25%;width:50%;top:0;bottom:0;border-left:2px solid var(--verde);border-right:2px solid var(--verde)}
+  .marca{position:absolute;top:50%;width:0;transform:translateX(-50%)}
+  .marca::before{content:"";position:absolute;left:-11px;top:-11px;width:22px;height:22px;border-radius:50%;background:var(--tinta);border:4px solid #fff;box-shadow:0 1px 4px rgba(0,0,0,.3)}
+  .marca span{position:absolute;bottom:16px;left:50%;transform:translateX(-50%);white-space:nowrap;font:600 .8rem/1 var(--f-mono);background:var(--tinta);color:#fff;padding:5px 7px;border-radius:6px}
+  .ejes{display:flex;justify-content:space-between;font:500 .78rem/1.3 var(--f-mono);color:var(--gris);padding:0 calc(25% - 34px)}
+  .ejes b{color:var(--tinta);font-weight:600;display:block}
+  .nota-ref{font-size:.82rem;color:var(--gris);margin:10px 0 0}
+  .acciones{display:grid;gap:10px;grid-template-columns:1fr 1fr}
+  .cta{background:var(--noche);color:var(--claro);border-radius:18px;padding:20px;display:grid;gap:12px}
+  .cta h3{font:700 1.4rem/1.1 var(--f-disp);margin:0}
+  .cta p{margin:0;color:#C9D6D0;font-size:.95rem}
+  .aviso{font-size:.84rem;color:var(--gris);text-align:center;margin:0}
+
+  .pie{max-width:560px;margin:0 auto;padding:22px 18px 34px;color:#9FB2AA;font-size:.8rem;display:grid;gap:8px}
+  .pie a{color:var(--verde-luz)}
+  [hidden]{display:none!important}
+  @media (prefers-reduced-motion:no-preference){
+    .resultado{animation:entra .35s ease-out}
+    @keyframes entra{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+  }
+</style>
+</head>
+<body>
+<header class="tope"><a href="/?utm_source=calculadora&amp;utm_medium=web&amp;utm_campaign=te_cobraron"><img src="/icon-192.png" alt=""><b>Tratto</b></a></header>
+
+<section class="hero">
+  <p class="ceja" id="ceja">Calculadora de precios · AMBA</p>
+  <h1>¿Te cobraron de más?</h1>
+  <p class="sub">Compará lo que pagaste, o lo que te presupuestaron, con los precios de referencia del mes. Tarda 20 segundos.</p>
+</section>
+
+<main class="hoja"><div class="hoja-in">
+
+  <form id="form" novalidate>
+    <div style="display:grid;gap:18px">
+      <div class="campo">
+        <label for="rubro">¿Qué servicio contrataste?</label>
+        <select id="rubro" required><option value="">Elegí el rubro</option></select>
+        <select id="servicio" required disabled><option value="">Primero elegí el rubro</option></select>
+      </div>
+      <div class="campo">
+        <label for="zona">¿En qué zona?</label>
+        <select id="zona" required><option value="">Elegí tu barrio o partido</option></select>
+      </div>
+      <div class="campo">
+        <span class="etq" id="etq-estado">¿Ya lo pagaste o es un presupuesto?</span>
+        <div class="opciones" role="radiogroup" aria-labelledby="etq-estado">
+          <input type="radio" name="estado" id="e-pagado" value="pagado" checked><label for="e-pagado">Ya lo pagué</label>
+          <input type="radio" name="estado" id="e-presu" value="presupuestado"><label for="e-presu">Me lo presupuestaron</label>
+        </div>
+      </div>
+      <div class="campo">
+        <label for="precio" id="etq-precio">¿Cuánto pagaste?</label>
+        <div class="precio"><span class="signo">$</span><input type="text" id="precio" inputmode="numeric" autocomplete="off" placeholder="0" required><span class="unidad" id="unidad"></span></div>
+        <span class="ayuda">Solo mano de obra, sin materiales.</span>
+      </div>
+      <p class="error" id="error1" hidden></p>
+      <button class="boton" type="submit" id="seguir">Comparar mi precio</button>
+    </div>
+  </form>
+
+  <form id="candado" class="candado" novalidate hidden>
+    <h2>Último paso</h2>
+    <div class="campo">
+      <label for="email">Dejanos tu email para ver el resultado</label>
+      <input type="email" id="email" autocomplete="email" inputmode="email" placeholder="tu@email.com" required>
+    </div>
+    <label class="check"><input type="checkbox" id="novedades"><span>Quiero recibir por email los precios de referencia de cada mes y novedades de Tratto (opcional).</span></label>
+    <p class="error" id="error2" hidden></p>
+    <button class="boton" type="submit" id="ver">Ver mi resultado</button>
+    <p class="legal">Guardamos tu email y tu consulta para mostrarte el resultado y mejorar los precios de referencia. Solo te escribimos si marcás la casilla, y te podés dar de baja cuando quieras. Más detalles en la <a href="/privacidad.html" target="_blank" rel="noopener">política de privacidad</a>.</p>
+  </form>
+
+  <section id="resultado" class="resultado" hidden aria-live="polite">
+    <span class="sello" id="sello"></span>
+    <h2 id="titulo"></h2>
+    <p class="detalle" id="detalle"></p>
+    <div class="escala">
+      <div class="barra" aria-hidden="true"><div class="rango"></div><div class="marca" id="marca"><span id="marca-txt"></span></div></div>
+      <div class="ejes"><span>Desde<b id="r-min"></b></span><span style="text-align:right">Hasta<b id="r-max"></b></span></div>
+      <p class="nota-ref" id="nota-ref"></p>
+    </div>
+    <div class="acciones">
+      <button class="boton laton" type="button" id="compartir">Compartir</button>
+      <button class="boton claro" type="button" id="otra">Otra consulta</button>
+    </div>
+    <div class="cta">
+      <h3>La próxima, compará antes de pagar</h3>
+      <p>En Tratto publicás lo que necesitás y te llegan presupuestos de proveedores de tu zona. Elegís vos.</p>
+      <a class="boton laton" id="ir-app" href="/">Pedí 3 presupuestos en Tratto</a>
+    </div>
+    <p class="aviso" id="aviso-compartir" hidden></p>
+  </section>
+
+</div></main>
+
+<footer class="pie">
+  <p>Los precios de referencia son de mano de obra, relevados en sitios y publicaciones de precios de servicios del AMBA y ajustados mes a mes por inflación. Son una orientación, no un presupuesto: el precio final depende de cada trabajo.</p>
+  <p><a href="/privacidad.html">Privacidad</a> · <a href="/terminos.html">Términos</a> · <a href="/?utm_source=calculadora&amp;utm_medium=web&amp;utm_campaign=te_cobraron">trattoapp.com.ar</a></p>
+</footer>
+
+<canvas id="lienzo" width="1080" height="1920" hidden></canvas>
+
+<script>
+(function(){
+  'use strict';
+  var SUPABASE_URL = 'https://qglsonbcsncgekzbfafk.supabase.co';
+  // Clave pública (anon), la misma que usa la app: solo puede llamar a las dos
+  // funciones de la calculadora; la tabla de respuestas no se lee desde afuera.
+  var ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFnbHNvbmJjc25jZ2VremJmYWZrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODU3MDU2NzksImV4cCI6MjEwMTI4MTY3OX0.bdToh3Rt3XQaFOvHZmO0t1bHIlSKPv-YOVLHe3ljXiA';
+
+  var GRUPOS = {
+    'Hogar y construcción': ['Plomería y destapaciones','Albañilería y refacciones','Pintura','Carpintería y muebles','Herrería y soldadura','Techos e impermeabilización','Durlock y yeso','Pisos y revestimientos','Vidrios y aberturas','Cerrajería','Aire acondicionado','Service de electrodomésticos','Jardinería y piletas','Arreglos generales'],
+    'Limpieza': ['Servicios de limpieza'],
+    'Autos y traslados': ['Mecánica del automotor','Chapa y pintura','Gomería y auxilio','Lavado de autos','Fletes y mudanzas'],
+    'Trámites y administración': ['Contabilidad e impuestos','Gestoría y trámites','Asistente administrativo'],
+    'Digital y diseño': ['Diseño gráfico','Programación y desarrollo','Marketing y redes sociales','Fotografía y video','Reparación y soporte técnico'],
+    'Belleza': ['Estética, maquillaje y peinados'],
+    'Bienestar y cuidado': ['Personal trainer, yoga y pilates','Masajes','Cuidado de adultos mayores'],
+    'Eventos': ['Catering y pastelería','Música y sonido (DJ)','Animación y organización de eventos'],
+    'Educación': ['Apoyo escolar y universitario','Idiomas','Clases de música','Computación y capacitación','Clases de manejo'],
+    'Mascotas': ['Paseo y cuidado de mascotas','Peluquería y adiestramiento canino'],
+    'Otros servicios': ['Costura y arreglos de ropa','Tapicería y restauración','Decoración e interiores','Mandados y compras']
+  };
+  var ZONAS = {
+    'Ciudad de Buenos Aires': ['Agronomía','Almagro','Balvanera','Barracas','Belgrano','Boedo','Caballito','Chacarita','Coghlan','Colegiales','Constitución','Flores','Floresta','La Boca','La Paternal','Liniers','Mataderos','Monserrat','Monte Castro','Nueva Pompeya','Núñez','Palermo','Parque Avellaneda','Parque Chacabuco','Parque Chas','Parque Patricios','Puerto Madero','Recoleta','Retiro','Saavedra','San Cristóbal','San Nicolás','San Telmo','Vélez Sarsfield','Versalles','Villa Crespo','Villa del Parque','Villa Devoto','Villa General Mitre','Villa Lugano','Villa Luro','Villa Ortúzar','Villa Pueyrredón','Villa Real','Villa Riachuelo','Villa Santa Rita','Villa Soldati','Villa Urquiza'],
+    'GBA Norte': ['Escobar','José C. Paz','Malvinas Argentinas','Pilar','San Fernando','San Isidro','San Martín','San Miguel','Tigre','Vicente López'],
+    'GBA Oeste': ['General Rodríguez','Hurlingham','Ituzaingó','La Matanza','Merlo','Moreno','Morón','Tres de Febrero'],
+    'GBA Sur': ['Almirante Brown','Avellaneda','Berazategui','Esteban Echeverría','Ezeiza','Florencio Varela','La Plata','Lanús','Lomas de Zamora','Quilmes'],
+    'Otra': ['Otra zona de la provincia']
+  };
+  var MESES = ['enero','febrero','marzo','abril','mayo','junio','julio','agosto','septiembre','octubre','noviembre','diciembre'];
+  var ahora = new Date(Date.now() - 3 * 3600 * 1000);
+  var MES = MESES[ahora.getUTCMonth()] + ' ' + ahora.getUTCFullYear();
+
+  var qs = new URLSearchParams(location.search);
+  var ORIGEN = (qs.get('utm_source') || qs.get('origen') || 'directo').slice(0, 60);
+  var CAMPANA = (qs.get('utm_campaign') || '').slice(0, 80) || null;
+
+  var $ = function(id){ return document.getElementById(id); };
+  var servicios = [];
+  var ultimo = null;
+
+  $('ceja').textContent = 'Calculadora de precios · AMBA · ' + MES;
+
+  function pesos(n){ return '$' + Math.round(n).toLocaleString('es-AR'); }
+  function soloNumero(s){ return parseInt(String(s).replace(/\D/g, ''), 10) || 0; }
+  function opcion(v, t){ var o = document.createElement('option'); o.value = v; o.textContent = t || v; return o; }
+  function mostrarError(id, txt){ var e = $(id); e.textContent = txt; e.hidden = !txt; }
+
+  async function rpc(nombre, cuerpo){
+    var r = await fetch(SUPABASE_URL + '/rest/v1/rpc/' + nombre, {
+      method: 'POST',
+      headers: {'apikey': ANON, 'Authorization': 'Bearer ' + ANON, 'Content-Type': 'application/json'},
+      body: JSON.stringify(cuerpo || {})
+    });
+    if (!r.ok) throw new Error('http ' + r.status);
+    return r.json();
+  }
+
+  // Zonas
+  Object.keys(ZONAS).forEach(function(g){
+    var og = document.createElement('optgroup'); og.label = g;
+    ZONAS[g].forEach(function(z){ og.appendChild(opcion(z)); });
+    $('zona').appendChild(og);
+  });
+
+  // Servicios desde la base (sin precios)
+  rpc('calculadora_servicios').then(function(lista){
+    servicios = lista || [];
+    var hay = {};
+    servicios.forEach(function(s){ hay[s.rubro] = true; });
+    Object.keys(GRUPOS).forEach(function(g){
+      var og = document.createElement('optgroup'); og.label = g;
+      GRUPOS[g].forEach(function(r){ if (hay[r]) og.appendChild(opcion(r)); });
+      if (og.children.length) $('rubro').appendChild(og);
+    });
+  }).catch(function(){
+    mostrarError('error1', 'No pudimos cargar la lista de servicios. Revisá tu conexión y recargá la página.');
+  });
+
+  $('rubro').addEventListener('change', function(){
+    var s = $('servicio');
+    s.innerHTML = '';
+    var r = this.value;
+    if (!r){ s.appendChild(opcion('', 'Primero elegí el rubro')); s.disabled = true; $('unidad').textContent=''; return; }
+    s.appendChild(opcion('', 'Elegí el trabajo'));
+    servicios.filter(function(x){ return x.rubro === r; }).forEach(function(x){ s.appendChild(opcion(x.servicio)); });
+    s.disabled = false;
+    $('unidad').textContent = '';
+  });
+  $('servicio').addEventListener('change', function(){
+    var r = $('rubro').value, v = this.value;
+    var x = servicios.find(function(s){ return s.rubro === r && s.servicio === v; });
+    $('unidad').textContent = x ? x.unidad : '';
+  });
+  document.querySelectorAll('input[name=estado]').forEach(function(el){
+    el.addEventListener('change', function(){
+      $('etq-precio').textContent = this.value === 'pagado' ? '¿Cuánto pagaste?' : '¿Cuánto te presupuestaron?';
+    });
+  });
+  $('precio').addEventListener('input', function(){
+    var n = soloNumero(this.value);
+    this.value = n ? n.toLocaleString('es-AR') : '';
+  });
+
+  function estado(){ return document.querySelector('input[name=estado]:checked').value; }
+
+  $('form').addEventListener('submit', function(ev){
+    ev.preventDefault();
+    if (!$('rubro').value || !$('servicio').value) return mostrarError('error1', 'Elegí el rubro y el trabajo.');
+    if (!$('zona').value) return mostrarError('error1', 'Elegí tu zona.');
+    if (soloNumero($('precio').value) < 100) return mostrarError('error1', 'Escribí el precio en pesos (por ejemplo, 85.000).');
+    mostrarError('error1', '');
+    $('seguir').hidden = true;
+    $('candado').hidden = false;
+    $('email').focus();
+    $('candado').scrollIntoView({behavior: 'smooth', block: 'start'});
+  });
+
+  var ERRORES = {
+    email: 'Revisá el email: parece que tiene un error.',
+    zona: 'Elegí tu zona.',
+    precio: 'Revisá el precio.',
+    servicio: 'Elegí el trabajo de la lista.',
+    estado: 'Elegí si ya lo pagaste o es un presupuesto.',
+    limite: 'Hiciste muchas consultas seguidas. Probá de nuevo en un rato.'
+  };
+
+  $('candado').addEventListener('submit', async function(ev){
+    ev.preventDefault();
+    var email = $('email').value.trim();
+    if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) return mostrarError('error2', ERRORES.email);
+    mostrarError('error2', '');
+    $('ver').disabled = true; $('ver').textContent = 'Calculando…';
+    var datos = {
+      p_email: email,
+      p_acepta_novedades: $('novedades').checked,
+      p_rubro: $('rubro').value,
+      p_servicio: $('servicio').value,
+      p_zona: $('zona').value,
+      p_estado: estado(),
+      p_precio: soloNumero($('precio').value),
+      p_origen: ORIGEN,
+      p_campana: CAMPANA
+    };
+    try {
+      var r = await rpc('calculadora_comparar', datos);
+      if (!r || !r.ok) { mostrarError('error2', ERRORES[r && r.error] || 'No pudimos calcularlo. Probá de nuevo.'); return; }
+      ultimo = Object.assign({}, r, {precio: datos.p_precio, servicio: datos.p_servicio, zona: datos.p_zona, estado: datos.p_estado});
+      pintar(ultimo);
+    } catch (e) {
+      mostrarError('error2', 'No pudimos conectarnos. Revisá tu conexión y probá de nuevo.');
+    } finally {
+      $('ver').disabled = false; $('ver').textContent = 'Ver mi resultado';
+    }
+  });
+
+  var TEXTOS = {
+    pagado: {
+      muy_caro: ['Muy caro', 'Te cobraron bastante de más', 'v-caro'],
+      caro: ['Caro', 'Te cobraron un poco caro', 'v-caro'],
+      justo: ['Precio justo', 'Pagaste un precio justo', 'v-justo'],
+      barato: ['Buen precio', 'Conseguiste un buen precio', 'v-barato'],
+      muy_barato: ['Muy bajo', 'Pagaste muy por debajo del mercado', 'v-barato']
+    },
+    presupuestado: {
+      muy_caro: ['Muy caro', 'Ese presupuesto está muy arriba', 'v-caro'],
+      caro: ['Caro', 'Ese presupuesto está un poco alto', 'v-caro'],
+      justo: ['Precio justo', 'Es un presupuesto razonable', 'v-justo'],
+      barato: ['Buen precio', 'Es un buen presupuesto', 'v-barato'],
+      muy_barato: ['Muy bajo', 'Es muy bajo: preguntá qué incluye', 'v-barato']
+    }
+  };
+
+  function frase(r){
+    var d = r.diferencia_pct, abs = Math.abs(d);
+    var quien = r.estado === 'pagado' ? 'Pagaste' : 'Te presupuestaron';
+    if (abs <= 3) return quien + ' casi exactamente el precio medio de referencia para ' + r.servicio.toLowerCase() + ' en ' + r.zona + '.';
+    var lado = d > 0 ? 'más' : 'menos';
+    var cola = '';
+    if (r.veredicto === 'muy_caro') cola = r.estado === 'pagado' ? ' La próxima, pedí al menos dos presupuestos más antes de decidir.' : ' Antes de aceptar, pedí al menos dos presupuestos más.';
+    if (r.veredicto === 'muy_barato') cola = ' Fijate que el trabajo incluya todo lo que necesitás.';
+    return quien + ' un ' + abs + '% ' + lado + ' que el precio medio de referencia para ' + r.servicio.toLowerCase() + ' en ' + r.zona + '.' + cola;
+  }
+
+  function pintar(r){
+    var t = TEXTOS[r.estado][r.veredicto];
+    var sello = $('sello');
+    sello.textContent = t[0]; sello.className = 'sello ' + t[2];
+    $('titulo').textContent = t[1];
+    $('detalle').textContent = frase(r);
+    $('r-min').textContent = pesos(r.min);
+    $('r-max').textContent = pesos(r.max);
+    $('marca').style.left = Math.max(3, Math.min(97, r.posicion)) + '%';
+    $('marca-txt').textContent = pesos(r.precio);
+    $('nota-ref').textContent = 'Rango de referencia ' + r.unidad + ', mano de obra, ' + MES + '.' +
+      (r.aportes > 1 ? ' Ya compararon este servicio ' + r.aportes.toLocaleString('es-AR') + ' personas.' : '');
+    var link = '/?utm_source=calculadora&utm_medium=web&utm_campaign=te_cobraron&utm_content=' + encodeURIComponent(r.veredicto);
+    $('ir-app').href = link;
+    $('form').hidden = true;
+    $('candado').hidden = true;
+    $('resultado').hidden = false;
+    $('aviso-compartir').hidden = true;
+    window.scrollTo({top: 0, behavior: 'smooth'});
+  }
+
+  $('otra').addEventListener('click', function(){
+    $('resultado').hidden = true;
+    $('form').hidden = false;
+    $('seguir').hidden = false;
+    $('precio').value = '';
+    $('precio').focus();
+  });
+
+  // ── Tarjeta para compartir (1080×1920, formato historia) ──
+  function textoCompartir(r){
+    var d = r.diferencia_pct, abs = Math.abs(d);
+    var verbo = r.estado === 'pagado' ? 'Pagué' : 'Me presupuestaron';
+    var cuanto = abs <= 3 ? 'justo el precio medio' : 'un ' + abs + '% ' + (d > 0 ? 'más' : 'menos') + ' que el promedio';
+    return verbo + ' ' + r.servicio.toLowerCase() + ' en ' + r.zona + ' ' + cuanto + '. ¿Y vos? Compará en trattoapp.com.ar/calculadora';
+  }
+
+  function envolver(ctx, texto, x, y, ancho, alto){
+    var palabras = texto.split(' '), linea = '', lineas = [];
+    palabras.forEach(function(p){
+      var prueba = linea ? linea + ' ' + p : p;
+      if (ctx.measureText(prueba).width > ancho && linea){ lineas.push(linea); linea = p; } else linea = prueba;
+    });
+    if (linea) lineas.push(linea);
+    lineas.forEach(function(l, i){ ctx.fillText(l, x, y + i * alto); });
+    return y + lineas.length * alto;
+  }
+
+  async function dibujar(r){
+    try { await document.fonts.ready; } catch (e) {}
+    var c = $('lienzo'), ctx = c.getContext('2d');
+    var W = 1080, H = 1920;
+    ctx.fillStyle = '#0C2620'; ctx.fillRect(0, 0, W, H);
+    ctx.fillStyle = '#C9A227'; ctx.font = '500 34px "IBM Plex Mono", monospace';
+    ctx.fillText('¿TE COBRARON DE MÁS?', 90, 200);
+    var t = TEXTOS[r.estado][r.veredicto];
+    var color = t[2] === 'v-caro' ? '#F08A6C' : (t[2] === 'v-justo' ? '#8FD9BC' : '#E8C04F');
+    var abs = Math.abs(r.diferencia_pct);
+    ctx.fillStyle = color; ctx.font = '700 260px "IBM Plex Sans Condensed", sans-serif';
+    ctx.fillText(abs <= 3 ? '≈ 0%' : (r.diferencia_pct > 0 ? '+' : '−') + abs + '%', 80, 520);
+    ctx.fillStyle = '#FCFBF8'; ctx.font = '700 86px "IBM Plex Sans Condensed", sans-serif';
+    var y = envolver(ctx, t[1], 90, 680, 900, 96);
+    ctx.fillStyle = '#C9D6D0'; ctx.font = '400 44px "IBM Plex Sans", sans-serif';
+    y = envolver(ctx, r.servicio + ' · ' + r.zona, 90, y + 40, 900, 58);
+    // Escala
+    var by = Math.max(y + 140, 1180), bx = 90, bw = 900;
+    ctx.fillStyle = '#F3E7BC'; ctx.fillRect(bx, by, bw * .25, 28);
+    ctx.fillStyle = '#8FD9BC'; ctx.fillRect(bx + bw * .25, by, bw * .5, 28);
+    ctx.fillStyle = '#F9EAE4'; ctx.fillRect(bx + bw * .75, by, bw * .25, 28);
+    var mx = bx + bw * Math.max(3, Math.min(97, r.posicion)) / 100;
+    ctx.beginPath(); ctx.arc(mx, by + 14, 30, 0, Math.PI * 2); ctx.fillStyle = '#FCFBF8'; ctx.fill();
+    ctx.beginPath(); ctx.arc(mx, by + 14, 20, 0, Math.PI * 2); ctx.fillStyle = '#0E1815'; ctx.fill();
+    ctx.fillStyle = '#FCFBF8'; ctx.font = '600 44px "IBM Plex Mono", monospace';
+    var etq = pesos(r.precio), ew = ctx.measureText(etq).width;
+    ctx.fillText(etq, Math.max(bx, Math.min(bx + bw - ew, mx - ew / 2)), by - 50);
+    ctx.fillStyle = '#9FB2AA'; ctx.font = '500 32px "IBM Plex Mono", monospace';
+    ctx.fillText('Rango de referencia', bx, by + 110);
+    ctx.fillStyle = '#FCFBF8'; ctx.font = '600 40px "IBM Plex Mono", monospace';
+    ctx.fillText(pesos(r.min) + ' a ' + pesos(r.max), bx, by + 165);
+    // Pie
+    ctx.fillStyle = '#C9A227'; ctx.fillRect(90, 1640, 900, 4);
+    ctx.fillStyle = '#FCFBF8'; ctx.font = '700 64px "IBM Plex Sans Condensed", sans-serif';
+    ctx.fillText('¿Y vos? Compará el tuyo', 90, 1740);
+    ctx.fillStyle = '#8FD9BC'; ctx.font = '500 40px "IBM Plex Mono", monospace';
+    ctx.fillText('trattoapp.com.ar/calculadora', 90, 1810);
+    return new Promise(function(ok){ c.toBlob(ok, 'image/png'); });
+  }
+
+  function aviso(txt){ var a = $('aviso-compartir'); a.textContent = txt; a.hidden = false; }
+
+  $('compartir').addEventListener('click', async function(){
+    if (!ultimo) return;
+    var texto = textoCompartir(ultimo);
+    var url = 'https://www.trattoapp.com.ar/calculadora/?utm_source=compartido&utm_medium=social&utm_campaign=te_cobraron';
+    try {
+      var blob = await dibujar(ultimo);
+      var archivo = blob ? new File([blob], 'tratto-te-cobraron.png', {type: 'image/png'}) : null;
+      if (archivo && navigator.canShare && navigator.canShare({files: [archivo]})) {
+        await navigator.share({files: [archivo], text: texto + ' ' + url});
+        return;
+      }
+      if (navigator.share) { await navigator.share({text: texto, url: url}); return; }
+      if (blob) {
+        var a = document.createElement('a');
+        a.href = URL.createObjectURL(blob); a.download = 'tratto-te-cobraron.png';
+        document.body.appendChild(a); a.click(); a.remove();
+        aviso('Descargamos la imagen para que la subas a tus historias.');
+        return;
+      }
+    } catch (e) {
+      if (e && e.name === 'AbortError') return;
+    }
+    try { await navigator.clipboard.writeText(texto + ' ' + url); aviso('Copiamos el texto y el link para que lo pegues donde quieras.'); }
+    catch (e) { aviso(texto + ' ' + url); }
+  });
+})();
+</script>
+</body>
+</html>
