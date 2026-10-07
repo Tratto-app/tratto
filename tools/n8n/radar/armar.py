@@ -16,13 +16,14 @@ def apify(nombre, actor, cuerpo, x, tope):
         "authentication": "genericCredentialType", "genericAuthType": "httpHeaderAuth",
         "sendBody": True, "specifyBody": "json", "jsonBody": cuerpo,
         "options": {"timeout": 300000}}, x,
-        {"alwaysOutputData": True, "onError": "continueRegularOutput",
+        {"alwaysOutputData": True, "onError": "continueRegularOutput", "executeOnce": True,
          **({"credentials": {"httpHeaderAuth": APIFY_CRED}} if APIFY_CRED else {})})
 
 BUSQUEDAS = r"""
-// Plan gratis de Apify (USD 5/mes) rindiendo como uno pago: herramientas más
-// baratas para buscar posts, 4 hashtags y 4 búsquedas por día, ~150 comentarios
-// por red y un tope de gasto en cada llamada (~USD 0,15 por día).
+// Plan gratis de Apify (USD 5/mes). Muchas herramientas baratas de Apify le dan
+// solo 10 resultados a las cuentas gratis; estas no tienen ese límite. 1 hashtag
+// y 1 búsqueda por día, unos 45 comentarios por red repartidos entre varios
+// posts, y un tope de gasto en cada llamada (menos de USD 0,16 por día).
 // Qué buscar hoy: rota por día entre muchos rubros (Tratto no es solo oficios
 // del hogar). Instagram por hashtag, TikTok por búsqueda. Sin gas, electricidad
 // ni salud: son matriculados y Tratto no los acepta.
@@ -39,7 +40,7 @@ const TT = ['cuanto cobra un pintor argentina','presupuesto reforma departamento
   'catering para eventos precio'];
 const dia = Math.floor(Date.now() / 86400000);
 const tomar = (lista, n) => Array.from({ length: n }, (_, i) => lista[(dia * n + i) % lista.length]);
-return [{ json: { hashtags: tomar(IG, 4), busquedas: tomar(TT, 4) } }];
+return [{ json: { hashtags: tomar(IG, 1), busquedas: tomar(TT, 1) } }];   // el plan gratis acepta un hashtag por búsqueda
 """
 
 ELEGIR_POSTS = r"""
@@ -50,13 +51,14 @@ ELEGIR_POSTS = r"""
 const red = '%RED%';
 const posts = $input.all().map(i => i.json).filter(p => p && !p.error);
 const norm = s => String(s || '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
-const codigo = p => p.shortCode || p.shortcode || p.code;
+const codigo = p => p.shortCode || p.shortcode || p.short_code || p.code;
 const url = p => red === 'ig'
   ? (p.url || p.postUrl || p.link || (codigo(p) ? `https://www.instagram.com/p/${codigo(p)}/` : null))
-  : (p.webVideoUrl || p.url || p.postUrl || p.link || p.videoUrl);
-const coms = p => Number(p.commentsCount ?? p.commentCount ?? p.comments_count ?? (p.stats && (p.stats.commentCount ?? p.stats.comments)) ?? (typeof p.comments === 'number' ? p.comments : 0)) || 0;
-const texto = p => norm((p.caption && (p.caption.text || p.caption)) || p.description || p.title || p.text || p.desc || '');
-const duenio = p => (p.owner && p.owner.username) || p.ownerUsername || (p.user && (p.user.username || p.user.uniqueId)) ||
+  : (p.webVideoUrl || p.url || p.postUrl || p.link || p.videoUrl ||
+     (p.aweme_info && p.aweme_info.aweme_id && p.aweme_info.author ? `https://www.tiktok.com/@${p.aweme_info.author.unique_id}/video/${p.aweme_info.aweme_id}` : null));
+const coms = p => Number(p.commentsCount ?? p.commentCount ?? p.comments_count ?? p.comment_count ?? (p.aweme_info && p.aweme_info.statistics && p.aweme_info.statistics.comment_count) ?? (p.stats && (p.stats.commentCount ?? p.stats.comments)) ?? (typeof p.comments === 'number' ? p.comments : 0)) || 0;
+const texto = p => norm((p.caption && (p.caption.text || p.caption)) || p.description || p.title || p.text || p.desc || (p.aweme_info && p.aweme_info.desc) || '');
+const duenio = p => (p.owner && p.owner.username) || p.ownerUsername || p.owner_username || (p.aweme_info && p.aweme_info.author && p.aweme_info.author.unique_id) || (p.user && (p.user.username || p.user.uniqueId)) ||
   (p.channel && (p.channel.username || p.channel.uniqueId)) || (p.author && (p.author.uniqueId || p.author.username)) || (p.authorMeta && p.authorMeta.name);
 const CLAVES = ['precio', 'cuanto', 'presupuesto', 'cobra', 'sale', 'servicio', 'turno', 'consulta', 'zona', 'caba', 'argentina', 'buenos aires'];
 const valor = p => {
@@ -65,7 +67,7 @@ const valor = p => {
   const enRango = c <= 400 ? Math.log(c + 1) : Math.log(400) - 1;   // los virales rinden menos
   return enRango + 2 * CLAVES.filter(k => texto(p).includes(k)).length;
 };
-const elegidos = posts.filter(p => url(p) && valor(p) >= 0).sort((a, b) => valor(b) - valor(a)).slice(0, 10);
+const elegidos = posts.filter(p => url(p) && valor(p) >= 0).sort((a, b) => valor(b) - valor(a)).slice(0, red === 'ig' ? 6 : 8);
 return [{ json: { urls: elegidos.map(url), duenios: elegidos.map(duenio).filter(Boolean) } }];
 """
 
@@ -104,8 +106,9 @@ function elegir(red, nodo, nodoPosts) {
     const usuario = red === 'instagram'
       ? (it.owner && it.owner.username) || it.ownerUsername || it.username || (it.user && it.user.username) || (it.author && it.author.username)
       : (it.user && (it.user.uniqueId || it.user.username)) || (it.author && it.author.uniqueId) || it.uniqueId || it.username || (it.authorMeta && it.authorMeta.name);
-    const texto = it.text || it.comment || it.content || '';
-    const post = it.postUrl || it.videoWebUrl || it.videoUrl || it.url || it.inputUrl || '';
+    if (it.content_type === 'caption') continue;   // el texto del post, no un comentario
+    const texto = it.text || it.message || it.comment || it.content || '';
+    const post = it.postUrl || it.videoWebUrl || it.input_url || it.videoUrl || it.url || it.inputUrl || it.inputSource || '';
     if (!usuario) continue;
     const u = norm(usuario);
     if (NUESTRAS.includes(u) || duenios.has(u) || ya.has(red + ':' + u)) continue;
@@ -145,7 +148,7 @@ def supa(nombre, metodo, url, x, cuerpo=None, prefer=None):
     p = {"method": metodo, "url": url, "authentication": "predefinedCredentialType", "nodeCredentialType": "supabaseApi", "options": {}}
     if prefer: p.update({"sendHeaders": True, "headerParameters": {"parameters": [{"name": "Prefer", "value": prefer}]}})
     if cuerpo: p.update({"sendBody": True, "specifyBody": "json", "jsonBody": cuerpo})
-    return nodo(nombre, "n8n-nodes-base.httpRequest", 4.2, p, x, {"credentials": SUPA, "alwaysOutputData": True, "onError": "continueRegularOutput"})
+    return nodo(nombre, "n8n-nodes-base.httpRequest", 4.2, p, x, {"credentials": SUPA, "alwaysOutputData": True, "onError": "continueRegularOutput", "executeOnce": True})
 
 def code(nombre, js, x):
     return nodo(nombre, "n8n-nodes-base.code", 2, {"jsCode": js.strip()}, x)
@@ -156,16 +159,16 @@ def armar(apify_cred=None):
         nodo("Todos los dias 8:30", "n8n-nodes-base.scheduleTrigger", 1.2,
              {"rule": {"interval": [{"field": "cronExpression", "expression": "30 8 * * *"}]}}, 0),
         code("Busquedas del dia", BUSQUEDAS, 220),
-        apify("IG: reels por hashtag", "apidojo~instagram-hashtag-scraper",
-              "={{ JSON.stringify({ startUrls: $json.hashtags.map(h => 'https://www.instagram.com/explore/tags/' + h + '/'), getReels: true, getPosts: true, maxItems: 48 }) }}", 440, 0.025),
+        apify("IG: reels por hashtag", "publicsignallabs~instagram-hashtag-scraper",
+              "={{ JSON.stringify({ hashtags: $json.hashtags, resultsLimit: 25, getPosts: true, getReels: true }) }}", 440, 0.015),
         code("IG: elegir reels", ELEGIR_POSTS.replace('%RED%', 'ig'), 660),
-        apify("IG: comentarios", "apidojo~instagram-comments-scraper",
-              "={{ JSON.stringify({ startUrls: $json.urls, maxItems: 130 }) }}", 880, 0.07),
-        apify("TT: videos por busqueda", "xmolodtsov~tiktok-search-scraper",
-              "={{ JSON.stringify({ keywords: $('Busquedas del dia').first().json.busquedas, maxItems: 40, maxItemsPerKeyword: 10, location: 'AR' }) }}", 1100, 0.015),
+        apify("IG: comentarios", "datadoping~instagram-comments-and-replies-scraper",
+              "={{ JSON.stringify({ code_or_id_or_url: $json.urls, max_comments: 7, scrape_replies: false }) }}", 880, 0.07),
+        apify("TT: videos por busqueda", "novi~tiktok-search-api",
+              "={{ JSON.stringify({ keyword: $('Busquedas del dia').first().json.busquedas[0], limit: 20, region: 'AR' }) }}", 1100, 0.012),
         code("TT: elegir videos", ELEGIR_POSTS.replace('%RED%', 'tt'), 1320),
-        apify("TT: comentarios", "apidojo~tiktok-comments-scraper",
-              "={{ JSON.stringify({ startUrls: $json.urls, maxItems: 160, includeReplies: false }) }}", 1540, 0.05),
+        apify("TT: comentarios", "clockworks~tiktok-comments-scraper",
+              "={{ JSON.stringify({ postURLs: $json.urls, commentsPerPost: 6 }) }}", 1540, 0.065),
         supa("Ya sugeridos", "GET", f"{SB}/rest/v1/radar_redes?select=red,usuario&limit=50000", 1760),
         code("Elegir 50 por red", ELEGIR, 1980),
         supa("Guardar sugeridos", "POST", f"{SB}/rest/v1/radar_redes", 2200,
