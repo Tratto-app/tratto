@@ -70,3 +70,29 @@ python3 render-reel.py reel-dos-plomeros.html --segundos 31.1 --palabras audio/v
 ```
 
 Duraciones: dos-plomeros 31.1, presupuesto-barato 31.4, manana-paso 26.6, proveedores 37.1.
+
+## Publicidades estilo presentación de producto (sin voz)
+
+Inspiradas en un anuncio de respond.io: fondo claro con manchas de color en
+movimiento, títulos que entran con desenfoque, palabras que se reemplazan,
+lista de funciones con íconos, pantallas reales en un teléfono en 3D y cierre
+oscuro con el logo. Base común: `reels/publicidad-comun.js` + `reels/publicidad.css`.
+
+| Pieza | Duración | Para qué |
+|---|---|---|
+| `reels/publicidad-calculadora.html` | 23 s | Llevar gente a trattoapp.com.ar/calculadora (ejemplo real: DJ para un 15 en Morón, +37 %) |
+| `reels/publicidad-app.html` | 25 s | Publicidad general de la app (rubros variados) |
+
+Las pantallas están en `reels/img/` (las de la app salen de las capturas de la
+ficha de las tiendas; las de la calculadora, de la página real con la
+respuesta simulada). La música es propia (`reels/musica.py`, sin licencias) y
+los efectos se mezclan con `sonido.py`:
+
+```bash
+cd tools/piezas-redes/reels
+python3 musica.py audio/musica-app.wav --segundos 25 --cierre 20.6
+python3 sonido.py audio/musica-app.wav audio/publicidad-app.efectos.json audio/publicidad-app-mezcla.m4a --segundos 25
+python3 render-reel.py publicidad-app.html --segundos 25 --audio audio/publicidad-app-mezcla.m4a
+```
+
+Copias con URL pública (para Metricool) en `redes/publicidad-*.mp4`.

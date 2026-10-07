@@ -1,0 +1,92 @@
+<!doctype html>
+<html lang="es"><head><meta charset="utf-8">
+<link rel="stylesheet" href="publicidad.css">
+</head><body>
+<script>
+// Publicidad de la calculadora "¿Te cobraron de más?" (23 s, sin voz).
+// Ejemplo real de la tabla: DJ para un 15 en Morón, $450.000 = +37 % del medio.
+const $ = (r, s) => r.querySelector(s), $$ = (r, s) => [...r.querySelectorAll(s)];
+window.PUBLI = { cierre: 19.9, escenas: [
+{ a: 0, b: 2.75, html: () => `
+  <div class="abs centro t-xl" style="top:640px" id="c1a">¿Te cobraron</div>
+  <div class="abs centro t-xl oro" style="top:800px" id="c1b">de más?</div>`,
+  animar(t, r) {
+    entra($(r, '#c1a'), t, .15); sale($(r, '#c1a'), t, 2.4);
+    entra($(r, '#c1b'), t, .6, .6); sale($(r, '#c1b'), t, 2.45);
+  } },
+{ a: 2.6, b: 6.6, html: () => `
+  <div class="abs centro mono" style="top:560px;color:#3A4A43" id="c2a">DJ para un 15 · Morón</div>
+  <div class="abs centro t-xl" style="top:650px;font-family:'IBM Plex Mono';font-weight:600;font-size:132px" id="c2b">$0</div>
+  <div class="abs centro t-s" style="top:840px" id="c2c">Eso pagué. ¿Está bien?</div>
+  <div class="abs centro" style="top:1010px" id="c2d"><span class="sello rojo">+37% · caro</span></div>`,
+  animar(t, r) {
+    entra($(r, '#c2a'), t, 2.7);
+    const k = entra($(r, '#c2b'), t, 2.85);
+    const n = Math.round(450000 * U.eo(U.P(t, 2.9, 3.9)) / 1000) * 1000;
+    $(r, '#c2b').textContent = '$' + n.toLocaleString('es-AR');
+    entra($(r, '#c2c'), t, 3.7);
+    const s = $(r, '#c2d'), q = U.P(t, 4.6, 4.95);
+    s.style.opacity = q > 0 ? 1 : 0;
+    s.style.transform = `scale(${1.7 - .7 * U.back(q)}) rotate(${-6 * (1 - q) - 3}deg)`;
+    ['#c2a', '#c2b', '#c2c', '#c2d'].forEach(id => sale($(r, id), t, 6.25));
+  } },
+{ a: 6.4, b: 8.8, html: () => `
+  <div class="abs centro t-l" style="top:700px" id="c3a">Ahora lo sabés</div>
+  <div class="abs centro t-l acento" style="top:830px" id="c3b">en 20 segundos.</div>`,
+  animar(t, r) {
+    entra($(r, '#c3a'), t, 6.5); entra($(r, '#c3b'), t, 6.85);
+    sale($(r, '#c3a'), t, 8.45); sale($(r, '#c3b'), t, 8.5);
+  } },
+{ a: 8.7, b: 13.1, html: () => `
+  <div class="abs t-m" style="top:600px;left:110px" id="c4h">Así de simple:</div>
+  <div class="pila" style="position:absolute;top:760px;left:110px;right:80px;height:200px" id="c4p">
+    <div class="fila t-m"><span class="ico">${icono('lista', 76)}</span><span>Elegí el servicio</span></div>
+    <div class="fila t-m"><span class="ico">${icono('plata', 76)}</span><span>Poné cuánto pagaste</span></div>
+    <div class="fila t-m"><span class="ico">${icono('medidor', 76)}</span><span>Mirá si es caro, justo o barato</span></div>
+  </div>`,
+  animar(t, r) {
+    entra($(r, '#c4h'), t, 8.8); sale($(r, '#c4h'), t, 12.8);
+    cambia($$(r, '#c4p > div'), t, [9.15, 10.45, 11.75, 13.0]);
+  } },
+{ a: 13.0, b: 17.5, html: () => `
+  <div class="escenario"><div class="tel" id="tel"><div class="isla"></div><div class="pantalla">
+    <img src="img/calc-form.jpg" id="i1"><img src="img/calc-resultado.jpg" id="i2" style="opacity:0">
+  </div></div></div>
+  <div style="position:absolute;left:96px;top:300px" id="chip"><span class="chip"><span class="sello rojo" style="font-size:44px;padding:10px 24px;border-width:5px">+37%</span>Te cobraron caro</span></div>`,
+  animar(t, r) {
+    const tel = $(r, '#tel');
+    const k = U.eo(U.P(t, 13.0, 14.0)), f = U.eio(U.P(t, 14.0, 17.0));
+    const ry = -24 + 14 * k + 8 * f, rx = 16 - 10 * k, y = 700 * (1 - k);
+    const sal = U.eo(U.P(t, 17.1, 17.5));
+    tel.style.transform = `translateY(${y + sal * 120}px) rotateX(${rx}deg) rotateY(${ry}deg) scale(${1 - sal * .15})`;
+    tel.style.opacity = 1 - sal;
+    $(r, '#i2').style.opacity = U.eio(U.P(t, 15.0, 15.4));
+    const c = $(r, '#chip'), q = U.P(t, 15.5, 15.85);
+    c.style.opacity = q > 0 ? 1 - sal : 0;
+    c.style.transform = `scale(${.6 + .4 * U.back(q)}) translateY(${-sal * 60}px)`;
+  } },
+{ a: 17.4, b: 20.0, html: () => `
+  <div class="abs centro t-m" style="top:740px" id="c6h">La calculadora es</div>
+  <div class="pila centro" style="position:absolute;top:850px;left:0;right:0;height:170px" id="c6p">
+    <div class="t-xl acento">gratis</div><div class="t-xl acento">al instante</div><div class="t-xl acento">de 46 rubros</div>
+  </div>`,
+  animar(t, r) {
+    entra($(r, '#c6h'), t, 17.5); sale($(r, '#c6h'), t, 19.7);
+    cambia($$(r, '#c6p > div'), t, [17.8, 18.5, 19.2, 19.95]);
+  } },
+{ a: 19.9, b: 23.1, html: () => `
+  <div class="cierre">
+    <div class="icono-app" id="c7i">${LOGO(190, 'g1')}</div>
+    <div class="t-l" style="margin-top:80px;color:#FCFBF8" id="c7a">Compará el tuyo</div>
+    <div class="url" style="margin-top:34px" id="c7b">trattoapp.com.ar/calculadora</div>
+    <div class="mono" style="margin-top:60px;color:#C9A227;font-size:34px" id="c7c">Link en la bio</div>
+  </div>`,
+  animar(t, r) {
+    const i = $(r, '#c7i'), q = U.P(t, 20.3, 20.75);
+    i.style.opacity = q > 0 ? 1 : 0; i.style.transform = `scale(${.4 + .6 * U.back(q)})`;
+    entra($(r, '#c7a'), t, 20.8); entra($(r, '#c7b'), t, 21.15); entra($(r, '#c7c'), t, 21.5);
+  } },
+]};
+</script>
+<script src="publicidad-comun.js"></script>
+</body></html>

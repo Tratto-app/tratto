@@ -385,15 +385,18 @@
     }
   };
 
+  // Pasa a minúscula solo la primera letra, y no si es una sigla ("DJ").
+  function minus(s){ return /^[A-ZÁÉÍÓÚÑ][a-záéíóúñ]/.test(s) ? s.charAt(0).toLowerCase() + s.slice(1) : s; }
+
   function frase(r){
     var d = r.diferencia_pct, abs = Math.abs(d);
     var quien = r.estado === 'pagado' ? 'Pagaste' : 'Te presupuestaron';
-    if (abs <= 3) return quien + ' casi exactamente el precio medio de referencia para ' + r.servicio.toLowerCase() + ' en ' + r.zona + '.';
+    if (abs <= 3) return quien + ' casi exactamente el precio medio de referencia para ' + minus(r.servicio) + ' en ' + r.zona + '.';
     var lado = d > 0 ? 'más' : 'menos';
     var cola = '';
     if (r.veredicto === 'muy_caro') cola = r.estado === 'pagado' ? ' La próxima, pedí al menos dos presupuestos más antes de decidir.' : ' Antes de aceptar, pedí al menos dos presupuestos más.';
     if (r.veredicto === 'muy_barato') cola = ' Fijate que el trabajo incluya todo lo que necesitás.';
-    return quien + ' un ' + abs + '% ' + lado + ' que el precio medio de referencia para ' + r.servicio.toLowerCase() + ' en ' + r.zona + '.' + cola;
+    return quien + ' un ' + abs + '% ' + lado + ' que el precio medio de referencia para ' + minus(r.servicio) + ' en ' + r.zona + '.' + cola;
   }
 
   function pintar(r){
@@ -430,7 +433,7 @@
     var d = r.diferencia_pct, abs = Math.abs(d);
     var verbo = r.estado === 'pagado' ? 'Pagué' : 'Me presupuestaron';
     var cuanto = abs <= 3 ? 'justo el precio medio' : 'un ' + abs + '% ' + (d > 0 ? 'más' : 'menos') + ' que el promedio';
-    return verbo + ' ' + r.servicio.toLowerCase() + ' en ' + r.zona + ' ' + cuanto + '. ¿Y vos? Compará en trattoapp.com.ar/calculadora';
+    return verbo + ' ' + minus(r.servicio) + ' en ' + r.zona + ' ' + cuanto + '. ¿Y vos? Compará en trattoapp.com.ar/calculadora';
   }
 
   function envolver(ctx, texto, x, y, ancho, alto){

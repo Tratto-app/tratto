@@ -1,0 +1,107 @@
+[
+ {
+  "efecto": "pop",
+  "t": 0.5,
+  "db": -15
+ },
+ {
+  "efecto": "pop",
+  "t": 1.05,
+  "db": -15
+ },
+ {
+  "efecto": "pop",
+  "t": 1.6,
+  "db": -15
+ },
+ {
+  "efecto": "pop",
+  "t": 2.15,
+  "db": -15
+ },
+ {
+  "efecto": "pop",
+  "t": 2.7,
+  "db": -15
+ },
+ {
+  "efecto": "latigazo",
+  "t": 3.3,
+  "db": -17
+ },
+ {
+  "efecto": "latigazo",
+  "t": 5.9,
+  "db": -17
+ },
+ {
+  "efecto": "latigazo",
+  "t": 10.5,
+  "db": -17
+ },
+ {
+  "efecto": "latigazo",
+  "t": 15.5,
+  "db": -17
+ },
+ {
+  "efecto": "latigazo",
+  "t": 18.0,
+  "db": -17
+ },
+ {
+  "efecto": "latigazo",
+  "t": 20.6,
+  "db": -17
+ },
+ {
+  "efecto": "pop",
+  "t": 6.3,
+  "db": -15
+ },
+ {
+  "efecto": "pop",
+  "t": 7.35,
+  "db": -15
+ },
+ {
+  "efecto": "pop",
+  "t": 8.4,
+  "db": -15
+ },
+ {
+  "efecto": "pop",
+  "t": 9.45,
+  "db": -15
+ },
+ {
+  "efecto": "pop",
+  "t": 14.2,
+  "db": -15
+ },
+ {
+  "efecto": "pop",
+  "t": 18.35,
+  "db": -15
+ },
+ {
+  "efecto": "pop",
+  "t": 19.05,
+  "db": -15
+ },
+ {
+  "efecto": "pop",
+  "t": 19.75,
+  "db": -15
+ },
+ {
+  "efecto": "pop",
+  "t": 21.0,
+  "db": -15
+ },
+ {
+  "efecto": "campanita",
+  "t": 13.0,
+  "db": -14
+ }
+]
