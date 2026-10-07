@@ -36,6 +36,10 @@
       <span style="font-family:'IBM Plex Sans Condensed';font-weight:700">a</span><span style="font-family:'IBM Plex Sans Condensed';font-weight:600">a</span>
       <span style="font-family:'IBM Plex Sans';font-weight:500">a</span><span style="font-family:'IBM Plex Sans';font-weight:600">a</span>
       <span style="font-family:'IBM Plex Mono';font-weight:600">a</span><span style="font-family:Montserrat;font-weight:600">a</span></div>`);
+  // Link fijo en pantalla (en TikTok no hay link en la bio): PUBLI.url = [texto, desde]
+  if (window.PUBLI.url) document.body.insertAdjacentHTML('beforeend',
+    `<div id="link-fijo" class="link-fijo"><span class="lf-ico">${LOGO(40, 'glf')}</span><span>${window.PUBLI.url[0]}</span></div>`);
+  const linkFijo = document.getElementById('link-fijo');
   const escena = document.getElementById('escena');
   const noche = document.getElementById('noche');
   const manchas = [...document.querySelectorAll('.mancha')];
@@ -89,6 +93,11 @@
       s.raiz.style.display = vivo ? 'block' : 'none';
       if (vivo && s.animar) s.animar(t, s.raiz);
     });
+    if (linkFijo) {
+      const k = eo(P(t, window.PUBLI.url[1], window.PUBLI.url[1] + .5)) * (1 - eo(P(t, (window.PUBLI.cierre ?? 99) - .3, window.PUBLI.cierre ?? 99)));
+      linkFijo.style.opacity = k;
+      linkFijo.style.transform = `translateX(-50%) translateY(${(1 - k) * 20}px)`;
+    }
     // Cierre: la cortina oscura se abre en círculo desde el centro
     const c = window.PUBLI.cierre;
     if (c !== undefined) {

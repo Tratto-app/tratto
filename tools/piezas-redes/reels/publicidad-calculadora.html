@@ -6,7 +6,7 @@
 // Publicidad de la calculadora "¿Te cobraron de más?" (23 s, sin voz).
 // Ejemplo real de la tabla: DJ para un 15 en Morón, $450.000 = +37 % del medio.
 const $ = (r, s) => r.querySelector(s), $$ = (r, s) => [...r.querySelectorAll(s)];
-window.PUBLI = { cierre: 19.9, escenas: [
+window.PUBLI = { cierre: 19.9, url: ['trattoapp.com.ar/calculadora', 1.2], escenas: [
 { a: 0, b: 2.75, html: () => `
   <div class="abs centro t-xl" style="top:640px" id="c1a">¿Te cobraron</div>
   <div class="abs centro t-xl oro" style="top:800px" id="c1b">de más?</div>`,
@@ -79,7 +79,7 @@ window.PUBLI = { cierre: 19.9, escenas: [
     <div class="icono-app" id="c7i">${LOGO(190, 'g1')}</div>
     <div class="t-l" style="margin-top:80px;color:#FCFBF8" id="c7a">Compará el tuyo</div>
     <div class="url" style="margin-top:34px" id="c7b">trattoapp.com.ar/calculadora</div>
-    <div class="mono" style="margin-top:60px;color:#C9A227;font-size:34px" id="c7c">Link en la bio</div>
+    <div class="mono" style="margin-top:60px;color:#C9A227;font-size:34px" id="c7c">Gratis · en 20 segundos</div>
   </div>`,
   animar(t, r) {
     const i = $(r, '#c7i'), q = U.P(t, 20.3, 20.75);

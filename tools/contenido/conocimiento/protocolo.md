@@ -71,6 +71,15 @@ se reemplazan, lista con íconos, pantallas reales en 3D, cierre oscuro con el
 logo y música propia, sin voz. Se hace con la skill `video-publicidad`. Solo se
 usa otro estilo (por ejemplo, la serie con voz en off) si la persona lo pide.
 
+## 8.2. Links en TikTok
+
+@trattoapp **no tiene link clickeable en la bio** (TikTok lo habilita con el
+Registro de empresas aprobado o con 1.000 seguidores; el registro fue
+rechazado el 2026-10-07). Hasta que eso cambie, en TikTok nunca escribir "link
+en la bio": el texto dice "Entrá a trattoapp.com.ar" (o la página que
+corresponda) y el video muestra la URL en pantalla. En Instagram el link en la
+bio sí funciona.
+
 ## 9. Conectores (si están en la sesión)
 
 **Metricool** (marca `7270470`, zona horaria America/Buenos_Aires). Tiene conectados **TikTok** (@trattoapp, cuenta de empresa) e **Instagram** (@trattoapp_, desde el 2026-10-06).

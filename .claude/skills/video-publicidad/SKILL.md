@@ -44,6 +44,11 @@ y `publicidad-app.html`. Copiá su estructura; no arranques de cero.
   real con la respuesta simulada para no ensuciar la base.
 - No decir "Descargala en App Store / Google Play" hasta que la app esté
   publicada en las tiendas: el cierre lleva la URL.
+- **Nada de "link en la bio" en TikTok**: @trattoapp no tiene link clickeable
+  (hace falta el Registro de empresas aprobado o 1.000 seguidores). El link va
+  escrito en el video: `PUBLI.url = ['trattoapp.com.ar/…', desde]` muestra una
+  etiqueta fija con el link durante todo el video, y el cierre repite la URL.
+  En el texto de la publicación: "Entrá a trattoapp.com.ar/…".
 - Texto en pantalla dentro de la zona segura: entre y = 250 y 1500, y lejos del
   borde derecho (botones de TikTok).
 
