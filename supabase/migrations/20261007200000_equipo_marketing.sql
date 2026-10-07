@@ -67,6 +67,7 @@ returns jsonb language sql stable security invoker set search_path = public as $
     select p.*, coalesce(s.name, 'Sin dato') as fuente
     from growth_prospects p left join growth_sources s on s.id = p.source_id
     where p.workspace_id = (select id from ws)
+      and not (coalesce(p.tags, '{}') @> array['interno'])  -- cuentas del equipo: no cuentan
   ),
   gasto as (
     select coalesce(s.name, 'Sin dato') as fuente, sum(g.amount) as monto
