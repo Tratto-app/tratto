@@ -9,10 +9,10 @@ def nodo(nombre, tipo, ver, params, x, extra=None):
     if extra: n.update(extra)
     return n
 
-def apify(nombre, actor, cuerpo, x):
+def apify(nombre, actor, cuerpo, x, tope):
     return nodo(nombre, "n8n-nodes-base.httpRequest", 4.2, {
         "method": "POST",
-        "url": f"https://api.apify.com/v2/acts/{actor}/run-sync-get-dataset-items?timeout=280",
+        "url": f"https://api.apify.com/v2/acts/{actor}/run-sync-get-dataset-items?timeout=280&maxTotalChargeUsd={tope}",
         "authentication": "genericCredentialType", "genericAuthType": "httpHeaderAuth",
         "sendBody": True, "specifyBody": "json", "jsonBody": cuerpo,
         "options": {"timeout": 300000}}, x,
@@ -20,6 +20,8 @@ def apify(nombre, actor, cuerpo, x):
          **({"credentials": {"httpHeaderAuth": APIFY_CRED}} if APIFY_CRED else {})})
 
 BUSQUEDAS = r"""
+// Plan gratis de Apify (USD 5/mes): 2 hashtags y 2 búsquedas por día, 100
+// comentarios por red y un tope de gasto en cada llamada (~USD 0,15 por día).
 // Qué buscar hoy: rota por día entre muchos rubros (Tratto no es solo oficios
 // del hogar). Instagram por hashtag, TikTok por búsqueda. Sin gas, electricidad
 // ni salud: son matriculados y Tratto no los acepta.
@@ -36,7 +38,7 @@ const TT = ['cuanto cobra un pintor argentina','presupuesto reforma departamento
   'catering para eventos precio'];
 const dia = Math.floor(Date.now() / 86400000);
 const tomar = (lista, n) => Array.from({ length: n }, (_, i) => lista[(dia * n + i) % lista.length]);
-return [{ json: { hashtags: tomar(IG, 4), busquedas: tomar(TT, 4) } }];
+return [{ json: { hashtags: tomar(IG, 2), busquedas: tomar(TT, 2) } }];
 """
 
 ELEGIR_POSTS = r"""
@@ -46,12 +48,12 @@ const posts = $input.all().map(i => i.json).filter(p => p && !p.error);
 const url = p => red === 'ig' ? (p.url || (p.shortCode ? `https://www.instagram.com/p/${p.shortCode}/` : null)) : (p.webVideoUrl || p.url);
 const coms = p => Number(red === 'ig' ? p.commentsCount : p.commentCount) || 0;
 const duenio = p => red === 'ig' ? p.ownerUsername : (p.authorMeta && p.authorMeta.name);
-const elegidos = posts.filter(p => url(p) && coms(p) >= 3).sort((a, b) => coms(b) - coms(a)).slice(0, 15);
+const elegidos = posts.filter(p => url(p) && coms(p) >= 3).sort((a, b) => coms(b) - coms(a)).slice(0, 6);
 return [{ json: { urls: elegidos.map(url), duenios: elegidos.map(duenio).filter(Boolean) } }];
 """
 
 ELEGIR = r"""
-// Elige 50 cuentas por red entre la gente que comentó. Puntúa la intención de
+// Elige 25 cuentas por red entre la gente que comentó. Puntúa la intención de
 // pedir un servicio (pregunta precio, busca, dice la zona), que hable como en
 // Argentina y que el comentario diga algo. Saca spam, links, las cuentas
 // dueñas de los posts, las nuestras y las ya sugeridas en los últimos 60 días.
@@ -95,7 +97,7 @@ function elegir(red, nodo, nodoPosts) {
     const previo = porUsuario.get(u);
     if (!previo || puntaje > previo.puntaje) porUsuario.set(u, { red, usuario, comentario: String(texto).slice(0, 220), post_url: post, puntaje });
   }
-  return [...porUsuario.values()].sort((a, b) => b.puntaje - a.puntaje).slice(0, 50);
+  return [...porUsuario.values()].sort((a, b) => b.puntaje - a.puntaje).slice(0, 25);
 }
 
 const ig = elegir('instagram', 'IG: comentarios', 'IG: elegir reels');
@@ -104,7 +106,7 @@ return [{ json: { filas: [...ig, ...tt], ig, tt } }];
 """
 
 MAIL = r"""
-const { ig, tt } = $('Elegir 50 por red').first().json;
+const { ig, tt } = $('Elegir 25 por red').first().json;
 const b = $('Busquedas del dia').first().json;
 const esc = s => String(s || '').replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
 const link = (red, u) => red === 'instagram' ? `https://www.instagram.com/${encodeURIComponent(u)}/` : `https://www.tiktok.com/@${encodeURIComponent(u)}`;
@@ -138,17 +140,17 @@ def armar(apify_cred=None):
              {"rule": {"interval": [{"field": "cronExpression", "expression": "30 8 * * *"}]}}, 0),
         code("Busquedas del dia", BUSQUEDAS, 220),
         apify("IG: reels por hashtag", "apify~instagram-hashtag-scraper",
-              "={{ JSON.stringify({ hashtags: $json.hashtags, resultsType: 'reels', resultsLimit: 15 }) }}", 440),
+              "={{ JSON.stringify({ hashtags: $json.hashtags, resultsType: 'reels', resultsLimit: 6 }) }}", 440, 0.04),
         code("IG: elegir reels", ELEGIR_POSTS.replace('%RED%', 'ig'), 660),
         apify("IG: comentarios", "apidojo~instagram-comments-scraper",
-              "={{ JSON.stringify({ startUrls: $json.urls, maxItems: 600 }) }}", 880),
+              "={{ JSON.stringify({ startUrls: $json.urls, maxItems: 100 }) }}", 880, 0.06),
         apify("TT: videos por busqueda", "clockworks~tiktok-scraper",
-              "={{ JSON.stringify({ searchQueries: $('Busquedas del dia').first().json.busquedas, searchSection: '/video', resultsPerPage: 10, videoSearchDateFilter: 'PAST_MONTH', shouldDownloadVideos: false, shouldDownloadCovers: false, shouldDownloadAvatars: false }) }}", 1100),
+              "={{ JSON.stringify({ searchQueries: $('Busquedas del dia').first().json.busquedas, searchSection: '/video', resultsPerPage: 4, shouldDownloadVideos: false, shouldDownloadCovers: false, shouldDownloadAvatars: false }) }}", 1100, 0.04),
         code("TT: elegir videos", ELEGIR_POSTS.replace('%RED%', 'tt'), 1320),
         apify("TT: comentarios", "apidojo~tiktok-comments-scraper",
-              "={{ JSON.stringify({ startUrls: $json.urls, maxItems: 600, includeReplies: false }) }}", 1540),
+              "={{ JSON.stringify({ startUrls: $json.urls, maxItems: 100, includeReplies: false }) }}", 1540, 0.04),
         supa("Ya sugeridos", "GET", f"{SB}/rest/v1/radar_redes?select=red,usuario&limit=50000", 1760),
-        code("Elegir 50 por red", ELEGIR, 1980),
+        code("Elegir 25 por red", ELEGIR, 1980),
         supa("Guardar sugeridos", "POST", f"{SB}/rest/v1/radar_redes", 2200,
              cuerpo="={{ JSON.stringify($json.filas.map(f => ({ red: f.red, usuario: f.usuario, comentario: f.comentario, post_url: f.post_url, puntaje: f.puntaje }))) }}",
              prefer="resolution=ignore-duplicates,return=minimal"),
@@ -164,5 +166,5 @@ def armar(apify_cred=None):
     C = {}
     for a, b in zip(N, N[1:]):
         C[a["name"]] = {"main": [[{"node": b["name"], "type": "main", "index": 0}]]}
-    return {"name": "RADAR - 50 cuentas por red para seguir a mano", "nodes": N, "connections": C,
+    return {"name": "RADAR - 25 cuentas por red para seguir a mano", "nodes": N, "connections": C,
             "settings": {"executionOrder": "v1", "timezone": "America/Argentina/Buenos_Aires", "errorWorkflow": "LcYeloX0BIWbs3vN"}}

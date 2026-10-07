@@ -1,7 +1,7 @@
 -- Radar de redes: cuentas sugeridas cada día para seguir A MANO desde
 -- Instagram y TikTok (gente que comentó reels/videos parecidos con intención
--- de pedir un servicio). Lo llena el workflow de n8n "RADAR - 50 cuentas por
--- red" (tools/n8n/workflows/radar-50-cuentas-por-red.json). Sirve para no
+-- de pedir un servicio). Lo llena el workflow de n8n "RADAR - cuentas por
+-- red" (tools/n8n/workflows/radar-cuentas-por-red.json). Sirve para no
 -- repetir sugerencias. Solo datos públicos y mínimos (usuario, el comentario
 -- que motivó la sugerencia y el link al post); el workflow borra lo de más de
 -- 60 días. Aplicada el 2026-10-07.
