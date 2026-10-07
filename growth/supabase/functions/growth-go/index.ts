@@ -22,9 +22,12 @@ Deno.serve(async (req) => {
   }
   const ua = req.headers.get('user-agent') || '';
   if (BOTS.test(ua) || req.method === 'HEAD') {
-    return new Response('<!doctype html><meta charset="utf-8"><title>Link</title>', {
-      status: 200, headers: { 'content-type': 'text/html; charset=utf-8', 'cache-control': 'no-store' },
-    });
+    // Robots (vista previa de un chat, revisión de anuncios de Meta, Googlebot)
+    // y HEAD: se los manda al destino real para que vean la página, pero no
+    // cuentan como click.
+    const destino = await destinoSinRegistrar(slug);
+    if (!destino) return new Response('Link inexistente', { status: 404 });
+    return new Response(null, { status: 302, headers: { Location: destino, 'Cache-Control': 'no-store' } });
   }
   const ref = url.searchParams.get('r');
   const { data, error } = await admin().rpc('growth_record_click', {
@@ -46,3 +49,16 @@ Deno.serve(async (req) => {
     headers: { Location: target, 'Cache-Control': 'no-store', 'Referrer-Policy': 'no-referrer' },
   });
 });
+
+// Destino del link sin UTM ni registro de click (solo para robots).
+async function destinoSinRegistrar(slug: string): Promise<string | null> {
+  const db = admin();
+  const { data: l } = await db.from('growth_tracking_links').select('workspace_id,destination,custom_url,archived').eq('slug', slug).maybeSingle();
+  if (!l || l.archived) return null;
+  const https = (u?: string | null) => (u && /^https:\/\//i.test(u) ? u : null);
+  if (l.destination === 'custom' && https(l.custom_url)) return l.custom_url;
+  const { data: a } = await db.from('growth_app_settings').select('website,play_store_url,app_store_url').eq('workspace_id', l.workspace_id).maybeSingle();
+  if (l.destination === 'play' && https(a?.play_store_url)) return a!.play_store_url;
+  if (l.destination === 'appstore' && https(a?.app_store_url)) return a!.app_store_url;
+  return https(a?.website) || https(a?.play_store_url) || https(a?.app_store_url);
+}
