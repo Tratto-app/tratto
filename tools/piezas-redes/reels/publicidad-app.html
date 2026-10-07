@@ -1,0 +1,90 @@
+<!doctype html>
+<html lang="es"><head><meta charset="utf-8">
+<link rel="stylesheet" href="publicidad.css">
+</head><body>
+<script>
+// Publicidad general de la app (25 s, sin voz). Rubros variados, no solo hogar.
+const $ = (r, s) => r.querySelector(s), $$ = (r, s) => [...r.querySelectorAll(s)];
+const tel = (img, extra = '') => `<div class="escenario"><div class="tel" ${extra}><div class="isla"></div><div class="pantalla">${img}</div></div></div>`;
+window.PUBLI = { cierre: 20.6, escenas: [
+{ a: 0, b: 3.4, html: () => `
+  <div class="abs centro t-xl" style="top:660px" id="a1">¿Necesitás</div>
+  <div class="pila centro" style="position:absolute;top:830px;left:0;right:0;height:140px" id="a1p">
+    <div class="t-l acento">un DJ?</div><div class="t-l acento">clases de inglés?</div><div class="t-l acento">una manicura?</div>
+    <div class="t-l acento">un flete?</div><div class="t-l acento">una fotógrafa?</div>
+  </div>`,
+  animar(t, r) {
+    entra($(r, '#a1'), t, .1); sale($(r, '#a1'), t, 3.1);
+    cambia($$(r, '#a1p > div'), t, [.5, 1.05, 1.6, 2.15, 2.7, 3.3]);
+  } },
+{ a: 3.3, b: 6.0, html: () => `
+  <div class="abs centro t-l" style="top:650px" id="a2a">Tratto te conecta</div>
+  <div class="abs centro t-l acento" style="top:780px" id="a2b">con quien sabe,</div>
+  <div class="abs centro t-l oro" style="top:910px" id="a2c">en tu zona.</div>`,
+  animar(t, r) {
+    entra($(r, '#a2a'), t, 3.4); entra($(r, '#a2b'), t, 3.8); entra($(r, '#a2c'), t, 4.2);
+    ['#a2a', '#a2b', '#a2c'].forEach(id => sale($(r, id), t, 5.7));
+  } },
+{ a: 5.9, b: 10.6, html: () => `
+  <div class="abs t-m" style="top:600px;left:110px" id="a3h">En Tratto:</div>
+  <div class="pila" style="position:absolute;top:760px;left:110px;right:80px;height:200px" id="a3p">
+    <div class="fila t-m"><span class="ico">${icono('pedido', 76)}</span><span>Pedís gratis</span></div>
+    <div class="fila t-m"><span class="ico">${icono('presupuesto', 76)}</span><span>Te llegan presupuestos</span></div>
+    <div class="fila t-m"><span class="ico">${icono('chat', 76)}</span><span>Chateás y elegís</span></div>
+    <div class="fila t-m"><span class="ico">${icono('estrella', 76)}</span><span>Calificás el trabajo</span></div>
+  </div>`,
+  animar(t, r) {
+    entra($(r, '#a3h'), t, 6.0); sale($(r, '#a3h'), t, 10.3);
+    cambia($$(r, '#a3p > div'), t, [6.3, 7.35, 8.4, 9.45, 10.5]);
+  } },
+{ a: 10.5, b: 15.6, html: () => tel('<img src="img/app-1.jpg" id="i1"><img src="img/app-2.jpg" id="i2" style="opacity:0">', 'id="t4"') + `
+  <div style="position:absolute;left:96px;top:290px" id="n4"><span class="chip"><span class="icono-app" style="width:84px;height:84px;border-radius:22px">${LOGO(54, 'g4')}</span><span>Presupuesto nuevo<br><span style="font:600 40px 'IBM Plex Mono';color:#2B7E62">$68.000 · Martín R.</span></span></span></div>
+  <div style="position:absolute;left:390px;top:780px" id="ic4"><div class="icono-app">${LOGO(190, 'g5')}</div></div>`,
+  animar(t, r) {
+    const tl = $(r, '#t4');
+    const k = U.eo(U.P(t, 10.5, 11.5)), f = U.eio(U.P(t, 11.5, 15.0)), s = U.eo(U.P(t, 15.2, 15.6));
+    tl.style.transform = `translateX(${(1 - k) * 700}px) rotateY(${26 - 16 * k - 6 * f}deg) rotateX(${6 - 4 * f}deg) scale(${1 - s * .2})`;
+    tl.style.opacity = 1 - s;
+    $(r, '#i2').style.opacity = U.eio(U.P(t, 12.4, 12.8));
+    const n = $(r, '#n4'), q = U.P(t, 13.0, 13.35);
+    n.style.opacity = q > 0 ? 1 - s : 0;
+    n.style.transform = `translateY(${(1 - U.eo(q)) * -80}px) scale(${.85 + .15 * U.back(q)})`;
+    const i = $(r, '#ic4'), w = U.P(t, 14.2, 14.6);
+    i.style.opacity = w > 0 ? 1 - s : 0;
+    i.style.transform = `scale(${.2 + .8 * U.back(w) + s * .3})`;
+  } },
+{ a: 15.5, b: 18.1, html: () => `
+  <div class="abs centro t-m" style="top:180px" id="a5">Compará y <span class="acento">elegí vos</span></div>` +
+  tel('<img src="img/app-3.jpg">', 'id="t5"'),
+  animar(t, r) {
+    entra($(r, '#a5'), t, 15.7); sale($(r, '#a5'), t, 17.8);
+    const tl = $(r, '#t5');
+    const k = U.eo(U.P(t, 15.5, 16.4)), s = U.eo(U.P(t, 17.7, 18.1));
+    tl.style.transform = `translateY(${(1 - k) * 800 + 40}px) rotateY(${-20 + 12 * k}deg) rotateX(${10 - 6 * k}deg) scale(${.94 - s * .15})`;
+    tl.style.opacity = 1 - s;
+  } },
+{ a: 18.0, b: 20.7, html: () => `
+  <div class="abs centro t-m" style="top:740px" id="a6h">Tratto es</div>
+  <div class="pila centro" style="position:absolute;top:850px;left:0;right:0;height:150px" id="a6p">
+    <div class="t-xl acento">simple</div><div class="t-xl acento">de tu zona</div><div class="t-l acento" style="top:14px">para 46 rubros</div>
+  </div>`,
+  animar(t, r) {
+    entra($(r, '#a6h'), t, 18.1); sale($(r, '#a6h'), t, 20.4);
+    cambia($$(r, '#a6p > div'), t, [18.35, 19.05, 19.75, 20.65]);
+  } },
+{ a: 20.6, b: 25.1, html: () => `
+  <div class="cierre">
+    <div class="icono-app" id="c1">${LOGO(190, 'g7')}</div>
+    <div class="marca-txt" style="margin-top:70px" id="c2">TRATTO</div>
+    <div class="t-m" style="margin-top:70px;color:#FCFBF8" id="c3">Pedí tu primer presupuesto</div>
+    <div class="url" style="margin-top:30px" id="c4">trattoapp.com.ar</div>
+  </div>`,
+  animar(t, r) {
+    const i = $(r, '#c1'), q = U.P(t, 21.0, 21.45);
+    i.style.opacity = q > 0 ? 1 : 0; i.style.transform = `scale(${.4 + .6 * U.back(q)})`;
+    entra($(r, '#c2'), t, 21.4, .6, { blur: 24 }); entra($(r, '#c3'), t, 21.9); entra($(r, '#c4'), t, 22.3);
+  } },
+]};
+</script>
+<script src="publicidad-comun.js"></script>
+</body></html>

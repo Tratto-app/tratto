@@ -1,0 +1,51 @@
+/* Publicidades estilo presentación de producto, con la identidad de Tratto. */
+@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@500;600&family=IBM+Plex+Sans+Condensed:wght@600;700&family=IBM+Plex+Sans:wght@400;500;600&family=Montserrat:wght@600&display=block');
+:root{
+  --claro:#F3F6F2; --tinta:#0E1815; --tinta-2:#3A4A43; --verde:#1E5D49; --verde-vivo:#2B7E62;
+  --verde-luz:#8FD9BC; --laton:#C9A227; --laton-osc:#A07F12; --noche:#0C2620; --alerta:#C2452A;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{width:1080px;height:1920px;overflow:hidden;background:var(--claro)}
+body{font-family:'IBM Plex Sans',sans-serif;color:var(--tinta);position:relative}
+#fondo{position:absolute;inset:0;overflow:hidden;background:linear-gradient(170deg,#F7F8F3 0%,#EEF4F0 55%,#F6F2E4 100%)}
+.mancha{position:absolute;width:900px;height:900px;border-radius:50%;filter:blur(110px);opacity:.55}
+.m1{background:radial-gradient(circle,#9FE3CA 0%,transparent 70%)}
+.m2{background:radial-gradient(circle,#F3DE9A 0%,transparent 70%);opacity:.6}
+.m3{background:radial-gradient(circle,#B9E6D6 0%,transparent 70%)}
+.grano{position:absolute;inset:0;opacity:.05;background-image:radial-gradient(#000 1px,transparent 1px);background-size:4px 4px}
+#escena{position:absolute;inset:0}
+.capa{position:absolute;inset:0}
+#noche{position:absolute;inset:0;background:radial-gradient(circle at 50% 45%,#164237 0%,#0C2620 60%,#081A16 100%);display:none;z-index:5}
+.abs{position:absolute;left:0;right:0}
+.centro{text-align:center}
+.t-xl{font:700 150px/.98 'IBM Plex Sans Condensed',sans-serif;letter-spacing:-.01em}
+.t-l{font:700 112px/1 'IBM Plex Sans Condensed',sans-serif;letter-spacing:-.005em}
+.t-m{font:600 74px/1.08 'IBM Plex Sans Condensed',sans-serif}
+.t-s{font:500 52px/1.2 'IBM Plex Sans',sans-serif;color:var(--tinta-2)}
+.mono{font:600 38px/1.2 'IBM Plex Mono',monospace;letter-spacing:.08em;text-transform:uppercase}
+.acento{color:var(--verde-vivo)}
+.oro{color:var(--laton-osc)}
+.rojo{color:var(--alerta)}
+.pila{position:relative;height:130px}
+.pila > *{position:absolute;left:0;right:0;opacity:0}
+/* Teléfono */
+.escenario{position:absolute;inset:0;perspective:2600px}
+.tel{position:absolute;width:620px;height:1290px;left:230px;top:330px;border-radius:78px;background:#0E1815;padding:16px;
+     box-shadow:0 60px 120px rgba(12,38,32,.28),0 18px 40px rgba(12,38,32,.18);transform-style:preserve-3d}
+.tel .pantalla{position:absolute;inset:16px;border-radius:64px;overflow:hidden;background:#FCFBF8}
+.tel .pantalla img{position:absolute;left:0;top:0;width:100%;height:auto}
+.tel .isla{position:absolute;top:34px;left:50%;width:150px;height:40px;margin-left:-75px;border-radius:20px;background:#0E1815;z-index:2}
+/* Chips y sellos */
+.chip{display:inline-flex;align-items:center;gap:18px;background:#fff;border-radius:28px;padding:22px 30px;
+      box-shadow:0 24px 60px rgba(12,38,32,.18);font:600 44px/1.1 'IBM Plex Sans',sans-serif;white-space:nowrap}
+.sello{display:inline-flex;align-items:center;gap:20px;border:7px solid currentColor;border-radius:999px;padding:18px 40px;
+       font:700 70px/1 'IBM Plex Sans Condensed',sans-serif;letter-spacing:.04em;text-transform:uppercase;background:rgba(255,255,255,.75)}
+.sello::before{content:"";width:28px;height:28px;border-radius:50%;background:currentColor}
+.icono-app{width:300px;height:300px;border-radius:72px;background:linear-gradient(150deg,#1B4B40,#0C2620);display:flex;align-items:center;justify-content:center;
+           box-shadow:0 40px 90px rgba(12,38,32,.35),inset 0 2px 0 rgba(255,255,255,.12)}
+.fila{display:flex;align-items:center;gap:34px}
+.fila .ico{width:120px;height:120px;border-radius:32px;background:#fff;color:var(--verde);display:flex;align-items:center;justify-content:center;box-shadow:0 18px 40px rgba(12,38,32,.12);flex:none}
+.cierre{position:absolute;inset:0;z-index:6;color:#FCFBF8;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center}
+.marca-txt{font:600 92px/1 Montserrat,sans-serif;letter-spacing:.3em;padding-left:.3em;color:#FCFBF8}
+.url{font:600 50px/1.2 'IBM Plex Mono',monospace;color:#8FD9BC}
+.boton-cta{display:inline-block;background:#C9A227;color:#1A1405;border-radius:30px;padding:30px 54px;font:700 58px/1 'IBM Plex Sans Condensed',sans-serif;box-shadow:inset 0 -6px 0 rgba(0,0,0,.18)}
