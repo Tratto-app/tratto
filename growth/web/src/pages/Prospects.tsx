@@ -92,7 +92,7 @@ export default function Prospects() {
 
   return (
     <>
-      <PageHeader title="Prospects" desc="Personas que todavía no usan la app. Cada una tiene su estado en el funnel, su score y su link personal."
+      <PageHeader title="Contactos" desc="Personas que todavía no usan la app. Cada una tiene su estado en el funnel, su score y su link personal."
         actions={<>
           <button className="btn" onClick={exportar}>Exportar CSV</button>
           <button className="btn" onClick={() => setImportar(true)}>Importar CSV</button>

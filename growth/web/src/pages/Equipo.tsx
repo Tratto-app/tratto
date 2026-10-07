@@ -145,7 +145,7 @@ export default function Equipo() {
               <Kpi label="Primer pedido" value={t.periodo.activados} help="Activaciones: primer pedido o servicio publicado." />
               <Kpi label="Mails enviados" value={t.periodo.mails_enviados} help={t.periodo.mails_fallidos ? `${t.periodo.mails_fallidos} fallaron` : undefined} />
               <Kpi label="Clicks en links" value={t.periodo.clicks} />
-              <Kpi label="Gasto en anuncios" value={t.periodo.gasto} format={ars} help="Lo que cargues en Sources. Sin gasto cargado no hay costo por registro." />
+              <Kpi label="Gasto en anuncios" value={t.periodo.gasto} format={ars} help="Lo que cargues en Fuentes. Sin gasto cargado no hay costo por registro." />
             </div>
           )}
 

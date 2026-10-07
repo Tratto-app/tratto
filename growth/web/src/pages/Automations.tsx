@@ -36,7 +36,7 @@ export default function Automations() {
 
   return (
     <>
-      <PageHeader title="Automations" desc="Secuencias que trabajan solas: mandan mensajes, esperan respuesta, deciden por reglas y avisan. Corren cada 5 minutos (y cuando apretás “Procesar ahora”)."
+      <PageHeader title="Automatizaciones" desc="Secuencias que trabajan solas: mandan mensajes, esperan respuesta, deciden por reglas y avisan. Corren cada 5 minutos (y cuando apretás “Procesar ahora”)."
         actions={<><button className="btn" disabled={busy} onClick={procesar}>{busy ? 'Procesando…' : 'Procesar ahora'}</button><button className="btn primario" onClick={() => setEdit('new')}>+ Automatización</button></>} />
       <ErrorBox error={data.error} onRetry={data.reload} />
       {!data.data ? (data.error ? null : <Loading />) : !data.data.workflows.length ? (

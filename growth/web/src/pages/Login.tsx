@@ -17,8 +17,8 @@ export default function Login() {
     <div className="login">
       <form className="card grid" onSubmit={entrar}>
         <div>
-          <h1>Growth OS</h1>
-          <p className="texto-2" style={{ margin: '4px 0 0' }}>Conseguí, activá y retené usuarios de tu app.</p>
+          <h1>CRM de Tratto</h1>
+          <p className="texto-2" style={{ margin: '4px 0 0' }}>Clientes, marketing y el equipo que trabaja todos los días.</p>
         </div>
         <div className="hilo" style={{ margin: 0 }} />
         <label className="campo">Email<input type="email" autoComplete="username" required value={email} onChange={(e) => setEmail(e.target.value)} /></label>

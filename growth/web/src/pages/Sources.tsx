@@ -28,7 +28,7 @@ export default function Sources() {
   const rows = [...(data.data?.rows || [])].filter((r) => r.prospects || r.installs || r.spend).sort((a, b) => b.activations - a.activations || b.installs - a.installs);
   return (
     <>
-      <PageHeader title="Sources" desc="De dónde viene cada prospecto y cada usuario. El orden sale de tus datos del período, no de un ranking genérico."
+      <PageHeader title="Fuentes" desc="De dónde viene cada prospecto y cada usuario. El orden sale de tus datos del período, no de un ranking genérico."
         actions={<><button className="btn" onClick={() => setGasto(true)}>+ Cargar gasto</button><button className="btn primario" onClick={() => setNueva(true)}>+ Fuente</button></>} />
       <ErrorBox error={data.error} onRetry={data.reload} />
       {!data.data ? (data.error ? null : <Loading />) : (

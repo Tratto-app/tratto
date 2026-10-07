@@ -2,19 +2,19 @@
 export type IconKey = 'dash' | 'users' | 'flag' | 'source' | 'link' | 'inbox' | 'flow' | 'ai' | 'app' | 'seg' | 'ret' | 'chart' | 'funnel' | 'cohort' | 'store' | 'book' | 'plug' | 'gear' | 'team';
 
 export const NAV: { group: string; items: { to: string; label: string; icon: IconKey }[] }[] = [
-  { group: '', items: [{ to: '/', label: 'Dashboard', icon: 'dash' }, { to: '/equipo', label: 'Equipo de marketing', icon: 'team' }] },
-  { group: 'Acquisition', items: [
-    { to: '/prospects', label: 'Prospects', icon: 'users' }, { to: '/campaigns', label: 'Campaigns', icon: 'flag' },
-    { to: '/sources', label: 'Sources', icon: 'source' }, { to: '/links', label: 'Tracking Links', icon: 'link' }] },
-  { group: 'Engagement', items: [
-    { to: '/inbox', label: 'Inbox', icon: 'inbox' }, { to: '/automations', label: 'Automations', icon: 'flow' }, { to: '/agent', label: 'AI Agent', icon: 'ai' }] },
-  { group: 'Users', items: [
-    { to: '/users', label: 'App Users', icon: 'app' }, { to: '/segments', label: 'Segments', icon: 'seg' }, { to: '/retention', label: 'Retention', icon: 'ret' }] },
-  { group: 'Analytics', items: [
-    { to: '/analytics', label: 'Overview', icon: 'chart' }, { to: '/analytics/funnel', label: 'Funnel', icon: 'funnel' },
-    { to: '/analytics/campaigns', label: 'Campaigns', icon: 'flag' }, { to: '/analytics/cohorts', label: 'Cohorts', icon: 'cohort' }] },
+  { group: '', items: [{ to: '/', label: 'Inicio', icon: 'dash' }, { to: '/equipo', label: 'Equipo de marketing', icon: 'team' }] },
+  { group: 'Captación', items: [
+    { to: '/prospects', label: 'Contactos', icon: 'users' }, { to: '/campaigns', label: 'Campañas', icon: 'flag' },
+    { to: '/sources', label: 'Fuentes', icon: 'source' }, { to: '/links', label: 'Links con nombre', icon: 'link' }] },
+  { group: 'Contacto', items: [
+    { to: '/inbox', label: 'Mensajes', icon: 'inbox' }, { to: '/automations', label: 'Automatizaciones', icon: 'flow' }, { to: '/agent', label: 'Asistente IA', icon: 'ai' }] },
+  { group: 'Usuarios', items: [
+    { to: '/users', label: 'Usuarios de la app', icon: 'app' }, { to: '/segments', label: 'Segmentos', icon: 'seg' }, { to: '/retention', label: 'Retención', icon: 'ret' }] },
+  { group: 'Análisis', items: [
+    { to: '/analytics', label: 'Resumen', icon: 'chart' }, { to: '/analytics/funnel', label: 'Embudo', icon: 'funnel' },
+    { to: '/analytics/campaigns', label: 'Campañas', icon: 'flag' }, { to: '/analytics/cohorts', label: 'Cohortes', icon: 'cohort' }] },
   { group: 'App', items: [
-    { to: '/app', label: 'App Overview', icon: 'app' }, { to: '/app/stores', label: 'Store Links', icon: 'store' }, { to: '/app/knowledge', label: 'Knowledge Base', icon: 'book' }] },
-  { group: 'Settings', items: [
-    { to: '/settings/ai', label: 'AI', icon: 'ai' }, { to: '/settings/integrations', label: 'Integrations', icon: 'plug' }, { to: '/settings/workspace', label: 'Workspace', icon: 'gear' }] },
+    { to: '/app', label: 'La app', icon: 'app' }, { to: '/app/stores', label: 'Tiendas', icon: 'store' }, { to: '/app/knowledge', label: 'Base de conocimiento', icon: 'book' }] },
+  { group: 'Ajustes', items: [
+    { to: '/settings/ai', label: 'IA', icon: 'ai' }, { to: '/settings/integrations', label: 'Integraciones', icon: 'plug' }, { to: '/settings/workspace', label: 'Espacio de trabajo', icon: 'gear' }] },
 ];

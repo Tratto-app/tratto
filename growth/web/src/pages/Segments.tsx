@@ -23,7 +23,7 @@ export default function Segments() {
 
   return (
     <>
-      <PageHeader title="Segments" desc="Grupos que se recalculan solos con reglas. Sirven para filtrar prospectos, apuntar campañas y ver usuarios en riesgo."
+      <PageHeader title="Segmentos" desc="Grupos que se recalculan solos con reglas. Sirven para filtrar prospectos, apuntar campañas y ver usuarios en riesgo."
         actions={<button className="btn primario" onClick={() => setEdit('new')}>+ Segmento</button>} />
       <ErrorBox error={data.error} onRetry={data.reload} />
       {!data.data ? (data.error ? null : <Loading />) : (

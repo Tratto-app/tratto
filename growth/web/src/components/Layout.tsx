@@ -104,7 +104,7 @@ export default function Layout() {
           <span className="marca-sello">
             <svg width="16" height="16" viewBox="0 0 32 32" aria-hidden="true"><path d="M5 23l7-8 6 4 9-12" stroke="#C9A227" strokeWidth="3.4" fill="none" strokeLinecap="round" strokeLinejoin="round" /></svg>
           </span>
-          <div>Growth OS<small>{ws?.is_demo ? 'DEMO · DATOS FICTICIOS' : 'ADQUISICIÓN DE USUARIOS'}</small></div>
+          <div>CRM de Tratto<small>{ws?.is_demo ? 'DEMO · DATOS FICTICIOS' : 'CLIENTES Y MARKETING'}</small></div>
         </div>
         {NAV.map((g) => (
           <nav className="nav-grupo" key={g.group || 'inicio'} aria-label={g.group || 'Inicio'}>

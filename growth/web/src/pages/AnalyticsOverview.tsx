@@ -37,7 +37,7 @@ export default function AnalyticsOverview() {
 
   return (
     <>
-      <PageHeader title="Analytics" desc="CAC = gasto ÷ activaciones. LTV observado = ingresos reales ÷ usuarios registrados (no es una proyección). ROI = (ingresos − gasto) ÷ gasto. Si no cargás gasto ni la app manda pagos, esos valores quedan vacíos en lugar de inventarse." />
+      <PageHeader title="Análisis" desc="CAC = gasto ÷ activaciones. LTV observado = ingresos reales ÷ usuarios registrados (no es una proyección). ROI = (ingresos − gasto) ÷ gasto. Si no cargás gasto ni la app manda pagos, esos valores quedan vacíos en lugar de inventarse." />
       <ErrorBox error={k.error} onRetry={k.reload} />
       {c && (
         <div className="grid g6">

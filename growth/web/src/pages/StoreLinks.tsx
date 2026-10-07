@@ -23,7 +23,7 @@ export default function StoreLinks() {
   };
   return (
     <>
-      <PageHeader title="Store Links" desc="A dónde mandan los links trackeados y cómo rinde cada tienda. Los números salen de tus clicks y de los eventos que manda la app, no de las consolas de las tiendas."
+      <PageHeader title="Tiendas" desc="A dónde mandan los links trackeados y cómo rinde cada tienda. Los números salen de tus clicks y de los eventos que manda la app, no de las consolas de las tiendas."
         actions={<button className="btn primario" onClick={guardar}>Guardar</button>} />
       <div className="grid g2">
         <Card title="URLs">

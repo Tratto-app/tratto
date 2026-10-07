@@ -48,7 +48,7 @@ export default function AppUsers() {
 
   return (
     <>
-      <PageHeader title="App Users" desc="Personas que ya instalaron la app. Son distintas de los prospectos: un usuario puede venir de un prospecto (queda vinculado) o llegar solo." />
+      <PageHeader title="Usuarios de la app" desc="Personas que ya instalaron la app. Son distintas de los prospectos: un usuario puede venir de un prospecto (queda vinculado) o llegar solo." />
       {counts.data && (
         <div className="grid g6">
           <Kpi label="Usuarios" value={counts.data.total} />
@@ -75,7 +75,7 @@ export default function AppUsers() {
         </div>
         <ErrorBox error={list.error} onRetry={list.reload} />
         {list.error ? null : list.loading && !list.data ? <Loading /> : !list.data?.rows.length ? (
-          <Empty title="Todavía no hay usuarios">Aparecen cuando la app manda eventos a <code>growth-event</code> (ver Settings → Integrations).</Empty>
+          <Empty title="Todavía no hay usuarios">Aparecen cuando la app manda eventos a <code>growth-event</code> (ver Ajustes → Integraciones).</Empty>
         ) : (
           <div className="tabla-wrap"><table>
             <thead><tr><th>Usuario</th><th>Plataforma</th><th>Origen</th><th>Instaló</th><th>Registro</th><th>Activación</th><th>Último uso</th><th className="num">Sesiones</th><th className="num">Ingresos</th></tr></thead>

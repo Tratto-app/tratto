@@ -29,7 +29,7 @@ export default function SettingsAI() {
   };
   return (
     <>
-      <PageHeader title="Settings · AI" desc="Cómo trabaja el agente. Las reglas de base (no inventar, respetar la baja, español rioplatense, responder en JSON) están fijas en el código y no se pueden quitar desde acá." />
+      <PageHeader title="Ajustes · IA" desc="Cómo trabaja el agente. Las reglas de base (no inventar, respetar la baja, español rioplatense, responder en JSON) están fijas en el código y no se pueden quitar desde acá." />
       <div className="grid g2">
         <Card title="Proveedor">
           <p className="texto-2" style={{ marginTop: 0 }}>Se configura con secrets de las Edge Functions (nunca en el navegador):</p>

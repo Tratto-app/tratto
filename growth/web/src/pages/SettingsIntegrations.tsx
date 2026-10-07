@@ -15,7 +15,7 @@ const INFO: Record<string, { name: string; env: string[]; estado: string; nota: 
   openai: { name: 'OpenAI', env: ['OPENAI_API_KEY', 'GROWTH_AI_MODEL'], estado: 'Implementado', nota: 'Sin clave, la IA funciona por reglas (modo simulado).' },
   google_play: { name: 'Google Play Console', env: [], estado: 'No implementado', nota: 'Las métricas de la consola (instalaciones de la ficha, reseñas) requieren una cuenta de servicio. Hoy se usan los eventos de la app.' },
   app_store: { name: 'App Store Connect', env: [], estado: 'No implementado', nota: 'Requiere API key de App Store Connect. Hoy se usan los eventos de la app.' },
-  google_ads: { name: 'Google Ads', env: [], estado: 'No implementado', nota: 'El gasto se carga a mano en Sources (o por CSV) hasta conectar la API.' },
+  google_ads: { name: 'Google Ads', env: [], estado: 'No implementado', nota: 'El gasto se carga a mano en Fuentes (o por CSV) hasta conectar la API.' },
   analytics: { name: 'Analytics (GA4 / Firebase)', env: [], estado: 'No implementado', nota: 'La app manda sus eventos directo a growth-event.' },
   attribution: { name: 'Atribución (Install Referrer)', env: [], estado: 'Lado app', nota: 'Los links pasan el id del click a Google Play (referrer=…gid=). La app lo lee con la Install Referrer API y lo manda como click_token.' },
 };
@@ -47,7 +47,7 @@ export default function SettingsIntegrations() {
 
   return (
     <>
-      <PageHeader title="Settings · Integrations" desc="Ninguna credencial se guarda en el panel ni en la base: van como secrets de las Edge Functions (supabase secrets set …). Un canal en modo 'real' sin sus secrets sigue simulando y lo avisa." />
+      <PageHeader title="Ajustes · Integraciones" desc="Ninguna credencial se guarda en el panel ni en la base: van como secrets de las Edge Functions (supabase secrets set …). Un canal en modo 'real' sin sus secrets sigue simulando y lo avisa." />
       <Card title="Conectar la app (eventos de usuarios)">
         <p className="texto-2" style={{ marginTop: 0 }}>La app (o su backend) manda cada evento a <code>growth-event</code> con la clave de ingesta del workspace. Eventos con efecto: <code>install</code>, <code>open</code>, <code>register</code>, <code>onboarding_complete</code>, <code>first_action</code>, <code>session_start</code>, <code>purchase</code> (con <code>amount</code>). También acepta <code>sign_up</code> y <code>first_open</code>, y lotes de hasta 50 con <code>{'{"events":[…]}'}</code>.</p>
         <div className="fila"><button className="btn primario" onClick={generar}>{data.data?.hasKey ? 'Generar clave nueva' : 'Generar clave de ingesta'}</button>
