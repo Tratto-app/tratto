@@ -306,3 +306,65 @@ td.num, th.num { text-align: right; font-family: var(--f-mono); }
   background: radial-gradient(1000px 500px at 20% -10%, rgba(43, 126, 98, 0.18), transparent), var(--fondo); }
 .login .card { width: min(400px, 100%); padding: 26px; }
 .mt { margin-top: 14px; }
+
+/* ── Equipo de marketing ──
+   Organigrama: el CMO arriba con su sello de latón y un hilo que baja y se
+   abre a los cinco departamentos. El número de latón en cada nodo es lo que
+   espera tu aprobación: lo primero que hay que mirar. */
+.organigrama { display: flex; flex-direction: column; align-items: center; }
+.nodo {
+  display: flex; flex-direction: column; gap: 8px; text-align: left; width: 100%;
+  background: var(--sup-1); border: 1px solid var(--borde); border-radius: var(--radio);
+  padding: 14px; color: var(--texto); font: inherit; cursor: pointer; box-shadow: var(--sombra);
+  transition: border-color .15s, background .15s;
+}
+.nodo:hover { border-color: var(--borde-2); background: var(--sup-2); }
+.nodo.activo { border-color: var(--laton); background: var(--sup-2); }
+.nodo.cmo { flex-direction: row; align-items: center; gap: 16px; max-width: 720px;
+  background: linear-gradient(120deg, rgba(201, 162, 39, 0.10), transparent 55%), var(--sup-1);
+  border-color: rgba(201, 162, 39, 0.35); }
+.nodo-sello {
+  flex: none; width: 62px; height: 62px; border-radius: 50%; display: grid; place-items: center;
+  font: 700 15px var(--f-titulo); letter-spacing: .08em; color: var(--tinta);
+  background: radial-gradient(circle at 35% 30%, var(--laton-luz), var(--laton) 60%, #8a6e10);
+  box-shadow: 0 0 0 3px var(--sup-1), 0 0 0 4px rgba(201, 162, 39, 0.5);
+  transform: rotate(-6deg);
+}
+.nodo-texto { display: flex; flex-direction: column; gap: 4px; min-width: 0; }
+.nodo-texto strong { font: 600 17px var(--f-titulo); }
+.nodo-texto span { color: var(--texto-2); }
+.nodo-texto b { color: var(--laton-luz); font-weight: 600; }
+.ramas { width: 100%; height: 30px; position: relative; }
+.ramas::before { content: ''; position: absolute; left: 50%; top: 0; height: 15px; width: 2px; background: var(--laton); opacity: .7; }
+.ramas i { position: absolute; left: 10%; right: 10%; top: 15px; height: 15px;
+  border: 2px solid rgba(201, 162, 39, 0.55); border-bottom: 0; border-radius: 8px 8px 0 0; }
+.deptos { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 12px; width: 100%; }
+.nodo-cab { display: flex; align-items: center; gap: 8px; }
+.nodo-cab strong { font: 600 16px var(--f-titulo); }
+.sello-n { margin-left: auto; min-width: 26px; height: 26px; padding: 0 6px; border-radius: 13px; display: grid; place-items: center;
+  font: 600 12.5px var(--f-mono); color: var(--tinta); background: var(--laton); }
+.nodo-hace { color: var(--texto-2); font-size: 13px; flex: 1; }
+.nodo-pie { color: var(--texto-3); font-size: 11.5px; }
+@media (max-width: 1200px) { .deptos { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+@media (max-width: 860px) {
+  .deptos { grid-template-columns: 1fr; }
+  .ramas { height: 16px; } .ramas i { display: none; } .ramas::before { height: 16px; }
+  .nodo.cmo { flex-direction: column; align-items: flex-start; }
+}
+.pieza { border-top: 1px solid var(--borde); padding: 12px 0; }
+.pieza:first-of-type { border-top: 0; padding-top: 0; }
+.pieza h4 { font: 600 15.5px var(--f-titulo); margin: 8px 0 2px; }
+.pieza p { margin: 4px 0; }
+.pieza.urgente h4::before { content: ''; display: inline-block; width: 8px; height: 8px; border-radius: 50%; background: var(--laton); margin-right: 8px; vertical-align: middle; }
+.pieza .comentario { background: rgba(180, 154, 224, 0.08); border-left: 2px solid var(--violeta); padding: 6px 10px; border-radius: 4px; font-size: 13px; }
+.texto-largo { white-space: pre-wrap; background: var(--tinta); border: 1px solid var(--borde); border-radius: 8px;
+  padding: 12px; margin-top: 8px; font-size: 13px; line-height: 1.55; max-height: 420px; overflow-y: auto; overflow-wrap: anywhere; }
+.cola-equipo .card-cab { flex-wrap: wrap; gap: 10px; }
+.cola-equipo .card-cab .acciones { max-width: 100%; overflow-x: auto; }
+@media (max-width: 860px) { .cola-equipo .segmentado button { white-space: nowrap; } }
+/* Barra superior en el teléfono: que la campana no quede afuera de la pantalla */
+@media (max-width: 860px) {
+  .topbar { gap: 6px; }
+  .topbar select { min-width: 0; max-width: 34vw !important; }
+  .topbar .rango { display: none; }
+}

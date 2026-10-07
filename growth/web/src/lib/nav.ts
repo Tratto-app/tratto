@@ -1,8 +1,8 @@
 // Menú lateral del panel (lo usan el Layout y el smoke test).
-export type IconKey = 'dash' | 'users' | 'flag' | 'source' | 'link' | 'inbox' | 'flow' | 'ai' | 'app' | 'seg' | 'ret' | 'chart' | 'funnel' | 'cohort' | 'store' | 'book' | 'plug' | 'gear';
+export type IconKey = 'dash' | 'users' | 'flag' | 'source' | 'link' | 'inbox' | 'flow' | 'ai' | 'app' | 'seg' | 'ret' | 'chart' | 'funnel' | 'cohort' | 'store' | 'book' | 'plug' | 'gear' | 'team';
 
 export const NAV: { group: string; items: { to: string; label: string; icon: IconKey }[] }[] = [
-  { group: '', items: [{ to: '/', label: 'Dashboard', icon: 'dash' }] },
+  { group: '', items: [{ to: '/', label: 'Dashboard', icon: 'dash' }, { to: '/equipo', label: 'Equipo de marketing', icon: 'team' }] },
   { group: 'Acquisition', items: [
     { to: '/prospects', label: 'Prospects', icon: 'users' }, { to: '/campaigns', label: 'Campaigns', icon: 'flag' },
     { to: '/sources', label: 'Sources', icon: 'source' }, { to: '/links', label: 'Tracking Links', icon: 'link' }] },
