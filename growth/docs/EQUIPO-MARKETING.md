@@ -75,13 +75,18 @@ a un rubro distinto; al terminar los 46 rubros vuelve a empezar por el 1.
 - **De dónde salen los mails:** búsquedas web (Firecrawl) de direcciones que
   el propio negocio publicó para que lo contacten. Solo CABA y Provincia de
   Buenos Aires.
-- **Cada mail:** saluda por el nombre de la persona o del negocio, dice qué
-  hace y dónde, que Tratto recién arranca, que la app le avisa sola (por mail)
-  cuando le llega un cliente de su rubro y su zona, y que registrarse no tiene
-  costo. No menciona la comisión (pedido del 8/10/2026). Texto plano, con
-  link a la web etiquetado `utm_source=prospeccion`, dónde encontramos el mail
-  y la opción de responder "no". Un solo mail por dirección, nunca un
-  seguimiento automático.
+- **Cada mail** (`tools/prospeccion/armar_mail.py`): saluda por el nombre de
+  la persona o del negocio, dice qué hace y dónde, que Tratto recién arranca y
+  que si se registra, publica su servicio y activa las notificaciones le llega
+  el aviso automáticamente cuando aparece un cliente, sin entrar a revisar. No
+  menciona la comisión. El link se ve como "www.trattoapp.com.ar" (por dentro
+  lleva `utm_source=prospeccion`), firma con el logo de Tratto, dónde
+  encontramos el mail y la opción de responder "no". Un solo mail por
+  dirección, nunca un seguimiento automático.
+- **Aviso de cliente nuevo:** desde el 8/10/2026, cuando el matching conecta
+  un pedido con un proveedor, además del mail le llega una notificación al
+  celular ("Te llegó un cliente"). Migración
+  `supabase/migrations/20261008170000_push_cliente_nuevo.sql`.
 - **En el CRM:** cada proveedor queda como contacto **proveedor**, fuente
   "Mails a proveedores (Gmail)", con permiso `unknown` (las automatizaciones
   de Brevo no le escriben). Si se registra en la app, se une solo por mail.
