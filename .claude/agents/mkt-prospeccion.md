@@ -145,6 +145,8 @@ select mkt_prospeccion_guardar($j$[
 - `rubro`: exacto, como viene de `mkt_rubro_del_dia()`.
 - `zona`: CABA, GBA Norte, GBA Oeste, GBA Sur o Buenos Aires (interior).
 - `nombre`: solo si se ve el nombre de pila de la persona. Si no, vacío.
+- `empresa`: el nombre del negocio o del lugar, si figura (va en el saludo
+  cuando no hay nombre de persona).
 - `campania`: `prov-<orden con 2 cifras>-<rubro corto sin tildes>`.
 
 Devuelve `id`, `ref` y `email` de cada uno guardado.
@@ -165,22 +167,25 @@ errores seguidos, pará.
 **Asunto:** `Clientes que buscan {oficio} en {barrio o zona} · Tratto`
 (el "· Tratto" del final sirve para encontrar las respuestas).
 
-**Cuerpo:**
+**Cuerpo** (versión del 8/10/2026: con nombre y sin la comisión, pedido del fundador):
 
 ```
-Hola{ Nombre}, ¿cómo estás?
+Hola {nombre}, ¿cómo va?
 
 {Gancho.} Te escribo de Tratto, una app donde gente de CABA y Provincia de
 Buenos Aires publica lo que necesita y recibe presupuestos de proveedores de
-su zona. Estamos sumando proveedores de {servicio} en {barrio o zona}.
+su zona.
 
-Así funciona:
-- El cliente publica su pedido, con fotos y su zona.
-- Te llega el pedido, le mandás tu presupuesto y hablan por el chat de la app.
-- Cuando terminás, el cliente te paga por Mercado Pago y la plata va directo a tu cuenta.
+Tratto recién está arrancando y estamos sumando proveedores de {servicio} en
+{barrio o zona}. Te registrás, publicás tu servicio y listo: cuando un cliente
+de tu zona pide {servicio}, la app te avisa sola por mail. Si activás las
+notificaciones, también te enterás al instante cuando te aceptan un
+presupuesto o te pagan.
 
-Crear tu perfil y recibir pedidos no tiene costo. Tratto cobra solo el 3% de
-los trabajos que cobres por la app (mínimo $1.500 por trabajo).
+Con el cliente hablás por el chat de la app y, cuando terminás el trabajo, te
+paga por Mercado Pago, directo a tu cuenta.
+
+No perdés nada por probar: registrarte y publicar tu servicio no tiene costo.
 
 Te podés registrar acá: {link}
 
@@ -198,11 +203,24 @@ Si no querés recibir más mensajes, respondé "no" y no te escribimos más.
 (Los saltos de línea dentro de los párrafos de arriba son solo para leerlo
 acá: en el mail cada párrafo va en una sola línea.)
 
+- **Nombre en el saludo** (siempre que se consiga): el nombre de pila de la
+  persona si figura en la fuente ("Hola Hugo, ¿cómo va?"); si no, el nombre
+  del negocio tal como lo usa, sin "S.R.L." ni eslóganes ("Hola ServiMAX
+  Destapaciones, ¿cómo va?"). Si no hay ninguno de los dos: "Hola, ¿cómo va?".
+  Nunca un nombre sacado de la dirección de mail ni adivinado.
+- **No se menciona la comisión.** Lo que se dice del costo es solo que
+  registrarse y publicar el servicio no tiene costo (es cierto: la comisión
+  se cobra únicamente sobre trabajos cobrados por la app, y está en los
+  términos que acepta al registrarse).
+- **Avisos, tal como funcionan hoy:** el pedido nuevo de su rubro y su zona
+  le llega por **mail** (flujo de n8n "Matching automatico + avisos"); las
+  notificaciones del celular avisan cuando le aceptan o rechazan un
+  presupuesto y cuando le pagan. No prometas más que eso.
 - **Link:** `https://www.trattoapp.com.ar/?utm_source=prospeccion&utm_medium=email&utm_campaign={campania}&utm_content={ref}`
 - **Gancho:** una frase con algo real del resultado (qué hace y dónde). Sin
-  elogios inventados ni datos que no estén en la fuente. Siempre de "vos",
-  también a un negocio ("Vi en tu página que hacen destapaciones en
-  Caballito"): es como escribe un vecino, y lo lee quien atiende el mail.
+  elogios inventados ni datos que no estén en la fuente. El resto del mail va
+  de "vos", también a un negocio ("Vi en tu página que hacen destapaciones
+  en Caballito"): es como escribe un vecino, y lo lee quien atiende el mail.
 - **Oficio y servicio:** dichos como los dice la gente ("plomero",
   "plomería"; "profe de inglés", "clases de inglés"), no el nombre largo del
   rubro.
