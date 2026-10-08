@@ -368,3 +368,14 @@ td.num, th.num { text-align: right; font-family: var(--f-mono); }
   .topbar select { min-width: 0; max-width: 34vw !important; }
   .topbar .rango { display: none; }
 }
+
+/* Vista del CRM: todos / clientes / proveedores (aplica a todas las páginas) */
+.vista-tipo button { white-space: nowrap; }
+.vista-tipo.t-customer button.activo { background: rgba(43, 126, 98, 0.28); color: var(--verde-luz); }
+.vista-tipo.t-provider button.activo { background: rgba(201, 162, 39, 0.22); color: var(--laton-luz); }
+@media (max-width: 860px) {
+  .topbar { flex-wrap: wrap; }
+  .vista-tipo { order: 10; width: 100%; }
+  .vista-tipo button { flex: 1; }
+}
+.aviso-tipo { margin: -8px 0 14px; font-size: 12.5px; color: var(--texto-2); }

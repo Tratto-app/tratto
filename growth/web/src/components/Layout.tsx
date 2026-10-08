@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { NavLink, Outlet, useNavigate } from 'react-router-dom';
 import { supabase } from '../lib/supabase';
-import { useWs } from '../lib/workspace';
+import { TIPOS, useWs } from '../lib/workspace';
 import { PERIODS, periodLabel, type PeriodKey } from '../lib/period';
 import { hace } from '../lib/format';
 import { NOTIF } from '../lib/labels';
@@ -95,7 +95,7 @@ function Notificaciones() {
 }
 
 export default function Layout() {
-  const { ws, workspaces, setWs, period, setPeriod, custom, session } = useWs();
+  const { ws, workspaces, setWs, period, setPeriod, custom, session, tipo, setTipo } = useWs();
   const [menu, setMenu] = useState(false);
   return (
     <div className="shell">
@@ -125,6 +125,11 @@ export default function Layout() {
             {workspaces.map((w) => <option key={w.id} value={w.id}>{w.name}{w.is_demo ? ' (demo)' : ''}</option>)}
           </select>
           {ws?.is_demo && <Badge tone="laton" title="Todos los datos de este workspace son ficticios">Demo</Badge>}
+          <div className={`segmentado vista-tipo t-${tipo}`} role="radiogroup" aria-label="Ver clientes, proveedores o todos">
+            {TIPOS.map((t) => (
+              <button key={t.key} role="radio" aria-checked={tipo === t.key} className={tipo === t.key ? 'activo' : ''} onClick={() => setTipo(t.key)}>{t.label}</button>
+            ))}
+          </div>
           <span className="espacio" />
           <select aria-label="Período" style={{ width: 'auto' }} value={period.key} onChange={(e) => setPeriod(e.target.value as PeriodKey)}>
             {PERIODS.map((p) => <option key={p.key} value={p.key}>{p.label}</option>)}
