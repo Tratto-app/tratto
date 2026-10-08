@@ -2886,7 +2886,8 @@ $('a-enviar').addEventListener('click', async () => {
                   legales_version:VERSION_LEGALES, legales_rol:rolElegido,
                   /* Publicidad: solo si tildó la casilla opcional. Mismo formato
                      que guardarPermisoPublicidad (Ajustes); el CRM lo toma como
-                     opt_in al crear la cuenta (crm_registrar_usuario). */
+                     opt_in recién cuando la persona confirma el mail
+                     (crm_registrar_usuario y crm_desde_confirmacion). */
                   publicidad_permiso: $('a-publi').checked,
                   publicidad_permiso_fecha: $('a-publi').checked ? new Date().toISOString() : null,
                   /* Canal de marketing por el que llegó (ver origenVisita) */

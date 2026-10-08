@@ -46,6 +46,8 @@ Solo se le escribe a quien tiene `consent = opt_in`, que sale únicamente de:
 - la casilla de novedades de la calculadora, o
 - el permiso de publicidad de la app (`user_metadata.publicidad_permiso`): casilla
   opcional y desmarcada al crear la cuenta, o Ajustes > Novedades y promociones.
+  Cuenta como `opt_in` recién cuando la persona confirma su mail
+  (`crm_desde_confirmacion`), así un mail mal tipeado nunca recibe novedades.
 
 Si alguien apaga el permiso en la app, pasa a `opt_out`. Si se da de baja desde
 un mail, también se apaga el permiso en la app (`crm_apagar_publicidad`). El
