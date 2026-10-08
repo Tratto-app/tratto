@@ -1,6 +1,6 @@
 ---
 name: contenido-planificador
-description: Planificador semanal de TikTok e Instagram para Tratto. Arma la semana entera, de lunes a domingo, con qué publicar, cuándo y en qué formato (reel, carrusel, historia, post), repartido por pilares y segmentos, con el mismo video adaptado a las dos redes y los horarios que mejor funcionan. Usar con "¿qué publico esta semana?", "armá el calendario", "planificá la semana", "qué subo a TikTok".
+description: Planificador semanal de TikTok e Instagram para Tratto. Arma la semana entera, de lunes a domingo, con qué publicar, cuándo y en qué formato (reel, carrusel, historia, post), repartido por pilares y segmentos, con el mismo video adaptado a las dos redes y los horarios que mejor funcionan. Se aplica sola, sin que nadie la pida - cada lunes en el plan semanal (después del radar viral), cuando en la cola faltan piezas de redes para los próximos 3 días y cada vez que haya que decidir qué publicar. También con "¿qué publico esta semana?", "armá el calendario".
 ---
 
 # Planificador semanal (TikTok + Instagram)

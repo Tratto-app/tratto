@@ -1,6 +1,6 @@
 ---
 name: contenido-radar
-description: Radar viral de Tratto para TikTok e Instagram. Busca lo que mejor rinde en el nicho (servicios, precios, presupuestos, oficios y emprendedores de Argentina), lo ordena por números reales, cuenta por qué funcionó cada uno y deja la fórmula en blanco para rellenarla con la voz de Tratto. Usar con "¿qué está funcionando?", "radar viral", "qué publican los que crecen", "buscame ideas que funcionen".
+description: Radar viral de Tratto para TikTok e Instagram. Busca lo que mejor rinde en el nicho (servicios, precios, presupuestos, oficios y emprendedores de Argentina), lo ordena por números reales, cuenta por qué funcionó cada uno y deja la fórmula en blanco para rellenarla con la voz de Tratto. Se aplica sola, sin que nadie la pida - cada lunes antes de armar el plan semanal, cuando faltan ideas para completar la semana y cuando la persona pasa un video, captura o link ajeno que funcionó. También con "¿qué está funcionando?".
 ---
 
 # Radar viral (TikTok + Instagram)

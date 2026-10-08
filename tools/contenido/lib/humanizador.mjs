@@ -40,8 +40,10 @@ const MARCAS = [
     /\bseamos (honestos|sinceros)\b/, /\bte lo digo claro\b/, /\bla verdad es que\b/, /\bte soy (sincero|sincera|honesto|honesta)\b/,
     /\bno te voy a mentir\b/, /\bhablemos claro\b/, /\bopinion impopular\b/, /\bte voy a ser (sincero|sincera|honesto|honesta)\b/,
   ]],
+  // Solo formas que no se confunden con el voseo al sacar las tildes:
+  // "necesitas" o "desbloquea" serían también "necesitás" y "desbloqueá".
   ['tuteo', 1.5, true, [
-    /\b(puedes|tienes|quieres|eres|necesitas)\b/, /\bdescubre\b/, /\bhaz\b/, /\bdesbloquea\b/,
+    /\b(puedes|tienes|quieres|eres)\b/, /\bdescubre\b/, /\bhaz\b/,
   ]],
   ['cierre_muerto', 1.5, true, [
     /\bque opinas\s*\?\s*$/m, /\bque te parecio\s*\?\s*$/m, /\bcomenta si\b/, /\bdoble tap\b/, /\bdale like si\b/,
@@ -68,15 +70,19 @@ function marcasDe(parrafo) {
 
 export function revisarIA(entrada) {
   const texto = String(entrada ?? '').replace(/\r\n?/g, '\n').trim();
-  if (!texto) return { palabras: 0, porcentaje: 0, veredicto: 'sin texto', parrafos: [], formato: [] };
+  if (!texto) return { palabras: 0, porcentaje: 0, veredicto: 'sin texto', parrafos: [], formato: [], corregir: [] };
   const sinHashtags = texto.replace(/#[\p{L}\p{N}_]+/gu, ' ');
   const parrafos = sinHashtags.split(/\n\s*\n/).map((p) => p.trim()).filter(Boolean);
   const palabras = normalizar(sinHashtags).split(' ').filter(Boolean).length;
 
   let puntos = 0;
+  // Lo que hay que corregir sí o sí, aunque el porcentaje total sea bajo.
+  const corregir = [];
   const detalle = parrafos.map((p, i) => {
     const marcas = marcasDe(p);
     puntos += marcas.reduce((s, m) => s + m.peso, 0);
+    if (marcas.length >= 3) corregir.push(`párrafo ${i + 1}, reescribirlo entero (${marcas.map((m) => `${m.tipo.replace('_', ' ')} "${m.texto}"`).join(', ')})`);
+    else for (const m of marcas) if (m.siempre) corregir.push(`${m.tipo.replace('_', ' ')}: "${m.texto}"`);
     const accion = marcas.length >= 3 ? 'reescribir el párrafo'
       : marcas.some((m) => m.siempre) ? 'reemplazar lo marcado'
       : marcas.length ? 'dejar (una marca suelta no es un problema)' : 'bien';
@@ -102,7 +108,7 @@ export function revisarIA(entrada) {
   const densidad = (puntos * 100) / Math.max(palabras, 30);
   const porcentaje = Math.min(99, Math.round(densidad * 6));
   const veredicto = porcentaje < 25 ? 'suena humano' : porcentaje < 55 ? 'mixto' : 'suena a IA';
-  return { palabras, porcentaje, veredicto, parrafos: detalle, formato,
+  return { palabras, porcentaje, veredicto, parrafos: detalle, formato, corregir,
     nota: 'Estimación por las marcas que notan los lectores, no un detector: no promete pasar ningún detector de IA.' };
 }
 

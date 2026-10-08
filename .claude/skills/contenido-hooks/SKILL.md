@@ -1,6 +1,6 @@
 ---
 name: contenido-hooks
-description: Genera y elige hooks (primera frase, primer segundo, primer slide) para reels y videos de TikTok e Instagram, carruseles, historias y publicaciones de Tratto, usando 12 categorías (curiosidad, contrarian, problema, resultado, error, lista, historia, pregunta, shock, autoridad, identificación, intriga). Da varias alternativas, las verifica con el motor y selecciona la mejor por retención, claridad, curiosidad, identificación y viralidad. Usar con "haceme hooks", "mejorá este hook", "cómo arranco este reel".
+description: Genera y elige hooks (primera frase, primer segundo, primer slide) para reels y videos de TikTok e Instagram, carruseles, historias y publicaciones de Tratto, usando 12 categorías (curiosidad, contrarian, problema, resultado, error, lista, historia, pregunta, shock, autoridad, identificación, intriga). Da varias alternativas, las verifica con el motor y selecciona la mejor por retención, claridad, curiosidad, identificación y viralidad. Se aplica sola, sin que nadie la pida, al empezar cualquier pieza nueva o versión para otra red, y cuando una pieza puntúa bajo en el hook. También con "haceme hooks".
 ---
 
 # Generador de hooks

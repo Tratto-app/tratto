@@ -1,6 +1,6 @@
 ---
 name: contenido-reutilizador
-description: Reutilizador de contenido de Tratto. Convierte una pieza en todas las demás sin repetirla igual - un reel de TikTok en reel de Instagram, carrusel, historias y post; una guía o página de precios de la web en carrusel y reel; un carrusel de Instagram en carrusel de fotos de TikTok - adaptando gancho, texto, link con nombre y hashtags a cada red. Usar con "adaptalo para Instagram", "pasalo a TikTok", "hacé un carrusel con esto", "reutilizá esta pieza".
+description: Reutilizador de contenido de Tratto. Convierte una pieza en todas las demás sin repetirla igual - un reel de TikTok en reel de Instagram, carrusel, historias y post; una guía o página de precios de la web en carrusel y reel; un carrusel de Instagram en carrusel de fotos de TikTok - adaptando gancho, texto, link con nombre y hashtags a cada red. Se aplica sola, sin que nadie la pida - al terminar cada pieza nueva (arma la versión para la otra red), cuando una pieza aprobada o publicada no tiene su gemela, cuando se publica una guía o página de precios nueva y cuando una pieza rinde muy por encima de la mediana. También con "pasalo a TikTok".
 ---
 
 # Reutilizador (TikTok ↔ Instagram ↔ web)

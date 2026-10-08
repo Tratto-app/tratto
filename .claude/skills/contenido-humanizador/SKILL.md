@@ -1,6 +1,6 @@
 ---
 name: contenido-humanizador
-description: Humanizador de textos de Tratto para TikTok e Instagram. Limpia de un caption, una descripción, un guion o el texto de una placa todo lo que suena a inteligencia artificial en castellano rioplatense (vocabulario de folleto, frases hechas, remates armados, "no es solo X, es Y", tuteo, emojis y signos de más) y muestra cuánto suena a IA antes y después. Usar con "humanizá este texto", "que no suene a IA", "revisá el caption antes de publicar".
+description: Humanizador de textos de Tratto para TikTok e Instagram. Limpia de un caption, una descripción, un guion o el texto de una placa todo lo que suena a inteligencia artificial en castellano rioplatense (vocabulario de folleto, frases hechas, remates armados, "no es solo X, es Y", tuteo, emojis y signos de más) y muestra cuánto suena a IA antes y después. Se aplica sola, sin que nadie la pida, a todo texto que va a salir publicado con el nombre de Tratto (redes y también guías, anuncios y mails nuevos) antes de entregarlo o dejarlo para aprobar; además corre en código dentro de `verificar` y antes de programar en Metricool. También con "que no suene a IA".
 ---
 
 # Humanizador de texto (TikTok + Instagram)

@@ -4,6 +4,7 @@
 // advertencia (se puede, pero suele rendir peor).
 import { conocimiento } from './conocimiento.mjs';
 import { ErrorEntrada } from './errores.mjs';
+import { revisarIA } from './humanizador.mjs';
 import { contarPalabras, limpiar, normalizar, oraciones, tieneCTA } from './texto.mjs';
 
 const MAX_TEXTO = 20000;
@@ -25,6 +26,38 @@ function revisarMarca(textos, marca, adv) {
     if (hallados.length >= (sesgo.minimo || 2) && !salvo) adv.push(`Oficios del hogar (${hallados.join(', ')}): ${sesgo.motivo}`);
   }
   if (/\$\s?\d/.test(textos.join(' '))) adv.push('Menciona precios: verificá que salgan de la tabla de referencia del tasador o de un relevamiento con fecha.');
+}
+
+// Humanizador automático: todo texto que va a salir publicado se mide acá,
+// sin que nadie lo pida. Lo que hay que corregir sí o sí (remates armados,
+// "no es solo X, es Y", tuteo, frases de sinceridad, cierres de relleno o un
+// párrafo con 3 marcas) y un texto que "suena a IA" son errores: la pieza no
+// pasa hasta corregirlo. "Mixto" es advertencia. El formato (emojis,
+// hashtags, rayas) se mira solo en textos largos, no en placas sueltas.
+function revisarHumano(textos, errores, adv, medidas) {
+  let peor = 0;
+  const may = (t) => t.charAt(0).toUpperCase() + t.slice(1);
+  for (const { nombre, valor, formato } of textos) {
+    if (!valor) continue;
+    const r = revisarIA(valor);
+    peor = Math.max(peor, r.porcentaje);
+    if (r.corregir.length) errores.push(`Suena a IA en ${nombre}: ${r.corregir.join(' · ')}. Corregilo con el humanizador.`);
+    else if (r.veredicto === 'suena a IA') errores.push(`${may(nombre)} suena a IA (${r.porcentaje}%): pasalo por el humanizador.`);
+    else if (r.veredicto === 'mixto') adv.push(`${may(nombre)} suena a IA un ${r.porcentaje}%: pasalo por el humanizador.`);
+    if (formato) for (const f of r.formato) adv.push(`${may(nombre)}: ${f}`);
+  }
+  medidas.suena_a_ia = peor;
+}
+
+// En un guion, los tiempos entre corchetes y la raya que separa el tramo de
+// lo que se dice son estructura, no texto: no cuentan para el humanizador.
+const soloLoDicho = (guion) => guion.replace(/\[[^\]\n]*\]/g, ' ').replace(/^\s*[^\n—]{0,30}—\s*/gm, '');
+
+// Hashtags automáticos: un caption de TikTok o Instagram lleva de 3 a 5.
+function revisarHashtags(caption, adv) {
+  if (!caption) return;
+  const n = (caption.match(/#[\p{L}\p{N}_]+/gu) || []).length;
+  if (n < 3) adv.push(`El texto tiene ${n} hashtag(s): sumá de 3 a 5 elegidos por tamaño (contenido-hashtags).`);
 }
 
 function texto(v, campo, req = true) {
@@ -70,6 +103,10 @@ export function verificarPieza(entrada, marca) {
     const largas = oraciones(guion).filter((o) => contarPalabras(o) > G.oracion_max_palabras);
     if (largas.length) advertencias.push(`${largas.length} oración(es) de más de ${G.oracion_max_palabras} palabras: "${largas[0].slice(0, 80)}…"`);
     if (!tieneCTA(guion)) advertencias.push('No se detecta un pedido de acción (guardá, compartilo, comentá, pedí…).');
+    const caption = texto(entrada.texto, 'texto', false);
+    if (caption) textos.push(caption);
+    revisarHashtags(caption, advertencias);
+    revisarHumano([{ nombre: 'el guion', valor: soloLoDicho(guion) }, { nombre: 'el texto', valor: caption, formato: true }], errores, advertencias, medidas);
   }
 
   if (formato === 'carrusel') {
@@ -86,6 +123,8 @@ export function verificarPieza(entrada, marca) {
     if (slides.length && !tieneCTA(slides[slides.length - 1]) && !tieneCTA(caption || '')) advertencias.push('Ni el último slide ni el texto piden una acción.');
     const lim = F.formatos.publicacion.limites.texto_max_caracteres;
     if (caption && caption.length > lim) errores.push(`El texto tiene ${caption.length} caracteres; el máximo es ${lim}.`);
+    revisarHashtags(caption, advertencias);
+    revisarHumano([...slides.map((v, i) => ({ nombre: `el slide ${i + 1}`, valor: v })), { nombre: 'el texto', valor: caption, formato: true }], errores, advertencias, medidas);
   }
 
   if (formato === 'historia') {
@@ -98,6 +137,7 @@ export function verificarPieza(entrada, marca) {
     if (pantallas.length && (pantallas.length < hmin || pantallas.length > hmax)) advertencias.push(`${pantallas.length} pantallas; una secuencia rinde mejor con ${hmin}–${hmax}.`);
     medidas.palabras_por_pantalla.forEach((n, i) => { if (n > G.texto_max_palabras) advertencias.push(`Pantalla ${i + 1}: ${n} palabras (guía: ${G.texto_max_palabras}); en historias se lee en 2–3 segundos.`); });
     if (pantallas.length && !pantallas.some(tieneCTA) && !entrada.sticker) advertencias.push('Ninguna pantalla pide una respuesta o acción (encuesta, pregunta, link, DM).');
+    revisarHumano(pantallas.map((v, i) => ({ nombre: `la pantalla ${i + 1}`, valor: v })), errores, advertencias, medidas);
   }
 
   if (formato === 'publicacion') {
@@ -107,6 +147,8 @@ export function verificarPieza(entrada, marca) {
     medidas.primera_linea_palabras = contarPalabras(t.split('\n')[0]);
     if (t.length > L.texto_max_caracteres) errores.push(`Tiene ${t.length} caracteres; el máximo es ${L.texto_max_caracteres}.`);
     if (medidas.primera_linea_palabras > G.primera_linea_max_palabras) advertencias.push(`La primera línea tiene ${medidas.primera_linea_palabras} palabras (guía: ${G.primera_linea_max_palabras}); es lo único que se ve antes del "más".`);
+    revisarHashtags(t, advertencias);
+    revisarHumano([{ nombre: 'el texto', valor: t, formato: true }], errores, advertencias, medidas);
   }
 
   if (formato === 'perfil') {
@@ -131,6 +173,7 @@ export function verificarPieza(entrada, marca) {
       if (destacadas.length < dmin || destacadas.length > dmax) advertencias.push(`${destacadas.length} destacadas; lo recomendado es ${dmin}–${dmax}.`);
       destacadas.forEach((d) => { if ([...d].length > G.destacadas_titulo_max_caracteres) advertencias.push(`Destacada "${d}": más de ${G.destacadas_titulo_max_caracteres} caracteres, se corta.`); });
     }
+    revisarHumano([{ nombre: 'la bio', valor: bio }], errores, advertencias, medidas);
   }
 
   revisarMarca(textos, marca, advertencias);

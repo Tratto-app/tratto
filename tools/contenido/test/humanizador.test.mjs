@@ -32,3 +32,17 @@ test('marca exceso de emojis, hashtags y rayas', () => {
 test('texto vacío no rompe', () => {
   assert.equal(revisarIA('').veredicto, 'sin texto');
 });
+
+test('corregir: lista lo que hay que cambiar sí o sí', () => {
+  assert.deepEqual(revisarIA('Cuánto sale un flete chico en CABA.').corregir, []);
+  const r = revisarIA('Seamos honestos: la mudanza cansa.');
+  assert.equal(r.corregir.length, 1);
+  assert.match(r.corregir[0], /sinceridad/);
+  assert.deepEqual(revisarIA('').corregir, []);
+});
+
+test('el voseo con tilde no se confunde con tuteo', () => {
+  assert.deepEqual(revisarIA('¿Necesitás un servicio? Tratto').corregir, []);
+  assert.deepEqual(revisarIA('Desbloqueá el celular y entrá.').corregir, []);
+  assert.equal(revisarIA('¿Tienes un servicio? Tú puedes.').corregir.length, 1);
+});
