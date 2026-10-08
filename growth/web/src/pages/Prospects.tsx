@@ -14,13 +14,15 @@ const PAGE = 50;
 const COLS = 'id,ref,kind,entrada,utm_campaign,rubro,zona,first_name,last_name,company,email,phone,instagram,city,status,score,ai_score,interest,consent,do_not_contact,tags,source_id,campaign_id,contact_count,last_contact_at,last_reply_at,next_action,created_at';
 
 export default function Prospects() {
-  const { ws, toast } = useWs();
+  const { ws, toast, kind: kindGlobal, setTipo } = useWs();
   const nav = useNavigate();
   const [sp, setSp] = useSearchParams();
   const [q, setQ] = useState('');
   const dq = useDebounced(q);
   const [status, setStatus] = useState(sp.get('status') || '');
-  const [kind, setKind] = useState(sp.get('kind') || '');
+  // El tipo (clientes / proveedores) es el selector de arriba, común a todo el CRM
+  const kind = kindGlobal || '';
+  useEffect(() => { const k = sp.get('kind'); if (k === 'customer' || k === 'provider') setTipo(k); }, []); // eslint-disable-line react-hooks/exhaustive-deps
   const [source, setSource] = useState('');
   const [entrada, setEntrada] = useState(sp.get('entrada') || '');
   const [campaign, setCampaign] = useState('');
@@ -102,9 +104,6 @@ export default function Prospects() {
       <Card>
         <div className="fila" style={{ marginBottom: 12 }}>
           <input className="crece" placeholder="Buscar por nombre, email, @usuario, empresa, teléfono o código…" value={q} onChange={(e) => setQ(e.target.value)} aria-label="Buscar" />
-          <select style={{ width: 150 }} value={kind} onChange={(e) => setKind(e.target.value)} aria-label="Tipo">
-            <option value="">Proveedores y clientes</option><option value="provider">Proveedores</option><option value="customer">Clientes</option>
-          </select>
           <select style={{ width: 160 }} value={status} onChange={(e) => setStatus(e.target.value)} aria-label="Estado">
             <option value="">Todos los estados</option>
             {STATUS_ORDER.map((s) => <option key={s} value={s}>{STATUS[s].label}</option>)}

@@ -10,16 +10,18 @@ import { CohortTable, type CohortRow } from './AnalyticsCohorts';
 interface Ret { new_users: number; active_users: number; returning_users: number; d1: number | null; d7: number | null; d30: number | null }
 
 export default function Retention() {
-  const { ws, period, app } = useWs();
-  const args = { ws: ws!.id, p_from: period.from, p_to: period.to };
-  const r = useAsync(() => rpc<Ret>('growth_retention', args), [ws!.id, period.from, period.to]);
-  const c = useAsync(() => rpc<CohortRow[]>('growth_cohorts', { ...args, grain: 'week' }), [ws!.id, period.from, period.to]);
+  const { ws, period, app, kind } = useWs();
+  const args = { ws: ws!.id, p_from: period.from, p_to: period.to, p_kind: kind };
+  const r = useAsync(() => rpc<Ret>('growth_retention_tipo', args), [ws!.id, period.from, period.to, kind]);
+  const c = useAsync(() => rpc<CohortRow[]>('growth_cohorts_tipo', { ...args, grain: 'week' }), [ws!.id, period.from, period.to, kind]);
   const riesgo = useAsync(async () => {
     const dias = app?.active_window_days || 7;
-    const { data } = await supabase.from('growth_app_users').select('id,name,email,external_user_id,last_seen_at,sessions_count').eq('workspace_id', ws!.id)
-      .not('activated_at', 'is', null).lt('last_seen_at', new Date(Date.now() - dias * 864e5).toISOString()).order('last_seen_at', { ascending: false }).limit(12);
+    let q = supabase.from('growth_app_users').select('id,name,email,external_user_id,last_seen_at,sessions_count').eq('workspace_id', ws!.id)
+      .not('activated_at', 'is', null).lt('last_seen_at', new Date(Date.now() - dias * 864e5).toISOString());
+    if (kind) q = q.eq('kind', kind);
+    const { data } = await q.order('last_seen_at', { ascending: false }).limit(12);
     return data || [];
-  }, [ws!.id, app?.active_window_days]);
+  }, [ws!.id, app?.active_window_days, kind]);
 
   return (
     <>

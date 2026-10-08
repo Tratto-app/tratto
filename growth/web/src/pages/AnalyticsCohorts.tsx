@@ -25,9 +25,9 @@ export function CohortTable({ rows }: { rows: CohortRow[] }) {
 }
 
 export default function AnalyticsCohorts() {
-  const { ws, period } = useWs();
+  const { ws, period, kind } = useWs();
   const [grain, setGrain] = useState<'week' | 'month'>('week');
-  const c = useAsync(() => rpc<CohortRow[]>('growth_cohorts', { ws: ws!.id, p_from: period.from, p_to: period.to, grain }), [ws!.id, period.from, period.to, grain]);
+  const c = useAsync(() => rpc<CohortRow[]>('growth_cohorts_tipo', { ws: ws!.id, p_from: period.from, p_to: period.to, grain, p_kind: kind }), [ws!.id, period.from, period.to, grain, kind]);
   return (
     <>
       <PageHeader title="Cohortes" desc="Usuarios agrupados por la semana (o el mes) en que se registraron, y qué parte volvió a usar la app." actions={<Segmented value={grain} onChange={setGrain} options={[{ key: 'week', label: 'Semanas' }, { key: 'month', label: 'Meses' }]} />} />

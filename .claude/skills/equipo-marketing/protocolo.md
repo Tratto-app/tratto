@@ -23,7 +23,7 @@ Precios: solo de la tabla `precios_referencia` (con fecha) o de pantallas reales
 |---|---|
 | CRM (contactos, origen, embudo) | Supabase producción `qglsonbcsncgekzbfafk`, tablas `growth_*` (MCP de Supabase, `execute_sql`) |
 | Cola del equipo | tabla `growth_mkt_items` (ver sección 4) |
-| Números de la semana | `select mkt_tablero(null, 7);` (o 28 para el mes) |
+| Números de la semana | `select mkt_tablero(null, 7);` (o 28 para el mes). Por tipo: `select mkt_tablero_tipo(null, 7, 'provider');` o `'customer'` |
 | Panel (lo que ve la persona) | https://www.trattoapp.com.ar/crm/equipo |
 | Redes (programar, métricas) | MCP de Metricool, marca `7270470`, America/Buenos_Aires. TikTok @trattoapp, Instagram @trattoapp_ |
 | Diseño de placas y carruseles | MCP de Canva o `tools/piezas-redes` |

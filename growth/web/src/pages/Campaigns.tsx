@@ -16,12 +16,12 @@ const GOAL_KEY: Record<string, keyof Breakdown> = {
 };
 
 export default function Campaigns() {
-  const { ws } = useWs();
+  const { ws, kind } = useWs();
   const [edit, setEdit] = useState<Campaign | 'new' | null>(null);
   const data = useAsync(async () => {
     const [c, b, s, w, g, cs] = await Promise.all([
       supabase.from('growth_campaigns').select('*').eq('workspace_id', ws!.id).order('created_at', { ascending: false }),
-      rpc<Breakdown[]>('growth_breakdown', { ws: ws!.id, p_from: null, p_to: null, dim: 'campaign' }),
+      rpc<Breakdown[]>('growth_breakdown_tipo', { ws: ws!.id, p_from: null, p_to: null, dim: 'campaign', p_kind: kind }),
       supabase.from('growth_sources').select('id,key,name,kind').eq('workspace_id', ws!.id).order('name'),
       supabase.from('growth_workflows').select('id,name,trigger,active').eq('workspace_id', ws!.id).order('name'),
       supabase.from('growth_segments').select('id,name').eq('workspace_id', ws!.id).eq('entity', 'prospect').order('name'),
@@ -33,7 +33,7 @@ export default function Campaigns() {
       sources: (s.data || []) as Source[], workflows: (w.data || []) as Workflow[], segments: (g.data || []) as { id: string; name: string }[],
       links: (cs.data || []) as { campaign_id: string; source_id: string }[],
     };
-  }, [ws!.id]);
+  }, [ws!.id, kind]);
 
   return (
     <>

@@ -17,11 +17,22 @@ interface Ctx {
   setPeriod: (k: PeriodKey, custom?: { from?: string; to?: string }) => void;
   custom: { from?: string; to?: string };
   toast: (msg: string, error?: boolean) => void;
+  /** Vista del CRM: todos, solo clientes o solo proveedores */
+  tipo: Tipo;
+  setTipo: (t: Tipo) => void;
+  /** Para las funciones *_tipo: null = todos */
+  kind: 'customer' | 'provider' | null;
 }
+
+export type Tipo = 'todos' | 'customer' | 'provider';
+export const TIPOS: { key: Tipo; label: string }[] = [
+  { key: 'todos', label: 'Todos' }, { key: 'customer', label: 'Clientes' }, { key: 'provider', label: 'Proveedores' },
+];
 
 const C = createContext<Ctx | null>(null);
 const LS_WS = 'growth.ws';
 const LS_PERIOD = 'growth.period';
+const LS_TIPO = 'growth.tipo';
 
 function leer(k: string): string | null { try { return localStorage.getItem(k); } catch { return null; } }
 function guardar(k: string, v: string) { try { localStorage.setItem(k, v); } catch { /* sin storage */ } }
@@ -35,6 +46,10 @@ export function WorkspaceProvider({ children }: { children: ReactNode }) {
   const [pkey, setPkey] = useState<PeriodKey>((leer(LS_PERIOD) as PeriodKey) || '30d');
   const [custom, setCustom] = useState<{ from?: string; to?: string }>({});
   const [msg, setMsg] = useState<{ text: string; error: boolean } | null>(null);
+  const [tipo, setTipoState] = useState<Tipo>(() => {
+    const t = leer(LS_TIPO);
+    return t === 'customer' || t === 'provider' ? t : 'todos';
+  });
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data }) => { setSession(data.session); if (!data.session) setReady(true); });
@@ -72,6 +87,9 @@ export function WorkspaceProvider({ children }: { children: ReactNode }) {
     period, custom,
     setPeriod: (k, c) => { setPkey(k); guardar(LS_PERIOD, k); if (c) setCustom(c); },
     toast,
+    tipo,
+    setTipo: (t) => { setTipoState(t); guardar(LS_TIPO, t); },
+    kind: tipo === 'todos' ? null : tipo,
   };
   return (
     <C.Provider value={value}>

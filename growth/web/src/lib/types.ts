@@ -42,6 +42,7 @@ export interface AppUser {
   source_id: string | null; campaign_id: string | null; link_id: string | null; installed_at: string | null; first_open_at: string | null;
   registered_at: string | null; onboarded_at: string | null; first_action_at: string | null; activated_at: string | null; last_seen_at: string | null;
   sessions_count: number; revenue: number; is_paying: boolean; created_at: string;
+  kind?: 'customer' | 'provider' | null;
 }
 export interface Segment { id: string; name: string; description: string | null; entity: 'prospect' | 'app_user'; rules: Record<string, unknown>; is_system: boolean }
 export interface Notification { id: string; type: string; title: string; body: string | null; prospect_id: string | null; app_user_id: string | null; campaign_id: string | null; read: boolean; created_at: string }

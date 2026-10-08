@@ -20,7 +20,7 @@ const PLANTILLAS = [
 ];
 
 export default function Inbox() {
-  const { ws } = useWs();
+  const { ws, kind } = useWs();
   const [sp] = useSearchParams();
   const [q, setQ] = useState('');
   const dq = useDebounced(q);
@@ -31,15 +31,16 @@ export default function Inbox() {
 
   const convs = useAsync(async () => {
     let qy = supabase.from('growth_conversations')
-      .select('id,channel,unread,last_message_at,prospect_id,prospect:growth_prospects!inner(id,first_name,last_name,status,score,last_reply_text,do_not_contact)')
+      .select('id,channel,unread,last_message_at,prospect_id,prospect:growth_prospects!inner(id,first_name,last_name,status,score,last_reply_text,do_not_contact,kind)')
       .eq('workspace_id', ws!.id).order('last_message_at', { ascending: false, nullsFirst: false }).limit(150);
     if (canal) qy = qy.eq('channel', canal);
+    if (kind) qy = qy.eq('prospect.kind', kind);
     if (soloSinLeer) qy = qy.gt('unread', 0);
     if (dq.trim()) { const t = dq.trim().replace(/[%,()]/g, ' '); qy = qy.or(`first_name.ilike.%${t}%,last_name.ilike.%${t}%,instagram.ilike.%${t}%`, { referencedTable: 'growth_prospects' }); }
     const { data, error } = await qy;
     if (error) throw new Error(error.message);
     return (data || []) as unknown as ConvRow[];
-  }, [ws!.id, canal, soloSinLeer, dq]);
+  }, [ws!.id, canal, soloSinLeer, dq, kind]);
 
   // Si viene ?p=<prospecto>, abre su conversación (o una nueva)
   useEffect(() => {

@@ -8,8 +8,8 @@ import { useWs } from '../lib/workspace';
 import { BreakdownTable } from './AnalyticsOverview';
 
 export default function AnalyticsCampaigns() {
-  const { ws, period } = useWs();
-  const b = useAsync(() => rpc<Breakdown[]>('growth_breakdown', { ws: ws!.id, p_from: period.from, p_to: period.to, dim: 'campaign' }), [ws!.id, period.from, period.to]);
+  const { ws, period, kind } = useWs();
+  const b = useAsync(() => rpc<Breakdown[]>('growth_breakdown_tipo', { ws: ws!.id, p_from: period.from, p_to: period.to, dim: 'campaign', p_kind: kind }), [ws!.id, period.from, period.to, kind]);
   const rows = [...(b.data || [])].filter((r) => r.prospects || r.installs || r.spend).sort((x, y) => y.activations - x.activations);
   return (
     <>
