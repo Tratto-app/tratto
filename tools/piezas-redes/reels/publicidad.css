@@ -49,6 +49,18 @@ body{font-family:'IBM Plex Sans',sans-serif;color:var(--tinta);position:relative
 .marca-txt{font:600 92px/1 Montserrat,sans-serif;letter-spacing:.3em;padding-left:.3em;color:#FCFBF8}
 .url{font:600 50px/1.2 'IBM Plex Mono',monospace;color:#8FD9BC}
 .boton-cta{display:inline-block;background:#C9A227;color:#1A1405;border-radius:30px;padding:30px 54px;font:700 58px/1 'IBM Plex Sans Condensed',sans-serif;box-shadow:inset 0 -6px 0 rgba(0,0,0,.18)}
+/* Globos de chat genéricos (grupo, conversación): sin logos de otras apps ni nombres reales */
+.chat-card{position:absolute;background:rgba(255,255,255,.74);border-radius:40px;padding:28px 30px 34px;box-shadow:0 30px 70px rgba(12,38,32,.14)}
+.grupo-cab{display:flex;align-items:center;gap:20px;font:600 40px/1.1 'IBM Plex Sans',sans-serif;color:var(--tinta);padding:0 4px 22px;border-bottom:2px solid rgba(14,24,21,.08);margin-bottom:8px}
+.grupo-cab .av{width:76px;height:76px;border-radius:50%;background:#DDE9E2;color:var(--verde);display:flex;align-items:center;justify-content:center;flex:none}
+.grupo-cab small{display:block;margin-top:6px;font:500 27px/1.2 'IBM Plex Mono',monospace;color:#6B7A73;letter-spacing:.03em}
+.globo{width:fit-content;max-width:660px;background:#fff;border-radius:34px 34px 34px 10px;padding:20px 30px;font:500 44px/1.25 'IBM Plex Sans',sans-serif;
+       color:var(--tinta);box-shadow:0 10px 26px rgba(12,38,32,.10);margin-top:18px}
+.globo .quien{display:block;font:600 30px/1.2 'IBM Plex Sans',sans-serif;color:var(--laton-osc);margin-bottom:4px}
+.globo.yo{margin-left:auto;background:#D5EFE3;border-radius:34px 34px 10px 34px}
+.globo .hora{display:inline-flex;align-items:center;gap:4px;margin-left:16px;font:500 26px 'IBM Plex Mono',monospace;color:#6B7A73;vertical-align:-3px}
+.tilde{color:#2B9BD6}
+.casilla{display:inline-block;width:58px;height:58px;border:5px solid var(--verde);border-radius:14px;background:#fff;flex:none}
 /* Link fijo en pantalla, arriba de la zona que tapa el texto de TikTok */
 .link-fijo{position:absolute;left:50%;top:1440px;z-index:4;display:flex;align-items:center;gap:14px;background:rgba(255,255,255,.88);
            border:2px solid rgba(30,93,73,.18);border-radius:999px;padding:14px 30px 14px 16px;box-shadow:0 14px 34px rgba(12,38,32,.14);
