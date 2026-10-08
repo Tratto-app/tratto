@@ -45,8 +45,11 @@ Mirá lo que te pidieron (o el argumento de `/equipo-marketing`):
    reforzá lo que trae registros y activaciones, no lo que trae likes.
 4. **Encargos.** Delegá a cada departamento lo que toca esta semana. Por
    defecto (ajustá con datos):
-   - Redes: el plan semanal de `tools/contenido/config/estrategia.json`
-     (3 reels + 2 carruseles), cada pieza con link con nombre.
+   - Redes: radar viral y después el plan semanal de
+     `tools/contenido/config/estrategia.json` (3 reels + 2 carruseles), cada
+     pieza con link con nombre, por la cadena completa del sistema de
+     contenido y con su versión para la otra red. El primer lunes del mes,
+     también la revisión del perfil.
    - SEO local: 1 o 2 páginas o mejoras del perfil de Google.
    - Contenido: 1 guía o artículo útil, o el mail de novedades si hay novedad real.
    - Anuncios: revisión de campañas activas (si hay gasto cargado) o 1 campaña
@@ -77,8 +80,16 @@ Mirá lo que te pidieron (o el argumento de `/equipo-marketing`):
    no los lances desde acá.
 4. **Redes**, solo si pasaron 2+ días desde la última vez: traer métricas de
    Metricool de lo publicado y guardarlas en `metricas` del item.
-5. Si no hay pedidos, nada aprobado ni alertas, no inventes trabajo: terminá diciendo
-   "sin novedades" en una línea.
+5. **Redes, lo automático** (punto 0 de `mkt-redes`): delegale a Redes solo
+   si se cumple alguna de estas condiciones, y decí cuál:
+   - para los próximos 3 días no hay piezas de redes en la cola;
+   - hay una pieza aprobada, programada o publicada sin su versión en la
+     otra red;
+   - se publicó una guía o página de precios nueva sin piezas para redes;
+   - una pieza rindió muy por encima de la mediana.
+   Lo que arme queda `para_aprobar`.
+6. Si no hay pedidos, nada aprobado, ninguna condición del punto 5 ni
+   alertas, no inventes trabajo: terminá diciendo "sin novedades" en una línea.
 
 ### Conversación (sin argumento o con una pregunta)
 

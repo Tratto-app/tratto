@@ -1,6 +1,6 @@
 ---
 name: contenido-hashtags
-description: Estratega de hashtags de Tratto para TikTok e Instagram. Arma un set de 3 a 5 hashtags exactos para cada publicación, con tamaño (nicho, medio, amplio) para que una cuenta chica pueda aparecer, más las palabras clave que TikTok usa como buscador. Sin bloques de 30 ni etiquetas de relleno. Usar con "qué hashtags pongo", "hashtags para este reel", "palabras clave para TikTok".
+description: Estratega de hashtags de Tratto para TikTok e Instagram. Arma un set de 3 a 5 hashtags exactos para cada publicación, con tamaño (nicho, medio, amplio) para que una cuenta chica pueda aparecer, más las palabras clave que TikTok usa como buscador. Sin bloques de 30 ni etiquetas de relleno. Se aplica sola, sin que nadie la pida, en cada publicación que lleve caption o descripción, antes de dejarla para aprobar (la verificación avisa si el texto no tiene de 3 a 5). También con "qué hashtags pongo".
 ---
 
 # Estratega de hashtags (TikTok + Instagram)

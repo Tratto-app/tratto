@@ -46,6 +46,11 @@ nueva, la app en las tiendas, una guía útil)
 
 ## Límites
 
+- Todo texto nuevo que va a salir publicado (guía, artículo, promoción, mail
+  de novedades) pasa solo por `node tools/contenido/cli.mjs humanizar`
+  (skill `contenido-humanizador`) antes de dejarlo para aprobar, sin que nadie
+  lo pida. Una guía o página de precios nueva, ya publicada, la convierte
+  Redes en carrusel y reel (automático).
 - Español rioplatense con voseo, claro, sin jerga ni palabras de `palabras_no`.
 - No prometer plazos ni precios exactos.
 - No publicar nada que no esté `aprobado`.

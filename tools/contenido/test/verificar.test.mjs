@@ -78,3 +78,29 @@ test('sesgo a oficios: marca la lista de oficios del hogar salvo que hable de lo
   const ejemplo = verificarPieza({ formato: 'reel', guion: 'Dos plomeros, el mismo caño. Pedí gratis.' }, marca);
   assert.ok(!ejemplo.advertencias.some((a) => a.includes('Oficios del hogar')), 'un solo oficio como ejemplo no es sesgo');
 });
+
+test('humanizador automático: lo que suena a IA no pasa la verificación', () => {
+  const mal = verificarPieza({ formato: 'publicacion', texto: '¿El resultado? Seamos honestos: tu casa merece más. #fletes #mudanzas #tratto' }, marca);
+  assert.equal(mal.ok, false);
+  assert.match(mal.errores.join(), /Suena a IA en el texto/);
+  const slide = verificarPieza({ formato: 'carrusel', slides: ['Qué incluye un presupuesto', 'No es solo el precio, es la garantía', 'Guardalo para la próxima'] }, marca);
+  assert.equal(slide.ok, false);
+  assert.match(slide.errores.join(), /el slide 2/);
+  const bien = verificarPieza({ formato: 'publicacion', texto: 'Cuánto sale un flete chico en CABA en octubre.\n\nGuardalo para cuando te mudes. #fletes #mudanzas #tratto' }, marca);
+  assert.equal(bien.ok, true);
+  assert.equal(typeof bien.medidas.suena_a_ia, 'number');
+});
+
+test('hashtags automáticos: un caption sin 3 a 5 hashtags avisa', () => {
+  const r = verificarPieza({ formato: 'publicacion', texto: 'Cuánto sale un flete chico en CABA. Guardalo.' }, marca);
+  assert.match(r.advertencias.join(), /0 hashtag/);
+  const reel = verificarPieza({ formato: 'reel', guion: 'Cuánto sale un flete. Guardalo.', texto: 'Flete en CABA #fletes' }, marca);
+  assert.match(reel.advertencias.join(), /1 hashtag/);
+});
+
+test('humanizador en el guion: los tramos con tiempo y raya no cuentan como texto', () => {
+  const guion = Array.from({ length: 8 }, (_, i) => `[${i * 3}–${i * 3 + 3} s] tramo — Cuánto sale un flete chico en CABA.`).join('\n') + '\nGuardalo.';
+  const r = verificarPieza({ formato: 'reel', guion }, marca);
+  assert.equal(r.medidas.suena_a_ia, 0);
+  assert.ok(!r.advertencias.some((a) => a.includes('suena a IA')));
+});

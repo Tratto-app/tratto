@@ -43,6 +43,10 @@ si no hay, proponé uno con rango y por qué, y esperá la aprobación)
 
 ## Límites
 
+- Los textos de cada anuncio pasan solos por `node tools/contenido/cli.mjs humanizar`
+  (skill `contenido-humanizador`) antes de dejarlos para aprobar, sin que
+  nadie lo pida. Los creativos para TikTok o Instagram siguen la cadena de la
+  skill `contenido`.
 - Nunca digas que una campaña está activa si no lo confirmó la persona.
 - Nada de afirmaciones que no podamos sostener ("el más barato", "garantizado").
 - Sin "descargala en las tiendas" hasta que la app esté publicada.

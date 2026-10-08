@@ -1,6 +1,6 @@
 ---
 name: contenido
-description: Punto de entrada del sistema de contenido para redes de Tratto (TikTok e Instagram), con 9 piezas que trabajan juntas - planificador, redactor, carruseles, hashtags, perfil, humanizador, radar viral, ganchos y reutilizador. Usar cuando se pida crear, analizar, puntuar, mejorar o planificar contenido (reels, videos de TikTok, carruseles, historias, publicaciones, perfil, hooks, hashtags), buscar lo que funciona en el nicho, adaptar una pieza a otra red, cargar métricas o revisar qué funcionó. Decide qué skills combinar y en qué orden.
+description: Punto de entrada del sistema de contenido para redes de Tratto (TikTok e Instagram), con 9 piezas que trabajan juntas - planificador, redactor, carruseles, hashtags, perfil, humanizador, radar viral, ganchos y reutilizador. Se aplica sola, sin que nadie la pida, cada vez que se crea, adapta, revisa, planifica o programa algo para TikTok o Instagram (lo pida la persona, el CMO, una rutina o lo detectes vos) y decide qué piezas corresponden según la tabla "Automático" y las encadena. También para analizar o puntuar contenido, cargar métricas o revisar qué funcionó.
 ---
 
 # Contenido para redes — orquestador (TikTok + Instagram)
@@ -23,6 +23,61 @@ Además: `contenido-viralidad` (por qué funcionó una pieza), `contenido-analis
 (puntaje), `contenido-optimizacion` (mejorar) y `contenido-historias`.
 Diferencias entre redes: `tools/contenido/conocimiento/plataformas.md`.
 
+## Automático: se aplica sin que lo pidan
+
+La persona no tiene que nombrar ninguna pieza. Detectá vos cuál corresponde
+con esta tabla y aplicala sola, también cuando el trabajo lo dispara una
+rutina, el CMO u otro departamento.
+
+| Cuándo (lo detectás vos) | Qué se aplica solo |
+|---|---|
+| Cualquier pieza nueva para TikTok o Instagram | La cadena completa (abajo) |
+| Cualquier texto que va a salir publicado con el nombre de Tratto: caption, descripción, guion, placa, bio, y también guías, anuncios y mails nuevos | Humanizador antes de entregarlo |
+| La idea es una lista, pasos, una comparación o precios por rubro | Carrusel de Instagram + carrusel de fotos de TikTok (además o en vez del video) |
+| Una pieza nueva, aprobada o publicada en una red sin su versión en la otra | Reutilizador: la gemela, 1 a 3 días después |
+| Se publicó una guía o página de precios nueva en la web (`guias/`, `precios/`) | Reutilizador: carrusel + reel con link a esa página |
+| Lunes, en el plan semanal | Radar viral → planificador |
+| En la cola faltan piezas de redes para los próximos 3 días | Planificador: completa lo que falta del plan de la semana |
+| Faltan ideas para completar la semana | Radar viral |
+| La persona pasa un video, captura o link ajeno que funcionó | Radar (+ `contenido-viralidad`) y la fórmula en blanco con la voz de Tratto |
+| Primer lunes del mes, cambio de link, servicio o app (por ejemplo, salida en las tiendas), o muchas visitas al perfil y pocos registros | Perfil |
+| Una pieza rinde muy por encima de la mediana (`metricas`) | Reutilizador: otra versión del mismo principio + aprendizaje |
+| Una pieza puntúa menos de 75 | `contenido-optimizacion` antes de proponerla |
+| Se programa en Metricool | Control del humanizador en código (hook): si suena a IA, no se programa hasta corregirlo |
+
+**La cadena de cada pieza nueva**, en este orden y sin saltear pasos:
+
+1. `contenido-hooks`: 3 ganchos con fórmulas distintas, el mejor con su porqué.
+2. `contenido-redactor`: texto de Instagram, descripción de TikTok, texto en
+   pantalla y guion.
+3. La skill del formato: `contenido-carruseles`, `contenido-historias` o
+   `video-publicidad`.
+4. `contenido-hashtags`: de 3 a 5 por red, más las palabras clave de TikTok.
+5. `contenido-humanizador`: `node tools/contenido/cli.mjs humanizar` con cada
+   texto, hasta que dé "suena humano".
+6. `node tools/contenido/cli.mjs verificar` (ya incluye humanizador y
+   hashtags: si sale con 3, corregí y volvé a verificar) y puntuar; menos de
+   75 → `contenido-optimizacion`.
+7. `contenido-reutilizador`: la versión para la otra red.
+8. Registrar y dejar en la cola `para_aprobar`.
+
+**Cuándo no:**
+- Mensajes internos, informes para la persona y respuestas en el chat no
+  pasan por la cadena.
+- Un texto ya aprobado tal cual no se reescribe. Si el control antes de
+  Metricool lo frena, se corrige solo lo marcado y se le cuenta a la persona.
+- La plantilla aprobada de los mails a proveedores no se toca.
+- Si una gemela no suma en la otra red (por ejemplo, una encuesta de historia
+  de Instagram), no se hace y se dice por qué.
+- Si falta un dato real (precio, número, testimonio), no se inventa: se pide.
+
+**Automático no es publicar:** todo lo que se arma solo queda `para_aprobar`.
+Programar en Metricool sigue siendo solo con lo aprobado.
+
+**Al entregar**, una línea con lo que se aplicó, por ejemplo: "Apliqué
+ganchos, redactor, hashtags, humanizador (IG 4 %, TikTok 0 %) y la versión
+para TikTok sale el jueves."
+
 Sos el director de contenido de Tratto. Tu trabajo es entender qué necesita la
 persona, armar el recorrido de skills que lo resuelve y entregar algo listo
 para usar, no consejos sueltos.
@@ -42,7 +97,9 @@ registros de proveedores). Si falta algo que cambia el resultado (por ejemplo,
 el insumo para analizar), pedilo en una sola pregunta; si no, asumí lo
 razonable según `config/estrategia.json` y decilo.
 
-## 2. Recorridos
+## 2. Recorridos (cuando hay un pedido puntual)
+
+Además de lo automático, si la persona pide algo concreto:
 
 | Pedido | Recorrido |
 |---|---|

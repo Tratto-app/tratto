@@ -30,8 +30,9 @@ Uso: node tools/contenido/cli.mjs <comando> [opciones]
            [--etiqueta TEXTO]         Título de la tabla (por defecto VIRALIDAD)
   hooks    [--archivo F]              Verifica hooks: { formato, hooks: [{ texto, categoria, criterios? }] }
   humanizar [--archivo F | --texto T]  Cuánto "suena a IA" un caption o una placa y qué reescribir: { texto }
-  verificar [--archivo F]             Límites de la plataforma y reglas de marca de una pieza:
-                                      reel {guion, hook?, duracion_seg?} · carrusel {slides, texto?}
+  verificar [--archivo F]             Límites de la plataforma, reglas de marca, hashtags y humanizador
+                                      (automático) de una pieza:
+                                      reel {guion, hook?, duracion_seg?, texto?} · carrusel {slides, texto?}
                                       historia {pantallas} · publicacion {texto} · perfil {nombre?, usuario?, bio?, destacadas?}
   metricas                            Ranking de la cuenta por interacción y medianas
   metricas --comparar [--archivo F]   Compara un resultado (sin guardarlo) con las medianas de la cuenta
@@ -44,7 +45,7 @@ Uso: node tools/contenido/cli.mjs <comando> [opciones]
   ayuda                               Esta ayuda
 
 La entrada JSON va por --archivo o por stdin. --json devuelve JSON en lugar de texto.
-Códigos de salida: 0 bien · 1 error interno · 2 entrada inválida · 3 la pieza no cumple un límite de la plataforma.`;
+Códigos de salida: 0 bien · 1 error interno · 2 entrada inválida · 3 la pieza no cumple un límite de la plataforma o suena a IA.`;
 
 function parsear(argv) {
   const pos = [], op = {};

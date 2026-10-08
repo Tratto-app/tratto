@@ -1,6 +1,6 @@
 ---
 name: contenido-carruseles
-description: Crea carruseles de Instagram y carruseles de fotos de TikTok para Tratto de punta a punta — ángulo, estructura, texto slide por slide, slide de hook, cierre con CTA, caption y notas de diseño — verificados contra los límites de la plataforma y puntuados con la rúbrica. Usar con "haceme un carrusel", "armá slides sobre…", "convertí esto en carrusel".
+description: Crea carruseles de Instagram y carruseles de fotos de TikTok para Tratto de punta a punta — ángulo, estructura, texto slide por slide, slide de hook, cierre con CTA, caption y notas de diseño — verificados contra los límites de la plataforma y puntuados con la rúbrica. Se aplica sola, sin que nadie la pida, cuando la idea es una lista, pasos, una comparación o precios por rubro (rinde más como carrusel que como video), cuando el plan semanal pide un carrusel y cuando se publica una guía o página de precios nueva en la web. También con "haceme un carrusel".
 ---
 
 # Carruseles

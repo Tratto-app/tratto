@@ -9,5 +9,19 @@
   },
   "enabledPlugins": {
     "claude-code-setup@claude-plugins-official": true
+  },
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "mcp__.*[Mm]etricool.*__(createScheduledPost|updateScheduledPost)",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node \"$CLAUDE_PROJECT_DIR/tools/contenido/hooks/antes-de-programar.mjs\"",
+            "timeout": 15
+          }
+        ]
+      }
+    ]
   }
 }

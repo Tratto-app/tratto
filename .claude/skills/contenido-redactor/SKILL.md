@@ -1,6 +1,6 @@
 ---
 name: contenido-redactor
-description: Redactor de publicaciones de Tratto para TikTok e Instagram. Escribe el texto del post (caption de Instagram con la primera línea que se entiende sola, descripción de TikTok con la palabra clave arriba), el texto en pantalla y el guion hablado, partiendo de fórmulas de ganchos probadas (número primero, mito vs. realidad, antes/después, confesión) y pasando el humanizador antes de entregar. Usar con "escribí el caption", "texto para TikTok", "redactá la publicación", "guion para el reel".
+description: Redactor de publicaciones de Tratto para TikTok e Instagram. Escribe el texto del post (caption de Instagram con la primera línea que se entiende sola, descripción de TikTok con la palabra clave arriba), el texto en pantalla y el guion hablado, partiendo de fórmulas de ganchos probadas (número primero, mito vs. realidad, antes/después, confesión) y pasando el humanizador antes de entregar. Se aplica sola, sin que nadie la pida, cada vez que haya que escribir cualquier texto para TikTok o Instagram (caption, descripción, guion, texto en pantalla), aunque el pedido sea solo "haceme un reel" o "un carrusel".
 ---
 
 # Redactor de publicaciones (TikTok + Instagram)

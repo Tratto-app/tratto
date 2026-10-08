@@ -1,6 +1,6 @@
 ---
 name: contenido-perfil
-description: Optimiza el perfil de Instagram y de TikTok de Tratto (nombre buscable, usuario, bio, link, destacadas, publicaciones fijadas y foto) para que alguien que llega por primera vez entienda en 3 segundos qué es, para quién y qué hacer. Usar con "mejorá la bio", "optimizá el perfil", "qué pongo en destacadas".
+description: Optimiza el perfil de Instagram y de TikTok de Tratto (nombre buscable, usuario, bio, link, destacadas, publicaciones fijadas y foto) para que alguien que llega por primera vez entienda en 3 segundos qué es, para quién y qué hacer. Se aplica sola, sin que nadie la pida - el primer lunes de cada mes, cuando cambia el link, un servicio o la app (por ejemplo, cuando salga en las tiendas) y cuando una pieza trae muchas visitas al perfil pero pocos registros. También con "mejorá la bio".
 ---
 
 # Optimización de perfil

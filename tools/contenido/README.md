@@ -28,7 +28,8 @@ reutilizador. Las diferencias entre las dos redes están en
   contenido-reutilizador/    9 · una pieza → todas las redes y formatos
 tools/contenido/
   cli.mjs                    motor (Node 18+, sin dependencias)
-  lib/                       puntaje, hooks, verificación, memoria, métricas, contexto, fotogramas
+  lib/                       puntaje, hooks, verificación, humanizador, memoria, métricas, contexto, fotogramas
+  hooks/                     antes-de-programar.mjs: control automático antes de Metricool
   conocimiento/              rúbrica, hooks, formatos, estructuras, principios, plantillas, protocolo
   config/                    marca, audiencia (segmentos), estrategia (pilares)
   memoria/                   JSONL: contenidos, hooks, resultados, aprendizajes, ideas
@@ -37,10 +38,20 @@ tools/contenido/
 
 ## Cómo se usa
 
-Pedíselo a Claude en lenguaje natural ("analizá este reel y adaptalo para
-proveedores", "haceme un carrusel sobre cuánto sale pintar un ambiente",
-"mejorá la bio"). La skill `contenido` decide qué skills combinar. También se
-pueden pedir por nombre: `/contenido-hooks`, `/contenido-viralidad`, etc.
+No hace falta pedir cada pieza: se aplican solas cuando corresponde (tabla
+"Automático" en `.claude/skills/contenido/SKILL.md` y regla en `CLAUDE.md`).
+Toda pieza nueva pasa por ganchos → redactor → formato → hashtags →
+humanizador → verificar → versión para la otra red; el radar y el plan corren
+cada lunes y el perfil se revisa una vez por mes. También se puede pedir en
+lenguaje natural ("haceme un carrusel sobre cuánto sale pintar un ambiente")
+o por nombre (`/contenido-hooks`).
+
+Dos controles en código hacen que no dependa de acordarse:
+- `verificar` corre el humanizador y revisa los hashtags de cada pieza. Lo que
+  hay que corregir sí o sí, o un texto que suena a IA, es error (sale con 3).
+- Antes de programar en Metricool, el hook `hooks/antes-de-programar.mjs`
+  (registrado en `.claude/settings.json`) mide el texto del post y frena la
+  programación si suena a IA, con lo que hay que cambiar.
 
 Para analizar un video, subí el archivo al repo o a la sesión (Claude no puede
 abrir links de Instagram ni TikTok) y, si tiene audio, pasá la transcripción.
