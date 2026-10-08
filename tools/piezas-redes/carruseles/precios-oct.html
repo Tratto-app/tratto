@@ -1,0 +1,205 @@
+<!doctype html><html lang="es"><head><meta charset="utf-8">
+<title>Carrusel · Cuánto sale en octubre</title>
+<!-- Item de la cola 5ebe9d95 (aprobado). Textos tal cual el cuerpo aprobado; precios de
+     precios_referencia ajustados a oct-2026. Exportar: python3 render-carrusel.py precios-oct.html carrusel-precios-oct -->
+<link rel="stylesheet" href="carrusel.css">
+<style>
+/* 1 · hook */
+.hook h1{font-size:108px;line-height:1.0}
+.hook h1 span{display:block}
+.hook h1 .verde{margin-top:18px}
+.tapados{display:grid;grid-template-columns:1fr 1fr;gap:26px;margin-top:80px}
+.tapado{padding:30px 30px 34px;position:relative}
+.tapado .fila{display:flex;align-items:center;gap:20px}
+.tapado .nombre{font:600 36px/1.15 'IBM Plex Sans',sans-serif}
+.tapado .ranura{position:relative;margin-top:28px;height:118px;border-radius:20px;background:var(--claro);border:2px dashed rgba(30,93,73,.22);display:flex;align-items:center;justify-content:center}
+.tapado .oculto{font:600 70px/1 'IBM Plex Mono',monospace;color:var(--verde);filter:blur(6px);opacity:.85;letter-spacing:-.02em}
+.tapado .sello{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%) rotate(-8deg);font-size:24px;padding:10px 20px;border-width:4px;box-shadow:0 10px 24px rgba(138,110,16,.18)}
+
+/* 2 · los 7 */
+.siete{display:flex;align-items:flex-start;gap:34px}
+.siete .gigante{font:700 380px/.74 'IBM Plex Sans Condensed',sans-serif;color:var(--verde);letter-spacing:-.04em}
+.siete p{font:600 64px/1.08 'IBM Plex Sans Condensed',sans-serif;margin-top:6px}
+.fichas{display:grid;grid-template-columns:repeat(7,1fr);gap:12px;margin-top:120px;position:relative}
+.ficha{height:150px;border-radius:24px;background:#fff;box-shadow:0 14px 34px rgba(12,38,32,.10);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;color:var(--verde)}
+.ficha b{font:600 30px/1 'IBM Plex Mono',monospace;color:var(--tinta)}
+.ficha.seis{background:var(--laton-claro);border:4px solid var(--laton);color:var(--laton-osc)}
+.ficha.seis b{color:var(--laton-osc)}
+.fichas .sello{position:absolute;top:-62px;right:58px;transform:rotate(-6deg);font-size:28px;padding:10px 22px}
+.dos .frase{font:500 46px/1.3 'IBM Plex Sans',sans-serif;color:var(--tinta-2);margin-top:70px}
+.dos .frase b{font-weight:600;color:var(--laton-osc)}
+.dos .anota{font:700 70px/1 'IBM Plex Sans Condensed',sans-serif;color:var(--verde-vivo);margin-top:44px}
+
+/* 3 a 9 · un servicio por placa */
+.srv .arriba{display:flex;align-items:center;gap:28px}
+.srv h2{font:700 96px/1.0 'IBM Plex Sans Condensed',sans-serif;letter-spacing:-.015em;margin-top:48px}
+.srv h2 .num{color:var(--laton-osc);margin-right:20px}
+.srv .para{font:500 40px/1.3 'IBM Plex Sans',sans-serif;color:var(--gris);margin-top:16px}
+.precio{font:600 88px/1 'IBM Plex Mono',monospace;letter-spacing:-.03em;margin-top:48px;white-space:nowrap}
+.precio span{font:500 54px/1 'IBM Plex Sans',sans-serif;color:var(--gris);margin:0 22px;letter-spacing:0}
+.varia{margin-top:48px;position:relative}
+.varia .fila-et{display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:14px}
+.pista{position:relative;height:22px;border-radius:99px;background:rgba(30,93,73,.10)}
+.pista::after{content:"";position:absolute;right:0;top:-12px;bottom:-12px;width:0;border-right:4px dotted var(--laton)}
+.relleno{position:absolute;left:0;top:0;bottom:0;width:calc(var(--v) * 100%);border-radius:99px;background:linear-gradient(90deg,var(--verde),var(--verde-vivo))}
+.relleno.max{background:linear-gradient(90deg,var(--verde),var(--verde-vivo) 55%,var(--laton))}
+.variante{margin-top:44px;padding:30px 36px}
+.variante p{font:500 36px/1.3 'IBM Plex Sans',sans-serif;color:var(--tinta-2)}
+.variante .mono{display:block;font-size:52px;line-height:1.1;color:var(--verde);margin-top:8px;letter-spacing:-.02em}
+.extra{display:flex;align-items:flex-start;gap:20px;margin-top:34px;font:600 40px/1.25 'IBM Plex Sans',sans-serif;color:var(--verde-vivo)}
+.extra svg{flex:none;margin-top:4px}
+.extra.oro{color:var(--laton-osc)}
+.adelanto{display:inline-flex;align-items:center;gap:18px;margin-top:34px;padding:18px 28px;border-radius:99px;border:3px solid var(--laton);
+  background:rgba(255,255,255,.75);font:600 36px/1.2 'IBM Plex Sans',sans-serif;color:var(--laton-osc)}
+.srv .sello-varia{position:absolute;right:-6px;top:-74px;transform:rotate(-5deg);font-size:30px}
+
+/* 10 · cierre */
+.cierre h2{font:700 104px/1.0 'IBM Plex Sans Condensed',sans-serif;letter-spacing:-.015em}
+.cierre .bajada{font:500 44px/1.3 'IBM Plex Sans',sans-serif;color:#B9C2BC;margin-top:36px}
+.medidor{margin-top:50px}
+.medidor .barra{display:grid;grid-template-columns:1fr 1.4fr 1fr;height:26px;border-radius:99px;overflow:hidden;position:relative}
+.medidor .barra i:nth-child(1){background:#F3DE9A}.medidor .barra i:nth-child(2){background:var(--verde-luz)}.medidor .barra i:nth-child(3){background:#F2B8A8}
+.medidor .ets{display:grid;grid-template-columns:1fr 1.4fr 1fr;margin-top:16px;font:600 26px/1 'IBM Plex Mono',monospace;letter-spacing:.14em;text-transform:uppercase;color:#B9C2BC;text-align:center}
+.cierre .url-caja{margin-top:56px}
+.cierre .bio{font:500 26px/1 'IBM Plex Mono',monospace;letter-spacing:.12em;text-transform:uppercase;color:var(--gris-2);margin-top:20px}
+.cierre .guarda{display:flex;align-items:center;gap:20px;margin-top:56px;font:700 52px/1.1 'IBM Plex Sans Condensed',sans-serif;color:var(--laton)}
+</style></head><body>
+
+<!-- 1 · HOOK -->
+<section class="placa hook"><div class="cont">
+  <div class="medio">
+  <h1 class="cond"><span>¿Cuánto sale bañar al perro?</span><span>¿Y la clase de manejo?</span><span class="verde">Adiviná.</span></h1>
+  <div class="tapados">
+    <div class="tarjeta tapado"><div class="fila"><div class="ico chico"><i data-ico="huella" data-px="52"></i></div><div class="nombre">Baño de perro</div></div><div class="ranura"><span class="oculto">$00.000</span><span class="sello">Octubre 2026</span></div></div>
+    <div class="tarjeta tapado"><div class="fila"><div class="ico chico"><i data-ico="volante" data-px="52"></i></div><div class="nombre">Clase de manejo</div></div><div class="ranura"><span class="oculto">$00.000</span><span class="sello">Octubre 2026</span></div></div>
+  </div>
+  </div>
+  <div class="pie"><span class="web">trattoapp.com.ar</span><span class="desliza">Deslizá →</span></div>
+</div></section>
+
+<!-- 2 · LOS 7 -->
+<section class="placa dos"><div class="cont">
+  <div class="medio">
+  <div class="siete"><div class="gigante">7</div><p>servicios de 7 rubros, con el rango de octubre 2026.</p></div>
+  <div class="fichas">
+    <div class="ficha"><b>1</b><i data-ico="idioma" data-px="50"></i></div>
+    <div class="ficha"><b>2</b><i data-ico="esmalte" data-px="50"></i></div>
+    <div class="ficha"><b>3</b><i data-ico="volante" data-px="50"></i></div>
+    <div class="ficha"><b>4</b><i data-ico="camion" data-px="50"></i></div>
+    <div class="ficha"><b>5</b><i data-ico="huella" data-px="50"></i></div>
+    <div class="ficha seis"><b>6</b><i data-ico="globo" data-px="50"></i></div>
+    <div class="ficha"><b>7</b><i data-ico="pedido" data-px="50"></i></div>
+    <span class="sello">El doble</span>
+  </div>
+  <p class="frase">El 6 es el que más varía: puede salir <b style="white-space:nowrap">el doble</b>.</p>
+  <p class="anota">Anotá cuánto pensabas.</p>
+  </div>
+  <div class="pie"><span class="web">trattoapp.com.ar</span><span class="desliza">Deslizá →</span></div>
+</div></section>
+
+<!-- 3 · INGLÉS (21-27 → varía x1,29) -->
+<section class="placa srv"><div class="cont">
+  <div class="medio">
+  <div class="arriba"><div class="ico"><i data-ico="idioma" data-px="64"></i></div><span class="etq">Idiomas</span></div>
+  <h2><span class="num">1.</span>Clase de inglés (1&nbsp;hora),</h2>
+  <p class="para">para el viaje o el laburo:</p>
+  <div class="precio">$21.000<span>a</span>$27.000</div>
+  <div class="varia"><div class="fila-et"><span class="etq">Cuánto varía</span><span class="etq oro">El doble</span></div><div class="pista"><div class="relleno" style="--v:.29"></div></div></div>
+  <div class="tarjeta variante"><p>Si es conversación o para un examen:</p><span class="mono">$27.000 a $37.000.</span></div>
+  </div>
+  <div class="pie"><span class="fuente">Precios de referencia de mano de obra · AMBA · oct-2026</span></div>
+</div></section>
+
+<!-- 4 · MANICURA (17-28 → x1,65) -->
+<section class="placa srv"><div class="cont">
+  <div class="medio">
+  <div class="arriba"><div class="ico"><i data-ico="esmalte" data-px="64"></i></div><span class="etq">Estética, maquillaje y peinados</span></div>
+  <h2><span class="num">2.</span>Manicura semipermanente:</h2>
+  <div class="precio">$17.000<span>a</span>$28.000</div>
+  <div class="varia"><div class="fila-et"><span class="etq">Cuánto varía</span><span class="etq oro">El doble</span></div><div class="pista"><div class="relleno" style="--v:.65"></div></div></div>
+  <div class="tarjeta variante"><p>Con pedicura:</p><span class="mono">$28.000 a $45.000.</span></div>
+  </div>
+  <div class="pie"><span class="fuente">Precios de referencia de mano de obra · AMBA · oct-2026</span></div>
+</div></section>
+
+<!-- 5 · MANEJO (34-48 → x1,41) -->
+<section class="placa srv"><div class="cont">
+  <div class="medio">
+  <div class="arriba"><div class="ico"><i data-ico="volante" data-px="64"></i></div><span class="etq">Clases de manejo</span></div>
+  <h2><span class="num">3.</span>Clase de manejo (1&nbsp;hora de práctica),</h2>
+  <p class="para">para el que ya cumple 17:</p>
+  <div class="precio">$34.000<span>a</span>$48.000</div>
+  <div class="varia"><div class="fila-et"><span class="etq">Cuánto varía</span><span class="etq oro">El doble</span></div><div class="pista"><div class="relleno" style="--v:.41"></div></div></div>
+  <p class="extra"><i data-ico="chat" data-px="46" data-grosor="5"></i><span>Preguntá si el auto lo pone la escuela.</span></p>
+  </div>
+  <div class="pie"><span class="fuente">Precios de referencia de mano de obra · AMBA · oct-2026</span></div>
+</div></section>
+
+<!-- 6 · FLETE (53-73 → x1,38) -->
+<section class="placa srv"><div class="cont">
+  <div class="medio">
+  <div class="arriba"><div class="ico"><i data-ico="camion" data-px="64"></i></div><span class="etq">Fletes y mudanzas</span></div>
+  <h2><span class="num">4.</span>Flete chico</h2>
+  <p class="para">(pocos muebles, misma ciudad, unas 2 horas):</p>
+  <div class="precio">$53.000<span>a</span>$73.000</div>
+  <div class="varia"><div class="fila-et"><span class="etq">Cuánto varía</span><span class="etq oro">El doble</span></div><div class="pista"><div class="relleno" style="--v:.38"></div></div></div>
+  <div class="tarjeta variante"><p>Con 2 peones se cobra por hora:</p><span class="mono">$81.000 a $132.000.</span></div>
+  <div><span class="adelanto">Y ojo con el 7: es el que más plata mueve. <i data-ico="flecha" data-px="40" data-grosor="5"></i></span></div>
+  </div>
+  <div class="pie"><span class="fuente">Precios de referencia de mano de obra · AMBA · oct-2026</span></div>
+</div></section>
+
+<!-- 7 · PERRO (28-39 → x1,39) -->
+<section class="placa srv"><div class="cont">
+  <div class="medio">
+  <div class="arriba"><div class="ico"><i data-ico="huella" data-px="64"></i></div><span class="etq">Peluquería y adiestramiento canino</span></div>
+  <h2><span class="num">5.</span>Baño de perro chico o mediano:</h2>
+  <div class="precio">$28.000<span>a</span>$39.000</div>
+  <div class="varia"><div class="fila-et"><span class="etq">Cuánto varía</span><span class="etq oro">El doble</span></div><div class="pista"><div class="relleno" style="--v:.39"></div></div></div>
+  <div class="tarjeta variante"><p>Baño y corte:</p><span class="mono">$39.000 a $66.000.</span></div>
+  </div>
+  <div class="pie"><span class="fuente">Precios de referencia de mano de obra · AMBA · oct-2026</span></div>
+</div></section>
+
+<!-- 8 · ANIMACIÓN (62-127 → x2,05: el que más varía) -->
+<section class="placa srv"><div class="cont">
+  <div class="medio">
+  <div class="arriba"><div class="ico" style="color:var(--laton-osc)"><i data-ico="globo" data-px="64"></i></div><span class="etq">Animación y organización de eventos</span></div>
+  <h2><span class="num">6.</span>Animación infantil (2&nbsp;horas):</h2>
+  <div class="precio">$62.000<span>a</span>$127.000</div>
+  <div class="varia" style="margin-top:96px"><span class="sello sello-varia">El que más varía</span><div class="fila-et"><span class="etq">Cuánto varía</span><span class="etq oro">El doble</span></div><div class="pista"><div class="relleno max" style="--v:1"></div></div></div>
+  <p class="extra" style="color:var(--tinta-2);font-weight:500"><span><b style="color:var(--laton-osc);font-weight:600">El que más varía:</b> preguntá cuántos animadores van y qué incluye.</span></p>
+  <p class="extra"><i data-ico="chat" data-px="46" data-grosor="5"></i><span>Mandáselo a quien organiza el próximo cumple.</span></p>
+  </div>
+  <div class="pie"><span class="fuente">Precios de referencia de mano de obra · AMBA · oct-2026</span></div>
+</div></section>
+
+<!-- 9 · TRANSFERENCIA (94-166 → x1,77) -->
+<section class="placa srv"><div class="cont">
+  <div class="medio">
+  <div class="arriba"><div class="ico"><i data-ico="pedido" data-px="64"></i></div><span class="etq">Gestoría y trámites</span></div>
+  <h2><span class="num">7.</span>Transferencia de auto con gestor:</h2>
+  <div class="precio">$94.000<span>a</span>$166.000</div>
+  <div class="varia"><div class="fila-et"><span class="etq">Cuánto varía</span><span class="etq oro">El doble</span></div><div class="pista"><div class="relleno" style="--v:.77"></div></div></div>
+  <div class="tarjeta variante"><p>Antes de comprar, el informe de dominio:</p><span class="mono">$20.000 a $39.000.</span></div>
+  <p class="extra"><i data-ico="chat" data-px="46" data-grosor="5"></i><span>Etiquetá a quien se está por comprar un auto.</span></p>
+  </div>
+  <div class="pie"><span class="fuente">Precios de referencia de mano de obra · AMBA · oct-2026</span></div>
+</div></section>
+
+<!-- 10 · CIERRE -->
+<section class="placa noche cierre"><div class="cont">
+  <div class="medio">
+  <h2>¿Te pasaron un precio fuera del rango?</h2>
+  <p class="bajada">Fijate en 20 segundos si es caro, justo o barato:</p>
+  <div class="medidor"><div class="barra"><i></i><i></i><i></i></div><div class="ets"><span>Barato</span><span>Justo</span><span>Caro</span></div></div>
+  <div><span class="url-caja"><span id="logo-url"></span>trattoapp.com.ar/r/ig-precios-oct</span></div>
+  <p class="bio">(link en la bio)</p>
+  <p class="guarda"><i data-ico="guardar" data-px="52" data-color="#C9A227" data-grosor="5"></i>Guardalo para cuando lo necesites.</p>
+  </div>
+  <div class="pie"><span class="fuente">Precios de referencia de mano de obra · AMBA · oct-2026. Orientativos.</span></div>
+</div></section>
+
+<script src="carrusel.js"></script>
+<script>document.getElementById('logo-url').outerHTML = LOGO(46, 'lu');</script>
+</body></html>
