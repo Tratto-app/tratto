@@ -110,6 +110,14 @@ configuración está en `config/marca.json` → `links`, y `verificar` (con
 - El único link que se toca dentro de un video de TikTok es el botón de un
   video promocionado (Promocionar → visitas al sitio web), que es pago: lo
   decide la persona.
+- **Cuando la app salga en las tiendas** (no habilita por sí sola el link del
+  perfil de TikTok, que sigue dependiendo del registro o de los 1.000
+  seguidores): buscar "Tratto" en Google Play y en App Store. Si sale primera,
+  en TikTok el texto y la pantalla dicen "Buscá Tratto en Google Play o App
+  Store" (una palabra en vez de una dirección) y el cierre de los videos
+  muestra los íconos de las tiendas. Si no sale primera, seguir con el link
+  escrito. Ese día también se revisa el perfil de las dos redes
+  (`contenido-perfil`) y se vuelve a pedir el Registro de empresas de TikTok.
 
 ## 9. Conectores (si están en la sesión)
 
