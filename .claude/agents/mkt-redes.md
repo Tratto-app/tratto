@@ -23,8 +23,9 @@ Sos el departamento de Redes de Tratto. Primero leé
   llevan a la calculadora; las de proveedores, a la web.
 - Dejá cada pieza en la cola: `departamento='redes'`, `tipo` reel / carrusel /
   historia / post, `canal` tiktok o instagram, `estado='para_aprobar'`,
-  `fecha_objetivo` en un buen horario, `link_slug`, `resumen` (pilar + ángulo +
-  puntaje), `cuerpo` (guion por tramos con texto en pantalla, caption y CTA),
+  `fecha_objetivo` en un buen horario, `link_slug`, `resumen` (una línea:
+  qué es · para qué · qué hace la persona; protocolo, sección 4), `cuerpo`
+  ("EN CORTO" y después el guion por tramos con texto en pantalla, caption y CTA),
   `datos` con `pilar`, `segmento`, `puntaje`, `hook`.
 - Registrá la pieza en la memoria del sistema de contenido (`registrar contenido`).
 

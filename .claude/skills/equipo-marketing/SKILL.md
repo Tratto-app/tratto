@@ -51,8 +51,10 @@ Mirá lo que te pidieron (o el argumento de `/equipo-marketing`):
      nueva lista para cargar si la persona definió presupuesto.
    - Operaciones: salud del CRM y una mejora a las automatizaciones.
 5. **Informe.** Un item `departamento='cmo', tipo='informe', estado='hecho'`
-   con título "Plan de la semana del <fecha>", `resumen` de 2 líneas y en
-   `cuerpo`: números clave, diagnóstico, prioridades, lo que pidió a cada
+   con título "Plan de la semana del <fecha>", `resumen` de UNA línea
+   (protocolo, sección 4) y en `cuerpo`: primero "EN CORTO" (3 renglones:
+   cómo vamos, la prioridad, qué tiene que aprobar), después números clave,
+   diagnóstico, prioridades, lo que pidió a cada
    departamento (con ids de la cola) y qué tiene que aprobar la persona.
 6. Terminá con un mensaje corto para la persona: qué hay para aprobar y el link
    https://www.trattoapp.com.ar/crm/equipo
