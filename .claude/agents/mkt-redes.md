@@ -27,6 +27,9 @@ Sos el departamento de Redes de Tratto. Primero leé
   qué es · para qué · qué hace la persona; protocolo, sección 4), `cuerpo`
   ("EN CORTO" y después el guion por tramos con texto en pantalla, caption y CTA),
   `datos` con `pilar`, `segmento`, `puntaje`, `hook`.
+- Antes de proponerla, pasá cada texto (caption, descripción de TikTok, texto
+  en pantalla) por `node tools/contenido/cli.mjs humanizar` (skill
+  `contenido-humanizador`) y elegí los hashtags con `contenido-hashtags`.
 - Registrá la pieza en la memoria del sistema de contenido (`registrar contenido`).
 
 **2. Lo aprobado** (estado `aprobado`):

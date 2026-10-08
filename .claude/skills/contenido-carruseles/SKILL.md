@@ -1,6 +1,6 @@
 ---
 name: contenido-carruseles
-description: Crea carruseles de Instagram para Tratto de punta a punta — ángulo, estructura, texto slide por slide, slide de hook, cierre con CTA, caption y notas de diseño — verificados contra los límites de la plataforma y puntuados con la rúbrica. Usar con "haceme un carrusel", "armá slides sobre…", "convertí esto en carrusel".
+description: Crea carruseles de Instagram y carruseles de fotos de TikTok para Tratto de punta a punta — ángulo, estructura, texto slide por slide, slide de hook, cierre con CTA, caption y notas de diseño — verificados contra los límites de la plataforma y puntuados con la rúbrica. Usar con "haceme un carrusel", "armá slides sobre…", "convertí esto en carrusel".
 ---
 
 # Carruseles
@@ -33,6 +33,19 @@ motivo para pasar al siguiente.
 7. **Puntuar** con `formato: carrusel`, `insumo: carrusel` (si el texto de todos los slides está escrito) y mejorar si queda por debajo de 75.
 8. **Diseño**: notas por slide (qué se ve: foto, ícono, número grande, tabla). La producción gráfica sigue la identidad de la skill `disenador-marketplace`; las placas se pueden generar agregando el carrusel a `tools/piezas-redes/piezas.html` y corriendo `python3 tools/piezas-redes/render.py` (1080×1350, 4:5).
 9. **Memoria**: `registrar contenido` con `formato: carrusel`, `titulo`, `pilar`, `segmento`, `hook`, `guion` (los slides numerados), `cta`, `puntaje`.
+
+## TikTok (carrusel de fotos)
+
+Pieza 3 de 9 del sistema. El mismo carrusel puede salir en TikTok en modo foto
+(`tools/contenido/conocimiento/plataformas.md`):
+- Formato 9:16 (1080×1920) o 4:5; si se reutiliza el de Instagram, dejá
+  márgenes para la interfaz de TikTok (arriba y abajo, y la columna derecha).
+- La placa 1 tiene que funcionar sin caption: TikTok muestra poco texto.
+- Texto del post con `contenido-redactor` (palabra clave arriba, link escrito,
+  sin link clickeable) y hashtags con `contenido-hashtags`.
+- Música: un tema de la biblioteca de TikTok al publicar (la persona lo elige
+  en la app); no subas audio de terceros.
+- Antes de entregar, pasá los textos por `node tools/contenido/cli.mjs humanizar`.
 
 ## Salida
 

@@ -13,6 +13,7 @@ import { conocimiento } from './lib/conocimiento.mjs';
 import { ErrorEntrada } from './lib/errores.mjs';
 import { extraerFotogramas } from './lib/fotogramas.mjs';
 import { hooksMarkdown, verificarHooks } from './lib/hooks.mjs';
+import { informeIA, revisarIA } from './lib/humanizador.mjs';
 import { actualizar, estadoMemoria, leer, registrar, TIPOS } from './lib/memoria.mjs';
 import { analizarMetricas, medianas, rendimiento } from './lib/metricas.mjs';
 import { puntajeMarkdown, puntuar, revisarRubrica } from './lib/puntaje.mjs';
@@ -28,6 +29,7 @@ Uso: node tools/contenido/cli.mjs <comando> [opciones]
   puntuar  [--archivo F]              Puntúa con la rúbrica: { formato, insumo, dimensiones: { dim: { puntaje, evidencia } } }
            [--etiqueta TEXTO]         Título de la tabla (por defecto VIRALIDAD)
   hooks    [--archivo F]              Verifica hooks: { formato, hooks: [{ texto, categoria, criterios? }] }
+  humanizar [--archivo F | --texto T]  Cuánto "suena a IA" un caption o una placa y qué reescribir: { texto }
   verificar [--archivo F]             Límites de la plataforma y reglas de marca de una pieza:
                                       reel {guion, hook?, duracion_seg?} · carrusel {slides, texto?}
                                       historia {pantallas} · publicacion {texto} · perfil {nombre?, usuario?, bio?, destacadas?}
@@ -172,6 +174,14 @@ async function main(argv) {
       const config = cargarConfig();
       const r = verificarHooks(entrada, leer('hook').registros, config.marca?.palabras_no || []);
       salida(op, r, hooksMarkdown(r));
+      return 0;
+    }
+
+    case 'humanizar': {
+      const texto = typeof op.texto === 'string' ? op.texto : (await leerEntrada(op)).texto;
+      if (typeof texto !== 'string' || !texto.trim()) throw new ErrorEntrada('Falta el texto: { "texto": "..." } o --texto "..."');
+      const r = revisarIA(texto);
+      salida(op, r, informeIA(r));
       return 0;
     }
 

@@ -38,8 +38,9 @@ test('todas las skills tienen nombre único igual a su carpeta y descripción', 
   }
 });
 
-test('las 8 skills de contenido existen y la de diseño sigue estando', () => {
-  for (const n of ['contenido', 'contenido-viralidad', 'contenido-hooks', 'contenido-analisis', 'contenido-optimizacion', 'contenido-carruseles', 'contenido-historias', 'contenido-perfil', 'disenador-marketplace']) {
+test('las skills de contenido (las 9 piezas y las de análisis) existen y la de diseño sigue estando', () => {
+  for (const n of ['contenido', 'contenido-viralidad', 'contenido-hooks', 'contenido-analisis', 'contenido-optimizacion', 'contenido-carruseles', 'contenido-historias', 'contenido-perfil',
+    'contenido-planificador', 'contenido-redactor', 'contenido-hashtags', 'contenido-humanizador', 'contenido-radar', 'contenido-reutilizador', 'disenador-marketplace']) {
     assert.ok(nombres.has(n), `falta ${n}`);
   }
 });
