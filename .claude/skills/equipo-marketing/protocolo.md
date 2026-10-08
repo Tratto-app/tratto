@@ -65,12 +65,25 @@ Precios: solo de la tabla `precios_referencia` (con fecha) o de pantallas reales
 Campos: `departamento` (cmo · redes · seo_local · contenido · anuncios ·
 operaciones), `tipo` (informe · plan · tarea · reel · carrusel · historia ·
 post · articulo · pagina · anuncio · campania · mail · automatizacion ·
-respuesta · aprendizaje · alerta), `titulo`, `resumen` (2 líneas, lo que la
-persona lee para decidir), `cuerpo` (la pieza completa), `canal`, `estado`,
+respuesta · aprendizaje · alerta), `titulo`, `resumen` (UNA línea, ver
+abajo), `cuerpo` (la pieza completa), `canal`, `estado`,
 `prioridad` (1 alta · 2 media · 3 baja), `fecha_objetivo`, `link_slug`, `url`,
 `datos` (jsonb: pilar, segmento, utm, presupuesto sugerido, ids externos),
 `metricas` (jsonb), `comentario` (lo que escribe la persona), `creado_por`
 (`agente:redes`, `agente:cmo`…).
+
+**Cómo se escribe para la persona (pedido del fundador, 8/10/2026: "todas
+tienen una explicación muy larga y tediosa de leer"):**
+
+- `titulo`: lo que es, en pocas palabras ("Reel: cuánto sale un flete").
+- `resumen`: UNA línea de hasta 120 caracteres con tres partes separadas por
+  " · ": qué es · para qué sirve · qué tiene que hacer la persona.
+  Ej.: "Reel de precios para TikTok · lleva gente a la calculadora · aprobalo y
+  sale el viernes 12 h". Nada de puntajes, ids, siglas ni jerga.
+- `cuerpo`: arranca con 3 renglones máximo bajo "EN CORTO" (lo mismo dicho
+  simple) y recién después el detalle completo (guion, texto, pasos, datos).
+- Los informes del CMO siguen la misma regla: resumen de una línea y un
+  "EN CORTO" de 3 renglones arriba de todo.
 
 Estados: `idea` → `borrador` → `para_aprobar` → (`cambios` | `aprobado` |
 `descartado`) → `programado` → `publicado` / `hecho`.

@@ -5998,8 +5998,22 @@ function miOficio(){
   return (m.rubro_personalizado || m.rubro || '').trim();
 }
 
+/* CRM: anota una visita por día (retención). La base ignora las repetidas;
+   el localStorage solo evita llamar de más. Nunca frena ni rompe la app. */
+function registrarVisita(){
+  if(!sesion || !sesion.user) return;
+  const hoy = new Date().toLocaleDateString('en-CA', {timeZone:'America/Argentina/Buenos_Aires'});
+  const clave = 'tratto_visita:' + sesion.user.id;
+  try{ if(localStorage.getItem(clave) === hoy) return; }catch(e){}
+  fetch(SUPABASE_URL + '/rest/v1/rpc/crm_visita', {method:'POST', headers:cab(), body:'{}'})
+    .then(r => { if(r.ok){ try{ localStorage.setItem(clave, hoy); }catch(e){} } })
+    .catch(() => {});
+}
+document.addEventListener('visibilitychange', () => { if(document.visibilityState === 'visible') registrarVisita(); });
+
 function entrarApp(){
   const u = sesion.user;
+  registrarVisita();
   $('saludo').textContent = 'Hola, ' + miPrimerNombre();
   $('c-nombre').textContent = miNombre();
   $('c-mail').textContent = u.email;
