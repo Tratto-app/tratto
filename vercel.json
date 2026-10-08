@@ -21,6 +21,9 @@
       ]
     }
   ],
+  "redirects": [
+    { "source": "/r/:slug", "destination": "https://qglsonbcsncgekzbfafk.supabase.co/functions/v1/growth-go/:slug", "permanent": false }
+  ],
   "rewrites": [
     { "source": "/crm/:ruta*", "destination": "/crm/index.html" }
   ]
