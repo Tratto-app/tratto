@@ -107,6 +107,16 @@ oscuro con el logo. Base común: `reels/publicidad-comun.js` + `reels/publicidad
 |---|---|---|
 | `reels/publicidad-calculadora.html` | 23 s | Llevar gente a trattoapp.com.ar/calculadora (ejemplo real: DJ para un 15 en Morón, +37 %) |
 | `reels/publicidad-app.html` | 25 s | Publicidad general de la app (rubros variados) |
+| `reels/publicidad-flete-cunado-{tt,ig}.html` | 22,5 s | "Tu cuñado no sabe cuánto sale un flete" → calculadora (cola `b3c4c3d3`) |
+| `reels/publicidad-grupo-confianza-{tt,ig}.html` | 23 s | "Lo encontraste en un grupo. ¿Y ahora?" → web (cola `5865e24b`) |
+| `reels/publicidad-presupuesto-caro-{tt,ig}.html` | 24 s | "¿Y si no perdiste ese trabajo por caro?", para proveedores → web (cola `f4f7b191`) |
+
+Cuando TikTok e Instagram llevan distinto link en pantalla, las escenas van en
+`reels/publicidad-<nombre>.js` y cada red tiene su HTML chico (`-tt.html`,
+`-ig.html`) que solo define `window.RED = { url: '…' }`. Las dos versiones usan la
+misma música (`audio/publicidad-<nombre>-mezcla.m4a`). La captura de la
+calculadora del flete (`img/calc-flete-*.jpg`) es la página real servida local
+con la respuesta de `calculadora_comparar` simulada, así no se guarda nada en la base.
 
 Las pantallas están en `reels/img/` (las de la app salen de las capturas de la
 ficha de las tiendas; las de la calculadora, de la página real con la
@@ -120,4 +130,8 @@ python3 sonido.py audio/musica-app.wav audio/publicidad-app.efectos.json audio/p
 python3 render-reel.py publicidad-app.html --segundos 25 --audio audio/publicidad-app-mezcla.m4a
 ```
 
-Copias con URL pública (para Metricool) en `redes/publicidad-*.mp4`.
+Copias con URL pública (para Metricool) en `redes/publicidad-*.mp4` y
+`redes/reel-*-{tt,ig}.mp4`. Al copiar, el video va tal cual y el audio se vuelve
+a tomar de la mezcla bajado 0,5 dB, para que el pico quede debajo de −1 dBFS
+(−14,3 LUFS, pico −1,4 dBFS). No recomprimir el audio del MP4 ya hecho: deja un
+clic al principio.
