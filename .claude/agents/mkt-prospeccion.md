@@ -147,14 +147,26 @@ select mkt_prospeccion_guardar($j$[
 - `nombre`: solo si se ve el nombre de pila de la persona. Si no, vacío.
 - `empresa`: el nombre del negocio o del lugar, si figura (va en el saludo
   cuando no hay nombre de persona).
-- `campania`: `prov-<orden con 2 cifras>-<rubro corto sin tildes>`.
+- `campania`: `prov-<orden con 2 cifras>-<rubro corto sin tildes>` (queda en
+  el CRM para medir por rubro; el link del mail ya no la lleva a la vista).
 
 Devuelve `id`, `ref` y `email` de cada uno guardado.
 
-## 5. El mail (uno por uno, texto plano)
+## 5. El mail (uno por uno, con diseño y texto)
 
-`send_message` con `to` = una sola dirección, `subject` y `body` (texto plano:
-sin `htmlBody`, sin imágenes, sin copias). Cada 10 enviados:
+Cada mail se arma con la herramienta del repo (versión 3, 8/10/2026):
+
+```bash
+python3 tools/prospeccion/armar_mail.py '{"saludo": "ServiMAX Destapaciones",
+  "gancho": "Vi en tu página que hacen destapaciones en Caballito.",
+  "servicio": "plomería y destapaciones", "zona": "Caballito",
+  "pedido": "una destapación o un arreglo de plomería",
+  "donde": "tu página web (servimaxdestapaciones.com)"}'
+```
+
+Devuelve `html` y `texto`. Mandalo con `send_message`: `to` = una sola
+dirección, `subject`, `htmlBody` = `html` y `body` = `texto` (sin copias, sin
+adjuntos). Cada 10 enviados:
 
 ```sql
 select mkt_prospeccion_enviado($j$[{"id": "<id>", "thread": "<threadId>"}, ...]$j$::jsonb);
@@ -167,66 +179,37 @@ errores seguidos, pará.
 **Asunto:** `Clientes que buscan {oficio} en {barrio o zona} · Tratto`
 (el "· Tratto" del final sirve para encontrar las respuestas).
 
-**Cuerpo** (versión del 8/10/2026: con nombre y sin la comisión, pedido del fundador):
+**Qué dice el mail** (pedidos del fundador; no los cambies sin que lo pida):
+- Saluda por el nombre (`saludo`): el nombre de pila de la persona si figura
+  en la fuente ("Hola Hugo, ¿cómo va?"); si no, el del negocio tal como lo
+  usa, sin "S.R.L." ni eslóganes. Si no hay ninguno, `saludo` vacío ("Hola,
+  ¿cómo va?"). Nunca un nombre sacado de la dirección de mail ni adivinado.
+- Qué hace y dónde (`gancho`), qué es Tratto, que **recién está arrancando**,
+  y que **si hoy se registra, publica su servicio y activa las
+  notificaciones, le llega el aviso automáticamente cada vez que un cliente
+  de su zona pide su servicio, sin entrar a revisar**. Es cierto: el matching
+  le manda un mail y, desde el 8/10/2026, también una notificación al celular
+  (`matches_notificar_push`).
+- Chat de la app y cobro por Mercado Pago directo a su cuenta.
+- "No perdés nada por registrarte: crear tu perfil y publicar tu servicio no
+  tiene costo." **No se menciona la comisión** (está en los términos que
+  acepta al registrarse).
+- El link se ve como **www.trattoapp.com.ar** (por dentro lleva
+  `?utm_source=prospeccion` para medir). Nunca pegues una URL larga a la vista.
+- Firma "Equipo de Tratto" con el **logo** y la web, y al pie dónde
+  encontramos su mail y que puede responder "no".
 
-```
-Hola {nombre}, ¿cómo va?
-
-{Gancho.} Te escribo de Tratto, una app donde gente de CABA y Provincia de
-Buenos Aires publica lo que necesita y recibe presupuestos de proveedores de
-su zona.
-
-Tratto recién está arrancando y estamos sumando proveedores de {servicio} en
-{barrio o zona}. Te registrás, publicás tu servicio y listo: cuando un cliente
-de tu zona pide {servicio}, la app te avisa sola por mail. Si activás las
-notificaciones, también te enterás al instante cuando te aceptan un
-presupuesto o te pagan.
-
-Con el cliente hablás por el chat de la app y, cuando terminás el trabajo, te
-paga por Mercado Pago, directo a tu cuenta.
-
-No perdés nada por probar: registrarte y publicar tu servicio no tiene costo.
-
-Te podés registrar acá: {link}
-
-Si tenés alguna duda, respondé este mail.
-
-Saludos,
-Equipo de Tratto
-www.trattoapp.com.ar
-
---
-Encontramos tu mail en {dónde: tu página web / tu perfil de Instagram / la guía X}.
-Si no querés recibir más mensajes, respondé "no" y no te escribimos más.
-```
-
-(Los saltos de línea dentro de los párrafos de arriba son solo para leerlo
-acá: en el mail cada párrafo va en una sola línea.)
-
-- **Nombre en el saludo** (siempre que se consiga): el nombre de pila de la
-  persona si figura en la fuente ("Hola Hugo, ¿cómo va?"); si no, el nombre
-  del negocio tal como lo usa, sin "S.R.L." ni eslóganes ("Hola ServiMAX
-  Destapaciones, ¿cómo va?"). Si no hay ninguno de los dos: "Hola, ¿cómo va?".
-  Nunca un nombre sacado de la dirección de mail ni adivinado.
-- **No se menciona la comisión.** Lo que se dice del costo es solo que
-  registrarse y publicar el servicio no tiene costo (es cierto: la comisión
-  se cobra únicamente sobre trabajos cobrados por la app, y está en los
-  términos que acepta al registrarse).
-- **Avisos, tal como funcionan hoy:** el pedido nuevo de su rubro y su zona
-  le llega por **mail** (flujo de n8n "Matching automatico + avisos"); las
-  notificaciones del celular avisan cuando le aceptan o rechazan un
-  presupuesto y cuando le pagan. No prometas más que eso.
-- **Link:** `https://www.trattoapp.com.ar/?utm_source=prospeccion&utm_medium=email&utm_campaign={campania}&utm_content={ref}`
-- **Gancho:** una frase con algo real del resultado (qué hace y dónde). Sin
-  elogios inventados ni datos que no estén en la fuente. El resto del mail va
-  de "vos", también a un negocio ("Vi en tu página que hacen destapaciones
-  en Caballito"): es como escribe un vecino, y lo lee quien atiende el mail.
-- **Oficio y servicio:** dichos como los dice la gente ("plomero",
-  "plomería"; "profe de inglés", "clases de inglés"), no el nombre largo del
-  rubro.
-- Nada de "gratis" en el asunto, nada de mayúsculas ni signos de más.
+Cómo completar los campos:
+- **`gancho`:** una frase con algo real del resultado (qué hace y dónde). Sin
+  elogios inventados ni datos que no estén en la fuente. De "vos", también a
+  un negocio ("Vi en tu página que hacen destapaciones en Caballito").
+- **`servicio`** y **`pedido`:** como los dice la gente ("plomería y
+  destapaciones" / "una destapación o un arreglo de plomería"; "clases de
+  inglés" / "clases de inglés"), no el nombre largo del rubro.
+- **`zona`:** el barrio o partido si se sabe; si no, la zona.
+- **`donde`:** "tu página web (dominio)", "tu perfil de Instagram", "la guía X".
 - **Cuando la app esté en las tiendas** (todavía no; la persona va a pasar
-  los links), se agrega antes de "Si tenés alguna duda": "También podés bajar
+  los links), se agrega en `armar_mail.py` un renglón: "También podés bajar
   la app: Android {link} · iPhone {link}". Hasta entonces no se nombran las
   tiendas.
 
