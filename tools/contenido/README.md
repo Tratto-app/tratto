@@ -49,9 +49,13 @@ o por nombre (`/contenido-hooks`).
 Dos controles en código hacen que no dependa de acordarse:
 - `verificar` corre el humanizador y revisa los hashtags de cada pieza. Lo que
   hay que corregir sí o sí, o un texto que suena a IA, es error (sale con 3).
+- Con `red` (`instagram` o `tiktok`), `verificar` exige el link de un toque
+  (`lib/links.mjs`, configurado en `config/marca.json` → `links`): un link
+  escrito en el texto no se puede tocar en ninguna de las dos redes.
 - Antes de programar en Metricool, el hook `hooks/antes-de-programar.mjs`
   (registrado en `.claude/settings.json`) mide el texto del post y frena la
-  programación si suena a IA, con lo que hay que cambiar.
+  programación si suena a IA o le falta el link de un toque, con lo que hay
+  que cambiar.
 
 Para analizar un video, subí el archivo al repo o a la sesión (Claude no puede
 abrir links de Instagram ni TikTok) y, si tiene audio, pasá la transcripción.

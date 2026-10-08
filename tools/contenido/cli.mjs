@@ -30,8 +30,8 @@ Uso: node tools/contenido/cli.mjs <comando> [opciones]
            [--etiqueta TEXTO]         Título de la tabla (por defecto VIRALIDAD)
   hooks    [--archivo F]              Verifica hooks: { formato, hooks: [{ texto, categoria, criterios? }] }
   humanizar [--archivo F | --texto T]  Cuánto "suena a IA" un caption o una placa y qué reescribir: { texto }
-  verificar [--archivo F]             Límites de la plataforma, reglas de marca, hashtags y humanizador
-                                      (automático) de una pieza:
+  verificar [--archivo F]             Límites de la plataforma, reglas de marca, hashtags, humanizador
+                                      y, con red (instagram|tiktok), el link de un toque:
                                       reel {guion, hook?, duracion_seg?, texto?} · carrusel {slides, texto?}
                                       historia {pantallas} · publicacion {texto} · perfil {nombre?, usuario?, bio?, destacadas?}
   metricas                            Ranking de la cuenta por interacción y medianas

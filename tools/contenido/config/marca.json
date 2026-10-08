@@ -4,6 +4,23 @@
     "instagram": "@trattoapp_",
     "web": "www.trattoapp.com.ar"
   },
+  "links": {
+    "nota": "Los links escritos en el texto no se pueden tocar ni en Instagram ni en TikTok (regla de las dos redes). Cada pieza lleva el camino de un toque: en Instagram, la mención a la cuenta (se toca) y el nombre del link del perfil. En TikTok, el link del perfil cuando esté habilitado.",
+    "instagram": {
+      "usuario": "@trattoapp_",
+      "link_en_perfil": true,
+      "links_del_perfil": [
+        "Calculadora de precios",
+        "Pedí un servicio",
+        "Soy proveedor"
+      ]
+    },
+    "tiktok": {
+      "usuario": "@trattoapp",
+      "link_en_perfil": false,
+      "motivo": "TikTok habilita el link del perfil con el Registro de empresas aprobado o con 1.000 seguidores (registro rechazado el 2026-10-07). Cuando se habilite, poner link_en_perfil en true."
+    }
+  },
   "que_es": "Marketplace de servicios de Argentina: la persona cuenta qué necesita (o le saca una foto), recibe presupuestos de proveedores de su zona y de ese rubro, y elige el que más le conviene.",
   "propuesta_valor": "Pedí lo que necesitás y recibí presupuestos de profesionales de tu zona, sin llamar a diez personas",
   "diferenciales": [

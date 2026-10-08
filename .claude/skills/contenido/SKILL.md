@@ -33,6 +33,8 @@ rutina, el CMO u otro departamento.
 |---|---|
 | Cualquier pieza nueva para TikTok o Instagram | La cadena completa (abajo) |
 | Cualquier texto que va a salir publicado con el nombre de Tratto: caption, descripción, guion, placa, bio, y también guías, anuncios y mails nuevos | Humanizador antes de entregarlo |
+| Cualquier texto para Instagram o TikTok que lleve a Tratto | Link de un toque (protocolo, sección 8.2): en Instagram, segunda línea "tocá @trattoapp_ y entrá al link «…»"; en TikTok, link escrito y en pantalla sin prometer "link en la bio" |
+| Cada reel o carrusel de Instagram | Historia con sticker de link el mismo día, para aprobar |
 | La idea es una lista, pasos, una comparación o precios por rubro | Carrusel de Instagram + carrusel de fotos de TikTok (además o en vez del video) |
 | Una pieza nueva, aprobada o publicada en una red sin su versión en la otra | Reutilizador: la gemela, 1 a 3 días después |
 | Se publicó una guía o página de precios nueva en la web (`guias/`, `precios/`) | Reutilizador: carrusel + reel con link a esa página |
@@ -43,7 +45,7 @@ rutina, el CMO u otro departamento.
 | Primer lunes del mes, cambio de link, servicio o app (por ejemplo, salida en las tiendas), o muchas visitas al perfil y pocos registros | Perfil |
 | Una pieza rinde muy por encima de la mediana (`metricas`) | Reutilizador: otra versión del mismo principio + aprendizaje |
 | Una pieza puntúa menos de 75 | `contenido-optimizacion` antes de proponerla |
-| Se programa en Metricool | Control del humanizador en código (hook): si suena a IA, no se programa hasta corregirlo |
+| Se programa en Metricool | Control en código (hook): si suena a IA o le falta el link de un toque, no se programa hasta corregirlo |
 
 **La cadena de cada pieza nueva**, en este orden y sin saltear pasos:
 
@@ -55,10 +57,13 @@ rutina, el CMO u otro departamento.
 4. `contenido-hashtags`: de 3 a 5 por red, más las palabras clave de TikTok.
 5. `contenido-humanizador`: `node tools/contenido/cli.mjs humanizar` con cada
    texto, hasta que dé "suena humano".
-6. `node tools/contenido/cli.mjs verificar` (ya incluye humanizador y
-   hashtags: si sale con 3, corregí y volvé a verificar) y puntuar; menos de
+6. `node tools/contenido/cli.mjs verificar` con `red` (ya incluye
+   humanizador, hashtags y el link de un toque: si sale con 3, corregí y
+   volvé a verificar) y puntuar; menos de
    75 → `contenido-optimizacion`.
-7. `contenido-reutilizador`: la versión para la otra red.
+7. `contenido-reutilizador`: la versión para la otra red (Instagram y TikTok
+   siempre por separado, cada uno con su texto) y, en Instagram, la historia
+   con sticker de link.
 8. Registrar y dejar en la cola `para_aprobar`.
 
 **Cuándo no:**

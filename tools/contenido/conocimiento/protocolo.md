@@ -71,14 +71,45 @@ se reemplazan, lista con íconos, pantallas reales en 3D, cierre oscuro con el
 logo y música propia, sin voz. Se hace con la skill `video-publicidad`. Solo se
 usa otro estilo (por ejemplo, la serie con voz en off) si la persona lo pide.
 
-## 8.2. Links en TikTok
+## 8.2. Links: siempre un camino de un toque
 
-@trattoapp **no tiene link clickeable en la bio** (TikTok lo habilita con el
-Registro de empresas aprobado o con 1.000 seguidores; el registro fue
-rechazado el 2026-10-07). Hasta que eso cambie, en TikTok nunca escribir "link
-en la bio": el texto dice "Entrá a trattoapp.com.ar" (o la página que
-corresponda) y el video muestra la URL en pantalla. En Instagram el link en la
-bio sí funciona.
+**Ni Instagram ni TikTok dejan tocar un link escrito en el texto de una
+publicación** (regla de las dos redes, no un error nuestro). Si el texto dice
+"Entrá a trattoapp.com.ar", la persona tiene que copiarlo o buscarlo, y casi
+nadie lo hace. Por eso cada pieza lleva a un link que sí se toca. La
+configuración está en `config/marca.json` → `links`, y `verificar` (con
+`red`) y el control antes de Metricool lo exigen.
+
+**Instagram (@trattoapp_)**
+- En el perfil hay 3 links con nombre, en este orden:
+  «Calculadora de precios» → `trattoapp.com.ar/r/ig-bio-calculadora`,
+  «Pedí un servicio» → `trattoapp.com.ar/r/tratto-bio`,
+  «Soy proveedor» → `trattoapp.com.ar/r/ig-bio-proveedores`.
+- La **segunda línea** del texto (antes del "más") dice qué hacer y dónde:
+  `👉 Calculadora gratis: tocá @trattoapp_ y entrá al link «Calculadora de precios».`
+  La mención se toca y abre el perfil. Nunca "link en la bio" a secas, y no
+  hace falta escribir la URL en el texto.
+- Cada reel o carrusel lleva una **historia con sticker de link** el mismo día
+  (`ig-historia-calculadora` o `ig-historia-app`), que queda para aprobar. Es
+  el único lugar de Instagram donde el link se toca sin pasar por el perfil.
+  El sticker lo pone la persona al publicarla desde el celular (la API no
+  permite stickers).
+- Las historias con link se guardan en las destacadas "Calculadora" y
+  "Pedí gratis".
+
+**TikTok (@trattoapp)**
+- **Todavía no tiene link en el perfil**: TikTok lo habilita con el Registro de
+  empresas aprobado o con 1.000 seguidores (el registro fue rechazado el
+  2026-10-07). Hasta entonces: el link va escrito en el texto y en pantalla, y
+  nunca se escribe "link en la bio" ni "link del perfil".
+- Nunca mencionar @trattoapp_ en TikTok: ahí esa mención abre otra cuenta. Por
+  eso Instagram y TikTok se programan por separado, cada uno con su texto.
+- Cuando TikTok habilite el link: ponerlo en el perfil
+  (`trattoapp.com.ar/r/tt-bio`), cambiar `links.tiktok.link_en_perfil` a
+  `true` y desde ahí el texto dice "tocá el link de nuestro perfil".
+- El único link que se toca dentro de un video de TikTok es el botón de un
+  video promocionado (Promocionar → visitas al sitio web), que es pago: lo
+  decide la persona.
 
 ## 9. Conectores (si están en la sesión)
 

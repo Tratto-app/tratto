@@ -18,19 +18,23 @@ y `tools/contenido/conocimiento/plataformas.md`.
    (`conocimiento/plataformas.md`) y elegí una con su porqué.
 3. **Escribir por red** (mismo mensaje, distinta forma):
    - **Instagram:** primera línea de hasta ~125 caracteres que se entienda
-     sola. Después 2 a 4 renglones con el valor (números concretos), una
-     acción clara (guardar, mandárselo a alguien, entrar al link de la bio) y
-     al final 3 a 5 hashtags de `contenido-hashtags`.
+     sola. **Segunda línea, el link de un toque** (protocolo, sección 8.2):
+     `👉 Calculadora gratis: tocá @trattoapp_ y entrá al link «Calculadora de precios».`
+     (o «Pedí un servicio» / «Soy proveedor»). Después 2 a 4 renglones con el
+     valor (números concretos), una acción (guardar o mandárselo a alguien) y
+     al final 3 a 5 hashtags de `contenido-hashtags`. Sin URL escrita.
    - **TikTok:** primera línea con la palabra clave que la gente busca, el
-     link escrito (no hay link clickeable), una pregunta que invite a
-     comentar algo concreto y 3 a 5 hashtags. Más corto que en Instagram.
+     link escrito y en pantalla mientras TikTok no habilite el link del perfil
+     (sin prometer "link en la bio" ni mencionar @trattoapp_), una pregunta
+     que invite a comentar algo concreto y 3 a 5 hashtags. Más corto que en
+     Instagram.
    - **Texto en pantalla y guion:** si es un video, por tramos con tiempos
      (`[0–2 s] gancho dicho y escrito`), según `conocimiento/estructuras.md`.
 4. **Humanizar.** `node tools/contenido/cli.mjs humanizar` con cada texto
    (skill `contenido-humanizador`). Si da "mixto" o "suena a IA", corregí lo
    marcado y volvé a pasarlo.
 5. **Verificar y puntuar.** `node tools/contenido/cli.mjs verificar` con el
-   formato y, si es una pieza completa, puntuar (protocolo, sección 4).
+   formato y `red` (`instagram` o `tiktok`: exige el link de un toque) y, si es una pieza completa, puntuar (protocolo, sección 4).
 
 ## Salida
 

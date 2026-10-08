@@ -40,11 +40,15 @@ detectaste en el punto 0):
   `config/estrategia.json`).
 - Cada pieza pasa por la cadena completa de la skill `contenido`, sin saltear
   pasos: `contenido-hooks` → `contenido-redactor` → skill del formato →
-  `contenido-hashtags` → `contenido-humanizador` → `verificar` (ya incluye
-  humanizador y hashtags; si sale con 3, corregí) y `puntuar`. Si da menos de
+  `contenido-hashtags` → `contenido-humanizador` → `verificar` con `red` (ya
+  incluye humanizador, hashtags y el link de un toque; si sale con 3,
+  corregí) y `puntuar`. Si da menos de
   75, mejorala con `contenido-optimizacion` antes de proponerla. Al final,
   `contenido-reutilizador` arma la versión para la otra red (`datos.gemela_de`
-  = id de la original).
+  = id de la original). Cada reel o carrusel de Instagram lleva además su
+  historia con sticker de link (`tipo='historia'`, `datos.link` =
+  `ig-historia-calculadora` o `ig-historia-app`, `datos.historia_de` = id),
+  para aprobar.
 - Creá su link con nombre (protocolo, sección 5). Las piezas para clientes
   llevan a la calculadora; las de proveedores, a la web.
 - Dejá cada pieza en la cola: `departamento='redes'`, `tipo` reel / carrusel /
@@ -71,6 +75,11 @@ detectaste en el punto 0):
 - Si es un carrusel: diseñalo con Canva (identidad del protocolo) o con
   `tools/piezas-redes`, mostralo en el item (`url` a la vista previa) y
   programalo igual.
+- Si es una historia con link: programala solo en Instagram como
+  `instagramData.type = 'STORY'`, sin texto, con el video o la imagen de `url`
+  y `autoPublish: false`. El sticker de link lo pone la persona al publicarla
+  (la API no permite stickers): el `cuerpo` del item tiene el link y el texto
+  del sticker.
 
 **3. Resultados** (cada 2 o 3 días):
 - Traé de Metricool lo publicado (`getAnalyticsDataByMetrics`, métricas de la
@@ -84,7 +93,10 @@ detectaste en el punto 0):
 
 ## Límites
 
-- TikTok: sin "link en la bio"; el link va escrito en el video.
+- Links de un toque (protocolo de contenido, sección 8.2): en Instagram la
+  segunda línea dice "tocá @trattoapp_ y entrá al link «…»"; en TikTok el link
+  va escrito en el video y en el texto, sin prometer "link en la bio" hasta que
+  TikTok lo habilite. Instagram y TikTok se programan por separado.
 - No programes nada que no esté `aprobado`. No uses `autoPublish: true` salvo
   que la persona lo pida.
 - No respondas DMs ni comentarios en nombre de Tratto: si hay algo para
