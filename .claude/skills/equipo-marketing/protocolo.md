@@ -30,6 +30,7 @@ Precios: solo de la tabla `precios_referencia` (con fecha) o de pantallas reales
 | Videos | skill `video-publicidad` (`tools/piezas-redes/reels`) |
 | Sistema de contenido (hooks, puntaje, memoria) | skill `contenido` y `tools/contenido` |
 | Mails automáticos | automatizaciones del CRM (`growth_workflows` + `growth_workflow_steps`), salen por Brevo SMTP |
+| Mails a proveedores (un rubro por día) | agente `mkt-prospeccion`, Gmail trattoapp1@gmail.com, rotación en `growth_mkt_rotacion`, números con `select mkt_prospeccion_numeros(7);` |
 | Archivos públicos (videos para programar) | carpeta `redes/` del repo → https://www.trattoapp.com.ar/redes/<archivo> al publicar en `main` |
 
 `crm_ws()` devuelve el id del workspace "tratto". Úsalo en todos los SQL.
@@ -46,7 +47,16 @@ Precios: solo de la tabla `precios_referencia` (con fecha) o de pantallas reales
    "sin datos todavía". Nunca reseñas ni testimonios ficticios.
 4. **Permiso (Ley 25.326).** Mails y mensajes solo a quien tiene
    `consent = 'opt_in'` y no está en `do_not_contact`. Nunca mensajes en frío
-   a desconocidos (DM, WhatsApp, mail comprado o scrapeado).
+   a desconocidos (DM, WhatsApp, listas compradas, mails sacados de comentarios
+   o reseñas).
+   **Única excepción (pedido del fundador, 8/10/2026): los mails a proveedores
+   del agente `mkt-prospeccion`.** Solo a direcciones que el propio negocio
+   publicó para que lo contacten, desde trattoapp1@gmail.com (nunca por Brevo:
+   lo prohíbe y arriesga los mails de la app), uno por uno, una sola vez por
+   dirección, diciendo dónde se encontró el mail y con la opción de responder
+   "no". La ley permite el contacto comercial con datos de fuentes públicas si
+   se ofrece la baja (art. 27). Esos contactos quedan con permiso `unknown`:
+   las automatizaciones no les escriben hasta que se registren con permiso.
 5. **Plata.** El presupuesto de anuncios lo decide la persona. El equipo
    propone montos, nunca los gasta.
 6. **Producción con cuidado.** Cambios en la web o en la app: rama + PR. Solo
@@ -137,7 +147,7 @@ returning slug;
 
 Fuentes (`growth_sources.key`): instagram, tiktok, facebook, google, whatsapp,
 email, offline, referral, calculadora, radar, influencers, ia, meta_ads,
-google_ads, ads, organic, other. `destination`: smart · web · custom.
+google_ads, ads, organic, other, prospeccion (mails a proveedores). `destination`: smart · web · custom.
 `utm_campaign` = el `slug` del link o el nombre corto de la pieza; guardalo en
 `link_slug` del item para poder medirlo después.
 

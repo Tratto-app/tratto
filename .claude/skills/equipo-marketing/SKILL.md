@@ -22,6 +22,7 @@ todo el equipo.
 | Contenido | `mkt-contenido` | Guías de precios, artículos, promociones y el mail de novedades |
 | Anuncios | `mkt-anuncios` | Campañas de Meta y Google listas para cargar, con públicos, textos, creativos y links; mide el costo por registro |
 | Operaciones | `mkt-operaciones` | El CRM: mails automáticos, seguimientos para que ningún contacto se enfríe, bajas, salud de los envíos |
+| Operaciones · mails a proveedores | `mkt-prospeccion` | 70 mails por día desde Gmail a proveedores de un rubro (rota los 46 y vuelve a empezar), respuestas y bajas. Corre en su propia rutina diaria |
 
 Los subagentes no pueden llamarse entre ellos: coordinás vos. Para delegar,
 usá la herramienta Agent con `subagent_type` = el nombre de la tabla y un
@@ -35,6 +36,7 @@ Mirá lo que te pidieron (o el argumento de `/equipo-marketing`):
 ### `semanal` — plan de la semana (lunes)
 
 1. **Números.** `select mkt_tablero(null, 7);` y `select mkt_tablero(null, 28);`.
+   Mails a proveedores: `select mkt_prospeccion_numeros(7);`.
    Si hay Metricool, pedile a Redes el resumen de lo publicado la semana pasada.
 2. **Diagnóstico** en 5 líneas: de dónde vino la gente (fuente, campaña,
    entrada), cuántos se registraron y activaron, qué funcionó y qué no, qué
@@ -71,6 +73,8 @@ Mirá lo que te pidieron (o el argumento de `/equipo-marketing`):
    departamento y delegá: cada uno ejecuta lo suyo y actualiza el estado.
 3. **Operaciones**: chequeo de salud (mails fallidos, automatizaciones con
    error, envíos pausados, tope diario). Si hay un problema, item `alerta`.
+   Los mails a proveedores corren en su propia rutina (`mkt-prospeccion`):
+   no los lances desde acá.
 4. **Redes**, solo si pasaron 2+ días desde la última vez: traer métricas de
    Metricool de lo publicado y guardarlas en `metricas` del item.
 5. Si no hay pedidos, nada aprobado ni alertas, no inventes trabajo: terminá diciendo
