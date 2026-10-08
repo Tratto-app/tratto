@@ -1484,6 +1484,14 @@
               <a href="/privacidad.html" target="_blank" rel="noopener">política de privacidad</a>.</span>
           </div>
           <div class="err" id="e-a-legales">Tenés que aceptar los términos para crear la cuenta.</div>
+          <!-- Permiso de publicidad: aparte de los dos de arriba (art. 27, Ley
+               25.326), opcional y desmarcado. La cuenta se crea igual sin él.
+               autocomplete="off" para que el navegador no lo restaure tildado. -->
+          <div class="tildar" id="a-publi-fila">
+            <input type="checkbox" id="a-publi" autocomplete="off" aria-labelledby="a-publi-txt">
+            <span id="a-publi-txt">Quiero recibir por email novedades y promociones de Tratto (opcional).
+              Me puedo dar de baja cuando quiera.</span>
+          </div>
         </div>
       </div>
 
@@ -2749,6 +2757,7 @@ function tildable(idFila, idCasilla){
 }
 tildable('a-transfer-fila', 'a-transfer');
 tildable('a-legales-fila',  'a-legales');
+tildable('a-publi-fila',    'a-publi');
 tildable('p-declara-fila',  'p-declara');
 
 /* El oficio solo se le pregunta al proveedor, y el subcampo del oficio propio
@@ -2875,6 +2884,12 @@ $('a-enviar').addEventListener('click', async () => {
                   transfer_permiso:true, transfer_permiso_fecha:new Date().toISOString(),
                   legales_aceptados:true, legales_fecha:new Date().toISOString(),
                   legales_version:VERSION_LEGALES, legales_rol:rolElegido,
+                  /* Publicidad: solo si tildó la casilla opcional. Mismo formato
+                     que guardarPermisoPublicidad (Ajustes); el CRM lo toma como
+                     opt_in recién cuando la persona confirma el mail
+                     (crm_registrar_usuario y crm_desde_confirmacion). */
+                  publicidad_permiso: $('a-publi').checked,
+                  publicidad_permiso_fecha: $('a-publi').checked ? new Date().toISOString() : null,
                   /* Canal de marketing por el que llegó (ver origenVisita) */
                   origen: origenVisita() }}
         : {email, password:pass})
