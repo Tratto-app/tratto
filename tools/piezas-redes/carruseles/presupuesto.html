@@ -1,0 +1,207 @@
+<!doctype html><html lang="es"><head><meta charset="utf-8">
+<title>Carrusel · Te lo dejo en 80</title>
+<!-- Item de la cola f7eb3020 (aprobado). Textos tal cual el cuerpo aprobado; precios del flete de
+     precios_referencia ajustados a oct-2026. Exportar: python3 render-carrusel.py presupuesto.html carrusel-presupuesto -->
+<link rel="stylesheet" href="carrusel.css">
+<style>
+/* comunes de este carrusel */
+.paso{display:flex;align-items:center;gap:30px}
+.paso h2{font:700 118px/1 'IBM Plex Sans Condensed',sans-serif;letter-spacing:-.02em}
+.paso h2 .num{color:var(--laton-osc);margin-right:18px}
+.ico.grande{width:150px;height:150px;border-radius:40px}
+.ejemplos{display:flex;flex-direction:column;gap:22px;margin-top:64px}
+.ej{display:flex;align-items:center;gap:30px;padding:26px 34px}
+.ej p{font:500 46px/1.25 'IBM Plex Sans',sans-serif;color:var(--tinta)}
+.ej p b{font-weight:600}
+.ej .mono{font-size:40px;color:var(--verde);letter-spacing:-.02em;white-space:nowrap}
+
+/* 1 · hook */
+.globo-chat{position:relative;align-self:flex-start;background:#fff;border-radius:44px 44px 44px 12px;padding:46px 60px 50px;
+  box-shadow:0 30px 70px rgba(12,38,32,.14);font:600 92px/1.05 'IBM Plex Sans',sans-serif;letter-spacing:-.02em;color:var(--tinta)}
+.globo-chat::after{content:"";position:absolute;left:-22px;bottom:0;width:44px;height:44px;background:#fff;clip-path:polygon(100% 0,100% 100%,0 100%)}
+.hook .que{font:700 250px/.9 'IBM Plex Sans Condensed',sans-serif;letter-spacing:-.03em;color:var(--laton-osc);margin-top:70px}
+
+/* 2 · las 5 cosas */
+.dos h2{font:700 96px/1.0 'IBM Plex Sans Condensed',sans-serif;letter-spacing:-.015em}
+.dos .pedi{font:600 52px/1.2 'IBM Plex Sans',sans-serif;color:var(--verde-vivo);margin-top:34px}
+.casilleros{display:grid;grid-template-columns:repeat(5,1fr);gap:18px;margin-top:64px}
+.casillero{height:160px;border-radius:28px;background:#fff;border:3px solid rgba(30,93,73,.16);display:flex;align-items:center;justify-content:center;
+  font:600 64px/1 'IBM Plex Mono',monospace;color:var(--verde);box-shadow:0 14px 34px rgba(12,38,32,.08)}
+.casillero.dest{background:var(--laton-claro);border:4px solid var(--laton);color:var(--laton-osc)}
+.dos .nota{font:500 44px/1.35 'IBM Plex Sans',sans-serif;color:var(--tinta-2);margin-top:56px}
+.dos .nota b{font-weight:600;color:var(--laton-osc)}
+
+/* 4 · aparte tachado */
+.lista-no{font:600 56px/1.25 'IBM Plex Sans',sans-serif;margin-top:64px}
+.cuatro .si-no{font:500 46px/1.3 'IBM Plex Sans',sans-serif;color:var(--tinta-2);margin-top:54px}
+.aparte{position:relative;display:inline-block;font:700 170px/1 'IBM Plex Sans Condensed',sans-serif;letter-spacing:-.02em;color:var(--tinta);margin-top:26px;padding:0 10px}
+.aparte::before{content:"";position:absolute;left:-6px;right:-6px;top:52%;height:16px;background:var(--laton);border-radius:8px;transform:rotate(-4deg)}
+.aparte::after{content:"";position:absolute;left:4px;right:4px;bottom:-40px;height:10px;border-radius:5px;background:var(--laton-osc);opacity:.85}
+
+/* 6 · fecha */
+.calendario{position:relative;align-self:flex-start;margin-top:64px;padding:44px 60px;display:flex;align-items:center;gap:44px}
+.calendario .sello{font-size:44px;transform:rotate(-6deg)}
+.seis .bajada{font:500 48px/1.3 'IBM Plex Sans',sans-serif;color:var(--tinta-2);margin-top:60px}
+.seis .bajada b{font-weight:600;color:var(--verde-vivo)}
+
+/* 7 · cómo se paga */
+.preguntas{display:flex;flex-direction:column;gap:26px;margin-top:70px}
+.pregunta{align-self:flex-start;background:#fff;border-radius:40px 40px 40px 12px;padding:34px 48px;box-shadow:0 24px 60px rgba(12,38,32,.10);
+  font:600 66px/1.1 'IBM Plex Sans',sans-serif;letter-spacing:-.015em}
+.pregunta.dos-l{margin-left:70px}
+
+/* 8 · checklist para capturar */
+.placa.blanca{background:#fff}
+.placa.blanca .pano{display:none}
+.placa.blanca .cont{border:10px solid var(--verde);border-radius:0}
+.ocho h2{font:700 98px/1 'IBM Plex Sans Condensed',sans-serif;letter-spacing:-.015em}
+.checks{margin-top:40px}
+.chk{display:flex;align-items:center;gap:30px;padding:20px 0;border-bottom:3px solid #E3EAE6}
+.chk:last-child{border-bottom:0}
+.chk .caja{width:72px;height:72px;border-radius:18px;background:var(--verde);display:flex;align-items:center;justify-content:center;flex:none}
+.chk .n{font:600 40px/1 'IBM Plex Mono',monospace;color:var(--laton-osc);width:40px}
+.chk span{font:600 60px/1.1 'IBM Plex Sans',sans-serif;color:var(--tinta)}
+.ocho .comenta{font:600 44px/1.3 'IBM Plex Sans',sans-serif;color:var(--verde-vivo);margin-top:40px}
+.ocho .etiqueta{font:500 40px/1.3 'IBM Plex Sans',sans-serif;color:var(--tinta-2);margin-top:14px}
+
+/* 9 · mensaje para copiar */
+.nueve h2{font:700 96px/1.0 'IBM Plex Sans Condensed',sans-serif;letter-spacing:-.015em}
+.mensaje{position:relative;align-self:flex-end;margin-top:80px;background:var(--verde-claro);border:3px solid rgba(43,126,98,.25);border-radius:44px 44px 12px 44px;
+  padding:56px 56px 60px;box-shadow:0 30px 70px rgba(12,38,32,.12);font:500 52px/1.38 'IBM Plex Sans',sans-serif;color:var(--tinta)}
+.mensaje::after{content:"";position:absolute;right:-24px;bottom:-3px;width:46px;height:46px;background:var(--verde-claro);clip-path:polygon(0 0,0 100%,100% 100%)}
+.mensaje .sello{position:absolute;top:-36px;left:44px;transform:rotate(-4deg);font-size:30px}
+
+/* 10 · cierre */
+.cierre h2{font:700 112px/1.0 'IBM Plex Sans Condensed',sans-serif;letter-spacing:-.015em;margin-top:56px}
+.cierre .bajada{font:500 44px/1.3 'IBM Plex Sans',sans-serif;color:#B9C2BC;margin-top:30px}
+.cierre .url-caja{margin-top:44px}
+.cierre .bio{font:500 26px/1 'IBM Plex Mono',monospace;letter-spacing:.12em;text-transform:uppercase;color:var(--gris-2);margin-top:20px}
+.cierre .tratto{font:600 42px/1.3 'IBM Plex Sans',sans-serif;color:#FCFBF8;margin-top:56px;max-width:500px}
+.cierre .tratto b{color:var(--verde-luz);font-weight:600}
+.tel{position:absolute;z-index:2;width:400px;height:800px;right:56px;top:830px;border-radius:58px;background:#0E1815;padding:12px;transform:rotate(5deg);
+  box-shadow:0 50px 100px rgba(0,0,0,.45),0 0 0 2px rgba(143,217,188,.25)}
+.tel .pantalla{position:absolute;inset:12px;border-radius:48px;overflow:hidden;background:#FCFBF8}
+.tel .pantalla img{width:100%;display:block;margin-top:52px;clip-path:inset(12px 0 0 0)}
+.tel .isla{position:absolute;top:26px;left:50%;width:110px;height:30px;margin-left:-55px;border-radius:15px;background:#0E1815;z-index:2}
+</style></head><body>
+
+<!-- 1 · HOOK -->
+<section class="placa hook"><div class="cont">
+  <div class="medio">
+    <div class="globo-chat">Te lo dejo en 80.</div>
+    <div class="que">¿80 qué?</div>
+  </div>
+  <div class="pie"><span class="web">trattoapp.com.ar</span><span class="desliza">Deslizá →</span></div>
+</div></section>
+
+<!-- 2 · LAS 5 COSAS -->
+<section class="placa dos"><div class="cont">
+  <div class="medio">
+    <h2>Un número por WhatsApp no es un presupuesto.</h2>
+    <p class="pedi">Pedí que diga estas 5 cosas.</p>
+    <div class="casilleros"><div class="casillero">1</div><div class="casillero dest">2</div><div class="casillero">3</div><div class="casillero">4</div><div class="casillero">5</div></div>
+    <p class="nota"><b>La 2</b> evita el “ah, eso era aparte”. <b>La 5</b>, la pelea del final.</p>
+  </div>
+  <div class="pie"><span class="web">trattoapp.com.ar</span><span class="desliza">Deslizá →</span></div>
+</div></section>
+
+<!-- 3 · QUÉ INCLUYE -->
+<section class="placa"><div class="cont">
+  <div class="medio">
+    <div class="paso"><div class="ico grande"><i data-ico="check" data-px="92"></i></div><h2><span class="num">1.</span>Qué incluye.</h2></div>
+    <div class="ejemplos">
+      <div class="tarjeta ej"><div class="ico chico"><i data-ico="torta" data-px="52"></i></div><p><b>La torta,</b> ¿con decoración?</p></div>
+      <div class="tarjeta ej"><div class="ico chico"><i data-ico="camion" data-px="52"></i></div><p><b>El flete,</b> ¿con peones?</p></div>
+      <div class="tarjeta ej"><div class="ico chico"><i data-ico="libro" data-px="52"></i></div><p><b>La clase,</b> ¿con material?</p></div>
+    </div>
+  </div>
+  <div class="pie"><span class="web">trattoapp.com.ar</span></div>
+</div></section>
+
+<!-- 4 · QUÉ NO INCLUYE -->
+<section class="placa cuatro"><div class="cont">
+  <div class="medio">
+    <div class="paso"><div class="ico grande" style="color:var(--laton-osc)"><i data-ico="cruz" data-px="92"></i></div><h2><span class="num">2.</span>Qué NO incluye.</h2></div>
+    <p class="lista-no">Materiales, traslado, horas extra.</p>
+    <p class="si-no">Si no está escrito, después es</p>
+    <div><span class="aparte">“aparte”.</span></div>
+  </div>
+  <div class="pie"><span class="web">trattoapp.com.ar</span></div>
+</div></section>
+
+<!-- 5 · CUÁNTO DURA -->
+<section class="placa"><div class="cont">
+  <div class="medio">
+    <div class="paso"><div class="ico grande"><i data-ico="reloj" data-px="92"></i></div><h2><span class="num">3.</span>Cuánto dura.</h2></div>
+    <div class="ejemplos">
+      <div class="tarjeta ej"><div class="ico chico"><i data-ico="nota" data-px="52"></i></div><p><b>El DJ,</b> ¿4 o 5 horas?</p></div>
+      <div class="tarjeta ej"><div class="ico chico"><i data-ico="camara" data-px="52"></i></div><p><b>La sesión de fotos,</b> ¿cuántas editadas?</p></div>
+      <div class="tarjeta ej" style="align-items:flex-start"><div class="ico chico"><i data-ico="camion" data-px="52"></i></div>
+        <p style="font-size:38px"><b>El flete chico</b> sale <span class="mono">$53.000 a $73.000</span> cerrado; con 2 peones se cobra por hora: <span class="mono">$81.000 a $132.000</span>.</p></div>
+    </div>
+  </div>
+  <div class="pie"><span class="fuente">Precios de referencia de mano de obra · AMBA · oct-2026</span></div>
+</div></section>
+
+<!-- 6 · HASTA CUÁNDO VALE -->
+<section class="placa seis"><div class="cont">
+  <div class="medio">
+    <div class="paso"><div class="ico grande"><i data-ico="calendario" data-px="92"></i></div><h2 style="font-size:104px"><span class="num">4.</span>Hasta cuándo vale el precio.</h2></div>
+    <div class="tarjeta calendario"><span style="color:var(--verde)"><i data-ico="calendario" data-px="150" data-grosor="3.5"></i></span><span class="sello">Válido hasta…</span></div>
+    <p class="bajada">Con precios que cambian todos los meses, <b>pedí la fecha.</b></p>
+  </div>
+  <div class="pie"><span class="web">trattoapp.com.ar</span></div>
+</div></section>
+
+<!-- 7 · CÓMO SE PAGA -->
+<section class="placa"><div class="cont">
+  <div class="medio">
+    <div class="paso"><div class="ico grande"><i data-ico="billete" data-px="92"></i></div><h2><span class="num">5.</span>Cómo se paga.</h2></div>
+    <div class="preguntas">
+      <div class="pregunta">¿Hay seña?</div>
+      <div class="pregunta dos-l">¿Cuánto, y cuándo el resto?</div>
+    </div>
+  </div>
+  <div class="pie"><span class="web">trattoapp.com.ar</span></div>
+</div></section>
+
+<!-- 8 · CHECKLIST (para capturar) -->
+<section class="placa blanca ocho"><div class="cont">
+  <div class="medio">
+    <h2>Antes de decir que sí:</h2>
+    <div class="checks">
+      <div class="chk"><span class="n">1</span><div class="caja"><i data-ico="check" data-px="56" data-color="#fff" data-grosor="5"></i></div><span>qué incluye</span></div>
+      <div class="chk"><span class="n">2</span><div class="caja"><i data-ico="check" data-px="56" data-color="#fff" data-grosor="5"></i></div><span>qué no</span></div>
+      <div class="chk"><span class="n">3</span><div class="caja"><i data-ico="check" data-px="56" data-color="#fff" data-grosor="5"></i></div><span>cuánto dura</span></div>
+      <div class="chk"><span class="n">4</span><div class="caja"><i data-ico="check" data-px="56" data-color="#fff" data-grosor="5"></i></div><span>hasta cuándo vale</span></div>
+      <div class="chk"><span class="n">5</span><div class="caja"><i data-ico="check" data-px="56" data-color="#fff" data-grosor="5"></i></div><span>cómo se paga</span></div>
+    </div>
+    <p class="comenta">¿Cuál te olvidaste alguna vez? Comentá el número.</p>
+    <p class="etiqueta">Etiquetá al que acepta todo por WhatsApp.</p>
+  </div>
+  <div class="pie"><span class="web">trattoapp.com.ar</span></div>
+</div></section>
+
+<!-- 9 · MENSAJE PARA COPIAR -->
+<section class="placa nueve"><div class="cont">
+  <div class="medio">
+    <h2>Copiá y mandá esto la próxima vez:</h2>
+    <div class="mensaje"><span class="sello">Copiá y mandá</span>Hola, ¿me pasás el presupuesto por escrito con qué incluye, qué no, cuánto dura, hasta cuándo vale y cómo se paga? Gracias.</div>
+  </div>
+  <div class="pie"><span class="web">trattoapp.com.ar</span></div>
+</div></section>
+
+<!-- 10 · CIERRE -->
+<section class="placa noche cierre"><div class="cont">
+  <h2>¿Ya tenés el número?</h2>
+  <p class="bajada">Fijate en 20 segundos si es caro, justo o barato:</p>
+  <div><span class="url-caja"><span id="logo-url"></span>trattoapp.com.ar/r/ig-presupuesto</span></div>
+  <p class="bio">(link en la bio)</p>
+  <p class="tratto">En Tratto los presupuestos te llegan con <b>qué incluye y qué no.</b></p>
+</div>
+<div class="tel"><div class="isla"></div><div class="pantalla"><img src="../reels/img/calc-resultado.jpg" alt=""></div></div>
+</section>
+
+<script src="carrusel.js"></script>
+<script>document.getElementById('logo-url').outerHTML = LOGO(46, 'lu');</script>
+</body></html>

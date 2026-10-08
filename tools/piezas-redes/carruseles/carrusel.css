@@ -1,0 +1,73 @@
+/* Carruseles de Instagram (1080x1350, 4:5) con la identidad de Tratto.
+   Misma base que las publicidades "presentación de producto": fondo claro con
+   manchas de color, títulos en Plex Sans Condensed, precios y URL en Plex Mono,
+   latón como sello. El fondo es un panorama continuo: las manchas siguen de una
+   placa a la otra al deslizar. */
+@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@500;600&family=IBM+Plex+Sans+Condensed:wght@600;700&family=IBM+Plex+Sans:wght@400;500;600&family=Montserrat:wght@600&display=block');
+:root{
+  --claro:#F3F6F2; --blanco:#FFFFFF; --tinta:#0E1815; --tinta-2:#3A4A43; --gris:#5E6B65; --gris-2:#94A19B;
+  --verde:#1E5D49; --verde-vivo:#2B7E62; --verde-luz:#8FD9BC; --verde-claro:#DDF3EA;
+  --laton:#C9A227; --laton-osc:#8A6E10; --laton-claro:#F6EBC4; --noche:#0C2620; --noche-2:#123830; --noche-3:#1B4B40;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:#777;font-family:'IBM Plex Sans',sans-serif;color:var(--tinta);display:flex;flex-direction:column;gap:40px;padding:40px;align-items:flex-start}
+
+.placa{position:relative;width:1080px;height:1350px;overflow:hidden;flex:none;background:var(--claro)}
+/* Panorama: 10 placas de ancho; cada placa muestra su tramo (--i = 0..9) */
+.pano{position:absolute;top:0;height:1350px;width:10800px;left:calc(var(--i) * -1080px);
+  background:linear-gradient(100deg,#F7F8F3 0%,#EEF4F0 35%,#F6F2E4 60%,#EEF4F0 85%,#F7F8F3 100%)}
+.mancha{position:absolute;border-radius:50%;filter:blur(120px);opacity:.6}
+.mv{background:radial-gradient(circle,#9FE3CA 0%,transparent 70%)}
+.ml{background:radial-gradient(circle,#F3DE9A 0%,transparent 70%)}
+.mc{background:radial-gradient(circle,#B9E6D6 0%,transparent 70%)}
+.grano{position:absolute;inset:0;opacity:.035;background-image:radial-gradient(#000 1px,transparent 1px);background-size:4px 4px}
+
+.cont{position:relative;z-index:1;height:100%;padding:76px 92px 70px;display:flex;flex-direction:column}
+.medio{flex:1;display:flex;flex-direction:column;justify-content:center;padding:24px 0 40px}
+
+/* Cabecera y pie */
+.cab{display:flex;align-items:center;justify-content:space-between}
+.marca{display:flex;align-items:center;gap:16px}
+.marca .logo{width:58px;height:58px;border-radius:16px;background:var(--noche);display:flex;align-items:center;justify-content:center}
+.marca span{font:600 24px/1 Montserrat,sans-serif;letter-spacing:.3em;color:var(--tinta)}
+.cuenta{font:500 24px/1 'IBM Plex Mono',monospace;letter-spacing:.08em;color:var(--gris)}
+.cuenta b{font-weight:600;color:var(--verde)}
+.pie{margin-top:auto;display:flex;align-items:center;justify-content:space-between;gap:24px}
+.pie .fuente{font:500 20px/1.35 'IBM Plex Mono',monospace;letter-spacing:.06em;text-transform:uppercase;color:var(--gris)}
+.pie .web{font:600 26px/1 'IBM Plex Mono',monospace;letter-spacing:.04em;color:var(--verde)}
+.pie .desliza{font:600 22px/1 'IBM Plex Mono',monospace;letter-spacing:.16em;text-transform:uppercase;color:var(--laton-osc)}
+
+/* Tipografía */
+.cond{font-family:'IBM Plex Sans Condensed',sans-serif;font-weight:700;letter-spacing:-.015em}
+.mono{font-family:'IBM Plex Mono',monospace;font-weight:600}
+.etq{font:600 22px/1.2 'IBM Plex Mono',monospace;letter-spacing:.16em;text-transform:uppercase;color:var(--gris)}
+.verde{color:var(--verde-vivo)}
+.oro{color:var(--laton-osc)}
+
+/* Ícono en cuadrado blanco (igual que en las publicidades) */
+.ico{width:112px;height:112px;border-radius:30px;background:#fff;color:var(--verde);display:flex;align-items:center;justify-content:center;
+  box-shadow:0 18px 40px rgba(12,38,32,.12);flex:none}
+.ico.chico{width:84px;height:84px;border-radius:24px}
+
+/* Sello latón: el elemento firma (certificado, fecha, "el que más varía") */
+.sello{display:inline-flex;align-items:center;gap:14px;border:5px solid var(--laton);color:var(--laton-osc);border-radius:999px;
+  padding:12px 28px;font:700 34px/1 'IBM Plex Sans Condensed',sans-serif;letter-spacing:.06em;text-transform:uppercase;
+  background:rgba(255,255,255,.92);white-space:nowrap}
+.sello::before{content:"";width:16px;height:16px;border-radius:50%;background:var(--laton)}
+
+/* Tarjeta blanca */
+.tarjeta{background:#fff;border-radius:30px;box-shadow:0 24px 60px rgba(12,38,32,.10);border:2px solid rgba(30,93,73,.08)}
+
+/* Placa oscura de cierre */
+.placa.noche{background:var(--noche);color:#FCFBF8}
+.placa.noche .fondo-noche{position:absolute;inset:0;
+  background:radial-gradient(80% 60% at 15% 0%, rgba(43,126,98,.45), transparent 62%),
+             radial-gradient(70% 55% at 100% 100%, rgba(201,162,39,.16), transparent 58%),
+             radial-gradient(circle at 50% 45%,#164237 0%,#0C2620 60%,#081A16 100%)}
+.placa.noche .marca span{color:#E8EBEA}
+.placa.noche .marca .logo{background:rgba(255,255,255,.06);border:2px solid rgba(143,217,188,.25)}
+.placa.noche .cuenta{color:var(--gris-2)}
+.placa.noche .cuenta b{color:var(--verde-luz)}
+.placa.noche .pie .fuente{color:var(--gris-2)}
+.url-caja{display:inline-flex;align-items:center;gap:18px;border:2px solid rgba(143,217,188,.35);background:rgba(143,217,188,.07);
+  border-radius:24px;padding:22px 30px;font:600 38px/1.1 'IBM Plex Mono',monospace;color:var(--verde-luz);white-space:nowrap}

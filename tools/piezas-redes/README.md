@@ -21,6 +21,31 @@ leen bien y que la redirección a `www` conserva esos parámetros.
 Para cambiar un texto: editar `piezas.html` y correr `python3 render.py`
 (Playwright + Chromium). Las imágenes quedan en `salida/`.
 
+## Carruseles de Instagram (`carruseles/`)
+
+Placas de 1080×1350 (4:5) con la misma base que las publicidades: fondo claro
+con manchas de color que siguen de una placa a la otra al deslizar (panorama
+continuo), títulos en Plex Sans Condensed, precios y URL en Plex Mono, sello
+de latón y cierre oscuro con la URL. `carrusel.css` y `carrusel.js` (íconos,
+logo, cabecera con el número de placa) son comunes; cada carrusel es un HTML
+con una `<section class="placa">` por placa.
+
+```bash
+cd tools/piezas-redes/carruseles
+python3 render-carrusel.py precios-oct.html carrusel-precios-oct      # → redes/carrusel-precios-oct-01..10.png (+ .jpg)
+python3 render-carrusel.py presupuesto.html carrusel-presupuesto --solo 10 --salida /tmp/previa   # revisar una sola
+```
+
+| Carrusel | Item de la cola | Link con nombre |
+|---|---|---|
+| `precios-oct.html` "Cuánto sale en octubre: 7 servicios de 7 rubros" | `5ebe9d95` | `ig-precios-oct` |
+| `presupuesto.html` "Te lo dejo en 80. ¿80 qué?" | `f7eb3020` | `ig-presupuesto` |
+
+Los textos salen tal cual del `cuerpo` aprobado; los precios, de
+`precios_referencia` ajustados al mes. La barra "cuánto varía" muestra el más
+caro respecto del más barato del rango, con tope en "el doble". Se exporta en
+PNG y en JPG (Instagram toma JPG cuando se programa por API).
+
 ## Reels animados (`reels/`)
 
 Reels de texto animado con la misma identidad, en 1080×1920 y listos para
