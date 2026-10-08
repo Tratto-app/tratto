@@ -23,6 +23,17 @@
     presupuesto: '<rect x="10" y="14" width="44" height="36" rx="6"/><path d="M10 24h44"/><path d="M20 36h10M20 42h18"/>',
     chat: '<path d="M10 16h44v26H30l-10 9v-9H10z"/><path d="M20 26h24M20 33h16"/>',
     estrella: '<path d="M32 10l6.5 13.5 14.5 2-10.5 10 2.5 14.5L32 43l-13 7 2.5-14.5L11 25.5l14.5-2z"/>',
+    huella: '<path d="M32 34c-7 0-14 7.5-14 14 0 4 3 6.5 7 6.5 3 0 5-2 7-2s4 2 7 2c4 0 7-2.5 7-6.5 0-6.5-7-14-14-14z"/><circle cx="16" cy="27" r="5"/><circle cx="25.5" cy="15" r="5"/><circle cx="38.5" cy="15" r="5"/><circle cx="48" cy="27" r="5"/>',
+    volante: '<circle cx="32" cy="32" r="22"/><circle cx="32" cy="32" r="6"/><path d="M10 32h16M38 32h16M32 38v16"/>',
+    nota: '<path d="M26 46V15l24-6v31"/><circle cx="19" cy="46" r="7"/><circle cx="43" cy="40" r="7"/><path d="M26 23l24-6"/>',
+    hojacheck: '<path d="M16 8h22l10 10v38H16z"/><path d="M38 8v10h10"/><path d="M23 37l6 6 12-13"/>',
+    candado: '<rect x="14" y="28" width="36" height="26" rx="5"/><path d="M21 28v-7a11 11 0 0 1 22 0v7"/><path d="M32 38v7"/>',
+    check: '<circle cx="32" cy="32" r="22"/><path d="M22 33l7 7 14-15"/>',
+    cruz: '<circle cx="32" cy="32" r="22"/><path d="M24 24l16 16M40 24L24 40"/>',
+    reloj: '<circle cx="32" cy="35" r="20"/><path d="M32 23v12l8 6"/><path d="M25 8h14M32 8v7"/>',
+    calendario: '<rect x="10" y="14" width="44" height="40" rx="6"/><path d="M10 26h44M22 8v10M42 8v10"/><path d="M20 36h6M30 36h6M40 36h4M20 45h6M30 45h6"/>',
+    grupo: '<circle cx="24" cy="23" r="8"/><circle cx="43" cy="25" r="6"/><path d="M9 51c0-8.5 6.5-15 15-15s15 6.5 15 15M40 37c8 0 14 5.5 14 13"/>',
+    reloj2: '<circle cx="32" cy="32" r="22"/><path d="M32 20v12l8 6"/>',
   };
   window.icono = (n, px = 92, color = 'currentColor') =>
     `<svg width="${px}" height="${px}" viewBox="0 0 64 64" fill="none" stroke="${color}" stroke-width="4" stroke-linecap="round" stroke-linejoin="round">${ICONOS[n]}</svg>`;
