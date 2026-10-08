@@ -25,6 +25,14 @@ export const ESQUEMAS = {
       palabras_no: { tipo: 'lista', de: TEXTO, requerido: true },
       restricciones: { tipo: 'lista', de: TEXTO, requerido: true },
       cta_principal: { ...TEXTO, requerido: true },
+      links: {
+        tipo: 'objeto',
+        campos: {
+          nota: TEXTO,
+          instagram: { tipo: 'objeto', campos: { usuario: { ...TEXTO, requerido: true }, link_en_perfil: { tipo: 'booleano', requerido: true }, links_del_perfil: { tipo: 'lista', de: TEXTO }, motivo: TEXTO } },
+          tiktok: { tipo: 'objeto', campos: { usuario: { ...TEXTO, requerido: true }, link_en_perfil: { tipo: 'booleano', requerido: true }, links_del_perfil: { tipo: 'lista', de: TEXTO }, motivo: TEXTO } },
+        },
+      },
       rubros: { tipo: 'objeto', campos: { cantidad: { tipo: 'entero', min: 1 }, frase: TEXTO, categorias: { tipo: 'lista', de: TEXTO }, fuente: TEXTO } },
       sesgo_oficios: { tipo: 'objeto', campos: { palabras: { tipo: 'lista', de: { tipo: 'texto', min: 1, max: 80 }, min: 1, requerido: true }, minimo: { tipo: 'entero', min: 1 }, salvo: { tipo: 'lista', de: TEXTO }, motivo: { ...TEXTO, requerido: true } } },
       alertas: {

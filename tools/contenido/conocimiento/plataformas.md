@@ -9,7 +9,7 @@ las skills. Lo que dice "conviene" es criterio, no un límite.
 | | TikTok | Instagram |
 |---|---|---|
 | Usuario | @trattoapp | @trattoapp_ |
-| Link clickeable | **No tiene** (protocolo, sección 8.2): el link va escrito en el video y en el texto | Link en la bio |
+| Link que se toca | En el texto, ninguno. En el perfil **todavía no** (protocolo, sección 8.2): el link va escrito en el texto y en pantalla | En el texto, ninguno. En el perfil, 3 links con nombre: la segunda línea dice "tocá @trattoapp_ y entrá al link «…»". En historias, el sticker de link |
 | Links con nombre | `trattoapp.com.ar/r/tt-<pieza>` | `trattoapp.com.ar/r/ig-<pieza>` |
 | Programar | Metricool (marca 7270470), publicación manual con aviso al teléfono | Metricool, igual |
 | Mejores horarios | `config/estrategia.json` → `horarios` | `config/estrategia.json` → `horarios` |

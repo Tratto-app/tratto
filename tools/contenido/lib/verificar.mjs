@@ -5,6 +5,7 @@
 import { conocimiento } from './conocimiento.mjs';
 import { ErrorEntrada } from './errores.mjs';
 import { revisarIA } from './humanizador.mjs';
+import { revisarCaminoAlLink } from './links.mjs';
 import { contarPalabras, limpiar, normalizar, oraciones, tieneCTA } from './texto.mjs';
 
 const MAX_TEXTO = 20000;
@@ -60,6 +61,13 @@ function revisarHashtags(caption, adv) {
   if (n < 3) adv.push(`El texto tiene ${n} hashtag(s): sumá de 3 a 5 elegidos por tamaño (contenido-hashtags).`);
 }
 
+// Camino de un toque al link (si se indica la red): sin él la pieza no pasa.
+function revisarLink(caption, entrada, marca, errores) {
+  if (entrada.red === undefined) return;
+  if (!['instagram', 'tiktok'].includes(entrada.red)) throw new ErrorEntrada('"red" tiene que ser instagram o tiktok');
+  for (const p of revisarCaminoAlLink(caption, entrada.red, marca?.links)) errores.push(p);
+}
+
 function texto(v, campo, req = true) {
   if (v === undefined || v === null) {
     if (req) throw new ErrorEntrada(`Falta "${campo}"`);
@@ -106,6 +114,7 @@ export function verificarPieza(entrada, marca) {
     const caption = texto(entrada.texto, 'texto', false);
     if (caption) textos.push(caption);
     revisarHashtags(caption, advertencias);
+    revisarLink(caption, entrada, marca, errores);
     revisarHumano([{ nombre: 'el guion', valor: soloLoDicho(guion) }, { nombre: 'el texto', valor: caption, formato: true }], errores, advertencias, medidas);
   }
 
@@ -124,6 +133,7 @@ export function verificarPieza(entrada, marca) {
     const lim = F.formatos.publicacion.limites.texto_max_caracteres;
     if (caption && caption.length > lim) errores.push(`El texto tiene ${caption.length} caracteres; el máximo es ${lim}.`);
     revisarHashtags(caption, advertencias);
+    revisarLink(caption, entrada, marca, errores);
     revisarHumano([...slides.map((v, i) => ({ nombre: `el slide ${i + 1}`, valor: v })), { nombre: 'el texto', valor: caption, formato: true }], errores, advertencias, medidas);
   }
 
@@ -138,6 +148,7 @@ export function verificarPieza(entrada, marca) {
     medidas.palabras_por_pantalla.forEach((n, i) => { if (n > G.texto_max_palabras) advertencias.push(`Pantalla ${i + 1}: ${n} palabras (guía: ${G.texto_max_palabras}); en historias se lee en 2–3 segundos.`); });
     if (pantallas.length && !pantallas.some(tieneCTA) && !entrada.sticker) advertencias.push('Ninguna pantalla pide una respuesta o acción (encuesta, pregunta, link, DM).');
     revisarHumano(pantallas.map((v, i) => ({ nombre: `la pantalla ${i + 1}`, valor: v })), errores, advertencias, medidas);
+    if (pantallas.length && !entrada.link) advertencias.push('Sin "link": una historia de Instagram es donde el link sí se toca. Sumá el sticker de link (link con nombre ig-historia-…).');
   }
 
   if (formato === 'publicacion') {
@@ -148,6 +159,7 @@ export function verificarPieza(entrada, marca) {
     if (t.length > L.texto_max_caracteres) errores.push(`Tiene ${t.length} caracteres; el máximo es ${L.texto_max_caracteres}.`);
     if (medidas.primera_linea_palabras > G.primera_linea_max_palabras) advertencias.push(`La primera línea tiene ${medidas.primera_linea_palabras} palabras (guía: ${G.primera_linea_max_palabras}); es lo único que se ve antes del "más".`);
     revisarHashtags(t, advertencias);
+    revisarLink(t, entrada, marca, errores);
     revisarHumano([{ nombre: 'el texto', valor: t, formato: true }], errores, advertencias, medidas);
   }
 
