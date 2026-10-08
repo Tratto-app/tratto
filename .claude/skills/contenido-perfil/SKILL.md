@@ -1,6 +1,6 @@
 ---
 name: contenido-perfil
-description: Optimiza el perfil de Instagram de Tratto (nombre buscable, usuario, bio, link, destacadas, publicaciones fijadas y foto) para que alguien que llega por primera vez entienda en 3 segundos qué es, para quién y qué hacer. Usar con "mejorá la bio", "optimizá el perfil", "qué pongo en destacadas".
+description: Optimiza el perfil de Instagram y de TikTok de Tratto (nombre buscable, usuario, bio, link, destacadas, publicaciones fijadas y foto) para que alguien que llega por primera vez entienda en 3 segundos qué es, para quién y qué hacer. Usar con "mejorá la bio", "optimizá el perfil", "qué pongo en destacadas".
 ---
 
 # Optimización de perfil
@@ -31,6 +31,20 @@ segundos si sigue la cuenta o toca el link. El perfil tiene que contestar:
    ```
 5. **Prueba de 3 segundos**: leé el perfil propuesto como alguien que no conoce Tratto y contestá las 4 preguntas. Si alguna no se contesta, volvé al paso 3.
 6. **Memoria**: `registrar contenido` con `formato: perfil`, `titulo: "Perfil vN"`, `guion` con todos los campos, y las fijadas que falten como `idea`.
+
+## TikTok (@trattoapp)
+
+Pieza 5 de 9 del sistema. Mismo objetivo (entender en 3 segundos qué es, para
+quién y qué hacer), con los límites de TikTok
+(`tools/contenido/conocimiento/plataformas.md`):
+- **Nombre** (30 caracteres): se busca por nombre; que diga qué hace Tratto.
+- **Bio** (80 caracteres): para quién + qué hacer. Como no hay link
+  clickeable, la bio dice la web escrita (`trattoapp.com.ar`).
+- **Videos fijados** (hasta 3): uno que explique Tratto, uno de precios (el
+  más guardable) y uno para proveedores.
+- **Foto:** el logo, igual que en Instagram, para que se reconozca.
+- Verificá los textos con `node tools/contenido/cli.mjs verificar` (formato
+  perfil) y pasalos por `node tools/contenido/cli.mjs humanizar`.
 
 ## Salida
 

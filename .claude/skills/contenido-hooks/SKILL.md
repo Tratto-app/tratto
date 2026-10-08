@@ -1,6 +1,6 @@
 ---
 name: contenido-hooks
-description: Genera y elige hooks (primera frase, primer segundo, primer slide) para reels, carruseles, historias y publicaciones de Tratto, usando 12 categorías (curiosidad, contrarian, problema, resultado, error, lista, historia, pregunta, shock, autoridad, identificación, intriga). Da varias alternativas, las verifica con el motor y selecciona la mejor por retención, claridad, curiosidad, identificación y viralidad. Usar con "haceme hooks", "mejorá este hook", "cómo arranco este reel".
+description: Genera y elige hooks (primera frase, primer segundo, primer slide) para reels y videos de TikTok e Instagram, carruseles, historias y publicaciones de Tratto, usando 12 categorías (curiosidad, contrarian, problema, resultado, error, lista, historia, pregunta, shock, autoridad, identificación, intriga). Da varias alternativas, las verifica con el motor y selecciona la mejor por retención, claridad, curiosidad, identificación y viralidad. Usar con "haceme hooks", "mejorá este hook", "cómo arranco este reel".
 ---
 
 # Generador de hooks
@@ -32,6 +32,16 @@ mecanismos, plantillas y riesgos están en `tools/contenido/conocimiento/hooks.j
    ```
    Si se adapta un contenido ajeno, agregá `"evitar": [frases del original]`. Las opciones con ✗ se reescriben o se descartan; la mejor opción es la que indica el motor entre las aptas (si elegís otra, justificalo).
 7. **Precios**: si un hook menciona un monto, tiene que salir de la tabla de referencia del tasador (`precios_referencia`) o de un relevamiento con fecha; si no hay dato, usá la pregunta sin número.
+
+## TikTok y fórmulas probadas
+
+Pieza 8 de 9 del sistema. Además de las 12 categorías, usá y alterná las
+fórmulas de `tools/contenido/conocimiento/plataformas.md` (número primero, mito
+vs. realidad, antes/después, confesión). En TikTok el gancho se **dice y se
+escribe** en el primer segundo e incluye la palabra clave que la gente busca
+("cuánto sale un flete"). En Instagram, el del caption entra en los primeros
+~125 caracteres. Para sacar el gancho de un video ajeno que funcionó, usá
+`contenido-radar` y `contenido-viralidad`.
 
 ## Salida
 

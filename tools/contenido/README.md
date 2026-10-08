@@ -1,8 +1,14 @@
 # Sistema de contenido para redes (skills + motor)
 
-Skills de Claude Code para crear, analizar, puntuar, mejorar y adaptar
-contenido de Instagram para Tratto, con un motor determinístico que puntúa,
-verifica y recuerda.
+Skills de Claude Code para planificar, escribir, crear, analizar, puntuar,
+mejorar y adaptar contenido de **TikTok e Instagram** para Tratto, con un motor
+determinístico que puntúa, verifica, revisa si un texto suena a IA y recuerda.
+
+Las 9 piezas (inspiradas en instagram-skills de Sergey Bulaev, MIT, y
+adaptadas a Tratto, a TikTok y al castellano de Argentina): planificador,
+redactor, carruseles, hashtags, perfil, humanizador, radar viral, ganchos y
+reutilizador. Las diferencias entre las dos redes están en
+`conocimiento/plataformas.md`.
 
 ```
 .claude/skills/
@@ -13,7 +19,13 @@ verifica y recuerda.
   contenido-optimizacion/    reescribe lo que más resta, antes/después
   contenido-carruseles/      carrusel completo slide por slide
   contenido-historias/       secuencias con stickers y objetivo
-  contenido-perfil/          nombre, bio, link, destacadas, fijadas
+  contenido-perfil/          nombre, bio, link, destacadas, fijadas (IG y TikTok)
+  contenido-planificador/    1 · la semana: qué, cuándo y en qué formato, en las dos redes
+  contenido-redactor/        2 · caption de IG y texto de TikTok con fórmulas de ganchos
+  contenido-hashtags/        4 · 3 a 5 hashtags con tamaño + palabras clave de TikTok
+  contenido-humanizador/     6 · que no suene a IA (con el comando humanizar)
+  contenido-radar/           7 · lo que mejor rinde en el nicho y su fórmula en blanco
+  contenido-reutilizador/    9 · una pieza → todas las redes y formatos
 tools/contenido/
   cli.mjs                    motor (Node 18+, sin dependencias)
   lib/                       puntaje, hooks, verificación, memoria, métricas, contexto, fotogramas
@@ -49,6 +61,7 @@ node tools/contenido/cli.mjs contexto [--segmento proveedores]
 node tools/contenido/cli.mjs puntuar   < puntuacion.json
 node tools/contenido/cli.mjs hooks     < hooks.json
 node tools/contenido/cli.mjs verificar < pieza.json
+node tools/contenido/cli.mjs humanizar --texto "…"   # cuánto suena a IA y qué reescribir
 node tools/contenido/cli.mjs registrar contenido|hook|resultado|aprendizaje|idea < datos.json
 node tools/contenido/cli.mjs actualizar contenido <id> < cambios.json
 node tools/contenido/cli.mjs metricas  [--comparar < resultado.json]
