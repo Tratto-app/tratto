@@ -13,7 +13,7 @@ const DEST: Record<string, string> = {
 interface LinkStat { link_id: string; clicks: number; android: number; ios: number; desktop: number; installs: number; registrations: number; activations: number; last_click: string | null }
 
 export default function Links() {
-  const { ws, app, toast } = useWs();
+  const { ws, app, toast, kind } = useWs();
   const [edit, setEdit] = useState<TrackingLink | 'new' | null>(null);
   const [archivados, setArchivados] = useState(false);
   const data = useAsync(async () => {
@@ -21,11 +21,11 @@ export default function Links() {
       supabase.from('growth_tracking_links').select('*').eq('workspace_id', ws!.id).order('created_at', { ascending: false }),
       supabase.from('growth_sources').select('id,key,name,kind').eq('workspace_id', ws!.id).order('name'),
       supabase.from('growth_campaigns').select('id,name').eq('workspace_id', ws!.id),
-      rpc<LinkStat[]>('growth_link_stats', { ws: ws!.id }),
+      rpc<LinkStat[]>('growth_link_stats_tipo', { ws: ws!.id, p_kind: kind }),
     ]);
     if (l.error) throw new Error(l.error.message);
     return { links: (l.data || []) as TrackingLink[], sources: (s.data || []) as Source[], campaigns: (c.data || []) as Campaign[], stats: Object.fromEntries(st.map((x) => [x.link_id, x])) as Record<string, LinkStat> };
-  }, [ws!.id]);
+  }, [ws!.id, kind]);
 
   const faltan = [!app?.play_store_url && 'Google Play', !app?.app_store_url && 'App Store', !app?.website && 'web'].filter(Boolean);
   const links = (data.data?.links || []).filter((l) => l.archived === archivados);

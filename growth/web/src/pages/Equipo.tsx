@@ -53,7 +53,7 @@ const VISTAS = [
 type VistaKey = (typeof VISTAS)[number]['key'];
 
 export default function Equipo() {
-  const { ws, toast } = useWs();
+  const { ws, toast, kind } = useWs();
   const [dias, setDias] = useState<'7' | '28'>('7');
   const [depto, setDepto] = useState<Depto | null>(null);
   const [vista, setVista] = useState<VistaKey>('curso');
@@ -62,11 +62,11 @@ export default function Equipo() {
   const data = useAsync(async () => {
     const [items, tablero] = await Promise.all([
       supabase.from('growth_mkt_items').select('*').eq('workspace_id', ws!.id).order('created_at', { ascending: false }).limit(300),
-      rpc<Tablero>('mkt_tablero', { p_ws: ws!.id, p_dias: Number(dias) }),
+      rpc<Tablero>('mkt_tablero_tipo', { p_ws: ws!.id, p_dias: Number(dias), p_kind: kind }),
     ]);
     if (items.error) throw new Error(items.error.message);
     return { items: (items.data || []) as Item[], tablero };
-  }, [ws!.id, dias]);
+  }, [ws!.id, dias, kind]);
 
   const items = data.data?.items || [];
   const t = data.data?.tablero;

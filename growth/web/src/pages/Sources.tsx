@@ -11,12 +11,12 @@ import { useWs } from '../lib/workspace';
 const KINDS: Record<string, string> = { social: 'Redes', paid: 'Pago', organic: 'Orgánico', referral: 'Referidos', messaging: 'Mensajería', email: 'Email', search: 'Buscadores', influencer: 'Influencers', other: 'Otro' };
 
 export default function Sources() {
-  const { ws, period, toast } = useWs();
+  const { ws, period, toast, kind } = useWs();
   const [nueva, setNueva] = useState(false);
   const [gasto, setGasto] = useState(false);
   const data = useAsync(async () => {
     const [b, s, c, sp] = await Promise.all([
-      rpc<Breakdown[]>('growth_breakdown', { ws: ws!.id, p_from: period.from, p_to: period.to, dim: 'source' }),
+      rpc<Breakdown[]>('growth_breakdown_tipo', { ws: ws!.id, p_from: period.from, p_to: period.to, dim: 'source', p_kind: kind }),
       supabase.from('growth_sources').select('id,key,name,kind').eq('workspace_id', ws!.id).order('name'),
       supabase.from('growth_campaigns').select('id,name').eq('workspace_id', ws!.id),
       supabase.from('growth_spend').select('id,spent_on,amount,note,source_id,campaign_id').eq('workspace_id', ws!.id).order('spent_on', { ascending: false }).limit(30),

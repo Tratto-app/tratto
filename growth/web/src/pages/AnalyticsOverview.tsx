@@ -25,13 +25,13 @@ export function BreakdownTable({ rows }: { rows: Breakdown[] }) {
 }
 
 export default function AnalyticsOverview() {
-  const { ws, period } = useWs();
+  const { ws, period, kind } = useWs();
   const [dim, setDim] = useState<'source' | 'campaign'>('source');
-  const args = { ws: ws!.id, p_from: period.from, p_to: period.to };
-  const k = useAsync(() => rpc<Kpis>('growth_kpis', args), [ws!.id, period.from, period.to]);
-  const b = useAsync(() => rpc<Breakdown[]>('growth_breakdown', { ...args, dim }), [ws!.id, period.from, period.to, dim]);
-  const d = useAsync(() => rpc<Daily[]>('growth_daily', { ...args, p_from: period.from || new Date(Date.now() - 90 * 864e5).toISOString() }), [ws!.id, period.from, period.to]);
-  const m = useAsync(() => rpc<{ template: string; sent: number; prospects: number; replied: number; interested: number; installed: number; registered: number }[]>('growth_message_performance', args), [ws!.id, period.from, period.to]);
+  const args = { ws: ws!.id, p_from: period.from, p_to: period.to, p_kind: kind };
+  const k = useAsync(() => rpc<Kpis>('growth_kpis_tipo', args), [ws!.id, period.from, period.to, kind]);
+  const b = useAsync(() => rpc<Breakdown[]>('growth_breakdown_tipo', { ...args, dim }), [ws!.id, period.from, period.to, dim, kind]);
+  const d = useAsync(() => rpc<Daily[]>('growth_daily_tipo', { ...args, p_from: period.from || new Date(Date.now() - 90 * 864e5).toISOString() }), [ws!.id, period.from, period.to, kind]);
+  const m = useAsync(() => rpc<{ template: string; sent: number; prospects: number; replied: number; interested: number; installed: number; registered: number }[]>('growth_message_performance_tipo', args), [ws!.id, period.from, period.to, kind]);
   const c = k.data?.cur; const p = k.data?.prev;
   const rows = [...(b.data || [])].filter((r) => r.prospects || r.installs || r.spend).sort((x, y) => y.activations - x.activations);
 

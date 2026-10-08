@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom';
 import { Funnel, Lines } from '../components/charts';
-import { Card, ErrorBox, Kpi, Loading, PageHeader, Score, StatusBadge } from '../components/ui';
+import { Badge, Card, ErrorBox, Kpi, Loading, PageHeader, Score, StatusBadge } from '../components/ui';
 import { rpc } from '../lib/api';
 import { ars, num, pct, rate, ratio, hace, nombre } from '../lib/format';
 import { useAsync } from '../lib/hooks';
@@ -9,19 +9,29 @@ import type { Daily, FunnelRow, Kpis, Prospect } from '../lib/types';
 import { useWs } from '../lib/workspace';
 
 export default function Dashboard() {
-  const { ws, period, app } = useWs();
-  const args = { ws: ws!.id, p_from: period.from, p_to: period.to };
-  const k = useAsync(() => rpc<Kpis>('growth_kpis', args), [ws!.id, period.from, period.to]);
-  const f = useAsync(() => rpc<FunnelRow[]>('growth_funnel', args), [ws!.id, period.from, period.to]);
-  const d = useAsync(() => rpc<Daily[]>('growth_daily', { ...args, p_from: period.from || new Date(Date.now() - 90 * 864e5).toISOString() }), [ws!.id, period.from, period.to]);
+  const { ws, period, app, kind } = useWs();
+  const args = { ws: ws!.id, p_from: period.from, p_to: period.to, p_kind: kind };
+  const k = useAsync(() => rpc<Kpis>('growth_kpis_tipo', args), [ws!.id, period.from, period.to, kind]);
+  const f = useAsync(() => rpc<FunnelRow[]>('growth_funnel_tipo', args), [ws!.id, period.from, period.to, kind]);
+  const d = useAsync(() => rpc<Daily[]>('growth_daily_tipo', { ...args, p_from: period.from || new Date(Date.now() - 90 * 864e5).toISOString() }), [ws!.id, period.from, period.to, kind]);
+  // Siempre las dos columnas, aunque arriba esté elegido un solo tipo
+  const comp = useAsync(async () => {
+    const base = { ws: ws!.id, p_from: period.from, p_to: period.to };
+    const [cli, prov] = await Promise.all([
+      rpc<Kpis>('growth_kpis_tipo', { ...base, p_kind: 'customer' }),
+      rpc<Kpis>('growth_kpis_tipo', { ...base, p_kind: 'provider' }),
+    ]);
+    return { cli: cli.cur, prov: prov.cur };
+  }, [ws!.id, period.from, period.to]);
   const hot = useAsync(async () => {
-    const { data, error } = await supabase.from('growth_prospects')
+    const q = supabase.from('growth_prospects')
       .select('id,first_name,last_name,status,score,next_action,last_reply_at')
-      .eq('workspace_id', ws!.id).gte('score', 70).is('installed_at', null).eq('do_not_contact', false)
-      .order('score', { ascending: false }).limit(8);
+      .eq('workspace_id', ws!.id).gte('score', 70).is('installed_at', null).eq('do_not_contact', false);
+    if (kind) q.eq('kind', kind);
+    const { data, error } = await q.order('score', { ascending: false }).limit(8);
     if (error) throw new Error(error.message);
     return data as Pick<Prospect, 'id' | 'first_name' | 'last_name' | 'status' | 'score' | 'next_action' | 'last_reply_at'>[];
-  }, [ws!.id]);
+  }, [ws!.id, kind]);
   const tasks = useAsync(async () => {
     const { data } = await supabase.from('growth_tasks').select('id,title,due_at,prospect_id').eq('workspace_id', ws!.id).eq('done', false).order('due_at').limit(6);
     return data || [];
@@ -40,9 +50,25 @@ export default function Dashboard() {
           <b>Envíos en pausa.</b> El sistema recibe registros y prepara las automatizaciones, pero no envía ningún mensaje todavía. Activalos en Ajustes → Espacio de trabajo cuando la app esté publicada en las tiendas.
         </div>
       )}
+      {comp.data && (
+        <Card title="Clientes y proveedores (período)" className="comparar-tipos">
+          <div className="tabla-wrap"><table>
+            <thead><tr><th></th><th className="num">Contactos nuevos</th><th className="num">Registros</th><th className="num">Primer pedido o servicio</th><th className="num">Usuarios activos</th></tr></thead>
+            <tbody>
+              {([['customer', 'Clientes', comp.data.cli], ['provider', 'Proveedores', comp.data.prov]] as const).map(([k2, nombre, x]) => (
+                <tr key={k2} className={kind === k2 ? 'elegido' : ''}>
+                  <td><Badge tone={k2 === 'provider' ? 'laton' : 'verde'}>{nombre}</Badge></td>
+                  <td className="num">{num(x.prospects)}</td><td className="num">{num(x.registrations)}</td>
+                  <td className="num">{num(x.activations)}</td><td className="num">{num(x.active_users)}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table></div>
+        </Card>
+      )}
       <ErrorBox error={k.error} onRetry={k.reload} />
       {k.loading && !k.data ? <Loading /> : c && (
-        <div className="grid g6">
+        <div className="grid g6 mt">
           <Kpi label="Prospectos nuevos" value={c.prospects} prev={p?.prospects} />
           <Kpi label="Contactados" value={c.contacted} prev={p?.contacted} />
           <Kpi label="Tasa de respuesta" value={rate(c.replied, c.contacted)} prev={rate(p?.replied, p?.contacted)} format={pct}

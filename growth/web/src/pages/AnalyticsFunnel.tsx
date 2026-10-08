@@ -8,10 +8,10 @@ import type { FunnelRow } from '../lib/types';
 import { useWs } from '../lib/workspace';
 
 export default function AnalyticsFunnel() {
-  const { ws, period, app } = useWs();
-  const args = { ws: ws!.id, p_from: period.from, p_to: period.to };
-  const f = useAsync(() => rpc<FunnelRow[]>('growth_funnel', args), [ws!.id, period.from, period.to]);
-  const a = useAsync(() => rpc<{ stage: string; label: string; n: number }[]>('growth_app_funnel', args), [ws!.id, period.from, period.to]);
+  const { ws, period, app, kind } = useWs();
+  const args = { ws: ws!.id, p_from: period.from, p_to: period.to, p_kind: kind };
+  const f = useAsync(() => rpc<FunnelRow[]>('growth_funnel_tipo', args), [ws!.id, period.from, period.to, kind]);
+  const a = useAsync(() => rpc<{ stage: string; label: string; n: number }[]>('growth_app_funnel_tipo', args), [ws!.id, period.from, period.to, kind]);
 
   // Dónde se pierde más gente (con al menos 5 personas en el paso previo)
   const peor = (() => {

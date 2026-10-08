@@ -13,19 +13,19 @@ import { useWs } from '../lib/workspace';
 interface WStat { workflow_id: string; runs: number; running: number; done: number; failed: number; replied: number; installed: number; registered: number }
 
 export default function Automations() {
-  const { ws, toast } = useWs();
+  const { ws, toast, kind } = useWs();
   const [edit, setEdit] = useState<Workflow | 'new' | null>(null);
   const [busy, setBusy] = useState(false);
   const data = useAsync(async () => {
     const [w, s, r] = await Promise.all([
       supabase.from('growth_workflows').select('*').eq('workspace_id', ws!.id).order('created_at'),
-      rpc<WStat[]>('growth_workflow_stats', { ws: ws!.id }),
+      rpc<WStat[]>('growth_workflow_stats_tipo', { ws: ws!.id, p_kind: kind }),
       supabase.from('growth_workflow_runs').select('id,status,current_step,started_at,updated_at,error,workflow_id,prospect:growth_prospects(id,first_name,last_name)')
         .eq('workspace_id', ws!.id).order('updated_at', { ascending: false }).limit(25),
     ]);
     if (w.error) throw new Error(w.error.message);
     return { workflows: (w.data || []) as Workflow[], stats: Object.fromEntries(s.map((x) => [x.workflow_id, x])) as Record<string, WStat>, runs: r.data || [] };
-  }, [ws!.id]);
+  }, [ws!.id, kind]);
 
   const procesar = async () => {
     setBusy(true);

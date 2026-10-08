@@ -10,10 +10,10 @@ interface StoreStat { platform: string; clicks: number; installs: number; regist
 const PLAT: Record<string, string> = { android: 'Android · Google Play', ios: 'iPhone · App Store', web: 'Web', desktop: 'Computadora', other: 'Otros' };
 
 export default function StoreLinks() {
-  const { ws, app, period, reloadApp, toast } = useWs();
+  const { ws, app, period, reloadApp, toast, kind } = useWs();
   const [f, setF] = useState({ play_store_url: '', app_store_url: '', deep_link_base: '' });
   useEffect(() => { if (app) setF({ play_store_url: app.play_store_url || '', app_store_url: app.app_store_url || '', deep_link_base: app.deep_link_base || '' }); }, [app]);
-  const s = useAsync(() => rpc<StoreStat[]>('growth_store_stats', { ws: ws!.id, p_from: period.from, p_to: period.to }), [ws!.id, period.from, period.to]);
+  const s = useAsync(() => rpc<StoreStat[]>('growth_store_stats_tipo', { ws: ws!.id, p_from: period.from, p_to: period.to, p_kind: kind }), [ws!.id, period.from, period.to, kind]);
   const integ = useAsync(async () => (await supabase.from('growth_integrations').select('provider,mode').eq('workspace_id', ws!.id).in('provider', ['google_play', 'app_store'])).data || [], [ws!.id]);
 
   const guardar = async () => {

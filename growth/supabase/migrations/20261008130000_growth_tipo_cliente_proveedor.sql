@@ -385,7 +385,8 @@ end $$;
 
 -- Permisos: solo usuarios con sesión (cada función valida además que sea
 -- miembro del workspace con growth_check).
-revoke execute on function public.growth_u_tipo(uuid, text), public.growth_p_tipo(uuid, text),
+revoke execute on function public.growth_u_tipo(uuid, text), public.growth_p_tipo(uuid, text) from public, anon, authenticated;
+revoke execute on function
   public.growth_kpis_tipo(uuid, timestamptz, timestamptz, text),
   public.growth_funnel_tipo(uuid, timestamptz, timestamptz, text),
   public.growth_app_funnel_tipo(uuid, timestamptz, timestamptz, text),
