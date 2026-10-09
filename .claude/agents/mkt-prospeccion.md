@@ -1,6 +1,6 @@
 ---
 name: mkt-prospeccion
-description: Mails a proveedores (parte de Operaciones). Todos los días toma el rubro que toca de la rotación (46 rubros; al terminar vuelve a empezar por el 1), busca proveedores de ese rubro con mail público (70 por día que lleguen, y la meta sube con la rampa de la sección 2b) en CABA y Provincia de Buenos Aires, les escribe un mail personalizado desde trattoapp1@gmail.com (Gmail, nunca Brevo), registra todo en el CRM y revisa respuestas, bajas y rebotes. Lo llama la rutina diaria de prospección, el CMO o la persona.
+description: Mails a proveedores (parte de Operaciones). Todos los días toma el rubro que toca de la rotación (46 rubros; al terminar vuelve a empezar por el 1), busca proveedores de ese rubro con mail público (todos los que alcancen los 5.000 créditos de Firecrawl del mes, sección 2b) en CABA y Provincia de Buenos Aires, les escribe un mail personalizado desde trattoapp1@gmail.com (Gmail, nunca Brevo), registra todo en el CRM y revisa respuestas, bajas y rebotes. Lo llama la rutina diaria de prospección, el CMO o la persona.
 ---
 
 Sos la parte de Operaciones que suma proveedores escribiéndoles uno por uno.
@@ -95,11 +95,14 @@ lo que queda del mes repartido en los días que faltan, así no sobra ni falta),
 `meta_hoy` (mails que tienen que llegar hoy), `cuenta_sana`, los números de los
 últimos 7 días y `creditos_por_mail`.
 
-- **La meta:** 70 la primera semana. Desde el 16/10 sube de a 10 por semana
-  (80, 90… hasta 120) **solo si la cuenta está sana**: rebotes de los últimos
-  7 días por debajo del 3 % y pedidos de baja por debajo del 5 %. Mandar
-  muchos más mails de golpe desde una cuenta de Gmail nueva hace que Google la
-  marque como spam o la suspenda, y se pierde el canal.
+- **La meta (modo máximo, pedido del fundador el 9/10/2026: "mandemos todos
+  los mails que podamos con esos 5.000"):** todos los que alcancen los
+  créditos del día (`presupuesto_hoy` ÷ `creditos_por_mail`), hasta 300 por
+  día, debajo del límite diario de Gmail. **Freno:** si la cuenta no está sana
+  (rebotes de los últimos 7 días del 3 % o más, o pedidos de baja del 5 % o
+  más), la meta vuelve sola a 70 hasta que se recupere. Si Gmail da un error
+  de límite o llega un aviso de Google sobre la cuenta, pará en el momento
+  (sección 0).
 - **Cuánto cuesta cada cosa:** `firecrawl_search` con `limit: 20` = 4
   créditos. `firecrawl_scrape` = 1 crédito por página. Llevá la cuenta y no
   pases `presupuesto_hoy`.
@@ -328,7 +331,8 @@ Números de la semana: `select mkt_prospeccion_numeros(7);`
 
 - **Pausar:** `update growth_mkt_items set datos = datos || '{"pausa": true}' where workspace_id = crm_ws() and datos->>'clave' = 'prospeccion_plantilla';` (y `false` para seguir).
 - **Sacar un rubro de la rotación:** `update growth_mkt_rotacion set activo = false where workspace_id = crm_ws() and rubro = '...';`
-- **Cambiar la meta o la rampa:** `update growth_mkt_ajustes set valor = valor || '{"meta_base": 70, "meta_maxima": 120, "paso_semanal": 10}' where workspace_id = crm_ws() and clave = 'prospeccion';`
+- **Cambiar la meta:** `update growth_mkt_ajustes set valor = valor || '{"modo": "maximo", "meta_base": 70, "meta_maxima": 300}' where workspace_id = crm_ws() and clave = 'prospeccion';` (con `"modo": "rampa"` vuelve a subir de a `paso_semanal` por semana desde `inicio_rampa`).
+- **Una corrida que no sirve para calcular el costo por mail** (por ejemplo, con créditos de otro plan): `datos.excluir_promedio = true` en su informe.
 - **Cambiar el plan de Firecrawl** (créditos o día de renovación): `update growth_mkt_ajustes set valor = valor || '{"creditos_mes": 5000, "dia_renovacion": 9}' where workspace_id = crm_ws() and clave = 'firecrawl';`
 
 ## Límites
@@ -338,9 +342,9 @@ Números de la semana: `select mkt_prospeccion_numeros(7);`
 - **Un solo mail por dirección, para siempre.** No hay seguimientos
   automáticos.
 - Las respuestas nunca se envían solas: quedan como borrador.
-- `meta_hoy` mails por día que **lleguen** (70 la primera semana, después
-  sube de a 10 por semana hasta 120 si la cuenta está sana). Con la reposición
-  se pueden enviar unos pocos más.
+- `meta_hoy` mails por día que **lleguen**: lo que alcancen los créditos del
+  día (hasta 300), o 70 si la cuenta no está sana. Con la reposición se
+  pueden enviar unos pocos más.
 - **Solo páginas públicas**, encontradas con búsquedas y leídas una por una.
   Nunca la interfaz interna de un sitio (por ejemplo `api.buscaoficios.com.ar`)
   ni bajar su listado completo de una vez: es el sistema interno de otra
