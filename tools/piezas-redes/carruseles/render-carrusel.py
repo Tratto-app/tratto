@@ -2,6 +2,7 @@
 
     python3 render-carrusel.py precios-oct.html carrusel-precios-oct
     python3 render-carrusel.py precios-oct.html carrusel-precios-oct --solo 1,8 --salida /tmp/previa
+    python3 render-carrusel.py precios-oct.html carrusel-precios-oct-tt --solo 10 --red tiktok
 
 Por defecto deja <prefijo>-01.png ... <prefijo>-NN.png en redes/ (la carpeta
 pública: https://www.trattoapp.com.ar/redes/<archivo>) y una copia .jpg de
@@ -22,6 +23,8 @@ async def main():
     ap.add_argument('--salida', default=REDES)
     ap.add_argument('--solo', default='', help='números de placa separados por coma (1 = la primera)')
     ap.add_argument('--sin-jpg', action='store_true')
+    ap.add_argument('--red', choices=['instagram', 'tiktok'], default='instagram',
+                    help='tiktok aplica los textos data-tiktok (link tt-, sin "link en la bio")')
     a = ap.parse_args()
     solo = {int(x) for x in a.solo.split(',') if x.strip()}
     os.makedirs(a.salida, exist_ok=True)
@@ -31,7 +34,8 @@ async def main():
                                     args=["--disable-background-networking"])
         ctx = await b.new_context(viewport={"width": 1200, "height": 1500}, device_scale_factor=1, ignore_https_errors=True)
         pg = await ctx.new_page()
-        await pg.goto(f"file://{os.path.join(D, a.html)}", wait_until="networkidle")
+        consulta = '?red=tiktok' if a.red == 'tiktok' else ''
+        await pg.goto(f"file://{os.path.join(D, a.html)}{consulta}", wait_until="networkidle")
         await pg.evaluate("document.fonts.ready")
         await pg.wait_for_timeout(400)
         fuentes = await pg.evaluate("[...new Set([...document.fonts].filter(f=>f.status==='loaded').map(f=>f.family+' '+f.weight))]")

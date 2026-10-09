@@ -55,6 +55,14 @@
       `<div class="cab"><div class="marca"><div class="logo">${LOGO(40, 'lg' + i)}</div><span>TRATTO</span></div>` +
       `<div class="cuenta"><b>${n}</b> / ${String(total).padStart(2, '0')}</div></div>`);
   });
+  // Versión para TikTok (render-carrusel.py --red tiktok): cambia el link de
+  // Instagram por el de TikTok y lo que en TikTok no va, como "link en la bio"
+  // (protocolo de contenido, sección 8.2). data-tiktok="" saca el elemento.
+  if (new URLSearchParams(location.search).get('red') === 'tiktok') {
+    document.querySelectorAll('[data-tiktok]').forEach(el => {
+      if (el.dataset.tiktok) el.textContent = el.dataset.tiktok; else el.remove();
+    });
+  }
   document.querySelectorAll('[data-ico]').forEach(el => {
     const px = +(el.dataset.px || 64);
     el.outerHTML = icono(el.dataset.ico, px, el.dataset.color || 'currentColor', +(el.dataset.grosor || 4));
