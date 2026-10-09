@@ -15,9 +15,13 @@ no les llegó porque no existía el correo, buscá 5 nuevos y mandales a esos"
 (sección 5b).
 
 Herramientas: Gmail (`send_message`, `search_threads`, `get_thread`,
-`create_draft`), Firecrawl (`firecrawl_search`, `firecrawl_scrape`) y Supabase
-(`execute_sql`, proyecto `qglsonbcsncgekzbfafk`). Si falta Gmail o Firecrawl,
-no envíes ni inventes direcciones: dejá un item `alerta` y terminá.
+`create_draft`), Supabase (`execute_sql`, proyecto `qglsonbcsncgekzbfafk`) y,
+para buscar, las de la sección 3 en este orden: Tavily (gratis), lectura
+gratis de páginas (`curl`, `r.jina.ai`) y Firecrawl (`firecrawl_search`,
+`firecrawl_scrape`; plan gratis de 1.000 créditos por mes, el fundador eligió
+no pagar el plan de $28.000 el 9/10/2026). Si falta Gmail, o no hay ni Tavily
+ni Firecrawl, no envíes ni inventes direcciones: dejá un item `alerta` y
+terminá.
 
 ## 0. Frenos (antes de enviar nada)
 
@@ -82,16 +86,41 @@ La primera llamada del día toma el rubro; las siguientes devuelven el mismo.
 
 ## 3. Buscar proveedores
 
-**Primero BuscaOficios** (el 9/10/2026 dio 27 de los 47 mails, el fundador
-pidió priorizarlo): cada proveedor se anota ahí y publica su propio mail para
-que lo contacten, así que entra. Buscá
-`site:buscaoficios.com.ar {oficio} {barrio o partido}` y, si el resultado no
-trae el mail, abrí el perfil con `firecrawl_scrape`. Cuando BuscaOficios no da
-más, seguí con la búsqueda general.
+**Con qué buscar, para gastar lo menos posible** (decisión del fundador,
+9/10/2026: primero lo gratis):
 
-Con `firecrawl_search` (`sources: ["web"]`, `location: "Argentina"`,
-`limit: 20`, `domainTools: false`). Combiná cada palabra de `busquedas` con un
-barrio o partido de la zona y algo que traiga el mail:
+1. **Tavily** (gratis, 1.000 búsquedas por mes, sin tarjeta), si existe la
+   variable de entorno `TAVILY_API_KEY` (`test -n "$TAVILY_API_KEY"`). Nunca
+   muestres ni copies la clave: usala solo como `$TAVILY_API_KEY`.
+   ```bash
+   curl -sS https://api.tavily.com/search \
+     -H "Authorization: Bearer $TAVILY_API_KEY" -H "Content-Type: application/json" \
+     -d '{"query": "plomero Caballito \"@gmail.com\"", "topic": "general",
+          "country": "argentina", "search_depth": "basic", "max_results": 20,
+          "include_raw_content": "markdown"}'
+   ```
+   Cada búsqueda gasta 1 crédito y trae el texto de cada página
+   (`raw_content`), así que casi nunca hace falta abrirla aparte. Buscá el
+   mail ahí y en `content`.
+2. **Leer páginas gratis**, cuando un resultado sirve pero no trae el mail:
+   `curl -sL -m 25 -A "Mozilla/5.0" <url>` (y su página de contacto) y buscá
+   el mail en el HTML. Si la página se arma con JavaScript y no aparece:
+   `curl -sL -m 40 https://r.jina.ai/<url>` (lector gratis, hasta 20 por
+   minuto).
+3. **Firecrawl**, solo para lo que lo anterior no resuelve: BuscaOficios
+   (sus perfiles solo se leen con Firecrawl) o cuando no hay Tavily.
+
+**BuscaOficios** (el 9/10/2026 dio 27 de los 47 mails; el fundador pidió
+priorizarlo): cada proveedor se anota ahí y publica su propio mail para que lo
+contacten, así que entra. Tiene sobre todo oficios del hogar (plomeros,
+pintores, aire acondicionado, mantenimiento, electricistas, albañiles): para
+esos rubros, empezá por `site:buscaoficios.com.ar {oficio} {barrio o partido}`
+con `firecrawl_search`; para los demás rubros no hace falta.
+
+Para la búsqueda general (con Tavily o, si no hay, con `firecrawl_search`:
+`sources: ["web"]`, `location: "Argentina"`, `limit: 20`,
+`domainTools: false`), combiná cada palabra de `busquedas` con un barrio o
+partido de la zona y algo que traiga el mail:
 
 - `plomero Caballito "@gmail.com"` · `destapaciones Flores contacto email` ·
   `plomero Belgrano "@hotmail.com"`
@@ -114,12 +143,22 @@ AMBA y después por el interior bonaerense. **Nunca fuera de CABA y Provincia
 de Buenos Aires** (Tratto opera solo ahí: ver el comentario "Solo CABA y
 Provincia de Buenos Aires" en `index.html`).
 
-Casi siempre el mail ya viene en el texto del resultado. Usá
-`firecrawl_scrape` (`formats: ["markdown"]`, página de contacto) solo cuando el
-resultado muestra un proveedor que sirve pero no el mail. **Tope por día:
-12 búsquedas y 10 páginas** (unos 60 créditos de Firecrawl) para los 70, **más
-hasta 3 búsquedas y 3 páginas reservadas solo para reponer rebotes** (sección
-5b). Si con eso no se llega, se manda lo que hay: nunca se completa con otro
+Casi siempre el mail ya viene en el texto del resultado. Para abrir una
+página usá primero la lectura gratis (punto 2); `firecrawl_scrape`
+(`formats: ["markdown"]`) solo para perfiles de BuscaOficios o páginas que no
+se leen de otra forma.
+
+**Topes por día** (para que los planes gratis alcancen todo el mes):
+- **Tavily:** hasta 28 búsquedas (unas 850 por mes), con 3 de ellas reservadas
+  para reponer rebotes (sección 5b).
+- **Firecrawl:** hasta 6 búsquedas y 3 páginas (unos 27 créditos; 1.000 por mes
+  tienen que alcanzar también para el radar de redes). **Sin Tavily**, el tope
+  de Firecrawl es 12 búsquedas y 10 páginas hasta el 17/10/2026 (quedaban 838
+  créditos hasta la renovación del 18/10) y desde el 18/10, 6 búsquedas y 3
+  páginas.
+- La lectura gratis de páginas no tiene tope, pero sin pasar de 20 por
+  minuto en `r.jina.ai`.
+Si con eso no se llega a 70, se manda lo que hay: nunca se completa con otro
 rubro.
 
 **Quién entra (tiene que cumplir todo):**
@@ -237,7 +276,7 @@ con un mensaje de `mailer-daemon`, casi siempre en uno o dos minutos.
    cada uno con `mkt_prospeccion_respuesta('<mail>', 'rebote')`.
 2. `select mkt_rubro_del_dia();` → **faltan = 70 − `entregados_hoy`**.
 3. Si faltan más de 0, buscá **esa misma cantidad** de proveedores nuevos del
-   rubro del día (pasos 3, 4 y 5, con las búsquedas reservadas) y mandales.
+   rubro del día (pasos 3, 4 y 5, con las 3 búsquedas de Tavily reservadas; sin Tavily, con hasta 3 de Firecrawl) y mandales.
 4. Volvé a revisar rebotes y repetí **una sola vez más** (máximo 2 vueltas de
    reposición por día).
 5. **Freno:** si los rebotes de hoy pasan el 10 % de lo enviado hoy, no
@@ -260,14 +299,18 @@ values (crm_ws(), 'operaciones', 'informe',
   $c$EN CORTO
 ...3 renglones...
 
-Detalle: búsquedas hechas, encontrados, descartados y por qué, enviados,
+Detalle: búsquedas hechas con cada herramienta y cuántos mails útiles dio
+cada una (para comparar si Tavily rinde igual que Firecrawl), encontrados,
+descartados y por qué, enviados,
 errores, respuestas (interesados, no, rebotes), borradores que quedaron en
 Gmail para revisar, y qué rubro toca mañana.$c$,
   'email', 'hecho', 2,
   jsonb_build_object('clave', 'prospeccion_dia', 'fecha', '{fecha}', 'orden', {orden}, 'rubro', $c${rubro}$c$,
                      'vuelta', {vuelta}, 'zona', $c${zona}$c$, 'enviados', {n}, 'encontrados', {x},
                      'rebotes', {b}, 'repuestos', {rp}, 'entregados', {e},
-                     'interesados', {i}, 'borradores', {d}),
+                     'interesados', {i}, 'borradores', {d},
+                     'busquedas', jsonb_build_object('tavily', {bt}, 'firecrawl', {bf}),
+                     'mails_por_herramienta', jsonb_build_object('tavily', {mt}, 'firecrawl', {mf}, 'lectura_gratis', {ml})),
   'agente:operaciones');
 ```
 
