@@ -13,7 +13,9 @@ Pieza 7 de 9. Antes de empezar leé `tools/contenido/conocimiento/protocolo.md`
 1. **Juntar candidatos** de lo que haya, diciendo de dónde salió cada uno:
    - Lo que pasa la persona: videos, capturas o links con sus números a la
      vista. Es lo más confiable.
-   - Firecrawl, si está conectado: buscar en TikTok e Instagram por las
+   - Firecrawl, si está conectado (plan de 5.000 créditos por mes que se
+     comparte con los mails a proveedores: el radar usa como mucho 80 créditos
+     por semana, unas 20 búsquedas): buscar en TikTok e Instagram por las
      palabras clave del nicho ("cuánto sale un flete", "presupuesto pintor",
      "tips emprendedores argentina", "profe de inglés particular"). Sirve
      solo lo que trae números visibles (vistas, me gusta, guardados).
