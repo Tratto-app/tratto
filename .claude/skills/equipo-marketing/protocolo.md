@@ -148,6 +148,13 @@ returning slug;
 -- URL: https://qglsonbcsncgekzbfafk.supabase.co/functions/v1/growth-go/<slug>
 ```
 
+**Para probar un link no lo abras**: cada visita a `growth-go` cuenta como
+un clic y ensucia los números (pasó el 8 y el 9/10/2026). Alcanza con ver que
+el link esté en `growth_tracking_links` y que `/r/` responda 307 sin seguir la
+redirección, que no llega a contar:
+`curl -s -o /dev/null -w '%{http_code}' https://www.trattoapp.com.ar/r/<slug>`
+(sin `-L`).
+
 Fuentes (`growth_sources.key`): instagram, tiktok, facebook, google, whatsapp,
 email, offline, referral, calculadora, radar, influencers, ia, meta_ads,
 google_ads, ads, organic, other, prospeccion (mails a proveedores). `destination`: smart · web · custom.
