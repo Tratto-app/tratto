@@ -1,5 +1,13 @@
 # Tratto: reglas para Claude
 
+## Contexto y trabajo en paralelo con Codex
+
+Antes de una tarea compartida, leé `docs/CONTEXTO-CODEX-CLAUDE.md` y
+`docs/COORDINACION-CODEX-CLAUDE.md`. Ahí están el contexto verificado, las
+fuentes y el reparto propuesto. Usá una rama por tarea y dejá un traspaso con
+commit, archivos, pruebas y pendientes. Estas instrucciones conservan las
+reglas de aprobación y contenido que siguen abajo.
+
 ## Contenido para TikTok e Instagram: se aplica solo
 
 La persona no tiene que pedir cada pieza del sistema de contenido. Cada vez que
