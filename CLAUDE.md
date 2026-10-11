@@ -6,7 +6,9 @@ Antes de una tarea compartida, leé `docs/CONTEXTO-CODEX-CLAUDE.md` y
 `docs/COORDINACION-CODEX-CLAUDE.md`. Ahí están el contexto verificado, las
 fuentes y el reparto propuesto. Usá una rama por tarea y dejá un traspaso con
 commit, archivos, pruebas y pendientes. Estas instrucciones conservan las
-reglas de aprobación y contenido que siguen abajo.
+reglas de aprobación y contenido que siguen abajo. La configuración de skills
+compartidas está en `docs/CONFIGURACION-AGENTES.md`; al retomar, usá
+`tratto-contexto` y la skill técnica correspondiente al componente.
 
 ## Contenido para TikTok e Instagram: se aplica solo
 
