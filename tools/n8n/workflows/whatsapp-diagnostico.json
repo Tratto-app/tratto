@@ -1,0 +1,223 @@
+{
+  "name": "Tratto · WhatsApp · Diagnóstico sin envíos",
+  "active": false,
+  "nodes": [
+    {
+      "id": "Prueba-manual",
+      "name": "Prueba manual",
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        0
+      ],
+      "parameters": {}
+    },
+    {
+      "id": "Ver-estado-sin-enviar",
+      "name": "Ver estado sin enviar",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        280,
+        0
+      ],
+      "parameters": {
+        "method": "POST",
+        "url": "https://qglsonbcsncgekzbfafk.supabase.co/rest/v1/rpc/growth_wa_report",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "supabaseApi",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "{\"p_workspace\": \"e92e7144-af22-4a98-9e18-52ca8d3cd0c3\"}",
+        "options": {
+          "timeout": 60000,
+          "response": {
+            "response": {
+              "fullResponse": true,
+              "neverError": true
+            }
+          }
+        }
+      },
+      "credentials": {
+        "supabaseApi": {
+          "id": "SELECCIONAR_EN_N8N",
+          "name": "Tratto · Supabase (service role)"
+        }
+      },
+      "retryOnFail": false
+    },
+    {
+      "id": "Prueba-HTTP-protegida",
+      "name": "Prueba HTTP protegida",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        0,
+        200
+      ],
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "tratto-wa-diagnostico",
+        "authentication": "headerAuth",
+        "responseMode": "lastNode",
+        "options": {}
+      },
+      "webhookId": "45574fe1-74a3-540c-9599-e1c5d024b596",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "SELECCIONAR_EN_N8N",
+          "name": "Tratto · Diagnóstico WhatsApp (sin envíos)"
+        }
+      }
+    },
+    {
+      "id": "Probar-guardia-apagada",
+      "name": "Probar guardia apagada",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        560,
+        0
+      ],
+      "parameters": {
+        "method": "POST",
+        "url": "https://qglsonbcsncgekzbfafk.supabase.co/functions/v1/growth-whatsapp-webhook/health",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "supabaseApi",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "{\"workspace_id\": \"e92e7144-af22-4a98-9e18-52ca8d3cd0c3\"}",
+        "options": {
+          "timeout": 60000,
+          "response": {
+            "response": {
+              "fullResponse": true,
+              "neverError": true
+            }
+          }
+        }
+      },
+      "credentials": {
+        "supabaseApi": {
+          "id": "SELECCIONAR_EN_N8N",
+          "name": "Tratto · Supabase (service role)"
+        }
+      },
+      "retryOnFail": false
+    },
+    {
+      "id": "Comprobar-cero-reservas",
+      "name": "Comprobar cero reservas",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        840,
+        0
+      ],
+      "parameters": {
+        "method": "POST",
+        "url": "https://qglsonbcsncgekzbfafk.supabase.co/rest/v1/rpc/growth_wa_claim",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "supabaseApi",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "{\"p_workspace\": \"e92e7144-af22-4a98-9e18-52ca8d3cd0c3\", \"p_limit\": 0}",
+        "options": {
+          "timeout": 60000,
+          "response": {
+            "response": {
+              "fullResponse": true,
+              "neverError": true
+            }
+          }
+        }
+      },
+      "credentials": {
+        "supabaseApi": {
+          "id": "SELECCIONAR_EN_N8N",
+          "name": "Tratto · Supabase (service role)"
+        }
+      },
+      "retryOnFail": false
+    },
+    {
+      "id": "Resultado-sin-envíos",
+      "name": "Resultado sin envíos",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1120,
+        0
+      ],
+      "parameters": {
+        "jsCode": "const r=$('Ver estado sin enviar').first().json;const h=$('Probar guardia apagada').first().json;const c=$json;return [{json:{ok:r.statusCode===200 && h.statusCode===200 && c.statusCode===200 && r.body.enabled===false && h.body.reason==='disabled_or_unapproved' && Array.isArray(c.body) && c.body.length===0,enabled:r.body.enabled,guard_status:h.statusCode,guard_reason:h.body.reason,reservations:Array.isArray(c.body)?c.body.length:null,counts:r.body.counts,permission_verified:r.body.permission_verified}}];"
+      }
+    }
+  ],
+  "connections": {
+    "Prueba manual": {
+      "main": [
+        [
+          {
+            "node": "Ver estado sin enviar",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Prueba HTTP protegida": {
+      "main": [
+        [
+          {
+            "node": "Ver estado sin enviar",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Ver estado sin enviar": {
+      "main": [
+        [
+          {
+            "node": "Probar guardia apagada",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Probar guardia apagada": {
+      "main": [
+        [
+          {
+            "node": "Comprobar cero reservas",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Comprobar cero reservas": {
+      "main": [
+        [
+          {
+            "node": "Resultado sin envíos",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "timezone": "America/Argentina/Buenos_Aires",
+    "saveDataSuccessExecution": "none",
+    "saveDataErrorExecution": "all",
+    "executionTimeout": 1800
+  }
+}
