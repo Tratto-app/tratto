@@ -45,6 +45,10 @@ jobs:
           PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: '1'
       - name: Tipos y tests unitarios
         run: npx tsc -b && npx vitest run
+      - name: Navegador para recuperación de contraseña
+        run: npx playwright install --with-deps chromium
+      - name: Recuperación de contraseña de la app (Auth simulado)
+        run: node --test ../../tools/auth/probar-recuperacion.mjs
       - name: Build
         run: npx vite build
         env:
