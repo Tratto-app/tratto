@@ -2378,7 +2378,9 @@ const CLAVE = 'mkt_sesion';
 let retornoRecuperacion = (() => {
   const h = new URLSearchParams(location.hash.slice(1));
   const q = new URLSearchParams(location.search);
-  if(h.get('type') !== 'recovery' && q.get('recuperar') !== '1') return null;
+  // La Site URL puede omitir el marcador; Auth tampoco incluye type cuando
+  // rechaza un enlace vencido. En ese caso ofrecemos pedir uno nuevo.
+  if(h.get('type') !== 'recovery' && q.get('recuperar') !== '1' && h.get('error_code') !== 'otp_expired') return null;
   const retorno = { token:h.get('access_token'), error:h.get('error') || h.get('error_code') };
   q.delete('recuperar');
   history.replaceState(null, '', location.pathname + (q.toString() ? '?' + q.toString() : ''));
