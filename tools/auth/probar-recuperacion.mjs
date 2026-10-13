@@ -127,6 +127,12 @@ test('enlace inválido o vencido no permite cambiar la contraseña',async()=>{
   assert.equal(await error.page.locator('#a-nueva-clave-caja').isVisible(),false);
   assert.equal(new URL(error.page.url()).hash,'');
   await error.close();
+  const sinMarcador=await pagina(async()=>{throw new Error('No debe llamar Auth con un enlace vencido');});
+  await abrir(sinMarcador.page,'#error=access_denied&error_code=otp_expired');
+  assert.equal(await sinMarcador.page.locator('#a-recuperar-caja').isVisible(),true);
+  assert.equal(await sinMarcador.page.locator('#a-nueva-clave-caja').isVisible(),false);
+  assert.equal(new URL(sinMarcador.page.url()).hash,'');
+  await sinMarcador.close();
 });
 
 test('un enlace que vence al guardar exige pedir uno nuevo',async()=>{
