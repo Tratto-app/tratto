@@ -1463,6 +1463,7 @@
           <div class="ayuda">Al menos 8 caracteres.</div>
           <div class="err" id="e-a-pass">La contraseña tiene que tener al menos 8 caracteres.</div>
         </div>
+        <button class="ver" id="a-olvido" type="button">¿Olvidaste tu contraseña?</button>
 
         <!-- Solo al crear la cuenta. La transferencia ocurre en el mismo momento
              en que se crea, así que el permiso tiene que estar antes, no después. -->
@@ -1510,6 +1511,40 @@
         </div>
       </div>
 
+      <div class="oculto" id="a-recuperar-caja">
+        <div class="codigo-cab">
+          <div class="codigo-tit">Recuperá tu cuenta</div>
+          <p class="codigo-txt">Poné el email de tu cuenta. Te mandamos un enlace para elegir una nueva contraseña.</p>
+        </div>
+        <div class="campo">
+          <label for="a-recuperar-email">Email de tu cuenta</label>
+          <input id="a-recuperar-email" type="email" autocomplete="email" placeholder="tucorreo@ejemplo.com" aria-describedby="e-a-recuperar-email">
+          <div class="err" id="e-a-recuperar-email">Revisá el email: falta el @ o el dominio.</div>
+          <div class="ayuda">El enlace puede tardar un minuto. Fijate también en el correo no deseado.</div>
+        </div>
+      </div>
+
+      <div class="oculto" id="a-nueva-clave-caja">
+        <div class="codigo-cab">
+          <div class="codigo-tit">Elegí tu nueva contraseña</div>
+          <p class="codigo-txt">Estás recuperando la cuenta de <b id="a-recuperar-dest">—</b>.</p>
+        </div>
+        <div class="campo">
+          <div class="campo-top">
+            <label for="a-nueva-pass">Nueva contraseña</label>
+            <button class="ver" id="ver-nueva-pass" type="button" aria-pressed="false">Mostrar</button>
+          </div>
+          <input id="a-nueva-pass" type="password" autocomplete="new-password" minlength="8" aria-describedby="e-a-nueva-pass">
+          <div class="ayuda">Al menos 8 caracteres.</div>
+          <div class="err" id="e-a-nueva-pass">Usá al menos 8 caracteres.</div>
+        </div>
+        <div class="campo">
+          <label for="a-repetir-pass">Repetí la nueva contraseña</label>
+          <input id="a-repetir-pass" type="password" autocomplete="new-password" minlength="8" aria-describedby="e-a-repetir-pass">
+          <div class="err" id="e-a-repetir-pass">Las contraseñas no coinciden.</div>
+        </div>
+      </div>
+
       <button class="btn lleno" id="a-enviar" type="button">
         <span class="rueda"></span><span id="a-txt">Iniciar sesión</span>
       </button>
@@ -1518,6 +1553,9 @@
       <div class="oculto" id="a-codigo-acciones">
         <button class="btn vacio-b" id="a-reenviar" type="button">Reenviame el código</button>
         <button class="ver" id="a-otro-email" type="button">Usar otro email</button>
+      </div>
+      <div class="oculto" id="a-recuperar-acciones">
+        <button class="ver" id="a-recuperar-volver" type="button">Volver a iniciar sesión</button>
       </div>
     </section>
 
@@ -2335,6 +2373,18 @@ const SUPABASE_URL  = 'https://qglsonbcsncgekzbfafk.supabase.co';
 const SUPABASE_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFnbHNvbmJjc25jZ2VremJmYWZrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODU3MDU2NzksImV4cCI6MjEwMTI4MTY3OX0.bdToh3Rt3XQaFOvHZmO0t1bHIlSKPv-YOVLHe3ljXiA';
 const CLAVE = 'mkt_sesion';
 
+/* El enlace de recuperación se atiende antes de restaurar la sesión del
+   teléfono. Los tokens se retiran de la URL y quedan sólo en memoria. */
+let retornoRecuperacion = (() => {
+  const h = new URLSearchParams(location.hash.slice(1));
+  const q = new URLSearchParams(location.search);
+  if(h.get('type') !== 'recovery' && q.get('recuperar') !== '1') return null;
+  const retorno = { token:h.get('access_token'), error:h.get('error') || h.get('error_code') };
+  q.delete('recuperar');
+  history.replaceState(null, '', location.pathname + (q.toString() ? '?' + q.toString() : ''));
+  return retorno;
+})();
+
 /* ══════════════════ DE DÓNDE VINO LA VISITA ══════════════════
    Para saber qué canal de marketing trae a cada usuario (TikTok, Instagram,
    la calculadora, un mail del CRM...). Se guarda la última visita que llegó
@@ -2716,6 +2766,7 @@ function cambiarAuth(m){
   $('tab-crear').classList.toggle('activa', c);
   $('a-txt').textContent = c ? 'Crear cuenta' : 'Iniciar sesión';
   $('a-pass').setAttribute('autocomplete', c ? 'new-password' : 'current-password');
+  $('a-olvido').classList.toggle('oculto', c);
   limpiar(['a-email','a-pass']); $('a-aviso').className='aviso';
   /* La transferencia arranca cuando se crea la cuenta, no cuando se inicia
      sesión: quien ya la tiene, ya la consintió. */
@@ -2728,7 +2779,7 @@ function cambiarAuth(m){
   $('a-tel-caja').classList.toggle('oculto', !c);
   pintarCamposDeRol();
   limpiarTransfer();
-  if(pasoAuth === 'codigo') volverAPasoDatos();
+  if(pasoAuth !== 'datos') volverAPasoDatos();
 }
 
 /* ── Filas tildables ──────────────────────────────────────────────────
@@ -2821,6 +2872,8 @@ function traducir(t){
 }
 
 $('a-enviar').addEventListener('click', async () => {
+  if(pasoAuth === 'recuperar') return pedirRecuperacion();
+  if(pasoAuth === 'nueva-clave') return guardarNuevaClave();
   if(pasoAuth === 'codigo') return confirmarCodigo();
   limpiar(['a-email','a-pass']);
   limpiarTransfer();
@@ -2950,10 +3003,16 @@ function irAPasoCodigo(email){
 }
 
 function volverAPasoDatos(){
+  generacionRecuperacion++;
+  sesionRecuperacion = null;
   pasoAuth = 'datos'; emailPendiente = '';
   $('a-datos').classList.remove('oculto');
   $('a-codigo-caja').classList.add('oculto');
   $('a-codigo-acciones').classList.add('oculto');
+  $('a-recuperar-caja').classList.add('oculto');
+  $('a-nueva-clave-caja').classList.add('oculto');
+  $('a-recuperar-acciones').classList.add('oculto');
+  $('a-nueva-pass').value = ''; $('a-repetir-pass').value = '';
   $('a-codigo').value = '';
   limpiar(['a-codigo']);
   $('a-txt').textContent = modoAuth === 'crear' ? 'Crear cuenta' : 'Iniciar sesión';
@@ -3039,6 +3098,168 @@ $('a-otro-email').addEventListener('click', () => {
   volverAPasoDatos();
   $('a-aviso').className = 'aviso';
   $('a-email').focus();
+});
+
+/* ══════════════════ RECUPERACIÓN DE CONTRASEÑA ══════════════════ */
+let sesionRecuperacion = null, generacionRecuperacion = 0;
+let recuperacionOcupada = false, ultimoEnlacePedido = 0;
+
+function abrirRecuperacion(verificada){
+  generacionRecuperacion++;
+  sesionRecuperacion = verificada || null;
+  pasoAuth = verificada ? 'nueva-clave' : 'recuperar';
+  $('a-datos').classList.add('oculto');
+  $('a-codigo-caja').classList.add('oculto');
+  $('a-codigo-acciones').classList.add('oculto');
+  $('sel-rol').classList.add('oculto');
+  $('a-recuperar-caja').classList.toggle('oculto', !!verificada);
+  $('a-nueva-clave-caja').classList.toggle('oculto', !verificada);
+  $('a-recuperar-acciones').classList.remove('oculto');
+  $('a-pass').value = ''; $('a-nueva-pass').value = ''; $('a-repetir-pass').value = '';
+  $('a-nueva-pass').type = 'password'; $('a-repetir-pass').type = 'password';
+  $('ver-nueva-pass').textContent = 'Mostrar'; $('ver-nueva-pass').setAttribute('aria-pressed', 'false');
+  limpiar(['a-recuperar-email','a-nueva-pass','a-repetir-pass']);
+  $('a-aviso').className = 'aviso';
+  $('a-txt').textContent = verificada ? 'Guardar contraseña' : 'Enviar enlace';
+  $('a-enviar').disabled = false; $('a-enviar').classList.remove('cargando');
+  if(verificada) $('a-recuperar-dest').textContent = verificada.email;
+  $(verificada ? 'a-nueva-pass' : 'a-recuperar-email').focus();
+}
+
+function errorRecuperacion(j, status){
+  const texto = String(j.msg || j.error_description || j.message || '').toLowerCase();
+  const codigo = j.error_code || j.code;
+  if(status === 429 || texto.includes('rate limit') || texto.includes('for security purposes'))
+    return 'Esperá un minuto antes de volver a intentarlo.';
+  if(codigo === 'same_password' || texto.includes('different from the old'))
+    return 'Elegí una contraseña distinta de la anterior.';
+  if(codigo === 'weak_password' || texto.includes('password should be'))
+    return 'Elegí una contraseña más segura, de al menos 8 caracteres.';
+  return 'No se pudo completar. Probá de nuevo en unos minutos.';
+}
+
+async function authRecuperacion(ruta, opciones){
+  const control = new AbortController();
+  const reloj = setTimeout(() => control.abort(), 15000);
+  try{
+    const res = await fetch(SUPABASE_URL + ruta, {...opciones, signal:control.signal});
+    return {res, j:await res.json().catch(() => ({}))};
+  }finally{ clearTimeout(reloj); }
+}
+
+async function pedirRecuperacion(){
+  if(recuperacionOcupada || pasoAuth !== 'recuperar') return;
+  limpiar(['a-recuperar-email']);
+  const r = {p:null}, email = $('a-recuperar-email').value.trim();
+  if(!mailOk(email)) fallar('a-recuperar-email', r);
+  if(enfocar(r)) return;
+  if(Date.now() - ultimoEnlacePedido < 60000){
+    avisar('a-aviso','Esperá un minuto antes de pedir otro enlace.','mal'); return;
+  }
+  const generacion = generacionRecuperacion, b = $('a-enviar');
+  recuperacionOcupada = true; b.disabled = true; b.classList.add('cargando');
+  $('a-txt').textContent = 'Enviando…';
+  try{
+    const destino = new URL('/', location.origin); destino.searchParams.set('recuperar','1');
+    const {res, j} = await authRecuperacion('/auth/v1/recover?redirect_to=' + encodeURIComponent(destino.href), {
+      method:'POST', headers:{apikey:SUPABASE_ANON,'Content-Type':'application/json'},
+      body:JSON.stringify({email})
+    });
+    if(generacion !== generacionRecuperacion) return;
+    /* No revelar si la dirección tiene cuenta: misma respuesta para todos. */
+    if(res.ok || (j.error_code || j.code) === 'user_not_found'){
+      ultimoEnlacePedido = Date.now();
+      avisar('a-aviso','Si existe una cuenta con ese email, te va a llegar un enlace para cambiar la contraseña. Revisá también el correo no deseado.','ok');
+    }else avisar('a-aviso',errorRecuperacion(j,res.status),'mal');
+  }catch(e){
+    if(generacion === generacionRecuperacion) avisar('a-aviso','No se pudo conectar. Revisá tu conexión y probá de nuevo.','mal');
+  }finally{
+    recuperacionOcupada = false;
+    if(generacion === generacionRecuperacion){ b.disabled=false; b.classList.remove('cargando'); $('a-txt').textContent='Enviar enlace'; }
+  }
+}
+
+async function recuperarDesdeEnlace(retorno){
+  abrirRecuperacion(); ir('auth','entra');
+  if(!retorno.token || retorno.error){
+    avisar('a-aviso','Ese enlace no es válido o ya venció. Pedí uno nuevo con el email de tu cuenta.','mal'); return;
+  }
+  const generacion = generacionRecuperacion;
+  $('a-enviar').disabled = true;
+  $('a-txt').textContent = 'Verificando enlace…';
+  try{
+    const {res, j} = await authRecuperacion('/auth/v1/user', {
+      headers:{apikey:SUPABASE_ANON,Authorization:'Bearer ' + retorno.token}
+    });
+    if(generacion !== generacionRecuperacion) return;
+    if(!res.ok || !j.id || !j.email){
+      avisar('a-aviso','Ese enlace no es válido o ya venció. Pedí uno nuevo con el email de tu cuenta.','mal'); return;
+    }
+    abrirRecuperacion({token:retorno.token, email:j.email});
+  }catch(e){
+    if(generacion === generacionRecuperacion) avisar('a-aviso','No pudimos verificar el enlace. Revisá tu conexión o pedí uno nuevo.','mal');
+  }finally{
+    retorno.token = null;
+    if(generacion === generacionRecuperacion){ $('a-enviar').disabled=false; $('a-txt').textContent='Enviar enlace'; }
+  }
+}
+
+async function guardarNuevaClave(){
+  if(recuperacionOcupada || pasoAuth !== 'nueva-clave' || !sesionRecuperacion) return;
+  limpiar(['a-nueva-pass','a-repetir-pass']);
+  const r={p:null}, pass=$('a-nueva-pass').value;
+  if(pass.length < 8) fallar('a-nueva-pass', r);
+  if(pass !== $('a-repetir-pass').value) fallar('a-repetir-pass', r);
+  if(enfocar(r)) return;
+  const recuperada = sesionRecuperacion, generacion = generacionRecuperacion, b=$('a-enviar');
+  recuperacionOcupada = true; b.disabled = true; b.classList.add('cargando');
+  $('a-txt').textContent = 'Guardando…';
+  try{
+    const headers={apikey:SUPABASE_ANON,Authorization:'Bearer '+recuperada.token,'Content-Type':'application/json'};
+    const {res,j} = await authRecuperacion('/auth/v1/user', {method:'PUT',headers,body:JSON.stringify({password:pass})});
+    if(generacion !== generacionRecuperacion) return;
+    if(!res.ok){
+      if(res.status === 401 || res.status === 403){
+        abrirRecuperacion(); $('a-recuperar-email').value=recuperada.email;
+        avisar('a-aviso','El enlace venció. Pedí uno nuevo para cambiar la contraseña.','mal');
+      }else avisar('a-aviso',errorRecuperacion(j,res.status),'mal');
+      return;
+    }
+    /* Nunca se usa la sesión que ya estuviera guardada en este teléfono.
+       Pedimos revocar los refresh tokens y volvemos al acceso con la nueva clave. */
+    await authRecuperacion('/auth/v1/logout?scope=global', {method:'POST',headers}).catch(() => {});
+    if(generacion !== generacionRecuperacion) return;
+    store.borrar(); sesion=null;
+    cambiarAuth('entrar'); $('a-email').value=recuperada.email;
+    b.disabled=false; b.classList.remove('cargando');
+    avisar('a-aviso','Listo, cambiaste tu contraseña. Iniciá sesión con la nueva.','ok');
+    $('a-pass').focus();
+  }catch(e){
+    if(generacion === generacionRecuperacion) avisar('a-aviso','No pudimos confirmar el cambio. Revisá tu conexión; podés probar iniciando sesión con la nueva contraseña.','mal');
+  }finally{
+    recuperacionOcupada=false;
+    if(generacion === generacionRecuperacion){
+      b.disabled=false; b.classList.remove('cargando');
+      if(pasoAuth === 'nueva-clave') $('a-txt').textContent='Guardar contraseña';
+    }
+  }
+}
+
+$('a-olvido').addEventListener('click', () => {
+  $('a-recuperar-email').value=$('a-email').value.trim(); abrirRecuperacion();
+});
+$('a-recuperar-volver').addEventListener('click', () => {
+  cambiarAuth('entrar'); $('a-enviar').disabled=false; $('a-enviar').classList.remove('cargando'); $('a-email').focus();
+});
+$('ver-nueva-pass').addEventListener('click', () => {
+  const mostrar=$('a-nueva-pass').type === 'password';
+  ['a-nueva-pass','a-repetir-pass'].forEach(id => $(id).type=mostrar ? 'text':'password');
+  $('ver-nueva-pass').textContent=mostrar ? 'Ocultar':'Mostrar';
+  $('ver-nueva-pass').setAttribute('aria-pressed',String(mostrar));
+});
+['a-recuperar-email','a-nueva-pass','a-repetir-pass'].forEach(id => {
+  $(id).addEventListener('input', () => { limpiar([id]); $('a-aviso').className='aviso'; });
+  $(id).addEventListener('keydown', e => { if(e.key==='Enter'){ e.preventDefault(); $('a-enviar').click(); } });
 });
 
 $('salir').addEventListener('click', async () => {
@@ -3323,7 +3544,7 @@ function filaConexion(m, titulo, meta){
 let conexiones = {}, chatActual = null, miRol = null, canal = null, sondeo = null, ultimoId = 0;
 
 const sb = (window.supabase && window.supabase.createClient)
-  ? window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON, {realtime:{params:{eventsPerSecond:5}}})
+  ? window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON, {auth:{detectSessionInUrl:false},realtime:{params:{eventsPerSecond:5}}})
   : null;
 
 const hora = t => new Date(t).toLocaleTimeString('es-AR',{hour:'2-digit',minute:'2-digit'});
@@ -6070,6 +6291,11 @@ function bajarTelon(){
 }
 
 (async function iniciar(){
+  if(retornoRecuperacion){
+    const retorno=retornoRecuperacion; retornoRecuperacion=null;
+    try{ await recuperarDesdeEnlace(retorno); }finally{ bajarTelon(); }
+    return;
+  }
   const s = store.leer();
   if(!s || !s.access_token){ ir('auth','entra'); bajarTelon(); return; }
   try{
