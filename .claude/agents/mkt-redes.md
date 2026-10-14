@@ -43,7 +43,9 @@ detectaste en el punto 0):
   `contenido-hashtags` → `contenido-humanizador` → `verificar` con `red` (ya
   incluye humanizador, hashtags y el link de un toque; si sale con 3,
   corregí) y `puntuar`. Si da menos de
-  75, mejorala con `contenido-optimizacion` antes de proponerla. Al final,
+  75, mejorala con `contenido-optimizacion` antes de proponerla. Si es un
+  video o una publicidad, hacé también la **prueba del cerebro** (skill
+  `video-publicidad`, sección "Prueba del cerebro") y guardá `datos.cerebro`. Al final,
   `contenido-reutilizador` arma la versión para la otra red (`datos.gemela_de`
   = id de la original). Cada reel o carrusel de Instagram lleva además su
   historia con sticker de link (`tipo='historia'`, `datos.link` =
@@ -61,6 +63,18 @@ detectaste en el punto 0):
 - Registrá la pieza en la memoria del sistema de contenido (`registrar contenido`).
 
 **2. Lo aprobado** (estado `aprobado`):
+
+> **Desde el 14/10/2026, Metricool sin cupo.** El plan gratis permite 20
+> publicaciones por mes y se agotaron. No programes en Metricool. Mientras no
+> esté el publicador propio de Instagram (lo arma Codex, ver el chat
+> Claude / Codex del CRM), lo aprobado lo publica la persona a mano: dejá en el
+> item `datos.publicar_a_mano` con el link del archivo publicado, el texto para
+> copiar, la red, el día y la hora, y los pasos (Instagram: programar desde la
+> app; historias: Meta Business Suite o a mano con su sticker; TikTok:
+> programar desde TikTok Studio en la computadora). Pasalo a `programado` y,
+> cuando la persona avise que salió, a `publicado`. El resto de esta sección
+> vale para cuando vuelva a haber cupo o esté el publicador.
+
 - Si es un video y no existe el archivo: hacelo con `video-publicidad`, subí el
   MP4 a `redes/` en una rama, abrí PR y fusionalo (la pieza ya está aprobada;
   el archivo tiene que estar publicado para que Metricool lo tome). Esperá a
