@@ -1,0 +1,21 @@
+<!doctype html>
+<html lang="es"><head><meta charset="utf-8">
+<link rel="stylesheet" href="publicidad.css">
+</head><body>
+<script>
+// Historia 1 de 2 del lanzamiento en la App Store (imagen fija 1080×1920).
+// La persona pone el sticker de Encuesta (opciones "iPhone" / "Android") en el
+// lugar libre (y ≈ 1000–1250). La 2 es historia-app-store.html, con el link.
+// Se renderiza con: python3 render-reel.py historia-app-store-encuesta.html --segundos 3 --previa 2
+window.PUBLI = { escenas: [
+{ a: 0, b: 3, html: () => `
+  <div style="position:absolute;left:465px;top:360px"><div class="icono-app" style="width:150px;height:150px;border-radius:38px">${LOGO(96, 'ge')}</div></div>
+  <div class="abs centro mono" style="top:600px;font-size:36px;color:#1E5D49">Pregunta rápida</div>
+  <div class="abs centro t-l" style="top:680px">¿Qué teléfono</div>
+  <div class="abs centro t-l acento" style="top:795px">tenés?</div>
+  <div class="abs centro mono" style="top:1380px;left:140px;right:140px;font-size:32px;color:#3A4A43;text-transform:none;letter-spacing:.02em;line-height:1.45">En la próxima te decimos<br>cómo pedir desde el tuyo.</div>`,
+  animar() {} },
+]};
+</script>
+<script src="publicidad-comun.js"></script>
+</body></html>
