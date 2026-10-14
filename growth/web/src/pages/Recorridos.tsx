@@ -66,7 +66,7 @@ export default function Recorridos({ canal }: { canal: CanalRecorrido }) {
       const propios = elegidos.filter(p => normalizar(p.rubro || '') === normalizar(r.rubro));
       return { ...r, contactos: propios, a: actividad(propios, canal) };
     }).filter(r => (!busqueda || normalizar(r.rubro).includes(normalizar(busqueda))) && (filtro === 'todos' || (filtro === 'actividad' ? r.a.iniciales > 0 : r.a.iniciales === 0)));
-    return { contactos, caba, elegidos, filas, hoy: actividad(deHoy, canal), total: actividad(contactos, canal), actual: planDelDia(data.dias, canal, hoy) };
+    return { contactos, caba, elegidos, filas, hoy: actividad(deHoy, canal), hoyCaba: deHoy.filter(p => regionDe(p) === 'CABA').length, total: actividad(contactos, canal), actual: planDelDia(data.dias, canal, hoy) };
   }, [data, canal, zona, busqueda, filtro, hoy]);
   const mail = canal === 'gmail';
   if (loading && !data) return <Loading />;
@@ -84,6 +84,7 @@ export default function Recorridos({ canal }: { canal: CanalRecorrido }) {
       <div><Badge tone="verde">Zona actual: {activa}</Badge><h2>Hoy · {mostrarFecha(hoy)}</h2><p className="recorrido-rubro-hoy">{actual}</p>
         <p className="muted">Datos nuevos sólo de CABA. Las zonas siguientes quedan pendientes hasta que avancemos a esa etapa.</p></div>
       <div className="recorrido-hoy-num"><strong>{modelo.hoy.iniciales}</strong><span>{mail ? 'primeros contactos hoy' : 'contactos en listas de hoy'}</span>
+        <small>{modelo.hoyCaba} en CABA · El total de hoy conserva la actividad anterior al cambio de zona.</small>
         {!mail && <small>Contacto manual: {modelo.hoy.confirmados ? `${modelo.hoy.confirmados} confirmados` : 'sin confirmación registrada'}</small>}
         {mail && <small>Recordatorio 18:30 · {texto(objeto(modelo.actual.recontacto).estado) === 'enviado' ? 'ver resultado del día' : 'según tarea del día'}</small>}
       </div>
@@ -115,6 +116,7 @@ export default function Recorridos({ canal }: { canal: CanalRecorrido }) {
             <div className="recorrido-detalle">
               {mail ? <p>Sin rebote observado: <strong>{r.a.sinRebote}</strong> · Rechazos: <strong>{r.a.rechazos}</strong> · Demoras: <strong>{r.a.demoras}</strong> · Recordatorios: <strong>{r.a.recordatorios}</strong></p> : <p>Contactos manuales confirmados: <strong>{r.a.confirmados}</strong> · Restantes sin confirmación: <strong>{r.a.iniciales - r.a.confirmados}</strong></p>}
               <strong>Zonas y barrios registrados</strong><div className="recorrido-zonas">{zonasContadas(r.contactos).map(z => <span key={z.nombre}>{z.nombre} <b>{z.n}</b></span>)}{!r.contactos.length && <span className="muted">Todavía sin actividad registrada.</span>}</div>
+              <details className="recorrido-pendientes-rubro"><summary>CABA · barrios sin actividad registrada en este rubro</summary><div className="recorrido-zonas pendientes">{barriosPendientes(modelo.caba.filter(p => normalizar(p.rubro || '') === normalizar(r.rubro))).map(b => <span key={b}>{b}</span>)}</div></details>
               <Link to="/prospects">Ver contactos en el CRM</Link>
             </div>
           </details>;

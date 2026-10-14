@@ -36,6 +36,7 @@
 .recorrido-zonas>span { background:var(--sup-2); border:1px solid var(--borde); padding:5px 9px; border-radius:6px; overflow-wrap:anywhere; }
 .recorrido-zonas b { color:var(--verde-luz); margin-left:6px; font-family:var(--f-mono); }
 .recorrido-zonas.pendientes>span { background:transparent; color:var(--texto-2); }
+.recorrido-item .recorrido-pendientes-rubro summary { display:block; padding:10px 0; color:var(--texto-2); font-size:13px; }
 .recorrido-barrios { display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-top:18px; }
 @media(max-width:1100px) { .recorrido-etapas,.recorrido-kpis { grid-template-columns:repeat(2,minmax(0,1fr)); } }
 @media(max-width:650px) {
