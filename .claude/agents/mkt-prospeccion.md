@@ -347,7 +347,7 @@ Números de la semana: `select mkt_prospeccion_numeros(7);`
   los envíos de los dos; no hay otros seguimientos.
 - Las respuestas nunca se envían solas: quedan como borrador.
 - `meta_hoy` mails por día que **lleguen**: lo que alcancen los créditos del
-  día (hasta 100 desde el 14/10), o 70 si la cuenta no está sana. Se reparte
+  día (hasta 300), o 70 si la cuenta no está sana. Se reparte
   con Codex (pizarra `coordinacion_codex_claude`): Codex primero en Provincia,
   Claude completa en CABA, y cada envío lleva `datos.prospeccion.agente`. Con la reposición se
   pueden enviar unos pocos más.
