@@ -1,0 +1,25 @@
+<!doctype html>
+<html lang="es"><head><meta charset="utf-8">
+<link rel="stylesheet" href="publicidad.css">
+</head><body>
+<script>
+// Historia de Instagram del lanzamiento en la App Store (imagen fija 1080×1920).
+// El sticker de link (ig-historia-app, texto «Pedí gratis») lo pone la persona
+// al publicarla, en el lugar libre que señala la flecha (y ≈ 1250–1400).
+// Zona segura de historias: nada importante arriba de y = 250 ni abajo de 1650.
+// Se renderiza con: python3 render-reel.py historia-app-store.html --segundos 3 --previa 2
+const $ = (r, s) => r.querySelector(s);
+window.PUBLI = { escenas: [
+{ a: 0, b: 3, html: () => `
+  <div style="position:absolute;left:390px;top:330px"><div class="icono-app">${LOGO(190, 'gh')}</div></div>
+  <div class="abs centro t-l" style="top:700px">Tratto ya está</div>
+  <div class="abs centro t-l oro" style="top:815px">en la App Store</div>
+  <div class="abs centro t-s" style="top:960px;left:130px;right:130px">Más de 40 rubros.<br>Pedís gratis.</div>
+  <div class="abs centro" style="top:1150px"><span class="mono" style="color:#A07F12;font-size:40px;letter-spacing:.06em">Tocá acá</span>
+    <div style="margin:10px auto 0;width:84px;height:84px;color:#C9A227"><svg width="84" height="84" viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"><path d="M32 10v40M16 36l16 16 16-16"/></svg></div></div>
+  <div class="abs centro mono" style="top:1480px;left:120px;right:120px;font-size:30px;color:#3A4A43;text-transform:none;letter-spacing:.02em;line-height:1.45">En iPhone abre la App Store.<br>En Android, la web.</div>`,
+  animar(t, r) {} },
+]};
+</script>
+<script src="publicidad-comun.js"></script>
+</body></html>
