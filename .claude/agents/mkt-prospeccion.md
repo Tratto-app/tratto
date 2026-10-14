@@ -48,7 +48,9 @@ direcciones: dejá un item `alerta` y terminá.
 
 ## 1. Respuestas, bajas y rebotes (siempre, aunque hoy no se envíe)
 
-- **Rebotes:** `search_threads` con `from:mailer-daemon newer_than:3d`. Leé
+- **Rebotes:** `search_threads` con `in:anywhere from:mailer-daemon newer_than:3d`
+  (`in:anywhere` incluye la papelera: los avisos de rebote se mueven ahí
+  después de registrarlos). Leé
   cada uno (`get_thread`, `PLAIN_TEXT`), sacá la dirección que falló y
   `select mkt_prospeccion_respuesta('<mail>', 'rebote');`.
 - **Respuestas:** `search_threads` con
@@ -280,7 +282,7 @@ Un rebote es un mail que no llegó porque la dirección no existe. Gmail avisa
 con un mensaje de `mailer-daemon`, casi siempre en uno o dos minutos.
 
 1. Después de enviar y marcar los enviados (`mkt_prospeccion_enviado`), revisá
-   los rebotes como en el paso 1: `from:mailer-daemon newer_than:1d`, y marcá
+   los rebotes como en el paso 1: `in:anywhere from:mailer-daemon newer_than:1d`, y marcá
    cada uno con `mkt_prospeccion_respuesta('<mail>', 'rebote')`.
 2. `select mkt_rubro_del_dia();` → **faltan = `meta_hoy` − `entregados_hoy`**.
 3. Si faltan más de 0, buscá **esa misma cantidad** de proveedores nuevos del
@@ -339,11 +341,15 @@ Números de la semana: `select mkt_prospeccion_numeros(7);`
 
 - Solo desde trattoapp1@gmail.com. Nunca por Brevo (prohíbe estas listas y
   arriesga los mails de la app), nunca con copia ni a varios a la vez.
-- **Un solo mail por dirección, para siempre.** No hay seguimientos
-  automáticos.
+- **Una sola presentación por dirección, para siempre**, y como mucho un
+  recordatorio el mismo día a las 18:30, solo a quien no respondió (pedido
+  del fundador del 13/10 y del 14/10). El recordatorio lo manda Codex para
+  los envíos de los dos; no hay otros seguimientos.
 - Las respuestas nunca se envían solas: quedan como borrador.
 - `meta_hoy` mails por día que **lleguen**: lo que alcancen los créditos del
-  día (hasta 300), o 70 si la cuenta no está sana. Con la reposición se
+  día (hasta 300), o 70 si la cuenta no está sana. Se reparte
+  con Codex (pizarra `coordinacion_codex_claude`): Codex primero en Provincia,
+  Claude completa en CABA, y cada envío lleva `datos.prospeccion.agente`. Con la reposición se
   pueden enviar unos pocos más.
 - **Solo páginas públicas**, encontradas con búsquedas y leídas una por una.
   Nunca la interfaz interna de un sitio (por ejemplo `api.buscaoficios.com.ar`)
