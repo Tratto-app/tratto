@@ -43,7 +43,9 @@ detectaste en el punto 0):
   `contenido-hashtags` → `contenido-humanizador` → `verificar` con `red` (ya
   incluye humanizador, hashtags y el link de un toque; si sale con 3,
   corregí) y `puntuar`. Si da menos de
-  75, mejorala con `contenido-optimizacion` antes de proponerla. Al final,
+  75, mejorala con `contenido-optimizacion` antes de proponerla. Si es un
+  video o una publicidad, hacé también la **prueba del cerebro** (skill
+  `video-publicidad`, sección "Prueba del cerebro") y guardá `datos.cerebro`. Al final,
   `contenido-reutilizador` arma la versión para la otra red (`datos.gemela_de`
   = id de la original). Cada reel o carrusel de Instagram lleva además su
   historia con sticker de link (`tipo='historia'`, `datos.link` =

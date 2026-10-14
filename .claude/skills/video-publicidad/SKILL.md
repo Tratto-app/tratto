@@ -56,6 +56,51 @@ y `publicidad-app.html`. Copiá su estructura; no arranques de cero.
 - Texto en pantalla dentro de la zona segura: entre y = 250 y 1500, y lejos del
   borde derecho (botones de TikTok).
 
+## Prueba del cerebro (antes de dejarlo para aprobar)
+
+Pedido del fundador (14/10/2026), a partir del video "Esta IA predice
+VIRALIDAD" sobre el **Virality Predictor de Higgsfield**. La herramienta simula
+cómo respondería un cerebro al video y devuelve un puntaje viral, el del
+gancho (hook score), la retención (hold rate) y cuánto se activa cada zona:
+visual, atención, auditiva, dispersión del foco (focus drift), lenguaje y
+memoria. Según la prensa usaría el modelo TRIBE v2 de Meta (Higgsfield no lo
+confirmó). Ese modelo tiene licencia solo para uso no comercial, así que no lo
+corremos nosotros: se usa la herramienta de Higgsfield.
+
+- **Mira hasta 15 segundos.** Lo que decide si el video funciona (el gancho, la
+  promesa y la primera vez que se ve el producto) tiene que pasar en los
+  primeros 15.
+- **Cada video o publicidad nueva pasa por la prueba** con el conector de
+  Higgsfield, si está en la sesión. El resultado va en `datos.cerebro` del
+  item (formato abajo) y se ve en el CRM, en "Cerebro de las piezas".
+- **Gancho por debajo de 50:** rehacé los primeros 3 segundos con
+  `contenido-hooks` y `contenido-optimizacion` y volvé a probar. Si probaste
+  dos versiones, guardá las dos en `datos.cerebro.versiones` y proponé la que
+  dio mejor.
+- **Es un filtro previo, no un oráculo.** No reemplaza `puntuar` ni la
+  aprobación de la persona. Cuando la pieza se publica, comparalo con las
+  métricas reales para ver si acierta con nuestra cuenta.
+- **Qué mueve cada zona:**
+  - Visual y atención: movimiento y un cambio de plano o de texto cada 1 o 2
+    segundos desde el primer cuadro; una cara o una mano en pantalla al
+    arrancar.
+  - Auditiva y lenguaje: los videos solo con música las dejan bajas. Probá
+    también una versión con voz (`comun-voz.js`) y subtítulos palabra por
+    palabra, como el video de referencia.
+  - Memoria: una frase clave que se repita (Tratto y el beneficio) y el cierre
+    con la marca.
+- **Sin el conector**, guardá `datos.cerebro = {"estado": "pendiente",
+  "notas": "por qué"}` y decilo en el item. Nunca inventes números.
+
+Formato de `datos.cerebro`:
+
+```json
+{ "herramienta": "Higgsfield Virality Predictor", "fecha": "2026-10-14", "segundos": "0-15",
+  "viral": 0, "gancho": 0, "retencion": 0,
+  "regiones": { "visual": 0, "atencion": 0, "auditiva": 0, "foco": 0, "lenguaje": 0, "memoria": 0 },
+  "informe_url": "", "imagen_url": "", "notas": "", "estado": "hecho", "versiones": [] }
+```
+
 ## Cómo se hace
 
 ```bash
