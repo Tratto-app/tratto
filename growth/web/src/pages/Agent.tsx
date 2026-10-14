@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Badge, Card, ErrorBox, Field, Loading, PageHeader } from '../components/ui';
 import { fn } from '../lib/api';
-import { hace, nombre } from '../lib/format';
+import { hace, nombre, mensajeError } from '../lib/format';
 import { useAsync, useDebounced } from '../lib/hooks';
 import { CHANNELS } from '../lib/labels';
 import { supabase } from '../lib/supabase';
@@ -53,7 +53,7 @@ export default function Agent() {
       const r = await fn<{ provider: string; model: string | null; output: Record<string, unknown> }>('growth-ai',
         { workspace_id: ws!.id, action: accion, prospect_id: pid || undefined, text: texto || undefined, channel: canal, apply: aplicar });
       setRes(r);
-    } catch (e) { toast(e instanceof Error ? e.message : String(e), true); }
+    } catch (e) { toast(mensajeError(e), true); }
     setBusy(false);
   };
 

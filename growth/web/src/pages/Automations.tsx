@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import { RuleBuilder, describeRule, type Cond } from '../components/RuleBuilder';
 import { Badge, Card, Empty, ErrorBox, Field, Loading, Modal, PageHeader } from '../components/ui';
 import { fn, rpc } from '../lib/api';
-import { hace, nombre, num, pct, rate } from '../lib/format';
+import { hace, nombre, num, pct, rate, mensajeError } from '../lib/format';
 import { useAsync } from '../lib/hooks';
 import { CHANNELS, STATUS, STATUS_ORDER, STEP_TYPES, TRIGGERS } from '../lib/labels';
 import { supabase } from '../lib/supabase';
@@ -30,7 +30,7 @@ export default function Automations() {
   const procesar = async () => {
     setBusy(true);
     try { const r = await fn<{ processed: number }>('growth-automations', { workspace_id: ws!.id }); toast(`Procesadas ${r.processed} ejecuciones pendientes`); data.reload(); }
-    catch (e) { toast(e instanceof Error ? e.message : String(e), true); }
+    catch (e) { toast(mensajeError(e), true); }
     setBusy(false);
   };
 

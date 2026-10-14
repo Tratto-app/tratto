@@ -48,3 +48,14 @@ export function hace(s: string | null | undefined): string {
 
 export const nombre = (p: { first_name?: string | null; last_name?: string | null; name?: string | null; email?: string | null } | null | undefined) =>
   p ? ([p.first_name, p.last_name].filter(Boolean).join(' ') || p.name || p.email || 'Sin nombre') : '—';
+
+// Texto de un error para mostrarle a la persona. Los errores de Supabase llegan
+// como objetos sueltos (no Error), y String() los mostraba como "[object Object]".
+export function mensajeError(e: unknown): string {
+  const o = (e && typeof e === 'object' ? e : {}) as { message?: unknown; code?: unknown };
+  const msg = typeof e === 'string' ? e : typeof o.message === 'string' ? o.message : '';
+  if (o.code === '42501' || /permission denied/i.test(msg)) return 'No tenés permiso para ver estos datos. Avisá a quien administra el CRM.';
+  if (o.code === 'PGRST301' || /jwt expired/i.test(msg)) return 'Tu sesión venció. Volvé a entrar.';
+  if (/failed to fetch|networkerror|load failed/i.test(msg)) return 'No hay conexión con el servidor. Probá de nuevo en un rato.';
+  return msg || 'Algo salió mal. Probá de nuevo.';
+}

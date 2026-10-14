@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { delta, pct, rate, ratio } from '../../src/lib/format';
+import { delta, mensajeError, pct, rate, ratio } from '../../src/lib/format';
 import { resolvePeriod } from '../../src/lib/period';
 import { parseCsv } from '../../src/lib/csv';
 
@@ -34,5 +34,15 @@ describe('CSV', () => {
     expect(parseCsv('nombre,email\n"Pérez, Ana",ana@x.com\n')).toEqual([['nombre', 'email'], ['Pérez, Ana', 'ana@x.com']]);
     expect(parseCsv('nombre;telefono\r\nJuan;+54 9 11\r\n')).toEqual([['nombre', 'telefono'], ['Juan', '+54 9 11']]);
     expect(parseCsv('a\n"dice ""hola"""\n')).toEqual([['a'], ['dice "hola"']]);
+  });
+});
+
+describe('mensajeError', () => {
+  it('muestra el texto de los errores de Supabase, nunca "[object Object]"', () => {
+    expect(mensajeError({ message: 'algo puntual', code: 'XX000' })).toBe('algo puntual');
+    expect(mensajeError({ message: 'permission denied for table growth_mkt_ajustes', code: '42501' })).toMatch(/^No tenés permiso/);
+    expect(mensajeError(new Error('Failed to fetch'))).toMatch(/^No hay conexión/);
+    expect(mensajeError('texto suelto')).toBe('texto suelto');
+    expect(mensajeError({})).toBe('Algo salió mal. Probá de nuevo.');
   });
 });

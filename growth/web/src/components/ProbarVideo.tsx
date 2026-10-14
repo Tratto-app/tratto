@@ -4,6 +4,7 @@ import { extraer, MAX_MB } from '../lib/cerebro-extraer';
 import { supabase } from '../lib/supabase';
 import { CerebroSvg, tono, ZONAS } from './CerebroSvg';
 import { Card } from './ui';
+import { mensajeError } from '../lib/format';
 
 // Probar un video en el CRM: se elige el archivo, el navegador lo analiza
 // (cerebro-core.ts, el mismo que usan los agentes por la CLI) y se ve el
@@ -67,7 +68,7 @@ export function ProbarVideo({ opciones, onGuardado }: { opciones: Opcion[]; onGu
       setProgreso(1);
       setFase('listo');
     } catch (e) {
-      setError(e instanceof Error ? e.message : String(e));
+      setError(mensajeError(e));
       setFase('vacio');
     }
   }
@@ -102,7 +103,7 @@ export function ProbarVideo({ opciones, onGuardado }: { opciones: Opcion[]; onGu
       setGuardado({ etiqueta: opciones.find((o) => o.id === pieza)?.etiqueta || 'la pieza', anterior: versiones.length > (prev?.versiones?.length || 0) });
       onGuardado();
     } catch (e) {
-      setError(e instanceof Error ? e.message : String(e));
+      setError(mensajeError(e));
     } finally {
       setGuardando(false);
     }

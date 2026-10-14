@@ -2,7 +2,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import { Badge, Card, Empty, ErrorBox, Field, Loading, Modal, PageHeader, Pager, Score, StatusBadge } from '../components/ui';
 import { fn } from '../lib/api';
-import { hace, nombre, num } from '../lib/format';
+import { hace, nombre, num, mensajeError } from '../lib/format';
 import { useAsync, useDebounced } from '../lib/hooks';
 import { CHANNELS, CONSENT, ENTRADA, INTEREST, STATUS, STATUS_ORDER } from '../lib/labels';
 import { supabase } from '../lib/supabase';
@@ -316,7 +316,7 @@ function Masivo({ tipo, ids, workflows, onClose, onDone }: { tipo: 'workflow' | 
         toast('Etiqueta agregada');
       }
       onDone();
-    } catch (e) { toast(e instanceof Error ? e.message : String(e), true); setTrabajando(false); }
+    } catch (e) { toast(mensajeError(e), true); setTrabajando(false); }
   };
   return (
     <Modal title={tipo === 'workflow' ? 'Iniciar automatización' : tipo === 'tag' ? 'Agregar etiqueta' : 'Cambiar estado'} onClose={onClose}

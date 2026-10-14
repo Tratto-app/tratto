@@ -2,7 +2,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
 import { Badge, Card, Loading, MsgStatus, PageHeader, Score, StatusBadge } from '../components/ui';
 import { fn } from '../lib/api';
-import { fecha, hace, nombre } from '../lib/format';
+import { fecha, hace, nombre, mensajeError } from '../lib/format';
 import { useAsync, useDebounced } from '../lib/hooks';
 import { CHANNELS, INTEREST } from '../lib/labels';
 import { supabase } from '../lib/supabase';
@@ -120,7 +120,7 @@ function Conversacion({ prospectId, canalInicial, convId, draft, onChange }: { p
         setTexto(''); setLinkId('');
       }
       data.reload(); onChange();
-    } catch (e) { toast(e instanceof Error ? e.message : String(e), true); }
+    } catch (e) { toast(mensajeError(e), true); }
     setBusy(false);
   };
   const sugerir = async () => {
@@ -132,7 +132,7 @@ function Conversacion({ prospectId, canalInicial, convId, draft, onChange }: { p
         : { workspace_id: ws!.id, action: 'message', prospect_id: prospectId, channel: canal });
       setTexto(String(r.output.suggested_reply || r.output.message || ''));
       if (r.provider === 'mock') toast('Sugerencia por reglas (no hay OPENAI_API_KEY configurada)');
-    } catch (e) { toast(e instanceof Error ? e.message : String(e), true); }
+    } catch (e) { toast(mensajeError(e), true); }
     setBusy(false);
   };
 

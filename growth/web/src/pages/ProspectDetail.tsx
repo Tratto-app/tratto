@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import { Badge, Card, ErrorBox, Field, Loading, Modal, MsgStatus, PageHeader, Score, StatusBadge } from '../components/ui';
 import { fn, rpc } from '../lib/api';
-import { fecha, hace, nombre } from '../lib/format';
+import { fecha, hace, nombre, mensajeError } from '../lib/format';
 import { useAsync } from '../lib/hooks';
 import { CHANNELS, CONSENT, ENTRADA, INTEREST, STATUS, STATUS_ORDER } from '../lib/labels';
 import { LINK_BASE, supabase } from '../lib/supabase';
@@ -186,7 +186,7 @@ function IA({ prospect, onApplied }: { prospect: Prospect; onApplied: () => void
       const r = await fn<{ provider: string; output: Record<string, unknown> }>('growth-ai', { workspace_id: ws!.id, action, prospect_id: prospect.id, apply });
       setOut({ action, provider: r.provider, output: r.output });
       if (apply) { toast('Guardado en el prospecto'); onApplied(); }
-    } catch (e) { toast(e instanceof Error ? e.message : String(e), true); }
+    } catch (e) { toast(mensajeError(e), true); }
     setBusy('');
   };
   return (
@@ -225,7 +225,7 @@ function LinksPersonales({ prospect, links, onDone }: { prospect: Prospect; link
                 {ws!.is_demo && ['android', 'ios'].map((d) => (
                   <button key={d} className="btn chico laton" title="Solo en la demo: registra un click como si viniera de ese teléfono" onClick={async () => {
                     try { await rpc('growth_simulate_click', { ws: ws!.id, p_link: l.id, p_prospect: prospect.id, p_device: d }); toast(`Click simulado desde ${d}`); onDone(); }
-                    catch (e) { toast(e instanceof Error ? e.message : String(e), true); }
+                    catch (e) { toast(mensajeError(e), true); }
                   }}>Simular click {d === 'android' ? 'Android' : 'iPhone'}</button>
                 ))}
               </li>
@@ -246,7 +246,7 @@ function SimularApp({ prospect, onDone }: { prospect: Prospect; onDone: () => vo
       const { data: click } = await supabase.from('growth_link_clicks').select('click_token').eq('prospect_id', prospect.id).order('created_at', { ascending: false }).limit(1).maybeSingle();
       await rpc('growth_simulate_event', { ws: ws!.id, ev: { event, external_user_id: ext, prospect_id: prospect.id, click_token: click?.click_token, platform: 'android' } });
       toast(`Evento "${event}" registrado`); onDone();
-    } catch (e) { toast(e instanceof Error ? e.message : String(e), true); }
+    } catch (e) { toast(mensajeError(e), true); }
   };
   return (
     <Card title="Simular la app (demo)">
