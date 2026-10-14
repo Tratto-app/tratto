@@ -29,8 +29,8 @@ def armar(saludo, gancho, servicio, zona, pedido, donde):
     parrafos = [
         f'Hola {saludo}, ¿cómo va?' if saludo else 'Hola, ¿cómo va?',
         f'{gancho} Te escribo de Tratto, una app donde gente de CABA y Provincia de Buenos Aires '
-        'publica lo que necesita y recibe presupuestos de proveedores de su zona.',
-        f'Tratto recién está arrancando y estamos sumando proveedores de {servicio} en {zona}. '
+        'publica lo que necesita y recibe presupuestos de quienes ofrecen el servicio en su zona.',
+        f'Tratto recién está arrancando y estamos sumando a quienes ofrecen {servicio} en {zona}. '
         'Si hoy te registrás, publicás tu servicio y activás las notificaciones, cada vez que un '
         f'cliente de tu zona pida {pedido} te llega el aviso automáticamente. No tenés que estar '
         'entrando a revisar la app.',

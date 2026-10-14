@@ -32,6 +32,23 @@ em{font-style:normal;color:var(--laton)}
 #portada h1{font-size:84px;line-height:1.0}
 #portada p{font-size:30px;color:var(--gris-3);margin-top:22px}
 
+/* 8 · portada whatsapp business 1600x900. WhatsApp muestra más o menos de
+   y=100 a y=800 (recorta arriba y abajo, y arriba tapa con la barra y los
+   íconos) y monta la foto de perfil abajo al medio (centro ~800,720). Por eso:
+   el título grande va en la franja de arriba que sí se ve, los rubros a los
+   costados y los hilos terminan detrás de la foto. */
+#portada-wa{width:1600px;height:900px}
+#portada-wa .hub{position:absolute;left:800px;top:720px;width:640px;height:640px;margin:-320px 0 0 -320px;border-radius:50%;
+  background:radial-gradient(circle, rgba(43,126,98,.55), rgba(43,126,98,.12) 45%, transparent 70%);z-index:1}
+#portada-wa svg.hilos{position:absolute;inset:0;z-index:1}
+#portada-wa .titulo{position:absolute;z-index:2;left:0;right:0;top:168px;text-align:center}
+#portada-wa .titulo h1{font-size:96px;line-height:1;color:#F4F1EA}
+#portada-wa .titulo .hilo{width:240px;height:3px;margin:18px auto 0}
+#portada-wa .chip{position:absolute;z-index:2;display:flex;align-items:center;gap:14px;padding:16px 26px;border-radius:99px;
+  background:rgba(12,38,32,.82);border:1.5px solid rgba(143,217,188,.32);color:#E8EBEA;font-size:28px;font-weight:500;white-space:nowrap}
+#portada-wa .chip i{width:10px;height:10px;border-radius:50%;background:var(--laton);flex:none}
+#portada-wa .izq i{order:2}
+
 /* posts 1080x1350 */
 .post{width:1080px;height:1350px}
 .post .cont{padding:88px 92px 80px;display:flex;flex-direction:column}
@@ -107,7 +124,7 @@ em{font-style:normal;color:var(--laton)}
   <h1 class="cond" style="font-size:100px">Así de <em>simple</em>.</h1>
   <div style="margin-top:56px">
     <div class="paso"><div class="num">01</div><div><b>Pedís</b><span>Contás qué necesitás arreglar. Si subís una foto, te damos un precio de referencia al toque.</span></div></div>
-    <div class="paso"><div class="num">02</div><div><b>Te cotizan</b><span>Proveedores de tu zona y de ese rubro te mandan su presupuesto por el chat.</span></div></div>
+    <div class="paso"><div class="num">02</div><div><b>Te cotizan</b><span>Quienes ofrecen ese servicio en tu zona te mandan su presupuesto por el chat.</span></div></div>
     <div class="paso"><div class="num">03</div><div><b>Elegís vos</b><span>Comparás qué incluye cada uno, cuánto sale y cuándo puede. Sin llamar a diez personas.</span></div></div>
   </div>
   <div class="pie"><span class="url">trattoapp.com.ar</span><span class="sello" style="font-size:20px;padding:10px 22px">Del pedido al presupuesto</span></div>
@@ -149,10 +166,40 @@ em{font-style:normal;color:var(--laton)}
   <p class="baja">Precio de referencia al toque y presupuestos de gente de tu zona.</p>
   <div class="lista">
     <div class="check"><i>✓</i><span>Gratis para el que pide</span></div>
-    <div class="check"><i>✓</i><span>Proveedores de tu zona</span></div>
+    <div class="check"><i>✓</i><span>Gente de tu zona que lo hace</span></div>
     <div class="check"><i>✓</i><span>Comparás y elegís vos</span></div>
   </div>
   <div class="qrbloque"><img src="qr-cli.svg"><div><b>Escaneá y pedí</b><span>Del pedido al presupuesto, sin vueltas.</span><div class="url">trattoapp.com.ar</div></div></div>
 </div></div>
 
+<!-- 8 · Portada de WhatsApp Business -->
+<div class="pieza oscura" id="portada-wa"><div class="cont">
+  <div class="hub"></div>
+  <svg class="hilos" width="1600" height="900"><defs><linearGradient id="hwa" x1="0" x2="1"><stop offset="0" stop-color="#1B4B40"/><stop offset=".5" stop-color="#C9A227"/><stop offset="1" stop-color="#1B4B40"/></linearGradient></defs></svg>
+  <div class="titulo"><h1 class="cond">Más de <em>40 rubros</em></h1><div class="hilo"></div></div>
+  <span class="chip izq" style="left:110px;top:350px">Plomería y destapaciones<i></i></span>
+  <span class="chip izq" style="left:230px;top:463px">Fotografía y video<i></i></span>
+  <span class="chip izq" style="left:80px;top:576px">Contabilidad e impuestos<i></i></span>
+  <span class="chip izq" style="left:190px;top:689px">Fletes y mudanzas<i></i></span>
+  <span class="chip der" style="right:96px;top:350px"><i></i>Paseo y cuidado de mascotas</span>
+  <span class="chip der" style="right:236px;top:463px"><i></i>Música y sonido (DJ)</span>
+  <span class="chip der" style="right:110px;top:576px"><i></i>Programación y desarrollo</span>
+  <span class="chip der" style="right:84px;top:689px"><i></i>Personal trainer, yoga y pilates</span>
+</div></div>
+<script>
+// Hilos de cada rubro a la foto de perfil (abajo al medio).
+(function(){
+  const pz=document.getElementById('portada-wa'), svg=pz.querySelector('svg.hilos'), r=pz.getBoundingClientRect();
+  const hx=800, hy=720;
+  pz.querySelectorAll('.chip').forEach(c=>{
+    const b=c.getBoundingClientRect(), izq=c.classList.contains('izq');
+    const x=(izq?b.right-r.left:b.left-r.left), y=b.top-r.top+b.height/2;
+    const mx=(x+hx)/2;
+    const p=document.createElementNS('http://www.w3.org/2000/svg','path');
+    p.setAttribute('d',`M${x} ${y} C${mx} ${y} ${mx} ${hy} ${hx} ${hy}`);
+    p.setAttribute('fill','none'); p.setAttribute('stroke','url(#hwa)'); p.setAttribute('stroke-width','2'); p.setAttribute('stroke-opacity','.75');
+    svg.appendChild(p);
+  });
+})();
+</script>
 </body></html>

@@ -57,7 +57,9 @@ Todo monto que aparezca en una pieza sale de la tabla `precios_referencia` del t
 
 ## 8. Cómo escribir
 
-**Tratto no es una app de oficios del hogar.** Tiene más de 40 rubros (ver `config/marca.json` → `rubros`). Cuando una pieza habla de proveedores o de qué se puede pedir, dice "más de 40 rubros" o muestra la variedad (clases, belleza, autos, mascotas, eventos, trámites…). Un plomero o un pintor sirven como ejemplo de un caso concreto, nunca como la lista de quiénes pueden sumarse. El verificador lo marca (`sesgo_oficios`). Es un pedido explícito del fundador.
+**Nunca «proveedor» ni «proveedores»** (pedido del fundador, 14/10/2026): se dice «quien ofrece el servicio», «quienes ofrecen servicios», «quien hace el trabajo» o el rubro concreto. `verificar` lo marca.
+
+**Tratto no es una app de oficios del hogar.** Tiene más de 40 rubros (ver `config/marca.json` → `rubros`). Cuando una pieza habla de quienes ofrecen servicios o de qué se puede pedir, dice "más de 40 rubros" o muestra la variedad (clases, belleza, autos, mascotas, eventos, trámites…). Un plomero o un pintor sirven como ejemplo de un caso concreto, nunca como la lista de quiénes pueden sumarse. El verificador lo marca (`sesgo_oficios`). Es un pedido explícito del fundador.
 
 
 Español rioplatense con voseo, como habla el público. Concreto: números (de la tabla de referencia), objetos, situaciones. Cada recomendación con el texto nuevo listo para usar, no consejos sueltos.
@@ -84,7 +86,7 @@ configuración está en `config/marca.json` → `links`, y `verificar` (con
 - En el perfil hay 3 links con nombre, en este orden:
   «Calculadora de precios» → `trattoapp.com.ar/r/ig-bio-calculadora`,
   «Pedí un servicio» → `trattoapp.com.ar/r/tratto-bio`,
-  «Soy proveedor» → `trattoapp.com.ar/r/ig-bio-proveedores`.
+  «Ofrezco un servicio» → `trattoapp.com.ar/r/ig-bio-proveedores` (hasta el 14/10/2026 se llamaba «Soy proveedor»).
 - La **segunda línea** del texto (antes del "más") dice qué hacer y dónde:
   `👉 Calculadora gratis: tocá @trattoapp_ y entrá al link «Calculadora de precios».`
   La mención se toca y abre el perfil. Nunca "link en la bio" a secas, y no

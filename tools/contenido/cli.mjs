@@ -1,7 +1,8 @@
 #!/usr/bin/env node
 // Motor de contenido: lo que las skills necesitan calcular o recordar de forma
 // determinística. Las skills razonan; este programa valida, puntúa, verifica
-// y guarda. Sin dependencias: Node 18+ (y ffmpeg solo para `fotogramas`).
+// y guarda. Sin dependencias: Node 18+ (y ffmpeg solo para `fotogramas` y
+// `cerebro`; `cerebro` además usa Node 22.18+ para importar el analizador en TypeScript).
 //
 //   node tools/contenido/cli.mjs ayuda
 import fs from 'node:fs';
@@ -12,6 +13,7 @@ import { armarContexto } from './lib/contexto.mjs';
 import { conocimiento } from './lib/conocimiento.mjs';
 import { ErrorEntrada } from './lib/errores.mjs';
 import { extraerFotogramas } from './lib/fotogramas.mjs';
+import { analizarVideo } from './lib/cerebro.mjs';
 import { hooksMarkdown, verificarHooks } from './lib/hooks.mjs';
 import { informeIA, revisarIA } from './lib/humanizador.mjs';
 import { actualizar, estadoMemoria, leer, registrar, TIPOS } from './lib/memoria.mjs';
@@ -42,6 +44,8 @@ Uso: node tools/contenido/cli.mjs <comando> [opciones]
   validar                             Revisa rúbrica, conocimiento, configuración y memoria
   fotogramas <video> [--salida DIR] [--cantidad N] [--ancho PX]
                                       Extrae fotogramas con ffmpeg para analizar un video
+  cerebro <video>                     Prueba del cerebro gratis (la misma del CRM): gancho, retención,
+                                      zonas, línea de atención y consejos. --json da lo que va en datos.cerebro
   ayuda                               Esta ayuda
 
 La entrada JSON va por --archivo o por stdin. --json devuelve JSON en lugar de texto.
@@ -260,6 +264,22 @@ async function main(argv) {
         : fs.mkdtempSync(path.join(os.tmpdir(), 'fotogramas-'));
       const r = extraerFotogramas(video, dir, { cantidad: entero(op.cantidad, 'cantidad', 8), ancho: entero(op.ancho, 'ancho', 540) });
       salida(op, r, [`Video: ${r.segundos} s · ${r.ancho}×${r.alto}`, r.nota, '', ...r.fotogramas.map((f) => `${f.segundo}s → ${f.archivo}`)].join('\n'));
+      return 0;
+    }
+
+    case 'cerebro': {
+      const video = pos[1];
+      if (!video) throw new ErrorEntrada('Uso: cerebro <video> [--json]');
+      const r = await analizarVideo(video);
+      const z = r.regiones;
+      salida(op, r, [
+        `${r.archivo} · ${r.duracion} s (analizados ${r.segundos} s)`,
+        `Viral ${r.viral} · Gancho ${r.gancho} · Retención ${r.retencion}`,
+        `Zonas: visual ${z.visual} · atención ${z.atencion} · auditiva ${z.auditiva} · foco ${z.foco} · lenguaje ${z.lenguaje} · memoria ${z.memoria}`,
+        `Atención por segundo: ${r.linea.join(' ')}`,
+        '', ...r.consejos.map((c) => `→ ${c}`),
+        '', 'Estimación de Tratto por señales del video (movimiento, cambios, texto, sonido y voz), no un modelo del cerebro.',
+      ].join('\n'));
       return 0;
     }
 

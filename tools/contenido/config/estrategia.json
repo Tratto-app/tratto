@@ -1,6 +1,6 @@
 {
   "nicho": "Servicios para el hogar y la vida cotidiana en Argentina: cómo conseguir a alguien confiable y a un precio justo.",
-  "objetivo_comercial": "Conseguir los primeros pedidos de clientes y los primeros proveedores por zona para el lanzamiento de la app.",
+  "objetivo_comercial": "Conseguir los primeros pedidos de clientes y a los primeros que ofrecen servicios en cada zona para el lanzamiento de la app.",
   "plataformas": [
     "instagram",
     "tiktok"
@@ -26,7 +26,7 @@
     },
     {
       "id": "proveedores",
-      "nombre": "Para proveedores (todos los rubros)",
+      "nombre": "Para quienes ofrecen servicios (todos los rubros)",
       "descripcion": "Para quien ofrece cualquier servicio de los más de 40 rubros (no solo oficios del hogar): cómo conseguir más trabajos, presupuestar mejor y cuidar la reputación.",
       "porcentaje": 15
     },

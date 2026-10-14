@@ -7,8 +7,10 @@ Vale para el CMO y para los cinco departamentos. Leelo entero antes de trabajar.
 Marketplace de servicios de Argentina con **más de 40 rubros (46)**: hogar,
 limpieza, autos y traslados, clases, eventos, digital, trámites, contabilidad,
 belleza, entrenamiento, mascotas. La persona pide, recibe presupuestos de
-proveedores de su zona y elige. Gratis para quien pide; el proveedor paga 3%
-solo si cobra por la app. Web: www.trattoapp.com.ar · Calculadora "¿Te cobraron
+quienes ofrecen ese servicio en su zona y elige. Gratis para quien pide; quien
+ofrece el servicio paga 3% solo si cobra por la app. En todo lo que sale con el
+nombre de Tratto nunca se dice «proveedor»: «quien ofrece el servicio» (pedido
+del fundador, 14/10/2026). Web: www.trattoapp.com.ar · Calculadora "¿Te cobraron
 de más?": www.trattoapp.com.ar/calculadora/
 
 Marca, tono, palabras prohibidas y restricciones: `tools/contenido/config/marca.json`.
