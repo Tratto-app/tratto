@@ -1,8 +1,8 @@
 // Menú lateral del panel (lo usan el Layout y el smoke test).
-export type IconKey = 'dash' | 'users' | 'flag' | 'source' | 'link' | 'inbox' | 'flow' | 'ai' | 'app' | 'seg' | 'ret' | 'chart' | 'funnel' | 'cohort' | 'store' | 'book' | 'plug' | 'gear' | 'team';
+export type IconKey = 'dash' | 'users' | 'flag' | 'source' | 'link' | 'inbox' | 'flow' | 'ai' | 'app' | 'seg' | 'ret' | 'chart' | 'funnel' | 'cohort' | 'store' | 'book' | 'plug' | 'gear' | 'team' | 'agentes';
 
 export const NAV: { group: string; items: { to: string; label: string; icon: IconKey }[] }[] = [
-  { group: '', items: [{ to: '/', label: 'Inicio', icon: 'dash' }, { to: '/equipo', label: 'Equipo de marketing', icon: 'team' }] },
+  { group: '', items: [{ to: '/', label: 'Inicio', icon: 'dash' }, { to: '/equipo', label: 'Equipo de marketing', icon: 'team' }, { to: '/agentes', label: 'Claude / Codex', icon: 'agentes' }] },
   { group: 'Captación', items: [
     { to: '/prospects', label: 'Contactos', icon: 'users' }, { to: '/campaigns', label: 'Campañas', icon: 'flag' },
     { to: '/sources', label: 'Fuentes', icon: 'source' }, { to: '/links', label: 'Links con nombre', icon: 'link' }] },

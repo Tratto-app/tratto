@@ -44,3 +44,22 @@ test('hook: frena Instagram sin la mención, Instagram y TikTok juntos y deja pa
   assert.equal(decidir(post('', ['instagram'], { instagramData: { type: 'STORY' } }), links), null);
   assert.equal(decidir(post('Entrá a trattoapp.com.ar/r/tt-es-caro #fletes', ['tiktok']), conTikTok(false)), null);
 });
+
+test('tiendas: solo se nombra la tienda donde la app ya está', () => {
+  const soloApple = { ...links, tiendas: { app_store: { publicada: true }, google_play: { publicada: false } } };
+  assert.deepEqual(revisarCaminoAlLink('Bajala en la App Store, buscá Tratto', 'tiktok', soloApple), []);
+  assert.match(revisarCaminoAlLink('Bajala en Google Play', 'tiktok', soloApple)[0], /todavía no está en Google Play/);
+  assert.match(revisarCaminoAlLink('Descargala gratis en las tiendas', 'tiktok', soloApple)[0], /solo está en la App Store/);
+  assert.match(revisarCaminoAlLink('Ya está en Play Store.\n👉 Tocá @trattoapp_ y entrá al link «Pedí un servicio».', 'instagram', soloApple)[0], /Google Play/);
+  const ninguna = { ...links, tiendas: { app_store: { publicada: false }, google_play: { publicada: false } } };
+  assert.equal(revisarCaminoAlLink('Bajala en la App Store o en Google Play', 'tiktok', ninguna).length, 2);
+  const ambas = { ...links, tiendas: { app_store: { publicada: true }, google_play: { publicada: true } } };
+  assert.deepEqual(revisarCaminoAlLink('Bajala de las tiendas: App Store o Google Play', 'tiktok', ambas), []);
+  assert.deepEqual(revisarCaminoAlLink('Tiendas de ropa del barrio', 'tiktok', soloApple), [], '"tiendas" suelto no es la tienda de apps');
+});
+
+test('la marca de hoy: App Store sí, Google Play no', () => {
+  assert.equal(links.tiendas.app_store.publicada, true);
+  assert.equal(links.tiendas.google_play.publicada, false);
+  assert.match(links.tiendas.app_store.url, /^https:\/\/apps\.apple\.com\//);
+});

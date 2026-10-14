@@ -110,14 +110,25 @@ configuración está en `config/marca.json` → `links`, y `verificar` (con
 - El único link que se toca dentro de un video de TikTok es el botón de un
   video promocionado (Promocionar → visitas al sitio web), que es pago: lo
   decide la persona.
-- **Cuando la app salga en las tiendas** (no habilita por sí sola el link del
-  perfil de TikTok, que sigue dependiendo del registro o de los 1.000
-  seguidores): buscar "Tratto" en Google Play y en App Store. Si sale primera,
-  en TikTok el texto y la pantalla dicen "Buscá Tratto en Google Play o App
-  Store" (una palabra en vez de una dirección) y el cierre de los videos
-  muestra los íconos de las tiendas. Si no sale primera, seguir con el link
-  escrito. Ese día también se revisa el perfil de las dos redes
-  (`contenido-perfil`) y se vuelve a pedir el Registro de empresas de TikTok.
+- **Tiendas** (estado en `links.tiendas` de `config/marca.json`; `verificar`
+  y el hook frenan un texto que nombre una tienda donde la app no está):
+  - **App Store: sí, desde el 2026-10-09.** Buscando "Tratto" en la App Store
+    de Argentina sale primera (revisado el 2026-10-14). En TikTok el texto y
+    la pantalla pueden decir "En iPhone: buscá Tratto en la App Store" (una
+    palabra en vez de una dirección), siempre junto al link escrito para el
+    resto. En Instagram sigue el camino de un toque: el link «Pedí un
+    servicio» (`tratto-bio`) y la historia con `ig-historia-app` ya abren la
+    App Store en un iPhone y la web en Android o en la computadora.
+  - **Google Play: todavía no** (prueba cerrada hasta el 21/10, después el
+    pedido de acceso a producción). No se nombra Google Play ni se dice
+    "bajala en las tiendas". Cuando salga: poner
+    `links.tiendas.google_play.publicada` en `true`, buscar "Tratto" en Google
+    Play y, si sale primera, pasar a "Buscá Tratto en App Store o Google Play"
+    con los dos íconos en el cierre de los videos.
+  - Que la app esté en una tienda no habilita el link del perfil de TikTok
+    (sigue dependiendo del Registro de empresas o de los 1.000 seguidores).
+    Al salir cada tienda se revisa el perfil de las dos redes
+    (`contenido-perfil`).
 
 ## 9. Conectores (si están en la sesión)
 

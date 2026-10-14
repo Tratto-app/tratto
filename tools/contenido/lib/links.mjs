@@ -6,9 +6,33 @@
 // - TikTok: "link del perfil" solo si TikTok ya lo habilitó; si no, nunca
 //   prometerlo. Tampoco mencionar la cuenta de Instagram: en TikTok esa
 //   mención abre otra cuenta.
+// - Tiendas: solo se nombra la tienda donde la app ya está publicada
+//   (links.tiendas). Mientras falte una, tampoco "bajala en las tiendas".
 // La configuración vive en config/marca.json → links.
 
 const PERFIL = /\blink (en|de|del) (la |tu |nuestro |el )?(bio|perfil)\b|\blink del perfil\b|\bperfil\b.{0,40}\blink\b/i;
+
+const TIENDAS = [
+  { clave: 'google_play', nombre: 'Google Play', patron: /\bgoogle\s*play\b|\bplay\s*store\b/i, otro: 'en Android Tratto se usa desde la web' },
+  { clave: 'app_store', nombre: 'la App Store', patron: /\bapp\s*store\b|\bappstore\b/i, otro: 'en iPhone Tratto se usa desde la web' },
+];
+const LAS_TIENDAS = /\b(descarg|baj|instal)\w*\b.{0,40}\btiendas\b|\btiendas de (apps|aplicaciones)\b/i;
+
+function revisarTiendas(t, tiendas) {
+  if (!tiendas) return [];
+  const problemas = [];
+  const faltan = TIENDAS.filter((x) => !tiendas[x.clave]?.publicada);
+  for (const x of faltan) {
+    if (x.patron.test(t)) problemas.push(`La app todavía no está en ${x.nombre}: no la nombres (${x.otro}).`);
+  }
+  if (faltan.length && LAS_TIENDAS.test(t)) {
+    const hay = TIENDAS.filter((x) => tiendas[x.clave]?.publicada).map((x) => x.nombre);
+    problemas.push(hay.length
+      ? `No digas "las tiendas": la app solo está en ${hay.join(' y ')}. Nombrá esa tienda.`
+      : 'La app todavía no está en las tiendas: no digas que se descarga.');
+  }
+  return problemas;
+}
 
 const escapar = (s) => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 const menciona = (texto, usuario) => new RegExp(`(^|[^\\w.])${escapar(usuario)}(?![\\w.])`, 'i').test(texto);
@@ -18,7 +42,7 @@ export function revisarCaminoAlLink(texto, red, links) {
   const t = String(texto || '');
   if (!t.trim() || !links) return [];
   const ig = links.instagram, tt = links.tiktok;
-  const problemas = [];
+  const problemas = revisarTiendas(t, links.tiendas);
   if (red === 'instagram' && ig) {
     if (!menciona(t, ig.usuario)) {
       const nombres = (ig.links_del_perfil || []).map((n) => `«${n}»`).join(', ');
