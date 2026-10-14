@@ -2,7 +2,7 @@
 export type IconKey = 'dash' | 'users' | 'flag' | 'source' | 'link' | 'inbox' | 'flow' | 'ai' | 'app' | 'seg' | 'ret' | 'chart' | 'funnel' | 'cohort' | 'store' | 'book' | 'plug' | 'gear' | 'team' | 'agentes' | 'cerebro';
 
 export const NAV: { group: string; items: { to: string; label: string; icon: IconKey }[] }[] = [
-  { group: '', items: [{ to: '/', label: 'Inicio', icon: 'dash' }, { to: '/equipo', label: 'Equipo de marketing', icon: 'team' }, { to: '/agentes', label: 'Claude / Codex', icon: 'agentes' }, { to: '/cerebro', label: 'Cerebro de las piezas', icon: 'cerebro' }] },
+  { group: '', items: [{ to: '/', label: 'Inicio', icon: 'dash' }, { to: '/equipo', label: 'Equipo de marketing', icon: 'team' }, { to: '/agentes', label: 'Claude / Codex', icon: 'agentes' }, { to: '/cerebro', label: 'Cerebro de las piezas', icon: 'cerebro' }, { to: '/recorridos/mail', label: 'Recorrido por Mail', icon: 'inbox' }, { to: '/recorridos/whatsapp', label: 'Recorrido por WhatsApp', icon: 'flow' }] },
   { group: 'Captación', items: [
     { to: '/prospects', label: 'Contactos', icon: 'users' }, { to: '/campaigns', label: 'Campañas', icon: 'flag' },
     { to: '/sources', label: 'Fuentes', icon: 'source' }, { to: '/links', label: 'Links con nombre', icon: 'link' }] },

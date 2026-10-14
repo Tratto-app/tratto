@@ -1,0 +1,54 @@
+.recorrido-canales { display:flex; gap:8px; margin:0 0 18px; }
+.recorrido-canales a { padding:9px 15px; border:1px solid var(--borde); border-radius:var(--radio); color:var(--texto-2); }
+.recorrido-canales a.activo { color:var(--texto); background:var(--sup-2); border-color:var(--laton); }
+.recorrido-actual { display:flex; justify-content:space-between; gap:24px; border-left:3px solid var(--laton); margin-bottom:18px; }
+.recorrido-actual h2 { margin-top:14px; }
+.recorrido-rubro-hoy { font:600 24px var(--f-titulo); margin:5px 0 12px; }
+.recorrido-hoy-num { display:flex; flex-direction:column; justify-content:center; min-width:180px; max-width:240px; }
+.recorrido-hoy-num strong { font:600 42px var(--f-mono); color:var(--verde-luz); }
+.recorrido-hoy-num small { color:var(--texto-2); margin-top:10px; }
+.recorrido-etapas { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:10px; margin-bottom:18px; }
+.recorrido-etapas>div { display:flex; align-items:center; gap:10px; padding:14px; background:var(--sup-1); border:1px solid var(--borde); border-radius:var(--radio); }
+.recorrido-etapas>div.activa { border-color:var(--verde-vivo); background:var(--sup-2); }
+.recorrido-etapas small { display:block; margin-top:3px; color:var(--texto-2); }
+.recorrido-paso { font:500 15px var(--f-mono); color:var(--laton-luz); }
+.recorrido-kpis { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:12px; }
+.recorrido-filtros { display:flex; align-items:end; flex-wrap:wrap; gap:14px; margin-bottom:14px; }
+.recorrido-filtros label { flex:1; min-width:180px; color:var(--texto-2); }
+.recorrido-filtros input,.recorrido-filtros select { width:100%; margin-top:6px; }
+.recorrido-lista { margin-top:15px; }
+.recorrido-item { border-top:1px solid var(--borde); }
+.recorrido-item summary { display:grid; grid-template-columns:30px minmax(0,1fr) 140px 120px; align-items:center; gap:14px; padding:14px 0; cursor:pointer; list-style:none; }
+.recorrido-item summary::-webkit-details-marker { display:none; }
+.recorrido-item summary:focus-visible { outline:2px solid var(--laton); }
+.recorrido-item summary::before { content:none; }
+.recorrido-orden { font:500 14px var(--f-mono); color:var(--laton-luz); }
+.recorrido-nombre { min-width:0; }
+.recorrido-nombre strong { display:block; font-size:15px; }
+.recorrido-nombre small { display:block; color:var(--texto-2); margin-top:4px; }
+.recorrido-cantidad { text-align:right; }
+.recorrido-cantidad strong { font:500 20px var(--f-mono); display:block; }
+.recorrido-cantidad small { color:var(--texto-2); }
+.recorrido-item .badge { justify-self:end; }
+.recorrido-detalle { border-left:2px solid var(--verde-vivo); margin:0 0 16px 43px; padding:0 0 4px 16px; }
+.recorrido-detalle p { margin-top:0; }
+.recorrido-zonas { display:flex; flex-wrap:wrap; gap:7px; margin:12px 0; }
+.recorrido-zonas>span { background:var(--sup-2); border:1px solid var(--borde); padding:5px 9px; border-radius:6px; overflow-wrap:anywhere; }
+.recorrido-zonas b { color:var(--verde-luz); margin-left:6px; font-family:var(--f-mono); }
+.recorrido-zonas.pendientes>span { background:transparent; color:var(--texto-2); }
+.recorrido-barrios { display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-top:18px; }
+@media(max-width:1100px) { .recorrido-etapas,.recorrido-kpis { grid-template-columns:repeat(2,minmax(0,1fr)); } }
+@media(max-width:650px) {
+  .recorrido-actual { flex-direction:column; gap:4px; }
+  .recorrido-hoy-num { max-width:none; min-width:0; }
+  .recorrido-hoy-num strong { font-size:32px; }
+  .recorrido-etapas { grid-template-columns:1fr; }
+  .recorrido-kpis { gap:8px; }
+  .recorrido-kpis .valor { font-size:26px; }
+  .recorrido-item summary { grid-template-columns:24px minmax(0,1fr) 80px; gap:8px; }
+  .recorrido-item .badge { grid-column:2 / 4; justify-self:start; }
+  .recorrido-cantidad small { font-size:11px; }
+  .recorrido-detalle { margin-left:32px; padding-left:10px; }
+  .recorrido-barrios { grid-template-columns:1fr; }
+  .recorrido-filtros label { min-width:100%; }
+}
