@@ -1,0 +1,33 @@
+\set ON_ERROR_STOP on
+begin;
+insert into auth.users(email,phone) values('synthetic@example.invalid','5491100000002');
+set local role service_role;
+do $$ declare ws uuid:='00000000-0000-4000-8000-000000000001';a jsonb;b jsonb;
+begin
+  if has_table_privilege('service_role','auth.users','SELECT') then raise exception 'fixture should forbid raw auth read'; end if;
+  perform public.growth_wa_event(ws,'{"key":"permission-A","kind":"message","phone":"5491100000001","body":"QUIERO RECIBIR INVITACIONES DE TRATTO POR WHATSAPP"}');
+  perform public.growth_wa_event(ws,'{"key":"permission-B","kind":"message","phone":"5491100000002","body":"QUIERO RECIBIR INVITACIONES DE TRATTO POR WHATSAPP"}');
+  perform public.growth_wa_event(ws,'{"key":"permission-C","kind":"message","phone":"5491100000003","body":"QUIERO RECIBIR INVITACIONES DE TRATTO POR WHATSAPP"}');
+  if (public.growth_wa_enqueue(ws,'00000000-0000-4000-8000-000000000012')->>'ok')::boolean then raise exception 'registered auth user accepted'; end if;
+  if public.growth_wa_phone('011 15 0000-0001')<>'5491100000001' then raise exception 'local phone duplicate not normalized'; end if;
+  perform public.growth_wa_enqueue(ws,'00000000-0000-4000-8000-000000000011');
+  perform public.growth_wa_enqueue(ws,'00000000-0000-4000-8000-000000000013');
+  update public.growth_wa_config set enabled=true,template_approved=true,phone_number_id='123',waba_id='456',template_name='tratto_proveedores_v1',template_body='Prueba ficticia. Respondé BAJA.',daily_limit=2,monthly_budget_usd=0.10,price_ceiling_usd=0.10,health_ok=true,health_checked_at=now(),meta_limit=250,health_template_body='Prueba ficticia. Respondé BAJA.' where workspace_id=ws;
+  a:=public.growth_wa_claim(ws,20);if jsonb_array_length(a)<>1 then raise exception 'monthly budget overspend'; end if;
+  b:=public.growth_wa_begin((a->0->>'id')::uuid,(a->0->>'claim_token')::uuid);
+  perform public.growth_wa_event(ws,'{"key":"early-delivery","kind":"status","external_id":"wamid.early","status":"delivered"}');
+  perform public.growth_wa_result((a->0->>'id')::uuid,(a->0->>'claim_token')::uuid,200,'{"messages":[{"id":"wamid.early"}]}');
+  if (select state from public.growth_wa_queue where id=(a->0->>'id')::uuid)<>'delivered' then raise exception 'early webhook lost'; end if;
+  update public.growth_wa_config set monthly_budget_usd=1 where workspace_id=ws;
+  a:=public.growth_wa_claim(ws,20);if jsonb_array_length(a)<>1 then raise exception 'second reservation'; end if;
+  update public.growth_prospects set status='registered' where id=(select prospect_id from public.growth_wa_queue where id=(a->0->>'id')::uuid);
+  if (public.growth_wa_begin((a->0->>'id')::uuid,(a->0->>'claim_token')::uuid)->>'ok')::boolean then raise exception 'registration during reservation ignored'; end if;
+  perform public.growth_wa_event(ws,'{"key":"account-warning","kind":"account_alert"}');
+  if (select enabled from public.growth_wa_config where workspace_id=ws) then raise exception 'account warning not paused'; end if;
+  if public.growth_wa_claim(ws)<>'[]'::jsonb then raise exception 'paused account claimed'; end if;
+  if (public.growth_wa_qualify(ws,'5491100000004','Ficticio D','','','Pintura','CABA','Palermo','')->>'ok')::boolean then raise exception 'form without verified consent allowed'; end if;
+  perform public.growth_wa_daily_report(ws);perform public.growth_wa_daily_report(ws);
+  if (select count(*) from public.growth_mkt_items where datos->>'clave'='whatsapp_prospeccion_dia')<>1 then raise exception 'duplicate report'; end if;
+  raise notice 'PASS: service_role private auth lookup, phone normalization, monthly budget, early webhook, registration race, account pause, form permission, report idempotence';
+end $$;
+rollback;
