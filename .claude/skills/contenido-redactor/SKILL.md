@@ -20,7 +20,7 @@ y `tools/contenido/conocimiento/plataformas.md`.
    - **Instagram:** primera línea de hasta ~125 caracteres que se entienda
      sola. **Segunda línea, el link de un toque** (protocolo, sección 8.2):
      `👉 Calculadora gratis: tocá @trattoapp_ y entrá al link «Calculadora de precios».`
-     (o «Pedí un servicio» / «Soy proveedor»). Después 2 a 4 renglones con el
+     (o «Pedí un servicio» / «Ofrezco un servicio»). Después 2 a 4 renglones con el
      valor (números concretos), una acción (guardar o mandárselo a alguien) y
      al final 3 a 5 hashtags de `contenido-hashtags`. Sin URL escrita.
    - **TikTok:** primera línea con la palabra clave que la gente busca, el

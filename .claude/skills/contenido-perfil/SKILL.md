@@ -20,7 +20,7 @@ segundos si sigue la cuenta o toca el link. El perfil tiene que contestar:
    - **Nombre** (campo buscable, distinto del usuario): marca + lo que la gente busca ("Tratto · Servicios cerca tuyo").
    - **Bio** (hasta 150 caracteres): qué es + para quién (los dos segmentos si entra) + un diferencial creíble + CTA hacia el link. Sin promesas absolutas ni palabras que la marca evita.
    - **Link**: `cta_principal` con UTM (`?utm_source=instagram&utm_medium=bio`) para medirlo en Vercel Analytics.
-   - **Destacadas** (3 a 7, títulos de hasta 15 caracteres): por ejemplo "Cómo funciona", "Precios", "Proveedores", "Dudas", "Seguridad". Para cada una, qué historias van adentro.
+   - **Destacadas** (3 a 7, títulos de hasta 15 caracteres): por ejemplo "Cómo funciona", "Precios", "Ofrecé servicio", "Dudas", "Seguridad". Para cada una, qué historias van adentro.
    - **Fijadas** (hasta 3): qué piezas fijar (una que explique qué es Tratto, una de valor guardable, una para proveedores) y, si no existen, proponerlas como `idea`.
    - **Foto**: el logo de `tools/piezas-redes/salida/01-foto-de-perfil.png`; revisá que se lea en chico.
 4. **Verificar**:

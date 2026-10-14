@@ -248,7 +248,7 @@
       ],
       "parameters": {
         "respondWith": "json",
-        "responseBody": "={{ JSON.stringify({ public_key: ($json[0] ?? $json).public_key || null, error: ($json[0] ?? $json).public_key ? null : 'El proveedor todavia no conecto su cuenta de Mercado Pago.' }) }}",
+        "responseBody": "={{ JSON.stringify({ public_key: ($json[0] ?? $json).public_key || null, error: ($json[0] ?? $json).public_key ? null : 'Quien hizo el trabajo todavía no conectó su cuenta de Mercado Pago.' }) }}",
         "options": {}
       }
     },

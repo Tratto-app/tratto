@@ -1257,7 +1257,7 @@
   <div class="hoja">
     <div class="hoja-tit">Funciones con inteligencia artificial</div>
     <div class="hoja-txt">Para tasar una foto, comparar presupuestos, responderte en el chat de
-      ayuda y resumir cómo trabajó un proveedor, Tratto usa un servicio de inteligencia
+      ayuda y resumir cómo trabajó quien hizo un servicio, Tratto usa un servicio de inteligencia
       artificial de <b>OpenAI</b>, que procesa la información <b>en Estados Unidos</b>.</div>
     <ul class="ia-que">
       <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7.5h3l1.5-2h7L17 7.5h3a1 1 0 0 1 1 1v9a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1v-9a1 1 0 0 1 1-1z"/><circle cx="12" cy="13" r="3.4"/></svg>
@@ -1395,7 +1395,7 @@
         <div class="campo oculto" id="a-nombre-caja">
           <label for="a-nombre">Tu nombre</label>
           <input id="a-nombre" type="text" autocomplete="name" maxlength="60" placeholder="Ej: Raúl Gómez">
-          <div class="ayuda" id="a-nombre-ayuda">Es como te van a ver los proveedores.</div>
+          <div class="ayuda" id="a-nombre-ayuda">Es como te van a ver quienes ofrecen los servicios.</div>
           <div class="err" id="e-a-nombre">Escribí tu nombre.</div>
         </div>
 
@@ -1578,12 +1578,12 @@
     <section class="pantalla" id="p-chats">
       <div class="kicker">Conexiones</div>
       <h1>Tus chats</h1>
-      <p class="bajada">Cada conexión es un cliente y un proveedor que se encontraron. Acá van a vivir las conversaciones.</p>
+      <p class="bajada">Cada conexión es un cliente y alguien que ofrece un servicio, que se encontraron. Acá van a vivir las conversaciones.</p>
 
       <div class="sec"><span class="sec-tit">Como cliente</span><span class="sec-num" id="n-cli"></span></div>
       <div id="lista-cliente"></div>
 
-      <div class="sec"><span class="sec-tit">Como proveedor</span><span class="sec-num" id="n-prov"></span></div>
+      <div class="sec"><span class="sec-tit">Ofreciendo servicios</span><span class="sec-num" id="n-prov"></span></div>
       <div id="lista-proveedor"></div>
     </section>
 
@@ -1636,7 +1636,7 @@
           <span class="item-tit" id="modo-actual">Cuenta de cliente</span>
           <span class="sello verde" id="modo-sello">Cliente</span>
         </div>
-        <div class="item-meta"><span id="modo-txt">Pedís servicios y elegís proveedores.</span></div>
+        <div class="item-meta"><span id="modo-txt">Pedís servicios y elegís quién los hace.</span></div>
       </div>
 
       <div class="sec"><span class="sec-tit">Tus datos</span></div>
@@ -1728,7 +1728,7 @@
     <section class="pantalla" id="p-nuevo-pedido">
       <div class="kicker">Nuevo pedido</div>
       <h1>¿Qué necesitás?</h1>
-      <p class="bajada">Buscamos proveedores de tu rubro, en tu zona y dentro de tu presupuesto.</p>
+      <p class="bajada">Buscamos quienes ofrezcan ese servicio en tu zona y dentro de tu presupuesto.</p>
 
       <!-- Dos puertas a la misma estimación: la foto sirve para lo que se ve
            (una pérdida, una mancha, algo roto); para una clase de inglés o un
@@ -1764,7 +1764,7 @@
         <div class="campo">
           <label for="s-nombre"><span class="indice">01</span>Tu nombre</label>
           <input id="s-nombre" type="text" autocomplete="name" placeholder="Ej: María González">
-          <div class="err" id="e-s-nombre">Escribí tu nombre para que el proveedor sepa con quién habla.</div>
+          <div class="err" id="e-s-nombre">Escribí tu nombre para que quien ofrece el servicio sepa con quién habla.</div>
         </div>
         <div class="campo">
           <label for="s-email"><span class="indice">02</span>Email</label>
@@ -1780,7 +1780,7 @@
         <div class="campo">
           <label for="s-servicio"><span class="indice">04</span>Qué servicio necesitás</label>
           <select id="s-servicio"><option value="">Elegí el rubro</option></select>
-          <div class="err" id="e-s-servicio">Elegí un rubro para poder buscar proveedores.</div>
+          <div class="err" id="e-s-servicio">Elegí un rubro para poder buscar quién lo haga.</div>
         </div>
         <div class="campo">
           <label for="s-zona"><span class="indice">05</span>Zona</label>
@@ -1792,8 +1792,8 @@
           <div class="caja-monto"><span class="signo">$</span>
             <input id="s-presupuesto" type="text" inputmode="numeric" placeholder="30.000"></div>
           <div class="ayuda">Si tenés una idea de cuánto querés gastar, ponela. Si no, dejalo vacío:
-            <b>no filtra proveedores</b>, solo les da contexto.</div>
-          <div class="ayuda">Después lo negociás con el proveedor.</div>
+            <b>no deja a nadie afuera</b>, solo les da contexto.</div>
+          <div class="ayuda">Después lo negociás con quien haga el trabajo.</div>
 
         </div>
         <div class="campo">
@@ -1813,8 +1813,8 @@
             </button>
             <input type="file" id="s-foto-archivo" accept="image/*" class="oculto">
           </div>
-          <div class="ayuda">Es lo que más ayuda a que te coticen bien. Un proveedor que ve el
-            trabajo puede darte un precio; uno que lee un párrafo, no.</div>
+          <div class="ayuda">Es lo que más ayuda a que te coticen bien. Quien ve el trabajo
+            puede darte un precio; quien lee un párrafo, no.</div>
         </div>
 
         <div class="campo">
@@ -1835,7 +1835,7 @@
         </div>
 
         <button class="btn lleno" id="s-enviar" type="button" style="margin-top:16px">
-          <span class="rueda"></span><span id="s-txt">Buscar proveedores</span>
+          <span class="rueda"></span><span id="s-txt">Buscar quién lo haga</span>
         </button>
         <div class="aviso" id="s-aviso" role="status"></div>
       </div>
@@ -1975,7 +1975,7 @@
         </dl>
       </div>
       <div id="d-comparador"></div>
-      <div class="sec"><span class="sec-tit">Proveedores conectados</span><span class="sec-num" id="d-num"></span></div>
+      <div class="sec"><span class="sec-tit">Conectados con tu pedido</span><span class="sec-num" id="d-num"></span></div>
       <div id="d-lista"></div>
     </section>
 
@@ -2824,11 +2824,11 @@ function pintarCamposDeRol(){
   $('a-fiscal-caja').classList.toggle('oculto', !(creando && prov));
   $('a-nombre-ayuda').textContent = prov
     ? 'Es como te van a ver los clientes. Puede ser tu nombre o el de tu negocio.'
-    : 'Es como te van a ver los proveedores.';
+    : 'Es como te van a ver quienes ofrecen los servicios.';
   $('a-nombre').placeholder = prov ? 'Ej: Raúl Gómez / Pinturería Gómez' : 'Ej: Raúl Gómez';
   $('a-tel-ayuda').textContent = prov
     ? 'Es el que van a ver los clientes con los que trabajes.'
-    : 'Es el que van a ver los proveedores con los que trabajes.';
+    : 'Es el que van a ver las personas con las que trabajes.';
 }
 $('a-rubro').addEventListener('change', () => {
   pintarCamposDeRol();
@@ -3330,7 +3330,7 @@ $('s-enviar').addEventListener('click', async () => {
     fotoPedido = null; pintarFotoPedido(); $('tasar-resultado').innerHTML = ''; limpiarTasadorTexto();
     resumenPedido(); await cargarPedidos(); ir('inicio','entra');
   }catch(e){ console.error(e); avisar('s-aviso','No se pudo conectar. Probá de nuevo.','mal'); }
-  finally{ b.disabled=false; b.classList.remove('cargando'); $('s-txt').textContent='Buscar proveedores'; }
+  finally{ b.disabled=false; b.classList.remove('cargando'); $('s-txt').textContent='Buscar quién lo haga'; }
 });
 
 /* ══════════════════ NUEVO PROVEEDOR ══════════════════ */
@@ -3426,7 +3426,7 @@ async function cargarPedidos(){
          baja solo y se borra la foto. No lo escondemos: el cliente tiene que
          entender por qué dejó de buscar y poder pedirlo de nuevo. */
       const vencido = s.estado === 'vencida';
-      const sello = vencido ? ['gris','Vencido'] : listo ? ['verde','Con proveedores'] : ['gris','Buscando'];
+      const sello = vencido ? ['gris','Vencido'] : listo ? ['verde','Conectado'] : ['gris','Buscando'];
       return '<button class="item" data-pedido="'+s.id+'" type="button"><div class="item-top">' +
         '<span class="item-tit">'+esc(s.servicio_necesitado)+'</span>' +
         '<span class="sello '+sello[0]+'">'+sello[1]+'</span></div>' +
@@ -3435,7 +3435,7 @@ async function cargarPedidos(){
         '<span>'+esc(s.urgencia)+'</span></div>' +
         '<div class="item-pie"><span>'+(vencido
             ? 'Nadie respondió en 15 días. Podés volver a pedirlo.'
-            : listo ? 'Ver quién te podemos conectar' : 'Buscando proveedores que calcen')+'</span>' +
+            : listo ? 'Ver quién te podemos conectar' : 'Buscando quién lo haga')+'</span>' +
         '<span class="flecha"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 5l7 7-7 7"/></svg></span></div></button>';
     }).join('');
     document.querySelectorAll('[data-pedido]').forEach(b =>
@@ -3498,9 +3498,9 @@ async function cargarConexiones(){
 
   $('lista-cliente').innerHTML = comoCliente.length
     ? comoCliente.map(m => filaConexion(m,
-        m.proveedores ? m.proveedores.nombre : 'Proveedor',
+        m.proveedores ? m.proveedores.nombre : 'Sin nombre',
         (m.solicitudes ? m.solicitudes.servicio_necesitado : '') + ' · ' + (m.proveedores ? m.proveedores.zona : ''))).join('')
-    : cajaVacia('Sin conexiones', 'Cuando conectemos tu pedido con proveedores, van a aparecer acá.','chat');
+    : cajaVacia('Sin conexiones', 'Cuando conectemos tu pedido con quienes ofrecen el servicio, van a aparecer acá.','chat');
 
   $('lista-proveedor').innerHTML = comoProv.length
     ? comoProv.map(m => filaConexion(m,
@@ -3569,7 +3569,7 @@ async function abrirChat(matchId, desde){
 
   if(soyCliente && m.proveedores){
     $('ch-nom').textContent = m.proveedores.nombre;
-    $('ch-rol').textContent = 'Proveedor · ' + m.proveedores.rubro;
+    $('ch-rol').textContent = 'Ofrece: ' + m.proveedores.rubro;
     $('ch-desc').textContent = m.proveedores.descripcion || '';
     $('ch-datos').innerHTML =
       '<span><b>Zona:</b> '+esc(m.proveedores.zona)+'</span>' +
@@ -3673,12 +3673,12 @@ function pagoHTML(m){
       ? nota('Cuando termines, avisale al cliente desde acá para que te pague por la app.') +
         '<div class="presu-acciones"><button class="btn lleno" data-terminar-presu="'+m.id+'" ' +
         'type="button">Marcar trabajo terminado</button></div>'
-      : nota('Cuando el proveedor dé el trabajo por terminado, vas a poder pagarlo desde acá.');
+      : nota('Cuando quien hace el trabajo lo dé por terminado, vas a poder pagarlo desde acá.');
   }
 
   /* Trabajo terminado y sin cobrar: le toca al cliente. */
   return miRol === 'cliente'
-    ? nota('El proveedor dio el trabajo por terminado. Si estás conforme, pagalo desde acá.') +
+    ? nota('Quien hizo el trabajo lo dio por terminado. Si estás conforme, pagalo desde acá.') +
       '<div class="presu-acciones">' +
       '<button class="btn lleno" data-pagar-presu="'+m.id+'" data-monto="'+(m.monto||0)+'" ' +
       'type="button">Pagar con tarjeta</button></div>'
@@ -3690,7 +3690,7 @@ function pintarMensajes(msgs, irAbajo){
   if(!msgs.length){
     h.innerHTML = '<div class="chat-vacio"><b>Todavía no hay mensajes</b>' +
       (miRol === 'cliente'
-        ? 'Contale al proveedor qué necesitás y pedile un presupuesto.'
+        ? 'Contale qué necesitás y pedile un presupuesto.'
         : 'Presentate y ofrecele tu presupuesto al cliente.') + '</div>';
     return;
   }
@@ -4065,7 +4065,7 @@ async function cobrarPago(id, boton){
     });
     const clave = await rc.json().catch(() => null);
     if(!rc.ok || !clave || !clave.public_key)
-      throw new Error((clave && clave.error) || 'El proveedor todavía no conectó su cuenta de Mercado Pago.');
+      throw new Error((clave && clave.error) || 'Quien hizo el trabajo todavía no conectó su cuenta de Mercado Pago.');
 
     /* 2. El SDK cambia la tarjeta por un token contra los servidores de
           Mercado Pago. Los números nunca salen del navegador hacia nosotros. */
@@ -4170,7 +4170,7 @@ async function abrirDetalle(id){
   $('d-presu').textContent= pesos(s.presupuesto);
   $('d-urg').textContent  = s.urgencia;
   $('d-estado').textContent = s.estado === 'vencida' ? 'Vencido'
-    : s.estado === 'con_match' ? 'Con proveedores' : 'Buscando';
+    : s.estado === 'con_match' ? 'Conectado' : 'Buscando';
   $('d-lista').innerHTML = esqueleto(2);
   $('d-comparador').innerHTML = '';
   $('d-num').textContent = '';
@@ -4181,7 +4181,7 @@ async function abrirDetalle(id){
     $('d-num').textContent = ms.length || '';
     if(!ms.length){
       $('d-lista').innerHTML = cajaVacia('Todavía buscando',
-        'Apenas encontremos proveedores que calcen con tu rubro, zona y presupuesto, te avisamos.','chat');
+        'Apenas encontremos quién ofrezca ese servicio en tu zona y dentro de tu presupuesto, te avisamos.','chat');
       return;
     }
     $('d-lista').innerHTML = ms.map(m => {
@@ -4355,7 +4355,7 @@ function elegirRol(r){
   const a = $('a-terminos-link');
   a.href = TERMINOS[r];
   a.textContent = r === 'proveedor'
-    ? 'términos y condiciones para proveedores'
+    ? 'términos y condiciones para quienes ofrecen servicios'
     : 'términos y condiciones para clientes';
 }
 $('rol-cliente').addEventListener('click', () => elegirRol('cliente'));
@@ -4657,7 +4657,7 @@ async function abrirFicha(userId, propia){
       body: JSON.stringify({perfil_user_id:userId, visitante:sesion.user.id})}).catch(()=>{});
   }
 
-  const nombre = (perfil && perfil.nombre) || (servicios[0] && servicios[0].nombre) || 'Proveedor';
+  const nombre = (perfil && perfil.nombre) || (servicios[0] && servicios[0].nombre) || 'Sin nombre';
   const trabajos = (perfil && perfil.trabajos_hechos) || 0;
 
   $('pf-inicial').textContent = (nombre || '?').charAt(0).toUpperCase();
@@ -4687,7 +4687,7 @@ async function abrirFicha(userId, propia){
   }else{
     $('pf-bio').innerHTML = fichaPropia
       ? cajaVacia('Todavía no contaste quién sos','Los clientes eligen por confianza. Escribí unas líneas sobre tu trabajo.','maleta')
-      : '<p style="color:var(--gris);font-size:14px">Este proveedor todavía no cargó su descripción.</p>';
+      : '<p style="color:var(--gris);font-size:14px">Todavía no cargó su descripción.</p>';
   }
 
   /* lo que dicen los clientes */
@@ -4748,7 +4748,7 @@ async function abrirFicha(userId, propia){
   /* pie: editar o contactar */
   $('pf-contacto').innerHTML = fichaPropia
     ? '<button class="btn vacio-b" id="pf-editar" type="button">Editar mi perfil</button>'
-    : '<div class="nota">Los datos de este perfil los cargó el proveedor. ' +
+    : '<div class="nota">Los datos de este perfil los cargó quien ofrece el servicio. ' +
       '<b>Tratto no los verificó.</b> Antes de contratar, pedile la documentación que corresponda.</div>' +
       '<div style="margin-top:12px;text-align:center"><button class="reportar" data-reporta-perfil="'+esc(userId)+'" type="button">' +
       BANDERA_REP + 'Reportar este perfil</button></div>';
@@ -5668,7 +5668,7 @@ const ESTRELLA = '<svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoi
 function mostrarCalificar(){
   const h = $('ch-hilo');
   if(h.querySelector('#caja-calificar')) return;
-  const nombre = chatActual && chatActual.proveedores ? chatActual.proveedores.nombre : 'el proveedor';
+  const nombre = chatActual && chatActual.proveedores ? chatActual.proveedores.nombre : 'quien hizo el trabajo';
   estrellasPuestas = 0;
   h.insertAdjacentHTML('beforeend',
     '<div class="calificar" id="caja-calificar">' +
@@ -5822,7 +5822,7 @@ function mostrarTasacion(d, origen){
     '<div class="diag-nota">Es una referencia de mercado que estima una inteligencia artificial ' +
     (porFoto ? 'mirando la foto' : 'leyendo lo que escribiste') +
     ', <b>no un precio de esta app ni un presupuesto</b>. Puede estar equivocada. ' +
-    'El precio real lo pone cada proveedor.</div>' +
+    'El precio real lo pone quien hace el trabajo.</div>' +
     '<div class="diag-nota">Completamos el pedido abajo con lo que entendimos: revisalo y cambiá lo que haga falta.' +
     (porTrabajo ? '' : ' Dejamos el presupuesto vacío porque ese precio es ' + esc(d.unidad) + ': si querés, cargá cuánto pensás gastar en total.') +
     '</div>' +
@@ -6037,23 +6037,23 @@ $('asis-texto').addEventListener('keydown', e => {
 const FAQ = [
   ['Si buscás un servicio', [
     ['¿Cuánto me cuesta usar Tratto?',
-     'Nada. Pedir un servicio, hablar con proveedores y recibir presupuestos es gratis. ' +
-     'Tratto le cobra una comisión al proveedor sobre los trabajos que se pagan por la app.'],
+     'Nada. Pedir un servicio, hablar con quienes lo ofrecen y recibir presupuestos es gratis. ' +
+     'Tratto le cobra una comisión a quien ofrece el servicio sobre los trabajos que se pagan por la app.'],
     ['¿Cuándo pago el trabajo?',
-     'Cuando está terminado. El proveedor lo marca como terminado en la app y recién ahí ' +
+     'Cuando está terminado. Quien hace el trabajo lo marca como terminado en la app y recién ahí ' +
      'te aparece el botón para pagar. <b>Aceptar un presupuesto no te cobra nada.</b>'],
     ['¿Con qué puedo pagar?',
      'Con tarjeta de crédito, de débito o con saldo de tu cuenta de Mercado Pago.'],
     ['¿Tratto se queda con mi plata?',
-     'No. El pago va directo del cliente al proveedor por Mercado Pago. ' +
-     'Tratto nunca tiene los fondos: solo se le retiene su comisión al proveedor en el momento del cobro.'],
-    ['¿Tratto verifica a los proveedores?',
-     'No verificamos matrículas ni antecedentes: lo que ves en cada perfil lo declaró el proveedor. ' +
+     'No. El pago va directo del cliente a quien hizo el trabajo, por Mercado Pago. ' +
+     'Tratto nunca tiene los fondos: solo se retiene su comisión en el momento del cobro.'],
+    ['¿Tratto verifica a quienes ofrecen servicios?',
+     'No verificamos matrículas ni antecedentes: lo que ves en cada perfil lo declaró quien ofrece el servicio. ' +
      'Por eso mismo <b>no admitimos rubros que necesiten matrícula</b>, como gas, electricidad o profesiones de la salud. ' +
      'Mirá las calificaciones y los trabajos cerrados por la app antes de decidir.'],
     ['¿El precio que me da la foto es el que voy a pagar?',
      'No. Es una estimación que arma una inteligencia artificial mirando la foto, para que sepas ' +
-     'más o menos en qué rango estás parado. <b>El precio real lo pone cada proveedor</b> en su presupuesto, ' +
+     'más o menos en qué rango estás parado. <b>El precio real lo pone quien hace el trabajo</b> en su presupuesto, ' +
      'y puede ser distinto.'],
     ['¿Qué pasa si nadie responde mi pedido?',
      'A los 15 días sin respuesta el pedido se da de baja solo y te avisamos. Podés volver a publicarlo cuando quieras.'],
@@ -6184,12 +6184,12 @@ function pintarModoCuenta(){
       '<div class="placa-oficio">'+esc(miOficio())+'</div>');
   $('panel-saludo').textContent = prov ? 'Hola, ' + miPrimerNombre() : 'Panel';
   $('panel-oficio').textContent = prov ? miOficio() : '';
-  $('modo-actual').textContent = prov ? 'Cuenta de proveedor' : 'Cuenta de cliente';
-  $('modo-sello').textContent  = prov ? 'Proveedor' : 'Cliente';
+  $('modo-actual').textContent = prov ? 'Cuenta para ofrecer servicios' : 'Cuenta de cliente';
+  $('modo-sello').textContent  = prov ? 'Ofrezco servicios' : 'Cliente';
   $('modo-sello').className    = 'sello ' + (prov ? 'oro' : 'verde');
   $('modo-txt').textContent    = prov
     ? 'Recibís pedidos, mandás presupuestos y armás tu perfil. Se eligió al crear la cuenta y no se cambia.'
-    : 'Pedís servicios y elegís proveedores. Se eligió al crear la cuenta y no se cambia.';
+    : 'Pedís servicios y elegís quién los hace. Se eligió al crear la cuenta y no se cambia.';
 }
 
 /* El nombre y el oficio de la cuenta, con respaldo para las cuentas creadas
