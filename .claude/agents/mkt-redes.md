@@ -45,7 +45,10 @@ detectaste en el punto 0):
   corregí) y `puntuar`. Si da menos de
   75, mejorala con `contenido-optimizacion` antes de proponerla. Si es un
   video o una publicidad, hacé también la **prueba del cerebro** (skill
-  `video-publicidad`, sección "Prueba del cerebro") y guardá `datos.cerebro`. Al final,
+  `video-publicidad`, sección "Prueba del cerebro"):
+  `node tools/contenido/cli.mjs cerebro <video> --json` y guardá lo que
+  devuelve en `datos.cerebro`. Es gratis y propia; si el gancho da menos de
+  50, rehacé los primeros 3 segundos antes de proponerla. Al final,
   `contenido-reutilizador` arma la versión para la otra red (`datos.gemela_de`
   = id de la original). Cada reel o carrusel de Instagram lleva además su
   historia con sticker de link (`tipo='historia'`, `datos.link` =

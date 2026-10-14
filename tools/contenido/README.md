@@ -85,7 +85,16 @@ node tools/contenido/cli.mjs metricas  [--comparar < resultado.json]
 node tools/contenido/cli.mjs memoria   [tipo]
 node tools/contenido/cli.mjs validar
 node tools/contenido/cli.mjs fotogramas video.mp4 [--cantidad 12]
+node tools/contenido/cli.mjs cerebro video.mp4 [--json]   # prueba del cerebro: gancho, retención, zonas, consejos
 ```
+
+`cerebro` es la prueba del cerebro propia y gratis (la misma que el CRM en
+Cerebro → "Probar un video"): mide movimiento, cambios de plano o de texto,
+color, contraste, sonido y voz de los primeros 30 s y devuelve puntaje viral,
+gancho, retención, zonas, atención segundo a segundo y consejos. Es una
+estimación por señales, no un modelo del cerebro. El analizador está en
+`growth/web/src/lib/cerebro-core.ts` (lo comparten el CRM y la CLI; Node 22.18+
+para importar TypeScript).
 
 Salida: 0 bien · 1 error interno · 2 entrada inválida (el mensaje dice qué
 campo y por qué) · 3 la pieza no cumple un límite de Instagram.
@@ -121,6 +130,7 @@ Los datos de producto coinciden con el workspace de Growth OS
 | Programar publicaciones | Sí, con aprobación | Metricool `createScheduledPost`; necesita el video subido a una URL pública. |
 | Diseñar piezas | Sí | Conector de Canva (sin kit de marca: la identidad va en el pedido) o `tools/piezas-redes`. |
 | Transcribir el audio de un video | No | Un servicio de transcripción (por ejemplo, Whisper de OpenAI: el proyecto ya tiene cuenta de OpenAI por Growth OS; la clave iría como secreto) o pasar los subtítulos. Hoy se pide la transcripción. |
+| Prueba del cerebro de un video | Sí, gratis | `cerebro` (ffmpeg) o el CRM. Estimación por señales del video, no un modelo del cerebro. |
 | Abrir links de Instagram/TikTok | No | Las plataformas exigen sesión; se sube el archivo o capturas. |
 | Generar video | Aparte | `tools/video-ia-n8n` (guion con Claude + video con Veo), no conectado a estas skills. |
 | Piezas gráficas | Sí, aparte | Skill `disenador-marketplace` + `tools/piezas-redes`. |

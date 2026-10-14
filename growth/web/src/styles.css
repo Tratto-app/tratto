@@ -418,3 +418,82 @@ td.num, th.num { text-align: right; font-family: var(--f-mono); }
 .cerebro-leyenda span { width: 12px; height: 12px; border-radius: 3px; display: inline-block; }
 .cerebro-leyenda .frio { background: rgba(227, 196, 92, 0.2); }
 .cerebro-leyenda .calido { background: rgba(227, 196, 92, 1); }
+
+/* Cerebro: probar un video */
+.cerebro-seccion { font: 600 15px var(--f-titulo); margin: 26px 0 8px; color: var(--texto); }
+.cerebro-svg.pensando .calor circle { animation: cerebro-latido 1.4s ease-in-out infinite; transform-box: fill-box; transform-origin: center; }
+.cerebro-svg.pensando .calor circle:nth-child(2n) { animation-delay: 0.35s; }
+.cerebro-svg.pensando .calor circle:nth-child(3n) { animation-delay: 0.7s; }
+@keyframes cerebro-latido { 0%, 100% { opacity: 0.55; transform: scale(0.9); } 50% { opacity: 1; transform: scale(1.12); } }
+@media (prefers-reduced-motion: reduce) { .cerebro-svg.pensando .calor circle { animation: none; } }
+.probar { margin-bottom: 4px; }
+.probar-soltar {
+  width: 100%; display: grid; grid-template-columns: minmax(140px, 220px) 1fr; gap: 18px; align-items: center; text-align: left;
+  padding: 18px 22px; border-radius: 12px; border: 1.5px dashed rgba(201, 162, 39, 0.45); background: rgba(201, 162, 39, 0.04);
+  color: var(--texto); cursor: pointer; font: inherit; transition: background 0.15s, border-color 0.15s;
+}
+.probar-soltar:hover, .probar-soltar.encima { background: rgba(201, 162, 39, 0.1); border-color: var(--laton-luz); }
+.probar-soltar:focus-visible { outline: 2px solid var(--laton-luz); outline-offset: 2px; }
+.probar-soltar-cerebro { max-width: 220px; }
+.probar-soltar-texto { display: grid; gap: 4px; color: var(--texto-2); font-size: 13px; }
+.probar-soltar-texto strong { font: 600 17px var(--f-titulo); color: var(--texto); }
+.probar-privado { font: 11.5px var(--f-mono); color: var(--verde-luz); letter-spacing: 0.02em; }
+.probar-error { margin-top: 10px; }
+.probar-cargando { display: grid; justify-items: center; gap: 8px; padding: 6px 0 4px; }
+.probar-cargando .cerebro-svg { max-width: 300px; }
+.probar-progreso { width: min(320px, 100%); height: 6px; border-radius: 4px; background: var(--sup-3); overflow: hidden; }
+.probar-progreso span { display: block; height: 100%; background: linear-gradient(90deg, var(--verde-vivo), var(--laton-luz)); transition: width 0.2s; }
+.probar-grilla { display: grid; grid-template-columns: minmax(150px, 210px) minmax(0, 1.25fr) minmax(240px, 1fr); gap: 20px; align-items: start; }
+.probar-video video { width: 100%; max-height: 380px; border-radius: 10px; background: #000; border: 1px solid var(--borde); display: block; }
+.probar-nombre { margin-top: 6px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.probar-cerebro { display: grid; gap: 6px; }
+.probar-cerebro .cerebro-svg { max-width: 420px; }
+.probar-cerebro .cerebro-leyenda { justify-self: center; }
+.probar-momento { display: flex; align-items: center; justify-content: space-between; gap: 8px; min-height: 28px; font: 11.5px var(--f-mono); letter-spacing: 0.06em; text-transform: uppercase; color: var(--laton-luz); }
+.probar-puntos { display: grid; gap: 12px; }
+.probar-anillo { width: 132px; justify-self: center; }
+.probar-anillo-num { font: 600 34px var(--f-titulo); fill: var(--texto); }
+.probar-anillo-pie { font: 10px var(--f-mono); letter-spacing: 0.14em; fill: var(--texto-3); }
+.cerebro-puntajes.dos { grid-template-columns: repeat(2, 1fr); }
+.cerebro-zonas .barra.invertida span { background: linear-gradient(90deg, rgba(224, 122, 107, 0.5), var(--rojo)); }
+.probar-linea-cab { display: flex; justify-content: space-between; gap: 10px; flex-wrap: wrap; margin-top: 18px; }
+.probar-linea { display: flex; align-items: stretch; gap: 3px; height: 112px; margin-top: 8px; padding: 8px 8px 0; background: var(--sup-2); border-radius: 10px; overflow-x: auto; }
+.probar-seg { flex: 1 0 14px; display: flex; flex-direction: column; justify-content: flex-end; align-items: stretch; gap: 3px; padding: 0; background: none; border: 0; cursor: pointer; border-radius: 4px 4px 0 0; position: relative; }
+.probar-seg .col { display: block; border-radius: 3px 3px 1px 1px; opacity: 0.85; transition: opacity 0.12s; }
+.probar-seg .num { font: 9.5px var(--f-mono); color: var(--texto-3); text-align: center; padding-bottom: 3px; }
+.probar-seg.gancho { background: rgba(201, 162, 39, 0.1); }
+.probar-seg.quieto .num { color: var(--rojo); }
+.probar-seg.quieto::after { content: ''; position: absolute; top: 2px; left: 50%; width: 5px; height: 5px; margin-left: -2.5px; border-radius: 50%; background: var(--rojo); }
+.probar-seg:hover .col, .probar-seg.activo .col { opacity: 1; }
+.probar-seg.activo { outline: 1.5px solid var(--laton-luz); outline-offset: -1px; }
+.probar-seg.activo .num { color: var(--laton-luz); }
+.probar-marcas { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; margin-top: 6px; }
+.probar-marcas span { display: inline-block; width: 10px; height: 10px; border-radius: 3px; }
+.probar-marcas .m-gancho { background: rgba(201, 162, 39, 0.35); }
+.probar-marcas .m-quieto { background: var(--rojo); border-radius: 50%; margin-left: 10px; }
+.probar-senales { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 14px; }
+.probar-senales span { font: 11.5px var(--f-mono); color: var(--texto-2); background: var(--sup-2); border: 1px solid var(--borde); border-radius: 999px; padding: 3px 10px; }
+.probar-consejos { margin-top: 14px; display: grid; gap: 6px; }
+.probar-consejos ul { margin: 0; padding: 0; list-style: none; display: grid; gap: 6px; }
+.probar-consejos li { padding: 8px 12px 8px 30px; background: var(--sup-2); border-radius: 8px; position: relative; font-size: 13px; color: var(--texto); }
+.probar-consejos li::before { content: '→'; position: absolute; left: 11px; color: var(--laton-luz); font-family: var(--f-mono); }
+.probar-guardar { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; margin-top: 16px; padding-top: 14px; border-top: 1px solid var(--borde); }
+.probar-guardar select { flex: 1; min-width: 220px; max-width: 520px; }
+.probar-ok { color: var(--verde-luz); }
+.probar-nota { margin: 14px 0 0; line-height: 1.45; }
+.cerebro-mini { display: flex; align-items: flex-end; gap: 2px; height: 34px; padding: 4px 6px 0; background: var(--sup-2); border-radius: 6px; }
+.cerebro-mini span { flex: 1; border-radius: 2px 2px 0 0; opacity: 0.85; }
+.cerebro-mini span.gancho { outline: 1px solid rgba(201, 162, 39, 0.45); }
+@media (max-width: 1100px) { .probar-grilla { grid-template-columns: minmax(140px, 190px) 1fr; } .probar-puntos { grid-column: 1 / -1; grid-template-columns: 140px 1fr; align-items: center; } .probar-puntos .cerebro-zonas { grid-column: 1 / -1; } }
+@media (max-width: 700px) {
+  .probar-soltar { grid-template-columns: 1fr; justify-items: center; text-align: center; }
+  .probar-grilla { grid-template-columns: 1fr; }
+  .probar-video video { max-height: 300px; margin: 0 auto; width: auto; max-width: 100%; }
+  .probar-puntos { grid-template-columns: 1fr; }
+  .probar-seg .num { font-size: 8px; }
+}
+@media (max-width: 700px) {
+  .probar-linea { gap: 2px; padding: 6px 4px 0; overflow-x: hidden; }
+  .probar-seg { flex: 1 1 0; min-width: 0; }
+  .probar-seg:not(:nth-child(5n + 1)) .num { visibility: hidden; }
+}

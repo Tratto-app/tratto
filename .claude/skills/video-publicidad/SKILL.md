@@ -59,46 +59,60 @@ y `publicidad-app.html`. Copiá su estructura; no arranques de cero.
 ## Prueba del cerebro (antes de dejarlo para aprobar)
 
 Pedido del fundador (14/10/2026), a partir del video "Esta IA predice
-VIRALIDAD" sobre el **Virality Predictor de Higgsfield**. La herramienta simula
-cómo respondería un cerebro al video y devuelve un puntaje viral, el del
-gancho (hook score), la retención (hold rate) y cuánto se activa cada zona:
-visual, atención, auditiva, dispersión del foco (focus drift), lenguaje y
-memoria. Según la prensa usaría el modelo TRIBE v2 de Meta (Higgsfield no lo
-confirmó). Ese modelo tiene licencia solo para uso no comercial, así que no lo
-corremos nosotros: se usa la herramienta de Higgsfield.
+VIRALIDAD" sobre el Virality Predictor de Higgsfield. Esa herramienta es paga
+(y el modelo que usaría, TRIBE v2 de Meta, tiene licencia no comercial), así
+que armamos **una propia y gratis**: mide señales del video (movimiento,
+cambios de plano o de texto, color, contraste, sonido y voz) y devuelve lo
+mismo que mostraba el video: puntaje viral, gancho, retención, cuánto se
+activa cada zona (visual, atención, auditiva, dispersión del foco, lenguaje y
+memoria), la atención segundo a segundo y qué cambiar. **No es un modelo del
+cerebro**: el dibujo ubica cada señal en la zona que se asocia con ese
+estímulo. Decilo así cuando lo muestres.
 
-- **Mira hasta 15 segundos.** Lo que decide si el video funciona (el gancho, la
-  promesa y la primera vez que se ve el producto) tiene que pasar en los
-  primeros 15.
-- **Cada video o publicidad nueva pasa por la prueba** con el conector de
-  Higgsfield, si está en la sesión. El resultado va en `datos.cerebro` del
-  item (formato abajo) y se ve en el CRM, en "Cerebro de las piezas".
+- **Cómo se corre:**
+  - Agentes: `node tools/contenido/cli.mjs cerebro <video.mp4> --json` (ffmpeg,
+    sin conexión). Lo que devuelve va tal cual en `datos.cerebro` del item.
+  - Personas: CRM → Cerebro → "Probar un video". Se analiza en el navegador
+    (el video no se sube) y se guarda en la pieza con "Guardar en la pieza".
+  - Es el mismo analizador (`growth/web/src/lib/cerebro-core.ts`). Entre el
+    CRM y la CLI puede variar unos puntos por cómo cada uno lee los cuadros.
+- **Mira hasta 30 segundos, con foco en los primeros 15.** Lo que decide si el
+  video funciona (el gancho, la promesa y la primera vez que se ve el producto)
+  tiene que pasar ahí.
+- **Cada video o publicidad nueva pasa por la prueba** antes de dejarla para
+  aprobar.
 - **Gancho por debajo de 50:** rehacé los primeros 3 segundos con
   `contenido-hooks` y `contenido-optimizacion` y volvé a probar. Si probaste
-  dos versiones, guardá las dos en `datos.cerebro.versiones` y proponé la que
-  dio mejor.
+  dos versiones, guardá la anterior en `datos.cerebro.versiones` (el CRM lo
+  hace solo) y proponé la que dio mejor.
 - **Es un filtro previo, no un oráculo.** No reemplaza `puntuar` ni la
   aprobación de la persona. Cuando la pieza se publica, comparalo con las
   métricas reales para ver si acierta con nuestra cuenta.
 - **Qué mueve cada zona:**
-  - Visual y atención: movimiento y un cambio de plano o de texto cada 1 o 2
-    segundos desde el primer cuadro; una cara o una mano en pantalla al
-    arrancar.
-  - Auditiva y lenguaje: los videos solo con música las dejan bajas. Probá
-    también una versión con voz (`comun-voz.js`) y subtítulos palabra por
-    palabra, como el video de referencia.
-  - Memoria: una frase clave que se repita (Tratto y el beneficio) y el cierre
-    con la marca.
-- **Sin el conector**, guardá `datos.cerebro = {"estado": "pendiente",
-  "notas": "por qué"}` y decilo en el item. Nunca inventes números.
+  - Visual: color, contraste y movimiento.
+  - Atención: un cambio de plano o de texto cada 1 o 2 segundos y movimiento
+    desde el primer cuadro.
+  - Auditiva: sonido desde el primer cuadro, con subidas y bajadas.
+  - Dispersión del foco (más es peor): segundos en que no pasa nada.
+  - Lenguaje: voz y texto en pantalla. Los videos solo con música la dejan
+    baja: probá también una versión con voz (`comun-voz.js`) y subtítulos
+    palabra por palabra, como el video de referencia.
+  - Memoria: voz y texto con el mensaje, y cierre con la marca quieta 1 o 2
+    segundos.
+- **Si no se puede correr** (sin ffmpeg ni CRM a mano), guardá
+  `datos.cerebro = {"estado": "pendiente", "notas": "por qué"}` y decilo en el
+  item. Nunca inventes números.
+- Higgsfield queda como opción solo si algún día hay una cuenta paga; no es
+  parte del proceso.
 
-Formato de `datos.cerebro`:
+Formato de `datos.cerebro` (lo arma la CLI o el CRM; no se escribe a mano):
 
 ```json
-{ "herramienta": "Higgsfield Virality Predictor", "fecha": "2026-10-14", "segundos": "0-15",
-  "viral": 0, "gancho": 0, "retencion": 0,
+{ "herramienta": "Análisis de Tratto (señales del video)", "version": 1, "fecha": "2026-10-14",
+  "segundos": "0-25", "duracion": 25, "viral": 0, "gancho": 0, "retencion": 0,
   "regiones": { "visual": 0, "atencion": 0, "auditiva": 0, "foco": 0, "lenguaje": 0, "memoria": 0 },
-  "informe_url": "", "imagen_url": "", "notas": "", "estado": "hecho", "versiones": [] }
+  "pico_gancho": 0, "linea": [], "zonas_por_segundo": [], "senales": {}, "consejos": [],
+  "archivo": "reel.mp4", "estado": "hecho", "versiones": [] }
 ```
 
 ## Cómo se hace
