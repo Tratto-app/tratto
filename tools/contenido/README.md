@@ -51,7 +51,9 @@ Dos controles en código hacen que no dependa de acordarse:
   hay que corregir sí o sí, o un texto que suena a IA, es error (sale con 3).
 - Con `red` (`instagram` o `tiktok`), `verificar` exige el link de un toque
   (`lib/links.mjs`, configurado en `config/marca.json` → `links`): un link
-  escrito en el texto no se puede tocar en ninguna de las dos redes.
+  escrito en el texto no se puede tocar en ninguna de las dos redes. También
+  frena un texto que nombre una tienda donde la app todavía no está
+  (`links.tiendas`: hoy App Store sí, Google Play no).
 - Antes de programar en Metricool, el hook `hooks/antes-de-programar.mjs`
   (registrado en `.claude/settings.json`) mide el texto del post y frena la
   programación si suena a IA o le falta el link de un toque, con lo que hay

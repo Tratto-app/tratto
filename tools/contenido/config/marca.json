@@ -19,6 +19,19 @@
       "usuario": "@trattoapp",
       "link_en_perfil": false,
       "motivo": "TikTok habilita el link del perfil con el Registro de empresas aprobado o con 1.000 seguidores (registro rechazado el 2026-10-07). Cuando se habilite, poner link_en_perfil en true."
+    },
+    "tiendas": {
+      "app_store": {
+        "publicada": true,
+        "desde": "2026-10-09",
+        "url": "https://apps.apple.com/ar/app/tratto-servicios-cerca-tuyo/id6819329487",
+        "primera_al_buscar": true,
+        "revisado": "2026-10-14"
+      },
+      "google_play": {
+        "publicada": false,
+        "motivo": "Prueba cerrada de 14 días hasta el 21/10/2026; después hay que pedir acceso a producción. En Android Tratto se usa desde la web. Cuando salga, poner publicada en true."
+      }
     }
   },
   "que_es": "Marketplace de servicios de Argentina: la persona cuenta qué necesita (o le saca una foto), recibe presupuestos de proveedores de su zona y de ese rubro, y elige el que más le conviene.",

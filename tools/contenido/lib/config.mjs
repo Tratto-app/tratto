@@ -7,6 +7,7 @@ import { rutas } from './rutas.mjs';
 import { validar } from './validar.mjs';
 
 const TEXTO = { tipo: 'texto', min: 1, max: 600 };
+const TIENDA = { publicada: { tipo: 'booleano', requerido: true }, desde: TEXTO, url: TEXTO, primera_al_buscar: { tipo: 'booleano' }, revisado: TEXTO, motivo: TEXTO };
 const ITEM = { tipo: 'objeto', campos: { texto: { ...TEXTO, requerido: true }, validado: { tipo: 'booleano', requerido: true } } };
 const LISTA_ITEMS = { tipo: 'lista', de: ITEM, min: 1, max: 30, requerido: true };
 
@@ -31,6 +32,13 @@ export const ESQUEMAS = {
           nota: TEXTO,
           instagram: { tipo: 'objeto', campos: { usuario: { ...TEXTO, requerido: true }, link_en_perfil: { tipo: 'booleano', requerido: true }, links_del_perfil: { tipo: 'lista', de: TEXTO }, motivo: TEXTO } },
           tiktok: { tipo: 'objeto', campos: { usuario: { ...TEXTO, requerido: true }, link_en_perfil: { tipo: 'booleano', requerido: true }, links_del_perfil: { tipo: 'lista', de: TEXTO }, motivo: TEXTO } },
+          tiendas: {
+            tipo: 'objeto',
+            campos: {
+              app_store: { tipo: 'objeto', campos: TIENDA },
+              google_play: { tipo: 'objeto', campos: TIENDA },
+            },
+          },
         },
       },
       rubros: { tipo: 'objeto', campos: { cantidad: { tipo: 'entero', min: 1 }, frase: TEXTO, categorias: { tipo: 'lista', de: TEXTO }, fuente: TEXTO } },
