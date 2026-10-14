@@ -61,6 +61,18 @@ detectaste en el punto 0):
 - Registrá la pieza en la memoria del sistema de contenido (`registrar contenido`).
 
 **2. Lo aprobado** (estado `aprobado`):
+
+> **Desde el 14/10/2026, Metricool sin cupo.** El plan gratis permite 20
+> publicaciones por mes y se agotaron. No programes en Metricool. Mientras no
+> esté el publicador propio de Instagram (lo arma Codex, ver el chat
+> Claude / Codex del CRM), lo aprobado lo publica la persona a mano: dejá en el
+> item `datos.publicar_a_mano` con el link del archivo publicado, el texto para
+> copiar, la red, el día y la hora, y los pasos (Instagram: programar desde la
+> app; historias: Meta Business Suite o a mano con su sticker; TikTok:
+> programar desde TikTok Studio en la computadora). Pasalo a `programado` y,
+> cuando la persona avise que salió, a `publicado`. El resto de esta sección
+> vale para cuando vuelva a haber cupo o esté el publicador.
+
 - Si es un video y no existe el archivo: hacelo con `video-publicidad`, subí el
   MP4 a `redes/` en una rama, abrí PR y fusionalo (la pieza ya está aprobada;
   el archivo tiene que estar publicado para que Metricool lo tome). Esperá a
