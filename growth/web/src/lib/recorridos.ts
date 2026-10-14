@@ -38,9 +38,9 @@ export function regionDe(p: ContactoRecorrido): Region {
   // Una cobertura mixta no identifica dónde está el negocio.
   const precisos = campos.filter(v => !(/\bcaba\b|capital federal|ciudad autonoma/.test(normalizar(v)) && /\bgba\b|gran buenos aires|provincia|zona norte|zona oeste|zona sur|amba/.test(normalizar(v))));
   for (const v of precisos) {
+    if (/\bcaba\b|capital federal|ciudad autonoma de buenos aires/.test(normalizar(v)) || BARRIOS.some(b => contiene(v, b)) || /\bcomuna (?:[1-9]|1[0-5])\b/.test(normalizar(v))) return 'CABA';
     for (const region of ETAPAS.slice(1)) if (contiene(v, region) || contiene(v, region.replace('Zona', 'GBA'))) return region;
     for (const [region, ciudades] of Object.entries(MUNICIPIOS)) if (ciudades.some(n => contiene(v, n))) return region as Region;
-    if (/\bcaba\b|capital federal|ciudad autonoma de buenos aires/.test(normalizar(v)) || BARRIOS.some(b => contiene(v, b)) || /\bcomuna (?:[1-9]|1[0-5])\b/.test(normalizar(v))) return 'CABA';
     if (/interior|provincia|mar del plata|bahia blanca|tandil|la plata|lujan/.test(normalizar(v))) return 'Otras zonas';
   }
   return 'Sin zona precisa';
@@ -58,7 +58,7 @@ export function fechaLocal(v: string | Date): string {
 export function fechaInicial(p: ContactoRecorrido, canal: CanalRecorrido): string {
   const d = objeto(p.datos), m = objeto(d.prospeccion), w = objeto(d.whatsapp_manual);
   if (canal === 'gmail') return texto(m.enviado_at) && texto(m.gmail_thread) ? texto(m.enviado_at) : '';
-  return texto(w.fecha_lista) && texto(w.estado).startsWith('lista_entregada') ? texto(w.fecha_lista) : '';
+  return texto(w.fecha_lista) && (texto(w.estado).startsWith('lista_entregada') || confirmadoManual(p)) ? texto(w.fecha_lista) : '';
 }
 export function confirmadoManual(p: ContactoRecorrido): boolean {
   const w = objeto(objeto(p.datos).whatsapp_manual);

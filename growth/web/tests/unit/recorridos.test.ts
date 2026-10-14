@@ -26,6 +26,7 @@ describe('ubicación y fecha real', () => {
     expect(regionDe(contacto({}, 'Buenos Aires'))).toBe('Sin zona precisa');
     expect(regionDe(contacto({}, 'CABA y Gran Buenos Aires', 'CABA y Gran Buenos Aires'))).toBe('Sin zona precisa');
     expect(regionDe(contacto({}, 'GBA Norte', 'Tigre'))).toBe('Zona Norte');
+    expect(regionDe(contacto({}, 'CABA', 'Parque Avellaneda'))).toBe('CABA');
     expect(regionDe(contacto({}, 'CABA y GBA', 'Palermo'))).toBe('CABA');
     expect(regionDe(contacto({}, 'Buenos Aires (interior)', 'Mar del Plata'))).toBe('Otras zonas');
   });
