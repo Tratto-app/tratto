@@ -12,6 +12,7 @@ Con la misma identidad que la app: verde bosque, latón e IBM Plex.
 | `05-post-proveedores.png` | Para sumar proveedores | 1080×1350 |
 | `06-cartel-proveedores-A4` | Cartel para ferreterías y corralones (PDF para imprimir, PNG a 300 dpi) | A4 |
 | `07-cartel-vecinos-A4` | Cartel para comercios del barrio | A4 |
+| `08-portada-whatsapp.png` / `.jpg` | Portada del perfil de WhatsApp Business: rubros de varias categorías unidos por hilos al centro de abajo, donde WhatsApp pone la foto de perfil | 1600×900 |
 
 Los QR de los carteles llevan a `trattoapp.com.ar` con
 `utm_source=cartel&utm_medium=qr&utm_campaign=proveedores|vecinos`, así Vercel

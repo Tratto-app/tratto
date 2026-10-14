@@ -32,6 +32,20 @@ em{font-style:normal;color:var(--laton)}
 #portada h1{font-size:84px;line-height:1.0}
 #portada p{font-size:30px;color:var(--gris-3);margin-top:22px}
 
+/* 8 · portada whatsapp business 1600x900 (16:9): el centro de abajo queda
+   libre para la foto de perfil, que WhatsApp pone encima; arriba a la derecha
+   van los íconos del perfil. Los rubros se conectan con hilos a ese centro y
+   el sello va arriba al medio, donde no lo tapa nada. */
+#portada-wa{width:1600px;height:900px}
+#portada-wa .hub{position:absolute;left:800px;top:880px;width:640px;height:640px;margin:-320px 0 0 -320px;border-radius:50%;
+  background:radial-gradient(circle, rgba(43,126,98,.55), rgba(43,126,98,.12) 45%, transparent 70%);z-index:1}
+#portada-wa svg.hilos{position:absolute;inset:0;z-index:1}
+#portada-wa .chip{position:absolute;z-index:2;display:flex;align-items:center;gap:14px;padding:16px 26px;border-radius:99px;
+  background:rgba(12,38,32,.82);border:1.5px solid rgba(143,217,188,.32);color:#E8EBEA;font-size:27px;font-weight:500;white-space:nowrap}
+#portada-wa .chip i{width:10px;height:10px;border-radius:50%;background:var(--laton);flex:none}
+#portada-wa .izq i{order:2}
+#portada-wa .pie{position:absolute;z-index:2;display:flex;align-items:center}
+
 /* posts 1080x1350 */
 .post{width:1080px;height:1350px}
 .post .cont{padding:88px 92px 80px;display:flex;flex-direction:column}
@@ -155,4 +169,37 @@ em{font-style:normal;color:var(--laton)}
   <div class="qrbloque"><img src="qr-cli.svg"><div><b>Escaneá y pedí</b><span>Del pedido al presupuesto, sin vueltas.</span><div class="url">trattoapp.com.ar</div></div></div>
 </div></div>
 
+<!-- 8 · Portada de WhatsApp Business -->
+<div class="pieza oscura" id="portada-wa"><div class="cont">
+  <div class="hub"></div>
+  <svg class="hilos" width="1600" height="900"><defs><linearGradient id="hwa" x1="0" x2="1"><stop offset="0" stop-color="#1B4B40"/><stop offset=".5" stop-color="#C9A227"/><stop offset="1" stop-color="#1B4B40"/></linearGradient></defs></svg>
+  <span class="chip izq" style="left:96px;top:150px">Plomería y destapaciones<i></i></span>
+  <span class="chip izq" style="left:230px;top:278px">Fotografía y video<i></i></span>
+  <span class="chip izq" style="left:72px;top:406px">Contabilidad e impuestos<i></i></span>
+  <span class="chip izq" style="left:250px;top:534px">Idiomas<i></i></span>
+  <span class="chip izq" style="left:120px;top:662px">Fletes y mudanzas<i></i></span>
+  <span class="chip der" style="right:96px;top:206px"><i></i>Paseo y cuidado de mascotas</span>
+  <span class="chip der" style="right:236px;top:334px"><i></i>Música y sonido (DJ)</span>
+  <span class="chip der" style="right:84px;top:462px"><i></i>Programación y desarrollo</span>
+  <span class="chip der" style="right:262px;top:590px"><i></i>Clases de manejo</span>
+  <span class="chip der" style="right:120px;top:718px"><i></i>Personal trainer, yoga y pilates</span>
+  <div class="pie" style="left:600px;right:600px;justify-content:center;top:78px;bottom:auto"><span class="sello" style="font-size:21px;padding:10px 22px">Más de 40 rubros</span></div>
+</div></div>
+<script>
+// Hilos de cada rubro al centro (donde WhatsApp pone la foto de perfil).
+(function(){
+  const pz=document.getElementById('portada-wa'), svg=pz.querySelector('svg.hilos'), r=pz.getBoundingClientRect();
+  const hx=800, hy=880; // abajo al medio: ahí cae la foto de perfil, esté más arriba o montada sobre el borde
+  pz.querySelectorAll('.chip').forEach(c=>{
+    const b=c.getBoundingClientRect(), izq=c.classList.contains('izq');
+    const x=(izq?b.right-r.left:b.left-r.left), y=b.top-r.top+b.height/2;
+    const p=document.createElementNS('http://www.w3.org/2000/svg','path');
+    const mx=(x+hx)/2;
+    p.setAttribute('d',`M${x} ${y} C${mx} ${y} ${hx} ${hy - 300} ${hx} ${hy}`);
+    p.setAttribute('fill','none'); p.setAttribute('stroke','url(#hwa)'); p.setAttribute('stroke-width','2');
+    p.setAttribute('stroke-opacity','.75');
+    svg.appendChild(p);
+  });
+})();
+</script>
 </body></html>
