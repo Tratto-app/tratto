@@ -7,7 +7,7 @@ export const NAV: { group: string; items: { to: string; label: string; icon: Ico
     { to: '/prospects', label: 'Contactos', icon: 'users' }, { to: '/campaigns', label: 'Campañas', icon: 'flag' },
     { to: '/sources', label: 'Fuentes', icon: 'source' }, { to: '/links', label: 'Links con nombre', icon: 'link' }] },
   { group: 'Contacto', items: [
-    { to: '/inbox', label: 'Mensajes', icon: 'inbox' }, { to: '/automations', label: 'Automatizaciones', icon: 'flow' }, { to: '/agent', label: 'Asistente IA', icon: 'ai' }] },
+    { to: '/inbox', label: 'Mensajes', icon: 'inbox' }, { to: '/whatsapp-seguimiento', label: 'Seguimiento WhatsApp', icon: 'flow' }, { to: '/automations', label: 'Automatizaciones', icon: 'flow' }, { to: '/agent', label: 'Asistente IA', icon: 'ai' }] },
   { group: 'Usuarios', items: [
     { to: '/users', label: 'Usuarios de la app', icon: 'app' }, { to: '/segments', label: 'Segmentos', icon: 'seg' }, { to: '/retention', label: 'Retención', icon: 'ret' }] },
   { group: 'Análisis', items: [
