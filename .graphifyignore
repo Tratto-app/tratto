@@ -1,0 +1,37 @@
+# Mapa del código (tools/graphify/armar.py): solo código fuente y documentos.
+# Afuera lo compilado, las dependencias y los archivos pesados.
+crm/
+growth/web/dist/
+node_modules/
+tools/ios-app/ios/
+tools/android/
+**/salida/
+*.min.js
+*.pdf
+*.mp4
+*.m4a
+*.png
+*.jpg
+*.jpeg
+*.webp
+*.gif
+*.aab
+
+# El mapa se arma con --no-gitignore (para leer graphify-src/), así que acá van
+# también las cosas que el repo ignora: nada sensible ni generado entra al mapa.
+.git/
+graphify-out/
+.env
+.env.*
+*.keystore
+*.jks
+*.p12
+*.p8
+*.mobileprovision
+*.pem
+*.key
+SECURITY-AUDIT.md
+tools/video-pipeline/input/
+tools/video-pipeline/output/
+**/.venv/
+**/__pycache__/

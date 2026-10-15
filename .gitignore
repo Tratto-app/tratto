@@ -16,3 +16,7 @@ SECURITY-AUDIT.md
 *.p12
 *.p8
 *.mobileprovision
+
+# Mapa del código (se arma con tools/graphify/armar.py, no se sube)
+graphify-out/
+graphify-src/
