@@ -98,7 +98,8 @@ class AppServer:
     async def begin(self):
         self.proc = await asyncio.create_subprocess_exec(
             self.binary, "app-server", "proxy", stdin=asyncio.subprocess.PIPE,
-            stdout=asyncio.subprocess.PIPE, stderr=asyncio.subprocess.DEVNULL)
+            stdout=asyncio.subprocess.PIPE, stderr=asyncio.subprocess.DEVNULL,
+            limit=1024 * 1024)
         asyncio.create_task(self._read())
         await self.request("initialize", {
             "clientInfo": {"name": "tratto-crm-events", "version": "1.0.0"},
@@ -192,7 +193,7 @@ class AppServer:
                     return  # Never steer, cancel, or interrupt the current turn.
                 queued, cursor = [], None
                 while True:
-                    params = {"threadId": self.thread_id}
+                    params = {"threadId": self.thread_id, "limit": 20}
                     if cursor:
                         params["cursor"] = cursor
                     page = await self.request("thread/queue/list", params)
