@@ -1,0 +1,10 @@
+.wa-observer > label { display: grid; gap: 8px; margin: 20px 0; max-width: 460px; }
+.wa-observer-grid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 20px; align-items: start; }
+.wa-observer-grid .card { margin-bottom: 12px; }
+.wa-observer dl { display: grid; grid-template-columns: 125px 1fr; gap: 8px; }
+.wa-observer dd { margin: 0; overflow-wrap: anywhere; }
+.wa-observer-conversation { position: sticky; top: 16px; max-height: 82vh; overflow: auto; padding: 18px; border: 1px solid var(--borde-2); border-radius: 12px; }
+.wa-observer-message { padding: 12px; margin: 12px 0; border-radius: 10px; background: var(--sup-2); color: var(--texto); }
+.wa-observer-message.out { border-left: 3px solid #387354; }
+.wa-observer-message p { white-space: pre-wrap; overflow-wrap: anywhere; }
+@media (max-width: 760px) { .wa-observer-grid { grid-template-columns: minmax(0, 1fr); } .wa-observer-conversation { position: static; max-height: none; grid-row: 1; } .wa-observer dl { grid-template-columns: 100px 1fr; } }
