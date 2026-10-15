@@ -1,7 +1,7 @@
 import { Link, useParams } from 'react-router-dom';
 import { Badge, Card, ErrorBox, Loading, PageHeader } from '../components/ui';
 import { rpc } from '../lib/api';
-import { ars, fecha, hace, nombre, num } from '../lib/format';
+import { ars, fecha, hace, nombre, num, mensajeError } from '../lib/format';
 import { useAsync } from '../lib/hooks';
 import { supabase } from '../lib/supabase';
 import type { AppUser, TimelineItem } from '../lib/types';
@@ -34,7 +34,7 @@ export default function AppUserDetail() {
   const x = u.data;
   const sim = async (event: string) => {
     try { await rpc('growth_simulate_event', { ws: ws!.id, ev: { event, external_user_id: x.external_user_id, email: x.email } }); toast(`Evento ${event} registrado`); u.reload(); ev.reload(); }
-    catch (e) { toast(e instanceof Error ? e.message : String(e), true); }
+    catch (e) { toast(mensajeError(e), true); }
   };
   return (
     <>

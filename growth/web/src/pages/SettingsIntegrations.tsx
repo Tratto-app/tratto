@@ -4,6 +4,7 @@ import { rpc } from '../lib/api';
 import { useAsync } from '../lib/hooks';
 import { SUPABASE_URL, supabase } from '../lib/supabase';
 import { useWs } from '../lib/workspace';
+import { mensajeError } from '../lib/format';
 
 // Qué hace cada integración, qué secrets necesita y qué tan real es hoy.
 const INFO: Record<string, { name: string; env: string[]; estado: string; nota: string }> = {
@@ -38,7 +39,7 @@ export default function SettingsIntegrations() {
   const generar = async () => {
     if (data.data?.hasKey && !confirm('Generar una clave nueva invalida la anterior (la app deja de poder mandar eventos hasta que la actualices). ¿Seguir?')) return;
     try { setClave(await rpc<string>('growth_rotate_ingest_key', { ws: ws!.id })); data.reload(); }
-    catch (e) { toast(e instanceof Error ? e.message : String(e), true); }
+    catch (e) { toast(mensajeError(e), true); }
   };
   const ejemplo = `curl -X POST ${SUPABASE_URL}/functions/v1/growth-event \\
   -H "content-type: application/json" \\

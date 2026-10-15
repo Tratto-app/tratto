@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
+import { mensajeError } from './format';
 
 // Carga asíncrona con estados de carga/error y recarga manual.
 export function useAsync<T>(fn: () => Promise<T>, deps: unknown[]) {
@@ -12,7 +13,7 @@ export function useAsync<T>(fn: () => Promise<T>, deps: unknown[]) {
     setError(null);
     fn().then(
       (d) => { if (id === seq.current) { setData(d); setLoading(false); } },
-      (e: unknown) => { if (id === seq.current) { setError(e instanceof Error ? e.message : String(e)); setLoading(false); } },
+      (e: unknown) => { if (id === seq.current) { setError(mensajeError(e)); setLoading(false); } },
     );
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, deps);

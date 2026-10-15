@@ -4,6 +4,7 @@ import { fn } from '../lib/api';
 import { useAsync } from '../lib/hooks';
 import { supabase } from '../lib/supabase';
 import { useWs } from '../lib/workspace';
+import { mensajeError } from '../lib/format';
 
 const NOMBRES: Record<string, string> = {
   analyze: 'Analizar prospecto', message: 'Escribir primer mensaje', reply: 'Leer respuestas', summary: 'Resumir conversación',
@@ -21,7 +22,7 @@ export default function SettingsAI() {
   const [edits, setEdits] = useState<Record<string, string>>({});
   const probar = async () => {
     try { const r = await fn<{ provider: string; model: string | null }>('growth-ai', { workspace_id: ws!.id, action: 'explain' }); setEstado(r); }
-    catch (e) { toast(e instanceof Error ? e.message : String(e), true); }
+    catch (e) { toast(mensajeError(e), true); }
   };
   const guardar = async (id: string) => {
     const { error } = await supabase.from('growth_ai_prompts').update({ instructions: edits[id], updated_at: new Date().toISOString() }).eq('id', id);

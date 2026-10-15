@@ -4,6 +4,7 @@ import { fn } from '../lib/api';
 import { useAsync } from '../lib/hooks';
 import { supabase } from '../lib/supabase';
 import { useWs } from '../lib/workspace';
+import { mensajeError } from '../lib/format';
 
 const KINDS: Record<string, string> = { problem: 'Problema que resuelve', feature: 'Funcionalidad', benefit: 'Beneficio', pricing: 'Precio', faq: 'Pregunta frecuente', terms: 'Condiciones', audience: 'Público', other: 'Otro' };
 interface K { id: string; kind: string; title: string; content: string; sort: number }
@@ -27,7 +28,7 @@ export default function Knowledge() {
     try {
       const r = await fn<{ output: { objection_label: string | null; response: string }; provider: string }>('growth-ai', { workspace_id: ws!.id, action: 'objection', text: prueba });
       setResp(`${r.output.objection_label ? `Objeción: ${r.output.objection_label}. ` : ''}${r.output.response}${r.provider === 'mock' ? ' (por reglas)' : ''}`);
-    } catch (e) { toast(e instanceof Error ? e.message : String(e), true); }
+    } catch (e) { toast(mensajeError(e), true); }
   };
   return (
     <>

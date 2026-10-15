@@ -157,10 +157,16 @@ Barrios y partidos por zona:
 - **Buenos Aires (interior):** La Plata, Mar del Plata, Bahía Blanca, Tandil,
   Luján, Zárate, Campana, Junín, Pergamino, Olavarría.
 
-Empezá por la zona de la vuelta. Si no alcanza para la meta, seguí por el resto del
-AMBA y después por el interior bonaerense. **Nunca fuera de CABA y Provincia
-de Buenos Aires** (Tratto opera solo ahí: ver el comentario "Solo CABA y
-Provincia de Buenos Aires" en `index.html`).
+**Zona: solo la etapa actual** (pedido del fundador, 14/10/2026). Leé
+`growth_mkt_ajustes` → `prospeccion_geografia` → `zona_actual` (hoy **CABA**).
+Vale el negocio con evidencia pública de estar en esa zona: barrio o comuna en
+su página o su perfil. "Buenos Aires", "AMBA" o una cobertura genérica no
+alcanzan. **Si no alcanza para la meta, no se completa con otras zonas**: se
+manda lo que haya y el informe dice cuántos faltaron. Las etapas siguientes
+(Zona Norte, Zona Oeste, Zona Sur) arrancan solo cuando el fundador lo indica.
+El historial de Provincia se conserva. Nunca fuera de CABA y Provincia de
+Buenos Aires (ver el comentario "Solo CABA y Provincia de Buenos Aires" en
+`index.html`).
 
 Casi siempre el mail ya viene en el texto del resultado. Para abrir una
 página usá primero la lectura gratis (punto 2); `firecrawl_scrape`
@@ -350,8 +356,9 @@ Números de la semana: `select mkt_prospeccion_numeros(7);`
 - Las respuestas nunca se envían solas: quedan como borrador.
 - `meta_hoy` mails por día que **lleguen**: lo que alcancen los créditos del
   día (hasta 300), o 70 si la cuenta no está sana. Se reparte
-  con Codex (pizarra `coordinacion_codex_claude`): Codex primero en Provincia,
-  Claude completa en CABA, y cada envío lleva `datos.prospeccion.agente`. Con la reposición se
+  con Codex (pizarra `coordinacion_codex_claude`): Codex hace la primera mitad,
+  Claude completa la meta, los dos en la zona actual (hoy CABA), y cada envío
+  lleva `datos.prospeccion.agente`. Con la reposición se
   pueden enviar unos pocos más.
 - **Solo páginas públicas**, encontradas con búsquedas y leídas una por una.
   Nunca la interfaz interna de un sitio (por ejemplo `api.buscaoficios.com.ar`)
