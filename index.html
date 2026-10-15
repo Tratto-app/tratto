@@ -1466,23 +1466,20 @@
         <button class="ver" id="a-olvido" type="button">¿Olvidaste tu contraseña?</button>
 
         <!-- Solo al crear la cuenta. La transferencia ocurre en el mismo momento
-             en que se crea, así que el permiso tiene que estar antes, no después. -->
+             en que se crea, así que el permiso tiene que estar antes, no después.
+             El permiso para guardar los datos en Brasil y servir la app desde
+             Estados Unidos va dentro de la casilla de los términos (pedido del
+             fundador, 15/10/2026): la ley 25.326 (art. 5) admite un permiso
+             junto con otras declaraciones si figura en forma expresa y
+             destacada, así que la casilla lo nombra y el detalle está en una
+             sección destacada de los términos y de la política de privacidad. -->
         <div class="oculto" id="a-transfer-caja">
-          <div class="tildar" id="a-transfer-fila">
-            <input type="checkbox" id="a-transfer" aria-labelledby="a-transfer-txt">
-            <span id="a-transfer-txt">Doy mi permiso para que mis datos se guarden en <b>Brasil</b> y para que la
-              aplicación se sirva desde <b>Estados Unidos</b>.</span>
-          </div>
-          <button class="ver-detalle" id="a-transfer-ver" type="button">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8.5"/><path d="M12 11v5.5M12 7.8h.01"/></svg>
-            Ver qué va a cada lugar
-          </button>
-          <div class="err" id="e-a-transfer">Sin este permiso no podemos crear la cuenta.</div>
           <div class="tildar" id="a-legales-fila">
             <input type="checkbox" id="a-legales" aria-labelledby="a-legales-txt">
             <span id="a-legales-txt">Leí y acepto los
               <a id="a-terminos-link" href="/terminos-cliente.html" target="_blank" rel="noopener">términos y condiciones para clientes</a> y la
-              <a href="/privacidad.html" target="_blank" rel="noopener">política de privacidad</a>.</span>
+              <a href="/privacidad.html" target="_blank" rel="noopener">política de privacidad</a>, incluido
+              <a id="a-infra-link" href="/privacidad.html#donde-se-guardan" target="_blank" rel="noopener">dónde se guardan mis datos</a>.</span>
           </div>
           <div class="err" id="e-a-legales">Tenés que aceptar los términos para crear la cuenta.</div>
           <!-- Permiso de publicidad: aparte de los dos de arriba (art. 27, Ley
@@ -2758,7 +2755,7 @@ if(!matchMedia('(prefers-reduced-motion: reduce)').matches){
 /* La fecha que llevan impresa las páginas publicadas. Se guarda con la
    aceptación porque importa QUÉ versión se aceptó, no solo que se aceptó: si
    los documentos cambian, esto es lo que dice quién aceptó cuál. */
-const VERSION_LEGALES = '2026-09-25';
+const VERSION_LEGALES = '2026-10-15';
 
 let modoAuth = 'entrar';
 function cambiarAuth(m){
@@ -2808,7 +2805,6 @@ function tildable(idFila, idCasilla){
     casilla.dispatchEvent(new Event('change', {bubbles:true}));
   });
 }
-tildable('a-transfer-fila', 'a-transfer');
 tildable('a-legales-fila',  'a-legales');
 tildable('a-publi-fila',    'a-publi');
 tildable('p-declara-fila',  'p-declara');
@@ -2837,14 +2833,17 @@ $('a-rubro').addEventListener('change', () => {
 });
 
 function limpiarTransfer(){
-  $('a-transfer-fila').classList.remove('mal');
-  $('e-a-transfer').classList.remove('visible');
   $('a-legales-fila').classList.remove('mal');
   $('e-a-legales').classList.remove('visible');
 }
-$('a-transfer').addEventListener('change', limpiarTransfer);
 $('a-legales').addEventListener('change', limpiarTransfer);
-$('a-transfer-ver').addEventListener('click', () => $('telon-infra').classList.add('abierto'));
+/* Dentro de la app, "dónde se guardan mis datos" abre la hoja con el detalle
+   en vez de sacar a la persona del registro. Sin JS, el link lleva a la
+   sección de la política de privacidad. */
+$('a-infra-link').addEventListener('click', e => {
+  e.preventDefault();
+  $('telon-infra').classList.add('abierto');
+});
 $('infra-cerrar').addEventListener('click', () => $('telon-infra').classList.remove('abierto'));
 $('telon-infra').addEventListener('click', e => {
   if(e.target.id === 'telon-infra') $('telon-infra').classList.remove('abierto');
@@ -2898,11 +2897,6 @@ $('a-enviar').addEventListener('click', async () => {
   if(pass.length<8) fallar('a-pass',r);
   /* El cuadradito es de 20px: si el error se marcara solo ahí no se vería.
      Se pinta el renglón entero. */
-  if(modoAuth === 'crear' && !$('a-transfer').checked){
-    $('a-transfer-fila').classList.add('mal');
-    $('e-a-transfer').classList.add('visible');
-    if(!r.p) r.p = 'a-transfer';
-  }
   if(modoAuth === 'crear' && !$('a-legales').checked){
     $('a-legales-fila').classList.add('mal');
     $('e-a-legales').classList.add('visible');
@@ -2936,7 +2930,10 @@ $('a-enviar').addEventListener('click', async () => {
                      punto 5.4 del contrato de Proveedores. */
                   cuit: rolElegido === 'proveedor' ? soloNumeros($('a-cuit').value) : null,
                   condicion_fiscal: rolElegido === 'proveedor' ? $('a-fiscal').value : null,
+                  /* El permiso de transferencia se da en la misma casilla de
+                     los términos, que lo nombra expresamente. */
                   transfer_permiso:true, transfer_permiso_fecha:new Date().toISOString(),
+                  transfer_permiso_forma:'casilla de términos',
                   legales_aceptados:true, legales_fecha:new Date().toISOString(),
                   legales_version:VERSION_LEGALES, legales_rol:rolElegido,
                   /* Publicidad: solo si tildó la casilla opcional. Mismo formato
