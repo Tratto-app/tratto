@@ -9,6 +9,7 @@ import NuevoWorkspace from './pages/NuevoWorkspace';
 
 const Dashboard = lazy(() => import('./pages/Dashboard'));
 const Equipo = lazy(() => import('./pages/Equipo'));
+const Usuarios = lazy(() => import('./pages/Usuarios'));
 const Agentes = lazy(() => import('./pages/Agentes'));
 const Cerebro = lazy(() => import('./pages/Cerebro'));
 const Recorridos = lazy(() => import('./pages/Recorridos'));
@@ -53,6 +54,7 @@ export default function App() {
       <Routes>
         <Route element={<Layout />}>
           <Route index element={<Dashboard />} />
+          <Route path="usuarios" element={<Usuarios />} />
           <Route path="equipo" element={<Equipo />} />
           <Route path="agentes" element={<Agentes />} />
           <Route path="cerebro" element={<Cerebro />} />
