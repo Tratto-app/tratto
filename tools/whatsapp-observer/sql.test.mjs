@@ -75,7 +75,27 @@ test('sin cobertura no infiere silencio; responder antes del último saliente no
   await ingest(db,event('later','out','Gracias',{timestamp:String(Math.floor(Date.now()/1000)-100)}));
   assert.equal((await summary(db)).respuesta,'respondio');
   await ingest(db,{waba_id:'12345',phone_number_id:'123',key:'disconnect-test',kind:'account_update',event:'PARTNER_REMOVED'});
+  const reason=(await db.query(`select last_account_event,last_account_event_at from growth_wa_observer_config where workspace_id='${A}'`)).rows[0];
+  assert.equal(reason.last_account_event,'PARTNER_REMOVED'); assert.ok(reason.last_account_event_at);
   assert.equal((await ingest(db,event('after'))).reason,'disabled');
+ } finally { await db.close(); }
+});
+test('un no ambiguo o una baja histórica requieren revisión; sólo una baja explícita actual excluye', async () => {
+ const db=await fixture(); try {
+  await enabled(db);
+  await ingest(db,event('ambiguous-no','in','no'));
+  let p=(await db.query(`select do_not_contact,consent from growth_prospects where id='${P}'`)).rows[0];
+  assert.deepEqual(p,{do_not_contact:false,consent:'unknown'});
+  assert.equal((await summary(db)).baja_pendiente_revision,true);
+  await db.exec(`update growth_wa_observer_config set history_shared=true where workspace_id='${A}'`);
+  await ingest(db,event('history-stop','in','No me escriban más',{source:'history'}));
+  p=(await db.query(`select do_not_contact,consent from growth_prospects where id='${P}'`)).rows[0];
+  assert.deepEqual(p,{do_not_contact:false,consent:'unknown'});
+  const historical=(await db.query(`select detail from growth_wa_observer_events where external_id='history-stop'`)).rows[0];
+  assert.equal(historical.detail.opt_out_review_required,true);
+  await ingest(db,event('current-stop','in','No me escriban más'));
+  p=(await db.query(`select do_not_contact,consent,status from growth_prospects where id='${P}'`)).rows[0];
+  assert.deepEqual(p,{do_not_contact:true,consent:'opt_out',status:'registered'});
  } finally { await db.close(); }
 });
 test('negocio ambiguo/otro workspace/no listado no se incorpora', async () => {

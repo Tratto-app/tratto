@@ -45,6 +45,13 @@ Deno.test('audio no se presenta como texto ni como transcripción', async () => 
   const r = await invoke(envelope('messages', { messages: [{ id: 'audio', from: '15550000002', timestamp: '1792028000', type: 'audio', audio: { id: 'asset-test' } }] }));
   assert(r.events[0].text_available === false && r.events[0].body === '' && r.events[0].media_pending === true);
 });
+Deno.test('ecos e historial argentino reconocen la misma línea con y sin9', async () => {
+  const config = { ...cfg, business_phone: '+54 11 0000-0001' };
+  const echo = await invoke(envelope('smb_message_echoes', { message_echoes: [{ id: 'ar-out', from: '5491100000001', to: '5491100000002', timestamp: '1792028000', type: 'text', text: { body: 'Hola' } }] }), { config });
+  assert(echo.events.length === 1 && echo.events[0].direction === 'out');
+  const history = await invoke(envelope('history', { history: [{ metadata: { phase: 0, progress: 100 }, threads: [{ id: '5491100000002', messages: [{ id: 'ar-history', from: '5491100000001', timestamp: '1792028000', type: 'text', text: { body: 'Hola' } }] }] }] }), { config });
+  assert(history.events[0].direction === 'out');
+});
 Deno.test('contenido adicional de history sólo completa un mensaje existente', async () => {
   const r = await invoke(envelope('history', { messages: [{ id: 'asset', from: '15550000002', timestamp: '1792028000', type: 'image', image: { caption: 'Mi trabajo' } }] }));
   assert(r.events[0].media_update_only === true && r.events[0].body === 'Mi trabajo');

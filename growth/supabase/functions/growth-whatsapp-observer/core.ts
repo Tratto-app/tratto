@@ -10,6 +10,11 @@ const obj = (v: unknown): Obj => v && typeof v === 'object' && !Array.isArray(v)
 const arr = (v: unknown): unknown[] => Array.isArray(v) ? v : [];
 const str = (v: unknown): string => typeof v === 'string' ? v : '';
 const digits = (v: unknown): string => str(v).replace(/\D/g, '');
+const phoneKey = (v: unknown): string => {
+  const d = digits(v);
+  return /^549[0-9]{10}$/.test(d) ? '54' + d.slice(3) : d;
+};
+const samePhone = (a: unknown, b: unknown): boolean => !!phoneKey(a) && phoneKey(a) === phoneKey(b);
 const json = (status: number, code: string) => new Response(JSON.stringify({ code }), { status, headers: { 'content-type': 'application/json' } });
 
 export async function validSignature(bytes: Uint8Array, signature: string, secret: string): Promise<boolean> {
@@ -84,7 +89,7 @@ export async function handleWebhook(req: Request, env: { appSecret?: string; ver
           }
           if (field === 'smb_message_echoes') {
             for (const raw of arr(value.message_echoes)) {
-              const m = obj(raw); if (digits(m.from) !== digits(cfg.business_phone)) continue;
+              const m = obj(raw); if (!samePhone(m.from, cfg.business_phone)) continue;
               const e = message(m, 'out', digits(m.to), field);
               if (e) await record(e);
             }
@@ -96,9 +101,9 @@ export async function handleWebhook(req: Request, env: { appSecret?: string; ver
                 const thread = obj(threadRaw), counterpart = digits(thread.id);
                 for (const mRaw of arr(thread.messages)) {
                   const m = obj(mRaw), from = digits(m.from);
-                  if (from !== digits(cfg.business_phone) && from !== counterpart) continue;
-                  const direction = from === digits(cfg.business_phone) ? 'out' : 'in';
-                  if (direction === 'out' && str(m.to) && digits(m.to) !== counterpart) continue;
+                  if (!samePhone(from, cfg.business_phone) && !samePhone(from, counterpart)) continue;
+                  const direction = samePhone(from, cfg.business_phone) ? 'out' : 'in';
+                  if (direction === 'out' && str(m.to) && !samePhone(m.to, counterpart)) continue;
                   const e = message(m, direction, counterpart, 'history');
                   if (e) await record(e);
                 }

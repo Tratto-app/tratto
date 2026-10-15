@@ -12,6 +12,8 @@ create table public.growth_wa_observer_config (
   coverage_since timestamptz,
   coverage_through timestamptz,
   coverage_gap boolean not null default true,
+  last_account_event text,
+  last_account_event_at timestamptz,
   updated_at timestamptz not null default now(),
   check (not receiving_enabled or
     (waba_id ~ '^[0-9]+$' and phone_number_id ~ '^[0-9]+$' and business_phone ~ '^\+[0-9]{8,15}$'
@@ -114,7 +116,9 @@ begin
       else 'pendiente_de_comprobar' end,
     'respuesta_at',response_at,'registro',reg,
     'conexion',case when c.receiving_enabled then 'recepcion_habilitada' else 'pendiente_de_conexion' end,
-    'cobertura_desde',c.coverage_since,'cobertura_hasta',c.coverage_through,'cobertura_con_lagunas',coalesce(c.coverage_gap,true));
+    'cobertura_desde',c.coverage_since,'cobertura_hasta',c.coverage_through,'cobertura_con_lagunas',coalesce(c.coverage_gap,true),
+    'baja_pendiente_revision',exists(select 1 from public.growth_wa_observer_events e where e.workspace_id=p_workspace and e.prospect_id=p.id and e.occurred_at<=p_cutoff
+       and e.detail->>'opt_out_review_required'='true' and e.detail->>'opt_out_review_resolved' is distinct from 'true'));
   update public.growth_prospects set datos=jsonb_set(datos,'{whatsapp_manual,seguimiento_meta}',j,true)
     where id=p.id and workspace_id=p_workspace;
   n:=n+1;
@@ -130,6 +134,7 @@ declare cfg public.growth_wa_observer_config; p public.growth_prospects; candida
  k text:=p_event->>'key'; kind text:=p_event->>'kind'; ext text:=p_event->>'external_id';
  dir text:=p_event->>'direction'; src text:=p_event->>'source'; happened timestamptz; affected integer;
  txt text:=left(coalesce(p_event->>'body',''),16384);
+ explicit_optout boolean; review_optout boolean;
 begin
  select * into cfg from public.growth_wa_observer_config where workspace_id=p_workspace for update;
  if not found or not cfg.receiving_enabled then return jsonb_build_object('stored',false,'reason','disabled'); end if;
@@ -143,7 +148,7 @@ begin
   insert into public.growth_wa_observer_events(workspace_id,event_key,kind,detail)
    values(p_workspace,k,kind,p_event-'body'-'phone') on conflict do nothing;
   if kind='account_update' then
-   update public.growth_wa_observer_config set receiving_enabled=false,coverage_gap=true,updated_at=now() where workspace_id=p_workspace;
+   update public.growth_wa_observer_config set receiving_enabled=false,coverage_gap=true,last_account_event=left(coalesce(p_event->>'event','actualizacion_sin_detalle'),100),last_account_event_at=now(),updated_at=now() where workspace_id=p_workspace;
   elsif coalesce((p_event->>'has_error')::boolean,false) then
    update public.growth_wa_observer_config set coverage_gap=true,updated_at=now() where workspace_id=p_workspace;
   end if;
@@ -174,9 +179,12 @@ begin
      and not text_available and coalesce((p_event->>'text_available')::boolean,false);
   return jsonb_build_object('stored',true,'media_update',true);
  end if;
+ explicit_optout:=dir='in' and (lower(trim(txt)) in ('baja','stop','unsubscribe')
+   or lower(txt) ~ '(no me (escriban|contacten)([[:space:][:punct:]]|$)|darme de baja|dej(a|á|en) de escribirme|eliminen mi contacto|no quiero recibir mensajes)');
+ review_optout:=dir='in' and (lower(trim(txt)) in ('no','cancelar') or (src='history' and explicit_optout));
  insert into public.growth_wa_observer_events(workspace_id,event_key,kind,prospect_id,external_id,direction,source,body,message_type,text_available,occurred_at,detail)
  values(p_workspace,k,kind,p.id,ext,dir,src,txt,p_event->>'message_type',coalesce((p_event->>'text_available')::boolean,false),happened,
-   jsonb_build_object('media_pending',coalesce((p_event->>'media_pending')::boolean,false),'waba_id',cfg.waba_id,'phone_number_id',cfg.phone_number_id))
+   jsonb_build_object('media_pending',coalesce((p_event->>'media_pending')::boolean,false),'waba_id',cfg.waba_id,'phone_number_id',cfg.phone_number_id,'opt_out_review_required',review_optout))
  on conflict do nothing;
  get diagnostics affected=row_count;
  if affected=0 then
@@ -186,8 +194,7 @@ begin
   return jsonb_build_object('stored',false,'reason','duplicate');
  end if;
  -- Una baja real se conserva aun si ya existe una cuenta; nunca baja registered/activated.
- if dir='in' and (lower(trim(txt)) in ('no','baja','stop','cancelar')
-   or lower(txt) ~ '(no me (escriban|contacten|manden)|darme de baja|dej(a|á|en) de escribirme)') then
+ if src<>'history' and explicit_optout then
   update public.growth_prospects set do_not_contact=true,consent='opt_out' where id=p.id and workspace_id=p_workspace;
  end if;
  insert into public.growth_timeline(workspace_id,prospect_id,type,title,detail,actor)

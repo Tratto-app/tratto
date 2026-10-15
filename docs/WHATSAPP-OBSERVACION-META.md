@@ -27,6 +27,9 @@ manuales; no incorpora contactos desconocidos ni copia otras conversaciones.
   en esquema privado; el navegador no puede leer Auth ni llamarla.
 - No cambia status, cuenta, fechas de registro/activación, contadores de contacto
   o campañas. Una baja real conserva el estado avanzado y marca exclusión.
+  Un “no” aislado, “cancelar” o una baja importada del historial se señalan para
+  revisión de contexto; sólo una baja explícita actual activa la exclusión.
+  Los números argentinos se comparan igual con y sin el9, también en ecos e historial.
 
 ## Qué se puede afirmar
 
@@ -42,7 +45,8 @@ sigue contando aunque el titular vuelva a escribir después. Sin salida o sin
 cobertura comprobada, no se infiere “no respondió”. `coverage_since`,
 `coverage_through` y `coverage_gap` deben reflejar una comprobación técnica real;
 recibir un evento no acredita automáticamente cobertura completa. Cada cambio de
-cuenta invalida la cobertura y apaga recepción hasta revisar el vínculo.
+cuenta invalida la cobertura y apaga recepción hasta revisar el vínculo. Se
+conserva el último aviso y su fecha para mostrar el motivo en la pantalla.
 
 La pantalla `/crm/whatsapp-seguimiento` muestra fichas, evidencia y conversación
 paginada de 100 en 100, sin botón de envío. No hay tope silencioso de mensajes.
@@ -105,7 +109,7 @@ SQL se prueba en PostgreSQL embebido PGlite, con roles/RLS y datos ficticios;
 no equivale a prueba de Meta ni de un teléfono real. La prueba de interfaz usa
 transporte/sesión simulados; no acredita acceso autenticado del titular.
 
-Resultados locales del 15/10: 9 pruebas del receptor, 6 suites SQL y 35 pruebas
+Resultados locales del 15/10: 10 pruebas del receptor, 7 pruebas SQL y 35 pruebas
 del CRM pasaron; typecheck, lint/check Deno y build pasaron. El build versionado
 reutiliza sólo la configuración pública de producción que ya estaba en el bundle.
 Pantalla verificada en anchos 390 y 1440, con conversación de 101 mensajes y
