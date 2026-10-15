@@ -92,6 +92,7 @@ class AppServer:
         self.ready = False
         self.lock = asyncio.Lock()
         self.pump_task = None
+        self.pump_requested = False
         self.pending_ids: set[str] = set()
 
     async def begin(self):
@@ -147,8 +148,7 @@ class AppServer:
                 elif payload.get("method") in {"turn/completed", "thread/status/changed"}:
                     params = payload.get("params", {})
                     if params.get("threadId") == self.thread_id and self.ready:
-                        if not self.pump_task or self.pump_task.done():
-                            self.pump_task = asyncio.create_task(self.pump())
+                        self.schedule_pump()
         finally:
             self.ready = False
             for future in list(self.waiters.values()):
@@ -166,8 +166,19 @@ class AppServer:
         # A queued item is not a read receipt and is not evidence of a reply.
         submission = result["queuedSubmission"]["id"]
         self.pending_ids.add(submission)
-        asyncio.create_task(self.pump())
+        self.schedule_pump()
         return submission
+
+    def schedule_pump(self):
+        self.pump_requested = True
+        if not self.pump_task or self.pump_task.done():
+            self.pump_task = asyncio.create_task(self._pump_events())
+
+    async def _pump_events(self):
+        # An idle event arriving DURING a status request must not be lost.
+        while self.pump_requested:
+            self.pump_requested = False
+            await self.pump()
 
     async def pump(self):
         async with self.lock:

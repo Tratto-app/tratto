@@ -115,6 +115,20 @@ class ReceiverTests(unittest.IsolatedAsyncioTestCase):
 
 
 class QueueTests(unittest.IsolatedAsyncioTestCase):
+    async def test_idle_event_during_a_pump_is_not_lost(self):
+        app = AppServer(MSG, '/tmp')
+        calls = []
+
+        async def pump():
+            calls.append('event')
+            if len(calls) == 1:
+                app.schedule_pump()
+            await asyncio.sleep(0)
+        app.pump = pump
+        app.schedule_pump()
+        await app.pump_task
+        self.assertEqual(calls, ['event', 'event'])
+
     async def test_busy_thread_is_not_interrupted(self):
         app = AppServer(MSG, '/tmp')
         app.ready = True
