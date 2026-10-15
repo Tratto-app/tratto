@@ -43,10 +43,11 @@ direcciones: dejá un item `alerta` y terminá.
 2. **La cuenta es la correcta.** El `viewUrl` de cualquier resultado de Gmail
    tiene que decir `authuser=trattoapp1@gmail.com`. Si no, no envíes.
 3. **Salud de la cuenta.** Después del paso 1: si los rebotes de los últimos
-   3 días pasan el 10 % de lo enviado en esos días, si Gmail devolvió un
-   error de límite o si llegó un aviso de Google sobre la cuenta, hoy no se
-   envía: item `alerta` (`departamento='operaciones'`, `estado='para_aprobar'`)
-   con lo que pasó.
+   3 días pasan el 10 % de lo enviado en esos días o si llegó un aviso de
+   Google sobre la cuenta (suspensión, límite diario de envío, 550 5.4.5),
+   hoy no se envía: item `alerta` (`departamento='operaciones'`,
+   `estado='para_aprobar'`) con lo que pasó. El error de límite de consultas
+   de la API (403 `rateLimitExceeded`) no frena el día: se reintenta (sección 5).
 
 ## 1. Respuestas, bajas y rebotes (siempre, aunque hoy no se envíe)
 
@@ -104,9 +105,13 @@ lo que queda del mes repartido en los días que faltan, así no sobra ni falta),
   créditos del día (`presupuesto_hoy` ÷ `creditos_por_mail`), hasta 300 por
   día, debajo del límite diario de Gmail. **Freno:** si la cuenta no está sana
   (rebotes de los últimos 7 días del 3 % o más, o pedidos de baja del 5 % o
-  más), la meta vuelve sola a 70 hasta que se recupere. Si Gmail da un error
-  de límite o llega un aviso de Google sobre la cuenta, pará en el momento
-  (sección 0).
+  más), la meta vuelve sola a 70 hasta que se recupere. Si llega un aviso de
+  Google sobre la cuenta, pará en el momento (sección 0); el error de límite
+  de consultas se reintenta (sección 5).
+- **Si el rubro del día no alcanza** en la zona actual (pedido del fundador
+  del 15/10/2026: "no podemos perder un día"), completá la meta con los
+  rubros que siguen en la rotación, en orden, cada mail con el oficio y el
+  gancho de su rubro. La zona no se amplía.
 - **Cuánto cuesta cada cosa:** `firecrawl_search` con `limit: 20` = 4
   créditos. `firecrawl_scrape` = 1 crédito por página. Llevá la cuenta y no
   pases `presupuesto_hoy`.
@@ -243,9 +248,22 @@ adjuntos). Cada 10 enviados:
 select mkt_prospeccion_enviado($j$[{"id": "<id>", "thread": "<threadId>"}, ...]$j$::jsonb);
 ```
 
-Si Gmail da un error de límite o de cuenta, **pará en ese momento** y dejá
-una `alerta`. Si un envío falla por otra cosa, salteá ese y seguí; con 3
-errores seguidos, pará.
+Ritmo: uno cada 45 a 60 segundos.
+
+**Error de límite de consultas** (403 `rateLimitExceeded`,
+`userRateLimitExceeded` o "Quota exceeded" de la API; pedido del fundador del
+15/10/2026: "reintentar de nuevo lo más antes posible" y que no se pierda el
+día): antes de reintentar, comprobá en Enviados
+(`in:sent newer_than:1d to:<mail>`) que ese mail no salió. Reintentá a 1, 2,
+5, 10 y 15 minutos y, cuando vuelva a andar, seguí más despacio (uno cada 90
+segundos). Si después del reintento de 15 minutos sigue fallando, pará,
+dejá una `alerta` (`prioridad=1`, `para_aprobar`) con la hora, el error
+exacto, cuántos salieron y cuántos faltan, y devolvelo: el que te llamó
+reprograma la corrida para una hora después y le avisa al fundador.
+
+**Aviso de Google sobre la cuenta** (suspensión, límite diario de envío,
+550 5.4.5): **pará en ese momento** y dejá una `alerta`. Si un envío falla por
+otra cosa, salteá ese y seguí; con 3 errores seguidos, pará.
 
 **Asunto:** `Clientes que buscan {oficio} en {barrio o zona} · Tratto`
 (el "· Tratto" del final sirve para encontrar las respuestas).
