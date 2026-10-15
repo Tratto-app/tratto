@@ -113,9 +113,10 @@ lo que queda del mes repartido en los días que faltan, así no sobra ni falta),
   de Google sobre la cuenta, pará en el momento (sección 0); el error de
   límite de consultas se reintenta (sección 5).
 - **Un solo rubro por día, nunca se mezcla** (fundador, 15/10/2026): todos los
-  mails del día, reposiciones incluidas, son del rubro del día. Si en la zona
-  actual no alcanza, no completes con otros rubros ni con otras zonas: anotá en
-  el informe cuántos faltaron y decíselo al fundador.
+  mails del día, reposiciones incluidas, son del rubro del día. Si en CABA no
+  alcanza, se sigue con el mismo rubro en el resto de Buenos Aires (sección 3).
+  Nunca se completa con otro rubro: si ni así llega a 70, anotá en el informe
+  cuántos faltaron y decíselo al fundador.
 - **Cuánto cuesta cada cosa:** `firecrawl_search` con `limit: 20` = 4
   créditos. `firecrawl_scrape` = 1 crédito por página. Llevá la cuenta y no
   pases `presupuesto_hoy`.
@@ -166,16 +167,17 @@ Barrios y partidos por zona:
 - **Buenos Aires (interior):** La Plata, Mar del Plata, Bahía Blanca, Tandil,
   Luján, Zárate, Campana, Junín, Pergamino, Olavarría.
 
-**Zona: solo la etapa actual** (pedido del fundador, 14/10/2026). Leé
-`growth_mkt_ajustes` → `prospeccion_geografia` → `zona_actual` (hoy **CABA**).
-Vale el negocio con evidencia pública de estar en esa zona: barrio o comuna en
-su página o su perfil. "Buenos Aires", "AMBA" o una cobertura genérica no
-alcanzan. **Si no alcanza para la meta, no se completa con otras zonas**: se
-manda lo que haya y el informe dice cuántos faltaron. Las etapas siguientes
-(Zona Norte, Zona Oeste, Zona Sur) arrancan solo cuando el fundador lo indica.
-El historial de Provincia se conserva. Nunca fuera de CABA y Provincia de
-Buenos Aires (ver el comentario "Solo CABA y Provincia de Buenos Aires" en
-`index.html`).
+**Zona: primero CABA, y si no alcanza, el mismo rubro en el resto de Buenos
+Aires** (pedido del fundador del 15/10/2026: "si solamente tenés 14 de techos
+en CABA, buscá en todo Buenos Aires y llegá a los 70, pero no cambies de
+rubro"). Leé `growth_mkt_ajustes` → `prospeccion_geografia` (`zona_actual` y
+`ampliar_si_falta`). Orden: CABA, después Zona Norte, Zona Oeste y Zona Sur
+del Gran Buenos Aires y, si todavía faltan, el interior de la Provincia de
+Buenos Aires. Vale el negocio con evidencia pública de estar en esa zona:
+barrio, localidad o partido en su página o su perfil. "Buenos Aires", "AMBA" o
+una cobertura genérica no alcanzan. El mail nombra su barrio o localidad real.
+Nunca fuera de CABA y Provincia de Buenos Aires (ver el comentario "Solo CABA y
+Provincia de Buenos Aires" en `index.html`).
 
 Casi siempre el mail ya viene en el texto del resultado. Para abrir una
 página usá primero la lectura gratis (punto 2); `firecrawl_scrape`
@@ -381,7 +383,8 @@ Números de la semana: `select mkt_prospeccion_numeros(7);`
 - 70 mails por día que **lleguen**, todos los días la misma cantidad y de un
   solo rubro (fundador, 15/10/2026). Se reparte
   con Codex (pizarra `coordinacion_codex_claude`): Codex hace la primera mitad,
-  Claude completa la meta, los dos en la zona actual (hoy CABA), y cada envío
+  Claude completa la meta, los dos con el mismo rubro, primero en CABA y si
+  falta en el resto de Buenos Aires, y cada envío
   lleva `datos.prospeccion.agente`. Con la reposición se
   pueden enviar unos pocos más.
 - **Solo páginas públicas**, encontradas con búsquedas y leídas una por una.
