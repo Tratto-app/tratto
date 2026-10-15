@@ -16,6 +16,10 @@ todos los rubros lo reiniciemos y arranque nuevamente por el número que empezó
 no les llegó porque no existía el correo, buscá 5 nuevos y mandales a esos"
 (sección 5b). **Y también el 9/10/2026:** pasó Firecrawl a pago (5.000 créditos
 por mes) y pidió usarlos al máximo (sección 2b).
+**Y el 15/10/2026:** "tiene que ser sí o sí un solo rubro por día, no podés
+mezclar" y "todos los días la misma cantidad de mails que el día anterior: si un
+día te rechazaron 10, juntás otros 10 y mandás esos 10". La meta es fija (70
+que lleguen) y todo lo del día, reposiciones incluidas, es del rubro del día.
 
 Herramientas: Gmail (`send_message`, `search_threads`, `get_thread`,
 `create_draft`), Supabase (`execute_sql`, proyecto `qglsonbcsncgekzbfafk`),
@@ -100,18 +104,18 @@ lo que queda del mes repartido en los días que faltan, así no sobra ni falta),
 `meta_hoy` (mails que tienen que llegar hoy), `cuenta_sana`, los números de los
 últimos 7 días y `creditos_por_mail`.
 
-- **La meta (modo máximo, pedido del fundador el 9/10/2026: "mandemos todos
-  los mails que podamos con esos 5.000"):** todos los que alcancen los
-  créditos del día (`presupuesto_hoy` ÷ `creditos_por_mail`), hasta 300 por
-  día, debajo del límite diario de Gmail. **Freno:** si la cuenta no está sana
-  (rebotes de los últimos 7 días del 3 % o más, o pedidos de baja del 5 % o
-  más), la meta vuelve sola a 70 hasta que se recupere. Si llega un aviso de
-  Google sobre la cuenta, pará en el momento (sección 0); el error de límite
-  de consultas se reintenta (sección 5).
-- **Si el rubro del día no alcanza** en la zona actual (pedido del fundador
-  del 15/10/2026: "no podemos perder un día"), completá la meta con los
-  rubros que siguen en la rotación, en orden, cada mail con el oficio y el
-  gancho de su rubro. La zona no se amplía.
+- **La meta es fija: 70 mails que lleguen, todos los días la misma cantidad**
+  (pedido del fundador del 15/10/2026), aunque `meta_hoy` diga otro número.
+  Lo que rebota se repone el mismo día con otros del mismo rubro hasta llegar
+  a 70 (sección 5b). Los créditos del día (`presupuesto_hoy`) se usan para
+  conseguirlos; si no alcanzan, podés pasarte hasta 60 créditos y lo anotás en
+  el informe. El número solo cambia si lo pide el fundador. Si llega un aviso
+  de Google sobre la cuenta, pará en el momento (sección 0); el error de
+  límite de consultas se reintenta (sección 5).
+- **Un solo rubro por día, nunca se mezcla** (fundador, 15/10/2026): todos los
+  mails del día, reposiciones incluidas, son del rubro del día. Si en la zona
+  actual no alcanza, no completes con otros rubros ni con otras zonas: anotá en
+  el informe cuántos faltaron y decíselo al fundador.
 - **Cuánto cuesta cada cosa:** `firecrawl_search` con `limit: 20` = 4
   créditos. `firecrawl_scrape` = 1 crédito por página. Llevá la cuenta y no
   pases `presupuesto_hoy`.
@@ -310,10 +314,12 @@ con un mensaje de `mailer-daemon`, casi siempre en uno o dos minutos.
 1. Después de enviar y marcar los enviados (`mkt_prospeccion_enviado`), revisá
    los rebotes como en el paso 1: `in:anywhere from:mailer-daemon newer_than:1d`, y marcá
    cada uno con `mkt_prospeccion_respuesta('<mail>', 'rebote')`.
-2. `select mkt_rubro_del_dia();` → **faltan = `meta_hoy` − `entregados_hoy`**.
+2. `select mkt_rubro_del_dia();` → **faltan = 70 − `entregados_hoy`** (la
+   meta fija de la sección 2b).
 3. Si faltan más de 0, buscá **esa misma cantidad** de proveedores nuevos del
    rubro del día (pasos 3, 4 y 5, con los créditos que dejaste para eso) y
-   mandales.
+   mandales. Siempre del rubro del día: los rebotes de días anteriores no se
+   reponen con otro rubro.
 4. Volvé a revisar rebotes y repetí **una sola vez más** (máximo 2 vueltas de
    reposición por día).
 5. **Freno:** si los rebotes de hoy pasan el 10 % de lo enviado hoy, no
@@ -372,8 +378,8 @@ Números de la semana: `select mkt_prospeccion_numeros(7);`
   del fundador del 13/10 y del 14/10). El recordatorio lo manda Codex para
   los envíos de los dos; no hay otros seguimientos.
 - Las respuestas nunca se envían solas: quedan como borrador.
-- `meta_hoy` mails por día que **lleguen**: lo que alcancen los créditos del
-  día (hasta 300), o 70 si la cuenta no está sana. Se reparte
+- 70 mails por día que **lleguen**, todos los días la misma cantidad y de un
+  solo rubro (fundador, 15/10/2026). Se reparte
   con Codex (pizarra `coordinacion_codex_claude`): Codex hace la primera mitad,
   Claude completa la meta, los dos en la zona actual (hoy CABA), y cada envío
   lleva `datos.prospeccion.agente`. Con la reposición se
