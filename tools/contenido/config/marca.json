@@ -41,6 +41,12 @@
       "url": "https://www.linkedin.com/company/145304785/",
       "solo_pagina": true,
       "nota": "Fundador 16/10/2026: publicaciones únicamente en la página de Tratto, nunca en su perfil personal. Link de la página: /r/li-pagina. Cada publicación lleva su link /r/li-<pieza> en el primer comentario."
+    },
+    "x": {
+      "usuario": null,
+      "solo_cuenta_tratto": true,
+      "conexion": "Composio (pendiente, 16/10/2026)",
+      "nota": "Fundador 16/10/2026: X automatizada con Composio, igual que LinkedIn. Poner el usuario de la cuenta de Tratto cuando el fundador lo pase."
     }
   },
   "que_es": "Marketplace de servicios de Argentina: la persona cuenta qué necesita (o le saca una foto), recibe presupuestos de quienes ofrecen ese servicio en su zona, y elige el que más le conviene.",

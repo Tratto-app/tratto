@@ -47,6 +47,14 @@ personas y automatizarlo por fuera de la conexión oficial va contra las reglas
 de LinkedIn. Links con nombre de la fuente `linkedin` (`/r/li-...`), en el
 primer comentario.
 
+## X (Twitter)
+
+Skill `twitter-x` (`.claude/skills/twitter-x/SKILL.md`). Solo la cuenta de
+Tratto, nunca la personal del fundador. Automático por la conexión oficial
+(Composio): se publica y se responden menciones sin esperarlo, y se le avisa en
+una línea. No se sigue gente, no se dan "me gusta" ni se responde en masa a
+quien no nos mencionó (reglas de X para cuentas automatizadas).
+
 ## Mapa del código (graphify): el mismo para Claude y Codex
 
 Claude y Codex usan el mismo mapa del proyecto. Se arma con
