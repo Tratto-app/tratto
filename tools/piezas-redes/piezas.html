@@ -49,6 +49,19 @@ em{font-style:normal;color:var(--laton)}
 #portada-wa .chip i{width:10px;height:10px;border-radius:50%;background:var(--laton);flex:none}
 #portada-wa .izq i{order:2}
 
+#portada-fb{width:1640px;height:924px}
+#portada-fb .hub{position:absolute;left:820px;top:870px;width:700px;height:700px;margin:-350px 0 0 -350px;border-radius:50%;
+  background:radial-gradient(circle, rgba(43,126,98,.55), rgba(43,126,98,.12) 45%, transparent 70%);z-index:1}
+#portada-fb svg.hilos{position:absolute;inset:0;z-index:1}
+#portada-fb .titulo{position:absolute;z-index:2;left:0;right:0;top:178px;text-align:center}
+#portada-fb .titulo h1{font-size:104px;line-height:1;color:#F4F1EA}
+#portada-fb .titulo .hilo{width:240px;height:3px;margin:20px auto 0}
+#portada-fb .titulo p{margin-top:22px;font-size:30px;color:var(--gris-3)}
+#portada-fb .chip{position:absolute;z-index:2;display:flex;align-items:center;gap:14px;padding:16px 26px;border-radius:99px;
+  background:rgba(12,38,32,.82);border:1.5px solid rgba(143,217,188,.32);color:#E8EBEA;font-size:28px;font-weight:500;white-space:nowrap}
+#portada-fb .chip i{width:10px;height:10px;border-radius:50%;background:var(--laton);flex:none}
+#portada-fb .izq i{order:2}
+
 /* posts 1080x1350 */
 .post{width:1080px;height:1350px}
 .post .cont{padding:88px 92px 80px;display:flex;flex-direction:column}
@@ -198,6 +211,35 @@ em{font-style:normal;color:var(--laton)}
     const p=document.createElementNS('http://www.w3.org/2000/svg','path');
     p.setAttribute('d',`M${x} ${y} C${mx} ${y} ${mx} ${hy} ${hx} ${hy}`);
     p.setAttribute('fill','none'); p.setAttribute('stroke','url(#hwa)'); p.setAttribute('stroke-width','2'); p.setAttribute('stroke-opacity','.75');
+    svg.appendChild(p);
+  });
+})();
+</script>
+
+<!-- 9 · Portada de la Página de Facebook (1640x924: en compu se ve la franja del medio, en el celular entera; la foto de perfil va abajo al medio) -->
+<div class="pieza oscura" id="portada-fb"><div class="cont">
+  <div class="hub"></div>
+  <svg class="hilos" width="1640" height="924"><defs><linearGradient id="hfb" x1="0" x2="1"><stop offset="0" stop-color="#1B4B40"/><stop offset=".5" stop-color="#C9A227"/><stop offset="1" stop-color="#1B4B40"/></linearGradient></defs></svg>
+  <div class="titulo"><h1 class="cond">Más de <em>40 rubros</em></h1><div class="hilo"></div><p>Pedís gratis, te mandan presupuestos de tu zona y elegís vos.</p></div>
+  <span class="chip izq" style="left:290px;top:440px">Plomería y destapaciones<i></i></span>
+  <span class="chip izq" style="left:200px;top:548px">Fotografía y video<i></i></span>
+  <span class="chip izq" style="left:110px;top:656px">Fletes y mudanzas<i></i></span>
+  <span class="chip der" style="right:290px;top:440px"><i></i>Paseo y cuidado de mascotas</span>
+  <span class="chip der" style="right:200px;top:548px"><i></i>Música y sonido (DJ)</span>
+  <span class="chip der" style="right:110px;top:656px"><i></i>Decoración e interiores</span>
+</div></div>
+<script>
+// Hilos de cada rubro a la foto de perfil (abajo al medio).
+(function(){
+  const pz=document.getElementById('portada-fb'), svg=pz.querySelector('svg.hilos'), r=pz.getBoundingClientRect();
+  const hx=820, hy=830;
+  pz.querySelectorAll('.chip').forEach(c=>{
+    const b=c.getBoundingClientRect(), izq=c.classList.contains('izq');
+    const x=(izq?b.right-r.left:b.left-r.left), y=b.top-r.top+b.height/2;
+    const mx=(x+hx)/2;
+    const p=document.createElementNS('http://www.w3.org/2000/svg','path');
+    p.setAttribute('d',`M${x} ${y} C${mx} ${y} ${mx} ${hy} ${hx} ${hy}`);
+    p.setAttribute('fill','none'); p.setAttribute('stroke','url(#hfb)'); p.setAttribute('stroke-width','2'); p.setAttribute('stroke-opacity','.75');
     svg.appendChild(p);
   });
 })();

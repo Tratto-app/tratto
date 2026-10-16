@@ -34,6 +34,11 @@
     calendario: '<rect x="10" y="14" width="44" height="40" rx="6"/><path d="M10 26h44M22 8v10M42 8v10"/><path d="M20 36h6M30 36h6M40 36h4M20 45h6M30 45h6"/>',
     grupo: '<circle cx="24" cy="23" r="8"/><circle cx="43" cy="25" r="6"/><path d="M9 51c0-8.5 6.5-15 15-15s15 6.5 15 15M40 37c8 0 14 5.5 14 13"/>',
     reloj2: '<circle cx="32" cy="32" r="22"/><path d="M32 20v12l8 6"/>',
+    camara: '<rect x="8" y="18" width="48" height="34" rx="6"/><circle cx="32" cy="35" r="10"/><path d="M22 18l4-6h12l4 6"/>',
+    torta: '<path d="M12 52h40V34H12z"/><path d="M12 42c5 4 10-4 15 0s10-4 15 0 10-4 10 0"/><path d="M22 34v-8M32 34v-8M42 34v-8"/><path d="M22 20c0-2 2-3 0-6M32 20c0-2 2-3 0-6M42 20c0-2 2-3 0-6"/>',
+    cubiertos: '<path d="M20 8v20a6 6 0 0 0 6 6v22M14 8v14M26 8v14"/><path d="M44 56V8c-6 4-8 14-8 22h8"/>',
+    campana: '<path d="M18 44V30a14 14 0 0 1 28 0v14l4 4H14z"/><path d="M27 54a5 5 0 0 0 10 0"/>',
+    celular: '<rect x="18" y="6" width="28" height="52" rx="6"/><path d="M28 50h8"/>',
   };
   window.icono = (n, px = 92, color = 'currentColor') =>
     `<svg width="${px}" height="${px}" viewBox="0 0 64 64" fill="none" stroke="${color}" stroke-width="4" stroke-linecap="round" stroke-linejoin="round">${ICONOS[n]}</svg>`;

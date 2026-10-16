@@ -2456,7 +2456,7 @@ const RUBROS_GRUPOS = {
     'Computación y capacitación', 'Clases de manejo'],
   'Mascotas': ['Paseo y cuidado de mascotas', 'Peluquería y adiestramiento canino'],
   'Otros servicios': ['Costura y arreglos de ropa', 'Tapicería y restauración',
-    'Decoración e interiores', 'Mandados y compras', 'Otro (lo escribo yo)']
+    'Decoración e interiores', 'Mandados y mensajería', 'Otro (lo escribo yo)']
 };
 
 const RUBROS = Object.values(RUBROS_GRUPOS).reduce((a,b)=>a.concat(b),[]);
@@ -5791,6 +5791,8 @@ async function llamarTasador(cuerpo){
    estimación. La persona revisa y cambia lo que haga falta. */
 function mostrarTasacion(d, origen){
   const porFoto = origen.foto;
+  /* El rubro se llamaba "Mandados y compras" hasta el 16/10/2026. */
+  if(d.rubro === 'Mandados y compras') d.rubro = 'Mandados y mensajería';
   if(d.rubro && [...$('s-servicio').options].some(o => o.textContent === d.rubro))
     $('s-servicio').value = d.rubro;
   if(d.descripcion) $('s-desc').value = d.descripcion;

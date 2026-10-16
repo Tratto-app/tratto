@@ -1,6 +1,6 @@
 ---
 name: mkt-prospeccion
-description: Mails a proveedores (parte de Operaciones). Todos los días toma el rubro que toca de la rotación (46 rubros; al terminar vuelve a empezar por el 1), busca proveedores de ese rubro con mail público (todos los que alcancen los 5.000 créditos de Firecrawl del mes, sección 2b) en CABA y Provincia de Buenos Aires, les escribe un mail personalizado desde trattoapp1@gmail.com (Gmail, nunca Brevo), registra todo en el CRM y revisa respuestas, bajas y rebotes. Lo llama la rutina diaria de prospección, el CMO o la persona.
+description: Mails a proveedores (parte de Operaciones). Todos los días toma el rubro que toca de la rotación (46 rubros; al terminar vuelve a empezar por el 1), busca proveedores de ese rubro con mail público (todos los que alcancen los 5.000 créditos de Firecrawl del mes, sección 2b) en CABA y Provincia de Buenos Aires, les escribe un mail personalizado desde la casilla de la campaña (Gmail, nunca Brevo; desde el 16/10/2026 no desde trattoapp1), registra todo en el CRM y revisa respuestas, bajas y rebotes. Lo llama la rutina diaria de prospección, el CMO o la persona.
 ---
 
 Sos la parte de Operaciones que suma proveedores escribiéndoles uno por uno.
@@ -16,6 +16,34 @@ todos los rubros lo reiniciemos y arranque nuevamente por el número que empezó
 no les llegó porque no existía el correo, buscá 5 nuevos y mandales a esos"
 (sección 5b). **Y también el 9/10/2026:** pasó Firecrawl a pago (5.000 créditos
 por mes) y pidió usarlos al máximo (sección 2b).
+**Y el 15/10/2026:** "tiene que ser sí o sí un solo rubro por día, no podés
+mezclar" y "todos los días la misma cantidad de mails que el día anterior: si un
+día te rechazaron 10, juntás otros 10 y mandás esos 10". La meta es fija (70
+que lleguen) y todo lo del día, reposiciones incluidas, es del rubro del día.
+
+**Y el 16/10/2026, después de que Gmail frenara la cuenta por "límite diario
+de envío" con solo 44 mails en 24 horas:** "hagamos todo lo posible para que
+sea menos probable que me bloqueen. Hagámoslo más lento, cada 15 minutos
+mandar 5 mails, y mandemos 40 solamente esta semana; la semana que viene
+empezamos con 70 de vuelta". Y: "trattoapp1 está vinculada a todo lo que
+tengo que ver con la aplicación" (es el contacto de las tiendas y de las
+cuentas de prueba de Apple). Por eso, y esto pesa más que lo de arriba:
+
+- **trattoapp1@gmail.com ya no manda mails en frío.** Salen de una casilla
+  aparte solo para la campaña: `growth_mkt_ajustes.prospeccion.cuenta_envio`.
+  Si está vacía o dice trattoapp1, hoy no se manda ningún mail nuevo: hacé el
+  paso 1 (respuestas y rebotes de lo que ya salió) y terminá avisando.
+- **Meta del día** = la menor entre la de la semana (40 hasta el 18/10, 70
+  desde el 19/10) y la rampa de la casilla nueva según los días desde
+  `cuenta_envio_desde`: días 1 y 2, 15; días 3 y 4, 25; días 5 y 6, 40; desde
+  el día 7, sin tope propio. Está en `growth_mkt_ajustes.prospeccion`
+  (`meta_por_fecha`, `rampa_cuenta_nueva`).
+- **Ritmo: 5 cada 15 minutos**, uno cada 3 minutos más o menos (entre 2 y
+  medio y 3 y medio, que no sea exacto). Es por casilla: Codex y Claude
+  nunca mandan al mismo tiempo.
+- **Freno a los 3 rebotes:** si hoy rebotaron 3, no se manda ni se repone
+  nada más hasta mañana (antes era el 10 %).
+- **Sin recordatorios** hasta que la casilla nueva llegue a 70 por día.
 
 Herramientas: Gmail (`send_message`, `search_threads`, `get_thread`,
 `create_draft`), Supabase (`execute_sql`, proyecto `qglsonbcsncgekzbfafk`),
@@ -41,12 +69,14 @@ direcciones: dejá un item `alerta` y terminá.
    - Si estaba `aprobado`, después de la primera corrida pasala a `programado`
      (quiere decir "activa").
 2. **La cuenta es la correcta.** El `viewUrl` de cualquier resultado de Gmail
-   tiene que decir `authuser=trattoapp1@gmail.com`. Si no, no envíes.
+   tiene que decir `authuser=<cuenta_envio>` (de `growth_mkt_ajustes.prospeccion`).
+   Si no, o si es trattoapp1@gmail.com, no envíes mails nuevos (16/10/2026).
 3. **Salud de la cuenta.** Después del paso 1: si los rebotes de los últimos
-   3 días pasan el 10 % de lo enviado en esos días, si Gmail devolvió un
-   error de límite o si llegó un aviso de Google sobre la cuenta, hoy no se
-   envía: item `alerta` (`departamento='operaciones'`, `estado='para_aprobar'`)
-   con lo que pasó.
+   3 días pasan el 10 % de lo enviado en esos días o si llegó un aviso de
+   Google sobre la cuenta (suspensión, límite diario de envío, 550 5.4.5),
+   hoy no se envía: item `alerta` (`departamento='operaciones'`,
+   `estado='para_aprobar'`) con lo que pasó. El error de límite de consultas
+   de la API (403 `rateLimitExceeded`) no frena el día: se reintenta (sección 5).
 
 ## 1. Respuestas, bajas y rebotes (siempre, aunque hoy no se envíe)
 
@@ -99,14 +129,21 @@ lo que queda del mes repartido en los días que faltan, así no sobra ni falta),
 `meta_hoy` (mails que tienen que llegar hoy), `cuenta_sana`, los números de los
 últimos 7 días y `creditos_por_mail`.
 
-- **La meta (modo máximo, pedido del fundador el 9/10/2026: "mandemos todos
-  los mails que podamos con esos 5.000"):** todos los que alcancen los
-  créditos del día (`presupuesto_hoy` ÷ `creditos_por_mail`), hasta 300 por
-  día, debajo del límite diario de Gmail. **Freno:** si la cuenta no está sana
-  (rebotes de los últimos 7 días del 3 % o más, o pedidos de baja del 5 % o
-  más), la meta vuelve sola a 70 hasta que se recupere. Si Gmail da un error
-  de límite o llega un aviso de Google sobre la cuenta, pará en el momento
-  (sección 0).
+- **La meta es la del cuidado de la cuenta del 16/10/2026** (arriba): 40
+  hasta el 18/10 y 70 desde el 19/10, nunca más que la rampa de la casilla
+  nueva. Donde abajo diga 70, leé esa meta. Es la misma todos los días
+  (pedido del fundador del 15/10/2026), aunque `meta_hoy` diga otro número.
+  Lo que rebota se repone el mismo día con otros del mismo rubro hasta llegar
+  a 70 (sección 5b). Los créditos del día (`presupuesto_hoy`) se usan para
+  conseguirlos; si no alcanzan, podés pasarte hasta 60 créditos y lo anotás en
+  el informe. El número solo cambia si lo pide el fundador. Si llega un aviso
+  de Google sobre la cuenta, pará en el momento (sección 0); el error de
+  límite de consultas se reintenta (sección 5).
+- **Un solo rubro por día, nunca se mezcla** (fundador, 15/10/2026): todos los
+  mails del día, reposiciones incluidas, son del rubro del día. Si en CABA no
+  alcanza, se sigue con el mismo rubro en el resto de Buenos Aires (sección 3).
+  Nunca se completa con otro rubro: si ni así llega a 70, anotá en el informe
+  cuántos faltaron y decíselo al fundador.
 - **Cuánto cuesta cada cosa:** `firecrawl_search` con `limit: 20` = 4
   créditos. `firecrawl_scrape` = 1 crédito por página. Llevá la cuenta y no
   pases `presupuesto_hoy`.
@@ -157,16 +194,17 @@ Barrios y partidos por zona:
 - **Buenos Aires (interior):** La Plata, Mar del Plata, Bahía Blanca, Tandil,
   Luján, Zárate, Campana, Junín, Pergamino, Olavarría.
 
-**Zona: solo la etapa actual** (pedido del fundador, 14/10/2026). Leé
-`growth_mkt_ajustes` → `prospeccion_geografia` → `zona_actual` (hoy **CABA**).
-Vale el negocio con evidencia pública de estar en esa zona: barrio o comuna en
-su página o su perfil. "Buenos Aires", "AMBA" o una cobertura genérica no
-alcanzan. **Si no alcanza para la meta, no se completa con otras zonas**: se
-manda lo que haya y el informe dice cuántos faltaron. Las etapas siguientes
-(Zona Norte, Zona Oeste, Zona Sur) arrancan solo cuando el fundador lo indica.
-El historial de Provincia se conserva. Nunca fuera de CABA y Provincia de
-Buenos Aires (ver el comentario "Solo CABA y Provincia de Buenos Aires" en
-`index.html`).
+**Zona: primero CABA, y si no alcanza, el mismo rubro en el resto de Buenos
+Aires** (pedido del fundador del 15/10/2026: "si solamente tenés 14 de techos
+en CABA, buscá en todo Buenos Aires y llegá a los 70, pero no cambies de
+rubro"). Leé `growth_mkt_ajustes` → `prospeccion_geografia` (`zona_actual` y
+`ampliar_si_falta`). Orden: CABA, después Zona Norte, Zona Oeste y Zona Sur
+del Gran Buenos Aires y, si todavía faltan, el interior de la Provincia de
+Buenos Aires. Vale el negocio con evidencia pública de estar en esa zona:
+barrio, localidad o partido en su página o su perfil. "Buenos Aires", "AMBA" o
+una cobertura genérica no alcanzan. El mail nombra su barrio o localidad real.
+Nunca fuera de CABA y Provincia de Buenos Aires (ver el comentario "Solo CABA y
+Provincia de Buenos Aires" en `index.html`).
 
 Casi siempre el mail ya viene en el texto del resultado. Para abrir una
 página usá primero la lectura gratis (punto 2); `firecrawl_scrape`
@@ -225,30 +263,66 @@ Devuelve `id`, `ref` y `email` de cada uno guardado.
 
 ## 5. El mail (uno por uno, con diseño y texto)
 
-Cada mail se arma con la herramienta del repo (versión 3, 8/10/2026):
+Cada mail se arma con la herramienta del repo (versión 4, 16/10/2026). El
+fundador pidió que no salgan todos iguales: hay 4 versiones (A, B, C y D) con
+el mismo contenido y distinto asunto, apertura y orden, y se cambia de versión
+cada 5 envíos. Pasale `n` = el número de envío del día, empezando en 0 y
+contando también las reposiciones, y la herramienta elige sola
+((n div 5) mod 4: 0-4 A, 5-9 B, 10-14 C, 15-19 D, 20-24 A…):
 
 ```bash
 python3 tools/prospeccion/armar_mail.py '{"saludo": "ServiMAX Destapaciones",
   "gancho": "Vi en tu página que hacen destapaciones en Caballito.",
   "servicio": "plomería y destapaciones", "zona": "Caballito",
   "pedido": "una destapación o un arreglo de plomería",
-  "donde": "tu página web (servimaxdestapaciones.com)"}'
+  "donde": "tu página web (servimaxdestapaciones.com)", "n": 0}'
 ```
 
-Devuelve `html` y `texto`. Mandalo con `send_message`: `to` = una sola
-dirección, `subject`, `htmlBody` = `html` y `body` = `texto` (sin copias, sin
-adjuntos). Cada 10 enviados:
+Devuelve `html`, `texto`, `asunto` y `variante`. Mandalo con `send_message`:
+`to` = una sola dirección, `subject` = `asunto`, `htmlBody` = `html` y
+`body` = `texto` (sin copias, sin adjuntos). Guardá la versión en
+`datos.prospeccion.variante` del contacto, así se puede ver cuál responde más.
+
+**Antes de cada envío, que el dominio reciba correo** (fundador, 16/10/2026,
+para bajar los rebotes; gratis):
+
+```bash
+python3 tools/prospeccion/tiene_mx.py info@negocio.com.ar
+```
+
+Si dice `"recibe": false`, no lo mandes: dejalo sin contactar con
+`datos.prospeccion.sin_mx = true` y `do_not_contact = true` (no lo marques como
+rebote: no se envió, y contarlo como rebote empeoraría la salud de la cuenta)
+y seguí con otro del mismo rubro. Si dice `null` (no se pudo consultar), seguí
+como siempre. Pasale también `"remitente"` = `cuenta_envio`, que va en la
+firma. Cada 10 enviados:
 
 ```sql
 select mkt_prospeccion_enviado($j$[{"id": "<id>", "thread": "<threadId>"}, ...]$j$::jsonb);
 ```
 
-Si Gmail da un error de límite o de cuenta, **pará en ese momento** y dejá
-una `alerta`. Si un envío falla por otra cosa, salteá ese y seguí; con 3
-errores seguidos, pará.
+Ritmo (fundador, 16/10/2026): 5 cada 15 minutos, uno cada 3 minutos más o
+menos. Después de cada tanda de 5, revisá rebotes (sección 5b, freno a los 3).
 
-**Asunto:** `Clientes que buscan {oficio} en {barrio o zona} · Tratto`
-(el "· Tratto" del final sirve para encontrar las respuestas).
+**Error de límite de consultas** (403 `rateLimitExceeded`,
+`userRateLimitExceeded` o "Quota exceeded" de la API; pedido del fundador del
+15/10/2026: "reintentar de nuevo lo más antes posible" y que no se pierda el
+día): antes de reintentar, comprobá en Enviados
+(`in:sent newer_than:1d to:<mail>`) que ese mail no salió. Reintentá a 1, 2,
+5, 10 y 15 minutos y, cuando vuelva a andar, seguí más despacio (uno cada 90
+segundos). Si después del reintento de 15 minutos sigue fallando, pará,
+dejá una `alerta` (`prioridad=1`, `para_aprobar`) con la hora, el error
+exacto, cuántos salieron y cuántos faltan, y devolvelo: el que te llamó
+reprograma la corrida para una hora después y le avisa al fundador.
+
+**Aviso de Google sobre la cuenta** (suspensión, límite diario de envío,
+550 5.4.5): **pará en ese momento** y dejá una `alerta`. Si un envío falla por
+otra cosa, salteá ese y seguí; con 3 errores seguidos, pará.
+
+**Asunto:** el que devuelve la herramienta según la versión (A: `Clientes
+que buscan {oficio} en {barrio o zona} · Tratto`). Los cuatro llevan "Tratto"
+porque las respuestas se buscan con `subject:Tratto`: si lo cambiás a mano,
+no se lo saques.
 
 **Qué dice el mail** (pedidos del fundador; no los cambies sin que lo pida):
 - Saluda por el nombre (`saludo`): el nombre de pila de la persona si figura
@@ -292,14 +366,17 @@ con un mensaje de `mailer-daemon`, casi siempre en uno o dos minutos.
 1. Después de enviar y marcar los enviados (`mkt_prospeccion_enviado`), revisá
    los rebotes como en el paso 1: `in:anywhere from:mailer-daemon newer_than:1d`, y marcá
    cada uno con `mkt_prospeccion_respuesta('<mail>', 'rebote')`.
-2. `select mkt_rubro_del_dia();` → **faltan = `meta_hoy` − `entregados_hoy`**.
+2. `select mkt_rubro_del_dia();` → **faltan = meta del día − `entregados_hoy`**
+   (40 hasta el 18/10, 70 desde el 19/10, con la rampa de la casilla nueva).
 3. Si faltan más de 0, buscá **esa misma cantidad** de proveedores nuevos del
    rubro del día (pasos 3, 4 y 5, con los créditos que dejaste para eso) y
-   mandales.
+   mandales. Siempre del rubro del día: los rebotes de días anteriores no se
+   reponen con otro rubro.
 4. Volvé a revisar rebotes y repetí **una sola vez más** (máximo 2 vueltas de
    reposición por día).
-5. **Freno:** si los rebotes de hoy pasan el 10 % de lo enviado hoy, no
-   repongas: las fuentes están trayendo direcciones viejas o mal escritas.
+5. **Freno:** con 3 rebotes en el día (fundador, 16/10/2026: que sea lo
+   menos probable que bloqueen la cuenta), no se manda ni se repone nada más
+   hasta mañana: las fuentes están trayendo direcciones viejas o mal escritas.
    Dejá un item `alerta` (`departamento='operaciones'`,
    `estado='para_aprobar'`) con los dominios que rebotaron.
 6. Antes del informe, una última revisión de rebotes. Los que lleguen después
@@ -347,17 +424,21 @@ Números de la semana: `select mkt_prospeccion_numeros(7);`
 
 ## Límites
 
-- Solo desde trattoapp1@gmail.com. Nunca por Brevo (prohíbe estas listas y
+- Solo desde la casilla de la campaña (`cuenta_envio`), nunca desde
+  trattoapp1@gmail.com (16/10/2026). Nunca por Brevo (prohíbe estas listas y
   arriesga los mails de la app), nunca con copia ni a varios a la vez.
 - **Una sola presentación por dirección, para siempre**, y como mucho un
   recordatorio el mismo día a las 18:30, solo a quien no respondió (pedido
   del fundador del 13/10 y del 14/10). El recordatorio lo manda Codex para
-  los envíos de los dos; no hay otros seguimientos.
+  los envíos de los dos; no hay otros seguimientos. Pausado desde el
+  16/10/2026 hasta que la casilla nueva llegue a 70 por día.
 - Las respuestas nunca se envían solas: quedan como borrador.
-- `meta_hoy` mails por día que **lleguen**: lo que alcancen los créditos del
-  día (hasta 300), o 70 si la cuenta no está sana. Se reparte
+- La meta del día (40 hasta el 18/10, 70 desde el 19/10, con la rampa de la
+  casilla nueva) en mails que **lleguen**, de un solo rubro (fundador, 15 y
+  16/10/2026). Se reparte
   con Codex (pizarra `coordinacion_codex_claude`): Codex hace la primera mitad,
-  Claude completa la meta, los dos en la zona actual (hoy CABA), y cada envío
+  Claude completa la meta, los dos con el mismo rubro, primero en CABA y si
+  falta en el resto de Buenos Aires, y cada envío
   lleva `datos.prospeccion.agente`. Con la reposición se
   pueden enviar unos pocos más.
 - **Solo páginas públicas**, encontradas con búsquedas y leídas una por una.

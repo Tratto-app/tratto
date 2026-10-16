@@ -19,14 +19,20 @@ una está en `.claude/skills/contenido/SKILL.md`, sección "Automático".
   lo habilite (`tools/contenido/conocimiento/protocolo.md`, sección 8.2).
 - Lunes: radar viral y plan de la semana. Primer lunes del mes: perfil.
 - Guía o página de precios nueva en la web: carrusel y reel para redes.
-- Automático no es publicar: lo que se arma solo queda para aprobar, y en
-  Metricool se programa solo lo aprobado, con `autoPublish: false`.
+- Redes con permiso total (16/10/2026): la persona dijo "no requieras mi
+  permiso para nada" en TikTok, Instagram y Facebook. Lo que pasa la cadena y
+  los controles se programa en Buffer en modo automático (se publica solo),
+  sin esperar aprobación, y se le avisa en una línea qué sale, en qué red y
+  cuándo. Mails, anuncios, guías y gastos siguen esperando su aprobación.
+  Metricool quedó sin cupo el 14/10 y sigue solo para métricas.
+- Facebook (la Página) recibe la versión de Instagram de cada reel, con el
+  link escrito en vez de la mención a @trattoapp_.
 - Al entregar, decí en una línea qué piezas se aplicaron.
 
 Dos controles en código lo sostienen: `node tools/contenido/cli.mjs verificar`
 corre el humanizador, revisa los hashtags y (con `red`) el link de un toque, y
-el hook de `.claude/settings.json` frena la programación en Metricool si el
-texto suena a IA o le falta el link de un toque.
+el hook de `.claude/settings.json` frena la programación en Buffer o Metricool
+si el texto suena a IA o le falta el link de un toque.
 
 ## Mapa del código (graphify): el mismo para Claude y Codex
 

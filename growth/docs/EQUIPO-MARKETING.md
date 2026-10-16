@@ -67,6 +67,13 @@ También se le puede hablar directo en Claude Code: `/equipo-marketing`
 Pedido del 8/10/2026: 70 mails por día desde **trattoapp1@gmail.com**, cada día
 a un rubro distinto; al terminar los 46 rubros vuelve a empezar por el 1.
 
+Desde el 16/10/2026 (Gmail frenó la cuenta por límite diario con 44 mails en 24
+horas): los mails en frío salen de una casilla aparte, solo para la campaña
+(`growth_mkt_ajustes.prospeccion.cuenta_envio`), porque trattoapp1 está
+vinculada a la app y a las tiendas. 40 por día hasta el 18/10 y 70 desde el
+19/10, con rampa para la casilla nueva (15, 25, 40), 5 cada 15 minutos, freno a
+los 3 rebotes del día y sin recordatorios hasta llegar a 70.
+
 - **Quién lo hace:** el agente `mkt-prospeccion` (`.claude/agents/`), con una
   rutina diaria propia.
 - **Rotación:** tabla `growth_mkt_rotacion` (los 46 rubros en el orden de la

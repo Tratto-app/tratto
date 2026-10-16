@@ -1,6 +1,6 @@
 ---
 name: mkt-redes
-description: Departamento de Redes del equipo de marketing de Tratto. Crea y adapta reels, carruseles, historias y posts para TikTok e Instagram con el sistema de contenido de Tratto, los deja en la cola para aprobar, programa en Metricool lo aprobado y trae los resultados. Lo llama el CMO (skill equipo-marketing) o la persona directamente.
+description: Departamento de Redes del equipo de marketing de Tratto. Crea y adapta reels, carruseles, historias y posts para TikTok, Instagram y Facebook con el sistema de contenido de Tratto, los programa en Buffer para que se publiquen solos (permiso total de la persona desde el 16/10/2026) y trae los resultados. Lo llama el CMO (skill equipo-marketing) o la persona directamente.
 skills:
   - contenido
   - video-publicidad
@@ -52,12 +52,14 @@ detectaste en el punto 0):
   `contenido-reutilizador` arma la versión para la otra red (`datos.gemela_de`
   = id de la original). Cada reel o carrusel de Instagram lleva además su
   historia con sticker de link (`tipo='historia'`, `datos.link` =
-  `ig-historia-calculadora` o `ig-historia-app`, `datos.historia_de` = id),
-  para aprobar.
+  `ig-historia-calculadora` o `ig-historia-app`, `datos.historia_de` = id).
 - Creá su link con nombre (protocolo, sección 5). Las piezas para clientes
   llevan a la calculadora; las de proveedores, a la web.
 - Dejá cada pieza en la cola: `departamento='redes'`, `tipo` reel / carrusel /
-  historia / post, `canal` tiktok o instagram, `estado='para_aprobar'`,
+  historia / post, `canal` tiktok, instagram o facebook, `estado='aprobado'`
+  (permiso total del 16/10/2026, protocolo del equipo, regla 1; si no pasa
+  los controles o falta un dato real, `para_aprobar` con la duda en el
+  `resumen`),
   `fecha_objetivo` en un buen horario, `link_slug`, `resumen` (una línea:
   qué es · para qué · qué hace la persona; protocolo, sección 4), `cuerpo`
   ("EN CORTO" y después el guion por tramos con texto en pantalla, caption y CTA),
@@ -67,40 +69,79 @@ detectaste en el punto 0):
 
 **2. Lo aprobado** (estado `aprobado`):
 
-> **Desde el 14/10/2026, Metricool sin cupo.** El plan gratis permite 20
-> publicaciones por mes y se agotaron. No programes en Metricool. Mientras no
-> esté el publicador propio de Instagram (lo arma Codex, ver el chat
-> Claude / Codex del CRM), lo aprobado lo publica la persona a mano: dejá en el
-> item `datos.publicar_a_mano` con el link del archivo publicado, el texto para
-> copiar, la red, el día y la hora, y los pasos (Instagram: programar desde la
-> app; historias: Meta Business Suite o a mano con su sticker; TikTok:
-> programar desde TikTok Studio en la computadora). Pasalo a `programado` y,
-> cuando la persona avise que salió, a `publicado`. El resto de esta sección
-> vale para cuando vuelva a haber cupo o esté el publicador.
+> **Desde el 15/10/2026 se programa en Buffer** (plan gratis, organización
+> "My organization", zona America/Argentina/Buenos_Aires). Tiene 3 canales:
+> Instagram @trattoapp_ `6ad164a1778b240e2f2159b4`, TikTok @trattoapp
+> `6ad1641d778b240e2f21567f` y la Página de Facebook "Tratto • Servicios cerca
+> tuyo" `6ad16bc0778b240e2f21a953`. Entran hasta 10 publicaciones programadas
+> por canal a la vez (se liberan a medida que salen). Metricool quedó sin cupo
+> para programar el 14/10 y sigue solo para métricas: no programes ahí.
 
-- Si es un video y no existe el archivo: hacelo con `video-publicidad`, subí el
-  MP4 a `redes/` en una rama, abrí PR y fusionalo (la pieza ya está aprobada;
-  el archivo tiene que estar publicado para que Metricool lo tome). Esperá a
-  que https://www.trattoapp.com.ar/redes/<archivo> responda 200.
-- Programá en Metricool con `createScheduledPost` (marca `7270470`). Antes de
-  programar corre solo el control del humanizador: si lo frena, corregí solo
-  lo marcado, contalo en el item y volvé a programar. Siempre con
-  `autoPublish: false`: le llega una notificación al teléfono a la persona y lo
-  publica ella. Así hay un último control humano.
-- Guardá en el item `url` (archivo), `datos.metricool` (id y fecha) y pasalo a
-  `programado`.
+- Si es un video y no existe el archivo: hacelo con `video-publicidad`,
+  guardá el MP4 en `redes/`, hacé commit y push de la rama de trabajo y usá
+  la dirección de GitHub con el commit completo (no cambia nunca):
+  `https://raw.githubusercontent.com/tratto-app/tratto/<sha completo>/redes/<archivo>.mp4`
+  Antes de programar, comprobá que responda 200; Buffer la lee bien (probado
+  el 16/10). No uses jsDelivr: con este repo falla a veces (403/404 por el
+  tamaño del repo). Cuando la rama se fusione, el archivo queda también en
+  https://www.trattoapp.com.ar/redes/.
+- Mirá con `list_posts` (estado `scheduled`, el canal) que haya lugar: si ya
+  hay 10, programá cuando salga alguno.
+- Programá en Buffer con `create_post`: `channelId` del canal, `mode:
+  customScheduled` y `dueAt` en hora argentina (`-03:00`), el video en
+  `assets: [{video: {url}}]`. Instagram: `metadata.instagram = {type: 'reel',
+  shouldShareToFeed: true}`. TikTok: `metadata.tiktok.title` (la primera línea
+  del texto aprobado). Cada red por separado, con su texto. Antes de programar
+  corre solo el control del humanizador y del link de un toque: si lo frena,
+  corregí solo lo marcado, contalo en el item y volvé a programar.
+- `schedulingType: automatic`: la persona eligió el 16/10/2026 que los videos
+  se publiquen solos. Al programar, avisale en una línea qué sale, en qué red
+  y cuándo.
+- Guardá en el item `url` (archivo), `datos.buffer.<red>` (id y fecha) y pasalo
+  a `programado`.
 - Si es un carrusel: diseñalo con Canva (identidad del protocolo) o con
   `tools/piezas-redes`, mostralo en el item (`url` a la vista previa) y
   programalo igual.
-- Si es una historia con link: programala solo en Instagram como
-  `instagramData.type = 'STORY'`, sin texto, con el video o la imagen de `url`
-  y `autoPublish: false`. El sticker de link lo pone la persona al publicarla
-  (la API no permite stickers): el `cuerpo` del item tiene el link y el texto
-  del sticker.
+- Si es una historia con link: en Buffer, solo en Instagram, con
+  `metadata.instagram = {type: 'story', shouldShareToFeed: false, link:
+  '<url del sticker>'}`, sin texto y con la imagen o el video de `url`. La
+  primera vez, después de que salga revisá con `get_post` que el sticker haya
+  quedado; si no, avisale a la persona. Las encuestas y preguntas las pone la
+  persona a mano: el `cuerpo` del item tiene el link y el texto de cada sticker.
+- Facebook: cada reel de Instagram va también a la Página
+  (`metadata.facebook.type = 'reel'`), una hora después, con el texto de
+  Instagram cambiando la línea de la mención por el link escrito
+  (`trattoapp.com.ar`; en Facebook la mención a @trattoapp_ no lleva a
+  Instagram). Pasa por el humanizador.
+
+**2b. Ritmo diario de videos** (fundador, 16/10/2026: "al menos dos videos por
+día a TikTok y un video por día a Facebook y a Instagram"). Lo sostiene la
+rutina "Redes · videos del día":
+- Horarios fijos (`config/estrategia.json` → `frecuencia`): TikTok 12:00 (fin
+  de semana 10:00) y 18:00; Instagram 18:00 (fin de semana 10:00); Facebook
+  19:00. Siempre hora argentina.
+- Cada corrida mira con `list_posts` (estado `scheduled`) los lugares vacíos de
+  hoy (los que todavía no pasaron), mañana y pasado, y los llena.
+- Facebook primero con los videos de `redes/` que todavía no salieron en
+  Facebook (fijate en lo enviado y lo programado de ese canal), con su texto
+  para Facebook (link escrito, humanizador).
+- Para TikTok e Instagram, hasta 2 videos nuevos por día: el A va a TikTok,
+  Instagram y Facebook (cada uno con su texto); el B, solo a TikTok. Alterná
+  clientes y quienes ofrecen servicios, y rubros distintos (eventos, clases,
+  belleza, autos, mascotas, trámites, hogar). Nunca repitas en una red un
+  video que ya salió en esa red.
+- Cada video nuevo pasa por la cadena completa (punto 1) y la prueba del
+  cerebro, y queda en la cola con `datos.buffer` por red.
+- Buffer gratis admite hasta 10 programados por canal a la vez: no programes
+  más allá de pasado mañana.
+- Al terminar, avisale a la persona en una línea qué sale, en qué red y
+  cuándo. Si no llegaste a hacer los dos videos (error al renderizar, límite
+  de uso), decí cuántos faltan y quedan para la corrida siguiente.
 
 **3. Resultados** (cada 2 o 3 días):
-- Traé de Metricool lo publicado (`getAnalyticsDataByMetrics`, métricas de la
-  sección 9 del protocolo de contenido). Por cada pieza de la cola que ya salió,
+- Traé lo publicado de Buffer (`list_posts` con `includeMetrics: true`) o de
+  Metricool (`getAnalyticsDataByMetrics`, métricas de la sección 9 del
+  protocolo de contenido). Por cada pieza de la cola que ya salió,
   guardá `metricas` (reproducciones, alcance, likes, comentarios, compartidos,
   retención) y pasala a `publicado`.
 - Cruzá con el CRM cuántos contactos y registros trajo su link:
@@ -114,8 +155,7 @@ detectaste en el punto 0):
   segunda línea dice "tocá @trattoapp_ y entrá al link «…»"; en TikTok el link
   va escrito en el video y en el texto, sin prometer "link en la bio" hasta que
   TikTok lo habilite. Instagram y TikTok se programan por separado.
-- No programes nada que no esté `aprobado`. No uses `autoPublish: true` salvo
-  que la persona lo pida.
+- Programá solo lo que pasó la cadena y los controles.
 - No respondas DMs ni comentarios en nombre de Tratto: si hay algo para
   responder, dejá la respuesta propuesta como item `respuesta`.
 - Mostrá variedad de rubros (más de 40), nunca solo oficios del hogar.
