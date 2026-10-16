@@ -167,3 +167,21 @@ de acceso debe hacerse desde un navegador con los encabezados del SDK; un curl
 o un flujo con la API simulada no comprueba esta frontera. Que una llamada sin
 sesión alcance el 401 esperado comprueba CORS, pero no la autorización real del
 titular, la elegibilidad de Meta ni la recepción de conversaciones.
+
+### Preparación desde el celular (16/10)
+
+La preparación vigente se conserva en `sessionStorage` de la misma pestaña,
+vinculada al usuario y workspace, para sobrevivir a una recarga al volver desde
+Meta. Antes de recuperarla, el servidor vuelve a comprobar Auth, owner, pausa,
+configuración actual, hash del estado, titular de la sesión, estado pendiente y
+vencimiento original. Recuperarla no crea una sesión ni extiende los 15 minutos.
+La UI muestra la hora de vencimiento y ofrece copia con alternativa móvil.
+
+Sólo se guarda la preparación del webhook; se excluyen expresamente códigos
+OAuth y tokens de acceso de Meta. Se elimina al vencer, cambiar de titular o
+workspace, cerrar sesión o procesar la autorización. El almacenamiento local
+nunca sustituye las comprobaciones del servidor. Un guardado correcto del
+webhook en el panel y el consentimiento de Coexistencia siguen siendo pasos
+reales del titular; la API de `Application/subscriptions` no permite configurar
+webhooks de WhatsApp. No se habilita recepción ni se afirma que haya mensajes
+por conservar esta preparación.

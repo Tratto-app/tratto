@@ -42,12 +42,15 @@ Deno.serve(async (req: Request) => {
     if (inserted.error) return reply({ error: 'No se pudo preparar la sesión.' }, 503);
     return reply({ run_id: id, state, verify_token: verify, expires_at: until, app_id: appId, config_id: configId, callback, webhook_fields: WEBHOOK_FIELDS });
   }
-  if (body.action !== 'complete' || !uuid(body.run_id) || typeof body.state !== 'string' || body.state.length !== 64) return reply({ error: 'Solicitud de vinculación inválida.' }, 400);
+  if (!['resume', 'complete'].includes(String(body.action)) || !uuid(body.run_id) || typeof body.state !== 'string' || body.state.length !== 64) return reply({ error: 'Solicitud de vinculación inválida.' }, 400);
   const selected = await db.from('growth_wa_setup_sessions').select('*').eq('id', body.run_id).eq('workspace_id', ws).eq('user_id', auth.data.user.id).maybeSingle();
   const session = selected.data;
   if (selected.error) return reply({ error: 'No se pudo comprobar la sesión de vinculación.' }, 503);
   if (!session || session.state_hash !== await hash(body.state) || session.app_id !== appId || session.config_id !== configId) return reply({ error: 'Sesión de vinculación inválida.' }, 403);
   if (session.status !== 'pending') return reply(object(session.result).estado ? object(session.result) : { error: 'Esta sesión ya se procesó. Actualizá el estado antes de iniciar otra.', estado: session.status }, 409);
+  if (Date.parse(session.expires_at) <= Date.now()) return reply({ error: 'La preparación venció. Tocá Preparar conexión para obtener un token nuevo.' }, 409);
+  // Recuperar la preparación exige el mismo titular y estado secreto; no extiende su vigencia.
+  if (body.action === 'resume') return reply({ restored: true, expires_at: session.expires_at, app_id: appId, config_id: configId, callback, webhook_fields: WEBHOOK_FIELDS });
   const claimed = await db.from('growth_wa_setup_sessions').update({ status: 'processing' }).eq('id', body.run_id).eq('status', 'pending').gt('expires_at', new Date().toISOString()).select('id').maybeSingle();
   if (claimed.error || !claimed.data) return reply({ error: 'La sesión venció o ya está en proceso.' }, 409);
   const appSecret = Deno.env.get('TRATTO_WA_APP_SECRET') || '';
