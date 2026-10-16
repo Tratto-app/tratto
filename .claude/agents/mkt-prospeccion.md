@@ -236,19 +236,38 @@ Devuelve `id`, `ref` y `email` de cada uno guardado.
 
 ## 5. El mail (uno por uno, con diseño y texto)
 
-Cada mail se arma con la herramienta del repo (versión 3, 8/10/2026):
+Cada mail se arma con la herramienta del repo (versión 4, 16/10/2026). El
+fundador pidió que no salgan todos iguales: hay 4 versiones (A, B, C y D) con
+el mismo contenido y distinto asunto, apertura y orden, y se cambia de versión
+cada 5 envíos. Pasale `n` = el número de envío del día, empezando en 0 y
+contando también las reposiciones, y la herramienta elige sola
+((n div 5) mod 4: 0-4 A, 5-9 B, 10-14 C, 15-19 D, 20-24 A…):
 
 ```bash
 python3 tools/prospeccion/armar_mail.py '{"saludo": "ServiMAX Destapaciones",
   "gancho": "Vi en tu página que hacen destapaciones en Caballito.",
   "servicio": "plomería y destapaciones", "zona": "Caballito",
   "pedido": "una destapación o un arreglo de plomería",
-  "donde": "tu página web (servimaxdestapaciones.com)"}'
+  "donde": "tu página web (servimaxdestapaciones.com)", "n": 0}'
 ```
 
-Devuelve `html` y `texto`. Mandalo con `send_message`: `to` = una sola
-dirección, `subject`, `htmlBody` = `html` y `body` = `texto` (sin copias, sin
-adjuntos). Cada 10 enviados:
+Devuelve `html`, `texto`, `asunto` y `variante`. Mandalo con `send_message`:
+`to` = una sola dirección, `subject` = `asunto`, `htmlBody` = `html` y
+`body` = `texto` (sin copias, sin adjuntos). Guardá la versión en
+`datos.prospeccion.variante` del contacto, así se puede ver cuál responde más.
+
+**Antes de cada envío, que el dominio reciba correo** (fundador, 16/10/2026,
+para bajar los rebotes; gratis):
+
+```bash
+python3 tools/prospeccion/tiene_mx.py info@negocio.com.ar
+```
+
+Si dice `"recibe": false`, no lo mandes: dejalo sin contactar con
+`datos.prospeccion.sin_mx = true` y `do_not_contact = true` (no lo marques como
+rebote: no se envió, y contarlo como rebote empeoraría la salud de la cuenta)
+y seguí con otro del mismo rubro. Si dice `null` (no se pudo consultar), seguí
+como siempre. Cada 10 enviados:
 
 ```sql
 select mkt_prospeccion_enviado($j$[{"id": "<id>", "thread": "<threadId>"}, ...]$j$::jsonb);
