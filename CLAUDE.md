@@ -20,13 +20,14 @@ una está en `.claude/skills/contenido/SKILL.md`, sección "Automático".
 - Lunes: radar viral y plan de la semana. Primer lunes del mes: perfil.
 - Guía o página de precios nueva en la web: carrusel y reel para redes.
 - Automático no es publicar: lo que se arma solo queda para aprobar, y en
-  Metricool se programa solo lo aprobado, con `autoPublish: false`.
+  Buffer se programa solo lo aprobado (Metricool quedó sin cupo el 14/10 y
+  sigue solo para métricas).
 - Al entregar, decí en una línea qué piezas se aplicaron.
 
 Dos controles en código lo sostienen: `node tools/contenido/cli.mjs verificar`
 corre el humanizador, revisa los hashtags y (con `red`) el link de un toque, y
-el hook de `.claude/settings.json` frena la programación en Metricool si el
-texto suena a IA o le falta el link de un toque.
+el hook de `.claude/settings.json` frena la programación en Buffer o Metricool
+si el texto suena a IA o le falta el link de un toque.
 
 ## Mapa del código (graphify): el mismo para Claude y Codex
 

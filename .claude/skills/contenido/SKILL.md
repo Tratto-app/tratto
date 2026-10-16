@@ -45,7 +45,7 @@ rutina, el CMO u otro departamento.
 | Primer lunes del mes, cambio de link, servicio o app (por ejemplo, salida en las tiendas), o muchas visitas al perfil y pocos registros | Perfil |
 | Una pieza rinde muy por encima de la mediana (`metricas`) | Reutilizador: otra versión del mismo principio + aprendizaje |
 | Una pieza puntúa menos de 75 | `contenido-optimizacion` antes de proponerla |
-| Se programa en Metricool | Control en código (hook): si suena a IA o le falta el link de un toque, no se programa hasta corregirlo |
+| Se programa en Buffer o Metricool | Control en código (hook): si suena a IA o le falta el link de un toque, no se programa hasta corregirlo |
 
 **La cadena de cada pieza nueva**, en este orden y sin saltear pasos:
 
@@ -70,14 +70,14 @@ rutina, el CMO u otro departamento.
 - Mensajes internos, informes para la persona y respuestas en el chat no
   pasan por la cadena.
 - Un texto ya aprobado tal cual no se reescribe. Si el control antes de
-  Metricool lo frena, se corrige solo lo marcado y se le cuenta a la persona.
+  programar lo frena, se corrige solo lo marcado y se le cuenta a la persona.
 - La plantilla aprobada de los mails a proveedores no se toca.
 - Si una gemela no suma en la otra red (por ejemplo, una encuesta de historia
   de Instagram), no se hace y se dice por qué.
 - Si falta un dato real (precio, número, testimonio), no se inventa: se pide.
 
 **Automático no es publicar:** todo lo que se arma solo queda `para_aprobar`.
-Programar en Metricool sigue siendo solo con lo aprobado.
+Programar en Buffer sigue siendo solo con lo aprobado.
 
 **Al entregar**, una línea con lo que se aplicó, por ejemplo: "Apliqué
 ganchos, redactor, hashtags, humanizador (IG 4 %, TikTok 0 %) y la versión
@@ -123,8 +123,8 @@ Además de lo automático, si la persona pide algo concreto:
 | "Haceme un reel / guion sobre…" | contenido-hooks → guion (estructura de `conocimiento/estructuras.md`) → `verificar` → puntuar → mejora si < 75 |
 | "Historias para…" | contenido-historias |
 | "Mejorá el perfil / la bio" | contenido-perfil |
-| "Estos son los resultados de…" / "traé los resultados" | Metricool (protocolo, sección 9) o lo que pegue la persona → `registrar resultado` → contenido-analisis con insumo `metricas` → aprendizaje |
-| "Programalo" | Metricool `createScheduledPost` con aprobación explícita (protocolo, sección 9) |
+| "Estos son los resultados de…" / "traé los resultados" | Buffer o Metricool (protocolo, sección 9) o lo que pegue la persona → `registrar resultado` → contenido-analisis con insumo `metricas` → aprendizaje |
+| "Programalo" | Buffer `create_post` con aprobación explícita (protocolo, sección 9) |
 | "Diseñalo" (carrusel, portada, placa) | Canva con la identidad de marca (protocolo, sección 9) o `tools/piezas-redes` |
 
 Para un reel sin skill propia: escribir el guion por tramos con tiempos
@@ -147,7 +147,7 @@ Cada entrega termina con:
 
 ## Límites del sistema
 
-- Programa en Metricool solo lo que la persona aprueba (TikTok e Instagram están conectados), con publicación manual.
-- Lee métricas solo de las redes conectadas a Metricool; las demás se pegan a mano.
+- Programa en Buffer solo lo que la persona aprueba (Instagram, TikTok y la Página de Facebook están conectados).
+- Lee métricas solo de las redes conectadas a Buffer o Metricool; las demás se pegan a mano.
 - No transcribe audio ni abre links de redes.
 - Para piezas gráficas usar la skill `disenador-marketplace` y `tools/piezas-redes`.

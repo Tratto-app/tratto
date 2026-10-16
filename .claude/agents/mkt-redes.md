@@ -1,6 +1,6 @@
 ---
 name: mkt-redes
-description: Departamento de Redes del equipo de marketing de Tratto. Crea y adapta reels, carruseles, historias y posts para TikTok e Instagram con el sistema de contenido de Tratto, los deja en la cola para aprobar, programa en Metricool lo aprobado y trae los resultados. Lo llama el CMO (skill equipo-marketing) o la persona directamente.
+description: Departamento de Redes del equipo de marketing de Tratto. Crea y adapta reels, carruseles, historias y posts para TikTok e Instagram con el sistema de contenido de Tratto, los deja en la cola para aprobar, programa en Buffer lo aprobado y trae los resultados. Lo llama el CMO (skill equipo-marketing) o la persona directamente.
 skills:
   - contenido
   - video-publicidad
@@ -67,40 +67,49 @@ detectaste en el punto 0):
 
 **2. Lo aprobado** (estado `aprobado`):
 
-> **Desde el 14/10/2026, Metricool sin cupo.** El plan gratis permite 20
-> publicaciones por mes y se agotaron. No programes en Metricool. Mientras no
-> esté el publicador propio de Instagram (lo arma Codex, ver el chat
-> Claude / Codex del CRM), lo aprobado lo publica la persona a mano: dejá en el
-> item `datos.publicar_a_mano` con el link del archivo publicado, el texto para
-> copiar, la red, el día y la hora, y los pasos (Instagram: programar desde la
-> app; historias: Meta Business Suite o a mano con su sticker; TikTok:
-> programar desde TikTok Studio en la computadora). Pasalo a `programado` y,
-> cuando la persona avise que salió, a `publicado`. El resto de esta sección
-> vale para cuando vuelva a haber cupo o esté el publicador.
+> **Desde el 15/10/2026 se programa en Buffer** (plan gratis, organización
+> "My organization", zona America/Argentina/Buenos_Aires). Tiene 3 canales:
+> Instagram @trattoapp_ `6ad164a1778b240e2f2159b4`, TikTok @trattoapp
+> `6ad1641d778b240e2f21567f` y la Página de Facebook "Tratto • Servicios cerca
+> tuyo" `6ad16bc0778b240e2f21a953`. Entran hasta 10 publicaciones programadas
+> por canal a la vez (se liberan a medida que salen). Metricool quedó sin cupo
+> para programar el 14/10 y sigue solo para métricas: no programes ahí.
 
 - Si es un video y no existe el archivo: hacelo con `video-publicidad`, subí el
   MP4 a `redes/` en una rama, abrí PR y fusionalo (la pieza ya está aprobada;
-  el archivo tiene que estar publicado para que Metricool lo tome). Esperá a
+  el archivo tiene que estar publicado para que Buffer lo tome). Esperá a
   que https://www.trattoapp.com.ar/redes/<archivo> responda 200.
-- Programá en Metricool con `createScheduledPost` (marca `7270470`). Antes de
-  programar corre solo el control del humanizador: si lo frena, corregí solo
-  lo marcado, contalo en el item y volvé a programar. Siempre con
-  `autoPublish: false`: le llega una notificación al teléfono a la persona y lo
-  publica ella. Así hay un último control humano.
-- Guardá en el item `url` (archivo), `datos.metricool` (id y fecha) y pasalo a
-  `programado`.
+- Mirá con `list_posts` (estado `scheduled`, el canal) que haya lugar: si ya
+  hay 10, programá cuando salga alguno.
+- Programá en Buffer con `create_post`: `channelId` del canal, `mode:
+  customScheduled` y `dueAt` en hora argentina (`-03:00`), el video en
+  `assets: [{video: {url}}]`. Instagram: `metadata.instagram = {type: 'reel',
+  shouldShareToFeed: true}`. TikTok: `metadata.tiktok.title` (la primera línea
+  del texto aprobado). Cada red por separado, con su texto. Antes de programar
+  corre solo el control del humanizador y del link de un toque: si lo frena,
+  corregí solo lo marcado, contalo en el item y volvé a programar.
+- `schedulingType: automatic` publica solo a la hora; `notification` le manda
+  un aviso al celular a la persona para que lo publique ella. Usá el que la
+  persona haya elegido (anotado en `tools/contenido/conocimiento/protocolo.md`,
+  sección 9); si no eligió, `notification`.
+- Guardá en el item `url` (archivo), `datos.buffer.<red>` (id y fecha) y pasalo
+  a `programado`.
 - Si es un carrusel: diseñalo con Canva (identidad del protocolo) o con
   `tools/piezas-redes`, mostralo en el item (`url` a la vista previa) y
   programalo igual.
-- Si es una historia con link: programala solo en Instagram como
-  `instagramData.type = 'STORY'`, sin texto, con el video o la imagen de `url`
-  y `autoPublish: false`. El sticker de link lo pone la persona al publicarla
-  (la API no permite stickers): el `cuerpo` del item tiene el link y el texto
-  del sticker.
+- Si es una historia con link: en Buffer, solo en Instagram, con
+  `metadata.instagram = {type: 'story', shouldShareToFeed: false, link:
+  '<url del sticker>'}`, sin texto y con la imagen o el video de `url`. Hasta
+  que una historia salga bien con su sticker, programala con `notification` y
+  revisala con la persona. Las encuestas y preguntas las pone la persona a
+  mano: el `cuerpo` del item tiene el link y el texto de cada sticker.
+- Facebook: la versión de Instagram del reel va a la Página solo si la persona
+  la aprobó para Facebook (`metadata.facebook.type = 'reel'`).
 
 **3. Resultados** (cada 2 o 3 días):
-- Traé de Metricool lo publicado (`getAnalyticsDataByMetrics`, métricas de la
-  sección 9 del protocolo de contenido). Por cada pieza de la cola que ya salió,
+- Traé lo publicado de Buffer (`list_posts` con `includeMetrics: true`) o de
+  Metricool (`getAnalyticsDataByMetrics`, métricas de la sección 9 del
+  protocolo de contenido). Por cada pieza de la cola que ya salió,
   guardá `metricas` (reproducciones, alcance, likes, comentarios, compartidos,
   retención) y pasala a `publicado`.
 - Cruzá con el CRM cuántos contactos y registros trajo su link:
@@ -114,8 +123,7 @@ detectaste en el punto 0):
   segunda línea dice "tocá @trattoapp_ y entrá al link «…»"; en TikTok el link
   va escrito en el video y en el texto, sin prometer "link en la bio" hasta que
   TikTok lo habilite. Instagram y TikTok se programan por separado.
-- No programes nada que no esté `aprobado`. No uses `autoPublish: true` salvo
-  que la persona lo pida.
+- No programes nada que no esté `aprobado`.
 - No respondas DMs ni comentarios en nombre de Tratto: si hay algo para
   responder, dejá la respuesta propuesta como item `respuesta`.
 - Mostrá variedad de rubros (más de 40), nunca solo oficios del hogar.

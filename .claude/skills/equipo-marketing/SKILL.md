@@ -17,7 +17,7 @@ todo el equipo.
 
 | Departamento | Subagente | Qué hace |
 |---|---|---|
-| Redes | `mkt-redes` | Reels, carruseles, historias y posts para TikTok e Instagram; los programa en Metricool y trae los resultados |
+| Redes | `mkt-redes` | Reels, carruseles, historias y posts para TikTok e Instagram; los programa en Buffer y trae los resultados |
 | SEO local | `mkt-seo-local` | Que aparezcamos cuando alguien busca un servicio en su zona: páginas por rubro y zona, perfil de Google, reseñas |
 | Contenido | `mkt-contenido` | Guías de precios, artículos, promociones y el mail de novedades |
 | Anuncios | `mkt-anuncios` | Campañas de Meta y Google listas para cargar, con públicos, textos, creativos y links; mide el costo por registro |
@@ -37,7 +37,7 @@ Mirá lo que te pidieron (o el argumento de `/equipo-marketing`):
 
 1. **Números.** `select mkt_tablero(null, 7);` y `select mkt_tablero(null, 28);`.
    Mails a proveedores: `select mkt_prospeccion_numeros(7);`.
-   Si hay Metricool, pedile a Redes el resumen de lo publicado la semana pasada.
+   Pedile a Redes el resumen de lo publicado la semana pasada (Buffer o Metricool).
 2. **Diagnóstico** en 5 líneas: de dónde vino la gente (fuente, campaña,
    entrada), cuántos se registraron y activaron, qué funcionó y qué no, qué
    está trabado (cola en `cambios`, automatizaciones con error, mails fallidos).
@@ -79,7 +79,7 @@ Mirá lo que te pidieron (o el argumento de `/equipo-marketing`):
    Los mails a proveedores corren en su propia rutina (`mkt-prospeccion`):
    no los lances desde acá.
 4. **Redes**, solo si pasaron 2+ días desde la última vez: traer métricas de
-   Metricool de lo publicado y guardarlas en `metricas` del item.
+   Buffer o Metricool de lo publicado y guardarlas en `metricas` del item.
 5. **Redes, lo automático** (punto 0 de `mkt-redes`): delegale a Redes solo
    si se cumple alguna de estas condiciones, y decí cuál:
    - para los próximos 3 días no hay piezas de redes en la cola;

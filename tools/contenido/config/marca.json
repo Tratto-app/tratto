@@ -13,11 +13,13 @@
         "Calculadora de precios",
         "Pedí un servicio",
         "Ofrezco un servicio"
-      ]
+      ],
+      "canal_buffer": "6ad164a1778b240e2f2159b4"
     },
     "tiktok": {
       "usuario": "@trattoapp",
       "link_en_perfil": false,
+      "canal_buffer": "6ad1641d778b240e2f21567f",
       "motivo": "TikTok habilita el link del perfil con el Registro de empresas aprobado o con 1.000 seguidores (registro rechazado el 2026-10-07). Cuando se habilite, poner link_en_perfil en true."
     },
     "tiendas": {

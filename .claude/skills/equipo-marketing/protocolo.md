@@ -27,7 +27,7 @@ Precios: solo de la tabla `precios_referencia` (con fecha) o de pantallas reales
 | Cola del equipo | tabla `growth_mkt_items` (ver sección 4) |
 | Números de la semana | `select mkt_tablero(null, 7);` (o 28 para el mes). Por tipo: `select mkt_tablero_tipo(null, 7, 'provider');` o `'customer'` |
 | Panel (lo que ve la persona) | https://www.trattoapp.com.ar/crm/equipo |
-| Redes (programar, métricas) | MCP de Metricool (desde el 14/10/2026 solo métricas: el plan gratis no tiene más cupo para programar; lo aprobado lo publica la persona a mano hasta que esté el publicador propio de Instagram), marca `7270470`, America/Buenos_Aires. TikTok @trattoapp, Instagram @trattoapp_ |
+| Redes (programar, métricas) | MCP de Buffer para programar (desde el 15/10/2026, plan gratis: Instagram @trattoapp_, TikTok @trattoapp y la Página de Facebook; hasta 10 programadas por canal a la vez). MCP de Metricool solo para métricas (sin cupo para programar desde el 14/10), marca `7270470`, America/Buenos_Aires |
 | Diseño de placas y carruseles | MCP de Canva o `tools/piezas-redes` |
 | Videos | skill `video-publicidad` (`tools/piezas-redes/reels`) |
 | Sistema de contenido (hooks, puntaje, memoria) | skill `contenido` y `tools/contenido` |

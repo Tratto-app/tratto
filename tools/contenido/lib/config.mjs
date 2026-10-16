@@ -30,8 +30,8 @@ export const ESQUEMAS = {
         tipo: 'objeto',
         campos: {
           nota: TEXTO,
-          instagram: { tipo: 'objeto', campos: { usuario: { ...TEXTO, requerido: true }, link_en_perfil: { tipo: 'booleano', requerido: true }, links_del_perfil: { tipo: 'lista', de: TEXTO }, motivo: TEXTO } },
-          tiktok: { tipo: 'objeto', campos: { usuario: { ...TEXTO, requerido: true }, link_en_perfil: { tipo: 'booleano', requerido: true }, links_del_perfil: { tipo: 'lista', de: TEXTO }, motivo: TEXTO } },
+          instagram: { tipo: 'objeto', campos: { usuario: { ...TEXTO, requerido: true }, link_en_perfil: { tipo: 'booleano', requerido: true }, links_del_perfil: { tipo: 'lista', de: TEXTO }, motivo: TEXTO, canal_buffer: TEXTO } },
+          tiktok: { tipo: 'objeto', campos: { usuario: { ...TEXTO, requerido: true }, link_en_perfil: { tipo: 'booleano', requerido: true }, links_del_perfil: { tipo: 'lista', de: TEXTO }, motivo: TEXTO, canal_buffer: TEXTO } },
           tiendas: {
             tipo: 'objeto',
             campos: {

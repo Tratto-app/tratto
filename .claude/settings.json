@@ -13,7 +13,7 @@
   "hooks": {
     "PreToolUse": [
       {
-        "matcher": "mcp__.*[Mm]etricool.*__(createScheduledPost|updateScheduledPost)",
+        "matcher": "mcp__.*[Mm]etricool.*__(createScheduledPost|updateScheduledPost)|mcp__.*[Bb]uffer.*__(create_post|edit_post)",
         "hooks": [
           {
             "type": "command",
