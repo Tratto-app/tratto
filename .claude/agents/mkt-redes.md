@@ -77,10 +77,14 @@ detectaste en el punto 0):
 > por canal a la vez (se liberan a medida que salen). Metricool quedó sin cupo
 > para programar el 14/10 y sigue solo para métricas: no programes ahí.
 
-- Si es un video y no existe el archivo: hacelo con `video-publicidad`, subí el
-  MP4 a `redes/` en una rama, abrí PR y fusionalo (la pieza ya está aprobada;
-  el archivo tiene que estar publicado para que Buffer lo tome). Esperá a
-  que https://www.trattoapp.com.ar/redes/<archivo> responda 200.
+- Si es un video y no existe el archivo: hacelo con `video-publicidad`,
+  guardá el MP4 en `redes/`, hacé commit y push de la rama de trabajo y usá
+  la dirección pública de jsDelivr con el commit:
+  `https://cdn.jsdelivr.net/gh/tratto-app/tratto@<sha del commit>/redes/<archivo>.mp4`
+  (gratis, sirve el archivo como video, hasta 20 MB; no hace falta fusionar
+  ni esperar a la web). Antes de programar, comprobá que responda 200 con
+  `video/mp4`. Cuando la rama se fusione, el archivo queda también en
+  https://www.trattoapp.com.ar/redes/.
 - Mirá con `list_posts` (estado `scheduled`, el canal) que haya lugar: si ya
   hay 10, programá cuando salga alguno.
 - Programá en Buffer con `create_post`: `channelId` del canal, `mode:
@@ -109,6 +113,30 @@ detectaste en el punto 0):
   Instagram cambiando la línea de la mención por el link escrito
   (`trattoapp.com.ar`; en Facebook la mención a @trattoapp_ no lleva a
   Instagram). Pasa por el humanizador.
+
+**2b. Ritmo diario de videos** (fundador, 16/10/2026: "al menos dos videos por
+día a TikTok y un video por día a Facebook y a Instagram"). Lo sostiene la
+rutina "Redes · videos del día":
+- Horarios fijos (`config/estrategia.json` → `frecuencia`): TikTok 12:00 (fin
+  de semana 10:00) y 18:00; Instagram 18:00 (fin de semana 10:00); Facebook
+  19:00. Siempre hora argentina.
+- Cada corrida mira con `list_posts` (estado `scheduled`) los lugares vacíos de
+  hoy (los que todavía no pasaron), mañana y pasado, y los llena.
+- Facebook primero con los videos de `redes/` que todavía no salieron en
+  Facebook (fijate en lo enviado y lo programado de ese canal), con su texto
+  para Facebook (link escrito, humanizador).
+- Para TikTok e Instagram, hasta 2 videos nuevos por día: el A va a TikTok,
+  Instagram y Facebook (cada uno con su texto); el B, solo a TikTok. Alterná
+  clientes y quienes ofrecen servicios, y rubros distintos (eventos, clases,
+  belleza, autos, mascotas, trámites, hogar). Nunca repitas en una red un
+  video que ya salió en esa red.
+- Cada video nuevo pasa por la cadena completa (punto 1) y la prueba del
+  cerebro, y queda en la cola con `datos.buffer` por red.
+- Buffer gratis admite hasta 10 programados por canal a la vez: no programes
+  más allá de pasado mañana.
+- Al terminar, avisale a la persona en una línea qué sale, en qué red y
+  cuándo. Si no llegaste a hacer los dos videos (error al renderizar, límite
+  de uso), decí cuántos faltan y quedan para la corrida siguiente.
 
 **3. Resultados** (cada 2 o 3 días):
 - Traé lo publicado de Buffer (`list_posts` con `includeMetrics: true`) o de

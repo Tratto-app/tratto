@@ -132,8 +132,12 @@ python3 render-reel.py publicidad-<nombre>.html --segundos 25 --audio audio/publ
 
 Antes de entregar: mirá cuadros en las transiciones (no tiene que quedar texto
 cortado ni fuera de la zona segura) y medí el audio (−14 LUFS, pico por debajo
-de −1 dBFS). Para programar en Metricool hace falta una URL pública: copiá el
-MP4 a `redes/` y publicalo. Programá solo con aprobación de la persona.
+de −1 dBFS). Para programar en Buffer hace falta una URL pública: copiá el
+MP4 a `redes/`, hacé commit y push, y usá
+`https://cdn.jsdelivr.net/gh/tratto-app/tratto@<sha del commit>/redes/<archivo>.mp4`
+(comprobá que responda 200 con `video/mp4`). Las redes tienen permiso total de
+la persona desde el 16/10/2026: lo que pasa los controles se programa solo
+(`.claude/agents/mkt-redes.md`, puntos 2 y 2b).
 
 Si piden otro estilo (con voz en off, el de los reels de la serie con voz),
 usá `comun-voz.js` y la guía de `tools/piezas-redes/README.md`.

@@ -38,7 +38,24 @@
     }
   ],
   "frecuencia": {
-    "reels_por_semana": 3,
+    "videos_por_dia": {
+      "tiktok": 2,
+      "instagram": 1,
+      "facebook": 1
+    },
+    "nota": "Pedido del fundador el 16/10/2026: al menos 2 videos por día en TikTok y 1 por día en Instagram y en Facebook. Salen 2 videos nuevos por día: el A va a las tres redes y el B solo a TikTok. Facebook también usa los videos de antes que todavía no se publicaron ahí.",
+    "horarios_fijos": {
+      "tiktok": [
+        "12:00 (fin de semana 10:00)",
+        "18:00"
+      ],
+      "instagram": [
+        "18:00 (fin de semana 10:00)"
+      ],
+      "facebook": [
+        "19:00"
+      ]
+    },
     "carruseles_por_semana": 2,
     "historias_por_dia": [
       3,
