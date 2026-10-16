@@ -2,6 +2,6 @@
   "name": "tratto-whatsapp-observer-tests",
   "private": true,
   "type": "module",
-  "scripts": { "test": "node --test sql.test.mjs" },
+  "scripts": { "test": "node --test *.test.mjs" },
   "devDependencies": { "@electric-sql/pglite": "0.5.10" }
 }

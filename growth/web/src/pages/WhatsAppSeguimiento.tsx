@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Card, ErrorBox, Loading, PageHeader } from '../components/ui';
+import WhatsAppConnect from '../components/WhatsAppConnect';
 import { supabase } from '../lib/supabase';
 import { useWs } from '../lib/workspace';
 import './whatsapp-seguimiento.css';
@@ -61,9 +62,10 @@ export default function WhatsAppSeguimiento() {
   const [selected, setSelected] = useState<Prospect | null>(null);
   const [search, setSearch] = useState('');
   const [revision, setRevision] = useState(0);
+  const reload = useCallback(() => setRevision(r => r + 1), []);
   useEffect(() => {
     let alive = true;
-    setData(null); setError(null); setSelected(null);
+    setData(previous => previous?.workspace === ws?.id ? previous : null); setError(null); setSelected(null);
     if (!ws) return;
     const workspace = ws.id;
     void (async () => {
@@ -88,11 +90,12 @@ export default function WhatsAppSeguimiento() {
   const rows = data.prospects.filter(p => `${p.company || ''} ${p.first_name || ''} ${p.rubro || ''} ${p.zona || ''}`.toLocaleLowerCase('es-AR').includes(search.toLocaleLowerCase('es-AR')));
   return <div className="wa-observer">
     <PageHeader title="Seguimiento por WhatsApp" desc="Respuestas observadas mediante Meta y registro comprobado en Tratto." actions={<button className="btn" onClick={() => setRevision(r => r + 1)}>Actualizar</button>} />
-    <Card title={data.config?.receiving_enabled ? 'Recepción de Meta habilitada' : data.config?.last_account_event ? 'Recepción de Meta detenida' : 'Pendiente de conectar WhatsApp con Meta'}>
-      <p>{data.config?.receiving_enabled ? 'Los mensajes compartidos se guardan para revisión. Vos seguís usando WhatsApp Business en tu celular.' : data.config?.last_account_event ? 'La recepción se detuvo. Las conversaciones ya guardadas siguen disponibles.' : 'Todavía no recibimos las conversaciones del número actual. La ausencia de mensajes no significa que un negocio no respondió.'}</p>
+    <Card title={data.config?.receiving_enabled ? 'Recepción de Meta habilitada' : data.config?.coexistence_verified_at ? 'Número vinculado; recepción de Meta pendiente' : data.config?.last_account_event ? 'Recepción de Meta detenida' : 'Pendiente de conectar WhatsApp con Meta'}>
+      <p>{data.config?.receiving_enabled ? 'El receptor está habilitado para guardar mensajes compartidos. Vos seguís usando WhatsApp Business en tu celular. La recepción real debe comprobarse con eventos.' : data.config?.coexistence_verified_at ? 'Meta confirmó el número y Coexistencia. Falta completar el receptor o sus campos en el panel de Meta.' : data.config?.last_account_event ? 'La recepción se detuvo. Las conversaciones ya guardadas siguen disponibles.' : 'Todavía no recibimos las conversaciones del número actual. La ausencia de mensajes no significa que un negocio no respondió.'}</p>
       <p className="texto-2">{data.config?.coverage_gap !== false ? 'La cobertura aún tiene períodos sin comprobar.' : 'Cada resultado indica hasta qué momento se comprobó.'} Los envíos automáticos permanecen apagados.</p>
       {!data.config?.receiving_enabled && data.config?.last_account_event && <p>Meta notificó un cambio en la cuenta el {date(data.config.last_account_event_at)}. Hay que revisar la vinculación antes de reanudar.</p>}
     </Card>
+    <WhatsAppConnect onLinked={reload} />
     <label>Buscar negocio, rubro o zona<input value={search} onChange={e => setSearch(e.target.value)} placeholder="Nombre del negocio" /></label>
     <p>{rows.length} negocios · El registro se verifica aparte de la respuesta. “Sin registro detectado” puede requerir revisar otra identidad.</p>
     <div className="wa-observer-grid">

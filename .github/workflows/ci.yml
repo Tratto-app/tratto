@@ -59,7 +59,7 @@ jobs:
           deno-version: v2.x
       - name: Edge Functions (deno check + lint)
         working-directory: growth/supabase/functions
-        run: deno check */index.ts && deno lint && deno test growth-whatsapp-observer/core_test.ts
+        run: deno check */index.ts && deno lint && deno test growth-whatsapp-observer/core_test.ts growth-whatsapp-connect/core_test.ts
 
   whatsapp-observer-sql:
     runs-on: ubuntu-24.04
