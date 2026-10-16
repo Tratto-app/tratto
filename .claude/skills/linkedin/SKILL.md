@@ -1,6 +1,6 @@
 ---
 name: linkedin
-description: LinkedIn de Tratto (la página de la empresa y, si el fundador quiere, su perfil personal). Escribe publicaciones con ganchos probados, comenta publicaciones de otros, responde los comentarios propios, puntúa y reescribe la página o el perfil, planifica la semana, arma carruseles en PDF, convierte un video o una guía en varias publicaciones, escribe mensajes privados, ordena la bandeja y analiza lo publicado. Todo en castellano rioplatense y pasado por el humanizador. Usar con "LinkedIn", "publicación para LinkedIn", "qué publico en LinkedIn", "mejorá la página de LinkedIn", "comentá esto en LinkedIn".
+description: LinkedIn de Tratto, solo la página de la empresa (nunca el perfil personal del fundador). Escribe publicaciones con ganchos probados, comenta publicaciones de otros como la página, responde los comentarios propios, puntúa y reescribe la página, planifica la semana, arma carruseles en PDF, convierte un video o una guía en varias publicaciones, escribe mensajes privados, ordena la bandeja y analiza lo publicado. Todo en castellano rioplatense y pasado por el humanizador. Usar con "LinkedIn", "publicación para LinkedIn", "qué publico en LinkedIn", "mejorá la página de LinkedIn", "comentá esto en LinkedIn".
 ---
 
 # LinkedIn de Tratto
@@ -40,14 +40,15 @@ Antes de cualquier cosa:
 - **Largo:** 900 a 1.300 caracteres para una publicación de texto. La primera
   línea se tiene que entender sola (en el celular se corta a ~140 caracteres).
 
-## Página de empresa o perfil personal
+## Solo la página de Tratto
 
-En LinkedIn rinde mucho más lo que publica una persona que lo que publica una
-página. La página de Tratto sirve de vidriera (para quien busca la empresa, para
-inversores y para prensa) y para compartir. Lo que más alcance trae es que el
-fundador publique desde su perfil y la página lo comparta. Si el fundador quiere
-publicar desde su perfil, su voz es la suya: pedile tres publicaciones propias
-y agregá su sección en voz.md. No escribas como él sin eso.
+Regla del fundador (16/10/2026): "las publicaciones son únicamente en la página
+de Tratto, que no publiques nada en mi perfil personal". Todo lo que se escribe
+es para la página (https://www.linkedin.com/company/145304785/): publicaciones,
+comentarios y respuestas firmados como Tratto. Nunca se escribe, se comenta ni
+se manda nada en nombre del perfil personal del fundador, aunque rinda más. Si
+alguien lo pide, se le recuerda esta regla y se espera que el fundador la
+cambie.
 
 ## Las once funciones
 
@@ -72,12 +73,13 @@ en: posible cliente o socio, aporte de fondo, colega, apoyo y ruido. Respondé
 en ese orden. Al posible cliente, una respuesta útil y la invitación a
 escribir por privado, sin link.
 
-**4. Página (o perfil) con puntaje sobre 100.** Página: nombre, eslogan (hasta
+**4. Página con puntaje sobre 100.** Nombre, eslogan (hasta
 120 caracteres, que diga qué hace y para quién), descripción (hasta 2.000, las
 primeras 2 líneas valen más), sitio web con link con nombre, sector, tamaño,
-ubicación, botón (Visitar sitio web), logo y portada. Perfil personal: titular,
-acerca de, experiencia y aptitudes. Puntuá cada parte, decí qué perdió puntos y
-reescribí empezando por lo que más suma.
+ubicación, botón (Visitar sitio web), logo y portada. La parte de
+administración pide iniciar sesión: el fundador pasa capturas o el texto
+actual. Puntuá cada parte, decí qué perdió puntos y reescribí empezando por lo
+que más suma.
 
 **5. Plan de la semana.** Qué publicar, cuándo y con quién interactuar.
 Ritmo inicial: 3 publicaciones por semana (martes, miércoles y jueves entre las
@@ -96,9 +98,10 @@ qué hacer. Mismo estilo visual que los carruseles de Instagram
 publicaciones que se entienden solas, sin repetir el mismo gancho. Las guías
 de precios de la web y los reels que mejor rindieron son la primera fuente.
 
-**9. Mensajes privados.** Nota de invitación (hasta 200 caracteres), primer
-mensaje y como mucho dos seguimientos. Sin plantillas que se noten: cada uno
-nombra algo real de la persona. No se mandan solos: los manda el fundador.
+**9. Mensajes de la página.** Respuestas a los mensajes que lleguen a la
+página de Tratto. No se escriben invitaciones ni mensajes desde el perfil
+personal del fundador. Nada se manda solo: lo manda el fundador desde la
+página.
 
 **10. Bandeja.** Ordená lo que llega en posible cliente, búsqueda laboral,
 colega, pedido y spam, y proponé respuesta solo para los primeros.

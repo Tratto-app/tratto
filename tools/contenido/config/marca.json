@@ -2,7 +2,8 @@
   "nombre": "Tratto",
   "cuentas": {
     "instagram": "@trattoapp_",
-    "web": "www.trattoapp.com.ar"
+    "web": "www.trattoapp.com.ar",
+    "linkedin": "https://www.linkedin.com/company/145304785/"
   },
   "links": {
     "nota": "Los links escritos en el texto no se pueden tocar ni en Instagram ni en TikTok (regla de las dos redes). Cada pieza lleva el camino de un toque: en Instagram, la mención a la cuenta (se toca) y el nombre del link del perfil. En TikTok, el link del perfil cuando esté habilitado.",
@@ -34,6 +35,12 @@
         "publicada": false,
         "motivo": "Prueba cerrada de 14 días hasta el 21/10/2026; después hay que pedir acceso a producción. En Android Tratto se usa desde la web. Cuando salga, poner publicada en true."
       }
+    },
+    "linkedin": {
+      "pagina_id": "145304785",
+      "url": "https://www.linkedin.com/company/145304785/",
+      "solo_pagina": true,
+      "nota": "Fundador 16/10/2026: publicaciones únicamente en la página de Tratto, nunca en su perfil personal. Link de la página: /r/li-pagina. Cada publicación lleva su link /r/li-<pieza> en el primer comentario."
     }
   },
   "que_es": "Marketplace de servicios de Argentina: la persona cuenta qué necesita (o le saca una foto), recibe presupuestos de quienes ofrecen ese servicio en su zona, y elige el que más le conviene.",

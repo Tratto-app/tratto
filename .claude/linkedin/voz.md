@@ -5,8 +5,8 @@ una regla, una postura), se cambia acá.
 
 ## Quiénes somos
 
-- **Nombre:** Tratto (página de empresa en LinkedIn, creada por el fundador el
-  16/10/2026).
+- **Nombre:** Tratto (página de empresa en LinkedIn, id 145304785, creada por
+  el fundador el 16/10/2026).
 - **Qué hacemos, en una línea:** una app argentina donde la gente pide un
   servicio y recibe presupuestos de quienes lo ofrecen en su zona.
 - **Para quién escribimos en LinkedIn** (no es el mismo público que TikTok):
@@ -71,7 +71,8 @@ público discute.
 - Aviso al celular de quien ofrece el servicio cuando aparece un pedido de su
   rubro en su zona.
 
-## Perfil personal del fundador
+## Solo la página
 
-Vacío hasta que el fundador pase tres publicaciones suyas. Sin eso no se
-escribe nada en su nombre.
+Página: https://www.linkedin.com/company/145304785/ (id 145304785). Regla del
+fundador (16/10/2026): todo se publica únicamente en la página de Tratto. Nada
+en su perfil personal: ni publicaciones, ni comentarios, ni mensajes.

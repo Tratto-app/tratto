@@ -37,7 +37,8 @@ si el texto suena a IA o le falta el link de un toque.
 ## LinkedIn
 
 Todo lo de LinkedIn pasa por la skill `linkedin` (`.claude/skills/linkedin/SKILL.md`)
-y la voz de `.claude/linkedin/voz.md`. LinkedIn no está en el permiso total de
+y la voz de `.claude/linkedin/voz.md`. Solo la página de Tratto (id 145304785):
+nunca nada en el perfil personal del fundador. LinkedIn no está en el permiso total de
 redes: cada publicación espera el "sí" del fundador y, mientras no haya un
 canal conectado (Buffer o Codex con Composio), la publica él copiando el
 bloque. Links con nombre de la fuente `linkedin` (`/r/li-...`), en el primer
