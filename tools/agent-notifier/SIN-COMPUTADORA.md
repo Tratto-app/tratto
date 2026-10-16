@@ -2,6 +2,53 @@
 
 Estado comprobado: 15 de octubre de 2026, Buenos Aires.
 
+## Actualización: prueba real del disparador oficial
+
+Plus incluye Codex; no hace falta contratar una API de inferencia para probar
+la integración oficial de GitHub con una cuenta compatible. El plan real y las
+verificaciones de la cuenta se conservan sólo en el CRM privado. El uso sigue
+sujeto a los límites del plan.
+
+Se probó la mención oficial `@codex` en este PR con una petición limitada a
+capacidades y lectura de esquema. La primera petición produjo una revisión de
+código; esa revisión **no acredita acceso al CRM**. Una segunda petición
+explícita de tarea en nube recibió la respuesta real del conector:
+
+> To use Codex here, create an environment for this repo.
+
+[Respuesta del conector](https://github.com/Tratto-app/tratto/pull/79#issuecomment-6205526989).
+
+La ruta preferida pasa a ser **Codex Cloud iniciado por una mención en GitHub**,
+antes de construir un trabajador de Actions o contratar un host. La
+documentación oficial distingue esta ejecución de las revisiones de código:
+[Give Codex other tasks](https://learn.chatgpt.com/docs/third-party/github#give-codex-other-tasks).
+
+El titular debe crear o asociar un entorno para `Tratto-app/tratto` desde
+[Codex Cloud: entornos](https://chatgpt.com/codex/cloud/settings/environments).
+Se puede abrir esa página desde el navegador del celular; no requiere una
+computadora encendida. Nombre sugerido: `Tratto CRM`, repositorio
+`Tratto-app/tratto`, rama `main`. No pegar claves, archivos de autenticación ni
+contraseñas en el chat o en el repositorio.
+
+Después hay que repetir **una prueba inocua**, comprobar qué conexión Supabase
+está realmente disponible y preparar el relay autenticado de avisos desde el
+CRM. Crear el entorno no conecta automáticamente el CRM ni termina la
+integración. Si no hay conexión, se debe configurar por un canal del titular;
+no copiar las credenciales de esta sesión. Las herramientas actuales sólo
+permiten consultar el entorno activo, no crear el entorno legacy que pide el
+conector de GitHub. No usar endpoints internos para eludir esa limitación.
+
+El aviso de producción, cuando se configure, sólo puede llevar identificadores
+opacos; textos y respuestas quedan en el CRM privado. El agente no debe
+publicar conversaciones ni datos personales en la discusión de GitHub. La
+aceptación del aviso y la creación del entorno no equivalen a lectura real.
+
+**Estado actual:** captura preparada; receptor deshabilitado; entorno de esta
+integración pendiente de configuración por el titular; lectura automática no
+comprobada; sondeo periódico apagado. No se contrató infraestructura ni se
+crearon claves de API de inferencia. No se reintentará el mismo test hasta que
+se corrija el requisito de entorno indicado por el propio conector.
+
 El pedido vigente es recibir mensajes reales de Claude desde el CRM en una
 ejecución separada de Codex, sin interrumpir el chat del fundador, sin su
 computadora y sin contratar servicios adicionales. La cancelación anterior fue
@@ -20,7 +67,7 @@ Las herramientas de Scheduled disponibles en esta sesión no exponen
 tarea por horario y presentarla como una conexión por eventos. Tampoco se
 debe simular una llamada a una herramienta que no está disponible.
 
-## Ruta candidata con los cupos existentes
+## Alternativa de respaldo: CI privado con los cupos existentes
 
 La documentación oficial permite usar autenticación de la cuenta ChatGPT de
 Codex en CI privado y persistir el estado actualizado de autenticación entre
@@ -64,8 +111,8 @@ principal ni transferir credenciales de esta sesión.
 - Supabase y su almacenamiento también usan los límites del proyecto existente.
   No contratar ni ampliar planes para esta función.
 
-No se comprobó todavía el plan de ChatGPT del fundador, su saldo de Actions ni
-el bloqueo de facturación. **No se puede afirmar costo adicional cero ni
+Las verificaciones de cuenta, saldo de Actions y bloqueo de facturación se
+registran en el CRM privado. **No se puede afirmar costo adicional cero ni
 operación autónoma verificada antes de comprobar esas condiciones.**
 
 ## Vinculación desde el celular

@@ -3,6 +3,9 @@
 **Pedido vigente:** coordinación automática sin computadora del fundador ni
 costos adicionales. La cancelación anterior quedó rectificada. Ver
 [la ruta con ejecución en nube y sus dependencias](SIN-COMPUTADORA.md).
+Se probó el disparador oficial `@codex`: el conector
+respondió que falta crear un entorno de Codex Cloud para Tratto. La ruta
+preferida usa esa integración antes de preparar Actions o un host propio.
 El receptor permanente descrito abajo es la propuesta técnica anterior;
 todavía no hay lectura automática operativa ni un servidor contratado.
 
