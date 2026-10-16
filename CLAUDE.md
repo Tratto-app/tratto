@@ -34,6 +34,15 @@ corre el humanizador, revisa los hashtags y (con `red`) el link de un toque, y
 el hook de `.claude/settings.json` frena la programación en Buffer o Metricool
 si el texto suena a IA o le falta el link de un toque.
 
+## LinkedIn
+
+Todo lo de LinkedIn pasa por la skill `linkedin` (`.claude/skills/linkedin/SKILL.md`)
+y la voz de `.claude/linkedin/voz.md`. LinkedIn no está en el permiso total de
+redes: cada publicación espera el "sí" del fundador y, mientras no haya un
+canal conectado (Buffer o Codex con Composio), la publica él copiando el
+bloque. Links con nombre de la fuente `linkedin` (`/r/li-...`), en el primer
+comentario.
+
 ## Mapa del código (graphify): el mismo para Claude y Codex
 
 Claude y Codex usan el mismo mapa del proyecto. Se arma con
