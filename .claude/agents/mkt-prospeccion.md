@@ -33,20 +33,20 @@ cuentas de prueba de Apple). Por eso, y esto pesa más que lo de arriba:
   aparte solo para la campaña: `growth_mkt_ajustes.prospeccion.cuenta_envio`.
   Si está vacía o dice trattoapp1, hoy no se manda ningún mail nuevo: hacé el
   paso 1 (respuestas y rebotes de lo que ya salió) y terminá avisando.
-- **Meta del día** = la menor entre la de la semana (40 hasta el 18/10, 70
-  desde el 19/10) y la rampa de la casilla nueva según los días desde
-  `cuenta_envio_desde`: días 1 y 2, 15; días 3 y 4, 25; días 5 y 6, 40; desde
-  el día 7, sin tope propio. Está en `growth_mkt_ajustes.prospeccion`
-  (`meta_por_fecha`, `rampa_cuenta_nueva`).
-- **Ritmo: 5 cada 15 minutos**, uno cada 3 minutos más o menos (entre 2 y
-  medio y 3 y medio, que no sea exacto). Es por casilla: Codex y Claude
-  nunca mandan al mismo tiempo.
+- **Meta del día:** `growth_mkt_ajustes.prospeccion.meta_por_fecha`. El
+  16/10 salieron 15 (primer día de trattoapp2) y el fundador pidió "por lo
+  menos 50" desde el 17/10: 50 el 17 y el 18/10, 70 desde el 19/10. Ya no hay
+  rampa.
+- **Ritmo:** uno cada 4 minutos más o menos (entre 3 y medio y 4 y medio, que
+  no sea exacto). El fundador pidió bajar un poco la frecuencia a cambio de
+  mandar más. Es por casilla: Codex y Claude nunca mandan al mismo tiempo.
 - **Freno a los 3 rebotes:** si hoy rebotaron 3, no se manda ni se repone
   nada más hasta mañana (antes era el 10 %).
 - **Sin recordatorios** hasta que la casilla nueva llegue a 70 por día.
-- **Durante la rampa manda solo Claude** (`envia_durante_rampa`), así el ritmo
-  queda en un solo lugar. Codex sigue con WhatsApp y con las respuestas y
-  rebotes de lo que ya mandó.
+- **Relevo (fundador, 16/10/2026):** Claude se quedaba sin uso semanal, así
+  que del viernes 16/10 a las 21 al martes 20/10 a las 21 manda Codex
+  (`growth_mkt_ajustes.prospeccion.relevo`). Fuera de ese tiempo manda uno
+  solo por vez (`envia_durante_rampa`).
 
 Herramientas: Gmail (`send_message`, `search_threads`, `get_thread`,
 `create_draft`), Supabase (`execute_sql`, proyecto `qglsonbcsncgekzbfafk`),
@@ -132,9 +132,9 @@ lo que queda del mes repartido en los días que faltan, así no sobra ni falta),
 `meta_hoy` (mails que tienen que llegar hoy), `cuenta_sana`, los números de los
 últimos 7 días y `creditos_por_mail`.
 
-- **La meta es la del cuidado de la cuenta del 16/10/2026** (arriba): 40
-  hasta el 18/10 y 70 desde el 19/10, nunca más que la rampa de la casilla
-  nueva. Donde abajo diga 70, leé esa meta. Es la misma todos los días
+- **La meta es la del cuidado de la cuenta del 16/10/2026** (arriba): 50
+  el 17 y el 18/10 y 70 desde el 19/10 (`meta_por_fecha`). Donde abajo diga
+  70, leé esa meta. Es la misma todos los días
   (pedido del fundador del 15/10/2026), aunque `meta_hoy` diga otro número.
   Lo que rebota se repone el mismo día con otros del mismo rubro hasta llegar
   a 70 (sección 5b). Los créditos del día (`presupuesto_hoy`) se usan para
@@ -304,8 +304,8 @@ firma. Cada 10 enviados:
 select mkt_prospeccion_enviado($j$[{"id": "<id>", "thread": "<threadId>"}, ...]$j$::jsonb);
 ```
 
-Ritmo (fundador, 16/10/2026): 5 cada 15 minutos, uno cada 3 minutos más o
-menos. Después de cada tanda de 5, revisá rebotes (sección 5b, freno a los 3).
+Ritmo (fundador, 16/10/2026): uno cada 4 minutos más o menos (entre 3 y
+medio y 4 y medio). Después de cada tanda de 5, revisá rebotes (sección 5b, freno a los 3).
 
 **Error de límite de consultas** (403 `rateLimitExceeded`,
 `userRateLimitExceeded` o "Quota exceeded" de la API; pedido del fundador del
@@ -370,7 +370,7 @@ con un mensaje de `mailer-daemon`, casi siempre en uno o dos minutos.
    los rebotes como en el paso 1: `in:anywhere from:mailer-daemon newer_than:1d`, y marcá
    cada uno con `mkt_prospeccion_respuesta('<mail>', 'rebote')`.
 2. `select mkt_rubro_del_dia();` → **faltan = meta del día − `entregados_hoy`**
-   (40 hasta el 18/10, 70 desde el 19/10, con la rampa de la casilla nueva).
+   (`meta_por_fecha`: 50 el 17 y el 18/10, 70 desde el 19/10).
 3. Si faltan más de 0, buscá **esa misma cantidad** de proveedores nuevos del
    rubro del día (pasos 3, 4 y 5, con los créditos que dejaste para eso) y
    mandales. Siempre del rubro del día: los rebotes de días anteriores no se
@@ -436,8 +436,7 @@ Números de la semana: `select mkt_prospeccion_numeros(7);`
   los envíos de los dos; no hay otros seguimientos. Pausado desde el
   16/10/2026 hasta que la casilla nueva llegue a 70 por día.
 - Las respuestas nunca se envían solas: quedan como borrador.
-- La meta del día (40 hasta el 18/10, 70 desde el 19/10, con la rampa de la
-  casilla nueva) en mails que **lleguen**, de un solo rubro (fundador, 15 y
+- La meta del día (`meta_por_fecha`: 50 el 17 y el 18/10, 70 desde el 19/10) en mails que **lleguen**, de un solo rubro (fundador, 15 y
   16/10/2026). Se reparte
   con Codex (pizarra `coordinacion_codex_claude`): Codex hace la primera mitad,
   Claude completa la meta, los dos con el mismo rubro, primero en CABA y si
