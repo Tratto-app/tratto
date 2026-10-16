@@ -38,11 +38,14 @@ si el texto suena a IA o le falta el link de un toque.
 
 Todo lo de LinkedIn pasa por la skill `linkedin` (`.claude/skills/linkedin/SKILL.md`)
 y la voz de `.claude/linkedin/voz.md`. Solo la página de Tratto (id 145304785):
-nunca nada en el perfil personal del fundador. LinkedIn no está en el permiso total de
-redes: cada publicación espera el "sí" del fundador y, mientras no haya un
-canal conectado (Buffer o Codex con Composio), la publica él copiando el
-bloque. Links con nombre de la fuente `linkedin` (`/r/li-...`), en el primer
-comentario.
+nunca nada en el perfil personal del fundador. El fundador quiere LinkedIn
+automático como las otras redes (16/10/2026: "no quiero hacerlo yo manual"):
+con la conexión oficial de LinkedIn (Composio o Buffer) se publica en la
+página y se responden los comentarios de sus publicaciones sin esperarlo, y se
+le avisa en una línea. Seguir gente no se hace: una página no puede seguir
+personas y automatizarlo por fuera de la conexión oficial va contra las reglas
+de LinkedIn. Links con nombre de la fuente `linkedin` (`/r/li-...`), en el
+primer comentario.
 
 ## Mapa del código (graphify): el mismo para Claude y Codex
 

@@ -16,9 +16,13 @@ Antes de cualquier cosa:
    qué se puede afirmar y qué no).
 2. `node tools/contenido/cli.mjs contexto` para la marca, los segmentos y los
    datos reales.
-3. Nada se publica sin el "sí" del fundador. LinkedIn no está en el permiso
-   total de redes del 16/10 (ese es para TikTok, Instagram y Facebook). Cada
-   función termina con un bloque listo para copiar y pegar.
+3. Automático (fundador, 16/10/2026: "que quede automático, que vos puedas
+   hacer publicaciones, que puedas comentar a seguidores... no quiero hacerlo
+   yo manual"). Con la conexión oficial de LinkedIn (Composio o Buffer), lo
+   que pasa el humanizador se publica en la página y se responden los
+   comentarios de sus publicaciones sin esperar al fundador, y se le avisa en
+   una línea qué salió. Sin conexión, cada función termina con un bloque listo
+   para pegar.
 
 ## Reglas para todo lo que sale
 
@@ -113,16 +117,19 @@ memoria del motor (`node tools/contenido/cli.mjs registrar aprendizaje`).
 
 ## Cómo se publica
 
-Hoy: el fundador copia y pega desde el bloque. LinkedIn prohíbe automatizar el
-sitio con navegador o herramientas no autorizadas, y eso puede restringir la
-cuenta. Las formas permitidas de programar una página son por su conexión
-oficial:
-- Buffer, si la página se conecta como canal. El plan gratis permite 3 canales
-  y ya están TikTok, Instagram y Facebook, así que haría falta el plan pago o
-  sacar uno.
-- Codex, si tiene LinkedIn conectado por Composio.
-Cuando haya una de las dos, se programa igual que en las otras redes, con el
-"sí" del fundador por publicación.
+Solo por la conexión oficial de LinkedIn. Automatizar el sitio con un
+navegador o una herramienta no autorizada va contra las reglas de LinkedIn y
+puede restringir la cuenta, así que nunca.
+- **Composio** (conector de Claude o de Codex, con LinkedIn conectado por el
+  fundador): herramienta de crear publicación con autor = la organización
+  145304785, nunca la persona. Comentarios y respuestas, también como la
+  organización.
+- **Buffer**, si la página se conecta como canal. El plan gratis permite 3
+  canales y ya están TikTok, Instagram y Facebook: haría falta el plan pago.
+- Sin ninguna de las dos: bloque listo para pegar.
+
+Lo que no se hace: seguir personas (una página no puede), mandar invitaciones
+o mensajes en masa, ni nada desde el perfil personal del fundador.
 
 Registrá cada pieza en growth_mkt_items (departamento redes, datos.red =
 'linkedin') y, cuando salga, su link y sus números.
