@@ -25,7 +25,7 @@ Antes de cualquier cosa:
   de pedidos. Si falta un dato, `{{dato}}` y aviso.
 - Humanizador siempre: `node tools/contenido/cli.mjs humanizar --texto "<texto>"`.
 - Hasta 280 caracteres por posteo. La primera línea tiene que funcionar sola.
-- Link con nombre `/r/x-<pieza>` (fuente `x` en growth_sources y
+- Link con nombre `/r/x-<pieza>` (fuente `twitter` en growth_sources y
   growth_tracking_links), en la primera respuesta del propio posteo, no en el
   texto principal.
 - Hashtags: uno o ninguno.
