@@ -26,7 +26,15 @@ una está en `.claude/skills/contenido/SKILL.md`, sección "Automático".
   cuándo. Mails, anuncios, guías y gastos siguen esperando su aprobación.
   Metricool quedó sin cupo el 14/10 y sigue solo para métricas.
 - Facebook (la Página) recibe la versión de Instagram de cada reel, con el
-  link escrito en vez de la mención a @trattoapp_.
+  link escrito en vez de la mención a @trattoapp_. Desde el 16/10/2026 sale por
+  Composio (conexión oficial de Meta, gratis), no por Buffer:
+  `FACEBOOK_CREATE_VIDEO_POST` con `page_id` 1315608798310221, `published`
+  false y `scheduled_publish_time` (se programa en la misma Página). Como no
+  pasa por el hook, antes de programar corré `verificar` sobre el texto.
+- Buffer gratis tiene 3 lugares: TikTok, Instagram y uno libre (el que dejó
+  Facebook) para LinkedIn. Cuando Instagram pase también a Composio (el
+  miércoles 21/10, con una rutina que publique a la hora), el lugar que deja
+  es para X. Así las cinco redes salen solas sin pagar.
 - Al entregar, decí en una línea qué piezas se aplicaron.
 
 Dos controles en código lo sostienen: `node tools/contenido/cli.mjs verificar`

@@ -1,6 +1,6 @@
 ---
 name: mkt-redes
-description: Departamento de Redes del equipo de marketing de Tratto. Crea y adapta reels, carruseles, historias y posts para TikTok, Instagram y Facebook con el sistema de contenido de Tratto, los programa en Buffer para que se publiquen solos (permiso total de la persona desde el 16/10/2026) y trae los resultados. Lo llama el CMO (skill equipo-marketing) o la persona directamente.
+description: Departamento de Redes del equipo de marketing de Tratto. Crea y adapta reels, carruseles, historias y posts para TikTok, Instagram y Facebook con el sistema de contenido de Tratto, los programa en Buffer (TikTok, Instagram, LinkedIn) y en Facebook por Composio para que se publiquen solos (permiso total de la persona desde el 16/10/2026) y trae los resultados. Lo llama el CMO (skill equipo-marketing) o la persona directamente.
 skills:
   - contenido
   - video-publicidad
@@ -72,8 +72,9 @@ detectaste en el punto 0):
 > **Desde el 15/10/2026 se programa en Buffer** (plan gratis, organización
 > "My organization", zona America/Argentina/Buenos_Aires). Tiene 3 canales:
 > Instagram @trattoapp_ `6ad164a1778b240e2f2159b4`, TikTok @trattoapp
-> `6ad1641d778b240e2f21567f` y la Página de Facebook "Tratto • Servicios cerca
-> tuyo" `6ad16bc0778b240e2f21a953`. Entran hasta 10 publicaciones programadas
+> `6ad1641d778b240e2f21567f` y un lugar libre para LinkedIn (la Página de
+> Facebook salió de Buffer el 16/10/2026: ahora va por Composio, ver abajo).
+> Entran hasta 10 publicaciones programadas
 > por canal a la vez (se liberan a medida que salen). Metricool quedó sin cupo
 > para programar el 14/10 y sigue solo para métricas: no programes ahí.
 
@@ -108,8 +109,12 @@ detectaste en el punto 0):
   primera vez, después de que salga revisá con `get_post` que el sticker haya
   quedado; si no, avisale a la persona. Las encuestas y preguntas las pone la
   persona a mano: el `cuerpo` del item tiene el link y el texto de cada sticker.
-- Facebook: cada reel de Instagram va también a la Página
-  (`metadata.facebook.type = 'reel'`), una hora después, con el texto de
+- Facebook: cada reel de Instagram va también a la Página "Tratto • Servicios
+  cerca tuyo" por Composio (conexión oficial de Meta, gratis):
+  `FACEBOOK_CREATE_VIDEO_POST` con `page_id` 1315608798310221, `file_url` (el
+  MP4 directo), `published` false y `scheduled_publish_time` (Unix, al menos 10
+  minutos después). Verificá con `FACEBOOK_GET_SCHEDULED_POSTS`. Sale una hora
+  después que Instagram, con el texto de
   Instagram cambiando la línea de la mención por el link escrito
   (`trattoapp.com.ar`; en Facebook la mención a @trattoapp_ no lleva a
   Instagram). Pasa por el humanizador.

@@ -51,6 +51,12 @@
       "link_perfil": "trattoapp.com.ar/r/x-perfil",
       "fuente_crm": "twitter",
       "portada": "tools/piezas-redes/salida/10-portada-x.png"
+    },
+    "facebook": {
+      "pagina": "Tratto • Servicios cerca tuyo",
+      "page_id": "1315608798310221",
+      "por": "Composio (desde 16/10/2026), programación nativa de Meta",
+      "nota": "Ya no está en Buffer: el lugar quedó para LinkedIn."
     }
   },
   "que_es": "Marketplace de servicios de Argentina: la persona cuenta qué necesita (o le saca una foto), recibe presupuestos de quienes ofrecen ese servicio en su zona, y elige el que más le conviene.",
