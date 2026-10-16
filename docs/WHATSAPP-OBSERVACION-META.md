@@ -152,3 +152,18 @@ historial; ese paso requiere consentimiento y alcance comprobados por separado.
 Habilitar recepción no acredita eventos reales ni cobertura completa. Siguen
 pendientes la prueba controlada de entrada/eco y el corte de cobertura. No cambia
 el motor comercial, workflows, colas, estados de registro ni contadores de Gmail.
+
+### Corrección del acceso desde el navegador (16/10)
+
+La primera publicación omitía `x-client-info` de los encabezados CORS permitidos.
+El SDK de Supabase lo envía en las llamadas a funciones: el navegador rechazaba
+la comprobación previa y nunca hacía el POST, aunque OPTIONS devolviera 200.
+Se reproducía desde el dominio real sin iniciar ninguna conexión con Meta.
+
+El receptor de vinculación ahora reutiliza `@supabase/supabase-js/cors` con la
+misma versión del SDK. Conserva el origen exacto del CRM, sólo POST/OPTIONS,
+la validación JWT y la comprobación adicional de Auth y propietario. La prueba
+de acceso debe hacerse desde un navegador con los encabezados del SDK; un curl
+o un flujo con la API simulada no comprueba esta frontera. Que una llamada sin
+sesión alcance el 401 esperado comprueba CORS, pero no la autorización real del
+titular, la elegibilidad de Meta ni la recepción de conversaciones.

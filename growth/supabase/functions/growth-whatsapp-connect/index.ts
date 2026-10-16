@@ -1,8 +1,10 @@
 import { createClient } from 'npm:@supabase/supabase-js@2.117.2';
+import { corsHeaders } from 'npm:@supabase/supabase-js@2.117.2/cors';
 import { finishCoexistence, hash, numericId, object, WEBHOOK_FIELDS, type Graph, type Json } from './core.ts';
 
 const ORIGIN = 'https://www.trattoapp.com.ar';
-const headers = { 'Access-Control-Allow-Origin': ORIGIN, 'Access-Control-Allow-Headers': 'authorization,apikey,content-type', 'Access-Control-Allow-Methods': 'POST,OPTIONS', 'Content-Type': 'application/json', 'Cache-Control': 'no-store', Vary: 'Origin' };
+// Keep the SDK's request headers (including x-client-info), with our exact origin/methods.
+const headers = { ...corsHeaders, 'Access-Control-Allow-Origin': ORIGIN, 'Access-Control-Allow-Methods': 'POST,OPTIONS', 'Content-Type': 'application/json', 'Cache-Control': 'no-store', Vary: 'Origin' };
 const reply = (body: Json, status = 200) => new Response(JSON.stringify(body), { status, headers });
 const uuid = (v: unknown) => typeof v === 'string' && /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(v);
 const nonce = () => [...crypto.getRandomValues(new Uint8Array(32))].map(v => v.toString(16).padStart(2, '0')).join('');
