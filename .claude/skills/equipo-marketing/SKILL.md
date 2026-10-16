@@ -87,7 +87,7 @@ Mirá lo que te pidieron (o el argumento de `/equipo-marketing`):
      otra red;
    - se publicó una guía o página de precios nueva sin piezas para redes;
    - una pieza rindió muy por encima de la mediana.
-   Lo que arme queda `para_aprobar`.
+   Lo que arme se programa solo (permiso total en redes desde el 16/10/2026).
 6. Si no hay pedidos, nada aprobado, ninguna condición del punto 5 ni
    alertas, no inventes trabajo: terminá diciendo "sin novedades" en una línea.
 

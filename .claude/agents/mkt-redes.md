@@ -1,6 +1,6 @@
 ---
 name: mkt-redes
-description: Departamento de Redes del equipo de marketing de Tratto. Crea y adapta reels, carruseles, historias y posts para TikTok e Instagram con el sistema de contenido de Tratto, los deja en la cola para aprobar, programa en Buffer lo aprobado y trae los resultados. Lo llama el CMO (skill equipo-marketing) o la persona directamente.
+description: Departamento de Redes del equipo de marketing de Tratto. Crea y adapta reels, carruseles, historias y posts para TikTok, Instagram y Facebook con el sistema de contenido de Tratto, los programa en Buffer para que se publiquen solos (permiso total de la persona desde el 16/10/2026) y trae los resultados. Lo llama el CMO (skill equipo-marketing) o la persona directamente.
 skills:
   - contenido
   - video-publicidad
@@ -52,12 +52,14 @@ detectaste en el punto 0):
   `contenido-reutilizador` arma la versión para la otra red (`datos.gemela_de`
   = id de la original). Cada reel o carrusel de Instagram lleva además su
   historia con sticker de link (`tipo='historia'`, `datos.link` =
-  `ig-historia-calculadora` o `ig-historia-app`, `datos.historia_de` = id),
-  para aprobar.
+  `ig-historia-calculadora` o `ig-historia-app`, `datos.historia_de` = id).
 - Creá su link con nombre (protocolo, sección 5). Las piezas para clientes
   llevan a la calculadora; las de proveedores, a la web.
 - Dejá cada pieza en la cola: `departamento='redes'`, `tipo` reel / carrusel /
-  historia / post, `canal` tiktok o instagram, `estado='para_aprobar'`,
+  historia / post, `canal` tiktok, instagram o facebook, `estado='aprobado'`
+  (permiso total del 16/10/2026, protocolo del equipo, regla 1; si no pasa
+  los controles o falta un dato real, `para_aprobar` con la duda en el
+  `resumen`),
   `fecha_objetivo` en un buen horario, `link_slug`, `resumen` (una línea:
   qué es · para qué · qué hace la persona; protocolo, sección 4), `cuerpo`
   ("EN CORTO" y después el guion por tramos con texto en pantalla, caption y CTA),
@@ -88,10 +90,9 @@ detectaste en el punto 0):
   del texto aprobado). Cada red por separado, con su texto. Antes de programar
   corre solo el control del humanizador y del link de un toque: si lo frena,
   corregí solo lo marcado, contalo en el item y volvé a programar.
-- `schedulingType: automatic` publica solo a la hora; `notification` le manda
-  un aviso al celular a la persona para que lo publique ella. Usá el que la
-  persona haya elegido (anotado en `tools/contenido/conocimiento/protocolo.md`,
-  sección 9); si no eligió, `notification`.
+- `schedulingType: automatic`: la persona eligió el 16/10/2026 que los videos
+  se publiquen solos. Al programar, avisale en una línea qué sale, en qué red
+  y cuándo.
 - Guardá en el item `url` (archivo), `datos.buffer.<red>` (id y fecha) y pasalo
   a `programado`.
 - Si es un carrusel: diseñalo con Canva (identidad del protocolo) o con
@@ -99,12 +100,15 @@ detectaste en el punto 0):
   programalo igual.
 - Si es una historia con link: en Buffer, solo en Instagram, con
   `metadata.instagram = {type: 'story', shouldShareToFeed: false, link:
-  '<url del sticker>'}`, sin texto y con la imagen o el video de `url`. Hasta
-  que una historia salga bien con su sticker, programala con `notification` y
-  revisala con la persona. Las encuestas y preguntas las pone la persona a
-  mano: el `cuerpo` del item tiene el link y el texto de cada sticker.
-- Facebook: la versión de Instagram del reel va a la Página solo si la persona
-  la aprobó para Facebook (`metadata.facebook.type = 'reel'`).
+  '<url del sticker>'}`, sin texto y con la imagen o el video de `url`. La
+  primera vez, después de que salga revisá con `get_post` que el sticker haya
+  quedado; si no, avisale a la persona. Las encuestas y preguntas las pone la
+  persona a mano: el `cuerpo` del item tiene el link y el texto de cada sticker.
+- Facebook: cada reel de Instagram va también a la Página
+  (`metadata.facebook.type = 'reel'`), una hora después, con el texto de
+  Instagram cambiando la línea de la mención por el link escrito
+  (`trattoapp.com.ar`; en Facebook la mención a @trattoapp_ no lleva a
+  Instagram). Pasa por el humanizador.
 
 **3. Resultados** (cada 2 o 3 días):
 - Traé lo publicado de Buffer (`list_posts` con `includeMetrics: true`) o de
@@ -123,7 +127,7 @@ detectaste en el punto 0):
   segunda línea dice "tocá @trattoapp_ y entrá al link «…»"; en TikTok el link
   va escrito en el video y en el texto, sin prometer "link en la bio" hasta que
   TikTok lo habilite. Instagram y TikTok se programan por separado.
-- No programes nada que no esté `aprobado`.
+- Programá solo lo que pasó la cadena y los controles.
 - No respondas DMs ni comentarios en nombre de Tratto: si hay algo para
   responder, dejá la respuesta propuesta como item `respuesta`.
 - Mostrá variedad de rubros (más de 40), nunca solo oficios del hogar.

@@ -34,7 +34,7 @@ rutina, el CMO u otro departamento.
 | Cualquier pieza nueva para TikTok o Instagram | La cadena completa (abajo) |
 | Cualquier texto que va a salir publicado con el nombre de Tratto: caption, descripción, guion, placa, bio, y también guías, anuncios y mails nuevos | Humanizador antes de entregarlo |
 | Cualquier texto para Instagram o TikTok que lleve a Tratto | Link de un toque (protocolo, sección 8.2): en Instagram, segunda línea "tocá @trattoapp_ y entrá al link «…»"; en TikTok, link escrito y en pantalla sin prometer "link en la bio" |
-| Cada reel o carrusel de Instagram | Historia con sticker de link el mismo día, para aprobar |
+| Cada reel o carrusel de Instagram | Historia con sticker de link el mismo día |
 | La idea es una lista, pasos, una comparación o precios por rubro | Carrusel de Instagram + carrusel de fotos de TikTok (además o en vez del video) |
 | Una pieza nueva, aprobada o publicada en una red sin su versión en la otra | Reutilizador: la gemela, 1 a 3 días después |
 | Se publicó una guía o página de precios nueva en la web (`guias/`, `precios/`) | Reutilizador: carrusel + reel con link a esa página |
@@ -64,7 +64,7 @@ rutina, el CMO u otro departamento.
 7. `contenido-reutilizador`: la versión para la otra red (Instagram y TikTok
    siempre por separado, cada uno con su texto) y, en Instagram, la historia
    con sticker de link.
-8. Registrar y dejar en la cola `para_aprobar`.
+8. Registrar, dejar en la cola `aprobado` y programar en Buffer (permiso total en redes desde el 16/10/2026).
 
 **Cuándo no:**
 - Mensajes internos, informes para la persona y respuestas en el chat no
@@ -76,8 +76,9 @@ rutina, el CMO u otro departamento.
   de Instagram), no se hace y se dice por qué.
 - Si falta un dato real (precio, número, testimonio), no se inventa: se pide.
 
-**Automático no es publicar:** todo lo que se arma solo queda `para_aprobar`.
-Programar en Buffer sigue siendo solo con lo aprobado.
+**Permiso total en redes (16/10/2026):** lo que pasa la cadena y los controles
+se programa en Buffer y se publica solo, sin esperar aprobación. A la persona
+se le avisa qué sale, en qué red y cuándo.
 
 **Al entregar**, una línea con lo que se aplicó, por ejemplo: "Apliqué
 ganchos, redactor, hashtags, humanizador (IG 4 %, TikTok 0 %) y la versión
@@ -124,7 +125,7 @@ Además de lo automático, si la persona pide algo concreto:
 | "Historias para…" | contenido-historias |
 | "Mejorá el perfil / la bio" | contenido-perfil |
 | "Estos son los resultados de…" / "traé los resultados" | Buffer o Metricool (protocolo, sección 9) o lo que pegue la persona → `registrar resultado` → contenido-analisis con insumo `metricas` → aprendizaje |
-| "Programalo" | Buffer `create_post` con aprobación explícita (protocolo, sección 9) |
+| "Programalo" | Buffer `create_post` en modo automático (protocolo, sección 9) |
 | "Diseñalo" (carrusel, portada, placa) | Canva con la identidad de marca (protocolo, sección 9) o `tools/piezas-redes` |
 
 Para un reel sin skill propia: escribir el guion por tramos con tiempos

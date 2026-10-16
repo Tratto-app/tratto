@@ -92,7 +92,7 @@ configuración está en `config/marca.json` → `links`, y `verificar` (con
   La mención se toca y abre el perfil. Nunca "link en la bio" a secas, y no
   hace falta escribir la URL en el texto.
 - Cada reel o carrusel lleva una **historia con sticker de link** el mismo día
-  (`ig-historia-calculadora` o `ig-historia-app`), que queda para aprobar. Es
+  (`ig-historia-calculadora` o `ig-historia-app`). Es
   el único lugar de Instagram donde el link se toca sin pasar por el perfil.
   El sticker lo pone la persona al publicarla desde el celular (la API no
   permite stickers).
@@ -136,8 +136,8 @@ configuración está en `config/marca.json` → `links`, y `verificar` (con
 
 **Buffer** (desde el 15/10/2026, plan gratis, organización "My organization", zona America/Argentina/Buenos_Aires). Canales: Instagram @trattoapp_ `6ad164a1778b240e2f2159b4`, TikTok @trattoapp `6ad1641d778b240e2f21567f` y la Página de Facebook "Tratto • Servicios cerca tuyo" `6ad16bc0778b240e2f21a953`. Hasta 10 publicaciones programadas por canal a la vez.
 
-- *Programar*: `create_post` **solo con lo que la persona aprobó** (fecha, red, texto y video). Exige una URL pública del video o imagen (`assets: [{video: {url}}]`), `mode: customScheduled` y `dueAt` con `-03:00`. Instagram: `metadata.instagram = {type: 'reel', shouldShareToFeed: true}`; TikTok: `metadata.tiktok.title`. Antes de programar corre el hook (humanizador y link de un toque).
-- *Modo*: `schedulingType: automatic` publica solo; `notification` le avisa al celular a la persona para publicarlo a mano. Elegido por la persona: pendiente (el 15/10 pidió que los videos "se suban"; hasta que confirme, `notification`).
+- *Programar*: `create_post` **con el permiso total que dio la persona el 16/10/2026**: lo que pasó la cadena y los controles, sin esperar aprobación. Exige una URL pública del video o imagen (`assets: [{video: {url}}]`), `mode: customScheduled` y `dueAt` con `-03:00`. Instagram: `metadata.instagram = {type: 'reel', shouldShareToFeed: true}`; TikTok: `metadata.tiktok.title`. Antes de programar corre el hook (humanizador y link de un toque).
+- *Modo*: `schedulingType: automatic` (se publica solo). Lo eligió la persona el 16/10/2026: "que se publiquen solos los videos", y que se le avise qué sale y cuándo.
 - *Resultados*: `list_posts` con `includeMetrics: true` o `get_aggregated_post_metrics`.
 
 **Metricool** (marca `7270470`, zona horaria America/Buenos_Aires; desde el 14/10/2026 sin cupo para programar, solo métricas). Tiene conectados **TikTok** (@trattoapp, cuenta de empresa) e **Instagram** (@trattoapp_, desde el 2026-10-06).

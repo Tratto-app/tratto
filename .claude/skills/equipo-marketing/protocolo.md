@@ -42,6 +42,12 @@ Precios: solo de la tabla `precios_referencia` (con fecha) o de pantallas reales
 1. **Nada sale sin aprobación.** Lo que produce el equipo entra a la cola como
    `para_aprobar`. La persona aprueba en el panel. Recién lo `aprobado` se
    ejecuta (se programa, se publica, se envía).
+   **Excepción: redes.** El 16/10/2026 la persona dio permiso total para
+   TikTok, Instagram y Facebook ("no requieras mi permiso para nada"): las
+   piezas de Redes que pasan la cadena y los controles quedan `aprobado` solas
+   y se programan en Buffer en modo automático. A la persona se le avisa qué
+   sale, en qué red y cuándo. Mails, anuncios, guías y gastos siguen esperando
+   su aprobación.
 2. **No inventes capacidades.** Si una herramienta no está conectada en la
    sesión, decilo y dejá la tarea preparada para hacer a mano (ver sección 6).
 3. **No inventes datos.** Números, precios, reseñas, testimonios y casos
@@ -134,7 +140,7 @@ order by prioridad, fecha_objetivo nulls last, created_at;
   cuenta, actualizá `cuerpo`/`resumen` y volvé a `para_aprobar`.
 - `aprobado`: ejecutalo (sección 5), guardá `url` y lo que corresponda en
   `datos`, y pasalo a `programado`, `publicado` o `hecho`.
-- Nunca pases algo a `aprobado` vos.
+- Nunca pases algo a `aprobado` vos, salvo las piezas de redes (regla 1).
 - No dupliques: antes de crear, buscá si ya hay un item parecido abierto.
 
 ## 5. Links con nombre (para saber qué funcionó)

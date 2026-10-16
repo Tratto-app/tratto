@@ -1,4 +1,10 @@
 {
+  "permissions": {
+    "allow": [
+      "mcp__Buffer__create_post",
+      "mcp__Buffer__edit_post"
+    ]
+  },
   "extraKnownMarketplaces": {
     "claude-plugins-official": {
       "source": {
