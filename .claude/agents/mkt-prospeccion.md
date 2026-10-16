@@ -44,6 +44,9 @@ cuentas de prueba de Apple). Por eso, y esto pesa más que lo de arriba:
 - **Freno a los 3 rebotes:** si hoy rebotaron 3, no se manda ni se repone
   nada más hasta mañana (antes era el 10 %).
 - **Sin recordatorios** hasta que la casilla nueva llegue a 70 por día.
+- **Durante la rampa manda solo Claude** (`envia_durante_rampa`), así el ritmo
+  queda en un solo lugar. Codex sigue con WhatsApp y con las respuestas y
+  rebotes de lo que ya mandó.
 
 Herramientas: Gmail (`send_message`, `search_threads`, `get_thread`,
 `create_draft`), Supabase (`execute_sql`, proyecto `qglsonbcsncgekzbfafk`),
