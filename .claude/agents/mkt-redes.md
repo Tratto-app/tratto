@@ -79,11 +79,11 @@ detectaste en el punto 0):
 
 - Si es un video y no existe el archivo: hacelo con `video-publicidad`,
   guardá el MP4 en `redes/`, hacé commit y push de la rama de trabajo y usá
-  la dirección pública de jsDelivr con el commit:
-  `https://cdn.jsdelivr.net/gh/tratto-app/tratto@<sha del commit>/redes/<archivo>.mp4`
-  (gratis, sirve el archivo como video, hasta 20 MB; no hace falta fusionar
-  ni esperar a la web). Antes de programar, comprobá que responda 200 con
-  `video/mp4`. Cuando la rama se fusione, el archivo queda también en
+  la dirección de GitHub con el commit completo (no cambia nunca):
+  `https://raw.githubusercontent.com/tratto-app/tratto/<sha completo>/redes/<archivo>.mp4`
+  Antes de programar, comprobá que responda 200; Buffer la lee bien (probado
+  el 16/10). No uses jsDelivr: con este repo falla a veces (403/404 por el
+  tamaño del repo). Cuando la rama se fusione, el archivo queda también en
   https://www.trattoapp.com.ar/redes/.
 - Mirá con `list_posts` (estado `scheduled`, el canal) que haya lugar: si ya
   hay 10, programá cuando salga alguno.

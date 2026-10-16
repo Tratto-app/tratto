@@ -33,7 +33,7 @@ Precios: solo de la tabla `precios_referencia` (con fecha) o de pantallas reales
 | Sistema de contenido (hooks, puntaje, memoria) | skill `contenido` y `tools/contenido` |
 | Mails automáticos | automatizaciones del CRM (`growth_workflows` + `growth_workflow_steps`), salen por Brevo SMTP |
 | Mails a proveedores (un rubro por día) | agente `mkt-prospeccion`, Gmail trattoapp1@gmail.com, rotación en `growth_mkt_rotacion`, números con `select mkt_prospeccion_numeros(7);` |
-| Archivos públicos (videos para programar) | carpeta `redes/` del repo: apenas se sube el commit, `https://cdn.jsdelivr.net/gh/tratto-app/tratto@<sha>/redes/<archivo>` (gratis, sin fusionar); al publicar en `main`, también https://www.trattoapp.com.ar/redes/<archivo> |
+| Archivos públicos (videos para programar) | carpeta `redes/` del repo: apenas se sube el commit, `https://raw.githubusercontent.com/tratto-app/tratto/<sha completo>/redes/<archivo>` (gratis, sin fusionar); al publicar en `main`, también https://www.trattoapp.com.ar/redes/<archivo> |
 
 `crm_ws()` devuelve el id del workspace "tratto". Úsalo en todos los SQL.
 
