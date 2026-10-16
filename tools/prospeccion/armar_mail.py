@@ -6,7 +6,8 @@ Lo usa el agente mkt-prospeccion antes de cada envío por Gmail:
       "gancho": "Vi en tu página que hacen destapaciones en Caballito.",
       "servicio": "plomería y destapaciones", "zona": "Caballito",
       "pedido": "una destapación o un arreglo de plomería",
-      "donde": "tu página web (servimaxdestapaciones.com)", "n": 0}'
+      "donde": "tu página web (servimaxdestapaciones.com)", "n": 0,
+      "remitente": "<casilla de la campaña>"}'
 
 Devuelve {"html", "texto", "asunto", "variante"}: el html va en htmlBody, el
 texto en body y el asunto en subject de send_message. Pedidos del fundador que fija este formato:
@@ -21,6 +22,9 @@ texto en body y el asunto en subject de send_message. Pedidos del fundador que f
   asunto, apertura y orden. Con "n" (número de envío del día, desde 0) elige
   sola: (n div 5) mod 4. Todos los asuntos llevan "Tratto", porque las
   respuestas se buscan con subject:Tratto.
+- 16/10/2026: los mails en frío salen de una casilla aparte, no de
+  trattoapp1@gmail.com (está vinculada a la app y a las tiendas). "remitente"
+  es esa casilla y va en la firma.
 """
 import html
 import json
@@ -38,7 +42,9 @@ def _sin_punto(t):
     return t[:1].lower() + t[1:] if t else t
 
 
-def armar(saludo, gancho, servicio, zona, pedido, donde, variante=None, n=None, oficio=None):
+def armar(saludo, gancho, servicio, zona, pedido, donde, variante=None, n=None, oficio=None, remitente=None):
+    if not remitente:
+        raise SystemExit('falta "remitente": la casilla de la campaña (growth_mkt_ajustes.prospeccion.cuenta_envio)')
     if variante is None:
         variante = VARIANTES[(int(n) // 5) % 4] if n is not None else 'A'
     variante = str(variante).upper()
@@ -116,7 +122,7 @@ def armar(saludo, gancho, servicio, zona, pedido, donde, variante=None, n=None, 
         '<tr><td style="padding:8px 0 0;font:13px/1.5 Arial,Helvetica,sans-serif;color:#5B6B64">'
         'Servicios para tu casa, tu negocio y más, en CABA y Provincia de Buenos Aires<br>'
         f'<a href="{LINK}" style="color:#1E5D49;text-decoration:none">www.trattoapp.com.ar</a>'
-        ' · trattoapp1@gmail.com</td></tr></table>')
+        f' · {html.escape(remitente)}</td></tr></table>')
     pie = ('<p style="margin:22px 0 0;padding-top:12px;border-top:1px solid #E0DCD0;'
            'font:12px/1.5 Arial,Helvetica,sans-serif;color:#68766F">'
            f'Encontramos tu mail en {html.escape(donde, quote=False)}. Si no querés recibir más '

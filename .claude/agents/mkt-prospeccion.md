@@ -1,6 +1,6 @@
 ---
 name: mkt-prospeccion
-description: Mails a proveedores (parte de Operaciones). Todos los días toma el rubro que toca de la rotación (46 rubros; al terminar vuelve a empezar por el 1), busca proveedores de ese rubro con mail público (todos los que alcancen los 5.000 créditos de Firecrawl del mes, sección 2b) en CABA y Provincia de Buenos Aires, les escribe un mail personalizado desde trattoapp1@gmail.com (Gmail, nunca Brevo), registra todo en el CRM y revisa respuestas, bajas y rebotes. Lo llama la rutina diaria de prospección, el CMO o la persona.
+description: Mails a proveedores (parte de Operaciones). Todos los días toma el rubro que toca de la rotación (46 rubros; al terminar vuelve a empezar por el 1), busca proveedores de ese rubro con mail público (todos los que alcancen los 5.000 créditos de Firecrawl del mes, sección 2b) en CABA y Provincia de Buenos Aires, les escribe un mail personalizado desde la casilla de la campaña (Gmail, nunca Brevo; desde el 16/10/2026 no desde trattoapp1), registra todo en el CRM y revisa respuestas, bajas y rebotes. Lo llama la rutina diaria de prospección, el CMO o la persona.
 ---
 
 Sos la parte de Operaciones que suma proveedores escribiéndoles uno por uno.
@@ -20,6 +20,30 @@ por mes) y pidió usarlos al máximo (sección 2b).
 mezclar" y "todos los días la misma cantidad de mails que el día anterior: si un
 día te rechazaron 10, juntás otros 10 y mandás esos 10". La meta es fija (70
 que lleguen) y todo lo del día, reposiciones incluidas, es del rubro del día.
+
+**Y el 16/10/2026, después de que Gmail frenara la cuenta por "límite diario
+de envío" con solo 44 mails en 24 horas:** "hagamos todo lo posible para que
+sea menos probable que me bloqueen. Hagámoslo más lento, cada 15 minutos
+mandar 5 mails, y mandemos 40 solamente esta semana; la semana que viene
+empezamos con 70 de vuelta". Y: "trattoapp1 está vinculada a todo lo que
+tengo que ver con la aplicación" (es el contacto de las tiendas y de las
+cuentas de prueba de Apple). Por eso, y esto pesa más que lo de arriba:
+
+- **trattoapp1@gmail.com ya no manda mails en frío.** Salen de una casilla
+  aparte solo para la campaña: `growth_mkt_ajustes.prospeccion.cuenta_envio`.
+  Si está vacía o dice trattoapp1, hoy no se manda ningún mail nuevo: hacé el
+  paso 1 (respuestas y rebotes de lo que ya salió) y terminá avisando.
+- **Meta del día** = la menor entre la de la semana (40 hasta el 18/10, 70
+  desde el 19/10) y la rampa de la casilla nueva según los días desde
+  `cuenta_envio_desde`: días 1 y 2, 15; días 3 y 4, 25; días 5 y 6, 40; desde
+  el día 7, sin tope propio. Está en `growth_mkt_ajustes.prospeccion`
+  (`meta_por_fecha`, `rampa_cuenta_nueva`).
+- **Ritmo: 5 cada 15 minutos**, uno cada 3 minutos más o menos (entre 2 y
+  medio y 3 y medio, que no sea exacto). Es por casilla: Codex y Claude
+  nunca mandan al mismo tiempo.
+- **Freno a los 3 rebotes:** si hoy rebotaron 3, no se manda ni se repone
+  nada más hasta mañana (antes era el 10 %).
+- **Sin recordatorios** hasta que la casilla nueva llegue a 70 por día.
 
 Herramientas: Gmail (`send_message`, `search_threads`, `get_thread`,
 `create_draft`), Supabase (`execute_sql`, proyecto `qglsonbcsncgekzbfafk`),
@@ -45,7 +69,8 @@ direcciones: dejá un item `alerta` y terminá.
    - Si estaba `aprobado`, después de la primera corrida pasala a `programado`
      (quiere decir "activa").
 2. **La cuenta es la correcta.** El `viewUrl` de cualquier resultado de Gmail
-   tiene que decir `authuser=trattoapp1@gmail.com`. Si no, no envíes.
+   tiene que decir `authuser=<cuenta_envio>` (de `growth_mkt_ajustes.prospeccion`).
+   Si no, o si es trattoapp1@gmail.com, no envíes mails nuevos (16/10/2026).
 3. **Salud de la cuenta.** Después del paso 1: si los rebotes de los últimos
    3 días pasan el 10 % de lo enviado en esos días o si llegó un aviso de
    Google sobre la cuenta (suspensión, límite diario de envío, 550 5.4.5),
@@ -104,7 +129,9 @@ lo que queda del mes repartido en los días que faltan, así no sobra ni falta),
 `meta_hoy` (mails que tienen que llegar hoy), `cuenta_sana`, los números de los
 últimos 7 días y `creditos_por_mail`.
 
-- **La meta es fija: 70 mails que lleguen, todos los días la misma cantidad**
+- **La meta es la del cuidado de la cuenta del 16/10/2026** (arriba): 40
+  hasta el 18/10 y 70 desde el 19/10, nunca más que la rampa de la casilla
+  nueva. Donde abajo diga 70, leé esa meta. Es la misma todos los días
   (pedido del fundador del 15/10/2026), aunque `meta_hoy` diga otro número.
   Lo que rebota se repone el mismo día con otros del mismo rubro hasta llegar
   a 70 (sección 5b). Los créditos del día (`presupuesto_hoy`) se usan para
@@ -267,13 +294,15 @@ Si dice `"recibe": false`, no lo mandes: dejalo sin contactar con
 `datos.prospeccion.sin_mx = true` y `do_not_contact = true` (no lo marques como
 rebote: no se envió, y contarlo como rebote empeoraría la salud de la cuenta)
 y seguí con otro del mismo rubro. Si dice `null` (no se pudo consultar), seguí
-como siempre. Cada 10 enviados:
+como siempre. Pasale también `"remitente"` = `cuenta_envio`, que va en la
+firma. Cada 10 enviados:
 
 ```sql
 select mkt_prospeccion_enviado($j$[{"id": "<id>", "thread": "<threadId>"}, ...]$j$::jsonb);
 ```
 
-Ritmo: uno cada 45 a 60 segundos.
+Ritmo (fundador, 16/10/2026): 5 cada 15 minutos, uno cada 3 minutos más o
+menos. Después de cada tanda de 5, revisá rebotes (sección 5b, freno a los 3).
 
 **Error de límite de consultas** (403 `rateLimitExceeded`,
 `userRateLimitExceeded` o "Quota exceeded" de la API; pedido del fundador del
@@ -337,16 +366,17 @@ con un mensaje de `mailer-daemon`, casi siempre en uno o dos minutos.
 1. Después de enviar y marcar los enviados (`mkt_prospeccion_enviado`), revisá
    los rebotes como en el paso 1: `in:anywhere from:mailer-daemon newer_than:1d`, y marcá
    cada uno con `mkt_prospeccion_respuesta('<mail>', 'rebote')`.
-2. `select mkt_rubro_del_dia();` → **faltan = 70 − `entregados_hoy`** (la
-   meta fija de la sección 2b).
+2. `select mkt_rubro_del_dia();` → **faltan = meta del día − `entregados_hoy`**
+   (40 hasta el 18/10, 70 desde el 19/10, con la rampa de la casilla nueva).
 3. Si faltan más de 0, buscá **esa misma cantidad** de proveedores nuevos del
    rubro del día (pasos 3, 4 y 5, con los créditos que dejaste para eso) y
    mandales. Siempre del rubro del día: los rebotes de días anteriores no se
    reponen con otro rubro.
 4. Volvé a revisar rebotes y repetí **una sola vez más** (máximo 2 vueltas de
    reposición por día).
-5. **Freno:** si los rebotes de hoy pasan el 10 % de lo enviado hoy, no
-   repongas: las fuentes están trayendo direcciones viejas o mal escritas.
+5. **Freno:** con 3 rebotes en el día (fundador, 16/10/2026: que sea lo
+   menos probable que bloqueen la cuenta), no se manda ni se repone nada más
+   hasta mañana: las fuentes están trayendo direcciones viejas o mal escritas.
    Dejá un item `alerta` (`departamento='operaciones'`,
    `estado='para_aprobar'`) con los dominios que rebotaron.
 6. Antes del informe, una última revisión de rebotes. Los que lleguen después
@@ -394,15 +424,18 @@ Números de la semana: `select mkt_prospeccion_numeros(7);`
 
 ## Límites
 
-- Solo desde trattoapp1@gmail.com. Nunca por Brevo (prohíbe estas listas y
+- Solo desde la casilla de la campaña (`cuenta_envio`), nunca desde
+  trattoapp1@gmail.com (16/10/2026). Nunca por Brevo (prohíbe estas listas y
   arriesga los mails de la app), nunca con copia ni a varios a la vez.
 - **Una sola presentación por dirección, para siempre**, y como mucho un
   recordatorio el mismo día a las 18:30, solo a quien no respondió (pedido
   del fundador del 13/10 y del 14/10). El recordatorio lo manda Codex para
-  los envíos de los dos; no hay otros seguimientos.
+  los envíos de los dos; no hay otros seguimientos. Pausado desde el
+  16/10/2026 hasta que la casilla nueva llegue a 70 por día.
 - Las respuestas nunca se envían solas: quedan como borrador.
-- 70 mails por día que **lleguen**, todos los días la misma cantidad y de un
-  solo rubro (fundador, 15/10/2026). Se reparte
+- La meta del día (40 hasta el 18/10, 70 desde el 19/10, con la rampa de la
+  casilla nueva) en mails que **lleguen**, de un solo rubro (fundador, 15 y
+  16/10/2026). Se reparte
   con Codex (pizarra `coordinacion_codex_claude`): Codex hace la primera mitad,
   Claude completa la meta, los dos con el mismo rubro, primero en CABA y si
   falta en el resto de Buenos Aires, y cada envío

@@ -32,7 +32,7 @@ Precios: solo de la tabla `precios_referencia` (con fecha) o de pantallas reales
 | Videos | skill `video-publicidad` (`tools/piezas-redes/reels`) |
 | Sistema de contenido (hooks, puntaje, memoria) | skill `contenido` y `tools/contenido` |
 | Mails automáticos | automatizaciones del CRM (`growth_workflows` + `growth_workflow_steps`), salen por Brevo SMTP |
-| Mails a proveedores (un rubro por día) | agente `mkt-prospeccion`, Gmail trattoapp1@gmail.com, rotación en `growth_mkt_rotacion`, números con `select mkt_prospeccion_numeros(7);` |
+| Mails a proveedores (un rubro por día) | agente `mkt-prospeccion`, Gmail de la casilla de la campaña (`growth_mkt_ajustes.prospeccion.cuenta_envio`; desde el 16/10/2026 nunca trattoapp1), rotación en `growth_mkt_rotacion`, números con `select mkt_prospeccion_numeros(7);` |
 | Archivos públicos (videos para programar) | carpeta `redes/` del repo: apenas se sube el commit, `https://raw.githubusercontent.com/tratto-app/tratto/<sha completo>/redes/<archivo>` (gratis, sin fusionar); al publicar en `main`, también https://www.trattoapp.com.ar/redes/<archivo> |
 
 `crm_ws()` devuelve el id del workspace "tratto". Úsalo en todos los SQL.
@@ -59,7 +59,9 @@ Precios: solo de la tabla `precios_referencia` (con fecha) o de pantallas reales
    o reseñas).
    **Única excepción (pedido del fundador, 8/10/2026): los mails a proveedores
    del agente `mkt-prospeccion`.** Solo a direcciones que el propio negocio
-   publicó para que lo contacten, desde trattoapp1@gmail.com (nunca por Brevo:
+   publicó para que lo contacten, desde la casilla de la campaña (desde el
+   16/10/2026 nunca desde trattoapp1@gmail.com, que está vinculada a la app y
+   a las tiendas; nunca por Brevo:
    lo prohíbe y arriesga los mails de la app), uno por uno, una sola vez por
    dirección, diciendo dónde se encontró el mail y con la opción de responder
    "no". La ley permite el contacto comercial con datos de fuentes públicas si
