@@ -7,4 +7,9 @@
 .wa-observer-message { padding: 12px; margin: 12px 0; border-radius: 10px; background: var(--sup-2); color: var(--texto); }
 .wa-observer-message.out { border-left: 3px solid #387354; }
 .wa-observer-message p { white-space: pre-wrap; overflow-wrap: anywhere; }
+.wa-connect-setup { display: grid; gap: 12px; margin-top: 16px; }
+.wa-connect-setup label { display: grid; gap: 6px; }
+.wa-connect-setup input { width: 100%; min-width: 0; box-sizing: border-box; }
+.wa-connect-setup strong { overflow-wrap: anywhere; }
+.wa-connect-setup li { margin-bottom: 12px; }
 @media (max-width: 760px) { .wa-observer-grid { grid-template-columns: minmax(0, 1fr); } .wa-observer-conversation { position: static; max-height: none; grid-row: 1; } .wa-observer dl { grid-template-columns: 100px 1fr; } }

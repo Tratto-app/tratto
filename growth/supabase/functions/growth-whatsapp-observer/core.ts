@@ -5,6 +5,7 @@ export type Config = { workspace_id: string; waba_id: string; phone_number_id: s
 export type Dependencies = {
   configurations(waba: string, phone?: string): Promise<Config[]>;
   record(workspace: string, event: ObserverEvent): Promise<void>;
+  verifySetupToken?(token: string): Promise<boolean>;
 };
 const obj = (v: unknown): Obj => v && typeof v === 'object' && !Array.isArray(v) ? v as Obj : {};
 const arr = (v: unknown): unknown[] => Array.isArray(v) ? v : [];
@@ -56,9 +57,14 @@ function message(m: Obj, direction: 'in' | 'out', phone: string, source: string)
 
 export async function handleWebhook(req: Request, env: { appSecret?: string; verifyToken?: string }, deps: Dependencies): Promise<Response> {
   if (req.method === 'GET') {
-    if (!env.verifyToken) return json(503, 'not_configured');
     const q = new URL(req.url).searchParams;
-    if (q.get('hub.mode') !== 'subscribe' || q.get('hub.verify_token') !== env.verifyToken || !q.has('hub.challenge')) return json(403, 'verification_failed');
+    const token = q.get('hub.verify_token') || '';
+    if (q.get('hub.mode') !== 'subscribe' || !token || !q.has('hub.challenge') || q.get('hub.challenge')!.length > 256) return json(403, 'verification_failed');
+    let valid = !!env.verifyToken && token === env.verifyToken;
+    if (!valid && deps.verifySetupToken && /^[a-f0-9]{64}$/.test(token)) {
+      try { valid = await deps.verifySetupToken(token); } catch { return json(503, 'configuration_unavailable'); }
+    }
+    if (!valid) return json(403, 'verification_failed');
     return new Response(q.get('hub.challenge')!, { headers: { 'content-type': 'text/plain' } });
   }
   if (req.method !== 'POST') return json(405, 'method_not_allowed');
