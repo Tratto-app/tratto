@@ -1,4 +1,4 @@
-"""Arma el mail a proveedores (versión 3, 8/10/2026) en HTML y en texto.
+"""Arma el mail a proveedores (versión 4, 16/10/2026) en HTML y en texto.
 
 Lo usa el agente mkt-prospeccion antes de cada envío por Gmail:
 
@@ -6,10 +6,10 @@ Lo usa el agente mkt-prospeccion antes de cada envío por Gmail:
       "gancho": "Vi en tu página que hacen destapaciones en Caballito.",
       "servicio": "plomería y destapaciones", "zona": "Caballito",
       "pedido": "una destapación o un arreglo de plomería",
-      "donde": "tu página web (servimaxdestapaciones.com)"}'
+      "donde": "tu página web (servimaxdestapaciones.com)", "n": 0}'
 
-Devuelve {"html": ..., "texto": ...}: el html va en htmlBody y el texto en body
-de send_message. Pedidos del fundador que fija este formato:
+Devuelve {"html", "texto", "asunto", "variante"}: el html va en htmlBody, el
+texto en body y el asunto en subject de send_message. Pedidos del fundador que fija este formato:
 - El link se ve como "www.trattoapp.com.ar", sin parámetros largos a la vista.
 - Firma con el logo de Tratto al pie, para que no parezca una estafa.
 - Sin la comisión: Tratto recién arranca; si se registra, publica su servicio y
@@ -19,7 +19,8 @@ de send_message. Pedidos del fundador que fija este formato:
 - 16/10/2026: "cada 5 mails cambiamos un poco el formato, no los hacemos todos
   iguales". Hay 4 versiones (A, B, C, D) con el mismo contenido y distinto
   asunto, apertura y orden. Con "n" (número de envío del día, desde 0) elige
-  sola: (n div 5) mod 4. Devuelve también "asunto" y "variante".
+  sola: (n div 5) mod 4. Todos los asuntos llevan "Tratto", porque las
+  respuestas se buscan con subject:Tratto.
 """
 import html
 import json
@@ -61,7 +62,7 @@ def armar(saludo, gancho, servicio, zona, pedido, donde, variante=None, n=None, 
         link_antes, link_despues = 'Te podés registrar acá: ', ' (si tenés iPhone, también está en la App Store).'
         cierre = 'Si tenés alguna duda, respondé este mail.'
     elif variante == 'B':
-        asunto = f'{hola + ", p" if hola else "P"}edidos de {servicio} en {zona}'
+        asunto = f'{hola + ", p" if hola else "P"}edidos de {servicio} en {zona} · Tratto'
         parrafos = [
             f'Hola {hola}, ¿cómo estás?' if hola else 'Hola, ¿cómo estás?',
             f'{gancho} Te cuento rápido: en Tratto la gente de CABA y Provincia de Buenos Aires publica '
@@ -75,7 +76,7 @@ def armar(saludo, gancho, servicio, zona, pedido, donde, variante=None, n=None, 
         link_antes, link_despues = 'Entrá acá: ', ' (en iPhone también la encontrás en la App Store).'
         cierre = 'Cualquier cosa, respondeme este mail.'
     elif variante == 'C':
-        asunto = f'¿Tomás trabajos nuevos de {servicio} en {zona}?'
+        asunto = f'¿Tomás trabajos nuevos de {servicio} en {zona}? · Tratto'
         parrafos = [
             f'Hola {hola},' if hola else 'Hola,',
             f'¿Estás tomando trabajos nuevos de {servicio} en {zona}? Te pregunto porque '

@@ -290,8 +290,10 @@ reprograma la corrida para una hora después y le avisa al fundador.
 550 5.4.5): **pará en ese momento** y dejá una `alerta`. Si un envío falla por
 otra cosa, salteá ese y seguí; con 3 errores seguidos, pará.
 
-**Asunto:** `Clientes que buscan {oficio} en {barrio o zona} · Tratto`
-(el "· Tratto" del final sirve para encontrar las respuestas).
+**Asunto:** el que devuelve la herramienta según la versión (A: `Clientes
+que buscan {oficio} en {barrio o zona} · Tratto`). Los cuatro llevan "Tratto"
+porque las respuestas se buscan con `subject:Tratto`: si lo cambiás a mano,
+no se lo saques.
 
 **Qué dice el mail** (pedidos del fundador; no los cambies sin que lo pida):
 - Saluda por el nombre (`saludo`): el nombre de pila de la persona si figura
