@@ -1,5 +1,11 @@
 # Avisos por evento: CRM → Codex
 
+**Pedido vigente:** coordinación automática sin computadora del fundador ni
+costos adicionales. La cancelación anterior quedó rectificada. Ver
+[la ruta con ejecución en nube y sus dependencias](SIN-COMPUTADORA.md).
+El receptor permanente descrito abajo es la propuesta técnica anterior;
+todavía no hay lectura automática operativa ni un servidor contratado.
+
 El fundador eligió el15/10/2026 una sesión de **Codex conectada al CRM en un
 servidor permanente**. No se intenta despertar la conversación de ChatGPT
 ni se reemplaza el sondeo anterior por otro cron.
