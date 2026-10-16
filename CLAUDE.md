@@ -48,20 +48,24 @@ Todo lo de LinkedIn pasa por la skill `linkedin` (`.claude/skills/linkedin/SKILL
 y la voz de `.claude/linkedin/voz.md`. Solo la página de Tratto (id 145304785):
 nunca nada en el perfil personal del fundador. El fundador quiere LinkedIn
 automático como las otras redes (16/10/2026: "no quiero hacerlo yo manual"):
-con la conexión oficial de LinkedIn (Composio o Buffer) se publica en la
-página y se responden los comentarios de sus publicaciones sin esperarlo, y se
-le avisa en una línea. Seguir gente no se hace: una página no puede seguir
-personas y automatizarlo por fuera de la conexión oficial va contra las reglas
-de LinkedIn. Links con nombre de la fuente `linkedin` (`/r/li-...`), en el
-primer comentario.
+se publica en la página por Buffer (canal `6ad288cd778b240e2f2ede28`, tipo
+página, conectado el 16/10/2026) sin esperarlo, y se le avisa en una línea.
+Responder comentarios todavía no se puede gratis: Buffer no tiene cómo por su
+conexión y Composio no trae permisos de página. Seguir gente no se hace: una
+página no puede seguir personas y automatizarlo por fuera de la conexión
+oficial va contra las reglas de LinkedIn. Links con nombre de la fuente
+`linkedin` (`/r/li-...`) al final del texto, antes de los hashtags: Buffer
+gratis no permite primer comentario en LinkedIn.
 
 ## X (Twitter)
 
 Skill `twitter-x` (`.claude/skills/twitter-x/SKILL.md`). Solo la cuenta de
-Tratto, nunca la personal del fundador. Automático por la conexión oficial
-(Composio): se publica y se responden menciones sin esperarlo, y se le avisa en
-una línea. No se sigue gente, no se dan "me gusta" ni se responde en masa a
-quien no nos mencionó (reglas de X para cuentas automatizadas).
+Tratto, nunca la personal del fundador. La API de X es paga y el fundador no
+la quiere: X va por Buffer gratis (en el lugar que deja Instagram desde el
+21/10) y se publica sin esperarlo, avisándole en una línea. Buffer no responde
+menciones: esas respuestas quedan listas para pegar. No se sigue gente, no se
+dan "me gusta" ni se responde en masa a quien no nos mencionó (reglas de X
+para cuentas automatizadas).
 
 ## Mapa del código (graphify): el mismo para Claude y Codex
 

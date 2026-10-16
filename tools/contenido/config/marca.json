@@ -40,7 +40,8 @@
       "pagina_id": "145304785",
       "url": "https://www.linkedin.com/company/145304785/",
       "solo_pagina": true,
-      "nota": "Fundador 16/10/2026: publicaciones únicamente en la página de Tratto, nunca en su perfil personal. Link de la página: /r/li-pagina. Cada publicación lleva su link /r/li-<pieza> en el primer comentario.",
+      "nota": "Fundador 16/10/2026: publicaciones únicamente en la página de Tratto, nunca en su perfil personal. Link de la página: /r/li-pagina. Cada publicación lleva su link /r/li-<pieza> al final del texto, antes de los hashtags (Buffer gratis no permite primer comentario en LinkedIn). Se publica por Buffer, canal 6ad288cd778b240e2f2ede28.",
+      "buffer_canal": "6ad288cd778b240e2f2ede28",
       "portada": "tools/piezas-redes/salida/11-portada-linkedin.png"
     },
     "x": {

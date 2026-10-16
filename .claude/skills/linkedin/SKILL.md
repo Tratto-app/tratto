@@ -18,11 +18,10 @@ Antes de cualquier cosa:
    datos reales.
 3. Automático (fundador, 16/10/2026: "que quede automático, que vos puedas
    hacer publicaciones, que puedas comentar a seguidores... no quiero hacerlo
-   yo manual"). Con la conexión oficial de LinkedIn (Composio o Buffer), lo
-   que pasa el humanizador se publica en la página y se responden los
-   comentarios de sus publicaciones sin esperar al fundador, y se le avisa en
-   una línea qué salió. Sin conexión, cada función termina con un bloque listo
-   para pegar.
+   yo manual"). Lo que pasa el humanizador y `verificar` se publica en la
+   página por Buffer sin esperar al fundador, y se le avisa en una línea qué
+   salió. Responder comentarios todavía no se puede de forma automática (ver
+   "Cómo se publica"): las respuestas quedan como bloque listo para pegar.
 
 ## Reglas para todo lo que sale
 
@@ -36,10 +35,11 @@ Antes de cualquier cosa:
   se reescribe antes de mostrarlo. Además, a mano: sin rayas largas (—), sin
   comillas tipográficas, sin caracteres invisibles, sin "no es solo X, es Y",
   sin tríos de adjetivos y sin preguntas de una palabra.
-- **Links:** LinkedIn muestra menos las publicaciones con link en el texto. El
-  link va en el primer comentario, con un link con nombre
-  (`/r/li-<pieza>` en growth_tracking_links, fuente `linkedin`; la página usa `/r/li-pagina`) y se avisa en el
-  recibo.
+- **Links:** un link con nombre (`/r/li-<pieza>` en growth_tracking_links,
+  fuente `linkedin`; la página usa `/r/li-pagina`) en la última línea antes de
+  los hashtags. LinkedIn muestra un poco menos las publicaciones con link,
+  pero Buffer gratis no permite primer comentario en LinkedIn (16/10/2026).
+  Si algún día se paga Buffer, el link pasa al primer comentario.
 - **Hashtags:** hasta 3, al final, y solo categorías reales que la gente sigue.
 - **Largo:** 900 a 1.300 caracteres para una publicación de texto. La primera
   línea se tiene que entender sola (en el celular se corta a ~140 caracteres).
@@ -65,7 +65,7 @@ gancho solo en la primera línea, la segunda paga lo que prometió, párrafos de
 a 3 líneas con un renglón en blanco entre cada uno, un giro y un cierre con UNA
 pregunta que solo esta publicación puede hacer (nunca "¿qué opinan?").
 Recibo debajo del bloque: gancho usado, largo, resultado del humanizador,
-link para el primer comentario y cuándo publicarla.
+link y cuándo publicarla.
 
 **2. Comentarios en publicaciones de otros.** Leé la publicación entera y
 elegí el tipo: sumar un dato, contar un caso, discrepar con respeto, hacer una
@@ -120,13 +120,18 @@ memoria del motor (`node tools/contenido/cli.mjs registrar aprendizaje`).
 Solo por la conexión oficial de LinkedIn. Automatizar el sitio con un
 navegador o una herramienta no autorizada va contra las reglas de LinkedIn y
 puede restringir la cuenta, así que nunca.
-- **Composio** (conector de Claude o de Codex, con LinkedIn conectado por el
-  fundador): herramienta de crear publicación con autor = la organización
-  145304785, nunca la persona. Comentarios y respuestas, también como la
-  organización.
-- **Buffer**, si la página se conecta como canal. El plan gratis permite 3
-  canales y ya están TikTok, Instagram y Facebook: haría falta el plan pago.
-- Sin ninguna de las dos: bloque listo para pegar.
+- **Buffer** (así se publica desde el 16/10/2026): canal
+  `6ad288cd778b240e2f2ede28`, tipo página ("Tratto • Servicios cerca tuyo",
+  company/145304785). Antes de publicar, `get_channel` tiene que decir
+  `type: page`; si dijera perfil, no se publica y se avisa. `create_post` con
+  `schedulingType` automatic. Sin primer comentario (plan gratis).
+- **Composio**: la conexión de LinkedIn no trae permisos de organización
+  (crear como la página da error y leer la página da 403), así que no se usa:
+  con ella solo se podría publicar en el perfil personal, y eso no se hace.
+- **Comentarios**: ni Buffer (su conexión no tiene cómo responder) ni
+  Composio (sin permisos de página) permiten responder hoy. Si el fundador
+  pasa los comentarios, se escriben las respuestas (función 3) para pegar.
+- Sin conexión: bloque listo para pegar.
 
 Lo que no se hace: seguir personas (una página no puede), mandar invitaciones
 o mensajes en masa, ni nada desde el perfil personal del fundador.

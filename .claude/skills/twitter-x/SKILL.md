@@ -1,12 +1,13 @@
 ---
 name: twitter-x
-description: X (Twitter) de Tratto, solo la cuenta de la empresa (nunca la personal del fundador). Escribe y publica posteos e hilos, responde menciones y comentarios en nuestras publicaciones y reutiliza lo que sale en TikTok, Instagram y LinkedIn, todo en castellano rioplatense y pasado por el humanizador. Publica solo por la conexión oficial (Composio). Usar con "X", "Twitter", "tuit", "hilo", "publicá en X".
+description: X (Twitter) de Tratto, solo la cuenta de la empresa (nunca la personal del fundador). Escribe y publica posteos e hilos, responde menciones y comentarios en nuestras publicaciones y reutiliza lo que sale en TikTok, Instagram y LinkedIn, todo en castellano rioplatense y pasado por el humanizador. Publica por Buffer (conexión oficial, gratis). Usar con "X", "Twitter", "tuit", "hilo", "publicá en X".
 ---
 
 # X (Twitter) de Tratto
 
 Pedido del fundador (16/10/2026): "todas las redes sociales automatizadas",
-también X, con Composio, igual que LinkedIn.
+también X. Composio no sirve gratis para X (pide una app propia con la API
+paga), así que va por Buffer, igual que LinkedIn.
 
 Antes de cualquier cosa:
 1. `node tools/contenido/cli.mjs contexto` (marca, segmentos, datos reales) y
@@ -14,9 +15,12 @@ Antes de cualquier cosa:
    para X).
 2. Solo la cuenta de Tratto en X (`tools/contenido/config/marca.json`,
    `links.x`). Nunca la cuenta personal del fundador, igual que en LinkedIn.
-3. Automático: con la conexión oficial (Composio, herramientas de X) se publica
-   y se responde sin esperar al fundador, y se le avisa en una línea qué salió.
-   Sin conexión, bloque listo para pegar.
+3. Automático: se publica sin esperar al fundador y se le avisa en una línea
+   qué salió. La API de X es paga y el fundador no la quiere (16/10/2026), así
+   que X va por Buffer gratis: entra en el lugar que deja Instagram cuando
+   pase a Composio (desde el 21/10). Buffer no responde menciones: las
+   respuestas quedan como bloque listo para pegar. Sin canal, bloque listo
+   para pegar.
 
 ## Reglas para todo lo que sale
 
@@ -27,7 +31,9 @@ Antes de cualquier cosa:
 - Hasta 280 caracteres por posteo. La primera línea tiene que funcionar sola.
 - Link con nombre `/r/x-<pieza>` (fuente `twitter` en growth_sources y
   growth_tracking_links), en la primera respuesta del propio posteo, no en el
-  texto principal.
+  texto principal. En Buffer eso es un hilo de dos (`metadata.twitter.thread`
+  con los dos posteos, y el texto de afuera igual al primero). Si Buffer
+  gratis no deja hilos, el link va al final del posteo.
 - Hashtags: uno o ninguno.
 
 ## Qué hace
