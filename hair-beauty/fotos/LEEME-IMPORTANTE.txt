@@ -1,0 +1,28 @@
+ESTAS IMÁGENES SON DE MUESTRA — HAY QUE REEMPLAZARLAS
+=====================================================
+
+Las ocho imágenes de esta carpeta NO son trabajos de Didy.
+Son texturas generadas con la paleta del sitio, para poder mostrar
+cómo queda el diseño antes de tener las fotos reales.
+
+NO PUBLICAR EL SITIO ASÍ. En una peluquería de color, las fotos son
+la prueba del trabajo: si son inventadas, el sitio miente justo en
+lo único que la clienta vino a mirar.
+
+Para reemplazarlas: guardá las fotos reales con estos mismos nombres,
+en esta misma carpeta. No hay que tocar nada de código.
+
+  hero.jpg          la foto grande de la portada (vertical)
+  trabajo-01.jpg    galería, foto grande
+  antes-01.jpg      el "antes" del par
+  despues-01.jpg    el "después" del par
+  trabajo-02.jpg    galería, foto chica (izquierda)
+  trabajo-03.jpg    galería, foto chica (derecha)
+  trabajo-04.jpg    galería, foto grande
+  didy.jpg          retrato de Didy
+
+Todas verticales, con buena luz y SIN FILTRO: el color que se ve en
+la foto tiene que ser el color que sale del salón.
+
+El camino más rápido: bajar las fotos del propio Instagram de Didy
+(@didy_zarate). Son de ella, ya están sacadas y son trabajos reales.
