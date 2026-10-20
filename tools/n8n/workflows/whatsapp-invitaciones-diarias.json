@@ -1,0 +1,450 @@
+{
+  "name": "Tratto · WhatsApp · Invitaciones diarias (PENDIENTE CHIP)",
+  "active": false,
+  "nodes": [
+    {
+      "id": "Prueba-manual",
+      "name": "Prueba manual",
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        0
+      ],
+      "parameters": {}
+    },
+    {
+      "id": "Diario-11-Buenos-Aires",
+      "name": "Diario 11 Buenos Aires",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        0,
+        160
+      ],
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "cronExpression",
+              "expression": "0 11 * * *"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "Verificar-cuenta-y-plantilla",
+      "name": "Verificar cuenta y plantilla",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        240,
+        0
+      ],
+      "parameters": {
+        "method": "POST",
+        "url": "https://qglsonbcsncgekzbfafk.supabase.co/functions/v1/growth-whatsapp-webhook/health",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "supabaseApi",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "{\"workspace_id\": \"e92e7144-af22-4a98-9e18-52ca8d3cd0c3\"}",
+        "options": {
+          "timeout": 60000,
+          "response": {
+            "response": {
+              "fullResponse": true,
+              "neverError": true
+            }
+          }
+        }
+      },
+      "credentials": {
+        "supabaseApi": {
+          "id": "SELECCIONAR_EN_N8N",
+          "name": "Tratto · Supabase (service role)"
+        }
+      },
+      "retryOnFail": false
+    },
+    {
+      "id": "Cuenta-lista",
+      "name": "Cuenta lista",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        480,
+        0
+      ],
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "Cuenta lista",
+              "leftValue": "={{ $json.statusCode === 200 && $json.body.ok === true }}",
+              "rightValue": true,
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      }
+    },
+    {
+      "id": "Reservar-hasta-20",
+      "name": "Reservar hasta 20",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        720,
+        0
+      ],
+      "parameters": {
+        "method": "POST",
+        "url": "https://qglsonbcsncgekzbfafk.supabase.co/rest/v1/rpc/growth_wa_claim",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "supabaseApi",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "{\"p_workspace\": \"e92e7144-af22-4a98-9e18-52ca8d3cd0c3\", \"p_limit\": 20}",
+        "options": {
+          "timeout": 60000,
+          "response": {
+            "response": {
+              "fullResponse": true,
+              "neverError": true
+            }
+          }
+        }
+      },
+      "credentials": {
+        "supabaseApi": {
+          "id": "SELECCIONAR_EN_N8N",
+          "name": "Tratto · Supabase (service role)"
+        }
+      },
+      "retryOnFail": false
+    },
+    {
+      "id": "Hay-destinatarios",
+      "name": "Hay destinatarios",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        960,
+        0
+      ],
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "Hay destinatarios",
+              "leftValue": "={{ $json.statusCode === 200 && Array.isArray($json.body) && $json.body.length > 0 }}",
+              "rightValue": true,
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      }
+    },
+    {
+      "id": "Desplegar-reservas",
+      "name": "Desplegar reservas",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1200,
+        0
+      ],
+      "parameters": {
+        "jsCode": "return $json.body.map(j => ({ json: j }));"
+      }
+    },
+    {
+      "id": "Uno-por-vez",
+      "name": "Uno por vez",
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        1440,
+        0
+      ],
+      "parameters": {
+        "batchSize": 1,
+        "options": {}
+      }
+    },
+    {
+      "id": "Intentar-una-sola-vez",
+      "name": "Intentar una sola vez",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1680,
+        0
+      ],
+      "parameters": {
+        "method": "POST",
+        "url": "https://qglsonbcsncgekzbfafk.supabase.co/functions/v1/growth-whatsapp-webhook/dispatch",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "supabaseApi",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({id:$json.id,claim_token:$json.claim_token}) }}",
+        "options": {
+          "timeout": 60000,
+          "response": {
+            "response": {
+              "fullResponse": true,
+              "neverError": true
+            }
+          }
+        }
+      },
+      "credentials": {
+        "supabaseApi": {
+          "id": "SELECCIONAR_EN_N8N",
+          "name": "Tratto · Supabase (service role)"
+        }
+      },
+      "retryOnFail": false
+    },
+    {
+      "id": "API-aceptó",
+      "name": "API aceptó",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        1920,
+        0
+      ],
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "API aceptó",
+              "leftValue": "={{ $json.statusCode === 200 && $json.body.ok === true }}",
+              "rightValue": true,
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      }
+    },
+    {
+      "id": "Actualizar-informe-CRM",
+      "name": "Actualizar informe CRM",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1920,
+        320
+      ],
+      "parameters": {
+        "method": "POST",
+        "url": "https://qglsonbcsncgekzbfafk.supabase.co/rest/v1/rpc/growth_wa_daily_report",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "supabaseApi",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "{\"p_workspace\": \"e92e7144-af22-4a98-9e18-52ca8d3cd0c3\"}",
+        "options": {
+          "timeout": 60000,
+          "response": {
+            "response": {
+              "fullResponse": true,
+              "neverError": true
+            }
+          }
+        }
+      },
+      "credentials": {
+        "supabaseApi": {
+          "id": "SELECCIONAR_EN_N8N",
+          "name": "Tratto · Supabase (service role)"
+        }
+      },
+      "retryOnFail": false
+    }
+  ],
+  "connections": {
+    "Prueba manual": {
+      "main": [
+        [
+          {
+            "node": "Verificar cuenta y plantilla",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Diario 11 Buenos Aires": {
+      "main": [
+        [
+          {
+            "node": "Verificar cuenta y plantilla",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Verificar cuenta y plantilla": {
+      "main": [
+        [
+          {
+            "node": "Cuenta lista",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Cuenta lista": {
+      "main": [
+        [
+          {
+            "node": "Reservar hasta 20",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Actualizar informe CRM",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Reservar hasta 20": {
+      "main": [
+        [
+          {
+            "node": "Hay destinatarios",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Hay destinatarios": {
+      "main": [
+        [
+          {
+            "node": "Desplegar reservas",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Actualizar informe CRM",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Desplegar reservas": {
+      "main": [
+        [
+          {
+            "node": "Uno por vez",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Uno por vez": {
+      "main": [
+        [
+          {
+            "node": "Reservar hasta 20",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Intentar una sola vez",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Intentar una sola vez": {
+      "main": [
+        [
+          {
+            "node": "API aceptó",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "API aceptó": {
+      "main": [
+        [
+          {
+            "node": "Uno por vez",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Actualizar informe CRM",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "timezone": "America/Argentina/Buenos_Aires",
+    "saveDataSuccessExecution": "none",
+    "saveDataErrorExecution": "all",
+    "executionTimeout": 1800
+  }
+}

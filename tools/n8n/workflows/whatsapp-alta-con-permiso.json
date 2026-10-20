@@ -1,0 +1,160 @@
+{
+  "name": "Tratto · WhatsApp · Alta con permiso (PENDIENTE CHIP)",
+  "active": false,
+  "nodes": [
+    {
+      "id": "Datos-del-proveedor",
+      "name": "Datos del proveedor",
+      "type": "n8n-nodes-base.formTrigger",
+      "typeVersion": 2.2,
+      "position": [
+        0,
+        0
+      ],
+      "parameters": {
+        "formTitle": "Proveedores de Tratto por WhatsApp",
+        "formDescription": "Completá tus datos después de escribirnos por WhatsApp y aceptar las invitaciones de Tratto. No hace falta registrarte en la app. El formulario solo no concede permiso.",
+        "formFields": {
+          "values": [
+            {
+              "fieldLabel": "Teléfono WhatsApp internacional",
+              "placeholder": "+54 9 ...",
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "Nombre del negocio",
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "Nombre de contacto"
+            },
+            {
+              "fieldLabel": "Email (opcional)",
+              "fieldType": "email"
+            },
+            {
+              "fieldLabel": "Rubro exacto de Tratto",
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "Zona",
+              "fieldType": "dropdown",
+              "fieldOptions": {
+                "values": [
+                  {
+                    "option": "CABA"
+                  },
+                  {
+                    "option": "GBA Norte"
+                  },
+                  {
+                    "option": "GBA Oeste"
+                  },
+                  {
+                    "option": "GBA Sur"
+                  },
+                  {
+                    "option": "Buenos Aires (interior)"
+                  }
+                ]
+              },
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "Localidad o barrio",
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "Web del negocio (opcional)"
+            }
+          ]
+        },
+        "options": {},
+        "responseMode": "lastNode"
+      },
+      "webhookId": "2758cf49-0234-5c7b-8722-8cd4a0316a5c"
+    },
+    {
+      "id": "Validar-permiso-y-separar-del-mail",
+      "name": "Validar permiso y separar del mail",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        280,
+        0
+      ],
+      "parameters": {
+        "method": "POST",
+        "url": "https://qglsonbcsncgekzbfafk.supabase.co/rest/v1/rpc/growth_wa_qualify",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "supabaseApi",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({p_workspace:\"e92e7144-af22-4a98-9e18-52ca8d3cd0c3\",p_phone:$json[\"Teléfono WhatsApp internacional\"],p_company:$json[\"Nombre del negocio\"],p_name:$json[\"Nombre de contacto\"]||\"\",p_email:$json[\"Email (opcional)\"]||\"\",p_rubro:$json[\"Rubro exacto de Tratto\"],p_zone:$json.Zona,p_city:$json[\"Localidad o barrio\"],p_source:$json[\"Web del negocio (opcional)\"]||\"\"}) }}",
+        "options": {
+          "timeout": 60000,
+          "response": {
+            "response": {
+              "fullResponse": true,
+              "neverError": true
+            }
+          }
+        }
+      },
+      "credentials": {
+        "supabaseApi": {
+          "id": "SELECCIONAR_EN_N8N",
+          "name": "Tratto · Supabase (service role)"
+        }
+      },
+      "retryOnFail": false
+    },
+    {
+      "id": "Resultado-del-formulario",
+      "name": "Resultado del formulario",
+      "type": "n8n-nodes-base.form",
+      "typeVersion": 1,
+      "position": [
+        560,
+        0
+      ],
+      "parameters": {
+        "operation": "completion",
+        "completionTitle": "={{ $json.body.ok ? \"Datos recibidos\" : \"Falta completar un paso\" }}",
+        "completionMessage": "={{ $json.body.ok ? \"Tu invitación quedó en la cola. No creamos una cuenta en Tratto.\" : ($json.body.reason || \"No pudimos validar los datos. Contactanos por WhatsApp.\") }}",
+        "options": {}
+      }
+    }
+  ],
+  "connections": {
+    "Datos del proveedor": {
+      "main": [
+        [
+          {
+            "node": "Validar permiso y separar del mail",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Validar permiso y separar del mail": {
+      "main": [
+        [
+          {
+            "node": "Resultado del formulario",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "timezone": "America/Argentina/Buenos_Aires",
+    "saveDataSuccessExecution": "none",
+    "saveDataErrorExecution": "all",
+    "executionTimeout": 1800
+  }
+}
