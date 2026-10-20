@@ -1,0 +1,23 @@
+[Unit]
+Description=Tratto CRM events to the Codex coordination queue
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=tratto-codex
+Group=tratto-codex
+WorkingDirectory=/srv/tratto/tools/agent-notifier
+EnvironmentFile=/etc/tratto-codex/receiver.env
+ExecStart=/usr/bin/python3 /srv/tratto/tools/agent-notifier/receiver.py
+Restart=on-failure
+RestartSec=10
+UMask=0077
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ProtectHome=read-only
+ReadWritePaths=/var/lib/tratto-codex
+
+[Install]
+WantedBy=multi-user.target

@@ -1,0 +1,27 @@
+name: CRM agent event bridge
+on:
+  push:
+    paths: ['tools/agent-notifier/**', 'supabase/migrations/*codex_chat_eventos.sql', '.github/workflows/agent-notifier.yml']
+  pull_request:
+    paths: ['tools/agent-notifier/**', 'supabase/migrations/*codex_chat_eventos.sql', '.github/workflows/agent-notifier.yml']
+permissions:
+  contents: read
+jobs:
+  test:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    defaults:
+      run:
+        working-directory: tools/agent-notifier
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: tools/agent-notifier/package-lock.json
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: npm ci --ignore-scripts --no-audit --no-fund
+      - run: npm test

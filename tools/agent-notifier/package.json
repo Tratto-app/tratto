@@ -1,0 +1,7 @@
+{
+  "name": "tratto-agent-notifier-tests",
+  "private": true,
+  "type": "module",
+  "scripts": { "test": "node --test sql.test.mjs && python3 -m unittest discover -p 'test_*.py'" },
+  "devDependencies": { "@electric-sql/pglite": "0.5.10" }
+}
