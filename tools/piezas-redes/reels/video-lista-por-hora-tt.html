@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="es"><head><meta charset="utf-8">
+<link rel="stylesheet" href="publicidad.css"><link rel="stylesheet" href="formatos.css">
+</head><body>
+<!-- Formato lista · quienes ofrecen servicios · música cumbia · gancho resultado
+     · largo. Precios de precios_referencia ajustados a oct-2026 con la misma
+     cuenta que calculadora_comparar (1,02 por mes desde el relevamiento):
+     inglés general 1 h (jul) $21.000-27.000; entrenamiento a domicilio (abr)
+     $17.000-29.000; técnico de computadoras por hora (may) $22.000-39.000;
+     hora de diseño (abr) $17.000-39.000; guitarra 1 h (abr) $13.500-28.000;
+     limpieza del hogar por hora (abr) $9.000-14.500; masaje descontracturante
+     1 h (jul) $37.000-64.000. -->
+<script>
+window.RED = { url: 'trattoapp.com.ar/r/tt-por-hora' };
+window.GUION = {
+  formato: 'lista',
+  titulo: ['Cobrá lo justo:', '*esto se paga*', 'en el AMBA', 'en octubre'],
+  items: [
+    { texto: 'Clase de inglés', detalle: '$21.000 a $27.000 la hora' },
+    { texto: 'Entrenamiento', detalle: '$17.000 a $29.000 la clase a domicilio' },
+    { texto: 'Técnico de compu', detalle: '$22.000 a $39.000 la hora' },
+    { texto: 'Diseño gráfico', detalle: '$17.000 a $39.000 la hora' },
+    { texto: 'Clase de guitarra', detalle: '$13.500 a $28.000 la hora' },
+    { texto: 'Limpieza del hogar', detalle: '$9.000 a $14.500 la hora' },
+    { texto: 'Masajes', detalle: '$37.000 a $64.000 la hora' },
+  ],
+  remate: ['Pedidos', 'de tu zona,', '*sin abono.*'],
+  pregunta: ['¿Tu rubro está', '*arriba o abajo*?'],
+  chip: 'Contalo en los comentarios',
+  cierre: { a: 'Ofrecé tu servicio.', b: 'Gratis y sin abono.' },
+};
+</script>
+<script src="formatos.js"></script>
+<script src="publicidad-comun.js"></script>
+</body></html>

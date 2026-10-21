@@ -1,0 +1,29 @@
+<!doctype html>
+<html lang="es"><head><meta charset="utf-8">
+<link rel="stylesheet" href="publicidad.css"><link rel="stylesheet" href="formatos.css">
+</head><body>
+<!-- Formato quiz · clientes · música house · gancho problema · corto. Precio de
+     precios_referencia (Gestoría y trámites, Transferencia de auto, relevado
+     may-2026: $85.000 a $150.000) ajustado a oct-2026 con la misma cuenta que
+     calculadora_comparar (1,02 por mes): $94.000 a $166.000. Las otras
+     opciones son distractores, no precios. -->
+<script>
+window.RED = { url: 'trattoapp.com.ar/r/fb-gestor' };
+window.GUION = {
+  formato: 'quiz',
+  titulo: '¿Vendés el auto?',
+  subtitulo: '¿Cuánto cobra el gestor?',
+  zona: 'AMBA · octubre 2026',
+  rondas: [
+    { pregunta: 'Transferencia de un auto con gestor', icono: 'hojacheck', segundos: 3,
+      opciones: ['$30.000 a $50.000', '$94.000 a $166.000', '$250.000 a $400.000'], correcta: 1,
+      dato: '$94.000 a $166.000', fuente: 'Referencia oct-2026' },
+  ],
+  pregunta: ['¿Le *pegaste*?'],
+  chip: 'Comentá A, B o C',
+  cierre: { a: '¿Te pasaron otro precio?', b: 'Fijate si es justo.' },
+};
+</script>
+<script src="formatos.js"></script>
+<script src="publicidad-comun.js"></script>
+</body></html>
