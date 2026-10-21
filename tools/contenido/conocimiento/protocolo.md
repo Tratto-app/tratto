@@ -134,9 +134,9 @@ configuración está en `config/marca.json` → `links`, y `verificar` (con
 
 ## 9. Conectores (si están en la sesión)
 
-**Buffer** (desde el 15/10/2026, plan gratis, organización "My organization", zona America/Argentina/Buenos_Aires). Canales: Instagram @trattoapp_ `6ad164a1778b240e2f2159b4`, TikTok @trattoapp `6ad1641d778b240e2f21567f` y la Página de Facebook "Tratto • Servicios cerca tuyo" `6ad16bc0778b240e2f21a953`. Hasta 10 publicaciones programadas por canal a la vez.
+**Buffer** (desde el 15/10/2026, plan gratis, organización "My organization", zona America/Argentina/Buenos_Aires). Canales: TikTok @trattoapp `6ad1641d778b240e2f21567f`, la página de LinkedIn `6ad288cd778b240e2f2ede28` y X (cuenta de Tratto). Hasta 10 publicaciones programadas por canal a la vez. Facebook salió de Buffer el 16/10/2026 e Instagram el 21/10/2026: los dos van por Composio (Facebook programado en la propia Página; Instagram por la cola de growth_mkt_items y las rutinas que publican a la hora, ver `.claude/agents/mkt-redes.md`).
 
-- *Programar*: `create_post` **con el permiso total que dio la persona el 16/10/2026**: lo que pasó la cadena y los controles, sin esperar aprobación. Exige una URL pública del video o imagen (`assets: [{video: {url}}]`), `mode: customScheduled` y `dueAt` con `-03:00`. Instagram: `metadata.instagram = {type: 'reel', shouldShareToFeed: true}`; TikTok: `metadata.tiktok.title`. Antes de programar corre el hook (humanizador y link de un toque).
+- *Programar*: `create_post` **con el permiso total que dio la persona el 16/10/2026**: lo que pasó la cadena y los controles, sin esperar aprobación. Exige una URL pública del video o imagen (`assets: [{video: {url}}]`), `mode: customScheduled` y `dueAt` con `-03:00`. TikTok: `metadata.tiktok.title`. Antes de programar corre el hook (humanizador y link de un toque).
 - *Modo*: `schedulingType: automatic` (se publica solo). Lo eligió la persona el 16/10/2026: "que se publiquen solos los videos", y que se le avise qué sale y cuándo.
 - *Resultados*: `list_posts` con `includeMetrics: true` o `get_aggregated_post_metrics`.
 
