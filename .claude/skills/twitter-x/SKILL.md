@@ -17,8 +17,9 @@ Antes de cualquier cosa:
    `links.x`). Nunca la cuenta personal del fundador, igual que en LinkedIn.
 3. Automático: se publica sin esperar al fundador y se le avisa en una línea
    qué salió. La API de X es paga y el fundador no la quiere (16/10/2026), así
-   que X va por Buffer gratis, en el lugar que dejó Instagram al pasar a
-   Composio el 21/10/2026. Buffer no responde menciones: las
+   que X va por Buffer gratis: canal `6ad813fe778b240e2f73815a` (@AppTratto),
+   en el lugar que dejó Instagram al pasar a Composio el 21/10/2026. Antes de
+   publicar, `get_channel` tiene que decir twitter.com/AppTratto. Buffer no responde menciones: las
    respuestas quedan como bloque listo para pegar. Sin canal, bloque listo
    para pegar.
 

@@ -45,13 +45,14 @@
       "portada": "tools/piezas-redes/salida/11-portada-linkedin.png"
     },
     "x": {
-      "usuario": null,
+      "usuario": "@AppTratto",
       "solo_cuenta_tratto": true,
-      "conexion": "Composio (pendiente, 16/10/2026)",
-      "nota": "Fundador 16/10/2026: X automatizada con Composio, igual que LinkedIn. Poner el usuario de la cuenta de Tratto cuando el fundador lo pase.",
+      "conexion": "Buffer gratis (conectado el 21/10/2026 en el lugar que dejó Instagram). La API de X es paga y el fundador no la quiere.",
+      "nota": "Fundador 16/10/2026: X automatizada como las otras redes, solo la cuenta de Tratto (@AppTratto), nunca la personal. Link del perfil: /r/x-perfil. Cada posteo lleva su /r/x-<pieza> en la primera respuesta (hilo de dos en Buffer).",
       "link_perfil": "trattoapp.com.ar/r/x-perfil",
       "fuente_crm": "twitter",
-      "portada": "tools/piezas-redes/salida/10-portada-x.png"
+      "portada": "tools/piezas-redes/salida/10-portada-x.png",
+      "canal_buffer": "6ad813fe778b240e2f73815a"
     },
     "facebook": {
       "pagina": "Tratto • Servicios cerca tuyo",

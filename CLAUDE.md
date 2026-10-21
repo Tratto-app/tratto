@@ -70,8 +70,9 @@ gratis no permite primer comentario en LinkedIn.
 
 Skill `twitter-x` (`.claude/skills/twitter-x/SKILL.md`). Solo la cuenta de
 Tratto, nunca la personal del fundador. La API de X es paga y el fundador no
-la quiere: X va por Buffer gratis (en el lugar que dejó Instagram el
-21/10/2026) y se publica sin esperarlo, avisándole en una línea. Buffer no responde
+la quiere: X va por Buffer gratis (canal `6ad813fe778b240e2f73815a`, @AppTratto,
+conectado el 21/10/2026 en el lugar que dejó Instagram) y se publica sin
+esperarlo, avisándole en una línea. Buffer no responde
 menciones: esas respuestas quedan listas para pegar. No se sigue gente, no se
 dan "me gusta" ni se responde en masa a quien no nos mencionó (reglas de X
 para cuentas automatizadas).
