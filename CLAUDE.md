@@ -1,5 +1,13 @@
 # Tratto: reglas para Claude
 
+## Idioma: siempre en español
+
+La persona no entiende inglés (lo pidió dos veces, la última el 21/10/2026).
+Todo lo que le escribas va en español rioplatense: respuestas, avisos de
+progreso ("estoy haciendo…"), resúmenes, preguntas y avisos de las rutinas.
+Nunca una frase en inglés, aunque el resto de la conversación o una
+herramienta esté en inglés.
+
 ## Contenido para TikTok e Instagram: se aplica solo
 
 La persona no tiene que pedir cada pieza del sistema de contenido. Cada vez que
