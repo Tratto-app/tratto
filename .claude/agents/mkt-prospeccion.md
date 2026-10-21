@@ -274,7 +274,8 @@ mails y que gaste menos tokens". Desde el 22/10 **no mandes los mails vos con
 `send_message`**: armalos y dejalos en la cola `growth_mail_cola`. El workflow
 de n8n "Mails a proveedores · cola (Gmail trattoapp2)"
 (`tools/n8n/workflows/mails-a-proveedores-cola.json`) corre a las 10, 12, 14,
-16 y 18 de Argentina y manda uno cada 4,5 a 5,5 minutos desde trattoapp2. Las
+16 y 18 de Argentina y manda uno cada 4 minutos (fundador, 21/10/2026)
+desde trattoapp2. Las
 reglas las aplica la base (`mail_cola_siguiente`): pausa_hasta, meta del día,
 freno con 3 rebotes, horario de 9 a 20:30 y un solo envío a la vez. Si n8n lee
 un 5.7.1 o un aviso de límite en Gmail, pone la pausa de 3 días y deja una
@@ -295,7 +296,7 @@ Lo tuyo en cada corrida:
    cuando llegan los de la meta, y lo que sobre se cancela al día siguiente.
 4. Para cada uno: buscalo y guardalo como en los puntos 3 y 4, corré
    `tiene_mx.py`, armá el mail con `armar_mail.py` (n = su lugar en la cola de
-   hoy, desde 0, así rotan las versiones A, B, C y D) e insertalo:
+   hoy, desde 0: la versión cambia cada 15 mails, A, B, C y D) e insertalo:
 
 ```sql
 insert into growth_mail_cola (prospect_id, para, asunto, html, texto, remitente, fecha, orden, datos)
@@ -324,9 +325,10 @@ dominio y las reglas del contenido.
 Cada mail se arma con la herramienta del repo (versión 4, 16/10/2026). El
 fundador pidió que no salgan todos iguales: hay 4 versiones (A, B, C y D) con
 el mismo contenido y distinto asunto, apertura y orden, y se cambia de versión
-cada 5 envíos. Pasale `n` = el número de envío del día, empezando en 0 y
-contando también las reposiciones, y la herramienta elige sola
-((n div 5) mod 4: 0-4 A, 5-9 B, 10-14 C, 15-19 D, 20-24 A…):
+cada 15 envíos (fundador, 21/10/2026; antes era cada 5). Pasale `n` = el
+número de envío del día, empezando en 0 y contando también las reposiciones,
+y la herramienta elige sola ((n div 15) mod 4: 0-14 A, 15-29 B, 30-44 C,
+45-59 D, 60-74 A…):
 
 ```bash
 python3 tools/prospeccion/armar_mail.py '{"saludo": "ServiMAX Destapaciones",

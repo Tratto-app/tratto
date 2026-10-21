@@ -20,8 +20,9 @@ texto en body y el asunto en subject de send_message. Pedidos del fundador que f
 - 16/10/2026: "cada 5 mails cambiamos un poco el formato, no los hacemos todos
   iguales". Hay 4 versiones (A, B, C, D) con el mismo contenido y distinto
   asunto, apertura y orden. Con "n" (número de envío del día, desde 0) elige
-  sola: (n div 5) mod 4. Todos los asuntos llevan "Tratto", porque las
-  respuestas se buscan con subject:Tratto.
+  sola. Todos los asuntos llevan "Tratto", porque las respuestas se buscan
+  con subject:Tratto.
+- 21/10/2026: "que cada 15 mails cambie el formato": (n div 15) mod 4.
 - 16/10/2026: los mails en frío salen de una casilla aparte, no de
   trattoapp1@gmail.com (está vinculada a la app y a las tiendas). "remitente"
   es esa casilla y va en la firma.
@@ -46,7 +47,7 @@ def armar(saludo, gancho, servicio, zona, pedido, donde, variante=None, n=None, 
     if not remitente:
         raise SystemExit('falta "remitente": la casilla de la campaña (growth_mkt_ajustes.prospeccion.cuenta_envio)')
     if variante is None:
-        variante = VARIANTES[(int(n) // 5) % 4] if n is not None else 'A'
+        variante = VARIANTES[(int(n) // 15) % 4] if n is not None else 'A'
     variante = str(variante).upper()
     if variante not in VARIANTES:
         raise SystemExit(f'variante desconocida: {variante}')

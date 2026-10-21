@@ -332,7 +332,7 @@
     },
     {
       "id": "f722bd09-a56e-4ba5-b791-96c4219774ee",
-      "name": "Esperar 4,5 a 5,5 minutos",
+      "name": "Esperar unos 4 minutos",
       "type": "n8n-nodes-base.wait",
       "typeVersion": 1.1,
       "position": [
@@ -341,7 +341,7 @@
       ],
       "webhookId": "8e7175f9-63fa-4a80-90b7-60772b732194",
       "parameters": {
-        "amount": "={{ 270 + Math.floor(Math.random() * 61) }}",
+        "amount": "={{ 225 + Math.floor(Math.random() * 31) }}",
         "unit": "seconds"
       }
     }
@@ -476,14 +476,14 @@
       "main": [
         [
           {
-            "node": "Esperar 4,5 a 5,5 minutos",
+            "node": "Esperar unos 4 minutos",
             "type": "main",
             "index": 0
           }
         ]
       ]
     },
-    "Esperar 4,5 a 5,5 minutos": {
+    "Esperar unos 4 minutos": {
       "main": [
         [
           {
