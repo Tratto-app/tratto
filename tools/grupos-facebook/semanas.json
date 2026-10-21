@@ -1,0 +1,84 @@
+{
+  "nota": "Grupos de Facebook por familias de rubros (fundador, 21/10/2026): una familia por semana; cada día se suma a grupos de uno o dos rubros de la familia y al día siguiente publica en ellos. Nunca gasistas ni electricistas: requieren matrícula y no están en la app.",
+  "inicio": "2026-10-22",
+  "dias_por_semana": 7,
+  "excluir": ["gasista", "gas", "electricista", "electricidad"],
+  "semanas": [
+    {
+      "familia": "Oficios de obra y de la casa",
+      "rubros": [
+        {"rubro": "Pintura", "se_busca": "pintor", "buscar": ["pintores"]},
+        {"rubro": "Albañilería y refacciones", "se_busca": "albañil", "buscar": ["albañiles", "albañilería"]},
+        {"rubro": "Plomería y destapaciones", "se_busca": "plomero", "buscar": ["plomeros", "destapaciones"]},
+        {"rubro": "Techos e impermeabilización", "se_busca": "techista", "buscar": ["techistas", "impermeabilización"]},
+        {"rubro": "Durlock y yeso", "se_busca": "durlero", "buscar": ["durleros", "durlock"]},
+        {"rubro": "Pisos y revestimientos", "se_busca": "colocador de pisos", "buscar": ["colocadores de pisos", "porcelanato"]},
+        {"rubro": "Herrería y soldadura", "se_busca": "herrero", "buscar": ["herreros", "herrería"]},
+        {"rubro": "Carpintería y muebles", "se_busca": "carpintero", "buscar": ["carpinteros", "muebles a medida"]},
+        {"rubro": "Vidrios y aberturas", "se_busca": "vidriero", "buscar": ["vidrieros", "aberturas de aluminio"]},
+        {"rubro": "Cerrajería", "se_busca": "cerrajero", "buscar": ["cerrajeros"]},
+        {"rubro": "Arreglos generales", "se_busca": "persona para arreglos de la casa", "buscar": ["changas arreglos hogar", "mantenimiento del hogar"]},
+        {"rubro": "Aire acondicionado", "se_busca": "técnico de aire acondicionado", "buscar": ["técnicos de aire acondicionado", "instalación de aire acondicionado"]}
+      ]
+    },
+    {
+      "familia": "Clases",
+      "rubros": [
+        {"rubro": "Apoyo escolar y universitario", "se_busca": "maestra o profe particular", "buscar": ["maestras particulares", "apoyo escolar"]},
+        {"rubro": "Idiomas", "se_busca": "profe de inglés", "buscar": ["profesores de inglés", "clases de idiomas"]},
+        {"rubro": "Clases de música", "se_busca": "profe de música", "buscar": ["profesores de música", "clases de guitarra"]},
+        {"rubro": "Clases de manejo", "se_busca": "instructor de manejo", "buscar": ["instructores de manejo", "clases de manejo"]},
+        {"rubro": "Computación y capacitación", "se_busca": "profe de computación", "buscar": ["clases de computación", "capacitadores"]},
+        {"rubro": "Personal trainer, yoga y pilates", "se_busca": "personal trainer o profe de yoga", "buscar": ["personal trainers", "profesores de yoga", "pilates"]}
+      ]
+    },
+    {
+      "familia": "Hogar y cuidados",
+      "rubros": [
+        {"rubro": "Servicios de limpieza", "se_busca": "persona de limpieza", "buscar": ["empleadas de limpieza", "limpieza por horas"]},
+        {"rubro": "Jardinería y piletas", "se_busca": "jardinero", "buscar": ["jardineros", "piletas mantenimiento"]},
+        {"rubro": "Cuidado de adultos mayores", "se_busca": "cuidadora de adultos mayores", "buscar": ["cuidadoras", "acompañantes terapéuticos"]},
+        {"rubro": "Paseo y cuidado de mascotas", "se_busca": "paseador de perros", "buscar": ["paseadores de perros", "cuidado de mascotas"]},
+        {"rubro": "Peluquería y adiestramiento canino", "se_busca": "peluquero canino", "buscar": ["peluquería canina", "adiestradores"]},
+        {"rubro": "Costura y arreglos de ropa", "se_busca": "costurera", "buscar": ["costureras", "arreglos de ropa"]},
+        {"rubro": "Tapicería y restauración", "se_busca": "tapicero", "buscar": ["tapiceros", "restauración de muebles"]},
+        {"rubro": "Decoración e interiores", "se_busca": "decoradora", "buscar": ["decoradores", "diseño de interiores"]},
+        {"rubro": "Service de electrodomésticos", "se_busca": "técnico de electrodomésticos", "buscar": ["service de lavarropas", "técnicos de heladeras"]}
+      ]
+    },
+    {
+      "familia": "Autos y traslados",
+      "rubros": [
+        {"rubro": "Mecánica del automotor", "se_busca": "mecánico", "buscar": ["mecánicos"]},
+        {"rubro": "Chapa y pintura", "se_busca": "chapista", "buscar": ["chapistas", "chapa y pintura"]},
+        {"rubro": "Gomería y auxilio", "se_busca": "gomero", "buscar": ["gomerías", "auxilio mecánico"]},
+        {"rubro": "Lavado de autos", "se_busca": "lavador de autos a domicilio", "buscar": ["lavado de autos a domicilio", "detailing"]},
+        {"rubro": "Fletes y mudanzas", "se_busca": "fletero", "buscar": ["fletes", "mudanzas"]},
+        {"rubro": "Mandados y mensajería", "se_busca": "cadete o moto mandados", "buscar": ["cadetes", "mensajería en moto"]}
+      ]
+    },
+    {
+      "familia": "Eventos y belleza",
+      "rubros": [
+        {"rubro": "Animación y organización de eventos", "se_busca": "animador de fiestas", "buscar": ["animadores infantiles", "organizadores de eventos"]},
+        {"rubro": "Catering y pastelería", "se_busca": "pastelera o catering", "buscar": ["pasteleras", "catering"]},
+        {"rubro": "Fotografía y video", "se_busca": "fotógrafo", "buscar": ["fotógrafos", "filmación de eventos"]},
+        {"rubro": "Música y sonido (DJ)", "se_busca": "DJ", "buscar": ["DJs", "sonido para fiestas"]},
+        {"rubro": "Estética, maquillaje y peinados", "se_busca": "maquilladora o peinadora", "buscar": ["maquilladoras", "peinadoras", "manicuras"]},
+        {"rubro": "Masajes", "se_busca": "masajista", "buscar": ["masajistas"]}
+      ]
+    },
+    {
+      "familia": "Profesionales y digitales",
+      "rubros": [
+        {"rubro": "Contabilidad e impuestos", "se_busca": "contador", "buscar": ["contadores", "monotributo"]},
+        {"rubro": "Gestoría y trámites", "se_busca": "gestor", "buscar": ["gestores", "gestoría del automotor"]},
+        {"rubro": "Asistente administrativo", "se_busca": "asistente administrativa", "buscar": ["asistentes virtuales", "secretarias administrativas"]},
+        {"rubro": "Diseño gráfico", "se_busca": "diseñador gráfico", "buscar": ["diseñadores gráficos"]},
+        {"rubro": "Marketing y redes sociales", "se_busca": "community manager", "buscar": ["community managers", "marketing digital"]},
+        {"rubro": "Programación y desarrollo", "se_busca": "programador", "buscar": ["programadores", "desarrollo web"]},
+        {"rubro": "Reparación y soporte técnico", "se_busca": "técnico de PC y celulares", "buscar": ["técnicos de PC", "reparación de celulares"]}
+      ]
+    }
+  ]
+}
