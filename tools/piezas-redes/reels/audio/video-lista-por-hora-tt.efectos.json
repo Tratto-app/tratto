@@ -1,0 +1,127 @@
+[
+ {
+  "efecto": "sello",
+  "t": 0.05,
+  "db": -13
+ },
+ {
+  "efecto": "sello",
+  "t": 0.37,
+  "db": -13
+ },
+ {
+  "efecto": "sello",
+  "t": 0.69,
+  "db": -13
+ },
+ {
+  "efecto": "sello",
+  "t": 1.01,
+  "db": -13
+ },
+ {
+  "efecto": "sello",
+  "t": 2.43,
+  "db": -12
+ },
+ {
+  "efecto": "pop",
+  "t": 2.88,
+  "db": -17
+ },
+ {
+  "efecto": "sello",
+  "t": 5.33,
+  "db": -12
+ },
+ {
+  "efecto": "pop",
+  "t": 5.78,
+  "db": -17
+ },
+ {
+  "efecto": "sello",
+  "t": 8.43,
+  "db": -12
+ },
+ {
+  "efecto": "pop",
+  "t": 8.88,
+  "db": -17
+ },
+ {
+  "efecto": "sello",
+  "t": 11.37,
+  "db": -12
+ },
+ {
+  "efecto": "pop",
+  "t": 11.82,
+  "db": -17
+ },
+ {
+  "efecto": "sello",
+  "t": 14.22,
+  "db": -12
+ },
+ {
+  "efecto": "pop",
+  "t": 14.67,
+  "db": -17
+ },
+ {
+  "efecto": "sello",
+  "t": 17.2,
+  "db": -12
+ },
+ {
+  "efecto": "pop",
+  "t": 17.65,
+  "db": -17
+ },
+ {
+  "efecto": "sello",
+  "t": 20.18,
+  "db": -12
+ },
+ {
+  "efecto": "pop",
+  "t": 20.64,
+  "db": -17
+ },
+ {
+  "efecto": "sello",
+  "t": 22.77,
+  "db": -13
+ },
+ {
+  "efecto": "sello",
+  "t": 23.09,
+  "db": -13
+ },
+ {
+  "efecto": "sello",
+  "t": 23.41,
+  "db": -13
+ },
+ {
+  "efecto": "latigazo",
+  "t": 24.83,
+  "db": -16
+ },
+ {
+  "efecto": "pop",
+  "t": 25.63,
+  "db": -15
+ },
+ {
+  "efecto": "latigazo",
+  "t": 27.33,
+  "db": -16
+ },
+ {
+  "efecto": "pop",
+  "t": 27.68,
+  "db": -15
+ }
+]
