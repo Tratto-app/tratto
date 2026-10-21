@@ -1,6 +1,6 @@
 ---
 name: mkt-redes
-description: Departamento de Redes del equipo de marketing de Tratto. Crea y adapta reels, carruseles, historias y posts para TikTok, Instagram y Facebook con el sistema de contenido de Tratto, los programa en Buffer (TikTok, Instagram, LinkedIn) y en Facebook por Composio para que se publiquen solos (permiso total de la persona desde el 16/10/2026) y trae los resultados. Lo llama el CMO (skill equipo-marketing) o la persona directamente.
+description: Departamento de Redes del equipo de marketing de Tratto. Crea y adapta reels, carruseles, historias y posts para TikTok, Instagram y Facebook con el sistema de contenido de Tratto, los programa en Buffer (TikTok, LinkedIn y X) y en Instagram y Facebook por Composio para que se publiquen solos (permiso total de la persona desde el 16/10/2026) y trae los resultados. Lo llama el CMO (skill equipo-marketing) o la persona directamente.
 skills:
   - contenido
   - video-publicidad
@@ -69,14 +69,20 @@ detectaste en el punto 0):
 
 **2. Lo aprobado** (estado `aprobado`):
 
-> **Desde el 15/10/2026 se programa en Buffer** (plan gratis, organización
-> "My organization", zona America/Argentina/Buenos_Aires). Tiene 3 canales:
-> Instagram @trattoapp_ `6ad164a1778b240e2f2159b4`, TikTok @trattoapp
-> `6ad1641d778b240e2f21567f` y un lugar libre para LinkedIn (la Página de
-> Facebook salió de Buffer el 16/10/2026: ahora va por Composio, ver abajo).
-> Entran hasta 10 publicaciones programadas
-> por canal a la vez (se liberan a medida que salen). Metricool quedó sin cupo
-> para programar el 14/10 y sigue solo para métricas: no programes ahí.
+> **Dónde sale cada red** (todo gratis y automático):
+> - **Buffer** (plan gratis, organización "My organization", zona
+>   America/Argentina/Buenos_Aires, 3 lugares): TikTok @trattoapp
+>   `6ad1641d778b240e2f21567f`, la página de LinkedIn `6ad288cd778b240e2f2ede28`
+>   y X (cuenta de Tratto) en el lugar que dejó Instagram. Hasta 10
+>   programadas por canal a la vez.
+> - **Facebook** (la Página): por Composio, programado en la propia Página
+>   (ver abajo). Salió de Buffer el 16/10/2026.
+> - **Instagram** @trattoapp_: por Composio desde el 21/10/2026. Composio no
+>   programa: se pone en la cola y lo publican a la hora las rutinas
+>   "Instagram · publicar el reel de la hora" (lunes a viernes 18:00, sábados y
+>   domingos 10:00). Ver abajo.
+> - Metricool quedó sin cupo para programar el 14/10 y sigue solo para
+>   métricas: no programes ahí.
 
 - Si es un video y no existe el archivo: hacelo con `video-publicidad`,
   guardá el MP4 en `redes/`, hacé commit y push de la rama de trabajo y usá
@@ -88,13 +94,23 @@ detectaste en el punto 0):
   https://www.trattoapp.com.ar/redes/.
 - Mirá con `list_posts` (estado `scheduled`, el canal) que haya lugar: si ya
   hay 10, programá cuando salga alguno.
-- Programá en Buffer con `create_post`: `channelId` del canal, `mode:
-  customScheduled` y `dueAt` en hora argentina (`-03:00`), el video en
-  `assets: [{video: {url}}]`. Instagram: `metadata.instagram = {type: 'reel',
-  shouldShareToFeed: true}`. TikTok: `metadata.tiktok.title` (la primera línea
-  del texto aprobado). Cada red por separado, con su texto. Antes de programar
-  corre solo el control del humanizador y del link de un toque: si lo frena,
-  corregí solo lo marcado, contalo en el item y volvé a programar.
+- TikTok (y LinkedIn y X): programá en Buffer con `create_post`: `channelId`
+  del canal, `mode: customScheduled` y `dueAt` en hora argentina (`-03:00`),
+  el video en `assets: [{video: {url}}]`. TikTok: `metadata.tiktok.title` (la
+  primera línea del texto aprobado). Cada red por separado, con su texto.
+  Antes de programar corre solo el control del humanizador y del link de un
+  toque: si lo frena, corregí solo lo marcado, contalo en el item y volvé a
+  programar.
+- Instagram: corré `node tools/contenido/cli.mjs verificar` con `red:
+  'instagram'` sobre el texto (hace lo mismo que el control de Buffer) y, si
+  pasa, dejá un item con `datos.red = 'instagram'` y
+  `datos.instagram = { estado: 'en_cola', publicar_el: '<fecha y hora con
+  -03:00>', video_url: '<raw.githubusercontent con el sha>', texto,
+  verificado: true }`, más `datos.video`. Las rutinas de Instagram lo publican
+  a esa hora con INSTAGRAM_POST_IG_USER_MEDIA y _PUBLISH (cuenta
+  28801270606173329) y guardan el permalink. Instagram acepta los videos de
+  raw.githubusercontent (probado el 21/10). La historia con sticker de link la
+  sube la persona desde el celular: la API no permite stickers.
 - `schedulingType: automatic`: la persona eligió el 16/10/2026 que los videos
   se publiquen solos. Al programar, avisale en una línea qué sale, en qué red
   y cuándo.
@@ -103,12 +119,11 @@ detectaste en el punto 0):
 - Si es un carrusel: diseñalo con Canva (identidad del protocolo) o con
   `tools/piezas-redes`, mostralo en el item (`url` a la vista previa) y
   programalo igual.
-- Si es una historia con link: en Buffer, solo en Instagram, con
-  `metadata.instagram = {type: 'story', shouldShareToFeed: false, link:
-  '<url del sticker>'}`, sin texto y con la imagen o el video de `url`. La
-  primera vez, después de que salga revisá con `get_post` que el sticker haya
-  quedado; si no, avisale a la persona. Las encuestas y preguntas las pone la
-  persona a mano: el `cuerpo` del item tiene el link y el texto de cada sticker.
+- Si es una historia con link: desde el 21/10/2026 Instagram ya no está en
+  Buffer y la API de Instagram no pone stickers. Dejá la placa lista en el
+  item (`url`) con `datos.instagram.historia = { link, texto }`: la sube la
+  persona desde el celular con el sticker de link. Las encuestas y preguntas
+  también: el `cuerpo` del item tiene el link y el texto de cada sticker.
 - Facebook: cada reel de Instagram va también a la Página "Tratto • Servicios
   cerca tuyo" por Composio (conexión oficial de Meta, gratis):
   `FACEBOOK_CREATE_VIDEO_POST` con `page_id` 1315608798310221, `file_url` (el

@@ -31,10 +31,19 @@ una está en `.claude/skills/contenido/SKILL.md`, sección "Automático".
   `FACEBOOK_CREATE_VIDEO_POST` con `page_id` 1315608798310221, `published`
   false y `scheduled_publish_time` (se programa en la misma Página). Como no
   pasa por el hook, antes de programar corré `verificar` sobre el texto.
-- Buffer gratis tiene 3 lugares: TikTok, Instagram y uno libre (el que dejó
-  Facebook) para LinkedIn. Cuando Instagram pase también a Composio (el
-  miércoles 21/10, con una rutina que publique a la hora), el lugar que deja
-  es para X. Así las cinco redes salen solas sin pagar.
+- Instagram sale por Composio desde el 21/10/2026, no por Buffer. Composio no
+  programa: el reel va a la cola (`growth_mkt_items` con `datos.red =
+  'instagram'` y `datos.instagram = { estado: 'en_cola', publicar_el,
+  video_url, texto, verificado: true }`) y lo publican a la hora las rutinas
+  "Instagram · publicar el reel de la hora" (lunes a viernes 18:00, sábados y
+  domingos 10:00). Antes de ponerlo en la cola, `verificar` con `red:
+  'instagram'`. La historia con sticker de link la sube la persona desde el
+  celular (la API no pone stickers).
+- Buffer gratis tiene 3 lugares: TikTok, LinkedIn y X (el que dejó Instagram).
+  Así las cinco redes salen solas sin pagar.
+- Cada video nuevo cambia de formato y de música respecto de los últimos de
+  esa red (fundador, 21/10/2026): `node tools/contenido/cli.mjs variedad`
+  antes de hacerlo y `datos.video` en el item (skill `video-publicidad`).
 - Al entregar, decí en una línea qué piezas se aplicaron.
 
 Dos controles en código lo sostienen: `node tools/contenido/cli.mjs verificar`
@@ -61,8 +70,8 @@ gratis no permite primer comentario en LinkedIn.
 
 Skill `twitter-x` (`.claude/skills/twitter-x/SKILL.md`). Solo la cuenta de
 Tratto, nunca la personal del fundador. La API de X es paga y el fundador no
-la quiere: X va por Buffer gratis (en el lugar que deja Instagram desde el
-21/10) y se publica sin esperarlo, avisándole en una línea. Buffer no responde
+la quiere: X va por Buffer gratis (en el lugar que dejó Instagram el
+21/10/2026) y se publica sin esperarlo, avisándole en una línea. Buffer no responde
 menciones: esas respuestas quedan listas para pegar. No se sigue gente, no se
 dan "me gusta" ni se responde en masa a quien no nos mencionó (reglas de X
 para cuentas automatizadas).

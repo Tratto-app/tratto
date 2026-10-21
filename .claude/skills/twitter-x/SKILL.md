@@ -17,8 +17,8 @@ Antes de cualquier cosa:
    `links.x`). Nunca la cuenta personal del fundador, igual que en LinkedIn.
 3. Automático: se publica sin esperar al fundador y se le avisa en una línea
    qué salió. La API de X es paga y el fundador no la quiere (16/10/2026), así
-   que X va por Buffer gratis: entra en el lugar que deja Instagram cuando
-   pase a Composio (desde el 21/10). Buffer no responde menciones: las
+   que X va por Buffer gratis, en el lugar que dejó Instagram al pasar a
+   Composio el 21/10/2026. Buffer no responde menciones: las
    respuestas quedan como bloque listo para pegar. Sin canal, bloque listo
    para pegar.
 
@@ -32,8 +32,9 @@ Antes de cualquier cosa:
 - Link con nombre `/r/x-<pieza>` (fuente `twitter` en growth_sources y
   growth_tracking_links), en la primera respuesta del propio posteo, no en el
   texto principal. En Buffer eso es un hilo de dos (`metadata.twitter.thread`
-  con los dos posteos, y el texto de afuera igual al primero). Si Buffer
-  gratis no deja hilos, el link va al final del posteo.
+  con los dos posteos, y el texto de afuera igual al primero). Buffer gratis
+  permite un solo hilo programado por canal a la vez (revisado el 21/10/2026):
+  si ya hay uno esperando, el link va al final del posteo.
 - Hashtags: uno o ninguno.
 
 ## Qué hace
