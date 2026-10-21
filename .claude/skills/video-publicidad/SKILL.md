@@ -1,14 +1,64 @@
 ---
 name: video-publicidad
-description: Hace videos y publicidades de Tratto para TikTok e Instagram (reels, anuncios, promociones de la app, de la calculadora o de una función) con el estilo que eligió el fundador, "presentación de producto": fondo claro con color en movimiento, títulos grandes que entran con desenfoque, palabras que se reemplazan, lista con íconos, pantallas reales en un teléfono 3D y cierre oscuro con el logo, con música propia. Usar SIEMPRE que se pida un video, una publicidad, un anuncio o un reel nuevo, salvo que la persona pida otro estilo (por ejemplo, con su voz en off).
+description: Hace videos y publicidades de Tratto para TikTok e Instagram (reels, anuncios, promociones de la app, de la calculadora o de una función). Hay cinco formatos que rotan para no repetir (presentación de producto, chat, quiz de precios, lista con cortes secos y notas del celular), ocho músicas propias y la voz del fundador cuando hay grabación; el formato, la música, el gancho y el largo de cada video los elige `node tools/contenido/cli.mjs variedad` según el historial de la red. Usar SIEMPRE que se pida un video, una publicidad, un anuncio o un reel nuevo.
 ---
 
-# Videos de Tratto — estilo "presentación de producto"
+# Videos de Tratto
 
-Es el estilo por defecto para los videos nuevos. Lo pidió el fundador el
-2026-10-07 a partir de un anuncio de respond.io ("me gustó este estilo, guardalo
-para los próximos"). Los dos primeros: `tools/piezas-redes/reels/publicidad-calculadora.html`
-y `publicidad-app.html`. Copiá su estructura; no arranques de cero.
+## Ningún video igual al anterior (fundador, 21/10/2026)
+
+"Estás haciendo todas las publicaciones iguales, cambiando solo el texto, con
+la misma música y la misma modalidad. Quiero que cada una sea diferente a la
+anterior para probar qué se pega y qué no." Desde entonces:
+
+1. **Antes de cada video**, armá el historial de la red donde va a salir (las
+   piezas de growth_mkt_items con `datos.video`, su fecha de publicación y las
+   reproducciones como `vistas`) y corré
+   `node tools/contenido/cli.mjs variedad` con `{ red, historial }`. Devuelve
+   el formato, la música, el tipo de gancho y el largo, y por qué. No repite
+   lo de los últimos videos de esa red; explora hasta tener 3 videos medidos
+   de cada formato y después da 6 de cada 10 al que mejor rinde. El catálogo
+   está en `tools/contenido/conocimiento/variedad.json`.
+2. **Hacelo con eso**: el gancho, con esa categoría de `contenido-hooks`; el
+   largo, dentro de esos segundos.
+3. **Guardá en el item** `datos.video = { formato, musica, gancho, duracion }`
+   (lo devuelve `variedad` en `datos_video`) y el archivo. Sin eso la rotación
+   no aprende.
+
+| Formato | Cómo se ve | Archivos |
+|---|---|---|
+| `producto` | Fondo claro con manchas, títulos con desenfoque, teléfono 3D (abajo) | `publicidad-comun.js` + un `.js` por video |
+| `chat` | Conversación en modo oscuro que cuenta una historia (POV), con "escribiendo…", cortes ("3 días después…") y un remate | `formatos.js` |
+| `quiz` | Adiviná el precio: opciones A/B/C, cuenta regresiva y revelación con el precio real | `formatos.js` |
+| `lista` | Cortes secos de color con números gigantes, sin desenfoque | `formatos.js` |
+| `nota` | Notas del celular que se escriben solas y se tildan | `formatos.js` |
+| `voz` | La voz del fundador con subtítulos (solo con grabación nueva) | `comun-voz.js` |
+
+Los formatos de `formatos.js` son solo datos: un HTML chico con
+`window.RED = { url, ig? }` y `window.GUION = { formato, ... }` (mirá los
+ejemplos `video-chat-visto-tt.html`, `video-quiz-precios-tt.html`,
+`video-lista-errores-tt.html` y `video-nota-antes-tt.html`; el comentario de
+arriba de `formatos.js` explica cada campo). En el texto, `*así*` resalta con
+el color de acento. Se hacen de punta a punta con:
+
+```bash
+cd tools/piezas-redes/reels
+python3 hacer-video.py video-<formato>-<tema>-<red>.html --previa 1,4,8   # cuadros sueltos para revisar
+python3 hacer-video.py video-<formato>-<tema>-<red>.html --musica <estilo>  # música, efectos, mezcla y MP4
+```
+
+Músicas propias (`musica.py --estilo`): `pop`, `lofi`, `dembow`, `house`,
+`cumbia`, `tension`, `acustico` y `silencio` (solo efectos). Los sonidos en
+tendencia de TikTok o Instagram no se pueden poner por Buffer: se publica con
+la música propia del video.
+
+## Formato "presentación de producto"
+
+Lo pidió el fundador el 2026-10-07 a partir de un anuncio de respond.io ("me
+gustó este estilo, guardalo para los próximos"). Ya no es el de todos los
+videos: es uno de los formatos de la rotación. Los dos primeros:
+`tools/piezas-redes/reels/publicidad-calculadora.html` y `publicidad-app.html`.
+Copiá su estructura; no arranques de cero.
 
 ## Cómo se ve
 
@@ -30,8 +80,9 @@ y `publicidad-app.html`. Copiá su estructura; no arranques de cero.
   levemente girado.
 - **Cierre**: una cortina oscura (noche) se abre en círculo, aparece el ícono,
   el texto de cierre y la URL en mono verde claro.
-- **Sin voz.** Música propia + efectos (pop en lo que aparece, latigazo en los
-  cambios de escena, campanita para precios, sello para sellos).
+- **Sin voz.** Música propia (el estilo que diga `variedad`) + efectos (pop en
+  lo que aparece, latigazo en los cambios de escena, campanita para precios,
+  sello para sellos).
 - Duración: 20 a 25 segundos, 1080×1920, 30 fps.
 
 ## Reglas de contenido (no negociables)
@@ -124,7 +175,7 @@ cd tools/piezas-redes/reels
 # 2. Revisar cuadros sueltos
 python3 render-reel.py publicidad-<nombre>.html --segundos 25 --previa 1,4,8,12,16,20,23
 # 3. Música propia y efectos (el JSON dice qué efecto va en qué segundo)
-python3 musica.py audio/musica-<nombre>.wav --segundos 25 --cierre <segundo del cierre>
+python3 musica.py audio/musica-<nombre>.wav --segundos 25 --cierre <segundo del cierre> --estilo <estilo>
 python3 sonido.py audio/musica-<nombre>.wav audio/publicidad-<nombre>.efectos.json audio/publicidad-<nombre>-mezcla.m4a --segundos 25
 # 4. Video final
 python3 render-reel.py publicidad-<nombre>.html --segundos 25 --audio audio/publicidad-<nombre>-mezcla.m4a

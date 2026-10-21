@@ -19,6 +19,7 @@ import { informeIA, revisarIA } from './lib/humanizador.mjs';
 import { actualizar, estadoMemoria, leer, registrar, TIPOS } from './lib/memoria.mjs';
 import { analizarMetricas, medianas, rendimiento } from './lib/metricas.mjs';
 import { puntajeMarkdown, puntuar, revisarRubrica } from './lib/puntaje.mjs';
+import { variedadMarkdown, elegirVariedad } from './lib/variedad.mjs';
 import { verificacionMarkdown, verificarPieza } from './lib/verificar.mjs';
 
 const MAX_ENTRADA = 1024 * 1024;
@@ -36,6 +37,9 @@ Uso: node tools/contenido/cli.mjs <comando> [opciones]
                                       y, con red (instagram|tiktok), el link de un toque:
                                       reel {guion, hook?, duracion_seg?, texto?} · carrusel {slides, texto?}
                                       historia {pantallas} · publicacion {texto} · perfil {nombre?, usuario?, bio?, destacadas?}
+  variedad [--archivo F]              Cómo tiene que ser el próximo video de una red para no repetir: formato,
+                                      música, gancho y largo, con el motivo. { red, historial: [{ fecha, formato,
+                                      musica, gancho?, duracion_seg?, vistas? }], con_voz? }
   metricas                            Ranking de la cuenta por interacción y medianas
   metricas --comparar [--archivo F]   Compara un resultado (sin guardarlo) con las medianas de la cuenta
   registrar <tipo> [--archivo F]      Guarda en memoria. Tipos: ${Object.keys(TIPOS).join(', ')}
@@ -194,6 +198,12 @@ async function main(argv) {
       const r = verificarPieza(await leerEntrada(op), cargarConfig().marca);
       salida(op, r, verificacionMarkdown(r));
       return r.ok ? 0 : 3;
+    }
+
+    case 'variedad': {
+      const r = elegirVariedad(await leerEntrada(op));
+      salida(op, r, variedadMarkdown(r));
+      return 0;
     }
 
     case 'metricas': {

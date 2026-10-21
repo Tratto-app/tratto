@@ -43,9 +43,13 @@
   window.icono = (n, px = 92, color = 'currentColor') =>
     `<svg width="${px}" height="${px}" viewBox="0 0 64 64" fill="none" stroke="${color}" stroke-width="4" stroke-linecap="round" stroke-linejoin="round">${ICONOS[n]}</svg>`;
 
-  // Lienzo: fondo con manchas, capa de escenas y cortina oscura del cierre.
+  // Lienzo: fondo, capa de escenas y cortina oscura del cierre. El fondo claro
+  // con manchas es el del estilo "presentación de producto"; los otros formatos
+  // (formatos.js) piden su propio tema con PUBLI.tema y lo dibuja formatos.css.
+  const tema = window.PUBLI.tema || 'claro';
+  document.body.classList.add('tema-' + tema);
   document.body.insertAdjacentHTML('afterbegin', `
-    <div id="fondo"><div class="mancha m1"></div><div class="mancha m2"></div><div class="mancha m3"></div><div class="grano"></div></div>
+    <div id="fondo">${tema === 'claro' ? '<div class="mancha m1"></div><div class="mancha m2"></div><div class="mancha m3"></div>' : ''}<div class="grano"></div></div>
     <div id="escena"></div>
     <div id="noche"></div>
     <div style="position:absolute;opacity:0;pointer-events:none">

@@ -1,0 +1,100 @@
+/* Temas de los formatos nuevos (formatos.js). Cada uno se ve distinto a la
+   "presentación de producto" para poder comparar qué funciona en cada red,
+   pero con la misma identidad: verde bosque, latón, tinta e IBM Plex. */
+
+/* ---------- chat: conversación en modo oscuro ---------- */
+.tema-chat #fondo{background:radial-gradient(120% 80% at 50% 0%,#17312A 0%,#0E1A16 55%,#0A1411 100%)}
+.tema-chat .grano{opacity:.04}
+.f-titulo{position:absolute;left:90px;right:150px;top:250px;z-index:3;text-align:center}
+.f-titulo span{display:inline;background:#C9A227;color:#0E1815;font:700 58px/1.42 'IBM Plex Sans Condensed',sans-serif;
+  padding:6px 18px;border-radius:14px;-webkit-box-decoration-break:clone;box-decoration-break:clone}
+.chat-cab{transform-origin:50% 140%;position:absolute;left:70px;right:150px;top:420px;height:120px;display:flex;align-items:center;gap:24px;padding:0 30px;
+  background:rgba(252,251,248,.06);border:2px solid rgba(252,251,248,.08);border-radius:34px 34px 0 0;color:#FCFBF8}
+.chat-cab .av{width:84px;height:84px;border-radius:50%;background:#2B7E62;display:flex;align-items:center;justify-content:center;
+  font:700 44px 'IBM Plex Sans Condensed',sans-serif;color:#FCFBF8;flex:none}
+.chat-cab .nom{font:600 42px/1.1 'IBM Plex Sans',sans-serif}
+.chat-cab .est{font:500 28px/1.3 'IBM Plex Mono',monospace;color:#8FD9BC;margin-top:4px}
+.chat-zona{transform-origin:50% 40%;position:absolute;left:70px;right:150px;top:540px;height:840px;display:flex;flex-direction:column;justify-content:flex-end;
+  overflow:hidden;padding:0 28px 26px;background:rgba(252,251,248,.03);border:2px solid rgba(252,251,248,.06);border-top:0;border-radius:0 0 34px 34px}
+.msj{max-width:640px;width:fit-content;border-radius:36px;padding:22px 30px;margin-top:20px;font:500 44px/1.28 'IBM Plex Sans',sans-serif;display:none;flex:none}
+.msj.yo{margin-left:auto;background:#1E5D49;color:#FCFBF8;border-bottom-right-radius:10px;transform-origin:right bottom}
+.msj.el{background:#22302B;color:#F1EEE4;border-bottom-left-radius:10px;transform-origin:left bottom}
+.msj .hora{font:500 24px 'IBM Plex Mono',monospace;color:rgba(252,251,248,.55);margin-left:14px;white-space:nowrap}
+.msj.sis{margin:22px auto 0;background:rgba(252,251,248,.10);color:#B9C7C0;font:500 28px/1.2 'IBM Plex Mono',monospace;padding:12px 22px;border-radius:999px}
+.msj.escribe{background:#22302B;padding:26px 30px;border-bottom-left-radius:10px}
+.puntos{display:flex;gap:12px}.puntos i{width:16px;height:16px;border-radius:50%;background:#8FD9BC;display:block}
+.corte .resalta{color:#FCFBF8}
+.corte{position:absolute;inset:0;z-index:4;background:#0E1815;display:flex;align-items:center;justify-content:center;text-align:center;padding:0 120px;
+  font:700 104px/1.04 'IBM Plex Sans Condensed',sans-serif;color:#C9A227}
+.remate{position:absolute;left:60px;right:60px;top:330px;bottom:520px;z-index:4;background:#F3F6F2;border-radius:48px;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:0 60px;color:#0E1815;
+  box-shadow:0 -30px 80px rgba(0,0,0,.35)}
+.remate .icono-app{width:190px;height:190px;border-radius:48px;margin-bottom:46px}
+.remate .lin{font:700 84px/1.06 'IBM Plex Sans Condensed',sans-serif}
+.remate .lin.acento{color:#2B7E62}
+
+/* ---------- quiz: adiviná el precio ---------- */
+.tema-quiz #fondo{background:linear-gradient(165deg,#1E5D49 0%,#174A3B 50%,#0E3328 100%)}
+.tema-quiz #fondo::after{content:"";position:absolute;inset:0;opacity:.07;
+  background:repeating-linear-gradient(135deg,#FCFBF8 0 2px,transparent 2px 46px)}
+.tema-quiz .grano{opacity:.05}
+.q-cab{position:absolute;left:0;right:0;top:262px;text-align:center;font:600 34px/1 'IBM Plex Mono',monospace;letter-spacing:.12em;
+  text-transform:uppercase;color:#C9A227}
+.q-preg{position:absolute;left:100px;right:100px;top:330px;height:280px;display:flex;align-items:center;justify-content:center;gap:34px;
+  text-align:left;color:#FCFBF8;font:700 74px/1.04 'IBM Plex Sans Condensed',sans-serif}
+.q-preg .ic{width:150px;height:150px;border-radius:40px;background:#FCFBF8;color:#1E5D49;display:flex;align-items:center;justify-content:center;flex:none}
+.q-op{position:absolute;left:90px;width:820px;height:150px;border-radius:36px;background:#FCFBF8;display:flex;align-items:center;gap:34px;
+  padding:0 36px;box-shadow:0 22px 50px rgba(0,0,0,.25);color:#0E1815;font:600 54px/1 'IBM Plex Mono',monospace;letter-spacing:-.02em;white-space:nowrap}
+.q-op .le{width:90px;height:90px;border-radius:50%;background:#C9A227;color:#1A1405;display:flex;align-items:center;justify-content:center;
+  font:700 54px 'IBM Plex Sans Condensed',sans-serif;flex:none}
+.q-op.bien{background:#8FD9BC}.q-op.bien .le{background:#1E5D49;color:#FCFBF8}
+.q-op .marca{margin-left:auto;display:flex;opacity:0}
+.q-reloj{position:absolute;left:50%;top:1195px;width:180px;height:180px;margin-left:-90px}
+.q-reloj svg{position:absolute;inset:0}
+.q-reloj b{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font:700 92px 'IBM Plex Sans Condensed',sans-serif;color:#FCFBF8}
+.q-dato{position:absolute;left:0;right:0;top:1210px;text-align:center}
+.q-dato span{display:inline-flex;flex-direction:column;gap:8px;background:#0E1815;color:#FCFBF8;border-radius:30px;padding:22px 36px;
+  font:600 44px/1.15 'IBM Plex Mono',monospace;text-align:center}
+.q-dato small{font:500 28px/1.2 'IBM Plex Mono',monospace;color:#C9A227;letter-spacing:.06em;text-transform:uppercase}
+.q-intro{position:absolute;left:0;right:0;top:560px;text-align:center;color:#FCFBF8}
+.q-intro .t-xl{color:#FCFBF8}
+.q-intro .sello{color:#C9A227;background:rgba(14,24,21,.35);margin-top:56px;font-size:60px}
+
+/* ---------- lista: cortes secos con números gigantes ---------- */
+.tema-lista #fondo{background:#0E1815}
+.tema-lista .grano{opacity:.06}
+.l-tit{position:absolute;left:90px;right:120px;font:700 132px/.98 'IBM Plex Sans Condensed',sans-serif;color:#FCFBF8;letter-spacing:-.01em}
+.l-num{position:absolute;left:70px;top:250px;font:700 560px/.8 'IBM Plex Sans Condensed',sans-serif;letter-spacing:-.04em}
+.l-txt{position:absolute;left:90px;right:150px;top:800px;font:700 118px/1 'IBM Plex Sans Condensed',sans-serif;letter-spacing:-.01em}
+.l-det{position:absolute;left:94px;right:150px;top:1080px;font:600 46px/1.25 'IBM Plex Mono',monospace;letter-spacing:.01em}
+.l-cont{position:absolute;right:130px;top:330px;font:600 40px 'IBM Plex Mono',monospace;letter-spacing:.1em}
+
+/* ---------- nota: notas del celular ---------- */
+.tema-nota #fondo{background:#FBF7EC}
+.tema-nota #fondo::after{content:"";position:absolute;inset:0;
+  background:repeating-linear-gradient(180deg,transparent 0 87px,rgba(160,127,18,.13) 87px 89px);background-position:0 31px}
+.tema-nota .grano{opacity:.035}
+.n-hoja{position:absolute;inset:0;transform-origin:50% 35%}
+.n-barra{position:absolute;left:70px;right:70px;top:250px;display:flex;align-items:center;justify-content:space-between;
+  font:500 40px 'IBM Plex Sans',sans-serif;color:#A07F12}
+.n-barra b{font-weight:600}
+.n-fecha{position:absolute;left:0;right:0;top:330px;text-align:center;font:500 28px 'IBM Plex Mono',monospace;color:#8A8676;letter-spacing:.04em}
+.n-sello{position:absolute;right:150px;top:236px;z-index:2}
+.n-sello .sello{color:#A07F12;font-size:48px;padding:12px 28px;border-width:6px}
+.n-tit{position:absolute;left:90px;right:150px;top:400px;font:700 92px/1.04 'IBM Plex Sans Condensed',sans-serif;color:#0E1815}
+.n-tit mark{background:linear-gradient(transparent 55%,rgba(201,162,39,.75) 55%);color:inherit;background-repeat:no-repeat}
+.n-lineas{position:absolute;left:90px;right:150px;top:660px}
+.n-lin{display:flex;gap:24px;align-items:flex-start;font:500 50px/1.3 'IBM Plex Sans',sans-serif;color:#1B2622;min-height:89px;padding-top:12px}
+.n-caja{width:52px;height:52px;border:5px solid #A07F12;border-radius:50%;flex:none;margin-top:5px;display:flex;align-items:center;justify-content:center;color:#FBF7EC}
+.n-caja.ok{background:#A07F12}
+.n-cursor{display:inline-block;width:5px;height:58px;background:#C9A227;vertical-align:-10px;margin-left:3px}
+.n-remate{position:absolute;left:70px;right:110px;top:1240px;background:#0E1815;color:#FCFBF8;border-radius:34px;padding:30px 40px;
+  font:600 50px/1.2 'IBM Plex Sans Condensed',sans-serif}
+.n-remate b{color:#8FD9BC;font-weight:700}
+
+/* ---------- común: pregunta final ---------- */
+.f-preg{position:absolute;left:80px;right:110px;text-align:center;font:700 104px/1.02 'IBM Plex Sans Condensed',sans-serif}
+.tema-chat .f-preg,.tema-quiz .f-preg,.tema-lista .f-preg{color:#FCFBF8}
+.tema-nota .f-preg{color:#0E1815}
+.f-preg .resalta{color:#C9A227}
+.tema-nota .f-preg .resalta{color:#A07F12}

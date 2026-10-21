@@ -135,8 +135,23 @@ rutina "Redes · videos del día":
   clientes y quienes ofrecen servicios, y rubros distintos (eventos, clases,
   belleza, autos, mascotas, trámites, hogar). Nunca repitas en una red un
   video que ya salió en esa red.
+- **Ningún video igual al anterior** (fundador, 21/10/2026: "que no sean todas
+  iguales, con la misma música y la misma modalidad, para probar qué se pega
+  y qué no"). Antes de cada video nuevo, armá el historial de esa red con las
+  piezas de growth_mkt_items que tienen `datos.video` (fecha de publicación,
+  formato, música, gancho, duración y `metricas.reproducciones` como
+  `vistas`) y corré
+  `node tools/contenido/cli.mjs variedad` con `{ red, historial }`. Hacé el
+  video con el formato, la música, el tipo de gancho y el largo que devuelve
+  (nunca repite lo de los últimos videos de esa red; explora hasta tener 3
+  medidos de cada formato y después da 6 de cada 10 al que mejor rinde).
+  Formatos: `producto` (el de siempre), `chat`, `quiz`, `lista` y `nota`
+  (`tools/piezas-redes/reels/formatos.js`), y `voz` solo con una grabación
+  nueva del fundador. Guardá lo que devuelve en `datos.video` del item, más
+  el archivo. La versión para la otra red puede usar el mismo video: el
+  historial es por red.
 - Cada video nuevo pasa por la cadena completa (punto 1) y la prueba del
-  cerebro, y queda en la cola con `datos.buffer` por red.
+  cerebro, y queda en la cola con `datos.buffer` por red y `datos.video`.
 - Buffer gratis admite hasta 10 programados por canal a la vez: no programes
   más allá de pasado mañana.
 - Al terminar, avisale a la persona en una línea qué sale, en qué red y
@@ -153,6 +168,10 @@ rutina "Redes · videos del día":
   `select utm_campaign, count(*), count(registered_at) from growth_prospects where workspace_id = crm_ws() and utm_campaign = '<slug>' group by 1;`
 - Registrá el resultado en la memoria del sistema de contenido y, si hay un
   aprendizaje claro, un item `tipo='aprendizaje'`, `estado='hecho'`.
+- Los lunes, en el plan de la semana, una tabla por red: formato y música,
+  cuántos videos, mediana de reproducciones e interacción (salen de
+  `variedad`, en `tablas`). Con menos de 3 videos medidos por formato, decí
+  que todavía es poca muestra.
 
 ## Límites
 

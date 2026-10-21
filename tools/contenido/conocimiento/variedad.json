@@ -1,0 +1,48 @@
+{
+  "version": 1,
+  "nota": "Pedido del fundador del 21/10/2026: que los videos no salgan todos iguales (mismo estilo y misma música) para probar qué se pega y qué no en cada red. Cada video nuevo cambia de formato, de música, de tipo de gancho y de largo respecto de los últimos de esa red. Mientras un formato tenga menos de muestras_minimas videos medidos, se explora (gana el menos probado). Cuando todos tienen esas muestras, 6 de cada 10 videos van al que mejor rinde (mediana de la métrica) y el resto sigue explorando.",
+  "muestras_minimas": 3,
+  "reparto_aprovechar": 0.6,
+  "metrica": "vistas",
+  "dimensiones": {
+    "formato": {
+      "no_repetir_ultimos": 1,
+      "opciones": {
+        "producto": { "nombre": "Presentación de producto", "como": "skill video-publicidad: publicidad-comun.js con fondo claro, títulos con desenfoque y teléfono 3D", "musica_sugerida": ["pop", "house"] },
+        "chat": { "nombre": "Chat (POV)", "como": "formatos.js, formato chat: conversación que cuenta una historia, con cortes y remate", "musica_sugerida": ["lofi", "acustico"] },
+        "quiz": { "nombre": "Adiviná el precio", "como": "formatos.js, formato quiz: opciones, cuenta regresiva y revelación con precios de precios_referencia", "musica_sugerida": ["tension"] },
+        "lista": { "nombre": "Lista con cortes secos", "como": "formatos.js, formato lista: un color y un número gigante por ítem", "musica_sugerida": ["dembow", "house", "cumbia"] },
+        "nota": { "nombre": "Notas del celular", "como": "formatos.js, formato nota: se escribe sola y se tilda", "musica_sugerida": ["acustico", "lofi"] },
+        "voz": { "nombre": "Voz del fundador con subtítulos", "como": "comun-voz.js con una grabación nueva del fundador (tools/voz-en-off)", "automatico": false, "musica_sugerida": ["silencio", "lofi"] }
+      }
+    },
+    "musica": {
+      "no_repetir_ultimos": 3,
+      "opciones": {
+        "pop": { "nombre": "Pop electrónico (La menor, 112 bpm)" },
+        "lofi": { "nombre": "Lo-fi con piano eléctrico y vinilo (Do mayor, 82 bpm)" },
+        "dembow": { "nombre": "Reggaetón (La menor, 96 bpm)" },
+        "house": { "nombre": "House de cuatro tiempos (Mi menor, 124 bpm)" },
+        "cumbia": { "nombre": "Cumbia con güiro y acordeón (Re menor, 94 bpm)" },
+        "tension": { "nombre": "Cuenta regresiva con tic tac (Mi menor, 120 bpm)" },
+        "acustico": { "nombre": "Guitarra punteada y palmas (Sol mayor, 100 bpm)" },
+        "silencio": { "nombre": "Sin música, solo efectos" }
+      }
+    },
+    "gancho": {
+      "no_repetir_ultimos": 2,
+      "opciones": {
+        "curiosidad": {}, "contrarian": {}, "problema": {}, "resultado": {}, "error": {}, "lista": {},
+        "historia": {}, "pregunta": {}, "shock": {}, "autoridad": {}, "identificacion": {}, "intriga": {}
+      }
+    },
+    "duracion": {
+      "no_repetir_ultimos": 1,
+      "opciones": {
+        "corto": { "nombre": "Corto (8 a 14 s)", "segundos": [8, 14] },
+        "medio": { "nombre": "Medio (15 a 25 s)", "segundos": [15, 25] },
+        "largo": { "nombre": "Largo (26 a 45 s)", "segundos": [26, 45] }
+      }
+    }
+  }
+}
