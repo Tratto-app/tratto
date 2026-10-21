@@ -22,6 +22,7 @@ los workflows que la usan toman el valor nuevo.
 | Tratto · Secreto del aviso de matching (x-tratto-secreto) | Header Auth | secreto que manda la base | webhook `matching` (si no coincide, n8n responde 403) |
 | Tratto · Mercado Pago client secret | Custom Auth | `{"body":{"client_secret":"…"}}` | canje del código de OAuth |
 | Brevo SMTP (alertas) | SMTP | usuario y clave SMTP | alerta de errores |
+| Tratto · Gmail trattoapp2 | Gmail OAuth2 | acceso a la casilla de la campaña (trattoapp2@gmail.com) | mails a quienes ofrecen servicios (cola) |
 
 La validación de sesión (`/auth/v1/user`) usa la clave **pública** de Supabase
 (`anonKey`, en los nodos "Configuracion"): con el token del usuario alcanza.
@@ -49,6 +50,7 @@ cada valor.
 | `novedades-mail-cada-15-dias.json` | Mail de novedades (solo a quien aceptó) | Programado |
 | `novedades-push-cada-11-dias.json` | Push de novedades (solo a quien aceptó) | Programado |
 | `alerta-aviso-por-mail-cuando-falla-un-workflow.json` | Mail al equipo cuando falla un workflow | Error de otro workflow |
+| `mails-a-proveedores-cola.json` | Manda los mails a quienes ofrecen servicios que Claude deja en `growth_mail_cola`, uno cada 4,5 a 5,5 minutos desde trattoapp2. Las reglas (pausa, meta, freno de 3 rebotes, horario) están en la base: `mail_cola_siguiente`, `mail_cola_marcar` y `mail_cola_rechazos`. Si lee un 5.7.1 en Gmail, frena 3 días solo | Programado: 10, 12, 14, 16 y 18 h (desde el 22/10/2026) |
 
 Todos los workflows, salvo el de alerta, tienen como *Error workflow* el de
 alerta. Si se sube un workflow por la API, hay que mandar sus `settings`

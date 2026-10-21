@@ -267,7 +267,59 @@ select mkt_prospeccion_guardar($j$[
 
 Devuelve `id`, `ref` y `email` de cada uno guardado.
 
+## 5a. Desde el 22/10/2026 los mails los manda n8n (cola)
+
+Pedido del fundador (21/10/2026): "que no se demore casi 3 horas la corrida de
+mails y que gaste menos tokens". Desde el 22/10 **no mandes los mails vos con
+`send_message`**: armalos y dejalos en la cola `growth_mail_cola`. El workflow
+de n8n "Mails a proveedores · cola (Gmail trattoapp2)"
+(`tools/n8n/workflows/mails-a-proveedores-cola.json`) corre a las 10, 12, 14,
+16 y 18 de Argentina y manda uno cada 4,5 a 5,5 minutos desde trattoapp2. Las
+reglas las aplica la base (`mail_cola_siguiente`): pausa_hasta, meta del día,
+freno con 3 rebotes, horario de 9 a 20:30 y un solo envío a la vez. Si n8n lee
+un 5.7.1 o un aviso de límite en Gmail, pone la pausa de 3 días y deja una
+alerta sola (`mail_cola_rechazos`).
+
+Lo tuyo en cada corrida:
+1. Paso 1 (respuestas, bajas y rebotes de lo que ya salió), igual que siempre.
+   Mirá también los errores de la cola:
+   `select para, error from growth_mail_cola where estado = 'error' and fecha >= current_date - 1`.
+   Un error "Quedó a medio enviar" se revisa en Enviados de Gmail: si no
+   salió, se vuelve a `pendiente`; si salió, se marca con `mail_cola_marcar`.
+2. Pendientes de días anteriores: un solo rubro por día, así que se cancelan
+   (`update growth_mail_cola set estado = 'cancelado', error = 'Quedó de otro día' where estado = 'pendiente' and fecha < <hoy>`).
+   Los contactos siguen sin contactar y pueden volver en otra vuelta.
+3. faltan = meta del día − (enviados hoy sin rebote) − (pendientes de hoy).
+   Encolá `faltan` mails más 8 de reserva, del rubro del día y en el orden de
+   zonas de siempre. La reserva cubre los rebotes: la base deja de mandar
+   cuando llegan los de la meta, y lo que sobre se cancela al día siguiente.
+4. Para cada uno: buscalo y guardalo como en los puntos 3 y 4, corré
+   `tiene_mx.py`, armá el mail con `armar_mail.py` (n = su lugar en la cola de
+   hoy, desde 0, así rotan las versiones A, B, C y D) e insertalo:
+
+```sql
+insert into growth_mail_cola (prospect_id, para, asunto, html, texto, remitente, fecha, orden, datos)
+values ('<id del prospecto>', '<mail>', '<asunto>', $h$<html>$h$, $t$<texto>$t$,
+        '<cuenta_envio>', '<hoy>', <n>,
+        jsonb_build_object('agente', 'claude', 'variante', '<A|B|C|D>', 'gancho', '<gancho>',
+          'gancho_enviado', '<gancho>', 'zona_mail', '<barrio o localidad>', 'n_dia', <n>,
+          'fecha', '<hoy>', 'campania', '<campaña>', 'vuelta', <vuelta>, 'fuente_url', '<fuente>'));
+```
+
+   Cuando n8n lo manda, `mail_cola_marcar` pasa el contacto a `contacted` con
+   esos datos y el hilo de Gmail. No toques `contacted_at` vos.
+5. Terminá: informe corto con cuántos dejaste en la cola, de qué zonas y
+   cuántos créditos usaste. No esperes a que salgan: los manda n8n.
+
+Si el workflow de n8n no está activo (la cola de ayer sigue toda pendiente y
+no hay ningún `enviado`), no mandes vos: avisale al fundador que hay que
+activarlo o conectar Gmail en n8n.
+
 ## 5. El mail (uno por uno, con diseño y texto)
+
+Hasta el 21/10/2026 se mandaba así, con `send_message`. Desde el 22/10 el
+envío lo hace n8n (punto 5a): de acá vale cómo se arma el mail, el control del
+dominio y las reglas del contenido.
 
 Cada mail se arma con la herramienta del repo (versión 4, 16/10/2026). El
 fundador pidió que no salgan todos iguales: hay 4 versiones (A, B, C y D) con
