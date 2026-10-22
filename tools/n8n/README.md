@@ -50,7 +50,7 @@ cada valor.
 | `novedades-mail-cada-15-dias.json` | Mail de novedades (solo a quien aceptó) | Programado |
 | `novedades-push-cada-11-dias.json` | Push de novedades (solo a quien aceptó) | Programado |
 | `alerta-aviso-por-mail-cuando-falla-un-workflow.json` | Mail al equipo cuando falla un workflow | Error de otro workflow |
-| `mails-a-proveedores-cola.json` | Manda los mails a quienes ofrecen servicios que Claude deja en `growth_mail_cola`, uno cada 4 minutos desde trattoapp2. Las reglas (pausa, meta, freno de 3 rebotes, horario) están en la base: `mail_cola_siguiente`, `mail_cola_marcar` y `mail_cola_rechazos`. Si lee un 5.7.1 en Gmail, frena 3 días solo | Programado: 10, 12, 14, 16 y 18 h (desde el 22/10/2026). En n8n: `ZN2uqEJsobAUy6WJ`, activo; Gmail con la credencial `MTcKHQH27dQjwmLy` |
+| `mails-a-proveedores-cola.json` | Manda los mails a quienes ofrecen servicios que Claude deja en `growth_mail_cola`, uno cada 4 minutos desde trattoapp2. Las reglas (pausa, meta, freno de 3 rebotes, horario) están en la base: `mail_cola_siguiente`, `mail_cola_marcar` y `mail_cola_rechazos`. Desde el 22/10/2026 manda solo los de la fecha de hoy (la cola se carga por semana, los jueves). Si lee un 5.7.1 en Gmail, frena 3 días solo | Programado: cada media hora de 9 a 13:30 (desde el 22/10/2026: los 70 terminan antes de las 14). En n8n: `ZN2uqEJsobAUy6WJ`, activo; Gmail con la credencial `MTcKHQH27dQjwmLy` |
 
 Todos los workflows, salvo el de alerta, tienen como *Error workflow* el de
 alerta. Si se sube un workflow por la API, hay que mandar sus `settings`

@@ -45,7 +45,10 @@ cuentas de prueba de Apple). Por eso, y esto pesa más que lo de arriba:
   mandar más. Es por casilla: Codex y Claude nunca mandan al mismo tiempo.
 - **Freno a los 3 rebotes:** si hoy rebotaron 3, no se manda ni se repone
   nada más hasta mañana (antes era el 10 %).
-- **Sin recordatorios** hasta que la casilla nueva llegue a 70 por día.
+- **Recordatorio a las 19:30 (fundador, 22/10/2026):** uno solo, el mismo día,
+  a quien recibió la presentación y no respondió. Lo manda Codex en el mismo
+  hilo (`growth_mkt_ajustes.prospeccion.recordatorio`). Por eso la tanda de
+  mails tiene que terminar antes de las 14.
 - **Relevo (fundador, 16/10/2026):** Claude se quedaba sin uso semanal, así
   que del viernes 16/10 a las 21 al martes 20/10 a las 21 manda Codex
   (`growth_mkt_ajustes.prospeccion.relevo`). Fuera de ese tiempo manda uno
@@ -273,13 +276,25 @@ Pedido del fundador (21/10/2026): "que no se demore casi 3 horas la corrida de
 mails y que gaste menos tokens". Desde el 22/10 **no mandes los mails vos con
 `send_message`**: armalos y dejalos en la cola `growth_mail_cola`. El workflow
 de n8n "Mails a proveedores · cola (Gmail trattoapp2)"
-(`tools/n8n/workflows/mails-a-proveedores-cola.json`) corre a las 10, 12, 14,
-16 y 18 de Argentina y manda uno cada 4 minutos (fundador, 21/10/2026)
-desde trattoapp2. Las
+(`tools/n8n/workflows/mails-a-proveedores-cola.json`) prueba cada media hora
+de 9 a 13:30 de Argentina y manda uno cada 4 minutos (fundador, 21/10/2026)
+desde trattoapp2: los 70 del día terminan antes de las 14 (fundador,
+22/10/2026: "que arranquen a las 9 y terminen a las 2 de la tarde"). Las
 reglas las aplica la base (`mail_cola_siguiente`): pausa_hasta, meta del día,
-freno con 3 rebotes, horario de 9 a 20:30 y un solo envío a la vez. Si n8n lee
-un 5.7.1 o un aviso de límite en Gmail, pone la pausa de 3 días y deja una
-alerta sola (`mail_cola_rechazos`).
+freno con 3 rebotes, horario de 9 a 20:30, un solo envío a la vez y solo los
+de la fecha de hoy (los pendientes de días anteriores se cancelan solos). Si
+n8n lee un 5.7.1 o un aviso de límite en Gmail, pone la pausa de 3 días y deja
+una alerta sola (`mail_cola_rechazos`).
+
+**La cola se carga por semana (fundador, 22/10/2026: "dejá programados todos
+los mails en n8n con los 70 por día hasta el jueves que viene, para que no
+tengas que entrar todos los días").** La rutina "Mails · cargar la semana
+(jueves)" (14:17) reserva un rubro por día en `growth_mkt_rotacion`
+(`ultima_vez` = esa fecha, así `mkt_rubro_del_dia()` lo devuelve ese día) y
+lanza un subagente por día, de viernes a jueves: 78 por día (70 + 8 de
+reserva), `fecha` = el día del envío y `n` desde 0 en cada día. La primera
+semana (22 al 29/10) la cargó la sesión principal el 22/10. La rutina diaria
+de las 8:47 ya no busca: hace el paso 1 y solo completa si a un día le faltan.
 
 Lo tuyo en cada corrida:
 1. Paso 1 (respuestas, bajas y rebotes de lo que ya salió), igual que siempre.
@@ -488,10 +503,10 @@ Números de la semana: `select mkt_prospeccion_numeros(7);`
   trattoapp1@gmail.com (16/10/2026). Nunca por Brevo (prohíbe estas listas y
   arriesga los mails de la app), nunca con copia ni a varios a la vez.
 - **Una sola presentación por dirección, para siempre**, y como mucho un
-  recordatorio el mismo día a las 18:30, solo a quien no respondió (pedido
-  del fundador del 13/10 y del 14/10). El recordatorio lo manda Codex para
-  los envíos de los dos; no hay otros seguimientos. Pausado desde el
-  16/10/2026 hasta que la casilla nueva llegue a 70 por día.
+  recordatorio el mismo día, solo a quien no respondió (pedido del fundador
+  del 13/10 y del 14/10). Desde el 22/10/2026 sale a las 19:30 (antes 18:30) y
+  lo manda Codex, en el mismo hilo, para todos los de la cola de n8n; no hay
+  otros seguimientos. Nada si hay pausa o un 5.7.1 ese día.
 - Las respuestas nunca se envían solas: quedan como borrador.
 - La meta del día (`meta_por_fecha`: 50 el 17 y el 18/10, 70 desde el 19/10) en mails que **lleguen**, de un solo rubro (fundador, 15 y
   16/10/2026). Se reparte

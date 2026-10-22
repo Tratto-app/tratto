@@ -3,7 +3,7 @@
   "nodes": [
     {
       "id": "774b92ed-cc4a-48e3-8968-639d03f4a3f9",
-      "name": "10, 12, 14, 16 y 18 h",
+      "name": "De 9 a 13:30, cada media hora",
       "type": "n8n-nodes-base.scheduleTrigger",
       "typeVersion": 1.2,
       "position": [
@@ -15,7 +15,7 @@
           "interval": [
             {
               "field": "cronExpression",
-              "expression": "0 10,12,14,16,18 * * *"
+              "expression": "0,30 9-13 * * *"
             }
           ]
         }
@@ -347,7 +347,7 @@
     }
   ],
   "connections": {
-    "10, 12, 14, 16 y 18 h": {
+    "De 9 a 13:30, cada media hora": {
       "main": [
         [
           {
