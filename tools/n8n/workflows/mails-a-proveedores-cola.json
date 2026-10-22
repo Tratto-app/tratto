@@ -286,7 +286,13 @@
         "sendBody": true,
         "specifyBody": "json",
         "jsonBody": "={{ JSON.stringify({ p_id: $('Armar mail').item.json.id, p_ok: true, p_message_id: $json.id, p_thread_id: $json.threadId }) }}",
-        "options": {}
+        "options": {
+          "response": {
+            "response": {
+              "responseFormat": "text"
+            }
+          }
+        }
       },
       "credentials": {
         "supabaseApi": {
@@ -321,7 +327,13 @@
         "sendBody": true,
         "specifyBody": "json",
         "jsonBody": "={{ JSON.stringify({ p_id: $('Armar mail').item.json.id, p_ok: false, p_error: JSON.stringify($json.error || $json).slice(0, 1500) }) }}",
-        "options": {}
+        "options": {
+          "response": {
+            "response": {
+              "responseFormat": "text"
+            }
+          }
+        }
       },
       "credentials": {
         "supabaseApi": {
