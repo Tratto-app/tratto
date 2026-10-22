@@ -175,6 +175,13 @@ lo que queda del mes repartido en los días que faltan, así no sobra ni falta),
    no aparece, `curl -sL -m 40 https://r.jina.ai/<url>` (lector gratis, hasta
    20 por minuto). `firecrawl_scrape` cuando ninguna de las dos sirve
    (BuscaOficios, por ejemplo). Lo que se ahorra acá queda para más mails.
+   Desde el 22/10/2026 r.jina.ai da 401 desde este entorno: usá curl directo.
+3. **Páginas Amarillas por localidad, gratis (22/10/2026):** las fichas traen
+   el mail y el barrio del negocio. Se leen con curl y un User-Agent de
+   navegador completo (con "Mozilla/5.0" solo da 403). El 22/10 completó
+   mecánica del automotor en CABA sin gastar créditos y rindió en limpieza y
+   arreglos generales; en chapa y pintura, gomería y lavado de autos casi no
+   hay mails publicados.
 
 **BuscaOficios** (el 9/10/2026 dio 27 de los 47 mails; el fundador pidió
 priorizarlo): cada proveedor se anota ahí y publica su propio mail para que lo
