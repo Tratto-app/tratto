@@ -1,0 +1,688 @@
+{
+  "name": "Recordatorio a quienes no respondieron (día anterior, Gmail trattoapp2)",
+  "nodes": [
+    {
+      "id": "f781378c-a850-41f2-a128-87b0807e009b",
+      "name": "De 18 a 19:30, cada media hora",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        0,
+        0
+      ],
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "cronExpression",
+              "expression": "0,30 18-19 * * *"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "c2f8bee3-b197-4d0f-bc49-63bb1b6bdb44",
+      "name": "Configuracion",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        220,
+        0
+      ],
+      "parameters": {
+        "jsCode": "return [{ json: { supabaseUrl: 'https://qglsonbcsncgekzbfafk.supabase.co' } }];"
+      }
+    },
+    {
+      "id": "f5895418-f4d1-45be-a58e-f4366efaa648",
+      "name": "Buscar avisos de rechazo",
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "alwaysOutputData": true,
+      "position": [
+        440,
+        0
+      ],
+      "parameters": {
+        "operation": "getAll",
+        "limit": 25,
+        "filters": {
+          "q": "from:mailer-daemon newer_than:1d"
+        }
+      },
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "MTcKHQH27dQjwmLy",
+          "name": "Tratto · Gmail trattoapp2"
+        }
+      },
+      "webhookId": "f971dd8c-4998-44eb-bd5c-37621f73a7f1"
+    },
+    {
+      "id": "049f64d1-38aa-43aa-902c-262830d3ad5a",
+      "name": "Clasificar avisos",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        660,
+        0
+      ],
+      "parameters": {
+        "jsCode": "// Avisos de mailer-daemon de las últimas 24 horas. Bloqueo de Google (5.7.1,\n// límite de envío): la base pone la pausa de 3 días. Rebote: marca al contacto\n// y cuenta para el freno de 3 por día. Las demoras no cuentan.\nconst avisos = [];\nfor (const it of $input.all()) {\n  const m = it.json || {};\n  if (!m.id) continue;\n  const t = String(m.snippet || '');\n  let tipo = null;\n  if (/retras|demor|delay|todav[ií]a no se/i.test(t)) tipo = null;\n  else if (/5\\.7\\.1|message rejected|se bloque[oó]|l[ií]mite|5\\.4\\.5|rate limit|sending limit/i.test(t)) tipo = 'bloqueo';\n  else if (/no se entreg|no se encontr|no encontramos|no se encuentra|5\\.1\\.1|5\\.5\\.0|no est[aá] configurado|no pudo entregarse|address not found|does not exist/i.test(t)) tipo = 'rebote';\n  if (!tipo) continue;\n  const mails = (t.match(/[\\w.+-]+@[\\w-]+(?:\\.[\\w-]+)+/g) || []).filter((e) => !/trattoapp|googlemail|google\\.com/i.test(e));\n  avisos.push({ dsn_id: m.id, tipo, para: mails[0] || '', texto: t.slice(0, 500) });\n}\nreturn [{ json: { p_items: avisos } }];"
+      }
+    },
+    {
+      "id": "8534cf5b-d615-4990-ad4c-b2767e2c3221",
+      "name": "Registrar rechazos",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        880,
+        0
+      ],
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $('Configuracion').first().json.supabaseUrl }}/rest/v1/rpc/mail_cola_rechazos",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "supabaseApi",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ p_items: $json.p_items }) }}",
+        "options": {}
+      },
+      "credentials": {
+        "supabaseApi": {
+          "id": "xVc2ROmkhPTCf2XK",
+          "name": "Tratto · Supabase (service role)"
+        }
+      }
+    },
+    {
+      "id": "f0fc6f76-6fe8-459f-be44-a2e7a3de0187",
+      "name": "¿Google frenó?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [
+        1100,
+        0
+      ],
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose"
+          },
+          "conditions": [
+            {
+              "id": "f6ea4330-f196-4719-a70d-97128ca22993",
+              "leftValue": "={{ $json.bloqueo }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      }
+    },
+    {
+      "id": "b1ec82c7-06bc-4089-9fff-1b20e8d148f3",
+      "name": "Frenado: pausa de 3 días",
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        1320,
+        -160
+      ],
+      "parameters": {}
+    },
+    {
+      "id": "28363350-5e41-43a1-acf5-7312bd547aa8",
+      "name": "Siguiente recontacto",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1320,
+        20
+      ],
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $('Configuracion').first().json.supabaseUrl }}/rest/v1/rpc/mail_recordatorio_siguiente",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "supabaseApi",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({}) }}",
+        "options": {}
+      },
+      "credentials": {
+        "supabaseApi": {
+          "id": "xVc2ROmkhPTCf2XK",
+          "name": "Tratto · Supabase (service role)"
+        }
+      }
+    },
+    {
+      "id": "fcfc1d2a-589d-477c-8ce7-4c16956b137a",
+      "name": "¿Hay recontacto?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [
+        1540,
+        20
+      ],
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose"
+          },
+          "conditions": [
+            {
+              "id": "d804a4b9-1315-4b39-91fb-9af6f3c5bed3",
+              "leftValue": "={{ $json.id }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "notEmpty",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      }
+    },
+    {
+      "id": "2f4ae900-07e0-4378-b200-d9d7a534fe95",
+      "name": "Leer el hilo",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1760,
+        0
+      ],
+      "onError": "continueErrorOutput",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "MTcKHQH27dQjwmLy",
+          "name": "Tratto · Gmail trattoapp2"
+        }
+      },
+      "parameters": {
+        "method": "GET",
+        "url": "=https://gmail.googleapis.com/gmail/v1/users/me/threads/{{ $json.gmail_thread_id }}?format=metadata&metadataHeaders=From&metadataHeaders=Message-ID&metadataHeaders=Subject&metadataHeaders=References",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "gmailOAuth2",
+        "options": {}
+      }
+    },
+    {
+      "id": "5b67664d-6762-47a2-96c9-da2de3f4d7c9",
+      "name": "Armar recontacto",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1980,
+        -20
+      ],
+      "parameters": {
+        "mode": "runOnceForEachItem",
+        "jsCode": "// Lee el hilo de la presentación. Si hay cualquier mensaje que no es nuestro\n// (respuesta, respuesta automática o rebote), no se recontacta. Si no, arma la\n// respuesta en el mismo hilo (In-Reply-To y References) con el texto del\n// recontacto (fundador, 22/10/2026), pasado por el humanizador.\nconst fila = $('Siguiente recontacto').item.json;\nconst msgs = $json.messages || [];\nconst h = (m, n) => (((m.payload || {}).headers || []).find((x) => x.name.toLowerCase() === n.toLowerCase()) || {}).value || '';\nif (!msgs.length) return { json: { id: fila.id, saltear: true, motivo: 'No se encontró el hilo en Gmail' } };\nconst ajeno = msgs.find((m) => !/trattoapp2@gmail\\.com/i.test(h(m, 'From')));\nif (ajeno) return { json: { id: fila.id, saltear: true, motivo: ('Hay un mensaje en el hilo de ' + h(ajeno, 'From')).slice(0, 300) } };\nconst ultimo = msgs[msgs.length - 1];\nconst msgId = h(ultimo, 'Message-ID');\nconst refs = [h(ultimo, 'References'), msgId].filter(Boolean).join(' ');\nconst asunto = 'Re: ' + String(h(msgs[0], 'Subject') || fila.asunto).replace(/^re:\\s*/i, '');\nconst LINK = 'https://www.trattoapp.com.ar/?utm_source=prospeccion&utm_content=recordatorio';\nconst parrafos = [\n  'Hola, ¿cómo va?',\n  'Te escribí ayer desde Tratto y quería saber si llegaste a verlo, por si se te pasó.',\n  'Registrarte y publicar tu servicio es gratis. Cuando alguien de tu zona pide lo que hacés, te llega el aviso al celular y le mandás tu presupuesto por el chat de la app.',\n];\nconst texto = parrafos.join('\\n\\n') +\n  '\\n\\nTe podés anotar en www.trattoapp.com.ar eligiendo «Ofrezco un servicio» (en iPhone también está en la App Store). Si tenés alguna duda, respondé este mail.' +\n  '\\n\\nSaludos,\\nEquipo de Tratto\\nwww.trattoapp.com.ar\\n\\n--\\nSi no querés recibir más mensajes, respondé \"no\" y no te escribimos más.';\nconst p = (t) => `<p style=\"margin:0 0 14px\">${t}</p>`;\nconst html = '<div style=\"font:15px/1.6 Arial,Helvetica,sans-serif;color:#0E1815;max-width:560px\">' +\n  parrafos.map(p).join('') +\n  p(`Te podés anotar en <a href=\"${LINK}\" style=\"color:#1E5D49;font-weight:bold\">www.trattoapp.com.ar</a> eligiendo «Ofrezco un servicio» (en iPhone también está en la App Store). Si tenés alguna duda, respondé este mail.`) +\n  '<p style=\"margin:0 0 14px\">Saludos,<br><b>Equipo de Tratto</b></p>' +\n  '<p style=\"margin:22px 0 0;padding-top:12px;border-top:1px solid #E0DCD0;font:12px/1.5 Arial,Helvetica,sans-serif;color:#68766F\">Si no querés recibir más mensajes, respondé \"no\" y no te escribimos más.</p></div>';\nconst b64 = (s) => Buffer.from(String(s), 'utf8').toString('base64').replace(/.{76}(?=.)/g, '$&\\r\\n');\nconst frontera = 'tratto_' + Math.random().toString(36).slice(2);\nconst mime = [\n  `To: ${fila.para}`,\n  `Subject: =?UTF-8?B?${Buffer.from(asunto, 'utf8').toString('base64')}?=`,\n  ...(msgId ? [`In-Reply-To: ${msgId}`, `References: ${refs}`] : []),\n  'MIME-Version: 1.0',\n  `Content-Type: multipart/alternative; boundary=\"${frontera}\"`,\n  '',\n  `--${frontera}`, 'Content-Type: text/plain; charset=\"UTF-8\"', 'Content-Transfer-Encoding: base64', '', b64(texto),\n  `--${frontera}`, 'Content-Type: text/html; charset=\"UTF-8\"', 'Content-Transfer-Encoding: base64', '', b64(html),\n  `--${frontera}--`, '',\n].join('\\r\\n');\nreturn { json: { id: fila.id, saltear: false, threadId: fila.gmail_thread_id, raw: Buffer.from(mime, 'utf8').toString('base64url') } };"
+      }
+    },
+    {
+      "id": "b5e08970-0c4d-46e8-b3f0-150960452f8b",
+      "name": "¿Saltear?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [
+        2200,
+        -20
+      ],
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose"
+          },
+          "conditions": [
+            {
+              "id": "570e4ed5-1903-49a5-8643-ab2ba8cb8471",
+              "leftValue": "={{ $json.saltear }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      }
+    },
+    {
+      "id": "789abb12-2f42-4a12-b007-5085e3dc9432",
+      "name": "Marcar salteado",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        2420,
+        -200
+      ],
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $('Configuracion').first().json.supabaseUrl }}/rest/v1/rpc/mail_recordatorio_marcar",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "supabaseApi",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ p_id: $json.id, p_resultado: 'salteado', p_motivo: $json.motivo }) }}",
+        "options": {
+          "response": {
+            "response": {
+              "responseFormat": "text"
+            }
+          }
+        }
+      },
+      "credentials": {
+        "supabaseApi": {
+          "id": "xVc2ROmkhPTCf2XK",
+          "name": "Tratto · Supabase (service role)"
+        }
+      }
+    },
+    {
+      "id": "e5aeb0b4-f68d-4200-98e4-a3c5bde0072c",
+      "name": "Esperar unos segundos",
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        2640,
+        -200
+      ],
+      "webhookId": "79f2026d-9dcc-4faf-a169-085c62d87768",
+      "parameters": {
+        "amount": 5,
+        "unit": "seconds"
+      }
+    },
+    {
+      "id": "e5add88f-6614-4356-b98d-d877fd15e598",
+      "name": "Mandar recontacto",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        2420,
+        20
+      ],
+      "onError": "continueErrorOutput",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "MTcKHQH27dQjwmLy",
+          "name": "Tratto · Gmail trattoapp2"
+        }
+      },
+      "parameters": {
+        "method": "POST",
+        "url": "https://gmail.googleapis.com/gmail/v1/users/me/messages/send",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "gmailOAuth2",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ raw: $json.raw, threadId: $json.threadId }) }}",
+        "options": {}
+      }
+    },
+    {
+      "id": "6ae72df8-704b-4289-8581-5dfa347ecae9",
+      "name": "Marcar recontacto enviado",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        2640,
+        0
+      ],
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $('Configuracion').first().json.supabaseUrl }}/rest/v1/rpc/mail_recordatorio_marcar",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "supabaseApi",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ p_id: $('Armar recontacto').item.json.id, p_resultado: 'enviado', p_message_id: $json.id }) }}",
+        "options": {
+          "response": {
+            "response": {
+              "responseFormat": "text"
+            }
+          }
+        }
+      },
+      "credentials": {
+        "supabaseApi": {
+          "id": "xVc2ROmkhPTCf2XK",
+          "name": "Tratto · Supabase (service role)"
+        }
+      }
+    },
+    {
+      "id": "c748a628-17af-4e4b-81f6-921816b6f843",
+      "name": "Esperar un minuto",
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        2860,
+        0
+      ],
+      "webhookId": "126fa012-f95b-446c-bc5d-5b2f532482ce",
+      "parameters": {
+        "amount": "={{ 50 + Math.floor(Math.random() * 26) }}",
+        "unit": "seconds"
+      }
+    },
+    {
+      "id": "62d4734d-e593-4687-a33e-2d6d173307aa",
+      "name": "Marcar error",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        2640,
+        200
+      ],
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $('Configuracion').first().json.supabaseUrl }}/rest/v1/rpc/mail_recordatorio_marcar",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "supabaseApi",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ p_id: $('Siguiente recontacto').item.json.id, p_resultado: 'error', p_motivo: JSON.stringify($json.error || $json).slice(0, 1500) }) }}",
+        "options": {
+          "response": {
+            "response": {
+              "responseFormat": "text"
+            }
+          }
+        }
+      },
+      "credentials": {
+        "supabaseApi": {
+          "id": "xVc2ROmkhPTCf2XK",
+          "name": "Tratto · Supabase (service role)"
+        }
+      }
+    }
+  ],
+  "connections": {
+    "De 18 a 19:30, cada media hora": {
+      "main": [
+        [
+          {
+            "node": "Configuracion",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Configuracion": {
+      "main": [
+        [
+          {
+            "node": "Buscar avisos de rechazo",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Buscar avisos de rechazo": {
+      "main": [
+        [
+          {
+            "node": "Clasificar avisos",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Clasificar avisos": {
+      "main": [
+        [
+          {
+            "node": "Registrar rechazos",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Registrar rechazos": {
+      "main": [
+        [
+          {
+            "node": "¿Google frenó?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "¿Google frenó?": {
+      "main": [
+        [
+          {
+            "node": "Frenado: pausa de 3 días",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Siguiente recontacto",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Siguiente recontacto": {
+      "main": [
+        [
+          {
+            "node": "¿Hay recontacto?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "¿Hay recontacto?": {
+      "main": [
+        [
+          {
+            "node": "Leer el hilo",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        []
+      ]
+    },
+    "Leer el hilo": {
+      "main": [
+        [
+          {
+            "node": "Armar recontacto",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Marcar error",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Armar recontacto": {
+      "main": [
+        [
+          {
+            "node": "¿Saltear?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "¿Saltear?": {
+      "main": [
+        [
+          {
+            "node": "Marcar salteado",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Mandar recontacto",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Marcar salteado": {
+      "main": [
+        [
+          {
+            "node": "Esperar unos segundos",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Esperar unos segundos": {
+      "main": [
+        [
+          {
+            "node": "Siguiente recontacto",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Mandar recontacto": {
+      "main": [
+        [
+          {
+            "node": "Marcar recontacto enviado",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Marcar error",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Marcar recontacto enviado": {
+      "main": [
+        [
+          {
+            "node": "Esperar un minuto",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Esperar un minuto": {
+      "main": [
+        [
+          {
+            "node": "Buscar avisos de rechazo",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "timezone": "America/Argentina/Buenos_Aires",
+    "errorWorkflow": "LcYeloX0BIWbs3vN",
+    "saveDataSuccessExecution": "all"
+  },
+  "active": true
+}

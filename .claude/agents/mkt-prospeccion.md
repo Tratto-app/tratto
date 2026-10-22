@@ -45,10 +45,18 @@ cuentas de prueba de Apple). Por eso, y esto pesa más que lo de arriba:
   mandar más. Es por casilla: Codex y Claude nunca mandan al mismo tiempo.
 - **Freno a los 3 rebotes:** si hoy rebotaron 3, no se manda ni se repone
   nada más hasta mañana (antes era el 10 %).
-- **Recordatorio a las 19:30 (fundador, 22/10/2026):** uno solo, el mismo día,
-  a quien recibió la presentación y no respondió. Lo manda Codex en el mismo
-  hilo (`growth_mkt_ajustes.prospeccion.recordatorio`). Por eso la tanda de
-  mails tiene que terminar antes de las 14.
+- **Recontacto del día anterior a las 18 (fundador, 22/10/2026):** "si ayer
+  salió Service de electrodomésticos y hoy Jardinería y piletas, hoy a las 18
+  se recontacta a Service de electrodomésticos". Uno solo por dirección, en el
+  mismo hilo, a quien no respondió, no rebotó, no pidió la baja y no se
+  registró. Lo manda n8n (workflow "Recordatorio a quienes no respondieron",
+  `dIeCkRkoobCkhdWt`, uno por minuto de 18 a 21) con
+  `mail_recordatorio_siguiente` y `mail_recordatorio_marcar`; antes de cada
+  uno lee el hilo en Gmail y, si hay un mensaje que no es nuestro, lo saltea.
+  El estado queda en `growth_mail_cola.recordatorio_estado`.
+- **Revisión de la corrida a las 14:23 (fundador, 22/10/2026):** la rutina
+  "Mails · revisar la corrida de n8n" cuenta lo que salió de lo cargado para
+  el día, los rebotes y los errores de n8n, y se lo cuenta al fundador.
 - **Relevo (fundador, 16/10/2026):** Claude se quedaba sin uso semanal, así
   que del viernes 16/10 a las 21 al martes 20/10 a las 21 manda Codex
   (`growth_mkt_ajustes.prospeccion.relevo`). Fuera de ese tiempo manda uno
@@ -510,10 +518,10 @@ Números de la semana: `select mkt_prospeccion_numeros(7);`
   trattoapp1@gmail.com (16/10/2026). Nunca por Brevo (prohíbe estas listas y
   arriesga los mails de la app), nunca con copia ni a varios a la vez.
 - **Una sola presentación por dirección, para siempre**, y como mucho un
-  recordatorio el mismo día, solo a quien no respondió (pedido del fundador
-  del 13/10 y del 14/10). Desde el 22/10/2026 sale a las 19:30 (antes 18:30) y
-  lo manda Codex, en el mismo hilo, para todos los de la cola de n8n; no hay
-  otros seguimientos. Nada si hay pausa o un 5.7.1 ese día.
+  recordatorio, solo a quien no respondió (pedido del fundador del 13/10 y del
+  14/10). Desde el 22/10/2026 sale al día siguiente a las 18 y lo manda n8n, en
+  el mismo hilo, para todos los de la cola; no hay otros seguimientos. Nada si
+  hay pausa o un 5.7.1.
 - Las respuestas nunca se envían solas: quedan como borrador.
 - La meta del día (`meta_por_fecha`: 50 el 17 y el 18/10, 70 desde el 19/10) en mails que **lleguen**, de un solo rubro (fundador, 15 y
   16/10/2026). Se reparte
