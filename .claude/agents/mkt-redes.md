@@ -188,6 +188,28 @@ rutina "Redes · videos del día":
   `variedad`, en `tablas`). Con menos de 3 videos medidos por formato, decí
   que todavía es poca muestra.
 
+### Carruseles guardables y medición por ventanas (22/10/2026)
+
+Del análisis de Codex para el fundador (`tools/contenido/conocimiento/ideas-2026-10-22.md`):
+los carruseles de TikTok rindieron unas 5 veces más que los videos y los
+Reels de Instagram casi no se guardan ni se comparten.
+
+- 4 carruseles por semana (lunes, miércoles, viernes y domingo) del banco de
+  ideas, con la skill `contenido-carruseles`, hechos con
+  `tools/piezas-redes/carruseles/render-carrusel.py` (sale PNG y JPG). Van a
+  TikTok como publicación de fotos por Buffer y a Instagram por la cola de
+  Composio con `datos.instagram.tipo = 'carrusel'` e `imagenes` (las URLs JPG
+  del commit, de 2 a 10). Ese día el carrusel ocupa el lugar del reel de
+  Instagram; el video sigue en TikTok y Facebook.
+- Ficción con objetos que hablan (el sillón, la campera, el ropero) en
+  formato chat o nota, identificada como ficción.
+- Nada inventado que parezca real: ni trabajos, ni clientes, ni testimonios.
+- Métricas a las 24 h, 72 h y 7 días de publicada cada pieza, en
+  `metricas.h24`, `metricas.h72` y `metricas.d7` (vistas, guardados,
+  compartidos, comentarios, clics sin robots del link y registros con su
+  `link_id`). Se decide qué seguir por guardados y compartidos por alcance,
+  clics y registros, no solo por vistas.
+
 ## Límites
 
 - Links de un toque (protocolo de contenido, sección 8.2): en Instagram la
