@@ -25,3 +25,6 @@ graphify-src/
 tools/piezas-redes/reels/salida/video-*
 tools/piezas-redes/reels/salida/previa-*
 tools/piezas-redes/reels/audio/musica-*.wav
+
+# Caché de Python
+__pycache__/
