@@ -10,8 +10,8 @@ fundador lo apruebe.
 
 | Parte del video | En Tratto | Dónde vive |
 |---|---|---|
-| Anuncios: mirar a la competencia, escribir, hacer el video, la voz, mover la plata a los ganadores | Anuncios para clientes armados con nuestro armador de videos (gratis) y, cuando el fundador grabe, con su voz. Cada anuncio con su link con nombre. La plata se mueve dentro del tope semanal. | Esta carpeta, `tools/piezas-redes/reels/anuncio-*.html`, rutina "Anuncios · optimización y resumen de la mañana" |
-| Leer comentarios y mensajes | Instagram y Facebook: se leen y se responden con el link que corresponde. TikTok no deja leerlos desde afuera: queda a mano. | Rutina "Redes · comentarios y mensajes de Instagram y Facebook" |
+| Anuncios: mirar a la competencia, escribir, hacer el video, la voz, mover la plata a los ganadores | Anuncios para clientes armados con nuestro armador de videos (gratis) y, cuando el fundador grabe, con su voz. Cada anuncio con su link con nombre. La plata se mueve dentro del tope semanal. | Esta carpeta, `tools/piezas-redes/reels/anuncio-*.html`, rutina "Anuncios · optimización y resumen de la mañana" (`trig_0176yLQFUAZ2ZKWJwQ2vqMch`, 8:37) |
+| Leer comentarios y mensajes | Instagram y Facebook: se leen y se responden con el link que corresponde. TikTok no deja leerlos desde afuera: queda a mano. | Rutina "Redes · comentarios y mensajes de Instagram y Facebook" (`trig_01WjAbJVR8vWXYwqJqNzVc2y`, 11:17, 15:17 y 20:17) |
 | Agente que llama por teléfono | No va: las llamadas se pagan por minuto y en Tratto la "venta" es que la persona se anote. Lo reemplaza **trabajo listo**. | `supabase/migrations/20261023230000_trabajo_listo.sql`, `tools/n8n/workflows/trabajo-listo.json` |
 | Ver qué anuncio trajo a quién y un resumen por la mañana | Links con nombre por anuncio (`growth_tracking_links`) y registros con su `link_id`. Resumen de una página a las 8:37. | Rutina "Anuncios · optimización y resumen de la mañana" |
 
@@ -36,3 +36,9 @@ fundador lo apruebe.
 1. Crear la cuenta publicitaria de Meta (moneda pesos, zona horaria Buenos Aires, tarjeta) y conectarla a Composio (`metaads`), así la rutina lee los resultados y ajusta dentro del tope.
 2. Aprobar el texto del mail "trabajo listo" (`growth_mkt_ajustes.trabajo_listo.envio_aprobado` pasa a true).
 3. Grabar los guiones con su voz (cuando lo haga, se arma la versión con voz con `comun-voz.js`).
+
+## Dónde quedó cada cosa (23/10/2026)
+
+- Campaña en la cola del equipo: item `campania_clientes_1` (`para_aprobar`), con los textos y los pasos para cargarla.
+- El quiz sale en TikTok el lunes 26/10 a las 13:00 por Buffer (post `6adbec2f0b5343d070555c91`) para promocionarlo desde la app.
+- Videos: `redes/anuncio-quiz-precios.mp4`, `redes/anuncio-chat-canilla.mp4` y `redes/anuncio-lista-contratar.mp4`.
