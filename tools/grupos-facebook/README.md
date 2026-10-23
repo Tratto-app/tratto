@@ -47,6 +47,33 @@ publica en la Página), así que Claude prepara todo y el fundador hace el
   `utm_medium` grupo) en `growth_tracking_links`, así se ve qué grupo trae
   registros.
 
+## Antes de mandar un grupo: que se pueda publicar
+
+Pedido del fundador (23/10/2026): "revisá que sea un grupo que no necesite
+aprobación y que se pueda publicar". Ese día, de 41 grupos, 15 lo dejaron
+publicar, 21 no y 5 quedaron esperando que lo acepten. En los 21, Facebook
+no mostraba dónde escribir, pedía aprobación del administrador o decía que el
+grupo estaba en pausa.
+
+- El fundador publica como la **Página de Tratto**. Un grupo tiene que
+  aceptar Páginas para que la Página pueda escribir, y eso no se ve desde
+  afuera: Facebook no muestra nada sin cuenta (responde con error) y Firecrawl
+  no puede leer facebook.com. Lo único que se ve son los resultados del
+  buscador.
+- Con eso se filtra lo que se puede: una búsqueda `site:facebook.com/groups/<id>`
+  por candidato. Pasa si hay publicaciones de miembros de los últimos 14 días
+  (sin actividad suelen ser grupos en pausa) y alguna de alguien que ofrece su
+  servicio. Se descarta si el grupo dice que no permite publicidad,
+  autopromoción o Páginas, que hay que tener antigüedad o que solo publican
+  los administradores.
+- No alcanza para asegurarlo. "Herreros en Buenos Aires" y "Paseadores de
+  perros y adiestradores en Argentina" tenían ofertas de miembros de esa
+  misma semana y aun así no dejaron publicar a la Página. Por eso cuenta lo
+  que marca el fundador: estado `descartado` con `motivo` "El grupo no
+  permite publicar". Esos grupos no se vuelven a proponer y los lunes se
+  cuenta cuántos se pudieron publicar y cuántos no.
+- Cada grupo nuevo guarda `revision` = { fecha, actividad, motivo }.
+
 ## Dónde está cada cosa
 
 - La página del fundador: https://claude.ai/artifact/UwKXamTH4mSt1MAY9RW7xR
