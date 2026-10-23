@@ -5,7 +5,8 @@ os.makedirs(D+"/salida",exist_ok=True)
 PIEZAS={'perfil':('01-foto-de-perfil.png',2**0),'portada':('02-portada-facebook.png',1),'post1':('03-post-presentacion.png',1),
         'post2':('04-post-como-funciona.png',1),'post3':('05-post-proveedores.png',1),
         'cartel-prov':('06-cartel-proveedores-A4.png',2),'cartel-cli':('07-cartel-vecinos-A4.png',2),
-        'portada-wa':('08-portada-whatsapp.png',1)}
+        'portada-wa':('08-portada-whatsapp.png',1),
+        'portada-fb':('09-portada-facebook.png',1)}
 async def main():
     async with async_playwright() as p:
         b=await p.chromium.launch(executable_path="/opt/pw-browsers/chromium-1194/chrome-linux/chrome",

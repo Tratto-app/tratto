@@ -29,6 +29,14 @@
     billete: '<rect x="6" y="17" width="52" height="31" rx="5"/><circle cx="32" cy="32.5" r="7.5"/><path d="M15 25v15M49 25v15"/>',
     guardar: '<path d="M18 9h28v46L32 45 18 55z"/>',
     flecha: '<path d="M12 32h38M36 18l14 14-14 14"/>',
+    // checklist de mudanza (23/10/2026)
+    mueble: '<rect x="10" y="12" width="44" height="38" rx="4"/><path d="M10 31h44M32 12v38"/><path d="M25 22h-3M42 22h-3M25 41h-3M42 41h-3"/><path d="M15 50v5M49 50v5"/>',
+    rodillo: '<rect x="8" y="10" width="38" height="14" rx="4"/><path d="M46 17h7v14H32v8"/><rect x="28" y="39" width="8" height="16" rx="3"/>',
+    escoba: '<path d="M42 7L30 33"/><path d="M19 31l22 9-5 16H12z"/><path d="M21 44l-3 11M29 47l-3 8"/>',
+    llave: '<circle cx="19" cy="32" r="10"/><path d="M29 32h27M48 32v9M56 32v7"/>',
+    aire: '<rect x="6" y="13" width="52" height="21" rx="5"/><path d="M14 26h36"/><path d="M20 42c0 4-4 5-4 9M32 42c0 4-4 5-4 9M44 42c0 4-4 5-4 9"/>',
+    cuadro: '<path d="M32 9L19 22M32 9l13 13"/><rect x="10" y="22" width="44" height="32" rx="3"/><path d="M15 48l11-11 8 8 6-6 9 9"/>',
+    casa: '<path d="M8 30L32 10l24 20"/><path d="M14 26v28h36V26"/><path d="M27 54V40h10v14"/>',
   };
   const icono = (n, px = 64, color = 'currentColor', grosor = 4) =>
     `<svg width="${px}" height="${px}" viewBox="0 0 64 64" fill="none" stroke="${color}" stroke-width="${grosor}" stroke-linecap="round" stroke-linejoin="round">${ICONOS[n]}</svg>`;

@@ -136,3 +136,31 @@ Copias con URL pública (para Metricool) en `redes/publicidad-*.mp4` y
 a tomar de la mezcla bajado 0,5 dB, para que el pico quede debajo de −1 dBFS
 (−14,3 LUFS, pico −1,4 dBFS). No recomprimir el audio del MP4 ya hecho: deja un
 clic al principio.
+
+## Formatos que rotan (desde el 21/10/2026)
+
+Pedido del fundador: que los videos no salgan todos iguales (mismo estilo y
+misma música) para probar qué se pega y qué no. Además de la presentación de
+producto hay cuatro formatos armados solo con datos, en `reels/formatos.js` y
+`reels/formatos.css`:
+
+| Formato | Cómo se ve | Ejemplo |
+|---|---|---|
+| `chat` | Conversación en modo oscuro (POV) con "escribiendo…", cortes y un remate | `video-chat-visto-tt.html` |
+| `quiz` | Adiviná el precio: opciones A/B/C, cuenta regresiva y revelación | `video-quiz-precios-tt.html` |
+| `lista` | Cortes secos de color con números gigantes | `video-lista-errores-tt.html` |
+| `nota` | Notas del celular que se escriben solas y se tildan | `video-nota-antes-tt.html` |
+
+Música propia con ocho estilos (`musica.py --estilo pop|lofi|dembow|house|cumbia|tension|acustico|silencio`).
+Un video se hace de punta a punta con:
+
+```bash
+cd tools/piezas-redes/reels
+python3 hacer-video.py video-quiz-precios-tt.html --previa 1,5,9      # cuadros sueltos
+python3 hacer-video.py video-quiz-precios-tt.html --musica tension    # música, efectos, mezcla y MP4
+```
+
+Qué formato, música, gancho y largo toca lo decide
+`node tools/contenido/cli.mjs variedad` con el historial de la red (catálogo en
+`tools/contenido/conocimiento/variedad.json`). Cada pieza guarda lo que usó en
+`datos.video` para comparar después cuál rinde más.

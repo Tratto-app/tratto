@@ -2,7 +2,8 @@
   "nombre": "Tratto",
   "cuentas": {
     "instagram": "@trattoapp_",
-    "web": "www.trattoapp.com.ar"
+    "web": "www.trattoapp.com.ar",
+    "linkedin": "https://www.linkedin.com/company/145304785/"
   },
   "links": {
     "nota": "Los links escritos en el texto no se pueden tocar ni en Instagram ni en TikTok (regla de las dos redes). Cada pieza lleva el camino de un toque: en Instagram, la mención a la cuenta (se toca) y el nombre del link del perfil. En TikTok, el link del perfil cuando esté habilitado.",
@@ -13,11 +14,13 @@
         "Calculadora de precios",
         "Pedí un servicio",
         "Ofrezco un servicio"
-      ]
+      ],
+      "motivo": "Desde el 21/10/2026 se publica por Composio (cuenta 28801270606173329), no por Buffer: cola en growth_mkt_items y rutinas que publican a la hora."
     },
     "tiktok": {
       "usuario": "@trattoapp",
       "link_en_perfil": false,
+      "canal_buffer": "6ad1641d778b240e2f21567f",
       "motivo": "TikTok habilita el link del perfil con el Registro de empresas aprobado o con 1.000 seguidores (registro rechazado el 2026-10-07). Cuando se habilite, poner link_en_perfil en true."
     },
     "tiendas": {
@@ -32,6 +35,30 @@
         "publicada": false,
         "motivo": "Prueba cerrada de 14 días hasta el 21/10/2026; después hay que pedir acceso a producción. En Android Tratto se usa desde la web. Cuando salga, poner publicada en true."
       }
+    },
+    "linkedin": {
+      "pagina_id": "145304785",
+      "url": "https://www.linkedin.com/company/145304785/",
+      "solo_pagina": true,
+      "nota": "Fundador 16/10/2026: publicaciones únicamente en la página de Tratto, nunca en su perfil personal. Link de la página: /r/li-pagina. Cada publicación lleva su link /r/li-<pieza> al final del texto, antes de los hashtags (Buffer gratis no permite primer comentario en LinkedIn). Se publica por Buffer, canal 6ad288cd778b240e2f2ede28.",
+      "buffer_canal": "6ad288cd778b240e2f2ede28",
+      "portada": "tools/piezas-redes/salida/11-portada-linkedin.png"
+    },
+    "x": {
+      "usuario": "@AppTratto",
+      "solo_cuenta_tratto": true,
+      "conexion": "Buffer gratis (conectado el 21/10/2026 en el lugar que dejó Instagram). La API de X es paga y el fundador no la quiere.",
+      "nota": "Fundador 16/10/2026: X automatizada como las otras redes, solo la cuenta de Tratto (@AppTratto), nunca la personal. Link del perfil: /r/x-perfil. Cada posteo lleva su /r/x-<pieza> en la primera respuesta (hilo de dos en Buffer).",
+      "link_perfil": "trattoapp.com.ar/r/x-perfil",
+      "fuente_crm": "twitter",
+      "portada": "tools/piezas-redes/salida/10-portada-x.png",
+      "canal_buffer": "6ad813fe778b240e2f73815a"
+    },
+    "facebook": {
+      "pagina": "Tratto • Servicios cerca tuyo",
+      "page_id": "1315608798310221",
+      "por": "Composio (desde 16/10/2026), programación nativa de Meta",
+      "nota": "Ya no está en Buffer: el lugar quedó para LinkedIn."
     }
   },
   "que_es": "Marketplace de servicios de Argentina: la persona cuenta qué necesita (o le saca una foto), recibe presupuestos de quienes ofrecen ese servicio en su zona, y elige el que más le conviene.",

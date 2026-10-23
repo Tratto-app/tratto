@@ -1,6 +1,6 @@
 # Workflows de n8n
 
-Copia de los 12 workflows de n8n Cloud (`marketplace-servicios.app.n8n.cloud`),
+Copia de los workflows de n8n Cloud (`marketplace-servicios.app.n8n.cloud`),
 para tener historial en git y poder reconstruirlos si alguien rompe uno en el
 editor. **n8n sigue siendo la fuente de verdad**: lo que corre es lo que está
 allá, no estos archivos.
@@ -22,6 +22,7 @@ los workflows que la usan toman el valor nuevo.
 | Tratto · Secreto del aviso de matching (x-tratto-secreto) | Header Auth | secreto que manda la base | webhook `matching` (si no coincide, n8n responde 403) |
 | Tratto · Mercado Pago client secret | Custom Auth | `{"body":{"client_secret":"…"}}` | canje del código de OAuth |
 | Brevo SMTP (alertas) | SMTP | usuario y clave SMTP | alerta de errores |
+| Tratto · Gmail trattoapp2 | Gmail OAuth2 | acceso a la casilla de la campaña (trattoapp2@gmail.com) | mails a quienes ofrecen servicios (cola) |
 
 La validación de sesión (`/auth/v1/user`) usa la clave **pública** de Supabase
 (`anonKey`, en los nodos "Configuracion"): con el token del usuario alcanza.
@@ -49,10 +50,18 @@ cada valor.
 | `novedades-mail-cada-15-dias.json` | Mail de novedades (solo a quien aceptó) | Programado |
 | `novedades-push-cada-11-dias.json` | Push de novedades (solo a quien aceptó) | Programado |
 | `alerta-aviso-por-mail-cuando-falla-un-workflow.json` | Mail al equipo cuando falla un workflow | Error de otro workflow |
+| `mails-a-proveedores-cola.json` | Manda los mails a quienes ofrecen servicios que Claude deja en `growth_mail_cola`, uno cada 4 minutos desde trattoapp2. Las reglas (pausa, meta, freno de 3 rebotes, horario) están en la base: `mail_cola_siguiente`, `mail_cola_marcar` y `mail_cola_rechazos`. Desde el 22/10/2026 manda solo los de la fecha de hoy (la cola se carga por semana, los jueves). Si lee un 5.7.1 en Gmail, frena 3 días solo | Programado: cada media hora de 9 a 13:30 (desde el 22/10/2026: los 70 terminan antes de las 14). En n8n: `ZN2uqEJsobAUy6WJ`, activo; Gmail con la credencial `MTcKHQH27dQjwmLy` |
+| `recordatorio-dia-anterior.json` | Recontacto a quienes recibieron la presentación el día anterior y no respondieron (fundador, 22/10/2026): uno por dirección, en el mismo hilo, uno por minuto. Lee el hilo en Gmail antes de cada uno y saltea a quien contestó. Reglas en la base: `mail_recordatorio_siguiente` y `mail_recordatorio_marcar` | Programado: cada media hora de 18 a 19:30. En n8n: `dIeCkRkoobCkhdWt`, activo; Gmail con la credencial `MTcKHQH27dQjwmLy` |
 
 Todos los workflows, salvo el de alerta, tienen como *Error workflow* el de
 alerta. Si se sube un workflow por la API, hay que mandar sus `settings`
 completos: si no, se pierde esa opción.
+
+La API de n8n (`https://marketplace-servicios.app.n8n.cloud/api/v1`, encabezado
+`X-N8N-API-KEY`) la usa Claude con la clave guardada en la bóveda de Supabase
+(21/10/2026, sin vencimiento): `select decrypted_secret from
+vault.decrypted_secrets where name = 'n8n_api_key'`. La clave nunca va en el
+repo (es público) ni se muestra en el chat.
 
 ## Actualizar esta copia
 

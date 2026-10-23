@@ -1,0 +1,31 @@
+<!doctype html>
+<html lang="es"><head><meta charset="utf-8">
+<link rel="stylesheet" href="publicidad.css"><link rel="stylesheet" href="formatos.css">
+</head><body>
+<!-- Versión Facebook (link escrito). Formato quiz · clientes · música tension. Precios de precios_referencia
+     ajustados a oct-2026 (misma cuenta que calculadora_comparar): baño y corte
+     de perro $39.000 a $66.000; clase práctica de manejo $34.000 a $48.000.
+     Las otras opciones son distractores, no precios. -->
+<script>
+window.RED = { url: 'trattoapp.com.ar/r/fb-quiz-precios' };
+window.GUION = {
+  formato: 'quiz',
+  titulo: '¿Cuánto sale?',
+  subtitulo: 'Adiviná el precio',
+  zona: 'AMBA · octubre 2026',
+  rondas: [
+    { pregunta: 'Bañar y cortar a un perro mediano', icono: 'huella',
+      opciones: ['$15.000 a $25.000', '$39.000 a $66.000', '$95.000 a $130.000'], correcta: 1,
+      dato: '$39.000 a $66.000', fuente: 'Referencia oct-2026' },
+    { pregunta: 'Una clase práctica de manejo', icono: 'volante',
+      opciones: ['$34.000 a $48.000', '$12.000 a $18.000', '$70.000 a $95.000'], correcta: 0,
+      dato: '$34.000 a $48.000', fuente: 'Referencia oct-2026' },
+  ],
+  pregunta: ['¿Cuántas', '*acertaste*?'],
+  chip: 'Comentá: 0, 1 o 2',
+  cierre: { a: 'Antes de pagar,', b: 'fijate el precio.' },
+};
+</script>
+<script src="formatos.js"></script>
+<script src="publicidad-comun.js"></script>
+</body></html>

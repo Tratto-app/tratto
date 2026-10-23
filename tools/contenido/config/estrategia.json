@@ -10,19 +10,25 @@
       "id": "precios",
       "nombre": "Cuánto sale",
       "descripcion": "Rangos de precio de referencia por rubro y qué los cambia. El activo más guardable de la cuenta.",
-      "porcentaje": 30
+      "porcentaje": 25
     },
     {
       "id": "como_elegir",
       "nombre": "Cómo elegir bien",
       "descripcion": "Qué preguntar, qué incluye un presupuesto, señales de confianza, errores comunes al contratar.",
-      "porcentaje": 25
+      "porcentaje": 15
+    },
+    {
+      "id": "guardables",
+      "nombre": "Útil para guardar",
+      "descripcion": "Plantillas y checklists que la gente guarda o comparte: pedido incompleto contra pedido claro (con la plantilla final), qué fotos sacar antes de pedir presupuesto, checklist de mudanza o de un evento con los rubros que existen en la app, qué servicio consultar (decoración, tapicería o restauración). Sobre todo en carrusel. Sin prometer disponibilidad ni inventar trabajos.",
+      "porcentaje": 20
     },
     {
       "id": "situaciones",
       "nombre": "Situaciones de todos los días",
-      "descripcion": "Humor e identificación con situaciones de cualquier rubro: lo que pasa cuando se rompe algo, cuando no viene nadie, cuando te cobran de más, cuando buscás un profe, un flete o alguien para la mascota.",
-      "porcentaje": 20
+      "descripcion": "Humor e identificación con situaciones de cualquier rubro: lo que pasa cuando se rompe algo, cuando no viene nadie, cuando te cobran de más, cuando buscás un profe, un flete o alguien para la mascota. Incluye la ficción con objetos que hablan (el sillón, la campera, el ropero que piden ayuda), en formato chat o nota, siempre identificada como ficción.",
+      "porcentaje": 15
     },
     {
       "id": "proveedores",
@@ -38,20 +44,38 @@
     }
   ],
   "frecuencia": {
-    "reels_por_semana": 3,
-    "carruseles_por_semana": 2,
+    "videos_por_dia": {
+      "tiktok": 2,
+      "instagram": 1,
+      "facebook": 1
+    },
+    "nota": "Pedido del fundador el 16/10/2026: al menos 2 videos por día en TikTok y 1 por día en Instagram y en Facebook. Salen 2 videos nuevos por día: el A va a las tres redes y el B solo a TikTok. Facebook también usa los videos de antes que todavía no se publicaron ahí.",
+    "horarios_fijos": {
+      "tiktok": [
+        "12:00 (fin de semana 10:00)",
+        "18:00"
+      ],
+      "instagram": [
+        "18:00 (fin de semana 10:00)"
+      ],
+      "facebook": [
+        "19:00"
+      ]
+    },
+    "carruseles_por_semana": 4,
     "historias_por_dia": [
       3,
       6
-    ]
+    ],
+    "carruseles_nota": "22/10/2026 (análisis de Codex con datos de Metricool): los 2 carruseles de TikTok tuvieron 530 y 568 vistas; los 11 videos de TikTok, mediana 104; los 10 Reels de Instagram, mediana 20 vistas y 0 guardados, compartidos o comentarios. Es poca muestra, pero alcanza para probar más carruseles guardables: 4 por semana (lunes, miércoles, viernes y domingo), cada uno en TikTok (fotos) y en Instagram, donde ese día reemplaza al reel. Los videos de TikTok siguen como pidió el fundador."
   },
   "kpis": [
     "guardados por alcance",
     "compartidos por alcance",
+    "clics al link (sin robots)",
+    "registros atribuidos al link",
     "visitas al perfil",
-    "clics al link",
-    "respuestas a historias y DMs",
-    "pedidos con utm_source=instagram"
+    "respuestas a historias y DMs"
   ],
   "fuentes": "Propuesta, público y modelo: growth/supabase/seed/tratto.sql y tools/tiendas/FICHA-TIENDAS-TRATTO.md. Pilares y frecuencia: propuesta inicial, ajustar con resultados.",
   "horarios": {
@@ -63,5 +87,20 @@
       "mejores": "Todos los días 10 h (el pico); lunes a viernes también 11-12 h y 18 h; sábado y domingo 10 h y, el domingo, 18-19 h (hora de Argentina). Lo más bajo: de 21 h a 7 h.",
       "fuente": "Metricool, mejor horario para publicar en Instagram, consultado el 2026-10-07 para la semana 8-14/10 (la cuenta @trattoapp_ tiene 2 reels publicados: refleja el comportamiento general de Instagram, no datos propios). Volver a consultar cuando haya historial."
     }
+  },
+  "medicion": {
+    "ventanas": [
+      "24 h",
+      "72 h",
+      "7 días"
+    ],
+    "decidir_por": [
+      "guardados y compartidos por alcance",
+      "comentarios útiles",
+      "clics al link sin robots (growth_link_clicks)",
+      "registros con link_id del link de la pieza"
+    ],
+    "no_decidir_solo_por": "vistas",
+    "fuente": "Análisis de Codex del 22/10/2026: medir cada pieza a las 24 h, 72 h y 7 días y no elegir qué seguir solo por vistas."
   }
 }

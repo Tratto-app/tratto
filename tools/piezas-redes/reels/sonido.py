@@ -21,6 +21,12 @@ EFECTOS = {
     "campanita": "aevalsrc='0.5*sin(2*PI*1568*t)*exp(-3.5*t)+0.32*sin(2*PI*2352*t)*exp(-4.5*t)+0.18*sin(2*PI*3136*t)*exp(-6*t)':d=1.3",
     "tic": "aevalsrc='0.7*sin(2*PI*2400*t)*exp(-70*t)':d=0.05",
     "sello": "aevalsrc='0.9*sin(2*PI*(90+120*exp(-25*t))*t)*exp(-14*t)+0.5*(random(0)*2-1)*exp(-45*t)':d=0.35",
+    # Formatos nuevos (formatos.js): mensaje que sale, mensaje que llega,
+    # teclado (2 s de tecleo irregular), acierto del quiz
+    "enviado": "aevalsrc='0.5*sin(2*PI*(500+2600*t)*t)*exp(-14*t)':d=0.2",
+    "recibido": "aevalsrc='0.42*sin(2*PI*880*t)*exp(-12*t)+0.42*sin(2*PI*1320*(t-0.08))*exp(-10*(t-0.08))*gte(t,0.08)':d=0.6",
+    "tecleo": "aevalsrc='0.55*(random(0)*2-1)*(exp(-160*mod(t,0.083))+exp(-160*mod(t+0.031,0.121))+0.8*exp(-160*mod(t+0.017,0.157)))':d=2.0,highpass=f=1500,afade=t=out:st=1.8:d=0.2",
+    "acierto": "aevalsrc='0.4*sin(2*PI*1046.5*t)*exp(-4*t)+0.4*sin(2*PI*1318.5*(t-0.09))*exp(-4*(t-0.09))*gte(t,0.09)+0.45*sin(2*PI*1568*(t-0.18))*exp(-3*(t-0.18))*gte(t,0.18)':d=1.3",
 }
 
 
@@ -49,7 +55,7 @@ def main():
     mezcla = "[v]" + "".join(f"[e{i}]" for i in range(1, len(cues) + 1))
     pad = f",apad=whole_dur={a.segundos}" if a.segundos else ""
     filtros.append(f"{mezcla}amix=inputs={len(cues) + 1}:normalize=0:duration=first{pad},"
-                   "loudnorm=I=-14:TP=-1.5:LRA=9,aresample=48000[out]")
+                   "loudnorm=I=-14:TP=-1.5:LRA=9,aresample=48000,alimiter=limit=0.75:attack=1:release=60:level=disabled[out]")
     ff(*entradas, "-filter_complex", ";".join(filtros), "-map", "[out]", "-c:a", "aac", "-b:a", "192k", os.path.join(D, a.salida))
     print("listo:", a.salida)
 

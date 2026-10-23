@@ -1,0 +1,67 @@
+[
+ {
+  "efecto": "tecleo",
+  "t": 0.67,
+  "db": -20
+ },
+ {
+  "efecto": "tecleo",
+  "t": 1.93,
+  "db": -20
+ },
+ {
+  "efecto": "tecleo",
+  "t": 3.5,
+  "db": -20
+ },
+ {
+  "efecto": "tecleo",
+  "t": 5.22,
+  "db": -20
+ },
+ {
+  "efecto": "tecleo",
+  "t": 6.52,
+  "db": -20
+ },
+ {
+  "efecto": "tecleo",
+  "t": 7.73,
+  "db": -20
+ },
+ {
+  "efecto": "pop",
+  "t": 9.13,
+  "db": -14
+ },
+ {
+  "efecto": "tecleo",
+  "t": 0,
+  "db": -19
+ },
+ {
+  "efecto": "sello",
+  "t": 0.3,
+  "db": -10
+ },
+ {
+  "efecto": "latigazo",
+  "t": 11.73,
+  "db": -16
+ },
+ {
+  "efecto": "pop",
+  "t": 12.53,
+  "db": -15
+ },
+ {
+  "efecto": "latigazo",
+  "t": 14.23,
+  "db": -16
+ },
+ {
+  "efecto": "pop",
+  "t": 14.58,
+  "db": -15
+ }
+]

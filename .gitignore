@@ -20,3 +20,11 @@ SECURITY-AUDIT.md
 # Mapa del código (se arma con tools/graphify/armar.py, no se sube)
 graphify-out/
 graphify-src/
+
+# Salidas del render de los videos (el MP4 que se publica se copia a redes/)
+tools/piezas-redes/reels/salida/video-*
+tools/piezas-redes/reels/salida/previa-*
+tools/piezas-redes/reels/audio/musica-*.wav
+
+# Caché de Python
+__pycache__/

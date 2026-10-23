@@ -927,23 +927,61 @@
   @media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
 
   /* ═══════════ MODO DE INGRESO ═══════════ */
-  .roles{display:grid;gap:12px;margin-top:4px}
-  .rol{background:var(--claro);border:1px solid var(--linea);border-radius:var(--r);
-    padding:16px 18px;cursor:pointer;font:inherit;color:inherit;text-align:left;width:100%;
-    display:flex;align-items:center;gap:15px;
+  /* Dos puertas: cada rol tiene su color de punta a punta (verde quien pide,
+     latón quien ofrece) y cuenta en 3 pasos qué pasa después de elegirlo.
+     Mientras no se elige, el formulario y el botón no aparecen. */
+  #p-auth.eligiendo #a-datos > :not(.pestanas):not(#sel-rol),
+  #p-auth.eligiendo #a-enviar{display:none!important}
+  #a-datos{scroll-margin-top:84px}
+  .roles{display:grid;gap:14px;margin-bottom:6px}
+  .roles-tit{font-family:'IBM Plex Sans Condensed',sans-serif;font-weight:700;font-size:23px;
+    line-height:1.15;letter-spacing:-.015em}
+  .roles-txt{font-size:13.5px;color:var(--gris);margin-top:6px;line-height:1.5}
+  .rol, .sello-rol{--c:var(--verde);--c-tinte:rgba(30,93,73,.07);--c-borde:rgba(30,93,73,.3)}
+  #rol-proveedor, .sello-rol[data-rol="proveedor"]{
+    --c:var(--laton-osc);--c-tinte:rgba(201,162,39,.13);--c-borde:rgba(138,110,16,.38)}
+  .rol{display:block;width:100%;padding:0;overflow:hidden;cursor:pointer;
+    font:inherit;color:inherit;text-align:left;background:var(--claro);
+    border:1.5px solid var(--c-borde);border-radius:var(--r);box-shadow:0 1px 2px rgba(14,24,21,.06);
     transition:border-color .16s,box-shadow .16s,transform .1s}
   .rol:active{transform:scale(.99)}
-  .rol.elegido{border-color:var(--verde);box-shadow:0 0 0 3px rgba(30,93,73,.13)}
-  .rol-ico{width:44px;height:44px;border-radius:11px;background:var(--claro-2);flex:none;
-    display:flex;align-items:center;justify-content:center;border:1px solid var(--linea)}
-  .rol-ico svg{width:22px;height:22px;color:var(--verde);stroke-width:1.8}
-  .rol.elegido .rol-ico{background:var(--verde);border-color:var(--verde)}
-  .rol.elegido .rol-ico svg{color:#fff}
-  #rol-proveedor:not(.elegido) .rol-ico svg{color:var(--laton-osc)}
-  #rol-proveedor.elegido{border-color:var(--laton-osc);box-shadow:0 0 0 3px rgba(201,162,39,.16)}
-  #rol-proveedor.elegido .rol-ico{background:var(--laton-osc);border-color:var(--laton-osc)}
-  .rol-tit{font-family:'IBM Plex Sans Condensed',sans-serif;font-weight:700;font-size:17px;line-height:1.2}
-  .rol-txt{font-size:12.5px;color:var(--gris);margin-top:4px;line-height:1.45}
+  .rol.elegido{border-color:var(--c);box-shadow:0 0 0 3px var(--c-tinte)}
+  .rol:focus-visible{outline:2px solid var(--c);outline-offset:2px}
+  .rol-cab{display:flex;align-items:center;gap:14px;padding:16px 16px 15px;background:var(--c-tinte)}
+  .rol-ico, .sello-rol-ico{flex:none;display:flex;align-items:center;justify-content:center;background:var(--c)}
+  .rol-ico{width:50px;height:50px;border-radius:12px}
+  .rol-ico svg{width:26px;height:26px;color:#fff;stroke-width:1.8}
+  .rol-nom{display:block;min-width:0}
+  .rol-para, .sello-rol-kick{display:block;font-family:'IBM Plex Mono',monospace;font-size:9.5px;
+    letter-spacing:.16em;text-transform:uppercase;color:var(--c)}
+  .rol-para{margin-bottom:4px}
+  .rol-tit{display:block;font-family:'IBM Plex Sans Condensed',sans-serif;font-weight:700;
+    font-size:21px;line-height:1.15;letter-spacing:-.01em;color:var(--tinta)}
+  .rol-sello{display:inline-block;margin-top:8px;font-family:'IBM Plex Mono',monospace;font-size:9px;
+    letter-spacing:.14em;text-transform:uppercase;color:var(--laton-osc);background:var(--claro);
+    border:1px solid rgba(138,110,16,.5);border-radius:99px;padding:4px 10px}
+  .rol-pasos{display:grid;gap:10px;padding:15px 16px 4px}
+  .rol-paso{display:flex;gap:11px;align-items:flex-start;font-size:14px;line-height:1.45}
+  .rol-n{flex:none;width:22px;height:22px;border-radius:50%;border:1.5px solid var(--c);color:var(--c);
+    font-family:'IBM Plex Mono',monospace;font-size:11px;font-weight:600;
+    display:flex;align-items:center;justify-content:center}
+  .rol-pie{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:13px 16px 16px}
+  .rol-ej{font-size:12.5px;color:var(--gris);line-height:1.4;min-width:0}
+  .rol-ir{flex:none;display:inline-flex;align-items:center;gap:6px;background:var(--c);color:#fff;
+    font-weight:600;font-size:13.5px;border-radius:99px;padding:8px 14px}
+  .rol-ir svg{width:15px;height:15px}
+
+  .sello-rol{display:flex;align-items:center;gap:12px;margin-bottom:22px;padding:12px 12px 12px 14px;
+    background:var(--c-tinte);border:1.5px solid var(--c);border-radius:var(--r)}
+  .sello-rol-ico{width:40px;height:40px;border-radius:10px}
+  .sello-rol-ico svg{width:21px;height:21px;color:#fff;stroke-width:1.8}
+  .sello-rol .si-prov, .sello-rol[data-rol="proveedor"] .si-cli{display:none}
+  .sello-rol[data-rol="proveedor"] .si-prov{display:block}
+  .sello-rol-txt{flex:1;min-width:0}
+  .sello-rol-que{display:block;font-family:'IBM Plex Sans Condensed',sans-serif;font-weight:700;
+    font-size:18px;line-height:1.2;margin-top:3px}
+  .sello-rol-cambiar{flex:none;font:inherit;font-size:13px;font-weight:600;color:var(--c);cursor:pointer;
+    background:var(--claro);border:1px solid var(--c);border-radius:99px;padding:7px 13px}
   .cambiar-modo{font:inherit;font-size:13px;font-weight:600;color:var(--verde);background:none;
     border:none;cursor:pointer;padding:8px 0;display:inline-flex;align-items:center;gap:7px}
   .cambiar-modo svg{width:15px;height:15px}
@@ -1367,45 +1405,78 @@
         </div>
       </div>
 
-      <div class="roles oculto" id="sel-rol">
-        <button class="rol elegido" id="rol-cliente" type="button">
-          <span class="rol-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4.5 3.5 8.2v7.6L11 19.5l7.5-3.7V8.2z"/><path d="M3.5 8.2 11 12l7.5-3.8M11 12v7.5"/></svg></span>
-          <span style="min-width:0">
-            <span class="rol-tit">Necesito un servicio</span>
-            <span class="rol-txt">Pedís, te buscamos quién lo hace y elegís.</span>
-          </span>
-        </button>
-        <button class="rol" id="rol-proveedor" type="button">
-          <span class="rol-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="7.5" width="18" height="13" rx="2"/><path d="M9 7.5V5.2a1.6 1.6 0 0 1 1.6-1.6h2.8A1.6 1.6 0 0 1 15 5.2v2.3"/><path d="M3 12.5h18"/></svg></span>
-          <span style="min-width:0">
-            <span class="rol-tit">Ofrezco un servicio</span>
-            <span class="rol-txt">Armás tu perfil y te llegan clientes de tu zona.</span>
-          </span>
-        </button>
-      </div>
-
       <div id="a-datos">
         <div class="pestanas" style="margin-top:24px">
           <button class="pest activa" id="tab-entrar" type="button">Iniciar sesión</button>
           <button class="pest" id="tab-crear" type="button">Crear cuenta</button>
         </div>
 
+        <!-- Dos puertas. Quienes ofrecen servicios se anotaban como clientes
+             (fundador, 23/10/2026): la elección aparecía arriba de las pestañas,
+             fuera de la vista, y venía marcada como cliente. Ahora es lo primero
+             que se ve al crear la cuenta, ninguna viene marcada y el formulario
+             no aparece hasta elegir una. -->
+        <div class="roles oculto" id="sel-rol">
+          <div class="roles-cab">
+            <div class="roles-tit">¿Para qué querés usar Tratto?</div>
+            <p class="roles-txt">Elegí una opción y armamos tu cuenta.</p>
+          </div>
+          <button class="rol" id="rol-cliente" type="button">
+            <span class="rol-cab">
+              <span class="rol-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M20 12.2c0 4-3.6 7.1-8 7.1-1.1 0-2.2-.2-3.1-.6L4 20l1.2-3.6C4.4 15.2 4 13.8 4 12.2 4 8.2 7.6 5 12 5s8 3.2 8 7.2z"/><path d="M10.2 10.4a1.9 1.9 0 1 1 2.6 1.8c-.5.2-.8.6-.8 1.1v.4"/><path d="M12 15.6h.01"/></svg></span>
+              <span class="rol-nom">
+                <span class="rol-para">Para pedir presupuestos</span>
+                <span class="rol-tit">Necesito un servicio</span>
+              </span>
+            </span>
+            <span class="rol-pasos">
+              <span class="rol-paso"><span class="rol-n">1</span><span>Contás qué necesitás, con texto o una foto.</span></span>
+              <span class="rol-paso"><span class="rol-n">2</span><span>Te llegan presupuestos de gente de tu zona.</span></span>
+              <span class="rol-paso"><span class="rol-n">3</span><span>Elegís y arreglan por el chat de la app.</span></span>
+            </span>
+            <span class="rol-pie">
+              <span class="rol-ej">Ej.: pintar un cuarto, clases de inglés</span>
+              <span class="rol-ir">Elegir <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
+            </span>
+          </button>
+          <button class="rol" id="rol-proveedor" type="button">
+            <span class="rol-cab">
+              <span class="rol-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="8" width="18" height="12" rx="2"/><path d="M8.5 8V6a1.5 1.5 0 0 1 1.5-1.5h4A1.5 1.5 0 0 1 15.5 6v2"/><path d="M3 13h18"/><path d="M10 13v2h4v-2"/></svg></span>
+              <span class="rol-nom">
+                <span class="rol-para">Para recibir pedidos</span>
+                <span class="rol-tit">Ofrezco un servicio</span>
+                <span class="rol-sello">Sin abono mensual</span>
+              </span>
+            </span>
+            <span class="rol-pasos">
+              <span class="rol-paso"><span class="rol-n">1</span><span>Armás tu perfil con tu oficio.</span></span>
+              <span class="rol-paso"><span class="rol-n">2</span><span>Te llega un aviso cuando alguien de tu zona pide lo tuyo.</span></span>
+              <span class="rol-paso"><span class="rol-n">3</span><span>Mandás tu presupuesto desde el celular.</span></span>
+            </span>
+            <span class="rol-pie">
+              <span class="rol-ej">Ej.: pintura, plomería, peluquería canina, clases</span>
+              <span class="rol-ir">Elegir <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
+            </span>
+          </button>
+        </div>
+
+        <!-- Lo elegido queda a la vista durante todo el formulario, con su color. -->
+        <div class="sello-rol oculto" id="sello-rol" data-rol="cliente">
+          <span class="sello-rol-ico">
+            <svg class="si-cli" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M20 12.2c0 4-3.6 7.1-8 7.1-1.1 0-2.2-.2-3.1-.6L4 20l1.2-3.6C4.4 15.2 4 13.8 4 12.2 4 8.2 7.6 5 12 5s8 3.2 8 7.2z"/><path d="M10.2 10.4a1.9 1.9 0 1 1 2.6 1.8c-.5.2-.8.6-.8 1.1v.4"/><path d="M12 15.6h.01"/></svg>
+            <svg class="si-prov" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="8" width="18" height="12" rx="2"/><path d="M8.5 8V6a1.5 1.5 0 0 1 1.5-1.5h4A1.5 1.5 0 0 1 15.5 6v2"/><path d="M3 13h18"/><path d="M10 13v2h4v-2"/></svg>
+          </span>
+          <span class="sello-rol-txt">
+            <span class="sello-rol-kick">Te estás anotando para</span>
+            <span class="sello-rol-que" id="sello-rol-que">Pedir un servicio</span>
+          </span>
+          <button class="sello-rol-cambiar" id="rol-cambiar" type="button">Cambiar</button>
+        </div>
+
         <!-- El nombre y el oficio son de la persona, no del pedido ni del
-             servicio: se preguntan una vez acá y se reusan en todos lados. -->
-        <div class="campo oculto" id="a-nombre-caja">
-          <label for="a-nombre">Tu nombre</label>
-          <input id="a-nombre" type="text" autocomplete="name" maxlength="60" placeholder="Ej: Raúl Gómez">
-          <div class="ayuda" id="a-nombre-ayuda">Es como te van a ver quienes ofrecen los servicios.</div>
-          <div class="err" id="e-a-nombre">Escribí tu nombre.</div>
-        </div>
-
-        <div class="campo oculto" id="a-tel-caja">
-          <label for="a-tel">Tu teléfono</label>
-          <input id="a-tel" type="tel" autocomplete="tel" maxlength="25" placeholder="11 5555-5555">
-          <div class="ayuda" id="a-tel-ayuda">Es el que va a ver la otra parte para coordinar el trabajo.</div>
-          <div class="err" id="e-a-tel">Cargá un teléfono de contacto.</div>
-        </div>
-
+             servicio: se preguntan una vez acá y se reusan en todos lados.
+             El oficio va primero: a quien ofrece un servicio le confirma
+             desde el primer campo que se está anotando para eso. -->
         <div class="campo oculto" id="a-rubro-caja">
           <label for="a-rubro">Tu oficio</label>
           <select id="a-rubro"><option value="">Elegí tu oficio</option></select>
@@ -1424,6 +1495,20 @@
             <div class="ayuda">Nos sirve para que los clientes de ese rubro te encuentren.</div>
             <div class="err" id="e-a-rubro-padre">Elegí el rubro más parecido.</div>
           </div>
+        </div>
+
+        <div class="campo oculto" id="a-nombre-caja">
+          <label for="a-nombre">Tu nombre</label>
+          <input id="a-nombre" type="text" autocomplete="name" maxlength="60" placeholder="Ej: Raúl Gómez">
+          <div class="ayuda" id="a-nombre-ayuda">Es como te van a ver quienes ofrecen los servicios.</div>
+          <div class="err" id="e-a-nombre">Escribí tu nombre.</div>
+        </div>
+
+        <div class="campo oculto" id="a-tel-caja">
+          <label for="a-tel">Tu teléfono</label>
+          <input id="a-tel" type="tel" autocomplete="tel" maxlength="25" placeholder="11 5555-5555">
+          <div class="ayuda" id="a-tel-ayuda">Es el que va a ver la otra parte para coordinar el trabajo.</div>
+          <div class="err" id="e-a-tel">Cargá un teléfono de contacto.</div>
         </div>
 
         <!-- Solo el Proveedor. Tratto le factura su comisión por cada trabajo
@@ -2456,7 +2541,7 @@ const RUBROS_GRUPOS = {
     'Computación y capacitación', 'Clases de manejo'],
   'Mascotas': ['Paseo y cuidado de mascotas', 'Peluquería y adiestramiento canino'],
   'Otros servicios': ['Costura y arreglos de ropa', 'Tapicería y restauración',
-    'Decoración e interiores', 'Mandados y compras', 'Otro (lo escribo yo)']
+    'Decoración e interiores', 'Mandados y mensajería', 'Otro (lo escribo yo)']
 };
 
 const RUBROS = Object.values(RUBROS_GRUPOS).reduce((a,b)=>a.concat(b),[]);
@@ -2773,7 +2858,7 @@ function cambiarAuth(m){
   /* El rol es de la cuenta, no del teléfono: se elige al crearla y no se
      vuelve a preguntar. Al iniciar sesión lo decide la cuenta, así que el
      selector no tiene nada que hacer ahí. */
-  $('sel-rol').classList.toggle('oculto', !c);
+  pintarEleccion();
   $('a-nombre-caja').classList.toggle('oculto', !c);
   $('a-tel-caja').classList.toggle('oculto', !c);
   pintarCamposDeRol();
@@ -2849,7 +2934,11 @@ $('telon-infra').addEventListener('click', e => {
   if(e.target.id === 'telon-infra') $('telon-infra').classList.remove('abierto');
 });
 $('tab-entrar').addEventListener('click', () => cambiarAuth('entrar'));
-$('tab-crear').addEventListener('click', () => cambiarAuth('crear'));
+$('tab-crear').addEventListener('click', () => {
+  cambiarAuth('crear');
+  /* Las dos puertas quedan debajo del título de arriba: se baja hasta ellas. */
+  if(!rolTocado) $('a-datos').scrollIntoView({block:'start', behavior:'smooth'});
+});
 $('ver-pass').addEventListener('click', () => {
   const i=$('a-pass'), o = i.type==='password';
   i.type = o ? 'text':'password'; $('ver-pass').textContent = o ? 'Ocultar':'Mostrar';
@@ -4299,6 +4388,9 @@ function revisarTexto(txt, opciones){
 
 /* ══════════════════ MODO CLIENTE / PROVEEDOR ══════════════════ */
 let modo = 'cliente', rolElegido = 'cliente';
+/* Si la persona tocó una de las dos puertas. rolElegido arranca en cliente,
+   pero al crear la cuenta nadie avanza sin elegir. */
+let rolTocado = false;
 const TERMINOS = {cliente:'/terminos-cliente.html', proveedor:'/terminos-proveedor.html'};
 let miPerfilProv = null, misCredenciales = [], misPublicaciones = [];
 let fichaActual = null, fichaPropia = false;
@@ -4340,11 +4432,25 @@ function aplicarModo(){
   ir(modo === 'proveedor' ? 'panel' : 'inicio', 'entra');
 }
 
+/* Al crear la cuenta: sin elegir se ven las dos puertas y nada más; elegida,
+   las puertas se van y queda el sello con el rol arriba del formulario. */
+function pintarEleccion(){
+  const creando = modoAuth === 'crear', eligiendo = creando && !rolTocado;
+  $('p-auth').classList.toggle('eligiendo', eligiendo);
+  $('sel-rol').classList.toggle('oculto', !eligiendo);
+  $('sello-rol').classList.toggle('oculto', !creando || eligiendo);
+  $('sello-rol').dataset.rol = rolElegido;
+  $('sello-rol-que').textContent = rolElegido === 'proveedor' ? 'Ofrecer un servicio' : 'Pedir un servicio';
+}
+
 /* selector de rol en la pantalla de entrada */
 function elegirRol(r){
   rolElegido = r;
+  rolTocado = true;
   $('rol-cliente').classList.toggle('elegido', r === 'cliente');
   $('rol-proveedor').classList.toggle('elegido', r === 'proveedor');
+  pintarEleccion();
+  $('a-datos').scrollIntoView({block:'start', behavior:'smooth'});
   pintarCamposDeRol();
   /* Cada rol acepta su propio contrato: el del cliente es una relación de
      consumo, el del proveedor una relación entre independientes. El enlace
@@ -4357,6 +4463,11 @@ function elegirRol(r){
 }
 $('rol-cliente').addEventListener('click', () => elegirRol('cliente'));
 $('rol-proveedor').addEventListener('click', () => elegirRol('proveedor'));
+$('rol-cambiar').addEventListener('click', () => {
+  rolTocado = false;
+  pintarEleccion();
+  $('a-datos').scrollIntoView({block:'start', behavior:'smooth'});
+});
 
 /* ══════════════════ RUBRO PERSONALIZADO ══════════════════ */
 $('p-rubro').addEventListener('change', () => {
@@ -5791,6 +5902,8 @@ async function llamarTasador(cuerpo){
    estimación. La persona revisa y cambia lo que haga falta. */
 function mostrarTasacion(d, origen){
   const porFoto = origen.foto;
+  /* El rubro se llamaba "Mandados y compras" hasta el 16/10/2026. */
+  if(d.rubro === 'Mandados y compras') d.rubro = 'Mandados y mensajería';
   if(d.rubro && [...$('s-servicio').options].some(o => o.textContent === d.rubro))
     $('s-servicio').value = d.rubro;
   if(d.descripcion) $('s-desc').value = d.descripcion;

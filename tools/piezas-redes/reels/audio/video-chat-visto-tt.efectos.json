@@ -1,0 +1,97 @@
+[
+ {
+  "efecto": "enviado",
+  "t": 0.12,
+  "db": -16
+ },
+ {
+  "efecto": "recibido",
+  "t": 1.62,
+  "db": -15
+ },
+ {
+  "efecto": "enviado",
+  "t": 2.42,
+  "db": -16
+ },
+ {
+  "efecto": "recibido",
+  "t": 4.4,
+  "db": -15
+ },
+ {
+  "efecto": "enviado",
+  "t": 5.55,
+  "db": -16
+ },
+ {
+  "efecto": "tic",
+  "t": 6.61,
+  "db": -18
+ },
+ {
+  "efecto": "latigazo",
+  "t": 7.41,
+  "db": -16
+ },
+ {
+  "efecto": "enviado",
+  "t": 8.76,
+  "db": -16
+ },
+ {
+  "efecto": "tic",
+  "t": 9.96,
+  "db": -18
+ },
+ {
+  "efecto": "latigazo",
+  "t": 10.76,
+  "db": -16
+ },
+ {
+  "efecto": "pop",
+  "t": 11.11,
+  "db": -15
+ },
+ {
+  "efecto": "pop",
+  "t": 11.36,
+  "db": -18
+ },
+ {
+  "efecto": "pop",
+  "t": 11.66,
+  "db": -18
+ },
+ {
+  "efecto": "pop",
+  "t": 11.96,
+  "db": -18
+ },
+ {
+  "efecto": "pop",
+  "t": 12.26,
+  "db": -18
+ },
+ {
+  "efecto": "latigazo",
+  "t": 13.96,
+  "db": -16
+ },
+ {
+  "efecto": "pop",
+  "t": 14.76,
+  "db": -15
+ },
+ {
+  "efecto": "latigazo",
+  "t": 16.46,
+  "db": -16
+ },
+ {
+  "efecto": "pop",
+  "t": 16.81,
+  "db": -15
+ }
+]

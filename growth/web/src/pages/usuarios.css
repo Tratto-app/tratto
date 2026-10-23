@@ -1,0 +1,49 @@
+.usuarios-kpis { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:12px; margin-bottom:18px; }
+.usuarios-nuevos { border-left:3px solid var(--azul); margin-bottom:18px; }
+.usuarios-nuevos-lista { list-style:none; margin:0; padding:0; }
+.usuarios-nuevos-lista li { display:grid; grid-template-columns:82px minmax(0,1fr) auto; gap:10px; align-items:center; padding:9px 0; border-top:1px solid var(--borde); }
+.usuarios-nuevos-lista li:first-child { border-top:none; }
+.usuarios-nuevos-cuando { font:500 12px var(--f-mono); color:var(--azul); }
+.usuarios-nuevos-nombre { min-width:0; }
+.usuarios-nuevos-nombre strong { display:block; overflow-wrap:anywhere; }
+.usuarios-nuevos-nombre small { display:block; color:var(--texto-2); overflow-wrap:anywhere; }
+@media (max-width: 520px) {
+  .usuarios-nuevos-lista li { grid-template-columns:minmax(0,1fr) auto; }
+  .usuarios-nuevos-cuando { grid-column:1 / -1; }
+}
+.usuarios-conteos { display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-bottom:18px; }
+
+.usuarios-barras { list-style:none; margin:4px 0 0; padding:0; display:grid; gap:12px; }
+.usuarios-barras li { display:grid; grid-template-columns:minmax(0,1fr) auto; grid-template-areas:'nombre num' 'pista pista' 'det det'; gap:4px 10px; align-items:baseline; }
+.usuarios-barras-nombre { grid-area:nombre; min-width:0; overflow-wrap:anywhere; }
+.usuarios-barras strong { grid-area:num; font:500 16px var(--f-mono); color:var(--verde-luz); }
+.usuarios-barras-pista { grid-area:pista; height:8px; background:var(--sup-2); border-radius:4px; overflow:hidden; }
+.usuarios-barras-pista i { display:block; height:100%; background:var(--verde-vivo); border-radius:0 4px 4px 0; min-width:4px; }
+.usuarios-barras small { grid-area:det; color:var(--texto-3); font-size:12px; }
+.usuarios-barras .usuarios-barras-nota { display:block; font-size:12px; }
+
+.usuarios-filtros { display:flex; flex-wrap:wrap; align-items:end; gap:14px; margin-bottom:12px; }
+.usuarios-buscar { flex:1; min-width:200px; color:var(--texto-2); }
+.usuarios-buscar input { width:100%; margin-top:6px; }
+.usuarios-ver-todo { display:flex; align-items:center; gap:8px; color:var(--texto-2); font-size:13px; flex:1 1 220px; }
+.usuarios-ver-todo input { width:auto; margin:0; flex:none; }
+
+.usuarios-lista { list-style:none; margin:0; padding:0; }
+.usuarios-ficha { border-top:1px solid var(--borde); padding:14px 0; display:grid; gap:10px; }
+.usuarios-ficha:first-child { border-top:none; }
+.usuarios-ficha.nuevo .usuarios-ficha-nombre strong { color:var(--texto); }
+.usuarios-ficha-cab { display:flex; justify-content:space-between; gap:12px; flex-wrap:wrap; }
+.usuarios-ficha-nombre { min-width:0; }
+.usuarios-ficha-nombre strong { display:block; font-size:15px; overflow-wrap:anywhere; }
+.usuarios-ficha-nombre small { display:block; color:var(--texto-2); margin-top:3px; overflow-wrap:anywhere; }
+.usuarios-ficha-sellos { display:flex; flex-wrap:wrap; gap:6px; align-items:flex-start; }
+.usuarios-ficha-datos { display:grid; grid-template-columns:repeat(auto-fit,minmax(150px,1fr)); gap:8px 18px; margin:0; }
+.usuarios-ficha-datos div { min-width:0; }
+.usuarios-ficha-datos dt { font:500 10.5px var(--f-mono); letter-spacing:.08em; text-transform:uppercase; color:var(--texto-3); }
+.usuarios-ficha-datos dd { margin:2px 0 0; overflow-wrap:anywhere; }
+.usuarios-falta { color:var(--texto-3); }
+
+@media (max-width: 760px) {
+  .usuarios-kpis { grid-template-columns:repeat(2,minmax(0,1fr)); }
+  .usuarios-conteos { grid-template-columns:1fr; }
+}

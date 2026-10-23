@@ -3,6 +3,8 @@
 Uso: python3 render-reel.py reel-pintura.html [--segundos 33] [--fps 30]
          [--palabras audio/x.palabras.json] [--audio audio/x-mezcla.m4a]
          [--previa 0,3.5,12] (solo esos cuadros, en PNG, para revisar)
+         [--info] (solo imprime la duración, el cierre, los efectos y los
+                   golpes que arma formatos.js; lo usa hacer-video.py)
 Salida: salida/<nombre>.mp4 (H.264; con --audio lleva ese sonido, si no va
 mudo y el sonido se agrega al subirlo) y salida/<nombre>-portada.jpg.
 --palabras inyecta window.PALABRAS ([inicio, fin, palabra]) para los subtítulos.
@@ -10,7 +12,7 @@ mudo y el sonido se agrega al subirlo) y salida/<nombre>-portada.jpg.
 Cada cuadro se dibuja con render(t) y se captura con Playwright, así el
 video sale igual siempre, sin depender de la velocidad de la máquina.
 """
-import argparse, asyncio, os, subprocess, sys
+import argparse, asyncio, json, os, subprocess, sys
 from playwright.async_api import async_playwright
 
 D = os.path.dirname(os.path.abspath(__file__))
@@ -25,6 +27,8 @@ async def main():
     ap.add_argument("--palabras")
     ap.add_argument("--audio")
     ap.add_argument("--previa")
+    ap.add_argument("--info", action="store_true",
+                    help="solo imprime en JSON la duración, el cierre, los efectos y los golpes que arma el video (formatos.js)")
     a = ap.parse_args()
     html = os.path.abspath(os.path.join(D, a.html))
     nombre = os.path.splitext(os.path.basename(html))[0]
@@ -33,8 +37,10 @@ async def main():
     portada = os.path.join(D, "salida", nombre + "-portada.jpg")
     cuadros = int(round(a.segundos * a.fps))
 
-    audio = ["-i", os.path.join(D, a.audio), "-map", "0:v", "-map", "1:a", "-c:a", "aac", "-b:a", "192k", "-shortest"] if a.audio else []
-    ffmpeg = None if a.previa else subprocess.Popen(
+    # La mezcla ya viene en AAC (sonido.py): se copia tal cual para no codificarla dos veces
+    copiar = bool(a.audio) and a.audio.endswith(".m4a")
+    audio = ["-i", os.path.join(D, a.audio), "-map", "0:v", "-map", "1:a", *(["-c:a", "copy"] if copiar else ["-c:a", "aac", "-b:a", "192k"]), "-shortest"] if a.audio else []
+    ffmpeg = None if (a.previa or a.info) else subprocess.Popen(
         ["ffmpeg", "-hide_banner", "-loglevel", "error", "-y", "-f", "image2pipe", "-framerate", str(a.fps),
          "-c:v", "mjpeg", "-i", "-", *audio, "-c:v", "libx264", "-preset", "slow", "-crf", "18", "-pix_fmt", "yuv420p",
          "-r", str(a.fps), "-movflags", "+faststart", mp4],
@@ -55,6 +61,12 @@ async def main():
         print("fuentes:", fuentes)
         if not any("Plex" in f for f in fuentes):
             sys.exit("No cargaron las fuentes IBM Plex: revisar la conexión a Google Fonts")
+        if a.info:
+            info = await pg.evaluate("({tema: PUBLI.tema || 'claro', duracion: PUBLI.duracion || null, cierre: PUBLI.cierre ?? null,"
+                                     " efectos: PUBLI.efectos || [], golpes: PUBLI.golpes || []})")
+            await b.close()
+            print(json.dumps(info, ensure_ascii=False))
+            return
         if a.previa:
             for t in [float(x) for x in a.previa.split(",")]:
                 await pg.evaluate(f"render({t})")

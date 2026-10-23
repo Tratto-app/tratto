@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="es"><head><meta charset="utf-8">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@500;600&family=IBM+Plex+Sans+Condensed:wght@600;700&display=swap" rel="stylesheet">
+<style>
+/* Portada de X (1500x500) y de la página de LinkedIn (1128x191) de Tratto.
+   La foto de perfil tapa la esquina de abajo a la izquierda: ahí no va nada. */
+:root{--tinta:#0E1815;--verde:#1E5D49;--vivo:#2B7E62;--luz:#8FD9BC;--laton:#C9A227}
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:#ddd;padding:40px;display:flex;flex-direction:column;gap:40px}
+.p{position:relative;overflow:hidden;color:#FCFBF8;
+   background:radial-gradient(120% 140% at 85% 20%,#2B7E62 0%,#1E5D49 38%,#0E1815 100%)}
+.p .trama{position:absolute;inset:0;opacity:.07;
+   background-image:linear-gradient(#fff 1px,transparent 1px),linear-gradient(90deg,#fff 1px,transparent 1px);background-size:44px 44px}
+.p .hilo{position:absolute;height:3px;background:linear-gradient(90deg,transparent,var(--laton))}
+.t1{font:700 72px/1.02 'IBM Plex Sans Condensed';letter-spacing:-.5px;white-space:nowrap}
+.t1 b{color:var(--luz);font-weight:700}
+.mono{font:600 19px 'IBM Plex Mono';letter-spacing:.14em;text-transform:uppercase;color:var(--laton)}
+#x{width:1500px;height:500px}
+#x .texto{position:absolute;left:440px;top:140px}
+#x .mono{margin-top:30px}
+#x .hilo{left:440px;right:0;top:112px}
+#x svg{display:none}
+#li{width:1128px;height:191px}
+#li .texto{position:absolute;left:300px;top:44px}
+#li .t1{font-size:34px}
+#li .mono{margin-top:14px;font-size:12px}
+#li svg{display:none}
+#li .hilo{left:300px;right:0;top:26px;height:2px}
+</style></head><body>
+<div class="p" id="x"><div class="trama"></div><div class="hilo"></div>
+  <div class="texto"><div class="t1">Pedí un servicio.<br><b>Recibí presupuestos de tu zona.</b></div>
+  <div class="mono">Más de 40 rubros · CABA y Provincia de Buenos Aires · trattoapp.com.ar</div></div>
+  <svg viewBox='0 0 32 32' fill='none'><defs><linearGradient id='g' gradientUnits='userSpaceOnUse' x1='10.3' y1='10.37' x2='22.54' y2='22.46'><stop offset='0' stop-color='#96E7CE'/><stop offset='1' stop-color='#62AD98'/></linearGradient></defs><path d='M10.3 10.37 L22.54 22.46' stroke='url(#g)' stroke-width='2.39'/><circle cx='7.47' cy='7.58' r='5.23' stroke='#9EECD4' stroke-width='2.5'/><path d='M10.3 10.37 L12.08 12.13' stroke='#96E7CE' stroke-width='2.39'/><circle cx='25.12' cy='25.02' r='4.76' stroke='#F7CA55' stroke-width='2.24'/><path d='M20.95 20.89 L22.54 22.46' stroke='#9EECD4' stroke-opacity='.32' stroke-width='2.39'/></svg>
+</div>
+<div class="p" id="li"><div class="trama"></div><div class="hilo"></div>
+  <div class="texto"><div class="t1">Pedí un servicio.<br><b>Recibí presupuestos de tu zona.</b></div>
+  <div class="mono">Más de 40 rubros · CABA y Provincia de Buenos Aires · trattoapp.com.ar</div></div>
+  <svg viewBox='0 0 32 32' fill='none'><defs><linearGradient id='g2' gradientUnits='userSpaceOnUse' x1='10.3' y1='10.37' x2='22.54' y2='22.46'><stop offset='0' stop-color='#96E7CE'/><stop offset='1' stop-color='#62AD98'/></linearGradient></defs><path d='M10.3 10.37 L22.54 22.46' stroke='url(#g2)' stroke-width='2.39'/><circle cx='7.47' cy='7.58' r='5.23' stroke='#9EECD4' stroke-width='2.5'/><path d='M10.3 10.37 L12.08 12.13' stroke='#96E7CE' stroke-width='2.39'/><circle cx='25.12' cy='25.02' r='4.76' stroke='#F7CA55' stroke-width='2.24'/><path d='M20.95 20.89 L22.54 22.46' stroke='#9EECD4' stroke-opacity='.32' stroke-width='2.39'/></svg>
+</div>
+</body></html>

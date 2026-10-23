@@ -27,13 +27,13 @@ Precios: solo de la tabla `precios_referencia` (con fecha) o de pantallas reales
 | Cola del equipo | tabla `growth_mkt_items` (ver sección 4) |
 | Números de la semana | `select mkt_tablero(null, 7);` (o 28 para el mes). Por tipo: `select mkt_tablero_tipo(null, 7, 'provider');` o `'customer'` |
 | Panel (lo que ve la persona) | https://www.trattoapp.com.ar/crm/equipo |
-| Redes (programar, métricas) | MCP de Metricool (desde el 14/10/2026 solo métricas: el plan gratis no tiene más cupo para programar; lo aprobado lo publica la persona a mano hasta que esté el publicador propio de Instagram), marca `7270470`, America/Buenos_Aires. TikTok @trattoapp, Instagram @trattoapp_ |
+| Redes (programar, métricas) | MCP de Buffer para programar (desde el 15/10/2026, plan gratis: Instagram @trattoapp_, TikTok @trattoapp y la Página de Facebook; hasta 10 programadas por canal a la vez). MCP de Metricool solo para métricas (sin cupo para programar desde el 14/10), marca `7270470`, America/Buenos_Aires |
 | Diseño de placas y carruseles | MCP de Canva o `tools/piezas-redes` |
 | Videos | skill `video-publicidad` (`tools/piezas-redes/reels`) |
 | Sistema de contenido (hooks, puntaje, memoria) | skill `contenido` y `tools/contenido` |
 | Mails automáticos | automatizaciones del CRM (`growth_workflows` + `growth_workflow_steps`), salen por Brevo SMTP |
-| Mails a proveedores (un rubro por día) | agente `mkt-prospeccion`, Gmail trattoapp1@gmail.com, rotación en `growth_mkt_rotacion`, números con `select mkt_prospeccion_numeros(7);` |
-| Archivos públicos (videos para programar) | carpeta `redes/` del repo → https://www.trattoapp.com.ar/redes/<archivo> al publicar en `main` |
+| Mails a proveedores (un rubro por día) | agente `mkt-prospeccion`, Gmail de la casilla de la campaña (`growth_mkt_ajustes.prospeccion.cuenta_envio`; desde el 16/10/2026 nunca trattoapp1), rotación en `growth_mkt_rotacion`, números con `select mkt_prospeccion_numeros(7);` |
+| Archivos públicos (videos para programar) | carpeta `redes/` del repo: apenas se sube el commit, `https://raw.githubusercontent.com/tratto-app/tratto/<sha completo>/redes/<archivo>` (gratis, sin fusionar); al publicar en `main`, también https://www.trattoapp.com.ar/redes/<archivo> |
 
 `crm_ws()` devuelve el id del workspace "tratto". Úsalo en todos los SQL.
 
@@ -42,6 +42,12 @@ Precios: solo de la tabla `precios_referencia` (con fecha) o de pantallas reales
 1. **Nada sale sin aprobación.** Lo que produce el equipo entra a la cola como
    `para_aprobar`. La persona aprueba en el panel. Recién lo `aprobado` se
    ejecuta (se programa, se publica, se envía).
+   **Excepción: redes.** El 16/10/2026 la persona dio permiso total para
+   TikTok, Instagram y Facebook ("no requieras mi permiso para nada"): las
+   piezas de Redes que pasan la cadena y los controles quedan `aprobado` solas
+   y se programan en Buffer en modo automático. A la persona se le avisa qué
+   sale, en qué red y cuándo. Mails, anuncios, guías y gastos siguen esperando
+   su aprobación.
 2. **No inventes capacidades.** Si una herramienta no está conectada en la
    sesión, decilo y dejá la tarea preparada para hacer a mano (ver sección 6).
 3. **No inventes datos.** Números, precios, reseñas, testimonios y casos
@@ -53,7 +59,9 @@ Precios: solo de la tabla `precios_referencia` (con fecha) o de pantallas reales
    o reseñas).
    **Única excepción (pedido del fundador, 8/10/2026): los mails a proveedores
    del agente `mkt-prospeccion`.** Solo a direcciones que el propio negocio
-   publicó para que lo contacten, desde trattoapp1@gmail.com (nunca por Brevo:
+   publicó para que lo contacten, desde la casilla de la campaña (desde el
+   16/10/2026 nunca desde trattoapp1@gmail.com, que está vinculada a la app y
+   a las tiendas; nunca por Brevo:
    lo prohíbe y arriesga los mails de la app), uno por uno, una sola vez por
    dirección, diciendo dónde se encontró el mail y con la opción de responder
    "no". La ley permite el contacto comercial con datos de fuentes públicas si
@@ -134,7 +142,7 @@ order by prioridad, fecha_objetivo nulls last, created_at;
   cuenta, actualizá `cuerpo`/`resumen` y volvé a `para_aprobar`.
 - `aprobado`: ejecutalo (sección 5), guardá `url` y lo que corresponda en
   `datos`, y pasalo a `programado`, `publicado` o `hecho`.
-- Nunca pases algo a `aprobado` vos.
+- Nunca pases algo a `aprobado` vos, salvo las piezas de redes (regla 1).
 - No dupliques: antes de crear, buscá si ya hay un item parecido abierto.
 
 ## 5. Links con nombre (para saber qué funcionó)
