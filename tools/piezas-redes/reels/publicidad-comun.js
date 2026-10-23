@@ -39,6 +39,9 @@
     cubiertos: '<path d="M20 8v20a6 6 0 0 0 6 6v22M14 8v14M26 8v14"/><path d="M44 56V8c-6 4-8 14-8 22h8"/>',
     campana: '<path d="M18 44V30a14 14 0 0 1 28 0v14l4 4H14z"/><path d="M27 54a5 5 0 0 0 10 0"/>',
     celular: '<rect x="18" y="6" width="28" height="52" rx="6"/><path d="M28 50h8"/>',
+    tijera: '<circle cx="18" cy="46" r="8"/><circle cx="46" cy="46" r="8"/><path d="M24 40L50 8M40 40L14 8"/>',
+    auto: '<path d="M8 40v-8l6-12h36l6 12v8z"/><path d="M8 40v8h8v-8M48 40v8h8v-8"/><circle cx="19" cy="34" r="2.5"/><circle cx="45" cy="34" r="2.5"/><path d="M16 26h32"/>',
+    pincel: '<path d="M44 8l12 12-22 22-12-12z"/><path d="M22 30c-8 0-12 6-12 12 0 6-2 10-4 12 10 0 22-2 22-14"/>',
   };
   window.icono = (n, px = 92, color = 'currentColor') =>
     `<svg width="${px}" height="${px}" viewBox="0 0 64 64" fill="none" stroke="${color}" stroke-width="4" stroke-linecap="round" stroke-linejoin="round">${ICONOS[n]}</svg>`;

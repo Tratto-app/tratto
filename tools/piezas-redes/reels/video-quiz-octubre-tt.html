@@ -1,0 +1,34 @@
+<!doctype html>
+<html lang="es"><head><meta charset="utf-8">
+<link rel="stylesheet" href="publicidad.css"><link rel="stylesheet" href="formatos.css">
+</head><body>
+<!-- Formato quiz · clientes · música dembow · gancho autoridad · largo (rotación del 23/10/2026).
+     Precios de precios_referencia ajustados a oct-2026 (misma cuenta que calculadora_comparar):
+     ruedo de pantalón $4.500 a $9.000; cambio de aceite y filtro $66.000 a $117.000;
+     maquillaje social $64.000 a $127.000. Las otras opciones son distractores, no precios. -->
+<script>
+window.RED = { url: 'trattoapp.com.ar/r/tt-quiz-octubre' };
+window.GUION = {
+  formato: 'quiz',
+  titulo: 'Precios de referencia',
+  subtitulo: 'Adiviná los 3',
+  zona: 'AMBA · octubre 2026',
+  rondas: [
+    { pregunta: 'Hacerle el ruedo a un pantalón', icono: 'tijera',
+      opciones: ['$4.500 a $9.000', '$15.000 a $22.000', '$25.000 a $35.000'], correcta: 0,
+      dato: '$4.500 a $9.000', fuente: 'Referencia oct-2026' },
+    { pregunta: 'Cambio de aceite y filtro del auto', icono: 'auto',
+      opciones: ['$30.000 a $50.000', '$66.000 a $117.000', '$150.000 a $200.000'], correcta: 1,
+      dato: '$66.000 a $117.000', fuente: 'Referencia oct-2026' },
+    { pregunta: 'Maquillaje para un evento', icono: 'pincel',
+      opciones: ['$20.000 a $35.000', '$40.000 a $55.000', '$64.000 a $127.000'], correcta: 2,
+      dato: '$64.000 a $127.000', fuente: 'Referencia oct-2026' },
+  ],
+  pregunta: ['¿Cuántas', '*acertaste*?'],
+  chip: 'Comentá: 0, 1, 2 o 3',
+  cierre: { a: '¿Te pasaron un precio?', b: 'Fijate si es justo.' },
+};
+</script>
+<script src="formatos.js"></script>
+<script src="publicidad-comun.js"></script>
+</body></html>

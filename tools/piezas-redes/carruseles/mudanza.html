@@ -1,0 +1,209 @@
+<!doctype html><html lang="es"><head><meta charset="utf-8">
+<title>Carrusel · Checklist de mudanza</title>
+<!-- Primer carrusel guardable (23/10/2026, banco de ideas del 22/10, idea 3). Precios de precios_referencia
+     con el ajuste mensual del 2 % (el mismo de la calculadora), redondeados igual, a oct-2026.
+     Exportar: python3 render-carrusel.py mudanza.html carrusel-mudanza
+               python3 render-carrusel.py mudanza.html carrusel-mudanza-tt --red tiktok -->
+<link rel="stylesheet" href="carrusel.css">
+<style>
+.paso{display:flex;align-items:center;gap:30px}
+.paso h2{font:700 108px/1 'IBM Plex Sans Condensed',sans-serif;letter-spacing:-.02em}
+.paso h2 .num{color:var(--laton-osc);margin-right:16px}
+.ico.grande{width:150px;height:150px;border-radius:40px}
+.cuando{margin-bottom:34px}
+.precio{margin-top:60px;padding:40px 46px}
+.precio .que{font:500 44px/1.25 'IBM Plex Sans',sans-serif;color:var(--tinta-2)}
+.precio .rango{font:600 74px/1.1 'IBM Plex Mono',monospace;color:var(--verde);letter-spacing:-.03em;margin-top:14px;white-space:nowrap}
+.precio + .precio{margin-top:26px}
+.consejo{display:flex;gap:24px;align-items:flex-start;margin-top:56px;font:500 46px/1.3 'IBM Plex Sans',sans-serif;color:var(--tinta)}
+.consejo b{font-weight:600;color:var(--verde-vivo)}
+.consejo .ico{color:var(--laton-osc)}
+
+/* 1 · hook */
+.hook .te{font:700 128px/1 'IBM Plex Sans Condensed',sans-serif;letter-spacing:-.02em}
+.hook .solo{font:600 62px/1.15 'IBM Plex Sans',sans-serif;color:var(--tinta-2);margin-top:64px}
+.hook .grande{font:700 330px/.86 'IBM Plex Sans Condensed',sans-serif;letter-spacing:-.04em;color:var(--laton-osc);margin-top:18px;white-space:nowrap}
+.hook .grande small{font-size:150px;color:var(--verde)}
+.hook .cosas{font:600 62px/1.15 'IBM Plex Sans',sans-serif;color:var(--tinta-2);margin-top:26px}
+.siete{display:grid;grid-template-columns:repeat(7,1fr);gap:16px;margin-top:64px}
+.siete div{height:118px;border-radius:26px;background:#fff;border:3px solid rgba(30,93,73,.16);display:flex;align-items:center;justify-content:center;
+  font:700 60px/1 'IBM Plex Sans Condensed',sans-serif;color:var(--laton-osc);box-shadow:0 14px 34px rgba(12,38,32,.08)}
+.siete div:first-child{background:var(--verde);border-color:var(--verde);color:#fff}
+.dos .despues{font:600 40px/1.3 'IBM Plex Sans',sans-serif;color:var(--laton-osc);margin-top:30px}
+
+/* 2 · línea de tiempo (hilo hacia el latón, el elemento firma) */
+.dos h2{font:700 96px/1 'IBM Plex Sans Condensed',sans-serif;letter-spacing:-.015em}
+.dos .bajada{font:500 44px/1.3 'IBM Plex Sans',sans-serif;color:var(--tinta-2);margin-top:26px}
+.linea{position:relative;margin-top:44px;padding-left:76px}
+.linea::before{content:"";position:absolute;left:22px;top:20px;bottom:20px;width:8px;border-radius:4px;background:linear-gradient(var(--verde-vivo),var(--laton))}
+.hito{position:relative;padding:14px 0}
+.hito::before{content:"";position:absolute;left:-70px;top:24px;width:36px;height:36px;border-radius:50%;background:#fff;border:7px solid var(--verde-vivo)}
+.hito:last-child::before{border-color:var(--laton)}
+.hito .etq{font-size:24px}
+.hito p{font:600 52px/1.15 'IBM Plex Sans',sans-serif;margin-top:8px}
+
+/* 7 · ya en el nuevo */
+.fila3{display:flex;flex-direction:column;gap:22px;margin-top:54px}
+.f3{display:flex;align-items:center;gap:28px;padding:28px 34px}
+.f3 .txt{flex:1}
+.f3 .que{font:600 44px/1.15 'IBM Plex Sans',sans-serif}
+.f3 .rango{font:600 46px/1.1 'IBM Plex Mono',monospace;color:var(--verde);letter-spacing:-.03em;margin-top:10px}
+
+/* 8 · mensaje para el flete */
+.ocho h2{font:700 96px/1.0 'IBM Plex Sans Condensed',sans-serif;letter-spacing:-.015em}
+.mensaje{position:relative;align-self:flex-end;margin-top:76px;background:var(--verde-claro);border:3px solid rgba(43,126,98,.25);border-radius:44px 44px 12px 44px;
+  padding:58px 56px 60px;box-shadow:0 30px 70px rgba(12,38,32,.12);font:500 50px/1.4 'IBM Plex Sans',sans-serif;color:var(--tinta)}
+.mensaje::after{content:"";position:absolute;right:-24px;bottom:-3px;width:46px;height:46px;background:var(--verde-claro);clip-path:polygon(0 0,0 100%,100% 100%)}
+.mensaje .sello{position:absolute;top:-36px;left:44px;transform:rotate(-4deg);font-size:30px}
+.mensaje u{text-decoration:none;border-bottom:4px solid var(--laton);padding:0 6px;color:var(--laton-osc);font-weight:600}
+
+/* 9 · checklist para capturar */
+.placa.blanca{background:#fff}
+.placa.blanca .pano{display:none}
+.placa.blanca .cont{border:10px solid var(--verde);border-radius:0}
+.nueve h2{font:700 96px/1 'IBM Plex Sans Condensed',sans-serif;letter-spacing:-.015em}
+.checks{margin-top:34px}
+.chk{display:flex;align-items:center;gap:28px;padding:17px 0;border-bottom:3px solid #E3EAE6}
+.chk:last-child{border-bottom:0}
+.chk .caja{width:62px;height:62px;border-radius:16px;border:5px solid var(--verde);flex:none}
+.chk .n{font:600 36px/1 'IBM Plex Mono',monospace;color:var(--laton-osc);width:36px}
+.chk span{font:600 54px/1.1 'IBM Plex Sans',sans-serif;color:var(--tinta)}
+.nueve .manda{font:600 44px/1.3 'IBM Plex Sans',sans-serif;color:var(--verde-vivo);margin-top:34px}
+
+/* 10 · cierre */
+.cierre h2{font:700 116px/1.0 'IBM Plex Sans Condensed',sans-serif;letter-spacing:-.015em;margin-top:60px}
+.cierre .bajada{font:500 46px/1.3 'IBM Plex Sans',sans-serif;color:#B9C2BC;margin-top:30px;max-width:860px}
+.cierre .url-caja{margin-top:56px}
+.cierre .bio{font:500 28px/1.3 'IBM Plex Mono',monospace;letter-spacing:.06em;color:var(--gris-2);margin-top:22px}
+.cierre .gratis{margin-top:70px}
+.cierre .gratis .sello{background:rgba(201,162,39,.12);color:#F3DE9A}
+</style></head><body>
+
+<!-- 1 · HOOK -->
+<section class="placa hook"><div class="cont">
+  <div class="medio">
+    <div class="te">¿Te mudás?</div>
+    <div class="solo">El flete es solo</div>
+    <div class="grande">1 <small>de</small> 7</div>
+    <div class="cosas">cosas para pedir.</div>
+    <div class="siete"><div><i data-ico="camion" data-px="70" data-color="#fff"></i></div><div>?</div><div>?</div><div>?</div><div>?</div><div>?</div><div>?</div></div>
+  </div>
+  <div class="pie"><span class="web">trattoapp.com.ar</span><span class="desliza">Guardalo · Deslizá →</span></div>
+</div></section>
+
+<!-- 2 · EN ORDEN -->
+<section class="placa dos"><div class="cont">
+  <div class="medio">
+    <h2>En orden, para que no se pisen.</h2>
+    <p class="bajada">Con precios de referencia de octubre en el AMBA.</p>
+    <div class="linea">
+      <div class="hito"><div class="etq">2 semanas antes</div><p>Flete y muebles</p></div>
+      <div class="hito"><div class="etq">1 semana antes</div><p>Pintar lo que dejás</p></div>
+      <div class="hito"><div class="etq">El día</div><p>Limpieza</p></div>
+      <div class="hito"><div class="etq">Ya en el nuevo</div><p>Cerradura, aire y cuadros</p></div>
+    </div>
+    <p class="despues">Al final: la lista para tildar y el mensaje para el flete.</p>
+  </div>
+  <div class="pie"><span class="web">trattoapp.com.ar</span><span class="desliza">Deslizá →</span></div>
+</div></section>
+
+<!-- 3 · FLETE -->
+<section class="placa"><div class="cont">
+  <div class="medio">
+    <div class="etq cuando">2 semanas antes</div>
+    <div class="paso"><div class="ico grande"><i data-ico="camion" data-px="92"></i></div><h2><span class="num">1.</span>El flete.</h2></div>
+    <div class="tarjeta precio"><div class="que">Mudanza de monoambiente</div><div class="rango">$176.000 a $264.000</div></div>
+    <div class="tarjeta precio"><div class="que">Mudanza de 2 ambientes</div><div class="rango">$264.000 a $410.000</div></div>
+    <div class="consejo"><div class="ico chico"><i data-ico="check" data-px="52"></i></div><p>Pedilo diciendo <b>piso, si hay ascensor y los muebles grandes.</b></p></div>
+  </div>
+  <div class="pie"><span class="fuente">Precios de referencia de mano de obra · AMBA · oct-2026</span></div>
+</div></section>
+
+<!-- 4 · MUEBLES -->
+<section class="placa"><div class="cont">
+  <div class="medio">
+    <div class="etq cuando">2 semanas antes</div>
+    <div class="paso"><div class="ico grande"><i data-ico="mueble" data-px="92"></i></div><h2 style="font-size:100px"><span class="num">2.</span>Desarmar y armar muebles.</h2></div>
+    <div class="tarjeta precio"><div class="que">Armado de un mueble</div><div class="rango">$30.000 a $90.000</div></div>
+    <div class="consejo"><div class="ico chico"><i data-ico="check" data-px="52"></i></div><p>Preguntá si el flete <b>lo incluye o es aparte.</b> Que quede por escrito.</p></div>
+  </div>
+  <div class="pie"><span class="fuente">Precios de referencia de mano de obra · AMBA · oct-2026</span></div>
+</div></section>
+
+<!-- 5 · PINTURA -->
+<section class="placa"><div class="cont">
+  <div class="medio">
+    <div class="etq cuando">1 semana antes</div>
+    <div class="paso"><div class="ico grande"><i data-ico="rodillo" data-px="92"></i></div><h2 style="font-size:100px"><span class="num">3.</span>Pintar lo que dejás.</h2></div>
+    <div class="tarjeta precio"><div class="que">Habitación chica (3 × 3 m)</div><div class="rango">$113.000 a $175.000</div></div>
+    <div class="consejo"><div class="ico chico"><i data-ico="check" data-px="52"></i></div><p>Fijate antes <b>qué pide tu contrato</b> al devolver el departamento.</p></div>
+  </div>
+  <div class="pie"><span class="fuente">Precios de referencia de mano de obra · AMBA · oct-2026</span></div>
+</div></section>
+
+<!-- 6 · LIMPIEZA -->
+<section class="placa"><div class="cont">
+  <div class="medio">
+    <div class="etq cuando">El día</div>
+    <div class="paso"><div class="ico grande"><i data-ico="escoba" data-px="92"></i></div><h2><span class="num">4.</span>Limpieza.</h2></div>
+    <div class="tarjeta precio"><div class="que">Media jornada (4 horas)</div><div class="rango">$35.000 a $51.000</div></div>
+    <div class="consejo"><div class="ico chico"><i data-ico="check" data-px="52"></i></div><p>Si podés, <b>con la casa vacía:</b> se limpia mejor y en menos horas.</p></div>
+  </div>
+  <div class="pie"><span class="fuente">Precios de referencia de mano de obra · AMBA · oct-2026</span></div>
+</div></section>
+
+<!-- 7 · YA EN EL NUEVO -->
+<section class="placa"><div class="cont">
+  <div class="medio">
+    <div class="etq cuando">Ya en el nuevo</div>
+    <div class="paso"><div class="ico grande"><i data-ico="casa" data-px="92"></i></div><h2 style="font-size:100px"><span class="num">5, 6 y 7.</span></h2></div>
+    <div class="fila3">
+      <div class="tarjeta f3"><div class="ico chico"><i data-ico="llave" data-px="52"></i></div><div class="txt"><div class="que">Cambiar la cerradura</div><div class="rango">$62.000 a $107.000</div></div></div>
+      <div class="tarjeta f3"><div class="ico chico"><i data-ico="aire" data-px="52"></i></div><div class="txt"><div class="que">Instalar el aire (split de hasta 3.000 frigorías)</div><div class="rango">$90.000 a $175.000</div></div></div>
+      <div class="tarjeta f3"><div class="ico chico"><i data-ico="cuadro" data-px="52"></i></div><div class="txt"><div class="que">Colgar cuadros o espejos (hasta 5)</div><div class="rango">$20.000 a $40.000</div></div></div>
+    </div>
+  </div>
+  <div class="pie"><span class="fuente">Precios de referencia de mano de obra · AMBA · oct-2026</span></div>
+</div></section>
+
+<!-- 8 · MENSAJE PARA EL FLETE -->
+<section class="placa ocho"><div class="cont">
+  <div class="medio">
+    <h2>Para pedir el flete, copiá y completá:</h2>
+    <div class="mensaje"><span class="sello">Copiá y mandá</span>Hola. Mudanza de <u>__</u> ambientes, de <u>barrio</u> a <u>barrio</u>. Piso <u>__</u>, con o sin ascensor. Muebles grandes: <u>__</u>. Fecha: <u>__</u>. ¿Me pasás presupuesto con qué incluye?</div>
+  </div>
+  <div class="pie"><span class="web">trattoapp.com.ar</span></div>
+</div></section>
+
+<!-- 9 · CHECKLIST (para capturar) -->
+<section class="placa blanca nueve"><div class="cont">
+  <div class="medio">
+    <h2>Mudanza: lista para tildar</h2>
+    <div class="checks">
+      <div class="chk"><span class="n">1</span><div class="caja"></div><span>Flete</span></div>
+      <div class="chk"><span class="n">2</span><div class="caja"></div><span>Desarmar y armar muebles</span></div>
+      <div class="chk"><span class="n">3</span><div class="caja"></div><span>Pintar lo que dejás</span></div>
+      <div class="chk"><span class="n">4</span><div class="caja"></div><span>Limpieza</span></div>
+      <div class="chk"><span class="n">5</span><div class="caja"></div><span>Cambiar la cerradura</span></div>
+      <div class="chk"><span class="n">6</span><div class="caja"></div><span>Instalar el aire</span></div>
+      <div class="chk"><span class="n">7</span><div class="caja"></div><span>Colgar cuadros y espejos</span></div>
+    </div>
+    <p class="manda">Mandáselo a quien se está por mudar.</p>
+  </div>
+  <div class="pie"><span class="web">trattoapp.com.ar</span></div>
+</div></section>
+
+<!-- 10 · CIERRE -->
+<section class="placa noche cierre"><div class="cont">
+  <div class="medio">
+    <h2>Los 7, en un solo lugar.</h2>
+    <p class="bajada">En Tratto contás qué necesitás y te llegan presupuestos de quienes trabajan en tu zona.</p>
+    <div><span class="url-caja"><span id="logo-url"></span><span data-tiktok="trattoapp.com.ar/r/tt-mudanza">trattoapp.com.ar/r/ig-mudanza</span></span></div>
+    <p class="bio" data-tiktok="(escribilo en el navegador)">Tocá @trattoapp_ · link «Pedí un servicio»</p>
+    <div class="gratis"><span class="sello">Gratis para el que pide</span></div>
+  </div>
+</div></section>
+
+<script src="carrusel.js"></script>
+<script>document.getElementById('logo-url').outerHTML = LOGO(46, 'lu');</script>
+</body></html>
