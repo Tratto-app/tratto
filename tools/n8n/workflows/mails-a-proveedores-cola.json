@@ -37,13 +37,14 @@
     {
       "id": "e29e2547-09bb-4c72-a6c1-9f22af02d8f2",
       "name": "Buscar avisos de rechazo",
+      "webhookId": "e89f2d45-6bac-435a-9c96-06d1cdc21d97",
       "type": "n8n-nodes-base.gmail",
       "typeVersion": 2.1,
+      "alwaysOutputData": true,
       "position": [
         440,
         0
       ],
-      "alwaysOutputData": true,
       "parameters": {
         "operation": "getAll",
         "limit": 25,
@@ -155,6 +156,7 @@
       "name": "Siguiente mail",
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
+      "alwaysOutputData": true,
       "position": [
         1320,
         40
@@ -183,8 +185,7 @@
           "id": "xVc2ROmkhPTCf2XK",
           "name": "Tratto · Supabase (service role)"
         }
-      },
-      "alwaysOutputData": true
+      }
     },
     {
       "id": "dee43b6b-17af-412c-a258-022a04decd55",
@@ -230,7 +231,7 @@
       ],
       "parameters": {
         "mode": "runOnceForEachItem",
-        "jsCode": "// Arma el mail con texto y HTML (lo mismo que mandaba el agente con\n// send_message) y lo codifica para la API de Gmail.\nconst m = $json;\nconst b64 = (s) => Buffer.from(String(s), 'utf8').toString('base64').replace(/.{76}(?=.)/g, '$&\\r\\n');\nconst frontera = 'tratto_' + Math.random().toString(36).slice(2);\nconst mime = [\n  `To: ${m.para}`,\n  `Subject: =?UTF-8?B?${Buffer.from(String(m.asunto), 'utf8').toString('base64')}?=`,\n  'MIME-Version: 1.0',\n  `Content-Type: multipart/alternative; boundary=\"${frontera}\"`,\n  '',\n  `--${frontera}`,\n  'Content-Type: text/plain; charset=\"UTF-8\"',\n  'Content-Transfer-Encoding: base64',\n  '',\n  b64(m.texto),\n  `--${frontera}`,\n  'Content-Type: text/html; charset=\"UTF-8\"',\n  'Content-Transfer-Encoding: base64',\n  '',\n  b64(m.html),\n  `--${frontera}--`,\n  '',\n].join('\\r\\n');\nreturn { json: { id: m.id, para: m.para, raw: Buffer.from(mime, 'utf8').toString('base64url') } };"
+        "jsCode": "// Arma el mail con texto y HTML (lo mismo que mandaba el agente con\n// send_message) y lo codifica para la API de Gmail.\nconst m = $json;\nconst b64 = (s) => Buffer.from(String(s), 'utf8').toString('base64').replace(/.{76}(?=.)/g, '$&\\r\\n');\nconst frontera = 'tratto_' + Math.random().toString(36).slice(2);\nconst mime = [\n  `To: ${m.para}`,\n  `Subject: =?UTF-8?B?${Buffer.from(String(m.asunto), 'utf8').toString('base64')}?=`,\n  'List-Unsubscribe: <mailto:trattoapp2@gmail.com?subject=baja>',\n  'MIME-Version: 1.0',\n  `Content-Type: multipart/alternative; boundary=\"${frontera}\"`,\n  '',\n  `--${frontera}`,\n  'Content-Type: text/plain; charset=\"UTF-8\"',\n  'Content-Transfer-Encoding: base64',\n  '',\n  b64(m.texto),\n  `--${frontera}`,\n  'Content-Type: text/html; charset=\"UTF-8\"',\n  'Content-Transfer-Encoding: base64',\n  '',\n  b64(m.html),\n  `--${frontera}--`,\n  '',\n].join('\\r\\n');\nreturn { json: { id: m.id, para: m.para, raw: Buffer.from(mime, 'utf8').toString('base64url') } };"
       }
     },
     {
@@ -238,11 +239,11 @@
       "name": "Mandar por Gmail",
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
+      "onError": "continueErrorOutput",
       "position": [
         1980,
         20
       ],
-      "onError": "continueErrorOutput",
       "parameters": {
         "method": "POST",
         "url": "https://gmail.googleapis.com/gmail/v1/users/me/messages/send",
@@ -345,13 +346,13 @@
     {
       "id": "f722bd09-a56e-4ba5-b791-96c4219774ee",
       "name": "Esperar unos 4 minutos",
+      "webhookId": "8e7175f9-63fa-4a80-90b7-60772b732194",
       "type": "n8n-nodes-base.wait",
       "typeVersion": 1.1,
       "position": [
         2420,
         -60
       ],
-      "webhookId": "8e7175f9-63fa-4a80-90b7-60772b732194",
       "parameters": {
         "amount": "={{ 225 + Math.floor(Math.random() * 31) }}",
         "unit": "seconds"
@@ -359,17 +360,6 @@
     }
   ],
   "connections": {
-    "De 9 a 13:30, cada media hora": {
-      "main": [
-        [
-          {
-            "node": "Configuracion",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
     "Configuracion": {
       "main": [
         [
@@ -505,13 +495,24 @@
           }
         ]
       ]
+    },
+    "De 9 a 13:30, cada media hora": {
+      "main": [
+        [
+          {
+            "node": "Configuracion",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
     }
   },
-  "active": false,
+  "active": true,
   "settings": {
-    "executionOrder": "v1",
-    "timezone": "America/Argentina/Buenos_Aires",
+    "saveDataSuccessExecution": "all",
     "errorWorkflow": "LcYeloX0BIWbs3vN",
-    "saveDataSuccessExecution": "all"
+    "timezone": "America/Argentina/Buenos_Aires",
+    "executionOrder": "v1"
   }
 }

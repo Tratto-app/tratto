@@ -23,6 +23,8 @@ texto en body y el asunto en subject de send_message. Pedidos del fundador que f
   sola. Todos los asuntos llevan "Tratto", porque las respuestas se buscan
   con subject:Tratto.
 - 21/10/2026: "que cada 15 mails cambie el formato": (n div 15) mod 4.
+- 22/10/2026 (los mails caían en spam): el link va limpio, sin parámetros, el
+  logo queda pero sin link y firma una persona (FIRMA), no "Equipo de Tratto".
 - 16/10/2026: los mails en frío salen de una casilla aparte, no de
   trattoapp1@gmail.com (está vinculada a la app y a las tiendas). "remitente"
   es esa casilla y va en la firma.
@@ -31,7 +33,8 @@ import html
 import json
 import sys
 
-LINK = 'https://www.trattoapp.com.ar/?utm_source=prospeccion'
+LINK = 'https://www.trattoapp.com.ar/'
+FIRMA = 'Agustín'
 LOGO = 'https://www.trattoapp.com.ar/logo-mail.png'
 
 
@@ -117,9 +120,9 @@ def armar(saludo, gancho, servicio, zona, pedido, donde, variante=None, n=None, 
     firma = (
         '<table role="presentation" cellpadding="0" cellspacing="0" border="0">'
         '<tr><td style="padding:0 0 10px;font:15px/1.5 Arial,Helvetica,sans-serif;color:#0E1815">'
-        'Saludos,<br><b>Equipo de Tratto</b></td></tr>'
-        f'<tr><td><a href="{LINK}"><img src="{LOGO}" alt="Tratto" width="150" height="50" '
-        'style="display:block;border:0;border-radius:8px"></a></td></tr>'
+        f'Saludos,<br><b>{FIRMA}</b>, de Tratto</td></tr>'
+        f'<tr><td><img src="{LOGO}" alt="Tratto" width="150" height="50" '
+        'style="display:block;border:0;border-radius:8px"></td></tr>'
         '<tr><td style="padding:8px 0 0;font:13px/1.5 Arial,Helvetica,sans-serif;color:#5B6B64">'
         'Servicios para tu casa, tu negocio y más, en CABA y Provincia de Buenos Aires<br>'
         f'<a href="{LINK}" style="color:#1E5D49;text-decoration:none">www.trattoapp.com.ar</a>'
@@ -133,7 +136,7 @@ def armar(saludo, gancho, servicio, zona, pedido, donde, variante=None, n=None, 
     texto = '\n\n'.join(parrafos) + (
         f'\n\n{link_antes}www.trattoapp.com.ar{link_despues}'
         f'\n\n{cierre}'
-        '\n\nSaludos,\nEquipo de Tratto\nwww.trattoapp.com.ar\n\n--\n'
+        f'\n\nSaludos,\n{FIRMA}, de Tratto\nwww.trattoapp.com.ar\n\n--\n'
         f'Encontramos tu mail en {donde}. Si no querés recibir más mensajes, respondé "no" '
         'y no te escribimos más.')
     return html_mail, texto, asunto, variante

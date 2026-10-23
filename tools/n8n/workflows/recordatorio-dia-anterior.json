@@ -37,6 +37,7 @@
     {
       "id": "f5895418-f4d1-45be-a58e-f4366efaa648",
       "name": "Buscar avisos de rechazo",
+      "webhookId": "f971dd8c-4998-44eb-bd5c-37621f73a7f1",
       "type": "n8n-nodes-base.gmail",
       "typeVersion": 2.1,
       "alwaysOutputData": true,
@@ -56,8 +57,7 @@
           "id": "MTcKHQH27dQjwmLy",
           "name": "Tratto · Gmail trattoapp2"
         }
-      },
-      "webhookId": "f971dd8c-4998-44eb-bd5c-37621f73a7f1"
+      }
     },
     {
       "id": "049f64d1-38aa-43aa-902c-262830d3ad5a",
@@ -224,23 +224,23 @@
       "name": "Leer el hilo",
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
+      "onError": "continueErrorOutput",
       "position": [
         1760,
         0
       ],
-      "onError": "continueErrorOutput",
-      "credentials": {
-        "gmailOAuth2": {
-          "id": "MTcKHQH27dQjwmLy",
-          "name": "Tratto · Gmail trattoapp2"
-        }
-      },
       "parameters": {
         "method": "GET",
         "url": "=https://gmail.googleapis.com/gmail/v1/users/me/threads/{{ $json.gmail_thread_id }}?format=metadata&metadataHeaders=From&metadataHeaders=Message-ID&metadataHeaders=Subject&metadataHeaders=References",
         "authentication": "predefinedCredentialType",
         "nodeCredentialType": "gmailOAuth2",
         "options": {}
+      },
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "MTcKHQH27dQjwmLy",
+          "name": "Tratto · Gmail trattoapp2"
+        }
       }
     },
     {
@@ -254,7 +254,7 @@
       ],
       "parameters": {
         "mode": "runOnceForEachItem",
-        "jsCode": "// Lee el hilo de la presentación. Si hay cualquier mensaje que no es nuestro\n// (respuesta, respuesta automática o rebote), no se recontacta. Si no, arma la\n// respuesta en el mismo hilo (In-Reply-To y References) con el texto del\n// recontacto (fundador, 22/10/2026), pasado por el humanizador.\nconst fila = $('Siguiente recontacto').item.json;\nconst msgs = $json.messages || [];\nconst h = (m, n) => (((m.payload || {}).headers || []).find((x) => x.name.toLowerCase() === n.toLowerCase()) || {}).value || '';\nif (!msgs.length) return { json: { id: fila.id, saltear: true, motivo: 'No se encontró el hilo en Gmail' } };\nconst ajeno = msgs.find((m) => !/trattoapp2@gmail\\.com/i.test(h(m, 'From')));\nif (ajeno) return { json: { id: fila.id, saltear: true, motivo: ('Hay un mensaje en el hilo de ' + h(ajeno, 'From')).slice(0, 300) } };\nconst ultimo = msgs[msgs.length - 1];\nconst msgId = h(ultimo, 'Message-ID');\nconst refs = [h(ultimo, 'References'), msgId].filter(Boolean).join(' ');\nconst asunto = 'Re: ' + String(h(msgs[0], 'Subject') || fila.asunto).replace(/^re:\\s*/i, '');\nconst LINK = 'https://www.trattoapp.com.ar/?utm_source=prospeccion&utm_content=recordatorio';\nconst parrafos = [\n  'Hola, ¿cómo va?',\n  'Te escribí ayer desde Tratto y quería saber si llegaste a verlo, por si se te pasó.',\n  'Registrarte y publicar tu servicio es gratis. Cuando alguien de tu zona pide lo que hacés, te llega el aviso al celular y le mandás tu presupuesto por el chat de la app.',\n];\nconst texto = parrafos.join('\\n\\n') +\n  '\\n\\nTe podés anotar en www.trattoapp.com.ar eligiendo «Ofrezco un servicio» (en iPhone también está en la App Store). Si tenés alguna duda, respondé este mail.' +\n  '\\n\\nSaludos,\\nEquipo de Tratto\\nwww.trattoapp.com.ar\\n\\n--\\nSi no querés recibir más mensajes, respondé \"no\" y no te escribimos más.';\nconst p = (t) => `<p style=\"margin:0 0 14px\">${t}</p>`;\nconst html = '<div style=\"font:15px/1.6 Arial,Helvetica,sans-serif;color:#0E1815;max-width:560px\">' +\n  parrafos.map(p).join('') +\n  p(`Te podés anotar en <a href=\"${LINK}\" style=\"color:#1E5D49;font-weight:bold\">www.trattoapp.com.ar</a> eligiendo «Ofrezco un servicio» (en iPhone también está en la App Store). Si tenés alguna duda, respondé este mail.`) +\n  '<p style=\"margin:0 0 14px\">Saludos,<br><b>Equipo de Tratto</b></p>' +\n  '<p style=\"margin:22px 0 0;padding-top:12px;border-top:1px solid #E0DCD0;font:12px/1.5 Arial,Helvetica,sans-serif;color:#68766F\">Si no querés recibir más mensajes, respondé \"no\" y no te escribimos más.</p></div>';\nconst b64 = (s) => Buffer.from(String(s), 'utf8').toString('base64').replace(/.{76}(?=.)/g, '$&\\r\\n');\nconst frontera = 'tratto_' + Math.random().toString(36).slice(2);\nconst mime = [\n  `To: ${fila.para}`,\n  `Subject: =?UTF-8?B?${Buffer.from(asunto, 'utf8').toString('base64')}?=`,\n  ...(msgId ? [`In-Reply-To: ${msgId}`, `References: ${refs}`] : []),\n  'MIME-Version: 1.0',\n  `Content-Type: multipart/alternative; boundary=\"${frontera}\"`,\n  '',\n  `--${frontera}`, 'Content-Type: text/plain; charset=\"UTF-8\"', 'Content-Transfer-Encoding: base64', '', b64(texto),\n  `--${frontera}`, 'Content-Type: text/html; charset=\"UTF-8\"', 'Content-Transfer-Encoding: base64', '', b64(html),\n  `--${frontera}--`, '',\n].join('\\r\\n');\nreturn { json: { id: fila.id, saltear: false, threadId: fila.gmail_thread_id, raw: Buffer.from(mime, 'utf8').toString('base64url') } };"
+        "jsCode": "// Lee el hilo de la presentación. Si hay cualquier mensaje que no es nuestro\n// (respuesta, respuesta automática o rebote), no se recontacta. Si no, arma la\n// respuesta en el mismo hilo (In-Reply-To y References) con el texto del\n// recontacto (fundador, 22/10/2026), pasado por el humanizador.\nconst fila = $('Siguiente recontacto').item.json;\nconst msgs = $json.messages || [];\nconst h = (m, n) => (((m.payload || {}).headers || []).find((x) => x.name.toLowerCase() === n.toLowerCase()) || {}).value || '';\nif (!msgs.length) return { json: { id: fila.id, saltear: true, motivo: 'No se encontró el hilo en Gmail' } };\nconst ajeno = msgs.find((m) => !/trattoapp2@gmail\\.com/i.test(h(m, 'From')));\nif (ajeno) return { json: { id: fila.id, saltear: true, motivo: ('Hay un mensaje en el hilo de ' + h(ajeno, 'From')).slice(0, 300) } };\nconst ultimo = msgs[msgs.length - 1];\nconst msgId = h(ultimo, 'Message-ID');\nconst refs = [h(ultimo, 'References'), msgId].filter(Boolean).join(' ');\nconst asunto = 'Re: ' + String(h(msgs[0], 'Subject') || fila.asunto).replace(/^re:\\s*/i, '');\nconst LINK = 'https://www.trattoapp.com.ar/';\nconst parrafos = [\n  'Hola, ¿cómo va?',\n  'Te escribí ayer desde Tratto y quería saber si llegaste a verlo, por si se te pasó.',\n  'Registrarte y publicar tu servicio es gratis. Cuando alguien de tu zona pide lo que hacés, te llega el aviso al celular y le mandás tu presupuesto por el chat de la app.',\n];\nconst texto = parrafos.join('\\n\\n') +\n  '\\n\\nTe podés anotar en www.trattoapp.com.ar eligiendo «Ofrezco un servicio» (en iPhone también está en la App Store). Si tenés alguna duda, respondé este mail.' +\n  '\\n\\nSaludos,\\nAgustín, de Tratto\\nwww.trattoapp.com.ar\\n\\n--\\nSi no querés recibir más mensajes, respondé \"no\" y no te escribimos más.';\nconst p = (t) => `<p style=\"margin:0 0 14px\">${t}</p>`;\nconst html = '<div style=\"font:15px/1.6 Arial,Helvetica,sans-serif;color:#0E1815;max-width:560px\">' +\n  parrafos.map(p).join('') +\n  p(`Te podés anotar en <a href=\"${LINK}\" style=\"color:#1E5D49;font-weight:bold\">www.trattoapp.com.ar</a> eligiendo «Ofrezco un servicio» (en iPhone también está en la App Store). Si tenés alguna duda, respondé este mail.`) +\n  '<p style=\"margin:0 0 14px\">Saludos,<br><b>Agustín</b>, de Tratto</p>' +\n  '<p style=\"margin:22px 0 0;padding-top:12px;border-top:1px solid #E0DCD0;font:12px/1.5 Arial,Helvetica,sans-serif;color:#68766F\">Si no querés recibir más mensajes, respondé \"no\" y no te escribimos más.</p></div>';\nconst b64 = (s) => Buffer.from(String(s), 'utf8').toString('base64').replace(/.{76}(?=.)/g, '$&\\r\\n');\nconst frontera = 'tratto_' + Math.random().toString(36).slice(2);\nconst mime = [\n  `To: ${fila.para}`,\n  `Subject: =?UTF-8?B?${Buffer.from(asunto, 'utf8').toString('base64')}?=`,\n  ...(msgId ? [`In-Reply-To: ${msgId}`, `References: ${refs}`] : []),\n  'List-Unsubscribe: <mailto:trattoapp2@gmail.com?subject=baja>',\n  'MIME-Version: 1.0',\n  `Content-Type: multipart/alternative; boundary=\"${frontera}\"`,\n  '',\n  `--${frontera}`, 'Content-Type: text/plain; charset=\"UTF-8\"', 'Content-Transfer-Encoding: base64', '', b64(texto),\n  `--${frontera}`, 'Content-Type: text/html; charset=\"UTF-8\"', 'Content-Transfer-Encoding: base64', '', b64(html),\n  `--${frontera}--`, '',\n].join('\\r\\n');\nreturn { json: { id: fila.id, saltear: false, threadId: fila.gmail_thread_id, raw: Buffer.from(mime, 'utf8').toString('base64url') } };"
       }
     },
     {
@@ -334,13 +334,13 @@
     {
       "id": "e5aeb0b4-f68d-4200-98e4-a3c5bde0072c",
       "name": "Esperar unos segundos",
+      "webhookId": "79f2026d-9dcc-4faf-a169-085c62d87768",
       "type": "n8n-nodes-base.wait",
       "typeVersion": 1.1,
       "position": [
         2640,
         -200
       ],
-      "webhookId": "79f2026d-9dcc-4faf-a169-085c62d87768",
       "parameters": {
         "amount": 5,
         "unit": "seconds"
@@ -351,17 +351,11 @@
       "name": "Mandar recontacto",
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
+      "onError": "continueErrorOutput",
       "position": [
         2420,
         20
       ],
-      "onError": "continueErrorOutput",
-      "credentials": {
-        "gmailOAuth2": {
-          "id": "MTcKHQH27dQjwmLy",
-          "name": "Tratto · Gmail trattoapp2"
-        }
-      },
       "parameters": {
         "method": "POST",
         "url": "https://gmail.googleapis.com/gmail/v1/users/me/messages/send",
@@ -371,6 +365,12 @@
         "specifyBody": "json",
         "jsonBody": "={{ JSON.stringify({ raw: $json.raw, threadId: $json.threadId }) }}",
         "options": {}
+      },
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "MTcKHQH27dQjwmLy",
+          "name": "Tratto · Gmail trattoapp2"
+        }
       }
     },
     {
@@ -417,13 +417,13 @@
     {
       "id": "c748a628-17af-4e4b-81f6-921816b6f843",
       "name": "Esperar un minuto",
+      "webhookId": "126fa012-f95b-446c-bc5d-5b2f532482ce",
       "type": "n8n-nodes-base.wait",
       "typeVersion": 1.1,
       "position": [
         2860,
         0
       ],
-      "webhookId": "126fa012-f95b-446c-bc5d-5b2f532482ce",
       "parameters": {
         "amount": "={{ 50 + Math.floor(Math.random() * 26) }}",
         "unit": "seconds"
@@ -679,10 +679,10 @@
     }
   },
   "settings": {
-    "executionOrder": "v1",
-    "timezone": "America/Argentina/Buenos_Aires",
+    "saveDataSuccessExecution": "all",
     "errorWorkflow": "LcYeloX0BIWbs3vN",
-    "saveDataSuccessExecution": "all"
+    "timezone": "America/Argentina/Buenos_Aires",
+    "executionOrder": "v1"
   },
   "active": true
 }

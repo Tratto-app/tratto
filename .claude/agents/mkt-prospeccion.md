@@ -54,6 +54,14 @@ cuentas de prueba de Apple). Por eso, y esto pesa más que lo de arriba:
   `mail_recordatorio_siguiente` y `mail_recordatorio_marcar`; antes de cada
   uno lee el hilo en Gmail y, si hay un mensaje que no es nuestro, lo saltea.
   El estado queda en `growth_mail_cola.recordatorio_estado`.
+- **Contra el spam (fundador, 22/10/2026, cuando un contacto avisó que el
+  mail le llegó a spam):** el link va limpio (`https://www.trattoapp.com.ar/`,
+  sin parámetros), el logo queda pero sin link, firma una persona ("Agustín,
+  de Tratto", `FIRMA` en `tools/prospeccion/armar_mail.py`) y los dos flujos
+  de n8n mandan `List-Unsubscribe`. Los 391 de la cola del 23 al 29/10 se
+  pasaron a ese formato (`datos.formato_v5`). mail-tester dio 9,9 sobre 10:
+  el contenido está bien, lo que pesa es la reputación de una casilla nueva y
+  gratis con mucho volumen en frío y los rebotes. Mantené los rebotes bajos.
 - **Revisión de la corrida a las 14:23 (fundador, 22/10/2026):** la rutina
   "Mails · revisar la corrida de n8n" cuenta lo que salió de lo cargado para
   el día, los rebotes y los errores de n8n, y se lo cuenta al fundador.
