@@ -1,0 +1,508 @@
+{
+  "name": "Trabajo listo · pedido sin nadie (Gmail trattoapp2)",
+  "nodes": [
+    {
+      "id": "5378c283-0cca-40de-9e8e-baa194281b0d",
+      "name": "Pedido sin nadie (aviso de la base)",
+      "webhookId": "3cb8649c-b125-4657-a0b2-4729937d4b5e",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        0,
+        0
+      ],
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "trabajo-listo",
+        "responseMode": "onReceived",
+        "options": {}
+      }
+    },
+    {
+      "id": "6e51c848-aedd-47a0-bc86-023179315657",
+      "name": "De 8 a 21, cada 15 minutos",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        0,
+        300
+      ],
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "cronExpression",
+              "expression": "*/15 8-20 * * *"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "d2ff60d8-2dd3-4898-aab2-f0fdce58b2f5",
+      "name": "Configuracion",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        240,
+        300
+      ],
+      "parameters": {
+        "jsCode": "return [{ json: { supabaseUrl: 'https://qglsonbcsncgekzbfafk.supabase.co' } }];"
+      }
+    },
+    {
+      "id": "d0a263d4-dc4e-4bf5-b9d8-8896afba565f",
+      "name": "Configuracion (aviso)",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        240,
+        -200
+      ],
+      "parameters": {
+        "jsCode": "return [{ json: { supabaseUrl: 'https://qglsonbcsncgekzbfafk.supabase.co', trabajo_id: Number(($input.first().json.body || {}).trabajo_id) || null } }];"
+      }
+    },
+    {
+      "id": "5fa8e722-be6a-46a3-bf0d-3c47a4f4f0e9",
+      "name": "Resumen del pedido",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        480,
+        -200
+      ],
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $('Configuracion (aviso)').first().json.supabaseUrl }}/rest/v1/rpc/growth_trabajo_listo_resumen",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "supabaseApi",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ p_trabajo_id: $json.trabajo_id }) }}",
+        "options": {}
+      },
+      "credentials": {
+        "supabaseApi": {
+          "id": "xVc2ROmkhPTCf2XK",
+          "name": "Tratto · Supabase (service role)"
+        }
+      }
+    },
+    {
+      "id": "9128651c-223b-4e55-9fd5-5a3bc4c8aa3a",
+      "name": "Armar aviso al fundador",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        720,
+        -200
+      ],
+      "parameters": {
+        "jsCode": "// Aviso al fundador: un pedido sin nadie, cuántos mails salen solos y los\n// WhatsApp listos para mandar a mano desde su celular (regla: WhatsApp nunca\n// automático).\nconst r = $json || {};\nif (!r.trabajo_id) return [];\nconst rubro = String(r.rubro || '').toLowerCase();\nconst zona = r.zona || 'su zona';\nconst d = String(r.descripcion || '').replace(/[\\s.,;:]+$/, '');\nconst desc = d ? `: «${d}»` : '';\nconst msj = `Hola, soy Agustín, de Tratto. Un vecino de ${zona} está buscando ${rubro}${desc}. Si lo hacés, anotate gratis en www.trattoapp.com.ar (Ofrezco un servicio) y publicá tu servicio: ahí ves el pedido y le mandás tu presupuesto.`;\nconst wa = (r.whatsapp || []).map((w) => {\n  let t = String(w.tel || '').replace(/\\D/g, '');\n  if (!t.startsWith('54')) t = '549' + t.replace(/^0/, '').replace(/^15/, '');\n  return `- ${w.nombre || 'Sin nombre'}${w.misma_zona ? '' : ' (otra zona)'}: https://wa.me/${t}?text=${encodeURIComponent(msj)}`;\n});\nconst lineas = [\n  `Entró un pedido de ${r.rubro} en ${zona} y no hay nadie de ese rubro anotado ${r.motivo === 'rubro_vacio' ? 'en la app' : 'en esa zona'}.`,\n  r.descripcion ? `Lo que pidió (sin datos de contacto): «${r.descripcion}»` : '',\n  '',\n  r.aprobado ? `Mails \"trabajo listo\": ${r.mails}, salen solos de a uno por minuto (8 a 21 h).`\n             : `Mails \"trabajo listo\": ${r.mails} preparados, frenados hasta que apruebes el texto.`,\n  '',\n  wa.length ? `WhatsApp para mandar desde tu celular (tocá el link y se abre con el mensaje):` : 'No hay WhatsApp de este rubro en el CRM.',\n  ...wa,\n];\nreturn [{ json: { asunto: `Pedido sin nadie: ${r.rubro} en ${zona}`, texto: lineas.filter((x, i) => x !== '' || i > 0).join('\\n') } }];"
+      }
+    },
+    {
+      "id": "433a6cbc-9ae1-4d5e-a91c-c5804582d149",
+      "name": "Mandar aviso al fundador",
+      "webhookId": "ad141530-bf01-4df4-84f8-18960be6de1f",
+      "type": "n8n-nodes-base.emailSend",
+      "typeVersion": 2.1,
+      "position": [
+        960,
+        -200
+      ],
+      "parameters": {
+        "fromEmail": "Tratto avisos <info@trattoapp.com.ar>",
+        "toEmail": "trattoapp1@gmail.com",
+        "subject": "={{ $json.asunto }}",
+        "emailFormat": "text",
+        "text": "={{ $json.texto }}",
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "credentials": {
+        "smtp": {
+          "id": "NLd0bxspbVGiMdMH",
+          "name": "Brevo SMTP (alertas)"
+        }
+      }
+    },
+    {
+      "id": "a5cb23ae-8cf4-454d-944e-b883f3e2ab19",
+      "name": "Siguiente mail",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        480,
+        300
+      ],
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $('Configuracion').first().json.supabaseUrl }}/rest/v1/rpc/growth_trabajo_listo_siguiente",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "supabaseApi",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({}) }}",
+        "options": {}
+      },
+      "credentials": {
+        "supabaseApi": {
+          "id": "xVc2ROmkhPTCf2XK",
+          "name": "Tratto · Supabase (service role)"
+        }
+      }
+    },
+    {
+      "id": "0ba5fa6b-be82-4df2-81ed-03f743823675",
+      "name": "¿Hay mail para mandar?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [
+        720,
+        300
+      ],
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose"
+          },
+          "conditions": [
+            {
+              "id": "5d5b6def-fdc5-47a9-ad9e-c3a885f19dc4",
+              "leftValue": "={{ $json.envio_id }}",
+              "rightValue": "",
+              "operator": {
+                "type": "number",
+                "operation": "exists",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      }
+    },
+    {
+      "id": "5f4be4c5-e214-48f6-a8f7-f491296a74fa",
+      "name": "Armar mail",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        960,
+        280
+      ],
+      "parameters": {
+        "mode": "runOnceForEachItem",
+        "jsCode": "// Mail \"trabajo listo\" (fundador, 23/10/2026): un pedido real de un vecino,\n// sin datos de contacto del cliente. Texto pasado por el humanizador.\nconst f = { ...$json, descripcion: String($json.descripcion || '').replace(/[\\s.,;:]+$/, '') };\nconst rubro = String(f.rubro || '').toLowerCase();\nconst zona = f.zona || 'tu zona';\nconst LINK = 'https://www.trattoapp.com.ar/';\nconst saludo = f.nombre ? `Hola ${f.nombre}, ¿cómo va? Soy Agustín, de Tratto.` : 'Hola, ¿cómo va? Soy Agustín, de Tratto.';\nconst pedido = f.descripcion\n  ? `Hoy un vecino de ${zona} pidió esto en la app: «${f.descripcion}».`\n  : `Hoy un vecino de ${zona} pidió ${rubro} en la app.`;\nconst cerca = f.misma_zona ? '' : ' Si te queda cerca, te puede servir.';\nconst parrafos = [\n  saludo,\n  pedido,\n  `Todavía no hay nadie de ${rubro} anotado en su zona, por eso te lo paso a vos.${cerca}`,\n];\nconst cierre = `Si lo hacés, anotate gratis en www.trattoapp.com.ar, elegí «Ofrezco un servicio» y publicá tu servicio de ${rubro}. Ahí te aparece el pedido y le mandás tu presupuesto por el chat de la app. Hay lugar para ${f.cupo || 5} presupuestos.`;\nconst texto = parrafos.join('\\n\\n') + '\\n\\n' + cierre +\n  '\\n\\nSaludos,\\nAgustín, de Tratto\\nwww.trattoapp.com.ar\\n\\n--\\nSi no querés recibir más mensajes, respondé \"no\" y no te escribimos más.';\nconst esc = (s) => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');\nconst p = (t) => `<p style=\"margin:0 0 14px\">${t}</p>`;\nconst html = '<div style=\"font:15px/1.6 Arial,Helvetica,sans-serif;color:#0E1815;max-width:560px\">' +\n  parrafos.map((x) => p(esc(x))).join('') +\n  p(esc(cierre).replace('www.trattoapp.com.ar', `<a href=\"${LINK}\" style=\"color:#1E5D49;font-weight:bold\">www.trattoapp.com.ar</a>`)) +\n  '<p style=\"margin:0 0 14px\">Saludos,<br><b>Agustín</b>, de Tratto</p>' +\n  '<p style=\"margin:22px 0 0;padding-top:12px;border-top:1px solid #E0DCD0;font:12px/1.5 Arial,Helvetica,sans-serif;color:#68766F\">Si no querés recibir más mensajes, respondé \"no\" y no te escribimos más.</p></div>';\nconst asunto = `Hay un pedido de ${rubro} en ${zona}`;\nconst b64 = (s) => Buffer.from(String(s), 'utf8').toString('base64').replace(/.{76}(?=.)/g, '$&\\r\\n');\nconst frontera = 'tratto_' + Math.random().toString(36).slice(2);\nconst mime = [\n  `To: ${f.para}`,\n  `Subject: =?UTF-8?B?${Buffer.from(asunto, 'utf8').toString('base64')}?=`,\n  'List-Unsubscribe: <mailto:trattoapp2@gmail.com?subject=baja>',\n  'MIME-Version: 1.0',\n  `Content-Type: multipart/alternative; boundary=\"${frontera}\"`,\n  '',\n  `--${frontera}`, 'Content-Type: text/plain; charset=\"UTF-8\"', 'Content-Transfer-Encoding: base64', '', b64(texto),\n  `--${frontera}`, 'Content-Type: text/html; charset=\"UTF-8\"', 'Content-Transfer-Encoding: base64', '', b64(html),\n  `--${frontera}--`, '',\n].join('\\r\\n');\nreturn { json: { envio_id: f.envio_id, raw: Buffer.from(mime, 'utf8').toString('base64url') } };"
+      }
+    },
+    {
+      "id": "31d2863a-3af3-41c7-8674-abcbb09d24f5",
+      "name": "Mandar mail",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "onError": "continueErrorOutput",
+      "position": [
+        1200,
+        280
+      ],
+      "parameters": {
+        "method": "POST",
+        "url": "https://gmail.googleapis.com/gmail/v1/users/me/messages/send",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "gmailOAuth2",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ raw: $json.raw }) }}",
+        "options": {}
+      },
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "MTcKHQH27dQjwmLy",
+          "name": "Tratto · Gmail trattoapp2"
+        }
+      }
+    },
+    {
+      "id": "a9f87a7d-e063-4dde-9a33-e17e41defe30",
+      "name": "Marcar enviado",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1440,
+        200
+      ],
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $('Configuracion').first().json.supabaseUrl }}/rest/v1/rpc/growth_trabajo_listo_marcar",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "supabaseApi",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ p_id: $('Armar mail').item.json.envio_id, p_resultado: 'enviado', p_message_id: $json.id }) }}",
+        "options": {}
+      },
+      "credentials": {
+        "supabaseApi": {
+          "id": "xVc2ROmkhPTCf2XK",
+          "name": "Tratto · Supabase (service role)"
+        }
+      }
+    },
+    {
+      "id": "5d1e163c-9979-4875-9d73-12d84250e604",
+      "name": "Marcar error",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1440,
+        420
+      ],
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $('Configuracion').first().json.supabaseUrl }}/rest/v1/rpc/growth_trabajo_listo_marcar",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "supabaseApi",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ p_id: $('Armar mail').item.json.envio_id, p_resultado: 'error', p_motivo: JSON.stringify($json.error || $json).slice(0, 1500) }) }}",
+        "options": {}
+      },
+      "credentials": {
+        "supabaseApi": {
+          "id": "xVc2ROmkhPTCf2XK",
+          "name": "Tratto · Supabase (service role)"
+        }
+      }
+    },
+    {
+      "id": "49ba8d27-30bf-4bec-9527-358da1c26412",
+      "name": "Esperar un minuto",
+      "webhookId": "9cb0c2f4-5b55-4dc3-bc22-5578db1b8aad",
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        1680,
+        200
+      ],
+      "parameters": {
+        "amount": "={{ 50 + Math.floor(Math.random() * 26) }}",
+        "unit": "seconds"
+      }
+    },
+    {
+      "id": "b2b459b4-ca7e-4262-9064-d4a3e5e06e92",
+      "name": "Nada para mandar",
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        960,
+        480
+      ],
+      "parameters": {}
+    }
+  ],
+  "connections": {
+    "Pedido sin nadie (aviso de la base)": {
+      "main": [
+        [
+          {
+            "node": "Configuracion (aviso)",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Configuracion",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Configuracion (aviso)": {
+      "main": [
+        [
+          {
+            "node": "Resumen del pedido",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Resumen del pedido": {
+      "main": [
+        [
+          {
+            "node": "Armar aviso al fundador",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Armar aviso al fundador": {
+      "main": [
+        [
+          {
+            "node": "Mandar aviso al fundador",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "De 8 a 21, cada 15 minutos": {
+      "main": [
+        [
+          {
+            "node": "Configuracion",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Configuracion": {
+      "main": [
+        [
+          {
+            "node": "Siguiente mail",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Siguiente mail": {
+      "main": [
+        [
+          {
+            "node": "¿Hay mail para mandar?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "¿Hay mail para mandar?": {
+      "main": [
+        [
+          {
+            "node": "Armar mail",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Nada para mandar",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Armar mail": {
+      "main": [
+        [
+          {
+            "node": "Mandar mail",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Mandar mail": {
+      "main": [
+        [
+          {
+            "node": "Marcar enviado",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Marcar error",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Marcar enviado": {
+      "main": [
+        [
+          {
+            "node": "Esperar un minuto",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Esperar un minuto": {
+      "main": [
+        [
+          {
+            "node": "Siguiente mail",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "saveDataSuccessExecution": "all",
+    "errorWorkflow": "LcYeloX0BIWbs3vN",
+    "timezone": "America/Argentina/Buenos_Aires",
+    "executionOrder": "v1"
+  },
+  "active": true
+}
