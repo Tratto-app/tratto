@@ -49,6 +49,8 @@ jobs:
         run: npx playwright install --with-deps chromium
       - name: Recuperación de contraseña de la app (Auth simulado)
         run: node --test ../../tools/auth/probar-recuperacion.mjs
+      - name: Panel de usuarios (Auth y datos simulados)
+        run: npx playwright test --config playwright-users.config.ts
       - name: Build
         run: npx vite build
         env:
@@ -59,7 +61,7 @@ jobs:
           deno-version: v2.x
       - name: Edge Functions (deno check + lint)
         working-directory: growth/supabase/functions
-        run: deno check */index.ts && deno lint && deno test growth-whatsapp-observer/core_test.ts
+        run: deno check */index.ts && deno lint && deno test growth-whatsapp-observer/core_test.ts growth-whatsapp-connect/core_test.ts
 
   whatsapp-observer-sql:
     runs-on: ubuntu-24.04
@@ -74,5 +76,21 @@ jobs:
           node-version: 22
           cache: npm
           cache-dependency-path: tools/whatsapp-observer/package-lock.json
+      - run: npm ci --no-audit --no-fund
+      - run: npm test
+
+  app-users-sql:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    defaults:
+      run:
+        working-directory: tools/app-users
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: tools/app-users/package-lock.json
       - run: npm ci --no-audit --no-fund
       - run: npm test

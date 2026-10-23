@@ -71,3 +71,14 @@ Deno.test('challenge requiere token de verificación correcto', async () => {
   const bad = await handleWebhook(new Request('https://test.invalid/?hub.mode=subscribe&hub.verify_token=bad&hub.challenge=123'), { verifyToken: 'test' }, deps);
   assert(bad.status === 403);
 });
+Deno.test('verificación temporal no concede recepción ni evita HMAC', async () => {
+  const token = 'a'.repeat(64); let reads = 0;
+  const deps = { configurations: () => Promise.resolve([]), record: () => Promise.resolve(), verifySetupToken: (value: string) => { reads++; return Promise.resolve(value === token); } };
+  const url = `https://test.invalid/?hub.mode=subscribe&hub.verify_token=${token}&hub.challenge=hello`;
+  const valid = await handleWebhook(new Request(url), {}, deps);
+  assert(valid.status === 200 && await valid.text() === 'hello' && reads === 1);
+  const expired = await handleWebhook(new Request(url), {}, { ...deps, verifySetupToken: () => Promise.resolve(false) });
+  assert(expired.status === 403);
+  const post = await handleWebhook(new Request('https://test.invalid/', { method: 'POST', body: '{}', headers: { 'x-setup-token': token } }), { appSecret: secret }, deps);
+  assert(post.status === 403);
+});

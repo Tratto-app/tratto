@@ -115,3 +115,73 @@ reutiliza sólo la configuración pública de producción que ya estaba en el bu
 Pantalla verificada en anchos 390 y 1440, con conversación de 101 mensajes y
 paginación; cero errores de navegador y cero escrituras de la interfaz de prueba.
 No se desplegó ni conectó Meta como parte de estas pruebas.
+
+## Vinculación del titular desde el CRM (16/10)
+
+`/crm/whatsapp-seguimiento` incorpora una preparación y un botón de registro
+oficial de Meta. El identificador público de configuración se obtiene del ajuste
+privado `whatsapp_seguimiento_meta`; no se incluye el número del titular en Git.
+
+La Edge Function `growth-whatsapp-connect` comprueba la sesión real con Auth,
+el rol `owner` del workspace y la pizarra programada. Sus sesiones de preparación
+guardan sólo hashes de dos valores aleatorios y vencen en 15 minutos. El token
+temporal que muestra el CRM permite verificar el callback sin mostrar ni rotar
+el secreto existente del servidor. No permite aceptar mensajes POST sin HMAC.
+
+El titular configura en Meta el callback del observador y los campos `messages`,
+`account_update`, `smb_message_echoes`, `smb_app_state_sync` e `history`, además
+del dominio permitido para el SDK. `smb_app_state_sync` se ignora: no se copian
+agendas ajenas a las listas. El SDK sólo se carga por acción del titular y sin
+registro automático de eventos publicitarios. No se contrata ningún BSP.
+
+Al terminar el flujo de Coexistencia, el servidor intercambia una sola vez el
+código y comprueba app, permisos, número exacto, `is_on_biz_app=true` y
+`platform_type=CLOUD_API`. El token de Meta sólo vive en esa petición. No se
+devuelve al navegador ni se guarda en tablas del CRM. Si el webhook está completo,
+se suscribe la app a la cuenta y se habilita únicamente el observador; si falta
+algo, se conserva la recepción apagada. El RPC de vínculo vuelve a comprobar
+pausa, propietario, sesión y configuración en la misma transacción.
+
+La ausencia de Advanced Access, verificación o elegibilidad de Meta sigue siendo
+una dependencia externa: tener un configuration ID no prueba esas condiciones.
+Un código sin confirmación de Coexistencia no activa recepción. Una operación
+incierta no se reintenta; se revisa el estado guardado antes de otra preparación.
+
+Esta primera conexión observa mensajes nuevos. No solicita sincronización del
+historial; ese paso requiere consentimiento y alcance comprobados por separado.
+Habilitar recepción no acredita eventos reales ni cobertura completa. Siguen
+pendientes la prueba controlada de entrada/eco y el corte de cobertura. No cambia
+el motor comercial, workflows, colas, estados de registro ni contadores de Gmail.
+
+### Corrección del acceso desde el navegador (16/10)
+
+La primera publicación omitía `x-client-info` de los encabezados CORS permitidos.
+El SDK de Supabase lo envía en las llamadas a funciones: el navegador rechazaba
+la comprobación previa y nunca hacía el POST, aunque OPTIONS devolviera 200.
+Se reproducía desde el dominio real sin iniciar ninguna conexión con Meta.
+
+El receptor de vinculación ahora reutiliza `@supabase/supabase-js/cors` con la
+misma versión del SDK. Conserva el origen exacto del CRM, sólo POST/OPTIONS,
+la validación JWT y la comprobación adicional de Auth y propietario. La prueba
+de acceso debe hacerse desde un navegador con los encabezados del SDK; un curl
+o un flujo con la API simulada no comprueba esta frontera. Que una llamada sin
+sesión alcance el 401 esperado comprueba CORS, pero no la autorización real del
+titular, la elegibilidad de Meta ni la recepción de conversaciones.
+
+### Preparación desde el celular (16/10)
+
+La preparación vigente se conserva en `sessionStorage` de la misma pestaña,
+vinculada al usuario y workspace, para sobrevivir a una recarga al volver desde
+Meta. Antes de recuperarla, el servidor vuelve a comprobar Auth, owner, pausa,
+configuración actual, hash del estado, titular de la sesión, estado pendiente y
+vencimiento original. Recuperarla no crea una sesión ni extiende los 15 minutos.
+La UI muestra la hora de vencimiento y ofrece copia con alternativa móvil.
+
+Sólo se guarda la preparación del webhook; se excluyen expresamente códigos
+OAuth y tokens de acceso de Meta. Se elimina al vencer, cambiar de titular o
+workspace, cerrar sesión o procesar la autorización. El almacenamiento local
+nunca sustituye las comprobaciones del servidor. Un guardado correcto del
+webhook en el panel y el consentimiento de Coexistencia siguen siendo pasos
+reales del titular; la API de `Application/subscriptions` no permite configurar
+webhooks de WhatsApp. No se habilita recepción ni se afirma que haya mensajes
+por conservar esta preparación.
