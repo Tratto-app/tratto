@@ -82,6 +82,24 @@ Todas las respuestas están en la ficha, sección "1. Google Play":
 2. 🟢 Contestá el cuestionario de la prueba: quiénes probaron, qué te dijeron y qué cambiaste. Te ayudo a redactar las respuestas.
 3. ⏳ Google responde en hasta 7 días.
 
+### Si Google pide más prueba (pasó el 23/10/2026)
+El primer pedido (21/10) volvió con "se requieren más pruebas": 14 días más de
+prueba cerrada con verificadores reales, porque los verificadores usaron poco
+la app o porque no se vieron comentarios ni versiones nuevas con cambios.
+Había 12 verificadores, justo el mínimo, y una sola versión subida: los cambios
+de la web llegan solos a la app, pero Google solo ve las versiones subidas a Play.
+1. 🟢 La misma prueba cerrada sigue. Juntá **20 verificadores** con Android que
+   la usen de verdad: los que ya se anotaron en Tratto, los comercios de las
+   recorridas, familia y amigos. Un **Grupo de Google** como lista de
+   verificadores evita cargar los mails uno por uno.
+2. 🟢 Que la abran 3 o 4 veces por semana y te cuenten qué no anda (WhatsApp o
+   comentarios privados desde la ficha de Play Store).
+3. 🔵 Subimos **2 versiones nuevas** durante la prueba (versionCode 2 y 3), con
+   cambios que salgan de esos comentarios y notas que lo digan. Necesita la
+   clave de subida (`clave-android.zip`).
+4. 🟢 A los 14 días volvés a pedir producción con las respuestas reales:
+   cuántos probaron, qué dijeron y qué cambió en cada versión.
+
 ## Paso 6 · Publicar
 1. 🟢 **Producción** → **Crear versión** → **Agregar desde biblioteca** → la `1.0.0` que ya probaron.
 2. 🟢 Países: **Argentina** → **Iniciar lanzamiento en producción**.
