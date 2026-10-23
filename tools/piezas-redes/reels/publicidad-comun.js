@@ -40,6 +40,9 @@
     campana: '<path d="M18 44V30a14 14 0 0 1 28 0v14l4 4H14z"/><path d="M27 54a5 5 0 0 0 10 0"/>',
     celular: '<rect x="18" y="6" width="28" height="52" rx="6"/><path d="M28 50h8"/>',
     tijera: '<circle cx="18" cy="46" r="8"/><circle cx="46" cy="46" r="8"/><path d="M24 40L50 8M40 40L14 8"/>',
+    rodillo: '<rect x="8" y="10" width="38" height="14" rx="4"/><path d="M46 17h7v14H32v8"/><rect x="28" y="39" width="8" height="16" rx="3"/>',
+    llave: '<circle cx="19" cy="32" r="10"/><path d="M29 32h27M48 32v9M56 32v7"/>',
+    canilla: '<path d="M10 22h24a8 8 0 0 1 8 8v4"/><path d="M10 16v12"/><path d="M22 22v-8M16 14h12"/><path d="M42 42c0 4-3 6-3 9a3 3 0 0 0 6 0c0-3-3-5-3-9z"/>',
     auto: '<path d="M8 40v-8l6-12h36l6 12v8z"/><path d="M8 40v8h8v-8M48 40v8h8v-8"/><circle cx="19" cy="34" r="2.5"/><circle cx="45" cy="34" r="2.5"/><path d="M16 26h32"/>',
     pincel: '<path d="M44 8l12 12-22 22-12-12z"/><path d="M22 30c-8 0-12 6-12 12 0 6-2 10-4 12 10 0 22-2 22-14"/>',
   };

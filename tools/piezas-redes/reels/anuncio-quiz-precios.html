@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="es"><head><meta charset="utf-8">
+<link rel="stylesheet" href="publicidad.css"><link rel="stylesheet" href="formatos.css">
+</head><body>
+<!-- Anuncio pago para clientes (23/10/2026): TikTok Promocionar e Instagram. Formato quiz · música pop.
+     Lleva a la calculadora (regla de Anuncios: los de clientes van a la calculadora).
+     Precios de precios_referencia ajustados a oct-2026 (misma cuenta que calculadora_comparar):
+     destapación urgente $50.000 a $95.000; habitación chica 3x3 $113.000 a $175.000;
+     apertura de puerta sin rotura $39.000 a $68.000. Las otras opciones son distractores. -->
+<script>
+window.RED = { url: 'trattoapp.com.ar/calculadora' };
+window.GUION = {
+  formato: 'quiz',
+  titulo: 'Precios de referencia',
+  subtitulo: 'Adiviná los 3',
+  zona: 'AMBA · octubre 2026',
+  rondas: [
+    { pregunta: 'Destapar una cañería de urgencia', icono: 'canilla',
+      opciones: ['$15.000 a $25.000', '$50.000 a $95.000', '$150.000 a $200.000'], correcta: 1,
+      dato: '$50.000 a $95.000', fuente: 'Referencia oct-2026' },
+    { pregunta: 'Pintar una habitación de 3x3', icono: 'rodillo',
+      opciones: ['$113.000 a $175.000', '$40.000 a $60.000', '$300.000 a $400.000'], correcta: 0,
+      dato: '$113.000 a $175.000', fuente: 'Referencia oct-2026' },
+    { pregunta: 'Abrir una puerta sin romperla', icono: 'llave',
+      opciones: ['$10.000 a $15.000', '$90.000 a $120.000', '$39.000 a $68.000'], correcta: 2,
+      dato: '$39.000 a $68.000', fuente: 'Referencia oct-2026' },
+  ],
+  pregunta: ['¿Cuántas', '*acertaste*?'],
+  chip: 'Probá la calculadora gratis',
+  cierre: { a: '¿Te pasaron un precio?', b: 'Fijate si es justo.' },
+};
+</script>
+<script src="formatos.js"></script>
+<script src="publicidad-comun.js"></script>
+</body></html>
