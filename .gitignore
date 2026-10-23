@@ -24,6 +24,7 @@ graphify-src/
 # Salidas del render de los videos (el MP4 que se publica se copia a redes/)
 tools/piezas-redes/reels/salida/video-*
 tools/piezas-redes/reels/salida/previa-*
+tools/piezas-redes/reels/salida/anuncio-*
 tools/piezas-redes/reels/audio/musica-*.wav
 
 # Caché de Python
