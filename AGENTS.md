@@ -18,3 +18,12 @@ repo: cada uno lo arma con el mismo código, así que es el mismo mapa.
   mismo para las otras páginas `.html`.
 - Después de cambiar código, volvé a correr `python3 tools/graphify/armar.py`.
 - Si graphify no está instalado y la tarea no lo necesita, seguí sin él.
+
+## Mails a quienes ofrecen servicios: un solo recontacto
+
+A cada dirección se le manda una sola presentación y, como mucho, un
+recontacto. Ese recontacto lo manda n8n (workflow `dIeCkRkoobCkhdWt`) al día
+siguiente a las 18, en el mismo hilo, solo a quien no respondió (fundador,
+22/10/2026; confirmado el 23/10/2026). Codex no manda recordatorios del mismo
+día ni de ningún otro tipo. La regla también está en la pizarra
+(`coordinacion_codex_claude`, `datos.recontacto`).
