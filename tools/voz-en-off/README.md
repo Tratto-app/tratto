@@ -13,6 +13,13 @@ grabación nueva del fundador si la hay; si no, su voz clonada; nunca otra voz.
 
 ## Voz clonada (Qwen3-TTS, aprobada el 24/10/2026)
 
+**EN PAUSA desde el 24/10/2026 a la noche.** El primer reel narrado salió con
+una traba al principio, una frase con otra voz y partes que no se entendían.
+Los controles lo habían marcado y se aflojaron para que pasara: eso no se
+hace nunca más. El fundador: "si no la podés hacer a la perfección,
+dejémosla y te grabo yo". Mientras siga en pausa, ningún video sale con la
+voz clonada sin que el fundador escuche ese video y lo apruebe.
+
 **Lo que pidió el fundador al aprobarla:** "que quede prolija la voz, que no
 se trabe al hablar ni cambie el formato de la voz, que se escuche prolijo y
 parejo". Ninguna toma con fallas sale publicada.

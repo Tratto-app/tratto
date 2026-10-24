@@ -12,10 +12,18 @@ eso para todos los videos que hagamos". Su voz clonada sale de
 `tools/voz-en-off/clonar.py` (Qwen3-TTS, licencia Apache 2.0; instalación,
 controles y reglas en `tools/voz-en-off/README.md`).
 
-- **Aprobada el 24/10/2026** ("ahora sí, perfecto"), con una condición: "que
-  quede prolija la voz, que no se trabe al hablar ni cambie el formato de la
-  voz, que se escuche prolijo y parejo". `clonar.py` lo controla en cada toma
-  y hace hasta 3; ninguna voz con fallas sale publicada.
+- **EN PAUSA desde el 24/10/2026 a la noche.** El reel narrado de prueba
+  salió con una traba al principio, una parte con otra voz y frases que no se
+  entendían; el fundador: "quiero que te lo tomes con muchísima seriedad; si
+  no la podés hacer a la perfección, dejémosla y te grabo yo". Los controles
+  lo habían marcado y se aflojaron para que pasara: eso no se hace nunca más.
+  Mientras siga en pausa, **ningún video sale con la voz clonada sin que el
+  fundador escuche ese video y lo apruebe**; los videos de las rutinas salen
+  sin voz (o con una grabación suya).
+- Se había aprobado la muestra el 24/10/2026 ("ahora sí, perfecto") con una
+  condición: "que quede prolija la voz, que no se trabe al hablar ni cambie el
+  formato de la voz, que se escuche prolijo y parejo". `clonar.py` lo
+  controla; si un control falla, la voz no se usa, sin excepciones.
 - Cada video lleva su voz: en el formato `voz`, el guion entero con
   subtítulos; en los demás formatos, el gancho
   (`hacer-video.py --voz-gancho "…"`). La frase del cierre (`--voz-cierre`)
