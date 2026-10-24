@@ -41,7 +41,9 @@ parejo". Ninguna toma con fallas sale publicada.
   Unos 7 segundos de cómputo por segundo de voz, más 40 s para cargar el
   modelo. La muestra son los primeros 10,3 s de la toma aprobada de "Dos
   plomeros", con su texto; con `--muestra` y `--muestra-texto` se usa otra
-  toma suya.
+  toma suya. Con `--trabajo carpeta` quedan ahí los tramos que pasaron: si
+  algo se corta, al volver a correrlo sigue desde ahí (cada tramo se hace en
+  un proceso aparte, porque el modelo va juntando memoria).
 - **Por tramos y con controles estrictos** (desde el 24/10/2026 a la noche,
   medidos contra las grabaciones reales del fundador y contra el reel que
   salió mal). El guion se corta en frases; las de menos de 6 palabras van

@@ -25,7 +25,10 @@ control falla, la voz no sale (codigo de salida 2, sin archivo).
 2. El guion se genera por tramos (una frase; las de menos de 6 palabras van
    con la siguiente, porque solas salian con otra voz). Generado entero de
    una vez, una frase floja arruinaba la toma y no se podia cambiar sola.
-   Cada tramo sale de la misma muestra, asi que es la misma voz.
+   Cada tramo sale de la misma muestra, asi que es la misma voz, y se hace
+   en un proceso aparte (el modelo va juntando memoria y a los 4 o 5 tramos
+   el sistema lo cortaba). Con --trabajo CARPETA quedan ahi los tramos que
+   pasaron: si algo se corta, al volver a correrlo sigue desde ahi.
 3. De cada tramo, 2 tomas a la vez con menos azar que el de fabrica (sale mas
    pareja). Cada toma tiene que pasar TODOS los controles (CONTROL), medidos
    contra las grabaciones reales del fundador el 24/10/2026:
@@ -265,20 +268,21 @@ def recorte(x, sr, ini, fin):
     return y, a2 / sr
 
 
-def main():
-    ap = argparse.ArgumentParser()
-    ap.add_argument("guion")
-    ap.add_argument("salida")
-    ap.add_argument("--palabras")
-    ap.add_argument("--muestra", help=f"otra toma del fundador (por defecto {MUESTRA_SEG} s de voz-dos-plomeros)")
-    ap.add_argument("--muestra-texto", help="lo que dice la muestra, palabra por palabra")
-    ap.add_argument("--guardar-tomas", help="carpeta donde dejar todas las tomas, para revisarlas")
-    a = ap.parse_args()
-    if a.muestra and not a.muestra_texto:
-        sys.exit("Con --muestra hace falta --muestra-texto (lo que dice, palabra por palabra).")
-    if re.search(r"\d|\$", a.guion):
-        print("Aviso: el guion tiene cifras o $; se leen mejor escritas con letras.")
+def leer(wav, sr):
+    r = subprocess.run(["ffmpeg", "-v", "error", "-i", wav, "-ac", "1", "-ar", str(sr), "-f", "f32le", "-"],
+                       capture_output=True, check=True)
+    return np.frombuffer(r.stdout, dtype=np.float32).copy()
 
+
+def escuchar(oido, wav):
+    segs, _ = oido.transcribe(wav, language="es", word_timestamps=True, condition_on_previous_text=False)
+    return [(w.start, w.end, w.word, w.probability) for s in segs for w in s.words]
+
+
+def hacer_tramo(a, n, palabras, carpeta):
+    """Las tomas de un tramo, en un proceso aparte: el modelo va juntando
+    memoria y a los 4 o 5 tramos el sistema cortaba el proceso. Deja en la
+    carpeta tramoN.json (y tramoN.wav con la toma elegida, si alguna paso)."""
     import torch
     import soundfile as sf
     from qwen_tts import Qwen3TTSModel
@@ -287,139 +291,179 @@ def main():
     oido = WhisperModel(OIDO, device="cpu", compute_type="int8")
     sr_voz = modelo.model.speaker_encoder_sample_rate
 
-    def escuchar(wav):
-        segs, _ = oido.transcribe(wav, language="es", word_timestamps=True, condition_on_previous_text=False)
-        return [(w.start, w.end, w.word, w.probability) for s in segs for w in s.words]
-
-    def leer(wav, sr):
-        r = subprocess.run(["ffmpeg", "-v", "error", "-i", wav, "-ac", "1", "-ar", str(sr), "-f", "f32le", "-"],
-                           capture_output=True, check=True)
-        return np.frombuffer(r.stdout, dtype=np.float32).copy()
-
     def huella(x):
         with torch.no_grad():
             e = modelo.model.extract_speaker_embedding(audio=x, sr=sr_voz).float().flatten()
         return e / e.norm()
 
+    muestra = os.path.join(carpeta, "muestra.wav")
+    ff("-i", a.muestra or MUESTRA, *([] if a.muestra else ["-t", str(MUESTRA_SEG)]), "-ac", "1", "-ar", "24000", muestra)
+    prompt = modelo.create_voice_clone_prompt(ref_audio=muestra, ref_text=a.muestra_texto or MUESTRA_TEXTO)
+    h_muestra = huella(leer(muestra, sr_voz))
+    f0_muestra = tono(leer(muestra, 16000))
+
+    # Las comillas no se leen: donde abre una cita va un ":" (sin eso lo
+    # leia de corrido y se trababa: "Si mandas se me rompio...").
+    texto = re.sub(r"(\w)\s+[«“\"]", r"\1: ", " ".join(palabras))
+    texto = re.sub(r"[«»“”\"]", "", texto)
+    esperado = len(texto) / 14
+    buenas, probadas = [], []
+    for ronda in range(RONDAS):
+        torch.manual_seed(1000 * (n + 1) + ronda)
+        wavs, sr = modelo.generate_voice_clone(
+            text=[texto] * TOMAS, language=["Spanish"] * TOMAS, voice_clone_prompt=prompt,
+            max_new_tokens=int(12 * (esperado * 1.6 + 2)), **SORTEO)
+        for k, w in enumerate(wavs):
+            toma = os.path.join(carpeta, f"t{n}-{ronda}-{k}.wav")
+            sf.write(toma, np.concatenate([np.zeros(int(COLCHON * sr), dtype=np.float32),
+                                           np.asarray(w, dtype=np.float32)]), sr)
+            oidas = [(max(o[0], COLCHON), max(o[1], COLCHON + 0.05), o[2], o[3]) for o in escuchar(oido, toma)]
+            voz = float(h_muestra @ huella(leer(toma, sr_voz)[int(COLCHON * sr_voz):]))
+            r = revisar(leer(toma, 16000), palabras, oidas, voz, f0_muestra)
+            if len(w) / sr > esperado * 1.5 + 1:
+                r["fallas"].insert(0, f"se fue de largo ({len(w) / sr:.0f} s para unos {esperado:.0f})")
+            r.update(toma=toma, sr=sr, voz=voz, se_oye=" ".join(o[2].strip() for o in oidas))
+            probadas.append(r)
+            if a.guardar_tomas:
+                os.makedirs(a.guardar_tomas, exist_ok=True)
+                shutil.copyfile(toma, os.path.join(a.guardar_tomas, os.path.basename(toma)))
+            print(f"  tramo {n + 1} toma {len(probadas)}: voz {voz:.3f} · "
+                  + ("pasa" if not r["fallas"] else "; ".join(r["fallas"])), file=sys.stderr, flush=True)
+            if not r["fallas"]:
+                buenas.append(r)
+        del wavs
+        gc.collect()
+        ctypes.CDLL("libc.so.6").malloc_trim(0)
+        if buenas:
+            break
+    meta = {"texto": " ".join(palabras), "muestra": [a.muestra, a.muestra_texto], "tomas": len(probadas),
+            "pasaron": len(buenas)}
+    if buenas:
+        mejor = max(buenas, key=lambda b: b["voz"])
+        shutil.copyfile(mejor["toma"], os.path.join(carpeta, f"tramo{n}.wav"))
+        meta.update({k: mejor[k] for k in ("voz", "f0", "ini", "fin", "tiempos", "se_oye")})
+    else:
+        peor = min(probadas, key=lambda p: (len(p["fallas"]), -p["voz"]))
+        meta["mejor_fallida"] = {"fallas": peor["fallas"], "voz": round(peor["voz"], 3), "se_oye": peor["se_oye"]}
+    with open(os.path.join(carpeta, f"tramo{n}.json"), "w", encoding="utf-8") as f:
+        json.dump(meta, f, ensure_ascii=False)
+
+
+def main():
+    ap = argparse.ArgumentParser()
+    ap.add_argument("guion")
+    ap.add_argument("salida")
+    ap.add_argument("--palabras")
+    ap.add_argument("--muestra", help=f"otra toma del fundador (por defecto {MUESTRA_SEG} s de voz-dos-plomeros)")
+    ap.add_argument("--muestra-texto", help="lo que dice la muestra, palabra por palabra")
+    ap.add_argument("--guardar-tomas", help="carpeta donde dejar todas las tomas, para revisarlas")
+    ap.add_argument("--trabajo", help="carpeta para los tramos que pasaron: si se corta, se sigue desde ahi")
+    ap.add_argument("--solo-tramo", type=int, help=argparse.SUPPRESS)
+    a = ap.parse_args()
+    if a.muestra and not a.muestra_texto:
+        sys.exit("Con --muestra hace falta --muestra-texto (lo que dice, palabra por palabra).")
     partes = tramos(a.guion)
+    if a.solo_tramo is not None:
+        return hacer_tramo(a, a.solo_tramo, partes[a.solo_tramo], a.trabajo)
+    if re.search(r"\d|\$", a.guion):
+        print("Aviso: el guion tiene cifras o $; se leen mejor escritas con letras.")
+
+    import soundfile as sf
+    tmp_obj = None if a.trabajo else tempfile.TemporaryDirectory()
+    carpeta = a.trabajo or tmp_obj.name
+    os.makedirs(carpeta, exist_ok=True)
     elegidos, informe = [], []
-    with tempfile.TemporaryDirectory() as tmp:
-        muestra = os.path.join(tmp, "muestra.wav")
-        ff("-i", a.muestra or MUESTRA, *([] if a.muestra else ["-t", str(MUESTRA_SEG)]),
-           "-ac", "1", "-ar", "24000", muestra)
-        prompt = modelo.create_voice_clone_prompt(ref_audio=muestra, ref_text=a.muestra_texto or MUESTRA_TEXTO)
-        h_muestra = huella(leer(muestra, sr_voz))
-        f0_muestra = tono(leer(muestra, 16000))
-
-        for n, palabras in enumerate(partes):
-            # Las comillas no se leen: donde abre una cita va un ":" (sin eso lo
-            # leia de corrido y se trababa: "Si mandas se me rompio...").
-            texto = re.sub(r"(\w)\s+[«“\"]", r"\1: ", " ".join(palabras))
-            texto = re.sub(r"[«»“”\"]", "", texto)
-            esperado = len(texto) / 14
-            buenas, probadas = [], []
-            for ronda in range(RONDAS):
-                torch.manual_seed(1000 * (n + 1) + ronda)
-                wavs, sr = modelo.generate_voice_clone(
-                    text=[texto] * TOMAS, language=["Spanish"] * TOMAS, voice_clone_prompt=prompt,
-                    max_new_tokens=int(12 * (esperado * 1.6 + 2)), **SORTEO)
-                for k, w in enumerate(wavs):
-                    toma = os.path.join(tmp, f"t{n}-{ronda}-{k}.wav")
-                    sf.write(toma, np.concatenate([np.zeros(int(COLCHON * sr), dtype=np.float32),
-                                                   np.asarray(w, dtype=np.float32)]), sr)
-                    oidas = [(max(o[0], COLCHON), max(o[1], COLCHON + 0.05), o[2], o[3]) for o in escuchar(toma)]
-                    voz = float(h_muestra @ huella(leer(toma, sr_voz)[int(COLCHON * sr_voz):]))
-                    r = revisar(leer(toma, 16000), palabras, oidas, voz, f0_muestra)
-                    if len(w) / sr > esperado * 1.5 + 1:
-                        r["fallas"].insert(0, f"se fue de largo ({len(w) / sr:.0f} s para unos {esperado:.0f})")
-                    r.update(wav=w, sr=sr, voz=voz, se_oye=" ".join(o[2].strip() for o in oidas))
-                    probadas.append(r)
-                    if a.guardar_tomas:
-                        os.makedirs(a.guardar_tomas, exist_ok=True)
-                        shutil.copyfile(toma, os.path.join(a.guardar_tomas, os.path.basename(toma)))
-                    print(f"  tramo {n + 1} toma {len(probadas)}: voz {voz:.3f} · "
-                          + ("pasa" if not r["fallas"] else "; ".join(r["fallas"])), file=sys.stderr, flush=True)
-                    if not r["fallas"]:
-                        buenas.append(r)
-                # Sin esto la memoria crece en cada ronda hasta que el sistema corta el proceso.
-                del wavs
-                gc.collect()
-                ctypes.CDLL("libc.so.6").malloc_trim(0)
-                if buenas:
+    for n, palabras in enumerate(partes):
+        archivo = os.path.join(carpeta, f"tramo{n}.json")
+        meta = json.load(open(archivo, encoding="utf-8")) if os.path.exists(archivo) else None
+        if not meta or meta["texto"] != " ".join(palabras) or meta["muestra"] != [a.muestra, a.muestra_texto] \
+                or not meta["pasaron"]:
+            pedido = [sys.executable, os.path.abspath(__file__), a.guion, a.salida, "--solo-tramo", str(n),
+                      "--trabajo", carpeta]
+            for op in ("muestra", "muestra_texto", "guardar_tomas"):
+                if getattr(a, op):
+                    pedido += ["--" + op.replace("_", "-"), getattr(a, op)]
+            for intento in range(2):  # si el sistema lo corta por memoria, una vez mas
+                r = subprocess.run(pedido, stdout=subprocess.DEVNULL)
+                if r.returncode == 0:
                     break
-            texto_corto = " ".join(palabras)[:60]
-            if not buenas:
-                peor = min(probadas, key=lambda p: (len(p["fallas"]), -p["voz"]))
-                informe.append({"tramo": texto_corto, "tomas": len(probadas), "pasaron": 0,
-                                "mejor_fallida": {"fallas": peor["fallas"], "voz": round(peor["voz"], 3),
-                                                  "se_oye": peor["se_oye"]}})
-                break
-            mejor = max(buenas, key=lambda b: b["voz"])
-            elegidos.append((palabras, mejor))
-            informe.append({"tramo": texto_corto, "tomas": len(probadas), "pasaron": len(buenas),
-                            "voz": round(mejor["voz"], 3), "se_oye": mejor["se_oye"]})
-            print(f"tramo {n + 1}/{len(partes)}: {len(buenas)} de {len(probadas)} tomas pasaron "
-                  f"(voz {mejor['voz']:.3f})", file=sys.stderr, flush=True)
+            if r.returncode:
+                sys.exit(f"Falló la generación del tramo {n + 1} (código {r.returncode}).")
+            meta = json.load(open(archivo, encoding="utf-8"))
+        texto_corto = meta["texto"][:60]
+        if not meta["pasaron"]:
+            informe.append({"tramo": texto_corto, "tomas": meta["tomas"], "pasaron": 0,
+                            "mejor_fallida": meta["mejor_fallida"]})
+            break
+        x, sr = sf.read(os.path.join(carpeta, f"tramo{n}.wav"), dtype="float32")
+        meta.update(wav=x[int(COLCHON * sr):], sr=sr)
+        elegidos.append((palabras, meta))
+        informe.append({"tramo": texto_corto, "tomas": meta["tomas"], "pasaron": meta["pasaron"],
+                        "voz": round(meta["voz"], 3), "se_oye": meta["se_oye"]})
+        print(f"tramo {n + 1}/{len(partes)}: {meta['pasaron']} de {meta['tomas']} tomas pasaron "
+              f"(voz {meta['voz']:.3f})", file=sys.stderr, flush=True)
 
-        fallas = []
-        if len(elegidos) < len(partes):
-            t = informe[-1]
-            fallas.append(f"el tramo «{t['tramo']}» no pasó en {t['tomas']} tomas: "
-                          f"{'; '.join(t['mejor_fallida']['fallas'])}")
-        else:
-            tonos = [m["f0"] for _, m in elegidos if m["f0"]]
-            med = float(np.median(tonos)) if tonos else None
-            for palabras, m in elegidos:
-                if m["f0"] and med and abs(m["f0"] - med) / med > CONTROL["tono_pareja"]:
-                    fallas.append(f"el tramo «{' '.join(palabras)[:40]}» tiene otro tono "
-                                  f"({m['f0']:.0f} Hz contra {med:.0f})")
-        if fallas:
-            print(json.dumps({"salida": None, "fallas": fallas, "tramos": informe}, ensure_ascii=False))
-            print(f"Revisar: la voz no salió prolija y no se usa: {'; '.join(fallas)}")
-            sys.exit(2)
-
-        # Pegar: cada tramo al mismo volumen y 0,45 s entre tramos.
-        sr = elegidos[0][1]["sr"]
-        trozos, tiempos, pos = [], [], 0.0
+    fallas = []
+    if len(elegidos) < len(partes):
+        t = informe[-1]
+        fallas.append(f"el tramo «{t['tramo']}» no pasó en {t['tomas']} tomas: "
+                      f"{'; '.join(t['mejor_fallida']['fallas'])}")
+    else:
+        tonos = [m["f0"] for _, m in elegidos if m["f0"]]
+        med = float(np.median(tonos)) if tonos else None
         for palabras, m in elegidos:
-            # Los tiempos del oido cuentan el colchon de silencio; la toma no lo tiene.
-            y, corrido = recorte(np.asarray(m["wav"], dtype=np.float32), sr, m["ini"] - COLCHON, m["fin"] - COLCHON)
-            corrido += COLCHON
-            paso = int(0.01 * sr)
-            marcos = [y[i:i + paso] for i in range(0, len(y) - paso, paso)]
-            fuertes = [f for f in marcos if db(f) > max(db(f2) for f2 in marcos) - 30]
-            y *= 10 ** ((-20 - db(np.concatenate(fuertes))) / 20)
-            if trozos:
-                trozos.append(np.zeros(int(ENTRE_TRAMOS * sr), dtype=np.float32))
-                pos += ENTRE_TRAMOS
-            trozos.append(y)
-            propios = [None if t is None else [max(t[0] - corrido + pos, pos + 0.04), t[1] - corrido + pos]
-                       for t in m["tiempos"]]
-            tiempos += propios
-            pos += len(y) / sr
-        pegada = os.path.join(tmp, "pegada.wav")
-        sf.write(pegada, np.concatenate(trozos), sr)
+            if m["f0"] and med and abs(m["f0"] - med) / med > CONTROL["tono_pareja"]:
+                fallas.append(f"el tramo «{' '.join(palabras)[:40]}» tiene otro tono "
+                              f"({m['f0']:.0f} Hz contra {med:.0f})")
+    if fallas:
+        print(json.dumps({"salida": None, "fallas": fallas, "tramos": informe}, ensure_ascii=False))
+        print(f"Revisar: la voz no salió prolija y no se usa: {'; '.join(fallas)}")
+        sys.exit(2)
 
-        terminada = os.path.join(tmp, "terminada.wav")
-        ff("-i", pegada, "-af", TERMINAR, "-ac", "1", "-ar", str(SR), terminada)
-        med = ff("-i", terminada, "-af", "loudnorm=I=-14:TP=-1.5:LRA=7:print_format=json", "-f", "null", "-", nivel="info")
-        j = json.loads(med[med.rindex("{"):])
-        ln = ("loudnorm=I=-14:TP=-1.5:LRA=7:measured_I=%s:measured_TP=%s:measured_LRA=%s:"
-              "measured_thresh=%s:offset=%s:linear=true"
-              % (j["input_i"], j["input_tp"], j["input_lra"], j["input_thresh"], j["target_offset"]))
-        final = os.path.join(tmp, "final.wav")
-        ff("-i", terminada, "-af", ln + ",alimiter=limit=0.84:attack=2:release=40:level=false",
-           "-ar", str(SR), "-c:a", "pcm_s24le", final)
+    # Pegar: cada tramo al mismo volumen y 0,45 s entre tramos.
+    sr = elegidos[0][1]["sr"]
+    trozos, tiempos, pos = [], [], 0.0
+    for palabras, m in elegidos:
+        # Los tiempos del oido cuentan el colchon de silencio; la toma no lo tiene.
+        y, corrido = recorte(np.asarray(m["wav"], dtype=np.float32), sr, m["ini"] - COLCHON, m["fin"] - COLCHON)
+        corrido += COLCHON
+        paso = int(0.01 * sr)
+        marcos = [y[i:i + paso] for i in range(0, len(y) - paso, paso)]
+        fuertes = [f for f in marcos if db(f) > max(db(f2) for f2 in marcos) - 30]
+        y *= 10 ** ((-20 - db(np.concatenate(fuertes))) / 20)
+        if trozos:
+            trozos.append(np.zeros(int(ENTRE_TRAMOS * sr), dtype=np.float32))
+            pos += ENTRE_TRAMOS
+        trozos.append(y)
+        tiempos += [None if t is None else [max(t[0] - corrido + pos, pos + 0.04), t[1] - corrido + pos]
+                    for t in m["tiempos"]]
+        pos += len(y) / sr
+    pegada = os.path.join(carpeta, "pegada.wav")
+    sf.write(pegada, np.concatenate(trozos), sr)
 
-        # Entera otra vez: tiene que entenderse el guion.
-        oidas = escuchar(final)
-        parecido = difflib.SequenceMatcher(None, normal(a.guion), normal(" ".join(w[2] for w in oidas))).ratio()
-        if parecido < CONTROL["texto"]:
-            print(json.dumps({"salida": None, "fallas": [f"entera se entiende distinto ({parecido:.0%})"],
-                              "se_oye": " ".join(w[2].strip() for w in oidas), "tramos": informe}, ensure_ascii=False))
-            print(f"Revisar: la voz entera se entiende distinto ({parecido:.0%}) y no se usa.")
-            sys.exit(2)
-        shutil.copyfile(final, a.salida)
+    terminada = os.path.join(carpeta, "terminada.wav")
+    ff("-i", pegada, "-af", TERMINAR, "-ac", "1", "-ar", str(SR), terminada)
+    med = ff("-i", terminada, "-af", "loudnorm=I=-14:TP=-1.5:LRA=7:print_format=json", "-f", "null", "-", nivel="info")
+    j = json.loads(med[med.rindex("{"):])
+    ln = ("loudnorm=I=-14:TP=-1.5:LRA=7:measured_I=%s:measured_TP=%s:measured_LRA=%s:"
+          "measured_thresh=%s:offset=%s:linear=true"
+          % (j["input_i"], j["input_tp"], j["input_lra"], j["input_thresh"], j["target_offset"]))
+    final = os.path.join(carpeta, "final.wav")
+    ff("-i", terminada, "-af", ln + ",alimiter=limit=0.84:attack=2:release=40:level=false",
+       "-ar", str(SR), "-c:a", "pcm_s24le", final)
+
+    # Entera otra vez: tiene que entenderse el guion.
+    from faster_whisper import WhisperModel
+    oidas = escuchar(WhisperModel(OIDO, device="cpu", compute_type="int8"), final)
+    parecido = difflib.SequenceMatcher(None, normal(a.guion), normal(" ".join(w[2] for w in oidas))).ratio()
+    if parecido < CONTROL["texto"]:
+        print(json.dumps({"salida": None, "fallas": [f"entera se entiende distinto ({parecido:.0%})"],
+                          "se_oye": " ".join(w[2].strip() for w in oidas), "tramos": informe}, ensure_ascii=False))
+        print(f"Revisar: la voz entera se entiende distinto ({parecido:.0%}) y no se usa.")
+        sys.exit(2)
+    shutil.copyfile(final, a.salida)
+    if tmp_obj:
+        tmp_obj.cleanup()
 
     duracion = sf.info(a.salida).duration
     if a.palabras:
