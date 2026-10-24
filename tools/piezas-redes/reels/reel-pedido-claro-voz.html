@@ -1,0 +1,132 @@
+<!doctype html><html lang="es"><head><meta charset="utf-8">
+<title>Reel · Pedido claro con la voz del fundador</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@500;600&family=IBM+Plex+Sans+Condensed:wght@600;700&family=IBM+Plex+Sans:wght@400;500;600&family=Montserrat:wght@500;600&display=block" rel="stylesheet">
+<link rel="stylesheet" href="comun-voz.css">
+<!--
+  Reel 1080×1920 narrado entero con la voz clonada del fundador (24/10/2026,
+  tools/voz-en-off/clonar.py), subtítulos de audio/voz-pedido-claro.palabras.json.
+  Base: comun-voz.css y comun-voz.js. Los tiempos de cada escena salen de las
+  palabras (T('palabra', n)), así siguen sincronizados si se regenera la voz.
+  Tema: el carrusel «Pedido claro» (5 datos para que te pasen un precio).
+-->
+<style>
+.chat{width:820px;display:flex;flex-direction:column;gap:30px}
+.globo{max-width:640px;border-radius:40px;padding:30px 40px;font:600 54px/1.18 'IBM Plex Sans',sans-serif;box-shadow:0 18px 40px rgba(0,0,0,.35)}
+.globo.mio{align-self:flex-end;background:var(--verde-luz);color:var(--tinta);border-bottom-right-radius:12px}
+.globo.otro{align-self:flex-start;background:var(--claro);color:var(--tinta);border-bottom-left-radius:12px;font-size:76px;font-family:'IBM Plex Sans Condensed';font-weight:700}
+.quien{font-family:'IBM Plex Mono';font-size:24px;letter-spacing:.14em;text-transform:uppercase;color:var(--gris-2)}
+.puntos{align-self:flex-start;background:var(--noche-2);border:3px solid var(--noche-3);border-radius:40px;padding:26px 36px;display:flex;gap:14px}
+.puntos i{width:22px;height:22px;border-radius:50%;background:var(--gris-3);display:block}
+.lista{width:820px;display:flex;flex-direction:column;gap:22px}
+.dato{display:flex;align-items:center;gap:28px;padding:24px 32px}
+.dato .n{flex:none;width:84px;height:84px;border-radius:50%;background:var(--laton-cl);color:var(--tinta);display:flex;align-items:center;justify-content:center;font:700 52px/1 'IBM Plex Sans Condensed'}
+.dato .t{font:700 62px/1.05 'IBM Plex Sans Condensed';letter-spacing:-.01em;white-space:nowrap}
+</style></head><body><div id="lienzo"><div id="escenario">
+
+<!-- 1 · el pedido vago y el «depende» -->
+<div class="sc" id="s1"><div class="c chat">
+  <div class="quien" id="q-vos" style="align-self:flex-end;opacity:0">Vos</div>
+  <div class="globo mio" id="g-mio" style="opacity:0">Se me rompió algo del baño, ¿cuánto sale?</div>
+  <div class="puntos" id="g-puntos" style="opacity:0"><i></i><i></i><i></i></div>
+  <div class="globo otro" id="g-otro" style="opacity:0">Depende.</div>
+</div></div>
+
+<!-- 2 · cinco cosas -->
+<div class="sc" id="s2">
+  <div class="c cond" id="cinco" style="font-size:520px;line-height:1;color:var(--laton-cl);opacity:0;margin-top:-80px;text-shadow:0 18px 0 rgba(0,0,0,.3)">5</div>
+  <div class="c mono" id="cosas" style="font-size:40px;color:var(--claro);opacity:0;margin-top:250px;white-space:nowrap">datos y te pasan un precio</div>
+</div>
+
+<!-- 3 · los cinco datos -->
+<div class="sc" id="s3"><div class="c lista">
+  <div class="tarjeta dato" id="d1" style="opacity:0"><span class="n">1</span><span class="t">Qué pasa</span></div>
+  <div class="tarjeta dato" id="d2" style="opacity:0"><span class="n">2</span><span class="t">Desde cuándo</span></div>
+  <div class="tarjeta dato" id="d3" style="opacity:0"><span class="n">3</span><span class="t">Foto de cerca y de lejos</span></div>
+  <div class="tarjeta dato" id="d4" style="opacity:0"><span class="n">4</span><span class="t">Barrio y piso</span></div>
+  <div class="tarjeta dato" id="d5" style="opacity:0"><span class="n">5</span><span class="t">Para cuándo</span></div>
+</div></div>
+
+<!-- 4 · llega el presupuesto -->
+<div class="sc" id="s4">
+  <div class="c" id="presu" style="opacity:0;white-space:nowrap"><div class="tarjeta fila" style="border-color:var(--laton);gap:30px;padding:40px 48px">
+    <span id="tilde4"></span><div><div class="mono" style="font-size:28px;color:var(--laton)">Presupuesto nuevo</div>
+    <div class="cond" style="font-size:76px;margin-top:8px">Con precio y qué incluye</div></div></div></div>
+  <div class="c" id="sin-ir" style="opacity:0;margin-top:230px"><span class="chip l">Muchas veces, sin ir a mirar</span></div>
+</div>
+
+<!-- 5 · gente de tu zona -->
+<div class="sc" id="s5"><svg class="c" width="800" height="740" viewBox="0 0 800 740">
+  <g stroke="#1B4B40" stroke-width="22" stroke-linecap="round">
+    <path d="M40 140 L760 120"/><path d="M40 380 L760 400"/><path d="M60 620 L740 600"/>
+    <path d="M160 40 L190 700"/><path d="M420 30 L400 710"/><path d="M640 40 L660 700"/>
+  </g>
+  <circle id="radio" cx="400" cy="380" r="40" fill="#2B7E62" opacity="0"/>
+  <g id="pines"></g>
+  <g id="yo" style="transform-origin:400px 380px;opacity:0">
+    <circle cx="400" cy="380" r="46" fill="#F7CA55" stroke="#0C2620" stroke-width="8"/>
+    <text x="400" y="394" text-anchor="middle" font-family="IBM Plex Sans Condensed" font-weight="700" font-size="40" fill="#0E1815">Vos</text>
+  </g>
+</svg></div>
+
+</div></div>
+<script>
+// Tiempo en que empieza la n-ésima vez que se dice una palabra (sin tildes ni signos).
+const norm = (w) => w.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/[^a-z0-9ñ]/g, '');
+const W = (window.PALABRAS || []).map(([a, b, w]) => [a, b, norm(w)]);
+function T(palabra, n = 1, fin = false) {
+  const p = norm(palabra);
+  const hit = W.filter((w) => w[2] === p)[n - 1];
+  if (!hit) throw new Error(`No está la palabra "${palabra}" (${n})`);
+  return fin ? hit[1] : hit[0];
+}
+const ULTIMA = W.length ? W.at(-1)[1] : 30;
+const t1 = T('te'), t2 = T('para'), t3 = T('que', 2), t4 = T('con', 2), t5 = T('en'), tFin = ULTIMA + 0.35;
+window.REEL = {
+  escenas: [['s1', -1, t2], ['s2', t2, t3], ['s3', t3, t4], ['s4', t4, t5], ['s5', t5, tFin]],
+  golpes: [T('depende'), T('cinco'), T('que', 2), T('desde'), T('foto'), T('donde'), T('para', 2), T('precio', 2), T('zona'), tFin + 0.1],
+  sinSubs: [],
+  cierre: { entra: tFin, logo: tFin + 0.1, a: ['Pedí gratis en', tFin + 0.9], b: ['trattoapp.com.ar', tFin + 1.7], sello: ['Contalo una vez', tFin + 2.4] },
+  animar,
+};
+window.DURACION = tFin + 3.6;
+const PINES = [[170, 150, 0], [640, 130, 0.16], [180, 610, 0.32], [650, 610, 0.5], [420, 140, 0.66], [130, 390, 0.86], [670, 400, 1.04]];
+function animar(t) {
+  // 1 · chat
+  pop($('q-vos'), t, 0.05, '');
+  pop($('g-mio'), t, 0.15, '');
+  set($('g-puntos'), t >= t1 - 0.1 && t < T('depende') ? 1 : 0);
+  $('g-puntos').querySelectorAll('i').forEach((d, k) => { d.style.transform = `translateY(${Math.sin(t * 12 - k) * 6}px)`; });
+  const tiembla = t > T('depende') ? Math.sin(t * 60) * 8 * Math.exp(-(t - T('depende')) * 4) : 0;
+  pop($('g-otro'), t, T('depende'), `translateX(${tiembla}px) rotate(-3deg)`);
+
+  // 2 · cinco
+  pop($('cinco'), t, T('cinco'), `${C} rotate(${-8 + 8 * eo(P(t, T('cinco'), T('cinco') + 0.4))}deg)`, 0.45);
+  pop($('cosas'), t, T('cosas'), C);
+
+  // 3 · los datos, cada uno cuando lo dice
+  [['d1', T('que', 2)], ['d2', T('desde')], ['d3', T('una')], ['d4', T('donde')], ['d5', T('para', 2)]].forEach(([id, a]) =>
+    pop($(id), t, a, `translateX(${(1 - eo(P(t, a, a + 0.3))) * 80}px)`));
+  const f = T('foto');
+  $('flash').style.opacity = t >= f ? Math.max(0, 0.8 - (t - f) * 5) : 0;
+
+  // 4 · presupuesto
+  pop($('presu'), t, T('precio', 2), C);
+  pop($('sin-ir'), t, T('muchas'), C);
+
+  // 5 · zona
+  pop($('yo'), t, t5 + 0.1, '');
+  const p0 = T('presupuestos');
+  const rp = P(t, p0, p0 + 1.2);
+  $('radio').setAttribute('r', 40 + eo(rp) * 330);
+  $('radio').setAttribute('opacity', t >= p0 ? 0.35 * (1 - rp * 0.5) : 0);
+  $('pines').querySelectorAll('g').forEach((g, i) => pop(g, t, p0 + PINES[i][2], ''));
+}
+</script>
+<script src="comun-voz.js"></script>
+<script>
+$('tilde4').innerHTML = TILDE(110);
+PINES.forEach(([x, y]) => $('pines').insertAdjacentHTML('beforeend',
+  `<g style="transform-origin:${x}px ${y}px;opacity:0"><path d="M${x} ${y} c-34 -38 -34 -86 0 -86 c34 0 34 48 0 86z" transform="translate(0,-4)" fill="#8FD9BC" stroke="#0C2620" stroke-width="6"/><circle cx="${x}" cy="${y - 52}" r="13" fill="#0C2620"/></g>`));
+render(0);
+</script>
+</body></html>
