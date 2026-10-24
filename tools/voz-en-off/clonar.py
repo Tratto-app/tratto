@@ -32,9 +32,10 @@ control falla, la voz no sale (codigo de salida 2, sin archivo).
    - se entiende: lo que oye faster-whisper medium (sin pista del guion, para
      que no adivine) es el guion del tramo, sin palabras de mas ni repetidas,
      y lo oye seguro;
-   - no se traba: ninguna pausa en el medio de una frase de mas de 0,6 s
-     (despues de una coma, 0,75 s; el fundador llega a 0,72), ninguna
-     palabra estirada, nada de ruido o murmullo antes o despues;
+   - no se traba: ningun silencio de mas de 0,45 s en el medio de una frase
+     (despues de una coma, 0,75 s; el fundador llega a 0,72), medido en el
+     audio y no en lo que dice el oido (que a veces estira las palabras y
+     tapa la pausa), ninguna palabra estirada, nada antes o despues;
    - misma voz: parecido con la muestra (huella de voz del propio modelo)
      de 0,975 o mas; tono a menos de 22 % del de la muestra y ritmo normal.
    Si ninguna de las 4 pasa, otras 4 (hasta 3 rondas). Si un tramo no pasa,
@@ -69,7 +70,7 @@ CONTROL = {
     "texto": 0.95,          # parecido de lo que se oye con el guion del tramo
     "seguro": 0.80,         # seguridad media del oido en las palabras del tramo
     "seguro_3": 0.70,       # ni 3 palabras seguidas con menos: asi sono la traba de "Si mandas, se" (0,46 a 0,65)
-    "pausa": 0.60, "pausa_coma": 0.75, "pausa_punto": 0.95,
+    "pausa": 0.45, "pausa_coma": 0.75, "pausa_punto": 0.95,  # silencios medidos en el audio
     "palabra_larga": 0.90,
     "ruido_db": -38.0,      # nada que suene antes de la primera palabra o despues de la ultima
     "voz": 0.975,           # parecido con la muestra (reales 0,97 a 0,99; la frase con otra voz dio 0,944)
@@ -174,6 +175,20 @@ def db(x):
     return 20 * np.log10(np.sqrt((x ** 2).mean()) + 1e-9) if len(x) else -120.0
 
 
+def silencios(x, sr=16000, minimo=0.25):
+    """[(desde, largo)] de los silencios de mas de `minimo` s dentro de x."""
+    paso = int(0.01 * sr)
+    d = np.array([db(x[i:i + paso]) for i in range(0, len(x) - paso, paso)])
+    if not len(d):
+        return []
+    voz = np.where(d > d.max() - 35)[0]
+    out = []
+    for a, b in zip(voz, voz[1:]):
+        if (b - a - 1) * 0.01 >= minimo:
+            out.append(((a + 1) * 0.01, (b - a - 1) * 0.01))
+    return out
+
+
 def revisar(x16, palabras, oidas, voz, f0_muestra):
     """Fallas de una toma de un tramo. x16: la toma a 16 kHz (con 0,5 s de
     silencio adelante, como la escucho el oido); oidas: (inicio, fin,
@@ -202,15 +217,19 @@ def revisar(x16, palabras, oidas, voz, f0_muestra):
     for (ini, fin, w, p) in oidas:
         if fin - ini > CONTROL["palabra_larga"]:
             r["fallas"].append(f"palabra estirada: {w.strip()}")
+    # Pausas: los silencios de verdad (el oido a veces estira las palabras y
+    # tapa la pausa), cada uno con la palabra que termina mas cerca.
     t = r["tiempos"]
-    for i in range(len(palabras) - 1):
-        if t[i] and t[i + 1]:
-            hueco = t[i + 1][0] - t[i][1]
-            tope = CONTROL["pausa_punto"] if re.search(r"[.?!…][»”\"]?$", palabras[i]) else \
-                CONTROL["pausa_coma"] if re.search(r"[,:;»”\"]$", palabras[i]) else CONTROL["pausa"]
-            if hueco > tope:
-                r["fallas"].append(f"se frena {hueco:.1f} s después de «{palabras[i]}»")
     ini, fin = r["ini"], r["fin"] = oidas[0][0], oidas[-1][1]
+    for desde, largo in silencios(x16[int(ini * 16000):int(fin * 16000)]):
+        desde += ini
+        cerca = [i for i in range(len(palabras) - 1) if t[i]]
+        i = min(cerca, key=lambda i: abs(t[i][1] - desde)) if cerca else None
+        p = palabras[i] if i is not None and abs(t[i][1] - desde) < 0.3 else ""
+        tope = CONTROL["pausa_punto"] if re.search(r"[.?!…][»”\"]?$", p) else \
+            CONTROL["pausa_coma"] if re.search(r"[,:;»”\"]$", p) else CONTROL["pausa"]
+        if largo > tope:
+            r["fallas"].append(f"se frena {largo:.1f} s" + (f" después de «{p}»" if p else ""))
     if db(x16[int(0.5 * 16000):max(int(0.5 * 16000), int((ini - 0.25) * 16000))]) > CONTROL["ruido_db"]:
         r["fallas"].append("suena algo antes de la primera palabra")
     if db(x16[int((fin + 0.35) * 16000):]) > CONTROL["ruido_db"]:
@@ -303,7 +322,7 @@ def main():
                     toma = os.path.join(tmp, f"t{n}-{ronda}-{k}.wav")
                     sf.write(toma, np.concatenate([np.zeros(int(COLCHON * sr), dtype=np.float32),
                                                    np.asarray(w, dtype=np.float32)]), sr)
-                    oidas = escuchar(toma)
+                    oidas = [(max(o[0], COLCHON), max(o[1], COLCHON + 0.05), o[2], o[3]) for o in escuchar(toma)]
                     voz = float(h_muestra @ huella(leer(toma, sr_voz)[int(COLCHON * sr_voz):]))
                     r = revisar(leer(toma, 16000), palabras, oidas, voz, f0_muestra)
                     if len(w) / sr > esperado * 1.5 + 1:
@@ -360,7 +379,9 @@ def main():
                 trozos.append(np.zeros(int(ENTRE_TRAMOS * sr), dtype=np.float32))
                 pos += ENTRE_TRAMOS
             trozos.append(y)
-            tiempos += [None if t is None else [t[0] - corrido + pos, t[1] - corrido + pos] for t in m["tiempos"]]
+            propios = [None if t is None else [max(t[0] - corrido + pos, pos + 0.04), t[1] - corrido + pos]
+                       for t in m["tiempos"]]
+            tiempos += propios
             pos += len(y) / sr
         pegada = os.path.join(tmp, "pegada.wav")
         sf.write(pegada, np.concatenate(trozos), sr)

@@ -51,9 +51,9 @@ parejo". Ninguna toma con fallas sale publicada.
   - se entiende: lo que oye es el guion del tramo (95 % o más), sin palabras
     de más ni repetidas, y lo oye seguro, también de a 3 palabras seguidas
     (así se vio la traba de "Si mandás, se…" del reel);
-  - no se traba: ninguna pausa de más de 0,6 s en el medio de una frase
-    (0,75 s después de una coma), ninguna palabra estirada, nada que suene
-    antes o después;
+  - no se traba: ningún silencio de más de 0,45 s en el medio de una frase
+    (0,75 s después de una coma), medido en el audio; ninguna palabra
+    estirada, nada que suene antes o después;
   - misma voz: parecido con la muestra de 0,975 o más (las frases con otra
     voz del reel dieron 0,944 a 0,967), tono y ritmo normales, y los tramos
     elegidos parejos entre ellos.
