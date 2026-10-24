@@ -26,7 +26,7 @@ control falla, la voz no sale (codigo de salida 2, sin archivo).
    con la siguiente, porque solas salian con otra voz). Generado entero de
    una vez, una frase floja arruinaba la toma y no se podia cambiar sola.
    Cada tramo sale de la misma muestra, asi que es la misma voz.
-3. De cada tramo, 4 tomas a la vez con menos azar que el de fabrica (sale mas
+3. De cada tramo, 2 tomas a la vez con menos azar que el de fabrica (sale mas
    pareja). Cada toma tiene que pasar TODOS los controles (CONTROL), medidos
    contra las grabaciones reales del fundador el 24/10/2026:
    - se entiende: lo que oye faster-whisper medium (sin pista del guion, para
@@ -38,7 +38,7 @@ control falla, la voz no sale (codigo de salida 2, sin archivo).
      tapa la pausa), ninguna palabra estirada, nada antes o despues;
    - misma voz: parecido con la muestra (huella de voz del propio modelo)
      de 0,975 o mas; tono a menos de 22 % del de la muestra y ritmo normal.
-   Si ninguna de las 4 pasa, otras 4 (hasta 3 rondas). Si un tramo no pasa,
+   Si ninguna pasa, otras 2 (hasta 6 rondas, 12 tomas). Si un tramo no pasa,
    la voz entera no sale.
 4. Entre las que pasan, la mas parecida a la muestra. Despues, que los tramos
    elegidos sean parejos entre ellos (tono a menos de 15 % de la mediana).
@@ -62,8 +62,8 @@ MUESTRA_SEG = 10.3
 MUESTRA_TEXTO = ("Dos plomeros, el mismo caño tapado. Uno te cobra $40.000 y el otro $120.000. "
                  "¿Cuál te está viendo la cara? Una destapación simple hoy sale")
 OIDO = "medium"          # small dejaba pasar frases que no se entendian
-TOMAS = 4                # por tramo y por ronda, generadas juntas
-RONDAS = 3
+TOMAS = 2                # por tramo y por ronda, generadas juntas (4 juntas no entran en memoria)
+RONDAS = 6
 MIN_PALABRAS = 6         # frases mas cortas van con la siguiente
 SORTEO = {"temperature": 0.7, "top_p": 0.9, "subtalker_temperature": 0.7, "subtalker_top_p": 0.9}
 CONTROL = {

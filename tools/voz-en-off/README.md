@@ -45,7 +45,7 @@ parejo". Ninguna toma con fallas sale publicada.
 - **Por tramos y con controles estrictos** (desde el 24/10/2026 a la noche,
   medidos contra las grabaciones reales del fundador y contra el reel que
   salió mal). El guion se corta en frases; las de menos de 6 palabras van
-  con la siguiente. De cada tramo salen 4 tomas a la vez (hasta 3 rondas),
+  con la siguiente. De cada tramo salen 2 tomas a la vez (hasta 6 rondas),
   todas de la misma muestra, y cada toma tiene que pasar **todos** estos
   controles (faster-whisper medium, sin pista del guion para que no adivine):
   - se entiende: lo que oye es el guion del tramo (95 % o más), sin palabras
