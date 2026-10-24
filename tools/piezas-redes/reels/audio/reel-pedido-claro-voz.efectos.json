@@ -1,0 +1,82 @@
+[
+ {
+  "t": 0.15,
+  "efecto": "enviado",
+  "db": -12
+ },
+ {
+  "t": 4.24,
+  "efecto": "recibido",
+  "db": -10
+ },
+ {
+  "t": 5.18,
+  "efecto": "latigazo",
+  "db": 2
+ },
+ {
+  "t": 7.46,
+  "efecto": "golpe",
+  "db": -11
+ },
+ {
+  "t": 8.64,
+  "efecto": "latigazo",
+  "db": 2
+ },
+ {
+  "t": 8.66,
+  "efecto": "pop",
+  "db": -12
+ },
+ {
+  "t": 10.34,
+  "efecto": "pop",
+  "db": -12
+ },
+ {
+  "t": 11.4,
+  "efecto": "pop",
+  "db": -12
+ },
+ {
+  "t": 13.299999999999999,
+  "efecto": "pop",
+  "db": -12
+ },
+ {
+  "t": 15.17,
+  "efecto": "pop",
+  "db": -12
+ },
+ {
+  "t": 11.54,
+  "efecto": "obturador",
+  "db": -9
+ },
+ {
+  "t": 16.94,
+  "efecto": "latigazo",
+  "db": 2
+ },
+ {
+  "t": 18.12,
+  "efecto": "campanita",
+  "db": -13
+ },
+ {
+  "t": 20.32,
+  "efecto": "latigazo",
+  "db": 2
+ },
+ {
+  "t": 25.490000000000002,
+  "efecto": "golpe",
+  "db": -9
+ },
+ {
+  "t": 27.79,
+  "efecto": "sello",
+  "db": -12
+ }
+]
