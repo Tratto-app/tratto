@@ -42,12 +42,16 @@ def sumar_voz(musica, seg, cierre, gancho, final, nombre):
         if not frase:
             continue
         wav = os.path.join("audio", f"voz-{nombre}-{clave}.wav")
-        salida = correr(CLONAR, frase, wav, py=PY_VOZ)
-        info = json.loads(next(l for l in salida.splitlines() if l.startswith("{")))
-        if "Revisar" in salida:
-            os.remove(os.path.join(D, wav))
-            sys.exit(f"La voz del {clave} no salió prolija ({'; '.join(info['fallas'])}; se oye: "
-                     f"{info['se_oye']}). Probá otra frase.")
+        # clonar.py sale con 2 (y sin archivo) si la voz no pasa un control.
+        r = subprocess.run([PY_VOZ, CLONAR, frase, wav], cwd=D, capture_output=True, text=True)
+        if r.returncode not in (0, 2):
+            sys.exit(f"Falló clonar.py:\n{r.stdout[-1500:]}\n{r.stderr[-1500:]}")
+        info = json.loads(next(l for l in r.stdout.splitlines() if l.startswith("{")))
+        if r.returncode == 2 or info["fallas"]:
+            if os.path.exists(os.path.join(D, wav)):
+                os.remove(os.path.join(D, wav))
+            sys.exit(f"La voz del {clave} no salió prolija ({'; '.join(info['fallas'])}). "
+                     "No se usa: probá otra frase o el video sale sin voz.")
         tope = (cierre - 0.2 if clave == "gancho" else seg - 0.1) - desde
         if info["duracion"] > tope:
             sys.exit(f"La frase del {clave} dura {info['duracion']} s y entran {tope:.1f} s: acortala.")

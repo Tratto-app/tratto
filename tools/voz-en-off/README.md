@@ -42,18 +42,29 @@ parejo". Ninguna toma con fallas sale publicada.
   modelo. La muestra son los primeros 10,3 s de la toma aprobada de "Dos
   plomeros", con su texto; con `--muestra` y `--muestra-texto` se usa otra
   toma suya.
-- **Controles de cada toma** (frase por frase, con faster-whisper):
-  - que se entienda lo mismo que el guion (90 % o más);
-  - que no se trabe: palabras de más o repetidas, palabras estiradas,
-    pausas raras en el medio de una frase;
-  - que no cambie la voz: tono, volumen y ritmo de cada frase parejos con
-    los de toda la toma;
-  - que no se vaya de largo (el modelo a veces no sabe cuándo terminar).
-  El guion se genera entero de una vez (empalmar tomas cambia la voz). Si
-  algo falla, otra toma (hasta 3) y se queda con la de menos fallas; si la
-  mejor igual tiene fallas, avisa con "Revisar" y `hacer-video.py` frena.
-  Después deja la voz pareja: pausas largas a 0,45 s, compresión suave y
-  -14 LUFS con pico real de -1,5 dBTP.
+- **Por tramos y con controles estrictos** (desde el 24/10/2026 a la noche,
+  medidos contra las grabaciones reales del fundador y contra el reel que
+  salió mal). El guion se corta en frases; las de menos de 6 palabras van
+  con la siguiente. De cada tramo salen 4 tomas a la vez (hasta 3 rondas),
+  todas de la misma muestra, y cada toma tiene que pasar **todos** estos
+  controles (faster-whisper medium, sin pista del guion para que no adivine):
+  - se entiende: lo que oye es el guion del tramo (95 % o más), sin palabras
+    de más ni repetidas, y lo oye seguro, también de a 3 palabras seguidas
+    (así se vio la traba de "Si mandás, se…" del reel);
+  - no se traba: ninguna pausa de más de 0,6 s en el medio de una frase
+    (0,75 s después de una coma), ninguna palabra estirada, nada que suene
+    antes o después;
+  - misma voz: parecido con la muestra de 0,975 o más (las frases con otra
+    voz del reel dieron 0,944 a 0,967), tono y ritmo normales, y los tramos
+    elegidos parejos entre ellos.
+  Si un tramo no pasa en 12 tomas, **la voz entera no sale**: `clonar.py`
+  termina con código 2, sin archivo, y `hacer-video.py` frena. Nunca se
+  aflojan los controles para que algo pase. Al final se pegan con 0,45 s
+  entre tramos, al mismo volumen, compresión suave y -14 LUFS con pico real
+  de -1,5 dBTP, y se escucha entera otra vez.
+- **Aunque pase todo**, mientras la voz siga en pausa el fundador escucha y
+  aprueba cada video antes de que salga: los controles bajan el riesgo, no
+  lo reemplazan.
 - **En los videos:** `hacer-video.py --voz-gancho "…"` pone su voz en el
   gancho, con la música más baja mientras habla (`--voz-cierre` solo si la
   frase entra en el cierre, que dura unos 2,5 s). Para un reel narrado entero

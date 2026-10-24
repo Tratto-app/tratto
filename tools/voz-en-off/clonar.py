@@ -1,5 +1,7 @@
 #!/usr/bin/env python3
-"""Voz clonada del fundador para los videos (aprobada el 24/10/2026).
+"""Voz clonada del fundador para los videos (aprobada el 24/10/2026; en pausa
+desde esa noche: ningun video sale con ella sin que el fundador lo escuche y
+lo apruebe).
 
   /root/venv-voz/bin/python clonar.py "Guion..." salida.wav
   /root/venv-voz/bin/python clonar.py "Guion..." salida.wav --palabras salida.palabras.json
@@ -8,31 +10,44 @@
 Corre en un entorno aparte: una vez por sesion,
 `bash tools/voz-en-off/instalar-clon.sh` (unos 5 minutos). Modelo: Qwen3-TTS
 1.7B Base, licencia Apache 2.0 (se puede usar en publicidad), sin placa de
-video: unos 7 segundos de computo por segundo de voz.
+video: unos 7 segundos de computo por segundo de voz, por cada toma.
 
 Solo la voz del fundador, que lo pidio. Nunca la de otra persona.
 
-El fundador aprobo esta voz y pidio (24/10/2026) que siempre salga "prolija y
-pareja": que no se trabe, que no cambie la voz en el medio y que se escuche
-pareja. Por eso:
+Lo que pidio el fundador: que no se trabe, que no cambie la voz en el medio,
+que se entienda todo y que se escuche pareja. El primer reel salio con una
+traba al principio, una frase con otra voz y partes que no se entendian: los
+controles lo habian marcado y se aflojaron para que pasara. Nunca mas: si un
+control falla, la voz no sale (codigo de salida 2, sin archivo).
 
 1. La muestra va con las palabras exactas que dice (modo ICL): asi copia el
    timbre, el ritmo y el acento, no solo el timbre.
-2. El guion se genera entero de una sola vez (empalmar tomas cambia la voz).
-3. Control de cada toma, frase por frase (faster-whisper):
-   - texto: que se entienda lo mismo que el guion (parecido >= 90 %);
-   - trabas: palabras de mas o repetidas, palabras estiradas (> 1,1 s),
-     frenadas en el medio de una frase (> 0,55 s; despues de una coma no);
-   - pareja: tono de cada frase (de 4 palabras o mas) a menos de 18 % del de toda la toma
-     (mas que eso ya es otra voz; menos es la entonacion de una frase con enfasis),
-     volumen a menos de 5 dB y ritmo (palabras por segundo) a menos de 35 %.
-   Si algo falla, otra toma (hasta 3) y se queda con la de menos fallas.
-4. Termina pareja: pausas de mas de 0,6 s a 0,45 s, compresion suave y
-   master como voz_en_off.py (-14 LUFS, pico real -1,5 dBTP).
-5. Con --palabras guarda [inicio, fin, palabra] de cada palabra del guion,
+2. El guion se genera por tramos (una frase; las de menos de 6 palabras van
+   con la siguiente, porque solas salian con otra voz). Generado entero de
+   una vez, una frase floja arruinaba la toma y no se podia cambiar sola.
+   Cada tramo sale de la misma muestra, asi que es la misma voz.
+3. De cada tramo, 4 tomas a la vez con menos azar que el de fabrica (sale mas
+   pareja). Cada toma tiene que pasar TODOS los controles (CONTROL), medidos
+   contra las grabaciones reales del fundador el 24/10/2026:
+   - se entiende: lo que oye faster-whisper medium (sin pista del guion, para
+     que no adivine) es el guion del tramo, sin palabras de mas ni repetidas,
+     y lo oye seguro;
+   - no se traba: ninguna pausa en el medio de una frase de mas de 0,6 s
+     (despues de una coma, 0,75 s; el fundador llega a 0,72), ninguna
+     palabra estirada, nada de ruido o murmullo antes o despues;
+   - misma voz: parecido con la muestra (huella de voz del propio modelo)
+     de 0,975 o mas; tono a menos de 22 % del de la muestra y ritmo normal.
+   Si ninguna de las 4 pasa, otras 4 (hasta 3 rondas). Si un tramo no pasa,
+   la voz entera no sale.
+4. Entre las que pasan, la mas parecida a la muestra. Despues, que los tramos
+   elegidos sean parejos entre ellos (tono a menos de 15 % de la mediana).
+5. Se pegan con 0,45 s entre tramos, cada uno al mismo volumen, compresion
+   suave y master como voz_en_off.py (-14 LUFS, pico real -1,5 dBTP). Al
+   final se escucha entera otra vez y tiene que entenderse el guion.
+6. Con --palabras guarda [inicio, fin, palabra] de cada palabra del guion,
    con la ortografia del guion (para los subtitulos de comun-voz.js).
 """
-import argparse, difflib, json, os, re, sys, tempfile, unicodedata
+import argparse, difflib, json, os, re, shutil, subprocess, sys, tempfile, unicodedata
 import numpy as np
 
 D = os.path.dirname(os.path.abspath(__file__))
@@ -45,18 +60,59 @@ MUESTRA = os.path.join(D, "..", "piezas-redes", "reels", "audio", "voz-dos-plome
 MUESTRA_SEG = 10.3
 MUESTRA_TEXTO = ("Dos plomeros, el mismo caño tapado. Uno te cobra $40.000 y el otro $120.000. "
                  "¿Cuál te está viendo la cara? Una destapación simple hoy sale")
-TOMAS = 3
-PAREJA = {"parecido": 0.90, "tono": 0.18, "volumen_db": 5.0, "ritmo": 0.35,
-          "palabra_larga": 1.1, "pausa_rara": 0.55}
-TERMINAR = ",".join([
-    "silenceremove=stop_periods=-1:stop_duration=0.6:stop_threshold=-40dB:stop_silence=0.45",
-    "acompressor=threshold=-20dB:ratio=2.5:attack=8:release=120:knee=4:makeup=2",
-])
+OIDO = "medium"          # small dejaba pasar frases que no se entendian
+TOMAS = 4                # por tramo y por ronda, generadas juntas
+RONDAS = 3
+MIN_PALABRAS = 6         # frases mas cortas van con la siguiente
+SORTEO = {"temperature": 0.7, "top_p": 0.9, "subtalker_temperature": 0.7, "subtalker_top_p": 0.9}
+CONTROL = {
+    "texto": 0.95,          # parecido de lo que se oye con el guion del tramo
+    "seguro": 0.80,         # seguridad media del oido en las palabras del tramo
+    "seguro_3": 0.70,       # ni 3 palabras seguidas con menos: asi sono la traba de "Si mandas, se" (0,46 a 0,65)
+    "pausa": 0.60, "pausa_coma": 0.75, "pausa_punto": 0.95,
+    "palabra_larga": 0.90,
+    "ruido_db": -38.0,      # nada que suene antes de la primera palabra o despues de la ultima
+    "voz": 0.975,           # parecido con la muestra (reales 0,97 a 0,99; la frase con otra voz dio 0,944)
+    "tono": 0.22,           # contra la muestra
+    "tono_pareja": 0.15,    # entre los tramos elegidos
+    "ritmo": (1.8, 5.0),    # palabras por segundo (el fundador: 2,1 a 4,1)
+}
+ENTRE_TRAMOS = 0.45
+COLCHON = 0.5            # silencio delante de cada toma al escucharla: sin el, el oido duda de la primera palabra
+TERMINAR = "acompressor=threshold=-20dB:ratio=2.5:attack=8:release=120:knee=4:makeup=2"
+
+UNIDADES = ("cero uno dos tres cuatro cinco seis siete ocho nueve diez once doce trece catorce quince "
+            "dieciseis diecisiete dieciocho diecinueve veinte").split()
+DECENAS = {3: "treinta", 4: "cuarenta", 5: "cincuenta", 6: "sesenta", 7: "setenta", 8: "ochenta", 9: "noventa"}
+CENTENAS = {2: "doscientos", 3: "trescientos", 4: "cuatrocientos", 5: "quinientos", 6: "seiscientos",
+            7: "setecientos", 8: "ochocientos", 9: "novecientos"}
+
+
+def letras(n):
+    """Un numero escrito con letras, sin tildes (el oido a veces escribe cifras)."""
+    if n <= 20:
+        return UNIDADES[n]
+    if n < 30:
+        return "veinti" + UNIDADES[n - 20]
+    if n < 100:
+        d, u = divmod(n, 10)
+        return DECENAS[d] + (f" y {UNIDADES[u]}" if u else "")
+    if n < 1000:
+        c, r = divmod(n, 100)
+        if n == 100:
+            return "cien"
+        return ("ciento" if c == 1 else CENTENAS[c]) + (f" {letras(r)}" if r else "")
+    if n < 1000000:
+        m, r = divmod(n, 1000)
+        return ("mil" if m == 1 else f"{letras(m)} mil") + (f" {letras(r)}" if r else "")
+    return str(n)
 
 
 def normal(texto):
     t = unicodedata.normalize("NFD", texto.lower())
     t = "".join(c for c in t if unicodedata.category(c) != "Mn")
+    t = re.sub(r"(\d)[.,](\d{3})", r"\1\2", t)
+    t = re.sub(r"\d+", lambda m: f" {letras(int(m.group()))} ", t)
     return re.sub(r"[^a-z0-9ñ ]+", " ", t.replace("tratto", "trato")).split()
 
 
@@ -80,8 +136,8 @@ def alinear(guion, oidas):
     corresponde (None si no se oyo) y cuantas palabras se oyeron de mas: las
     que sobran de verdad (si oye "Entrato" por "En Tratto" no sobra nada) mas
     las repetidas seguidas que el guion no tiene."""
-    g = [(normal(p) or [""])[0] for p in guion]
-    o = [(normal(w[2]) or [""])[0] for w in oidas]
+    g = [" ".join(normal(p)) for p in guion]
+    o = [" ".join(normal(w[2])) for w in oidas]
     tiempos, usadas = [None] * len(guion), 0
     for b in difflib.SequenceMatcher(None, g, o, autojunk=False).get_matching_blocks():
         for k in range(b.size):
@@ -93,59 +149,99 @@ def alinear(guion, oidas):
     return tiempos, sobran + max(0, repetidas)
 
 
-def revisar(wav16, guion, oidas):
-    """Fallas de una toma. wav16: la toma a 16 kHz en numpy."""
-    palabras = guion.split()
-    tiempos, de_mas = alinear(palabras, oidas)
-    fallas = []
-    parecido = difflib.SequenceMatcher(None, normal(guion), normal(" ".join(w[2] for w in oidas))).ratio()
-    if parecido < PAREJA["parecido"]:
-        fallas.append(f"se entiende distinto ({parecido:.0%})")
-    if de_mas > 1:
-        fallas.append(f"{de_mas} palabras de más o repetidas")
-    for (ini, fin, w) in oidas:
-        if fin - ini > PAREJA["palabra_larga"]:
-            fallas.append(f"palabra estirada: {w.strip()}")
-    # Frases: del guion, cortadas en . ? ! ; y sus tiempos.
+def tramos(guion):
+    """Frases del guion (cortadas en . ? ! …); las cortas van con la siguiente."""
     frases, actual = [], []
-    for i, p in enumerate(palabras):
-        actual.append(i)
-        if re.search(r"[.?!;…]$", p):
+    for p in guion.split():
+        actual.append(p)
+        if re.search(r"[.?!…][»”\"]?$", p):
             frases.append(actual)
             actual = []
     if actual:
         frases.append(actual)
-    medidas = []
+    unidos = []
     for fr in frases:
-        t = [tiempos[i] for i in fr if tiempos[i]]
-        if len(t) < 2:
-            continue
-        # Trabarse es frenar en el medio de una frase: despues de una coma o
-        # de dos puntos la pausa es natural (y despues se acorta a 0,45 s).
-        for i, j in zip(fr, fr[1:]):
-            if tiempos[i] and tiempos[j] and not re.search(r"[,:;»”\"]$", palabras[i]) \
-                    and tiempos[j][0] - tiempos[i][1] > PAREJA["pausa_rara"]:
-                fallas.append(f"se frena en el medio de: {' '.join(palabras[k] for k in fr)[:40]}")
-                break
-        x = wav16[int(t[0][0] * 16000):int(t[-1][1] * 16000)]
-        if len(x) < 1600 or len(fr) < 4:
-            continue
-        medidas.append((fr, tono(x), 20 * np.log10(np.sqrt((x ** 2).mean()) + 1e-9),
-                        len(t) / max(t[-1][1] - t[0][0], 0.3)))
-    if len(medidas) > 1:
-        tonos = [m[1] for m in medidas if m[1]]
-        t_med = float(np.median(tonos)) if tonos else None
-        v_med = float(np.median([m[2] for m in medidas]))
-        r_med = float(np.median([m[3] for m in medidas]))
-        for fr, f0, vol, ritmo in medidas:
-            cual = " ".join(palabras[i] for i in fr)[:40]
-            if f0 and t_med and abs(f0 - t_med) / t_med > PAREJA["tono"]:
-                fallas.append(f"cambia la voz ({f0:.0f} Hz contra {t_med:.0f}) en: {cual}")
-            if abs(vol - v_med) > PAREJA["volumen_db"]:
-                fallas.append(f"volumen dispar en: {cual}")
-            if abs(ritmo - r_med) / r_med > PAREJA["ritmo"]:
-                fallas.append(f"ritmo dispar en: {cual}")
-    return fallas, round(parecido, 2)
+        if unidos and len(unidos[-1]) < MIN_PALABRAS:
+            unidos[-1] = unidos[-1] + fr
+        else:
+            unidos.append(fr)
+    if len(unidos) > 1 and len(unidos[-1]) < MIN_PALABRAS:
+        unidos[-2] += unidos.pop()
+    return unidos
+
+
+def db(x):
+    return 20 * np.log10(np.sqrt((x ** 2).mean()) + 1e-9) if len(x) else -120.0
+
+
+def revisar(x16, palabras, oidas, voz, f0_muestra):
+    """Fallas de una toma de un tramo. x16: la toma a 16 kHz (con 0,5 s de
+    silencio adelante, como la escucho el oido); oidas: (inicio, fin,
+    palabra, seguridad); voz: parecido con la muestra."""
+    r = {"fallas": [], "parecido": 0.0, "f0": None, "ini": 0.0, "fin": 0.0, "tiempos": []}
+    if not oidas:
+        r["fallas"].append("no se oye nada")
+        return r
+    texto = " ".join(palabras)
+    r["parecido"] = difflib.SequenceMatcher(None, normal(texto), normal(" ".join(w[2] for w in oidas))).ratio()
+    if r["parecido"] < CONTROL["texto"]:
+        r["fallas"].append(f"se entiende distinto ({r['parecido']:.0%})")
+    r["tiempos"], de_mas = alinear(palabras, oidas)
+    if de_mas:
+        r["fallas"].append(f"{de_mas} palabras de más o repetidas")
+    # La marca le cuesta al oido tambien con el fundador de verdad: si la oyo
+    # bien, no cuenta para la seguridad.
+    seg = [1.0 if normal(w[2])[:1] in (["trato"], ["tratoapp"]) else w[3] for w in oidas]
+    if float(np.mean(seg)) < CONTROL["seguro"]:
+        r["fallas"].append(f"no se entiende claro (seguridad {np.mean(seg):.0%})")
+    for i in range(len(oidas) - 2):
+        if np.mean(seg[i:i + 3]) < CONTROL["seguro_3"]:
+            r["fallas"].append("se traba o no se entiende en «"
+                               + " ".join(w[2].strip() for w in oidas[i:i + 3]) + "»")
+            break
+    for (ini, fin, w, p) in oidas:
+        if fin - ini > CONTROL["palabra_larga"]:
+            r["fallas"].append(f"palabra estirada: {w.strip()}")
+    t = r["tiempos"]
+    for i in range(len(palabras) - 1):
+        if t[i] and t[i + 1]:
+            hueco = t[i + 1][0] - t[i][1]
+            tope = CONTROL["pausa_punto"] if re.search(r"[.?!…][»”\"]?$", palabras[i]) else \
+                CONTROL["pausa_coma"] if re.search(r"[,:;»”\"]$", palabras[i]) else CONTROL["pausa"]
+            if hueco > tope:
+                r["fallas"].append(f"se frena {hueco:.1f} s después de «{palabras[i]}»")
+    ini, fin = r["ini"], r["fin"] = oidas[0][0], oidas[-1][1]
+    if db(x16[int(0.5 * 16000):max(int(0.5 * 16000), int((ini - 0.25) * 16000))]) > CONTROL["ruido_db"]:
+        r["fallas"].append("suena algo antes de la primera palabra")
+    if db(x16[int((fin + 0.35) * 16000):]) > CONTROL["ruido_db"]:
+        r["fallas"].append("suena algo después de la última palabra")
+    if voz < CONTROL["voz"]:
+        r["fallas"].append(f"no suena igual a la muestra (parecido {voz:.3f})")
+    r["f0"] = tono(x16[int(ini * 16000):int(fin * 16000)])
+    if r["f0"] and f0_muestra and abs(r["f0"] - f0_muestra) / f0_muestra > CONTROL["tono"]:
+        r["fallas"].append(f"cambia la voz (tono {r['f0']:.0f} Hz contra {f0_muestra:.0f})")
+    ritmo = len(palabras) / max(fin - ini, 0.3)
+    if not CONTROL["ritmo"][0] <= ritmo <= CONTROL["ritmo"][1]:
+        r["fallas"].append(f"ritmo raro ({ritmo:.1f} palabras por segundo)")
+    return r
+
+
+def recorte(x, sr, ini, fin):
+    """Del tramo, solo la voz: desde un poco antes de la primera palabra hasta
+    que se apaga la ultima, con fundidos cortos."""
+    a = max(0, int((ini - 0.30) * sr))
+    b = min(len(x), int((fin + 0.40) * sr))
+    paso = int(0.01 * sr)
+    marcos = [db(x[i:i + paso]) for i in range(a, b - paso, paso)]
+    umbral = max(-48.0, max(marcos) - 40)
+    voz = [k for k, v in enumerate(marcos) if v > umbral]
+    a2 = max(0, a + voz[0] * paso - int(0.04 * sr))
+    b2 = min(len(x), a + (voz[-1] + 1) * paso + int(0.08 * sr))
+    y = x[a2:b2].astype(np.float32).copy()
+    n1, n2 = int(0.01 * sr), int(0.03 * sr)
+    y[:n1] *= np.linspace(0, 1, n1)
+    y[-n2:] *= np.linspace(1, 0, n2)
+    return y, a2 / sr
 
 
 def main():
@@ -166,56 +262,133 @@ def main():
     from qwen_tts import Qwen3TTSModel
     from faster_whisper import WhisperModel
     modelo = Qwen3TTSModel.from_pretrained(MODELO, device_map="cpu", dtype=torch.float32)
-    oido = WhisperModel("small", device="cpu", compute_type="int8")
+    oido = WhisperModel(OIDO, device="cpu", compute_type="int8")
+    sr_voz = modelo.model.speaker_encoder_sample_rate
 
     def escuchar(wav):
-        segs, _ = oido.transcribe(wav, language="es", word_timestamps=True,
-                                  initial_prompt="Tratto, app de presupuestos.")
-        return [(w.start, w.end, w.word) for s in segs for w in s.words]
+        segs, _ = oido.transcribe(wav, language="es", word_timestamps=True, condition_on_previous_text=False)
+        return [(w.start, w.end, w.word, w.probability) for s in segs for w in s.words]
 
+    def leer(wav, sr):
+        r = subprocess.run(["ffmpeg", "-v", "error", "-i", wav, "-ac", "1", "-ar", str(sr), "-f", "f32le", "-"],
+                           capture_output=True, check=True)
+        return np.frombuffer(r.stdout, dtype=np.float32).copy()
+
+    def huella(x):
+        with torch.no_grad():
+            e = modelo.model.extract_speaker_embedding(audio=x, sr=sr_voz).float().flatten()
+        return e / e.norm()
+
+    partes = tramos(a.guion)
+    elegidos, informe = [], []
     with tempfile.TemporaryDirectory() as tmp:
         muestra = os.path.join(tmp, "muestra.wav")
         ff("-i", a.muestra or MUESTRA, *([] if a.muestra else ["-t", str(MUESTRA_SEG)]),
            "-ac", "1", "-ar", "24000", muestra)
         prompt = modelo.create_voice_clone_prompt(ref_audio=muestra, ref_text=a.muestra_texto or MUESTRA_TEXTO)
-        # Unos 14 caracteres por segundo. A veces el modelo no sabe cuándo
-        # terminar y sigue generando: se corta en 1,6 veces lo esperado (12
-        # códigos por segundo) y esa toma cuenta como fallada.
-        esperado = len(a.guion) / 14
-        tomas = []
-        for n in range(TOMAS):
-            torch.manual_seed(1000 + n)
-            wavs, sr = modelo.generate_voice_clone(text=a.guion, language="Spanish", voice_clone_prompt=prompt,
-                                                   max_new_tokens=int(12 * (esperado * 1.6 + 2)))
-            toma = os.path.join(tmp, f"toma{n}.wav")
-            sf.write(toma, wavs[0], sr)
-            t16 = os.path.join(tmp, f"toma{n}.raw")
-            ff("-i", toma, "-ac", "1", "-ar", "16000", "-f", "f32le", t16)
-            oidas = escuchar(toma)
-            fallas, parecido = revisar(np.fromfile(t16, dtype=np.float32), a.guion, oidas)
-            if len(wavs[0]) / sr > esperado * 1.5 + 1:
-                fallas.insert(0, f"se fue de largo ({len(wavs[0]) / sr:.0f} s para unos {esperado:.0f})")
-            tomas.append({"archivo": toma, "fallas": fallas, "parecido": parecido,
-                          "se_oye": " ".join(w[2].strip() for w in oidas)})
-            if not fallas:
+        h_muestra = huella(leer(muestra, sr_voz))
+        f0_muestra = tono(leer(muestra, 16000))
+
+        for n, palabras in enumerate(partes):
+            # Las comillas no se leen; los signos de pregunta y las comas, si.
+            texto = re.sub(r"[«»“”\"]", "", " ".join(palabras))
+            esperado = len(texto) / 14
+            buenas, probadas = [], []
+            for ronda in range(RONDAS):
+                torch.manual_seed(1000 * (n + 1) + ronda)
+                wavs, sr = modelo.generate_voice_clone(
+                    text=[texto] * TOMAS, language=["Spanish"] * TOMAS, voice_clone_prompt=prompt,
+                    max_new_tokens=int(12 * (esperado * 1.6 + 2)), **SORTEO)
+                for k, w in enumerate(wavs):
+                    toma = os.path.join(tmp, f"t{n}-{ronda}-{k}.wav")
+                    sf.write(toma, np.concatenate([np.zeros(int(COLCHON * sr), dtype=np.float32),
+                                                   np.asarray(w, dtype=np.float32)]), sr)
+                    oidas = escuchar(toma)
+                    voz = float(h_muestra @ huella(leer(toma, sr_voz)[int(COLCHON * sr_voz):]))
+                    r = revisar(leer(toma, 16000), palabras, oidas, voz, f0_muestra)
+                    if len(w) / sr > esperado * 1.5 + 1:
+                        r["fallas"].insert(0, f"se fue de largo ({len(w) / sr:.0f} s para unos {esperado:.0f})")
+                    r.update(wav=w, sr=sr, voz=voz, se_oye=" ".join(o[2].strip() for o in oidas))
+                    probadas.append(r)
+                    if not r["fallas"]:
+                        buenas.append(r)
+                if buenas:
+                    break
+            texto_corto = " ".join(palabras)[:60]
+            if not buenas:
+                peor = min(probadas, key=lambda p: (len(p["fallas"]), -p["voz"]))
+                informe.append({"tramo": texto_corto, "tomas": len(probadas), "pasaron": 0,
+                                "mejor_fallida": {"fallas": peor["fallas"], "voz": round(peor["voz"], 3),
+                                                  "se_oye": peor["se_oye"]}})
                 break
-        mejor = min(tomas, key=lambda t: (len(t["fallas"]), -t["parecido"]))
+            mejor = max(buenas, key=lambda b: b["voz"])
+            elegidos.append((palabras, mejor))
+            informe.append({"tramo": texto_corto, "tomas": len(probadas), "pasaron": len(buenas),
+                            "voz": round(mejor["voz"], 3), "se_oye": mejor["se_oye"]})
+            print(f"tramo {n + 1}/{len(partes)}: {len(buenas)} de {len(probadas)} tomas pasaron "
+                  f"(voz {mejor['voz']:.3f})", file=sys.stderr, flush=True)
+
+        fallas = []
+        if len(elegidos) < len(partes):
+            t = informe[-1]
+            fallas.append(f"el tramo «{t['tramo']}» no pasó en {t['tomas']} tomas: "
+                          f"{'; '.join(t['mejor_fallida']['fallas'])}")
+        else:
+            tonos = [m["f0"] for _, m in elegidos if m["f0"]]
+            med = float(np.median(tonos)) if tonos else None
+            for palabras, m in elegidos:
+                if m["f0"] and med and abs(m["f0"] - med) / med > CONTROL["tono_pareja"]:
+                    fallas.append(f"el tramo «{' '.join(palabras)[:40]}» tiene otro tono "
+                                  f"({m['f0']:.0f} Hz contra {med:.0f})")
+        if fallas:
+            print(json.dumps({"salida": None, "fallas": fallas, "tramos": informe}, ensure_ascii=False))
+            print(f"Revisar: la voz no salió prolija y no se usa: {'; '.join(fallas)}")
+            sys.exit(2)
+
+        # Pegar: cada tramo al mismo volumen y 0,45 s entre tramos.
+        sr = elegidos[0][1]["sr"]
+        trozos, tiempos, pos = [], [], 0.0
+        for palabras, m in elegidos:
+            # Los tiempos del oido cuentan el colchon de silencio; la toma no lo tiene.
+            y, corrido = recorte(np.asarray(m["wav"], dtype=np.float32), sr, m["ini"] - COLCHON, m["fin"] - COLCHON)
+            corrido += COLCHON
+            paso = int(0.01 * sr)
+            marcos = [y[i:i + paso] for i in range(0, len(y) - paso, paso)]
+            fuertes = [f for f in marcos if db(f) > max(db(f2) for f2 in marcos) - 30]
+            y *= 10 ** ((-20 - db(np.concatenate(fuertes))) / 20)
+            if trozos:
+                trozos.append(np.zeros(int(ENTRE_TRAMOS * sr), dtype=np.float32))
+                pos += ENTRE_TRAMOS
+            trozos.append(y)
+            tiempos += [None if t is None else [t[0] - corrido + pos, t[1] - corrido + pos] for t in m["tiempos"]]
+            pos += len(y) / sr
+        pegada = os.path.join(tmp, "pegada.wav")
+        sf.write(pegada, np.concatenate(trozos), sr)
 
         terminada = os.path.join(tmp, "terminada.wav")
-        ff("-i", mejor["archivo"], "-af", TERMINAR, "-ac", "1", "-ar", str(SR), terminada)
+        ff("-i", pegada, "-af", TERMINAR, "-ac", "1", "-ar", str(SR), terminada)
         med = ff("-i", terminada, "-af", "loudnorm=I=-14:TP=-1.5:LRA=7:print_format=json", "-f", "null", "-", nivel="info")
         j = json.loads(med[med.rindex("{"):])
         ln = ("loudnorm=I=-14:TP=-1.5:LRA=7:measured_I=%s:measured_TP=%s:measured_LRA=%s:"
               "measured_thresh=%s:offset=%s:linear=true"
               % (j["input_i"], j["input_tp"], j["input_lra"], j["input_thresh"], j["target_offset"]))
+        final = os.path.join(tmp, "final.wav")
         ff("-i", terminada, "-af", ln + ",alimiter=limit=0.84:attack=2:release=40:level=false",
-           "-ar", str(SR), "-c:a", "pcm_s24le", a.salida)
+           "-ar", str(SR), "-c:a", "pcm_s24le", final)
 
-    oidas = escuchar(a.salida)
+        # Entera otra vez: tiene que entenderse el guion.
+        oidas = escuchar(final)
+        parecido = difflib.SequenceMatcher(None, normal(a.guion), normal(" ".join(w[2] for w in oidas))).ratio()
+        if parecido < CONTROL["texto"]:
+            print(json.dumps({"salida": None, "fallas": [f"entera se entiende distinto ({parecido:.0%})"],
+                              "se_oye": " ".join(w[2].strip() for w in oidas), "tramos": informe}, ensure_ascii=False))
+            print(f"Revisar: la voz entera se entiende distinto ({parecido:.0%}) y no se usa.")
+            sys.exit(2)
+        shutil.copyfile(final, a.salida)
+
     duracion = sf.info(a.salida).duration
     if a.palabras:
         guion = a.guion.split()
-        tiempos, _ = alinear(guion, oidas)
         # Las palabras que no se reconocieron se reparten en partes iguales el
         # hueco entre la anterior y la siguiente que si se reconocieron.
         k = 0
@@ -229,8 +402,8 @@ def main():
             antes = tiempos[k - 1][1] if k else 0.0
             despues = tiempos[fin_tramo][0] if fin_tramo < len(tiempos) else antes + 0.3 * (fin_tramo - k)
             paso = max(despues - antes, 0.1 * (fin_tramo - k)) / (fin_tramo - k)
-            for n in range(k, fin_tramo):
-                tiempos[n] = [antes + paso * (n - k), antes + paso * (n - k + 1)]
+            for i in range(k, fin_tramo):
+                tiempos[i] = [antes + paso * (i - k), antes + paso * (i - k + 1)]
             k = fin_tramo
         # Whisper a veces encima palabras cortas: cada una empieza cuando
         # termina la anterior.
@@ -240,12 +413,9 @@ def main():
         with open(a.palabras, "w", encoding="utf-8") as f:
             json.dump([[round(t[0], 2), round(t[1], 2), p] for t, p in zip(tiempos, guion)], f, ensure_ascii=False)
 
-    print(json.dumps({"salida": a.salida, "duracion": round(duracion, 2), "tomas": len(tomas),
-                      "parecido": mejor["parecido"], "fallas": mejor["fallas"], "se_oye": mejor["se_oye"],
-                      "descartadas": [t["fallas"] for t in tomas if t is not mejor]},
-                     ensure_ascii=False))
-    if mejor["fallas"]:
-        print(f"Revisar: la mejor de {len(tomas)} tomas quedó con fallas: {'; '.join(mejor['fallas'])}")
+    print(json.dumps({"salida": a.salida, "duracion": round(duracion, 2), "parecido": round(parecido, 2),
+                      "voz_min": min(t["voz"] for t in informe), "fallas": [],
+                      "se_oye": " ".join(w[2].strip() for w in oidas), "tramos": informe}, ensure_ascii=False))
 
 
 if __name__ == "__main__":
