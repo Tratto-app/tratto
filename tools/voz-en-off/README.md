@@ -50,7 +50,9 @@ parejo". Ninguna toma con fallas sale publicada.
   controles (faster-whisper medium, sin pista del guion para que no adivine):
   - se entiende: lo que oye es el guion del tramo (95 % o más), sin palabras
     de más ni repetidas, y lo oye seguro, también de a 3 palabras seguidas
-    (así se vio la traba de "Si mandás, se…" del reel);
+    (así se vio la traba de "Si mandás, se…" del reel). La primera palabra
+    no cuenta para la seguridad: el oído siempre la duda, también con su voz
+    real ("Dos" de "Dos plomeros" sale con 23 %);
   - no se traba: ningún silencio de más de 0,45 s en el medio de una frase
     (0,75 s después de una coma), medido en el audio; ninguna palabra
     estirada, nada que suene antes o después;

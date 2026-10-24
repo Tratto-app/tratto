@@ -204,12 +204,13 @@ def revisar(x16, palabras, oidas, voz, f0_muestra):
     r["tiempos"], de_mas = alinear(palabras, oidas)
     if de_mas:
         r["fallas"].append(f"{de_mas} palabras de más o repetidas")
-    # La marca le cuesta al oido tambien con el fundador de verdad: si la oyo
-    # bien, no cuenta para la seguridad.
-    seg = [1.0 if normal(w[2])[:1] in (["trato"], ["tratoapp"]) else w[3] for w in oidas]
+    # La marca le cuesta al oido tambien con el fundador de verdad, y la
+    # primera palabra de un audio siempre la duda (en su toma real de "Dos
+    # plomeros", "Dos" sale con 23 %): si las oyo bien, no cuentan.
+    seg = [1.0 if k == 0 or normal(w[2])[:1] in (["trato"], ["tratoapp"]) else w[3] for k, w in enumerate(oidas)]
     if float(np.mean(seg)) < CONTROL["seguro"]:
         r["fallas"].append(f"no se entiende claro (seguridad {np.mean(seg):.0%})")
-    for i in range(len(oidas) - 2):
+    for i in range(1, len(oidas) - 2):
         if np.mean(seg[i:i + 3]) < CONTROL["seguro_3"]:
             r["fallas"].append("se traba o no se entiende en «"
                                + " ".join(f"{w[2].strip()} {w[3]:.0%}" for w in oidas[i:i + 3]) + "»")
