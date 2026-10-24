@@ -1,6 +1,6 @@
 ---
 name: video-publicidad
-description: Hace videos y publicidades de Tratto para TikTok e Instagram (reels, anuncios, promociones de la app, de la calculadora o de una función). Hay cinco formatos que rotan para no repetir (presentación de producto, chat, quiz de precios, lista con cortes secos y notas del celular), ocho músicas propias y la voz del fundador (grabada o clonada, desde que apruebe la muestra del 24/10); el formato, la música, el gancho y el largo de cada video los elige `node tools/contenido/cli.mjs variedad` según el historial de la red. Usar SIEMPRE que se pida un video, una publicidad, un anuncio o un reel nuevo.
+description: Hace videos y publicidades de Tratto para TikTok e Instagram (reels, anuncios, promociones de la app, de la calculadora o de una función). Hay cinco formatos que rotan para no repetir (presentación de producto, chat, quiz de precios, lista con cortes secos y notas del celular), ocho músicas propias y la voz del fundador (grabada o clonada, aprobada el 24/10); el formato, la música, el gancho y el largo de cada video los elige `node tools/contenido/cli.mjs variedad` según el historial de la red. Usar SIEMPRE que se pida un video, una publicidad, un anuncio o un reel nuevo.
 ---
 
 # Videos de Tratto
@@ -9,19 +9,19 @@ description: Hace videos y publicidades de Tratto para TikTok e Instagram (reels
 
 El fundador mandó un reel sobre clonar la voz gratis y pidió: "implementemos
 eso para todos los videos que hagamos". Su voz clonada sale de
-`tools/voz-en-off/clonar.py` (Chatterbox, licencia MIT; instalación y reglas en
-`tools/voz-en-off/README.md`).
+`tools/voz-en-off/clonar.py` (Qwen3-TTS, licencia Apache 2.0; instalación,
+controles y reglas en `tools/voz-en-off/README.md`).
 
-- **Estado: esperando que apruebe la muestra** (mandada el 24/10/2026). Hasta
-  que diga que suena a él, ningún video sale con la voz clonada. Cuando
-  apruebe, cambiá esta línea a "aprobada el <fecha>".
-- Ya aprobada, cada video lleva su voz: en el formato `voz`, el guion entero
-  con subtítulos; en los demás formatos, el gancho
+- **Aprobada el 24/10/2026** ("ahora sí, perfecto"), con una condición: "que
+  quede prolija la voz, que no se trabe al hablar ni cambie el formato de la
+  voz, que se escuche prolijo y parejo". `clonar.py` lo controla en cada toma
+  y hace hasta 3; ninguna voz con fallas sale publicada.
+- Cada video lleva su voz: en el formato `voz`, el guion entero con
+  subtítulos; en los demás formatos, el gancho
   (`hacer-video.py --voz-gancho "…"`). La frase del cierre (`--voz-cierre`)
-  solo si entra: el cierre de `formatos.js` dura unos 2,5 s y casi ninguna
-  frase entra. Frases de 5 palabras o más (las muy cortas salen con palabras
-  repetidas), números en letras y sin "pedilo" (lo dice mal). Si la voz no
-  pasa el control, `hacer-video.py` frena: cambiá la frase.
+  solo si entra: el cierre de `formatos.js` dura unos 2,5 s. Números en
+  letras y frases completas. Si la voz no pasa los controles, `hacer-video.py`
+  frena: cambiá la frase; si tampoco, el video sale sin voz y se avisa.
 - Si hay una grabación nueva suya, va esa y no la clonada. Nunca otra voz.
 - Avisar que es IA: en TikTok, `metadata.tiktok.isAiGenerated: true` en Buffer;
   en Instagram y Facebook, la línea "Voz hecha con IA a partir de la voz de

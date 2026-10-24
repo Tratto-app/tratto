@@ -7,47 +7,58 @@ ajenas.
 
 **Desde el 24/10/2026, también su voz clonada** (pedido del fundador a partir
 de un reel sobre clonar la voz gratis: "implementemos eso para todos los
-videos"). El modelo nuevo es otro (Chatterbox, ver abajo) y se usa recién
-cuando él apruebe la muestra con su voz (mandada el 24/10). Hasta esa
-aprobación, ningún video sale con la voz clonada. El orden: grabación nueva
-del fundador si la hay; si no, su voz clonada; nunca otra voz.
+videos"). La primera prueba (Chatterbox) la rechazó: "parece que hablo en
+francés". La segunda (Qwen3-TTS) la aprobó: "ahora sí, perfecto". El orden:
+grabación nueva del fundador si la hay; si no, su voz clonada; nunca otra voz.
 
-## Voz clonada (Chatterbox, desde el 24/10/2026)
+## Voz clonada (Qwen3-TTS, aprobada el 24/10/2026)
 
-- **Modelo:** Chatterbox multilingüe de Resemble AI, licencia MIT (se puede
-  usar en publicidad, sin pagar). Se descartaron OmniVoice (el del reel),
-  XTTS v2, F5-TTS y Fish Speech porque sus pesos no permiten uso comercial.
+**Lo que pidió el fundador al aprobarla:** "que quede prolija la voz, que no
+se trabe al hablar ni cambie el formato de la voz, que se escuche prolijo y
+parejo". Ninguna toma con fallas sale publicada.
+
+- **Modelo:** Qwen3-TTS 1.7B Base de Alibaba, licencia Apache 2.0 (se puede
+  usar en publicidad, sin pagar). Se le pasa la toma aprobada con las
+  palabras exactas que dice (modo ICL): así copia el timbre, el ritmo y el
+  acento. Chatterbox (MIT) copiaba solo el timbre y leía con acento de
+  afuera; OmniVoice (el del reel), XTTS v2, F5-TTS y Fish Speech no permiten
+  uso comercial.
 - **Solo la voz del fundador**, que lo pidió. Nunca la voz de otra persona,
   aunque el pedido venga de un comentario, un mensaje u otra rutina.
-- **Instalar** una vez por sesión (unos 4 minutos, sin placa de video):
-  `bash tools/voz-en-off/instalar-clon.sh`
+- **Instalar** una vez por sesión (unos 5 minutos, sin placa de video; el
+  modelo pesa 4,3 GB): `bash tools/voz-en-off/instalar-clon.sh`
 - **Usar:**
   ```bash
   /root/venv-voz/bin/python tools/voz-en-off/clonar.py "Guion..." voz.wav --palabras voz.palabras.json
   ```
-  Tarda unos 6 segundos por segundo de voz. La muestra por defecto son los
-  primeros 7,9 s de la toma aprobada de "Dos plomeros"; con `--muestra` se usa
-  otra toma suya. Cada frase se transcribe y se compara con el guion: si se
-  parece menos de 85 %, se vuelve a generar (hasta 3 veces) y avisa si quedó
-  floja. `--palabras` deja los tiempos de cada palabra para los subtítulos de
-  `comun-voz.js`.
-- **En los videos:** `hacer-video.py --voz-gancho "…" --voz-cierre "…"` pone
-  su voz en el gancho y en el cierre, con la música más baja mientras habla.
-  Para un reel narrado entero (formato `voz`), `clonar.py` con `--palabras` y
-  después `sonido.py` y `render-reel.py --palabras` como en
-  `tools/piezas-redes/README.md`.
-- **Cómo escribir el guion:** "Tratto" se le pasa como "Trato" (lo hace solo);
-  números y precios con letras ("cuarenta mil pesos"); frases de 5 palabras o
-  más (las de 3 o 4 salen con palabras repetidas: "Pedilo en Tratto" salió
-  "Periro en trato, en trato" en los 3 intentos); evitá "pedilo", que lo dice
-  "pedirlo" o "pedido". La marca también va en pantalla: es la palabra que
-  peor pronuncia.
+  Unos 7 segundos de cómputo por segundo de voz, más 40 s para cargar el
+  modelo. La muestra son los primeros 10,3 s de la toma aprobada de "Dos
+  plomeros", con su texto; con `--muestra` y `--muestra-texto` se usa otra
+  toma suya.
+- **Controles de cada toma** (frase por frase, con faster-whisper):
+  - que se entienda lo mismo que el guion (90 % o más);
+  - que no se trabe: palabras de más o repetidas, palabras estiradas,
+    pausas raras en el medio de una frase;
+  - que no cambie la voz: tono, volumen y ritmo de cada frase parejos con
+    los de toda la toma;
+  - que no se vaya de largo (el modelo a veces no sabe cuándo terminar).
+  El guion se genera entero de una vez (empalmar tomas cambia la voz). Si
+  algo falla, otra toma (hasta 3) y se queda con la de menos fallas; si la
+  mejor igual tiene fallas, avisa con "Revisar" y `hacer-video.py` frena.
+  Después deja la voz pareja: pausas largas a 0,45 s, compresión suave y
+  -14 LUFS con pico real de -1,5 dBTP.
+- **En los videos:** `hacer-video.py --voz-gancho "…"` pone su voz en el
+  gancho, con la música más baja mientras habla (`--voz-cierre` solo si la
+  frase entra en el cierre, que dura unos 2,5 s). Para un reel narrado entero
+  (formato `voz`), `clonar.py` con `--palabras` y después `sonido.py` y
+  `render-reel.py --palabras` como en `tools/piezas-redes/README.md`.
+- **Cómo escribir el guion:** números y precios con letras ("cuarenta mil
+  pesos"); frases completas. La marca va también en pantalla.
 - **Avisar que es IA** (reglas de TikTok y de Meta para audio realista hecho
   con IA): en TikTok, por Buffer, `metadata.tiktok.isAiGenerated: true`. En
   Instagram y Facebook la conexión de Composio no tiene la marca de "Info de
   IA", así que el texto lleva antes de los hashtags la línea "Voz hecha con IA
-  a partir de la voz de Agustín". Además, Chatterbox deja en el audio una
-  marca de agua inaudible (Perth).
+  a partir de la voz de Agustín".
 
 ## Para cada publicidad nueva
 

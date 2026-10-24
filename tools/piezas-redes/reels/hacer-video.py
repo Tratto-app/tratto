@@ -22,7 +22,7 @@ import argparse, json, os, subprocess, sys
 D = os.path.dirname(os.path.abspath(__file__))
 ESTILOS = ("pop", "lofi", "dembow", "house", "cumbia", "tension", "acustico", "silencio")
 CLONAR = os.path.join(D, "..", "..", "voz-en-off", "clonar.py")
-PY_VOZ = os.environ.get("TRATTO_PY_VOZ", "/root/venv-voz/bin/python")  # instalar-clon.sh
+PY_VOZ = os.environ.get("TRATTO_PY_VOZ", "/root/venv-voz/bin/python")  # tools/voz-en-off/instalar-clon.sh
 
 
 def correr(*args, py=sys.executable):
@@ -46,8 +46,8 @@ def sumar_voz(musica, seg, cierre, gancho, final, nombre):
         info = json.loads(next(l for l in salida.splitlines() if l.startswith("{")))
         if "Revisar" in salida:
             os.remove(os.path.join(D, wav))
-            sys.exit(f"La voz del {clave} no salió igual al guion (se oye: {info['frases'][0]['se_oye']}). "
-                     "Probá otra frase: de 5 palabras o más y sin \"pedilo\".")
+            sys.exit(f"La voz del {clave} no salió prolija ({'; '.join(info['fallas'])}; se oye: "
+                     f"{info['se_oye']}). Probá otra frase.")
         tope = (cierre - 0.2 if clave == "gancho" else seg - 0.1) - desde
         if info["duracion"] > tope:
             sys.exit(f"La frase del {clave} dura {info['duracion']} s y entran {tope:.1f} s: acortala.")
