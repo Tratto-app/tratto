@@ -212,7 +212,7 @@ def revisar(x16, palabras, oidas, voz, f0_muestra):
     for i in range(len(oidas) - 2):
         if np.mean(seg[i:i + 3]) < CONTROL["seguro_3"]:
             r["fallas"].append("se traba o no se entiende en «"
-                               + " ".join(w[2].strip() for w in oidas[i:i + 3]) + "»")
+                               + " ".join(f"{w[2].strip()} {w[3]:.0%}" for w in oidas[i:i + 3]) + "»")
             break
     for (ini, fin, w, p) in oidas:
         if fin - ini > CONTROL["palabra_larga"]:
@@ -271,6 +271,7 @@ def main():
     ap.add_argument("--palabras")
     ap.add_argument("--muestra", help=f"otra toma del fundador (por defecto {MUESTRA_SEG} s de voz-dos-plomeros)")
     ap.add_argument("--muestra-texto", help="lo que dice la muestra, palabra por palabra")
+    ap.add_argument("--guardar-tomas", help="carpeta donde dejar todas las tomas, para revisarlas")
     a = ap.parse_args()
     if a.muestra and not a.muestra_texto:
         sys.exit("Con --muestra hace falta --muestra-texto (lo que dice, palabra por palabra).")
@@ -332,6 +333,9 @@ def main():
                         r["fallas"].insert(0, f"se fue de largo ({len(w) / sr:.0f} s para unos {esperado:.0f})")
                     r.update(wav=w, sr=sr, voz=voz, se_oye=" ".join(o[2].strip() for o in oidas))
                     probadas.append(r)
+                    if a.guardar_tomas:
+                        os.makedirs(a.guardar_tomas, exist_ok=True)
+                        shutil.copyfile(toma, os.path.join(a.guardar_tomas, os.path.basename(toma)))
                     print(f"  tramo {n + 1} toma {len(probadas)}: voz {voz:.3f} · "
                           + ("pasa" if not r["fallas"] else "; ".join(r["fallas"])), file=sys.stderr, flush=True)
                     if not r["fallas"]:
