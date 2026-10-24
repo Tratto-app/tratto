@@ -18,7 +18,7 @@ fundador lo apruebe.
 ## Herramientas pagas y su reemplazo gratis
 
 - **Higgsfield** (fotos a video): nuestro armador (`tools/piezas-redes/reels/hacer-video.py`, formatos quiz, chat, lista, nota y producto) y los videos reales de las recorridas del fundador. No hay un reemplazo gratis con la misma calidad; en servicios, lo real da más confianza.
-- **ElevenLabs** (voz): la voz del fundador grabada en el celular (preferida, 23/10/2026: "me gustaría que sea más humanizada"). De reserva, Piper con la voz `es_AR-daniela-high` (gratis, corre en la sesión, licencia CC BY-SA 4.0); suena menos natural, siempre con subtítulos.
+- **ElevenLabs** (voz): la voz del fundador grabada en el celular (preferida, 23/10/2026: "me gustaría que sea más humanizada") o, desde que apruebe la muestra del 24/10/2026, su voz clonada con Chatterbox (gratis, licencia MIT, `tools/voz-en-off/clonar.py`). De reserva, Piper con la voz `es_AR-daniela-high` (gratis, licencia CC BY-SA 4.0); suena menos natural, siempre con subtítulos.
 - **Biblioteca de anuncios de Meta y Creative Center de TikTok**: gratis, pero no se pueden leer desde la sesión (Facebook y el Creative Center bloquean la lectura automática). La base son nuestros números: los quiz de precios y los carruseles fueron lo que más rindió.
 
 ## Primera campaña (para clientes)

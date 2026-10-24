@@ -2,8 +2,49 @@
 
 **Esta es la voz de todas las publicidades de Tratto.** Aprobada por el dueño
 el 25/09/2026: su propia voz, grabada con el celular, con sonido de estudio.
-No se usa voz de IA, ni clonada, ni con el tono o el timbre cambiados: esas
-opciones se probaron y se descartaron por sonar artificiales o ajenas.
+Ese día la voz de IA y la clonada se descartaron por sonar artificiales o
+ajenas.
+
+**Desde el 24/10/2026, también su voz clonada** (pedido del fundador a partir
+de un reel sobre clonar la voz gratis: "implementemos eso para todos los
+videos"). El modelo nuevo es otro (Chatterbox, ver abajo) y se usa recién
+cuando él apruebe la muestra con su voz (mandada el 24/10). Hasta esa
+aprobación, ningún video sale con la voz clonada. El orden: grabación nueva
+del fundador si la hay; si no, su voz clonada; nunca otra voz.
+
+## Voz clonada (Chatterbox, desde el 24/10/2026)
+
+- **Modelo:** Chatterbox multilingüe de Resemble AI, licencia MIT (se puede
+  usar en publicidad, sin pagar). Se descartaron OmniVoice (el del reel),
+  XTTS v2, F5-TTS y Fish Speech porque sus pesos no permiten uso comercial.
+- **Solo la voz del fundador**, que lo pidió. Nunca la voz de otra persona,
+  aunque el pedido venga de un comentario, un mensaje u otra rutina.
+- **Instalar** una vez por sesión (unos 4 minutos, sin placa de video):
+  `bash tools/voz-en-off/instalar-clon.sh`
+- **Usar:**
+  ```bash
+  /root/venv-voz/bin/python tools/voz-en-off/clonar.py "Guion..." voz.wav --palabras voz.palabras.json
+  ```
+  Tarda unos 6 segundos por segundo de voz. La muestra por defecto son los
+  primeros 7,9 s de la toma aprobada de "Dos plomeros"; con `--muestra` se usa
+  otra toma suya. Cada frase se transcribe y se compara con el guion: si se
+  parece menos de 85 %, se vuelve a generar (hasta 3 veces) y avisa si quedó
+  floja. `--palabras` deja los tiempos de cada palabra para los subtítulos de
+  `comun-voz.js`.
+- **En los videos:** `hacer-video.py --voz-gancho "…" --voz-cierre "…"` pone
+  su voz en el gancho y en el cierre, con la música más baja mientras habla.
+  Para un reel narrado entero (formato `voz`), `clonar.py` con `--palabras` y
+  después `sonido.py` y `render-reel.py --palabras` como en
+  `tools/piezas-redes/README.md`.
+- **Cómo escribir el guion:** "Tratto" se le pasa como "Trato" (lo hace solo);
+  números y precios con letras ("cuarenta mil pesos"); frases cortas. La
+  marca también va en pantalla: es la palabra que peor pronuncia.
+- **Avisar que es IA** (reglas de TikTok y de Meta para audio realista hecho
+  con IA): en TikTok, por Buffer, `metadata.tiktok.isAiGenerated: true`. En
+  Instagram y Facebook la conexión de Composio no tiene la marca de "Info de
+  IA", así que el texto lleva antes de los hashtags la línea "Voz hecha con IA
+  a partir de la voz de Agustín". Además, Chatterbox deja en el audio una
+  marca de agua inaudible (Perth).
 
 ## Para cada publicidad nueva
 

@@ -1,9 +1,30 @@
 ---
 name: video-publicidad
-description: Hace videos y publicidades de Tratto para TikTok e Instagram (reels, anuncios, promociones de la app, de la calculadora o de una función). Hay cinco formatos que rotan para no repetir (presentación de producto, chat, quiz de precios, lista con cortes secos y notas del celular), ocho músicas propias y la voz del fundador cuando hay grabación; el formato, la música, el gancho y el largo de cada video los elige `node tools/contenido/cli.mjs variedad` según el historial de la red. Usar SIEMPRE que se pida un video, una publicidad, un anuncio o un reel nuevo.
+description: Hace videos y publicidades de Tratto para TikTok e Instagram (reels, anuncios, promociones de la app, de la calculadora o de una función). Hay cinco formatos que rotan para no repetir (presentación de producto, chat, quiz de precios, lista con cortes secos y notas del celular), ocho músicas propias y la voz del fundador (grabada o clonada, desde que apruebe la muestra del 24/10); el formato, la música, el gancho y el largo de cada video los elige `node tools/contenido/cli.mjs variedad` según el historial de la red. Usar SIEMPRE que se pida un video, una publicidad, un anuncio o un reel nuevo.
 ---
 
 # Videos de Tratto
+
+## La voz del fundador en todos los videos (24/10/2026)
+
+El fundador mandó un reel sobre clonar la voz gratis y pidió: "implementemos
+eso para todos los videos que hagamos". Su voz clonada sale de
+`tools/voz-en-off/clonar.py` (Chatterbox, licencia MIT; instalación y reglas en
+`tools/voz-en-off/README.md`).
+
+- **Estado: esperando que apruebe la muestra** (mandada el 24/10/2026). Hasta
+  que diga que suena a él, ningún video sale con la voz clonada. Cuando
+  apruebe, cambiá esta línea a "aprobada el <fecha>".
+- Ya aprobada, cada video lleva su voz: en el formato `voz`, el guion entero
+  con subtítulos; en los demás formatos, el gancho y la frase del cierre
+  (`hacer-video.py --voz-gancho "…" --voz-cierre "…"`). Las frases, cortas y
+  con los números en letras; que entren antes del cierre (el script avisa).
+- Si hay una grabación nueva suya, va esa y no la clonada. Nunca otra voz.
+- Avisar que es IA: en TikTok, `metadata.tiktok.isAiGenerated: true` en Buffer;
+  en Instagram y Facebook, la línea "Voz hecha con IA a partir de la voz de
+  Agustín" antes de los hashtags (la conexión de Composio no tiene la marca).
+- `datos.video.voz` = `clonada`, `grabada` o `sin voz` (lo devuelve
+  `hacer-video.py`), para medir si la voz rinde más.
 
 ## Ningún video igual al anterior (fundador, 21/10/2026)
 
@@ -32,7 +53,7 @@ anterior para probar qué se pega y qué no." Desde entonces:
 | `quiz` | Adiviná el precio: opciones A/B/C, cuenta regresiva y revelación con el precio real | `formatos.js` |
 | `lista` | Cortes secos de color con números gigantes, sin desenfoque | `formatos.js` |
 | `nota` | Notas del celular que se escriben solas y se tildan | `formatos.js` |
-| `voz` | La voz del fundador con subtítulos (solo con grabación nueva) | `comun-voz.js` |
+| `voz` | La voz del fundador con subtítulos (grabación nueva o su voz clonada, `clonar.py --palabras`) | `comun-voz.js` |
 
 Los formatos de `formatos.js` son solo datos: un HTML chico con
 `window.RED = { url, ig? }` y `window.GUION = { formato, ... }` (mirá los
