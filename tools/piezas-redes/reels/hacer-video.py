@@ -34,11 +34,11 @@ def correr(*args, py=sys.executable):
 
 def sumar_voz(musica, seg, cierre, gancho, final, nombre):
     """Pone la voz clonada sobre la música: el gancho en 0,3 s y la frase final
-    0,4 s después de que entra el cierre. La música baja mientras habla."""
+    0,25 s después de que entra el cierre. La música baja mientras habla."""
     if not os.path.exists(PY_VOZ):
         sys.exit("Falta la voz clonada: bash tools/voz-en-off/instalar-clon.sh")
     tomas = []
-    for clave, frase, desde in (("gancho", gancho, 0.3), ("cierre", final, cierre + 0.4)):
+    for clave, frase, desde in (("gancho", gancho, 0.3), ("cierre", final, cierre + 0.25)):
         if not frase:
             continue
         wav = os.path.join("audio", f"voz-{nombre}-{clave}.wav")
@@ -46,7 +46,7 @@ def sumar_voz(musica, seg, cierre, gancho, final, nombre):
         info = json.loads(next(l for l in salida.splitlines() if l.startswith("{")))
         if "Revisar" in salida:
             print(f"Ojo: la voz del {clave} no salió igual al guion: {info['frases']}")
-        tope = (cierre if clave == "gancho" else seg) - desde - 0.2
+        tope = (cierre - 0.2 if clave == "gancho" else seg - 0.1) - desde
         if info["duracion"] > tope:
             sys.exit(f"La frase del {clave} dura {info['duracion']} s y entran {tope:.1f} s: acortala.")
         tomas.append((wav, desde))
