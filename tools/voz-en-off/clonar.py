@@ -306,6 +306,8 @@ def hacer_tramo(a, n, palabras, carpeta):
     # leia de corrido y se trababa: "Si mandas se me rompio...").
     texto = re.sub(r"(\w)\s+[«“\"]", r"\1: ", " ".join(palabras))
     texto = re.sub(r"[«»“”\"]", "", texto)
+    # "Tratto" escrito asi el modelo lo dice "tracto"; el fundador dice "trato".
+    texto = re.sub(r"(?i)\btratto", lambda m: m.group()[0] + "rato", texto)
     esperado = len(texto) / 14
     buenas, probadas = [], []
     for ronda in range(RONDAS):

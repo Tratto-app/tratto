@@ -75,7 +75,9 @@ parejo". Ninguna toma con fallas sale publicada.
   (formato `voz`), `clonar.py` con `--palabras` y después `sonido.py` y
   `render-reel.py --palabras` como en `tools/piezas-redes/README.md`.
 - **Cómo escribir el guion:** números y precios con letras ("cuarenta mil
-  pesos"); frases completas. La marca va también en pantalla.
+  pesos"); frases completas. La marca va también en pantalla. "Tratto" se
+  escribe normal: `clonar.py` le pasa "Trato" al modelo, porque con doble t
+  lo decía "tracto" (así salió en el primer reel); el fundador dice "trato".
 - **Avisar que es IA** (reglas de TikTok y de Meta para audio realista hecho
   con IA): en TikTok, por Buffer, `metadata.tiktok.isAiGenerated: true`. En
   Instagram y Facebook la conexión de Composio no tiene la marca de "Info de
