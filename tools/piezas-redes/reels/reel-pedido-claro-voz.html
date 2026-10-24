@@ -33,6 +33,7 @@
 
 <!-- 2 · cinco cosas -->
 <div class="sc" id="s2">
+  <div class="c cond" id="pv" style="font-size:150px;line-height:.95;text-align:center;color:var(--claro);opacity:0;width:820px">Un precio <span style="color:var(--laton-cl)">de verdad</span></div>
   <div class="c cond" id="cinco" style="font-size:520px;line-height:1;color:var(--laton-cl);opacity:0;margin-top:-80px;text-shadow:0 18px 0 rgba(0,0,0,.3)">5</div>
   <div class="c mono" id="cosas" style="font-size:40px;color:var(--claro);opacity:0;margin-top:250px;white-space:nowrap">datos y te pasan un precio</div>
 </div>
@@ -99,7 +100,9 @@ function animar(t) {
   const tiembla = t > T('depende') ? Math.sin(t * 60) * 8 * Math.exp(-(t - T('depende')) * 4) : 0;
   pop($('g-otro'), t, T('depende'), `translateX(${tiembla}px) rotate(-3deg)`);
 
-  // 2 · cinco
+  // 2 · un precio de verdad → cinco
+  pop($('pv'), t, T('precio'), C);
+  if (t > T('cinco') - 0.15) set($('pv'), 1 - P(t, T('cinco') - 0.15, T('cinco')));
   pop($('cinco'), t, T('cinco'), `${C} rotate(${-8 + 8 * eo(P(t, T('cinco'), T('cinco') + 0.4))}deg)`, 0.45);
   pop($('cosas'), t, T('cosas'), C);
 

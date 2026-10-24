@@ -22,8 +22,9 @@ pareja. Por eso:
 3. Control de cada toma, frase por frase (faster-whisper):
    - texto: que se entienda lo mismo que el guion (parecido >= 90 %);
    - trabas: palabras de mas o repetidas, palabras estiradas (> 1,1 s),
-     pausas raras en el medio de una frase (> 0,7 s);
-   - pareja: tono de cada frase a menos de 12 % del tono de toda la toma,
+     frenadas en el medio de una frase (> 0,55 s; despues de una coma no);
+   - pareja: tono de cada frase (de 4 palabras o mas) a menos de 18 % del de toda la toma
+     (mas que eso ya es otra voz; menos es la entonacion de una frase con enfasis),
      volumen a menos de 5 dB y ritmo (palabras por segundo) a menos de 35 %.
    Si algo falla, otra toma (hasta 3) y se queda con la de menos fallas.
 4. Termina pareja: pausas de mas de 0,6 s a 0,45 s, compresion suave y
@@ -45,8 +46,8 @@ MUESTRA_SEG = 10.3
 MUESTRA_TEXTO = ("Dos plomeros, el mismo caño tapado. Uno te cobra $40.000 y el otro $120.000. "
                  "¿Cuál te está viendo la cara? Una destapación simple hoy sale")
 TOMAS = 3
-PAREJA = {"parecido": 0.90, "tono": 0.12, "volumen_db": 5.0, "ritmo": 0.35,
-          "palabra_larga": 1.1, "pausa_rara": 0.7}
+PAREJA = {"parecido": 0.90, "tono": 0.18, "volumen_db": 5.0, "ritmo": 0.35,
+          "palabra_larga": 1.1, "pausa_rara": 0.55}
 TERMINAR = ",".join([
     "silenceremove=stop_periods=-1:stop_duration=0.6:stop_threshold=-40dB:stop_silence=0.45",
     "acompressor=threshold=-20dB:ratio=2.5:attack=8:release=120:knee=4:makeup=2",
@@ -76,7 +77,9 @@ def tono(x, sr=16000):
 
 def alinear(guion, oidas):
     """Para cada palabra del guion, [inicio, fin] de la palabra oida que le
-    corresponde (None si no se oyo) y cuantas palabras se oyeron de mas."""
+    corresponde (None si no se oyo) y cuantas palabras se oyeron de mas: las
+    que sobran de verdad (si oye "Entrato" por "En Tratto" no sobra nada) mas
+    las repetidas seguidas que el guion no tiene."""
     g = [(normal(p) or [""])[0] for p in guion]
     o = [(normal(w[2]) or [""])[0] for w in oidas]
     tiempos, usadas = [None] * len(guion), 0
@@ -84,7 +87,10 @@ def alinear(guion, oidas):
         for k in range(b.size):
             tiempos[b.a + k] = [oidas[b.b + k][0], oidas[b.b + k][1]]
         usadas += b.size
-    return tiempos, len(oidas) - usadas
+    sobran = max(0, (len(o) - usadas) - (len(g) - usadas))
+    repetidas = sum(1 for i in range(1, len(o)) if o[i] and o[i] == o[i - 1]) - \
+        sum(1 for i in range(1, len(g)) if g[i] and g[i] == g[i - 1])
+    return tiempos, sobran + max(0, repetidas)
 
 
 def revisar(wav16, guion, oidas):
@@ -114,12 +120,15 @@ def revisar(wav16, guion, oidas):
         t = [tiempos[i] for i in fr if tiempos[i]]
         if len(t) < 2:
             continue
-        for a, b in zip(t, t[1:]):
-            if b[0] - a[1] > PAREJA["pausa_rara"]:
-                fallas.append(f"pausa rara en: {' '.join(palabras[i] for i in fr)[:40]}")
+        # Trabarse es frenar en el medio de una frase: despues de una coma o
+        # de dos puntos la pausa es natural (y despues se acorta a 0,45 s).
+        for i, j in zip(fr, fr[1:]):
+            if tiempos[i] and tiempos[j] and not re.search(r"[,:;»”\"]$", palabras[i]) \
+                    and tiempos[j][0] - tiempos[i][1] > PAREJA["pausa_rara"]:
+                fallas.append(f"se frena en el medio de: {' '.join(palabras[k] for k in fr)[:40]}")
                 break
         x = wav16[int(t[0][0] * 16000):int(t[-1][1] * 16000)]
-        if len(x) < 1600:
+        if len(x) < 1600 or len(fr) < 4:
             continue
         medidas.append((fr, tono(x), 20 * np.log10(np.sqrt((x ** 2).mean()) + 1e-9),
                         len(t) / max(t[-1][1] - t[0][0], 0.3)))
