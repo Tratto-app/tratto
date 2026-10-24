@@ -48,7 +48,7 @@ control falla, la voz no sale (codigo de salida 2, sin archivo).
 6. Con --palabras guarda [inicio, fin, palabra] de cada palabra del guion,
    con la ortografia del guion (para los subtitulos de comun-voz.js).
 """
-import argparse, difflib, json, os, re, shutil, subprocess, sys, tempfile, unicodedata
+import argparse, ctypes, difflib, gc, json, os, re, shutil, subprocess, sys, tempfile, unicodedata
 import numpy as np
 
 D = os.path.dirname(os.path.abspath(__file__))
@@ -329,8 +329,14 @@ def main():
                         r["fallas"].insert(0, f"se fue de largo ({len(w) / sr:.0f} s para unos {esperado:.0f})")
                     r.update(wav=w, sr=sr, voz=voz, se_oye=" ".join(o[2].strip() for o in oidas))
                     probadas.append(r)
+                    print(f"  tramo {n + 1} toma {len(probadas)}: voz {voz:.3f} · "
+                          + ("pasa" if not r["fallas"] else "; ".join(r["fallas"])), file=sys.stderr, flush=True)
                     if not r["fallas"]:
                         buenas.append(r)
+                # Sin esto la memoria crece en cada ronda hasta que el sistema corta el proceso.
+                del wavs
+                gc.collect()
+                ctypes.CDLL("libc.so.6").malloc_trim(0)
                 if buenas:
                     break
             texto_corto = " ".join(palabras)[:60]
