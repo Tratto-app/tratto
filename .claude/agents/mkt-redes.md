@@ -194,7 +194,16 @@ Del análisis de Codex para el fundador (`tools/contenido/conocimiento/ideas-202
 los carruseles de TikTok rindieron unas 5 veces más que los videos y los
 Reels de Instagram casi no se guardan ni se comparten.
 
-- 4 carruseles por semana (lunes, miércoles, viernes y domingo) del banco de
+- **Más carruseles en TikTok (fundador, 24/10/2026: "empezá a subir más
+  carruseles, que es lo que en TikTok está funcionando muy bien").** Al menos
+  1 por día en TikTok, y los 2 lugares del día con carruseles distintos
+  cuando no hay video de plantilla ni del fundador: unos 11 por semana
+  (`estrategia.json`, `frecuencia.carruseles_nota_24_10`). El primero del día
+  es también la pieza de Instagram; el segundo va solo a TikTok. Cuando el
+  banco de ideas se termine, ideas nuevas con la skill `contenido-carruseles`
+  siguiendo a los que más guardados y compartidos tuvieron (el mismo tipo con
+  otro rubro o situación), nunca uno repetido.
+- Antes eran 4 por semana (lunes, miércoles, viernes y domingo), del banco de
   ideas, con la skill `contenido-carruseles`, hechos con
   `tools/piezas-redes/carruseles/render-carrusel.py` (sale PNG y JPG). Van a
   TikTok como publicación de fotos por Buffer y a Instagram por la cola de

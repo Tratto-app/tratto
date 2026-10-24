@@ -62,12 +62,20 @@
         "19:00"
       ]
     },
-    "carruseles_por_semana": 4,
+    "carruseles_por_semana": 11,
     "historias_por_dia": [
       3,
       6
     ],
-    "carruseles_nota": "22/10/2026 (análisis de Codex con datos de Metricool): los 2 carruseles de TikTok tuvieron 530 y 568 vistas; los 11 videos de TikTok, mediana 104; los 10 Reels de Instagram, mediana 20 vistas y 0 guardados, compartidos o comentarios. Es poca muestra, pero alcanza para probar más carruseles guardables: 4 por semana (lunes, miércoles, viernes y domingo), cada uno en TikTok (fotos) y en Instagram, donde ese día reemplaza al reel. Los videos de TikTok siguen como pidió el fundador."
+    "carruseles_nota": "22/10/2026 (análisis de Codex con datos de Metricool): los 2 carruseles de TikTok tuvieron 530 y 568 vistas; los 11 videos de TikTok, mediana 104; los 10 Reels de Instagram, mediana 20 vistas y 0 guardados, compartidos o comentarios. Es poca muestra, pero alcanza para probar más carruseles guardables: 4 por semana (lunes, miércoles, viernes y domingo), cada uno en TikTok (fotos) y en Instagram, donde ese día reemplaza al reel. Los videos de TikTok siguen como pidió el fundador.",
+    "carruseles_por_dia": {
+      "tiktok": [
+        1,
+        2
+      ],
+      "instagram": 1
+    },
+    "carruseles_nota_24_10": "24/10/2026, fundador: \"empezá a subir más carruseles, que es lo que en TikTok está funcionando muy bien\". Desde entonces, en TikTok al menos 1 carrusel por día y los 2 lugares del día con carruseles distintos cuando no hay video de plantilla ni del fundador (los de plantilla siguen con tope de 3 por semana): unos 11 por semana. El primer carrusel del día es también la pieza de Instagram de ese día; el segundo sale solo en TikTok y puede ir a Instagram otro día que quede vacío. Ningún carrusel repetido en una red y portadas y temas alternados."
   },
   "kpis": [
     "guardados por alcance",
