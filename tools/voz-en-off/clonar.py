@@ -226,8 +226,9 @@ def revisar(x16, palabras, oidas, voz, f0_muestra):
         cerca = [i for i in range(len(palabras) - 1) if t[i]]
         i = min(cerca, key=lambda i: abs(t[i][1] - desde)) if cerca else None
         p = palabras[i] if i is not None and abs(t[i][1] - desde) < 0.3 else ""
+        cita = p and palabras[i + 1][:1] in "«“\""   # antes de una cita se lee ":"
         tope = CONTROL["pausa_punto"] if re.search(r"[.?!…][»”\"]?$", p) else \
-            CONTROL["pausa_coma"] if re.search(r"[,:;»”\"]$", p) else CONTROL["pausa"]
+            CONTROL["pausa_coma"] if re.search(r"[,:;»”\"]$", p) or cita else CONTROL["pausa"]
         if largo > tope:
             r["fallas"].append(f"se frena {largo:.1f} s" + (f" después de «{p}»" if p else ""))
     if db(x16[int(0.5 * 16000):max(int(0.5 * 16000), int((ini - 0.25) * 16000))]) > CONTROL["ruido_db"]:
@@ -309,8 +310,10 @@ def main():
         f0_muestra = tono(leer(muestra, 16000))
 
         for n, palabras in enumerate(partes):
-            # Las comillas no se leen; los signos de pregunta y las comas, si.
-            texto = re.sub(r"[«»“”\"]", "", " ".join(palabras))
+            # Las comillas no se leen: donde abre una cita va un ":" (sin eso lo
+            # leia de corrido y se trababa: "Si mandas se me rompio...").
+            texto = re.sub(r"(\w)\s+[«“\"]", r"\1: ", " ".join(palabras))
+            texto = re.sub(r"[«»“”\"]", "", texto)
             esperado = len(texto) / 14
             buenas, probadas = [], []
             for ronda in range(RONDAS):
