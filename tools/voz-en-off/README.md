@@ -13,12 +13,15 @@ grabación nueva del fundador si la hay; si no, su voz clonada; nunca otra voz.
 
 ## Voz clonada (Qwen3-TTS, aprobada el 24/10/2026)
 
-**EN PAUSA desde el 24/10/2026 a la noche.** El primer reel narrado salió con
-una traba al principio, una frase con otra voz y partes que no se entendían.
-Los controles lo habían marcado y se aflojaron para que pasara: eso no se
-hace nunca más. El fundador: "si no la podés hacer a la perfección,
-dejémosla y te grabo yo". Mientras siga en pausa, ningún video sale con la
-voz clonada sin que el fundador escuche ese video y lo apruebe.
+**Habilitada de nuevo el 24/10/2026 a la noche, tomándolo muy en serio.** El
+primer reel narrado salió con una traba al principio, una frase con otra voz
+y "tracto" en vez de Tratto: los controles lo habían marcado y se aflojaron
+para que pasara (eso no se hace nunca más) y se pausó. Rehecho por tramos con
+los controles de abajo, el fundador lo puntuó 8 de 10: "para los videos que
+apliques, hacelo así. Subí con mi voz. Pero concentrate siempre en que salga
+bien la voz. Tomatelo muy en serio, porque se van a cagar de risa si subo un
+video y tiene la voz en cualquier cosa". Los videos salen con su voz sin
+esperar su aprobación; si la voz no pasa los controles, el video sale sin voz.
 
 **Lo que pidió el fundador al aprobarla:** "que quede prolija la voz, que no
 se trabe al hablar ni cambie el formato de la voz, que se escuche prolijo y
@@ -66,9 +69,9 @@ parejo". Ninguna toma con fallas sale publicada.
   aflojan los controles para que algo pase. Al final se pegan con 0,45 s
   entre tramos, al mismo volumen, compresión suave y -14 LUFS con pico real
   de -1,5 dBTP, y se escucha entera otra vez.
-- **Aunque pase todo**, mientras la voz siga en pausa el fundador escucha y
-  aprueba cada video antes de que salga: los controles bajan el riesgo, no
-  lo reemplazan.
+- **Antes de programar**, mirá el informe (lo que se oye en cada tramo y
+  entera): tiene que decir el guion, palabra por palabra. Ante la duda, sin
+  voz: un video sin voz no da vergüenza; uno con la voz rara, sí.
 - **En los videos:** `hacer-video.py --voz-gancho "…"` pone su voz en el
   gancho, con la música más baja mientras habla (`--voz-cierre` solo si la
   frase entra en el cierre, que dura unos 2,5 s). Para un reel narrado entero

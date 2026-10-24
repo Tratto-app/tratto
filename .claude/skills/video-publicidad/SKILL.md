@@ -12,18 +12,29 @@ eso para todos los videos que hagamos". Su voz clonada sale de
 `tools/voz-en-off/clonar.py` (Qwen3-TTS, licencia Apache 2.0; instalación,
 controles y reglas en `tools/voz-en-off/README.md`).
 
-- **EN PAUSA desde el 24/10/2026 a la noche.** El reel narrado de prueba
-  salió con una traba al principio, una parte con otra voz y frases que no se
-  entendían; el fundador: "quiero que te lo tomes con muchísima seriedad; si
-  no la podés hacer a la perfección, dejémosla y te grabo yo". Los controles
-  lo habían marcado y se aflojaron para que pasara: eso no se hace nunca más.
-  Mientras siga en pausa, **ningún video sale con la voz clonada sin que el
-  fundador escuche ese video y lo apruebe**; los videos de las rutinas salen
-  sin voz (o con una grabación suya).
-- Se había aprobado la muestra el 24/10/2026 ("ahora sí, perfecto") con una
-  condición: "que quede prolija la voz, que no se trabe al hablar ni cambie el
-  formato de la voz, que se escuche prolijo y parejo". `clonar.py` lo
-  controla; si un control falla, la voz no se usa, sin excepciones.
+- **Habilitada de nuevo el 24/10/2026 a la noche, tomándolo muy en serio.**
+  El primer reel narrado salió con una traba al principio, una parte con otra
+  voz y "tracto" en vez de Tratto; los controles lo habían marcado y se
+  aflojaron para que pasara (eso no se hace nunca más) y se pausó. Rehecho
+  con `clonar.py` por tramos y controles estrictos, el fundador lo puntuó 8
+  de 10: "para los videos que apliques, hacelo así. Subí con mi voz. Pero
+  concentrate siempre en que salga bien la voz. Tomatelo muy en serio, porque
+  se van a cagar de risa si subo un video y tiene la voz en cualquier cosa".
+  Desde entonces los videos salen con su voz clonada sin esperar su
+  aprobación, con estas reglas:
+  - Siempre con `clonar.py` tal como está. **Nunca se afloja un control** (ni
+    `CONTROL`, ni `TOMAS`/`RONDAS` para menos) para que algo pase. Si la voz
+    no pasa, se cambia la frase (más corta, más simple, sin citas raras) y se
+    prueba otra vez; si tampoco, el video sale sin voz y se le avisa.
+  - Antes de programar, mirá el informe de `clonar.py` (lo que se oye en
+    cada tramo y entera): tiene que decir el guion, palabra por palabra.
+    Ante la duda, sin voz: un video sin voz no da vergüenza; uno con la voz
+    rara, sí.
+  - Al avisarle lo programado, decí que lleva su voz clonada.
+- La condición de cuando aprobó la muestra sigue igual: "que quede prolija la
+  voz, que no se trabe al hablar ni cambie el formato de la voz, que se
+  escuche prolijo y parejo". `clonar.py` lo controla; si un control falla,
+  la voz no se usa, sin excepciones.
 - Cada video lleva su voz: en el formato `voz`, el guion entero con
   subtítulos; en los demás formatos, el gancho
   (`hacer-video.py --voz-gancho "…"`). La frase del cierre (`--voz-cierre`)

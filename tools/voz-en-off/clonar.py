@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
-"""Voz clonada del fundador para los videos (aprobada el 24/10/2026; en pausa
-desde esa noche: ningun video sale con ella sin que el fundador lo escuche y
-lo apruebe).
+"""Voz clonada del fundador para los videos (aprobada el 24/10/2026; rehecha
+por tramos esa noche, el fundador la puntuo 8 de 10 y pidio usarla en los
+videos "tomandolo muy en serio").
 
   /root/venv-voz/bin/python clonar.py "Guion..." salida.wav
   /root/venv-voz/bin/python clonar.py "Guion..." salida.wav --palabras salida.palabras.json
