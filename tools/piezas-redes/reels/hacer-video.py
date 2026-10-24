@@ -45,7 +45,9 @@ def sumar_voz(musica, seg, cierre, gancho, final, nombre):
         salida = correr(CLONAR, frase, wav, py=PY_VOZ)
         info = json.loads(next(l for l in salida.splitlines() if l.startswith("{")))
         if "Revisar" in salida:
-            print(f"Ojo: la voz del {clave} no salió igual al guion: {info['frases']}")
+            os.remove(os.path.join(D, wav))
+            sys.exit(f"La voz del {clave} no salió igual al guion (se oye: {info['frases'][0]['se_oye']}). "
+                     "Probá otra frase: de 5 palabras o más y sin \"pedilo\".")
         tope = (cierre - 0.2 if clave == "gancho" else seg - 0.1) - desde
         if info["duracion"] > tope:
             sys.exit(f"La frase del {clave} dura {info['duracion']} s y entran {tope:.1f} s: acortala.")

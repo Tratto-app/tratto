@@ -37,8 +37,11 @@ del fundador si la hay; si no, su voz clonada; nunca otra voz.
   después `sonido.py` y `render-reel.py --palabras` como en
   `tools/piezas-redes/README.md`.
 - **Cómo escribir el guion:** "Tratto" se le pasa como "Trato" (lo hace solo);
-  números y precios con letras ("cuarenta mil pesos"); frases cortas. La
-  marca también va en pantalla: es la palabra que peor pronuncia.
+  números y precios con letras ("cuarenta mil pesos"); frases de 5 palabras o
+  más (las de 3 o 4 salen con palabras repetidas: "Pedilo en Tratto" salió
+  "Periro en trato, en trato" en los 3 intentos); evitá "pedilo", que lo dice
+  "pedirlo" o "pedido". La marca también va en pantalla: es la palabra que
+  peor pronuncia.
 - **Avisar que es IA** (reglas de TikTok y de Meta para audio realista hecho
   con IA): en TikTok, por Buffer, `metadata.tiktok.isAiGenerated: true`. En
   Instagram y Facebook la conexión de Composio no tiene la marca de "Info de

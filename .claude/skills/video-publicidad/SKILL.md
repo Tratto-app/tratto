@@ -16,9 +16,12 @@ eso para todos los videos que hagamos". Su voz clonada sale de
   que diga que suena a él, ningún video sale con la voz clonada. Cuando
   apruebe, cambiá esta línea a "aprobada el <fecha>".
 - Ya aprobada, cada video lleva su voz: en el formato `voz`, el guion entero
-  con subtítulos; en los demás formatos, el gancho y la frase del cierre
-  (`hacer-video.py --voz-gancho "…" --voz-cierre "…"`). Las frases, cortas y
-  con los números en letras; que entren antes del cierre (el script avisa).
+  con subtítulos; en los demás formatos, el gancho
+  (`hacer-video.py --voz-gancho "…"`). La frase del cierre (`--voz-cierre`)
+  solo si entra: el cierre de `formatos.js` dura unos 2,5 s y casi ninguna
+  frase entra. Frases de 5 palabras o más (las muy cortas salen con palabras
+  repetidas), números en letras y sin "pedilo" (lo dice mal). Si la voz no
+  pasa el control, `hacer-video.py` frena: cambiá la frase.
 - Si hay una grabación nueva suya, va esa y no la clonada. Nunca otra voz.
 - Avisar que es IA: en TikTok, `metadata.tiktok.isAiGenerated: true` en Buffer;
   en Instagram y Facebook, la línea "Voz hecha con IA a partir de la voz de
