@@ -232,7 +232,8 @@ def main():
             json.dump([[round(t[0], 2), round(t[1], 2), p] for t, p in zip(tiempos, guion)], f, ensure_ascii=False)
 
     print(json.dumps({"salida": a.salida, "duracion": round(duracion, 2), "tomas": len(tomas),
-                      "parecido": mejor["parecido"], "fallas": mejor["fallas"], "se_oye": mejor["se_oye"]},
+                      "parecido": mejor["parecido"], "fallas": mejor["fallas"], "se_oye": mejor["se_oye"],
+                      "descartadas": [t["fallas"] for t in tomas if t is not mejor]},
                      ensure_ascii=False))
     if mejor["fallas"]:
         print(f"Revisar: la mejor de {len(tomas)} tomas quedó con fallas: {'; '.join(mejor['fallas'])}")
