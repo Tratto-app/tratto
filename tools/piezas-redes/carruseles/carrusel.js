@@ -37,6 +37,13 @@
     aire: '<rect x="6" y="13" width="52" height="21" rx="5"/><path d="M14 26h36"/><path d="M20 42c0 4-4 5-4 9M32 42c0 4-4 5-4 9M44 42c0 4-4 5-4 9"/>',
     cuadro: '<path d="M32 9L19 22M32 9l13 13"/><rect x="10" y="22" width="44" height="32" rx="3"/><path d="M15 48l11-11 8 8 6-6 9 9"/>',
     casa: '<path d="M8 30L32 10l24 20"/><path d="M14 26v28h36V26"/><path d="M27 54V40h10v14"/>',
+    // cumple infantil y fotos antes de pedir (25/10/2026)
+    banderines: '<path d="M6 12c17 9 35 9 52 0"/><path d="M12 15l5 17 7-14"/><path d="M28 19l4 17 4-17"/><path d="M40 18l7 14 5-17"/>',
+    cupcake: '<path d="M15 32h34l-5 22H20z"/><path d="M15 32c0-9 7-15 17-15s17 6 17 15"/><path d="M32 17v-6"/><path d="M26 32l2 22M38 32l-2 22"/>',
+    gota: '<path d="M32 8C24 21 16 30 16 39a16 16 0 0 0 32 0c0-9-8-18-16-31z"/><path d="M25 41a7 7 0 0 0 7 7"/>',
+    pared: '<rect x="8" y="12" width="48" height="40" rx="3"/><path d="M8 25h48M8 38h48M24 12v13M40 12v13M16 25v13M32 25v13M48 25v13M24 38v14M40 38v14"/>',
+    remera: '<path d="M22 10l-14 8 6 11 6-3v28h24V26l6 3 6-11-14-8c-2 5-6 7-10 7s-8-2-10-7z"/>',
+    metro: '<rect x="8" y="22" width="48" height="20" rx="4"/><path d="M16 22v8M24 22v5M32 22v8M40 22v5M48 22v8"/>',
   };
   const icono = (n, px = 64, color = 'currentColor', grosor = 4) =>
     `<svg width="${px}" height="${px}" viewBox="0 0 64 64" fill="none" stroke="${color}" stroke-width="${grosor}" stroke-linecap="round" stroke-linejoin="round">${ICONOS[n]}</svg>`;
