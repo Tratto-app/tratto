@@ -388,6 +388,12 @@
     box-shadow:var(--sombra);margin-bottom:11px;overflow:hidden}
   .prov.oro{border-left:3px solid var(--laton)}
   .prov.verde{border-left:3px solid var(--verde)}
+  /* Sugeridos: no están conectados todavía. Borde punteado en latón: es una
+     invitación a escribirles, no una conexión hecha. */
+  .prov.sugerido{border-left:3px dashed rgba(201,162,39,.75)}
+  .prov-motivo{font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:.12em;text-transform:uppercase;
+    color:var(--laton-osc);margin-top:6px;line-height:1.5}
+  .sugeridos-intro{font-size:13px;color:var(--gris);line-height:1.5;margin:-4px 0 12px}
   .prov-cuerpo{padding:15px 16px}
   .prov-top{display:flex;align-items:flex-start;justify-content:space-between;gap:10px}
   .prov-nom{font-family:'IBM Plex Sans Condensed',sans-serif;font-weight:700;font-size:17.5px;line-height:1.2}
@@ -2340,6 +2346,7 @@
       <div id="d-comparador"></div>
       <div class="sec"><span class="sec-tit">Conectados con tu pedido</span><span class="sec-num" id="d-num"></span></div>
       <div id="d-lista"></div>
+      <div id="d-sugeridos"></div>
     </section>
 
     <!-- ══════ CHAT ══════ -->
@@ -5021,6 +5028,7 @@ async function abrirDetalle(id){
   $('d-estado').textContent = s.estado === 'vencida' ? 'Vencido'
     : s.estado === 'con_match' ? 'Conectado' : 'Buscando';
   $('d-lista').innerHTML = esqueleto(2);
+  $('d-sugeridos').innerHTML = '';
   $('d-comparador').innerHTML = '';
   $('d-num').textContent = '';
   ir('detalle');
@@ -5028,6 +5036,7 @@ async function abrirDetalle(id){
   try{
     const ms = await api('matches?solicitud_id=eq.'+id+'&select=*,proveedores(*)&order=id.asc');
     $('d-num').textContent = ms.length || '';
+    cargarSugeridos(s, ms.length);
     if(!ms.length){
       $('d-lista').innerHTML = cajaVacia('Todavía buscando',
         'Apenas encontremos quién ofrezca ese servicio en tu zona y dentro de tu presupuesto, te avisamos.','chat');
@@ -5060,6 +5069,61 @@ async function abrirDetalle(id){
   }
 }
 
+
+/* ══════════════════ SUGERIDOS DEL PEDIDO ══════════════════ */
+/* El matching conecta solo con quien publicó el mismo rubro, en la zona y
+   dentro del presupuesto. Acá sumamos, para que el cliente elija: el mismo
+   rubro aunque no entre en el presupuesto, y oficios afines (un carpintero
+   para "arreglo de muebles" aunque no lo tenga publicado). Nadie se conecta
+   solo: recién al tocar "Escribirle" se crea el chat (pedido_conectar). */
+async function cargarSugeridos(s, conectados){
+  const caja = $('d-sugeridos');
+  if(!caja || s.estado === 'vencida') return;
+  let filas = [];
+  try{
+    const r = await fetch(SUPABASE_URL+'/rest/v1/rpc/pedido_sugeridos', {method:'POST', headers:cab(),
+      body: JSON.stringify({p_solicitud_id: s.id})});
+    if(r.ok) filas = await r.json();
+  }catch(e){ console.error(e); }
+  if(!filas.length || actual !== 'detalle') return;
+  caja.innerHTML =
+    '<div class="sec"><span class="sec-tit">'+(conectados ? 'También pueden ayudarte' : 'Gente que puede ayudarte')+'</span>' +
+      '<span class="sec-num">'+filas.length+'</span></div>' +
+    '<p class="sugeridos-intro">Trabajan en tu zona en este oficio o en uno parecido. Escribiles y preguntales si lo hacen: ' +
+      'recién ahí se abre el chat.</p>' +
+    filas.map(p => '<div class="prov sugerido"><div class="prov-cuerpo">' +
+      '<div class="prov-top"><span class="prov-nom">'+esc(p.nombre)+'</span></div>' +
+      '<div class="prov-motivo">'+esc(p.motivo)+'</div>' +
+      (p.descripcion ? '<div class="prov-desc">'+esc(p.descripcion)+'</div>' : '') +
+      '<div class="prov-datos"><span><b>Zona:</b> '+esc(p.zona)+' '+chapaZona(p.relacion)+'</span>' +
+      (Number(p.precio_desde) ? '<span><b>Precio:</b> '+pesos(p.precio_desde)+' – '+pesos(p.precio_hasta)+'</span>' : '') +
+      '<span><b>Trabajos:</b> '+(Number(p.trabajos) || 'Recién empieza')+'</span></div>' +
+      '<button class="btn lleno" data-sugerido="'+p.proveedor_id+'" data-pedido="'+s.id+'" type="button" style="margin-top:14px">' +
+      'Escribirle a ' + esc((p.nombre||'').split(' ')[0]) + '</button>' +
+      '<div class="aviso" data-sugerido-aviso="'+p.proveedor_id+'" role="status"></div>' +
+      '</div></div>').join('');
+}
+
+$('d-sugeridos').addEventListener('click', async e => {
+  const b = e.target.closest('[data-sugerido]');
+  if(!b || b.disabled) return;
+  b.disabled = true; b.classList.add('cargando');
+  const aviso = document.querySelector('[data-sugerido-aviso="'+b.dataset.sugerido+'"]');
+  try{
+    const r = await fetch(SUPABASE_URL+'/rest/v1/rpc/pedido_conectar', {method:'POST', headers:cab(),
+      body: JSON.stringify({p_solicitud_id: Number(b.dataset.pedido), p_proveedor_id: Number(b.dataset.sugerido)})});
+    const t = await r.text();
+    if(!r.ok) throw new Error(errorDeRPC(t, 'No pudimos abrir el chat. Probá de nuevo.'));
+    const mid = Number(JSON.parse(t));
+    const s = misPedidos.find(x => x.id === Number(b.dataset.pedido));
+    if(s) s.estado = s.estado === 'pendiente' ? 'con_match' : s.estado;
+    await abrirChat(mid, 'detalle');
+  }catch(ex){
+    console.error(ex);
+    if(aviso){ aviso.textContent = ex.message; aviso.className = 'aviso mal visible'; }
+    b.disabled = false; b.classList.remove('cargando');
+  }
+});
 
 /* ══════════════════ ESCRITURA EN SUPABASE ══════════════════ */
 async function apiEnviar(ruta, metodo, cuerpo, extra){
