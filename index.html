@@ -1188,6 +1188,165 @@
   .nota b{color:var(--tinta);font-weight:600}
   optgroup{font-family:'IBM Plex Sans',sans-serif;font-weight:600;color:var(--gris)}
 
+  /* ═══════════ TU PRÓXIMO PASO: PUBLICAR EL SERVICIO ═══════════ */
+  /* Quien ofrece servicios y todavía no publicó ninguno ve esto antes que
+     nada en su Panel. Es la noche del encabezado con el hilo de tres nodos
+     (cuenta creada, servicio, pedidos), el mismo dibujo del match: el nodo del
+     medio va en latón, el sello de lo que falta. */
+  .paso-uno{background:var(--noche);color:var(--claro);border-radius:14px;padding:20px 18px 16px;
+    margin-top:18px;box-shadow:var(--sombra-alta);position:relative;overflow:hidden}
+  .paso-uno::after{content:'';position:absolute;right:-70px;top:-70px;width:200px;height:200px;
+    border-radius:50%;background:radial-gradient(circle,rgba(201,162,39,.20),transparent 70%);pointer-events:none}
+  .pu-kicker{font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:.19em;
+    text-transform:uppercase;color:#F3DE9A;font-weight:500}
+  .pu-hilo{display:grid;grid-template-columns:auto 1fr auto 1fr auto;align-items:center;gap:6px;margin-top:16px}
+  .pu-nodo{width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;
+    font-family:'IBM Plex Mono',monospace;font-size:11px;font-weight:600;border:1.5px solid var(--noche-4);color:var(--gris-2)}
+  .pu-nodo.hecho{background:var(--verde-vivo);border-color:var(--verde-vivo);color:#fff}
+  .pu-nodo.ahora{border-color:var(--laton);color:#F3DE9A;box-shadow:0 0 0 4px rgba(201,162,39,.18)}
+  .pu-nodo svg{width:13px;height:13px}
+  .pu-linea{height:1.5px;background:var(--noche-4)}
+  .pu-linea.hecha{background:linear-gradient(90deg,var(--verde-vivo),var(--laton))}
+  .pu-etqs{display:grid;grid-template-columns:repeat(3,1fr);margin-top:7px;font-size:10.5px;
+    color:var(--gris-2);line-height:1.3}
+  .pu-etqs span:nth-child(2){text-align:center;color:#F3DE9A;font-weight:600}
+  .pu-etqs span:last-child{text-align:right}
+  .pu-tit{font-family:'IBM Plex Sans Condensed',sans-serif;font-weight:700;font-size:25px;line-height:1.08;
+    letter-spacing:-.015em;margin-top:18px;color:#fff}
+  .pu-txt{font-size:14.5px;line-height:1.5;color:#D6E3DD;margin-top:8px}
+  .pu-lista{list-style:none;margin-top:13px;display:grid;gap:7px}
+  .pu-lista li{display:flex;gap:9px;font-size:13.5px;line-height:1.45;color:#C9D6D0}
+  .pu-lista li::before{content:'';flex:none;width:6px;height:6px;border-radius:50%;background:var(--laton);margin-top:7px}
+  .pu-lista b{color:#fff;font-weight:600}
+  .paso-uno .btn.lleno{background:var(--laton);color:#2A2104;margin-top:18px;font-size:16px;padding:16px 22px;
+    position:relative;z-index:1}
+  .paso-uno .btn.lleno:active:not(:disabled){background:#B48F1F}
+  .paso-uno .btn.lleno:focus-visible{outline-color:#F3DE9A}
+  .pu-guia{display:block;margin:10px auto 0;background:none;border:none;font:inherit;font-size:13px;
+    font-weight:600;color:var(--verde-luz);cursor:pointer;padding:9px 10px;position:relative;z-index:1}
+
+  /* La versión corta del mismo aviso, arriba de Chats, Mi perfil y Cuenta. */
+  .aviso-serv-caja:empty{display:none}
+  .aviso-serv-caja{margin-top:16px}
+  .pp-cuerpo .aviso-serv-caja{margin:0 0 16px}
+  .paso-fino{display:flex;align-items:center;gap:12px;background:var(--claro);
+    border:1px solid rgba(201,162,39,.55);border-left:4px solid var(--laton);border-radius:var(--r);
+    padding:13px 13px 13px 14px;box-shadow:var(--sombra)}
+  .paso-fino div{flex:1;min-width:0}
+  .paso-fino b{display:block;font-family:'IBM Plex Sans Condensed',sans-serif;font-size:16px;font-weight:700;line-height:1.2}
+  .paso-fino span{display:block;font-size:12.5px;color:var(--gris);margin-top:3px;line-height:1.4}
+  .paso-fino .btn{width:auto;flex:none;padding:11px 14px;font-size:14px;background:var(--laton-osc);color:#fff}
+  @media(max-width:370px){.paso-fino{flex-direction:column;align-items:stretch}.paso-fino .btn{width:100%}}
+  #ir-proveedor.destacado{background:var(--laton-osc);color:#fff;border-color:var(--laton-osc)}
+
+  /* Servicios publicados: el botón para editarlos */
+  .serv-editar{background:none;border:none;font:inherit;font-size:13px;font-weight:600;color:var(--laton-osc);
+    cursor:pointer;padding:6px 2px;display:inline-flex;align-items:center;gap:5px}
+  .serv-editar svg{width:14px;height:14px}
+
+  /* ═══════════ FORMULARIO DE SERVICIO, EXPLICADO ═══════════ */
+  .form-guia{margin-top:20px;border:1px solid rgba(201,162,39,.45);background:rgba(201,162,39,.07);
+    border-radius:var(--r);padding:14px 15px}
+  .form-guia-tit{font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:.17em;
+    text-transform:uppercase;color:var(--laton-osc);font-weight:600}
+  .form-guia ol{margin:9px 0 0;padding-left:19px;display:grid;gap:6px;font-size:13.5px;line-height:1.45}
+  .form-guia li::marker{font-family:'IBM Plex Mono',monospace;font-weight:600;color:var(--laton-osc)}
+  .form-guia b{font-weight:600}
+  .form-guia-pie{font-size:12.5px;color:var(--gris);margin-top:9px;line-height:1.45}
+  .desc-ayuda{margin-top:9px;background:var(--claro-2);border:1px solid var(--linea);border-radius:var(--r-ch);
+    padding:11px 13px;font-size:12.5px;line-height:1.5;color:var(--gris)}
+  .desc-ayuda b{display:block;color:var(--tinta);font-weight:600}
+  .desc-ayuda > span{display:block;margin-top:3px}
+  .desc-ayuda .desc-tipicos{margin-top:8px}
+  .desc-tipicos i{font-style:normal;display:inline-block;background:var(--claro);border:1px solid var(--linea-fuerte);
+    border-radius:99px;padding:2px 9px;margin:5px 5px 0 0;color:var(--tinta);font-size:12px}
+
+  /* ═══════════ GUÍA DE PRIMEROS PASOS ═══════════ */
+  /* Por encima de la app y por debajo de las hojas (z 70): si desde la guía se
+     abre un permiso, el permiso queda arriba. */
+  .guia{position:fixed;inset:0;z-index:60;pointer-events:none}
+  .guia[hidden],.guia-mini[hidden]{display:none}
+  .guia-velo{position:fixed;background:rgba(8,26,22,.6);pointer-events:auto;
+    transition:top .2s,left .2s,width .2s,height .2s}
+  .guia-aro{position:fixed;border:2.5px solid var(--laton);border-radius:12px;pointer-events:none;
+    box-shadow:0 0 0 5px rgba(201,162,39,.28);animation:aroLatir 1.8s ease-in-out infinite;
+    transition:top .2s,left .2s,width .2s,height .2s}
+  .guia-aro.oculto{display:none}
+  @keyframes aroLatir{50%{box-shadow:0 0 0 9px rgba(201,162,39,.12)}}
+  .guia-tarjeta{position:fixed;left:12px;right:12px;margin:0 auto;max-width:480px;pointer-events:auto;
+    background:var(--claro);border-radius:14px;border:1px solid var(--linea);
+    box-shadow:0 12px 40px rgba(8,26,22,.38);overflow:hidden;display:flex;flex-direction:column;
+    animation:subir .22s cubic-bezier(.32,.72,.35,1) both}
+  /* El texto se desplaza adentro; Atrás, Ahora no y Siguiente quedan siempre a la vista. */
+  .gt-cuerpo{overflow-y:auto;overscroll-behavior:contain;-webkit-overflow-scrolling:touch;min-height:0;
+    padding:15px 16px 4px}
+  .gt-senal{display:flex;gap:9px;align-items:center;margin-top:12px;font-size:13.5px;font-weight:600;color:var(--laton-osc)}
+  .gt-senal::before{content:'';flex:none;width:10px;height:10px;border-radius:50%;background:var(--laton);
+    box-shadow:0 0 0 4px rgba(201,162,39,.22)}
+  .gt-cab{display:flex;align-items:center;justify-content:space-between;gap:10px}
+  .gt-paso{font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:.15em;text-transform:uppercase;
+    color:var(--laton-osc);font-weight:600}
+  .gt-cerrar{background:none;border:none;color:var(--gris);font-size:22px;line-height:1;width:40px;height:40px;
+    margin:-10px -10px -10px 0;border-radius:9px;cursor:pointer;flex:none}
+  .gt-cerrar:active{background:var(--claro-2)}
+  .gt-hilo{display:flex;align-items:center;margin-top:10px}
+  .gt-nodo{width:10px;height:10px;border-radius:50%;border:1.5px solid var(--linea-fuerte);background:var(--claro);flex:none}
+  .gt-nodo.visto{border-color:var(--verde-vivo)}
+  .gt-nodo.hecho{background:var(--verde-vivo);border-color:var(--verde-vivo)}
+  .gt-nodo.ahora{border-color:var(--laton);background:var(--laton);box-shadow:0 0 0 3px rgba(201,162,39,.25)}
+  .gt-tramo{flex:1;height:1.5px;background:var(--linea)}
+  .gt-tramo.ok{background:var(--verde-vivo)}
+  .gt-ok{display:flex;gap:9px;align-items:flex-start;margin-top:12px;background:#E5F0EA;border:1px solid #C3DACE;
+    color:#123529;border-radius:var(--r-ch);padding:10px 12px;font-size:13.5px;font-weight:600;line-height:1.4}
+  .gt-ok svg{width:17px;height:17px;flex:none;margin-top:1px;color:var(--verde-vivo)}
+  .gt-tit{font-family:'IBM Plex Sans Condensed',sans-serif;font-weight:700;font-size:21px;line-height:1.12;
+    letter-spacing:-.012em;margin-top:12px;outline:none}
+  .gt-txt{font-size:14px;line-height:1.5;color:var(--tinta);margin-top:7px}
+  .gt-txt p + p,.gt-txt p + ul,.gt-txt ul + p{margin-top:7px}
+  .gt-txt ul{list-style:none;display:grid;gap:7px}
+  .gt-txt li{position:relative;padding-left:15px}
+  .gt-txt li::before{content:'';position:absolute;left:0;top:8px;width:6px;height:6px;border-radius:50%;background:var(--verde-vivo)}
+  .gt-txt .gt-resumen li{padding-left:0}
+  .gt-txt .gt-resumen li::before{display:none}
+  .gt-txt b{font-weight:600}
+  .gt-chico{font-size:12.5px;color:var(--gris)}
+  .gt-para{margin-top:10px;font-size:12.5px;line-height:1.45;color:var(--gris);border-left:3px solid var(--laton);padding:2px 0 2px 10px}
+  .gt-para b{color:var(--laton-osc);font-weight:600}
+  .gt-estado{display:flex;align-items:flex-start;gap:9px;margin-top:8px;font-size:12.5px;line-height:1.45;color:var(--gris)}
+  .gt-estado .sello{margin-top:1px}
+  .gt-acciones{margin-top:13px}
+  .gt-acciones .btn{padding:13px 18px;font-size:15px}
+  .guia-tarjeta.prov .gt-acciones .btn.lleno{background:var(--laton-osc)}
+  .guia-tarjeta.prov .gt-acciones .btn.lleno:active:not(:disabled){background:#755D0D}
+  .gt-nav{display:flex;align-items:center;gap:6px;flex:none;padding:8px 16px 10px;border-top:1px solid var(--linea);
+    background:var(--claro)}
+  .gt-atras,.gt-ahora{background:none;border:none;font:inherit;font-size:13.5px;font-weight:600;color:var(--gris);
+    cursor:pointer;min-height:44px;padding:0 8px;border-radius:8px}
+  .gt-atras:disabled{opacity:.35;cursor:default}
+  .gt-atras:active:not(:disabled),.gt-ahora:active{background:var(--claro-2)}
+  .gt-nav .gt-sig{margin-left:auto;width:auto;min-height:44px;padding:10px 20px;font-size:14.5px}
+  .gt-resumen{list-style:none;margin-top:10px;display:grid;gap:6px}
+  .gt-resumen button{width:100%;display:flex;align-items:center;justify-content:space-between;gap:10px;
+    background:var(--claro);border:1px solid var(--linea);border-radius:var(--r-ch);padding:10px 12px;
+    font:inherit;font-size:13.5px;font-weight:500;color:var(--tinta);cursor:pointer;text-align:left;min-height:44px}
+  .gt-resumen button:active{background:var(--claro-2)}
+
+  /* La barrita: la guía achicada mientras completás algo o mirás otra cosa. */
+  .guia-mini{position:fixed;left:12px;right:12px;margin:0 auto;max-width:480px;z-index:55;
+    bottom:calc(var(--sb) + 12px);background:var(--noche);color:var(--claro);border-radius:12px;
+    box-shadow:0 8px 26px rgba(8,26,22,.35);display:flex;align-items:center;gap:8px;padding:7px 6px 7px 14px}
+  body.con-tabs .guia-mini{bottom:calc(var(--tabs) + var(--sb) + 12px)}
+  .gm-txt{flex:1;min-width:0;line-height:1.3}
+  .gm-txt small{display:block;font-family:'IBM Plex Mono',monospace;font-size:9.5px;letter-spacing:.14em;
+    text-transform:uppercase;color:#F3DE9A}
+  .gm-txt b{display:block;font-weight:600;font-size:13.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .gm-seguir{background:var(--verde-luz);color:var(--noche);border:none;border-radius:9px;font:inherit;font-weight:600;
+    font-size:13.5px;padding:10px 13px;min-height:42px;cursor:pointer;flex:none}
+  .gm-cerrar{background:none;border:none;color:var(--gris-2);font-size:21px;width:40px;height:42px;cursor:pointer;flex:none;border-radius:8px}
+  body.guia-con-mini .vista{padding-bottom:calc(var(--tabs) + var(--sb) + 104px)}
+  body.guia-con-mini .vista.sin-tabs{padding-bottom:calc(var(--sb) + 104px)}
+  body.guia-abierta .burbuja-asis,body.guia-con-mini .burbuja-asis{display:none}
+
 </style>
 </head>
 
@@ -1362,6 +1521,18 @@
     <button class="btn vacio-b" id="baja-cerrar" type="button">Cancelar</button>
   </div>
 </div>
+
+<!-- ═══════════ GUÍA DE PRIMEROS PASOS ═══════════ -->
+<!-- Cuatro velos alrededor del botón que se señala: oscurecen el resto sin
+     tapar el botón, que se puede tocar ahí mismo. Tocar un velo achica la guía
+     a la barrita de abajo; nunca bloquea la app. -->
+<div class="guia" id="guia" hidden>
+  <div class="guia-velo" data-velo></div><div class="guia-velo" data-velo></div>
+  <div class="guia-velo" data-velo></div><div class="guia-velo" data-velo></div>
+  <div class="guia-aro" id="guia-aro" aria-hidden="true"></div>
+  <section class="guia-tarjeta" id="guia-tarjeta" role="dialog" aria-modal="false" aria-labelledby="guia-tit"></section>
+</div>
+<div class="guia-mini" id="guia-mini" hidden></div>
 
 <div class="app">
 
@@ -1661,6 +1832,7 @@
       <div class="kicker">Conexiones</div>
       <h1>Tus chats</h1>
       <p class="bajada">Cada conexión es un cliente y alguien que ofrece un servicio, que se encontraron. Acá van a vivir las conversaciones.</p>
+      <div class="aviso-serv-caja" id="aviso-serv-chats"></div>
 
       <div class="sec"><span class="sec-tit">Como cliente</span><span class="sec-num" id="n-cli"></span></div>
       <div id="lista-cliente"></div>
@@ -1673,6 +1845,7 @@
     <section class="pantalla" id="p-perfil">
       <div class="kicker">Tu cuenta</div>
       <h1>Perfil</h1>
+      <div class="aviso-serv-caja" id="aviso-serv-cuenta"></div>
 
       <div class="placa" style="margin-top:20px">
         <div class="placa-top">
@@ -1706,6 +1879,7 @@
       <div id="perfil-servicios-sec">
         <div class="sec"><span class="sec-tit">Servicios que ofrecés</span><span class="sec-num" id="n-perfiles"></span></div>
         <div id="lista-perfiles"></div>
+        <div class="aviso" id="serv-aviso" role="status"></div>
         <button class="btn vacio-b" id="ir-proveedor" type="button" style="margin-top:12px">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>
           Ofrecer un servicio
@@ -1719,6 +1893,22 @@
           <span class="sello verde" id="modo-sello">Cliente</span>
         </div>
         <div class="item-meta"><span id="modo-txt">Pedís servicios y elegís quién los hace.</span></div>
+      </div>
+
+      <!-- La guía de primeros pasos se puede volver a ver acá cuando quieras:
+           si la pausaste, sigue desde el paso donde la dejaste. -->
+      <div class="item" id="guia-item">
+        <div class="item-top">
+          <span class="item-tit">Guía de primeros pasos</span>
+          <span id="guia-sello"></span>
+        </div>
+        <div class="item-meta"><span id="guia-txt">—</span></div>
+        <div class="item-pie">
+          <button class="cambiar-modo" id="guia-ver" type="button">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5V5a1.5 1.5 0 0 1 1.5-1.5H19v14H5.5A1.5 1.5 0 0 0 4 19a1.5 1.5 0 0 0 1.5 1.5H19"/><path d="M9 8h6"/></svg>
+            <span id="guia-ver-txt">Ver la guía</span>
+          </button>
+        </div>
       </div>
 
       <div class="sec"><span class="sec-tit">Tus datos</span></div>
@@ -1925,14 +2115,28 @@
 
     <!-- ══════ NUEVO PROVEEDOR ══════ -->
     <section class="pantalla" id="p-nuevo-proveedor">
-      <div class="kicker">Nuevo servicio</div>
-      <h1>¿Qué ofrecés?</h1>
-      <p class="bajada">Cargalo una vez. Cuando alguien busque esto en tu zona, te conectamos.</p>
+      <div class="kicker" id="np-kicker">Nuevo servicio</div>
+      <h1 id="np-tit">¿Qué ofrecés?</h1>
+      <p class="bajada" id="np-bajada">Cargalo una vez. Cuando alguien busque esto en tu zona, te conectamos.</p>
 
-      <div style="margin-top:26px">
+      <!-- Cómo se completa, en tres renglones. Quienes se anotaban para ofrecer
+           servicios se quedaban con la cuenta creada y sin publicar nada
+           (fundador, 28/10/2026): el formulario tiene que explicarse solo. -->
+      <div class="form-guia" id="p-guia">
+        <div class="form-guia-tit">Así se completa</div>
+        <ol>
+          <li><b>Quién sos:</b> tu nombre y un teléfono. Vienen de tu cuenta; cambialos si querés.</li>
+          <li><b>Dónde, cuánto y cuándo:</b> tu zona, tu rango de precios por trabajo y cuándo podés empezar.</li>
+          <li><b>Qué hacés:</b> contalo como se lo contarías a un cliente.</li>
+        </ol>
+        <div class="form-guia-pie">No se publica nada hasta que tocás «<span id="np-boton-nombre">Publicar mi servicio</span>».</div>
+      </div>
+
+      <div style="margin-top:22px">
         <div class="campo">
           <label for="p-nombre"><span class="indice">01</span>Nombre o razón social</label>
           <input id="p-nombre" type="text" autocomplete="name" placeholder="Ej: Juan Pérez / Estudio Pérez">
+          <div class="ayuda">Es el nombre que ven los clientes: el tuyo o el de tu negocio.</div>
           <div class="err" id="e-p-nombre">Escribí tu nombre para que los clientes sepan con quién hablan.</div>
         </div>
         <div class="campo">
@@ -1976,34 +2180,49 @@
         <div class="campo">
           <label for="p-zona"><span class="indice">05</span>Zona de cobertura</label>
           <select id="p-zona"><option value="">Elegí tu zona</option></select>
+          <div class="ayuda">Dónde trabajás más seguido. Es la que ven los clientes y la que usamos
+            para conectarte con pedidos cercanos.</div>
           <div class="err" id="e-p-zona">Elegí dónde trabajás.</div>
         </div>
         <div class="campo">
           <label for="p-desde"><span class="indice">06</span>Precio desde</label>
           <div class="caja-monto"><span class="signo">$</span>
             <input id="p-desde" type="text" inputmode="numeric" placeholder="15.000"></div>
+          <div class="ayuda">Lo mínimo que cobrás por un trabajo. Es una referencia para el cliente:
+            el precio de cada trabajo lo pasás después, en el presupuesto.</div>
           <div class="err" id="e-p-desde">Cargá un monto mínimo.</div>
         </div>
         <div class="campo">
           <label for="p-hasta"><span class="indice">07</span>Precio hasta</label>
           <div class="caja-monto"><span class="signo">$</span>
             <input id="p-hasta" type="text" inputmode="numeric" placeholder="60.000"></div>
-          <div class="ayuda">Tu rango habitual por trabajo.</div>
+          <div class="ayuda">Lo que cobrás por un trabajo grande. Con el de arriba arma tu rango
+            habitual (puede ser el mismo monto).</div>
           <div class="err" id="e-p-hasta">El máximo tiene que ser igual o mayor al mínimo.</div>
         </div>
         <div class="campo">
           <label for="p-disp"><span class="indice">08</span>Disponibilidad</label>
           <select id="p-disp"><option value="">Elegí tu disponibilidad</option></select>
+          <div class="ayuda">Cuándo podés empezar un trabajo nuevo. La cambiás cuando quieras.</div>
           <div class="err" id="e-p-disp">Indicá cuándo podés arrancar.</div>
         </div>
         <div class="campo">
           <label for="p-desc"><span class="indice">09</span>Qué ofrecés</label>
-          <textarea id="p-desc" maxlength="500" placeholder="Ej: Emito facturas A, B y C para monotributistas. Entrega en 24 hs."></textarea>
-          <div class="ayuda"><span id="p-cont">0</span>/500 · Es lo primero que lee el cliente.</div>
+          <textarea id="p-desc" maxlength="500" placeholder="Ej: Qué trabajos hacés, qué incluye tu precio y en qué días y horarios trabajás."></textarea>
+          <div class="ayuda"><span id="p-cont">0</span>/500 · Es lo primero que lee el cliente. Al menos 10 letras.</div>
+          <!-- Los trabajos típicos del rubro salen de la misma lista que usa la
+               calculadora de precios (calculadora_servicios): son de verdad del
+               rubro, no ejemplos inventados. -->
+          <div class="desc-ayuda" id="p-desc-ayuda">
+            <b>Qué conviene contar</b>
+            <span>Qué trabajos hacés, qué incluye tu precio (materiales, traslado), tu experiencia y en
+              qué días y horarios trabajás.</span>
+            <span class="desc-tipicos oculto" id="p-tipicos"></span>
+          </div>
           <div class="err" id="e-p-desc">Contá en una o dos líneas qué hacés.</div>
         </div>
 
-        <div class="declara">
+        <div class="declara" id="p-declara-caja">
           <div class="declara-tit">Antes de publicar</div>
           <ul>
             <li>Trabajás por tu cuenta. Tratto no es tu empleador ni tu cliente: es el lugar donde te encontrás con clientes.</li>
@@ -2038,7 +2257,7 @@
         </div>
 
         <button class="btn lleno" id="p-enviar" type="button" style="margin-top:16px">
-          <span class="rueda"></span><span id="p-txt">Publicar mi perfil</span>
+          <span class="rueda"></span><span id="p-txt">Publicar mi servicio</span>
         </button>
         <div class="aviso" id="p-aviso" role="status"></div>
       </div>
@@ -2220,6 +2439,7 @@
       </div>
 
       <div class="pp-cuerpo">
+        <div class="aviso-serv-caja" id="aviso-serv-ficha"></div>
         <div class="bloque" id="bl-bio">
           <div class="bloque-cab"><span class="bloque-tit">Sobre mi trabajo</span>
             <button class="bloque-accion oculto" id="ed-bio" type="button">Editar</button></div>
@@ -2713,6 +2933,7 @@ function ir(p, efecto){
   $('vista').classList.toggle('sin-tabs', esAuth || esSub);
   document.querySelectorAll('.tab').forEach(t => t.classList.toggle('activa', t.dataset.ir === p));
   window.scrollTo(0,0);
+  guiaAlNavegar(p);
 }
 $('tabs').addEventListener('click', e => {
   const t = e.target.closest('.tab'); if(!t) return;
@@ -2725,11 +2946,7 @@ $('volver').addEventListener('click', () => ir(volverA, 'entra'));
 $('ir-pedido').addEventListener('click', () => {
   volverA='inicio'; $('tasar-resultado').innerHTML=''; limpiarTasadorTexto(); ir('nuevo-pedido');
 });
-$('ir-proveedor').addEventListener('click', () => {
-  volverA='perfil';
-  prepararFormProveedor();
-  ir('nuevo-proveedor');
-});
+$('ir-proveedor').addEventListener('click', () => abrirNuevoServicio('perfil'));
 
 /* Nombre y oficio vienen de la cuenta. El nombre queda editable --puede
    publicar como "Raúl Gómez" o como "Pinturería Gómez"-- y el oficio no,
@@ -2743,6 +2960,8 @@ function prepararFormProveedor(){
   if(tiene) $('p-rubro-fijo').textContent = oficio;
   if(!$('p-nombre').value) $('p-nombre').value = miNombre();
   if(!$('p-tel').value)    $('p-tel').value    = miTelefono();
+  resumenProv();
+  pintarEjemplosRubro();
 }
 
 $('refrescar').addEventListener('click', async () => {
@@ -3355,7 +3574,7 @@ $('salir').addEventListener('click', async () => {
      entre otra persona. Con tope de tiempo: salir no puede quedar colgado. */
   try{ await Promise.race([desactivarPush(), new Promise(r => setTimeout(r, 3000))]); }catch(e){}
   try{ await fetch(SUPABASE_URL+'/auth/v1/logout',{method:'POST',headers:cab()}); }catch(e){}
-  store.borrar(); sesion=null; pararLatido();
+  guiaReiniciar(); store.borrar(); sesion=null; pararLatido();
   $('a-email').value=''; $('a-pass').value='';
   cambiarAuth('entrar'); ir('auth','entra');
 });
@@ -3425,7 +3644,12 @@ function resumenProv(){
   const v = id => $(id).value.trim();
   $('pv-nombre').innerHTML = v('p-nombre') ? esc(v('p-nombre')) : '<span class="hueco">Tu nombre</span>';
   const set=(e,x)=> $(e).innerHTML = x ? esc(x) : '<span class="hueco">Sin definir</span>';
-  set('pv-rubro',v('p-rubro')); set('pv-zona',v('p-zona')); set('pv-disp',v('p-disp'));
+  /* Con el oficio fijo de la cuenta el selector ni se muestra, así que la
+     vista previa decía "Sin definir" aunque el rubro estuviera más que claro. */
+  const fijo = sesion && sesion.user && (sesion.user.user_metadata || {}).rubro;
+  const rubroVisto = fijo ? miOficio()
+    : (v('p-rubro') === RUBRO_OTRO ? v('p-otro-rubro') : v('p-rubro'));
+  set('pv-rubro',rubroVisto); set('pv-zona',v('p-zona')); set('pv-disp',v('p-disp'));
   const d=num(v('p-desde')), h=num(v('p-hasta'));
   $('pv-precio').innerHTML = (d&&h) ? pesos(d)+' – '+pesos(h)
     : d ? 'Desde '+pesos(d) : h ? 'Hasta '+pesos(h) : '<span class="hueco">Sin definir</span>';
@@ -3456,26 +3680,50 @@ $('p-enviar').addEventListener('click', async () => {
   if(num(v('p-hasta')) < num(v('p-desde'))) fallar('p-hasta',r);
   if(!v('p-disp')) fallar('p-disp',r);
   if(v('p-desc').length<10) fallar('p-desc',r);
-  if(!$('p-declara').checked) fallar('p-declara',r);
+  /* La declaración se acepta al publicar. Al editar un servicio ya publicado
+     no se vuelve a pedir: es el mismo servicio, con los mismos términos. */
+  if(!editandoServ && !$('p-declara').checked) fallar('p-declara',r);
   if(enfocar(r)){ avisar('p-aviso','Faltan datos. Revisá los campos marcados.','mal'); return; }
 
   const b=$('p-enviar'); b.disabled=true; b.classList.add('cargando');
-  $('p-txt').textContent='Publicando…'; $('p-aviso').className='aviso';
+  $('p-txt').textContent = editandoServ ? 'Guardando…' : 'Publicando…'; $('p-aviso').className='aviso';
+  const datos = {
+    nombre:v('p-nombre'), email:v('p-email'), telefono:v('p-tel'),
+    /* si es un rubro propio, guardamos el nombre lindo aparte y usamos
+       el rubro parecido para que el matching lo siga encontrando */
+    rubro: deCuenta.rubro || (v('p-rubro') === RUBRO_OTRO ? v('p-rubro-padre') : v('p-rubro')),
+    rubro_personalizado: deCuenta.rubro
+      ? (deCuenta.rubro_personalizado || null)
+      : (v('p-rubro') === RUBRO_OTRO ? v('p-otro-rubro') : null),
+    zona:v('p-zona'),
+    precio_desde:num(v('p-desde')), precio_hasta:num(v('p-hasta')),
+    disponibilidad:v('p-disp'), descripcion:v('p-desc')
+  };
   try{
+    if(editandoServ){
+      /* Editar es un PATCH sobre el propio servicio (la política prov_editar
+         solo deja tocar los de uno). No dispara el matching: eso es al crear. */
+      const res = await fetch(SUPABASE_URL+'/rest/v1/proveedores?id=eq.'+editandoServ,{
+        method:'PATCH', headers:cab({'Prefer':'return=representation'}), body: JSON.stringify(datos)
+      });
+      if(res.status===401){ avisar('p-aviso','Tu sesión venció. Volvé a entrar.','mal'); return; }
+      const filas = res.ok ? await res.json() : null;
+      if(!res.ok || !filas || !filas.length){
+        if(!res.ok) console.error(await res.text().catch(() => ''));
+        avisar('p-aviso','No se pudieron guardar los cambios. Probá de nuevo.','mal'); return;
+      }
+      const destino = volverA;
+      salirDeEdicion();
+      await cargarPerfiles(); await cargarPerfilProv();
+      if(modo === 'proveedor') await cargarPanel();
+      if(destino === 'ficha') abrirFicha(sesion.user.id, true); else ir(destino || 'perfil', 'entra');
+      avisar('serv-aviso','Guardamos los cambios de tu servicio. Los clientes ya los ven.','ok');
+      setTimeout(() => { $('serv-aviso').className = 'aviso'; }, 5000);
+      return;
+    }
     const res = await fetch(SUPABASE_URL+'/rest/v1/proveedores',{
       method:'POST', headers:cab({'Prefer':'return=representation'}),
-      body: JSON.stringify({
-        nombre:v('p-nombre'), email:v('p-email'), telefono:v('p-tel'),
-        /* si es un rubro propio, guardamos el nombre lindo aparte y usamos
-           el rubro parecido para que el matching lo siga encontrando */
-        rubro: deCuenta.rubro || (v('p-rubro') === RUBRO_OTRO ? v('p-rubro-padre') : v('p-rubro')),
-        rubro_personalizado: deCuenta.rubro
-          ? (deCuenta.rubro_personalizado || null)
-          : (v('p-rubro') === RUBRO_OTRO ? v('p-otro-rubro') : null),
-        zona:v('p-zona'),
-        precio_desde:num(v('p-desde')), precio_hasta:num(v('p-hasta')),
-        disponibilidad:v('p-disp'), descripcion:v('p-desc'), user_id:sesion.user.id
-      })
+      body: JSON.stringify(Object.assign(datos, {user_id:sesion.user.id}))
     });
     if(res.status===401){ avisar('p-aviso','Tu sesión venció. Volvé a entrar.','mal'); return; }
     if(!res.ok){ const t = await res.text(); console.error(t); avisar('p-aviso', limiteDe(t) || 'No se pudo publicar (error '+res.status+').','mal'); return; }
@@ -3490,8 +3738,118 @@ $('p-enviar').addEventListener('click', async () => {
     resumenProv(); await cargarPerfiles(); await cargarConexiones(); await cargarPerfilProv();
     if(modo === 'proveedor'){ await cargarPanel(); ir('panel','entra'); } else ir('perfil','entra');
   }catch(e){ console.error(e); avisar('p-aviso','No se pudo conectar. Probá de nuevo.','mal'); }
-  finally{ b.disabled=false; b.classList.remove('cargando'); $('p-txt').textContent='Publicar mi perfil'; }
+  finally{ b.disabled=false; b.classList.remove('cargando'); $('p-txt').textContent=textoBotonServicio(); }
 });
+
+/* ══════════════════ EDITAR UN SERVICIO PUBLICADO ══════════════════ */
+/* Antes no había forma de cambiar un servicio una vez publicado. Se edita en
+   el mismo formulario: mismos campos, mismas validaciones. */
+let editandoServ = null;
+const textoBotonServicio = () => editandoServ ? 'Guardar cambios' : 'Publicar mi servicio';
+const servNombre = s => (s && (s.rubro_personalizado || s.rubro)) || 'tu servicio';
+
+function modoFormServicio(){
+  const ed = !!editandoServ;
+  $('np-kicker').textContent = ed ? 'Editar servicio' : 'Nuevo servicio';
+  $('np-tit').textContent    = ed ? 'Editá tu servicio' : '¿Qué ofrecés?';
+  $('np-bajada').textContent = ed
+    ? 'Cambiá lo que necesites. Los clientes ven los cambios apenas los guardás.'
+    : 'Cargalo una vez. Cuando alguien busque esto en tu zona, te conectamos.';
+  $('np-boton-nombre').textContent = textoBotonServicio();
+  $('p-txt').textContent = textoBotonServicio();
+  $('p-declara-caja').classList.toggle('oculto', ed);
+  SUB['nuevo-proveedor'] = ed ? 'Editar servicio' : 'Nuevo servicio';
+}
+
+function salirDeEdicion(){
+  if(editandoServ){
+    CP.forEach(c => $(c).value = ''); $('p-email').value = sesion.user.email;
+    $('p-otro-rubro').value = ''; $('p-rubro-padre').value = '';
+    $('caja-otro-rubro').classList.add('oculto');
+  }
+  editandoServ = null;
+  modoFormServicio();
+}
+
+/* Todas las puertas al formulario de servicio nuevo pasan por acá: el Panel,
+   Cuenta, los avisos de "te falta publicar" y la guía. */
+function abrirNuevoServicio(desde){
+  volverA = desde || 'panel';
+  salirDeEdicion();
+  limpiar(CP);
+  $('p-aviso').className = 'aviso';
+  prepararFormProveedor();
+  ir('nuevo-proveedor');
+}
+
+function abrirEditarServicio(id, desde){
+  const s = misPerfiles.find(x => x.id === Number(id));
+  if(!s) return;
+  editandoServ = s.id;
+  volverA = desde || 'perfil';
+  prepararFormProveedor();
+  $('p-nombre').value = s.nombre || '';
+  $('p-email').value  = s.email || sesion.user.email;
+  $('p-tel').value    = s.telefono || '';
+  if(!(sesion.user.user_metadata || {}).rubro){
+    if(s.rubro_personalizado){
+      $('p-rubro').value = RUBRO_OTRO; $('caja-otro-rubro').classList.remove('oculto');
+      $('p-otro-rubro').value = s.rubro_personalizado; $('p-rubro-padre').value = s.rubro;
+    }else{
+      $('p-rubro').value = s.rubro; $('caja-otro-rubro').classList.add('oculto');
+    }
+  }
+  $('p-zona').value  = s.zona || '';
+  $('p-desde').value = s.precio_desde ? Number(s.precio_desde).toLocaleString('es-AR') : '';
+  $('p-hasta').value = s.precio_hasta ? Number(s.precio_hasta).toLocaleString('es-AR') : '';
+  $('p-disp').value  = s.disponibilidad || '';
+  $('p-desc').value  = s.descripcion || '';
+  limpiar(CP); $('p-aviso').className = 'aviso';
+  modoFormServicio();
+  resumenProv(); pintarEjemplosRubro();
+  ir('nuevo-proveedor');
+}
+
+document.addEventListener('click', e => {
+  const ed = e.target.closest('[data-editar-serv]');
+  if(ed){ abrirEditarServicio(ed.dataset.editarServ, actual === 'ficha' ? 'ficha' : 'perfil'); return; }
+  const of = e.target.closest('[data-ofrecer-servicio]');
+  if(of){ abrirNuevoServicio(['perfil','chats'].includes(actual) ? actual : 'panel'); return; }
+  const g = e.target.closest('[data-guia-abrir]');
+  if(g) guiaDesdeBoton();
+});
+
+/* ══════════════════ EJEMPLOS DEL RUBRO EN EL FORMULARIO ══════════════════ */
+/* Los trabajos típicos salen de la misma lista que usa la calculadora
+   (calculadora_servicios, pública y sin precios): son trabajos reales de cada
+   rubro, no ejemplos inventados. Si no carga, el formulario sigue igual. */
+let tipicosPorRubro = null;
+async function cargarTipicos(){
+  if(tipicosPorRubro) return tipicosPorRubro;
+  try{
+    const r = await fetch(SUPABASE_URL + '/rest/v1/rpc/calculadora_servicios', {method:'POST', headers:cab(), body:'{}'});
+    if(!r.ok) throw new Error(r.status);
+    const filas = await r.json();
+    tipicosPorRubro = {};
+    filas.forEach(f => { (tipicosPorRubro[f.rubro] = tipicosPorRubro[f.rubro] || []).push(f.servicio); });
+  }catch(e){ console.error(e); return {}; }
+  return tipicosPorRubro;
+}
+
+async function pintarEjemplosRubro(){
+  if(!sesion) return;
+  const meta = sesion.user.user_metadata || {};
+  const rubro = meta.rubro || ($('p-rubro').value === RUBRO_OTRO ? $('p-rubro-padre').value : $('p-rubro').value);
+  const caja = $('p-tipicos');
+  const lista = rubro ? ((await cargarTipicos())[rubro] || []) : [];
+  if(!lista.length){ caja.classList.add('oculto'); caja.innerHTML = ''; return; }
+  caja.innerHTML = 'Trabajos típicos de ' + esc(rubro) + ':<br>' +
+    lista.slice(0, 5).map(t => '<i>' + esc(t) + '</i>').join('') +
+    '<br>Contá cuáles hacés vos y qué incluye tu precio.';
+  caja.classList.remove('oculto');
+}
+$('p-rubro').addEventListener('change', pintarEjemplosRubro);
+$('p-rubro-padre').addEventListener('change', pintarEjemplosRubro);
 
 /* ══════════════════ LISTAS ══════════════════ */
 let misPedidos = [], misPerfiles = [];
@@ -3530,6 +3888,7 @@ async function cargarPedidos(){
     console.error(e);
     $('lista-pedidos').innerHTML = cajaVacia('No se pudieron cargar','Tocá el botón de actualizar arriba a la derecha.','pedido');
   }
+  guiaRevisar();
 }
 
 async function cargarPerfiles(){
@@ -3540,20 +3899,66 @@ async function cargarPerfiles(){
     if(!misPerfiles.length){
       $('lista-perfiles').innerHTML = cajaVacia('No ofrecés nada todavía',
         'Publicá un servicio y te vamos a conectar con clientes de tu zona.','maleta');
-      return;
-    }
-    $('lista-perfiles').innerHTML = misPerfiles.map(p =>
+    }else $('lista-perfiles').innerHTML = misPerfiles.map(p =>
       '<div class="item"><div class="item-top"><span class="item-tit">'+esc(p.rubro_personalizado || p.rubro)+'</span>' +
       '<span class="sello oro">Publicado</span></div>' +
       '<div class="item-meta"><span>'+esc(p.zona)+'</span>' +
       '<span>'+pesos(p.precio_desde)+' – '+pesos(p.precio_hasta)+'</span>' +
-      '<span>'+esc(p.disponibilidad)+'</span></div></div>'
+      '<span>'+esc(p.disponibilidad)+'</span></div>' +
+      '<div class="item-pie"><span>Lo ven los clientes en tu perfil</span>' + botonEditarServ(p.id) + '</div></div>'
     ).join('');
   }catch(e){
     console.error(e);
     $('lista-perfiles').innerHTML = cajaVacia('No se pudieron cargar','Tocá el botón de actualizar arriba a la derecha.','maleta');
   }
   cargarCobros();
+  pintarAvisoServicio();
+  guiaRevisar();
+}
+
+const botonEditarServ = id => '<button class="serv-editar" data-editar-serv="'+id+'" type="button">' +
+  '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20h4L19 9l-4-4L4 16v4z"/><path d="M13.5 6.5l4 4"/></svg>Editar</button>';
+
+/* ══════════════════ TE FALTA PUBLICAR TU SERVICIO ══════════════════ */
+/* Quien ofrece servicios y no tiene ninguno publicado no recibe pedidos: la
+   cuenta sola no alcanza. Mientras sea así se ve, grande en el Panel y corto
+   arriba de Chats, Mi perfil y Cuenta. Se calcula siempre con los servicios
+   que hay de verdad en la base: si publica desaparece, y si se queda sin
+   ninguno vuelve. */
+const ICO_MAS = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>';
+const ICO_TILDE = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.6l4.6 4.6L19 7.4"/></svg>';
+
+function avisoServicioGrande(){
+  const oficio = miOficio();
+  return '<div class="paso-uno" role="region" aria-label="Tu próximo paso">' +
+    '<div class="pu-kicker">Tu próximo paso</div>' +
+    '<div class="pu-hilo" aria-hidden="true"><span class="pu-nodo hecho">'+ICO_TILDE+'</span>' +
+      '<span class="pu-linea hecha"></span><span class="pu-nodo ahora">2</span>' +
+      '<span class="pu-linea"></span><span class="pu-nodo">3</span></div>' +
+    '<div class="pu-etqs" aria-hidden="true"><span>Cuenta creada</span><span>Publicar servicio</span><span>Recibir pedidos</span></div>' +
+    '<div class="pu-tit">Publicá tu servicio</div>' +
+    '<p class="pu-txt">Ya creaste tu cuenta. Ahora publicá tu servicio para que los clientes puedan conocer lo que hacés.</p>' +
+    '<ul class="pu-lista">' +
+      '<li><span>Sin un servicio publicado <b>no te llegan pedidos</b>.</span></li>' +
+      '<li><span>Te conectamos con quienes piden ' + (oficio ? '<b>'+esc(oficio)+'</b>' : 'lo tuyo') + ' en tu zona.</span></li>' +
+      '<li><span>Publicarlo es gratis y sin abono mensual.</span></li>' +
+    '</ul>' +
+    '<button class="btn lleno" id="panel-crear" type="button">' + ICO_MAS + 'Ofrecer un servicio</button>' +
+    '<button class="pu-guia" data-guia-abrir type="button">Ver la guía paso a paso</button>' +
+    '</div>';
+}
+
+function avisoServicioFino(){
+  return '<div class="paso-fino"><div><b>Te falta publicar tu servicio</b>' +
+    '<span>Sin un servicio publicado no te llegan pedidos.</span></div>' +
+    '<button class="btn lleno" data-ofrecer-servicio type="button">Ofrecer un servicio</button></div>';
+}
+
+function pintarAvisoServicio(){
+  const falta = !!sesion && modo === 'proveedor' && !misPerfiles.length;
+  ['aviso-serv-chats','aviso-serv-cuenta'].forEach(id => { $(id).innerHTML = falta ? avisoServicioFino() : ''; });
+  $('aviso-serv-ficha').innerHTML = (falta && fichaPropia) ? avisoServicioFino() : '';
+  $('ir-proveedor').classList.toggle('destacado', falta);
 }
 
 async function cargarConexiones(){
@@ -4850,8 +5255,10 @@ async function abrirFicha(userId, propia){
     '<div class="item"><div class="item-top"><span class="item-tit">'+esc(s.rubro_personalizado || s.rubro)+'</span>' +
     '<span class="sello oro">'+pesos(s.precio_desde)+'+</span></div>' +
     (s.descripcion ? '<div class="item-meta"><span>'+esc(s.descripcion)+'</span></div>' : '') +
-    '<div class="item-pie"><span>'+esc(s.zona)+'</span><span>'+pesos(s.precio_desde)+' – '+pesos(s.precio_hasta)+'</span></div></div>'
+    '<div class="item-pie"><span>'+esc(s.zona)+'</span><span>'+pesos(s.precio_desde)+' – '+pesos(s.precio_hasta)+'</span>' +
+    (fichaPropia ? botonEditarServ(s.id) : '') + '</div></div>'
   ).join('') : '<p style="color:var(--gris);font-size:14px">Sin servicios publicados.</p>';
+  pintarAvisoServicio();
 
   /* pie: editar o contactar */
   $('pf-contacto').innerHTML = fichaPropia
@@ -4931,11 +5338,13 @@ async function conectarMP(boton){
     if(!r.ok || !d || !d.url) throw new Error((d && d.error) || 'no se pudo iniciar la conexión');
     if(ventana) ventana.location = d.url;
     else location.href = d.url;
+    return true;
   }catch(e){
     console.error(e);
     if(ventana) ventana.close();
     if(boton) boton.insertAdjacentHTML('afterend',
       '<div class="cobros-nota cobros-error">No pudimos abrir Mercado Pago. Revisá tu conexión y probá de nuevo.</div>');
+    return false;
   }finally{
     if(boton){ boton.disabled = false; boton.textContent = textoBoton; }
   }
@@ -4981,11 +5390,13 @@ function cobrosHTML(cuenta){
 async function cargarCobros(){
   const destinos = ['panel-cobros','perfil-cobros'].map($).filter(Boolean);
   if(!destinos.length) return;
-  let cuenta = null;
+  let cuenta = null, fallo = false;
   try{
     const filas = await api('cuentas_mp?user_id=eq.'+sesion.user.id+'&select=mp_user_id,created_at');
     cuenta = filas[0] || null;
-  }catch(e){ console.error(e); }
+  }catch(e){ console.error(e); fallo = true; }
+  guiaMP = fallo ? 'sin_datos' : (cuenta ? 'conectada' : 'sin_conectar');
+  guiaRevisar();
   const html = cobrosHTML(cuenta);
   destinos.forEach(d => { d.innerHTML = html; });
   /* En Cuenta la sección solo tiene sentido si la persona ofrece algo, igual
@@ -5013,11 +5424,9 @@ async function cargarPanel(){
 
   if(!misPerfiles.length){
     $('panel-datos').classList.add('oculto');
-    $('panel-sin-perfil').innerHTML = cajaVacia('Todavía no ofrecés nada',
-      'Publicá tu primer servicio y empezamos a conectarte con clientes de tu zona.','maleta') +
-      '<button class="btn lleno" id="panel-crear" type="button" style="margin-top:14px">Ofrecer un servicio</button>';
+    $('panel-sin-perfil').innerHTML = avisoServicioGrande();
     const b = $('panel-crear');
-    if(b) b.addEventListener('click', () => { volverA='panel'; ir('nuevo-proveedor'); });
+    if(b) b.addEventListener('click', () => abrirNuevoServicio('panel'));
     return;
   }
   $('panel-sin-perfil').innerHTML = '';
@@ -5553,6 +5962,7 @@ async function pintarPush(){
     txt.textContent = 'Este navegador no soporta notificaciones. Probá desde Chrome en Android, ' +
       'o agregando Tratto a la pantalla de inicio en iPhone (Safari 16.4 o más nuevo).';
     boton.disabled = true; botonTxt.textContent = 'No disponible';
+    guiaPush = 'no_soportado'; guiaRevisar();
     return;
   }
   const permiso = await permisoPush();
@@ -5563,6 +5973,7 @@ async function pintarPush(){
       : 'Las bloqueaste en el navegador. Para reactivarlas, abrí la configuración ' +
         'del sitio (el candado en la barra de direcciones) y permitilas de nuevo.';
     boton.disabled = true; botonTxt.textContent = 'Bloqueadas por el navegador';
+    guiaPush = 'bloqueadas'; guiaRevisar();
     return;
   }
   boton.disabled = false;
@@ -5578,6 +5989,8 @@ async function pintarPush(){
       'celular.' + (PN ? '' : ' En iPhone, primero agregá Tratto a la pantalla de inicio desde Safari.');
     botonTxt.textContent = 'Activar en este dispositivo';
   }
+  guiaPush = sub ? 'activas' : 'desactivadas';
+  guiaRevisar();
 }
 
 /* El pedido de permiso apenas se crea la cuenta.
@@ -5606,7 +6019,7 @@ async function sincronizarAvisos(ofrecer){
   if(permiso === 'granted'){
     try{ await activarPush(); }catch(e){ console.error(e); }
     pintarPush();
-  }else if(permiso === 'default' && ofrecer){
+  }else if(permiso === 'default' && ofrecer && !guiaTomaLosAvisos()){
     ofrecerAvisos();
   }
 }
@@ -6229,6 +6642,734 @@ $('faq-lista').addEventListener('click', e => {
    a la pantalla desde la que se pidió ayuda, no al asistente. */
 $('asis-a-faq').addEventListener('click', () => { pintarFAQ(); ir('ayuda'); });
 
+/* ══════════════════ GUÍA DE PRIMEROS PASOS ══════════════════ */
+/* Pedido del fundador (28/10/2026): una guía para quien entra por primera
+   vez, distinta para el cliente y para quien ofrece servicios, que señale los
+   botones de verdad y deje hacer cada cosa ahí mismo. Lo más importante: que
+   quien ofrece servicios no se quede con la cuenta creada y publique su
+   servicio.
+
+   Reglas que no se rompen:
+   - Se guarda por dónde va y qué pasos vio (user_metadata.guia_<rol>, con una
+     copia en el teléfono). Lo HECHO no se guarda: se mira cada vez en los datos
+     reales (servicios publicados, pedidos, la suscripción de este dispositivo,
+     la cuenta de Mercado Pago). Tocar un botón no cuenta como hecho.
+   - Nunca bloquea la app: tocar fuera de la tarjeta la achica a una barrita,
+     "Ahora no" la pausa, y se retoma desde Cuenta.
+   - No activa ningún permiso por su cuenta. Las notificaciones se piden solo si
+     la persona toca el botón (y decide en el cartel del teléfono). La
+     publicidad y la IA solo se explican.
+   Las variables van con var a propósito: ir() avisa a la guía y puede correr
+   antes de que el script termine de cargar. */
+var guia = null;              // {v, rol, paso, vistos[], estado: activa|pausada|terminada, mp_intento, act}
+var guiaVista = 'cerrada';    // tarjeta | mini | cerrada
+var guiaEsperando = null;     // pantalla que se está completando con la guía achicada
+var guiaBase = null;          // cuántos pedidos/servicios había al empezar a completar el formulario
+var guiaDestino = null;       // pantalla a la que la guía mandó a la persona
+var guiaFestejo = '';         // "tu servicio quedó publicado", arriba de la tarjeta
+var guiaAcciones = [];
+var guiaPush = '?';           // activas | desactivadas | bloqueadas | no_soportado
+var guiaPushError = '';
+var guiaMP = '?';             // conectada | sin_conectar | sin_datos
+var guiaMPError = false;
+var guiaTimer = null;
+
+/* Desde esta fecha, toda cuenta nueva la ve sola al entrar. Las anteriores la
+   ven solo si ofrecen servicios y no publicaron ninguno; el resto, desde Cuenta. */
+const GUIA_DESDE = '2026-10-28';
+
+const guiaVisible = el => !!el && el.getClientRects().length > 0 &&
+  el.getBoundingClientRect().width > 0 && el.getBoundingClientRect().height > 0;
+const esIPhone = () => /iPhone|iPad|iPod/.test(navigator.userAgent);
+const tabDe = ir => document.querySelector('.tab[data-ir="' + ir + '"]');
+
+/* ── Pasos ────────────────────────────────────────────────────────────────
+   pantalla: dónde tiene que estar la persona para ver el paso (o null).
+   abrir():  lleva ahí, con los mismos botones que tocaría ella.
+   foco():   lo que se señala (uno o varios elementos reales de la pantalla).
+   hecho():  si la acción del paso está hecha, mirando los datos reales.
+   textos(): título, explicación, para qué sirve, estado y acciones. */
+
+function guiaPasoAvisos(){
+  const prov = modo === 'proveedor';
+  const cuando = prov
+    ? 'cuando te conectamos con un cliente nuevo, cuando te aceptan o rechazan un presupuesto y cuando te pagan'
+    : 'cuando te llega un presupuesto y cuando marcan tu pedido como terminado';
+  const t = {
+    tit: 'Activá las notificaciones',
+    txt: '<p>Te avisamos en el celular ' + cuando + ', aunque tengas la app cerrada.</p>' +
+      '<p class="gt-chico">Los mensajes del chat los ves al abrir la app. Esto no activa publicidad: ' +
+      'las novedades por mail son otro permiso, aparte, y está apagado salvo que lo pidas.</p>',
+    para: prov
+      ? 'Te enterás a tiempo de cada cliente nuevo sin entrar a cada rato. Que lleguen pedidos depende de que alguien pida lo tuyo en tu zona.'
+      : 'Te enterás apenas te cotizan, sin entrar a cada rato a mirar.'
+  };
+  if(guiaPush === 'activas'){
+    t.tit = 'Notificaciones activadas';
+    t.estado = ['verde', 'Activadas', 'En este dispositivo ya te llegan los avisos. Las apagás cuando quieras desde Cuenta.'];
+  }else if(guiaPush === 'bloqueadas'){
+    t.estado = ['alerta', 'Bloqueadas', PN
+      ? 'Las bloqueaste en el teléfono. Para activarlas: Ajustes del iPhone → Tratto → Notificaciones. Después volvé y tocá «Revisar de nuevo».'
+      : 'Las bloqueaste en el navegador. Abrí la configuración del sitio (el candado al lado de la dirección), permití las notificaciones y tocá «Revisar de nuevo».'];
+    t.acciones = [{txt: 'Revisar de nuevo', clase: 'vacio-b', hacer: () => pintarPush()}];
+  }else if(guiaPush === 'no_soportado'){
+    t.estado = ['gris', 'No disponible acá', esIPhone()
+      ? 'En el iPhone, desde Safari: tocá Compartir → «Agregar a inicio» y abrí Tratto desde ese ícono (o bajate la app del App Store). Ahí las vas a poder activar. Mientras tanto te avisamos por mail.'
+      : 'Este navegador no permite notificaciones. Probá desde Chrome en Android. Mientras tanto te avisamos por mail.'];
+  }else{
+    t.estado = ['gris', 'Desactivadas', guiaPushError || 'Tu teléfono te va a preguntar si las permitís: ahí decidís vos. Si decís que no, te seguimos avisando por mail.'];
+    t.acciones = [{txt: 'Activar notificaciones', clase: 'lleno', hacer: guiaActivarPush}];
+  }
+  return t;
+}
+
+/* Mismo camino que el botón de Cuenta: el permiso lo da la persona en el cartel
+   del sistema, y recién se marca como hecho si la suscripción quedó guardada. */
+async function guiaActivarPush(){
+  guiaPushError = '';
+  try{ await activarPush(); }
+  catch(e){
+    const m = String((e && e.message) || '');
+    if(m === 'default') guiaPushError = 'Cerraste el cartel sin elegir. Cuando quieras, tocá «Activar notificaciones» de nuevo.';
+    else if(m !== 'denied') guiaPushError = 'No pudimos activarlas en este dispositivo. Probá de nuevo en un rato.';
+  }
+  await pintarPush();
+}
+
+function guiaPasoMP(){
+  const t = {
+    tit: 'Conectá Mercado Pago para cobrar',
+    txt: '<ul><li>Sirve para cobrar por la app los trabajos que hacés: cuando marcás un trabajo como terminado, ' +
+      'el cliente te paga con tarjeta desde el chat y la plata va directo a tu cuenta de Mercado Pago.</li>' +
+      '<li>Aceptar un presupuesto no mueve plata.</li>' +
+      '<li>Tratto se queda con el 3% (mínimo $1.500) de cada trabajo que cobrás por la app.</li></ul>' +
+      (misPerfiles.length ? '' : '<p class="gt-chico">La tarjeta de Cobros aparece en tu Panel y en Cuenta cuando publicás tu servicio.</p>'),
+    para: 'Te llevamos a Mercado Pago para que lo autorices. Cuando vuelvas, la guía sigue desde acá.'
+  };
+  if(guiaMP === 'conectada'){
+    t.tit = 'Mercado Pago conectado';
+    t.estado = ['verde', 'Conectada', 'Ya podés cobrar por la app. Tu cuenta figura en Cobros, en el Panel y en Cuenta.'];
+    delete t.para;
+    return t;
+  }
+  if(guiaMPError) t.estado = ['alerta', 'No se pudo abrir', 'No pudimos abrir Mercado Pago. Revisá tu conexión y probá de nuevo.'];
+  else if(guia && guia.mp_intento) t.estado = ['oro', 'Pendiente', 'Todavía no vemos tu cuenta conectada. Si ya autorizaste en Mercado Pago, tocá «Ya lo autoricé». Si no, probá de nuevo.'];
+  else if(guiaMP === 'sin_datos') t.estado = ['gris', 'Sin datos', 'No pudimos revisar si tu cuenta está conectada. Probá de nuevo en un rato.'];
+  else t.estado = ['gris', 'Sin conectar', 'Podés hacerlo ahora o más tarde, desde Cobros.'];
+  t.acciones = [{txt: 'Conectar Mercado Pago', clase: 'lleno', hacer: guiaConectarMP}];
+  if(guia && guia.mp_intento) t.acciones.push({txt: 'Ya lo autoricé, revisar', clase: 'vacio-b', hacer: () => cargarCobros()});
+  return t;
+}
+
+/* Sin esperas antes de conectarMP: el navegador solo deja abrir la pestaña de
+   Mercado Pago dentro del toque. El progreso queda guardado antes de salir
+   (en el teléfono al instante y en la cuenta enseguida), porque en la app de
+   iPhone la página se va entera a Mercado Pago y vuelve de cero. */
+function guiaConectarMP(boton){
+  guiaMPError = false;
+  guia.mp_intento = new Date().toISOString();
+  guia.estado = 'activa';
+  guiaGuardar(true);
+  return conectarMP(boton).then(ok => { if(ok === false) guiaMPError = true; guiaRevisar(); });
+}
+
+const GUIA_PASOS = {
+  proveedor: [
+    { id: 'publicar', corto: 'Publicar tu servicio', clave: true, pantalla: 'panel',
+      abrir(){ ir('panel'); },
+      foco(){ return misPerfiles.length ? null : $('panel-crear'); },
+      hecho(){ return misPerfiles.length > 0; },
+      textos(){
+        if(misPerfiles.length) return {
+          tit: 'Tu servicio ya está publicado',
+          txt: '<p>Ya ofrecés <b>' + esc(servNombre(misPerfiles[0])) + '</b>. Los clientes lo ven en tu perfil y te conectamos con pedidos de tu rubro en tu zona.</p>',
+          para: 'Si hacés otros trabajos dentro de tu oficio, podés publicar más de un servicio.',
+          estado: ['verde', 'Publicado'] };
+        return {
+          tit: 'Ya creaste tu cuenta. Ahora publicá tu servicio',
+          txt: '<p>Para que los clientes puedan conocer lo que hacés, publicá tu servicio con el botón «Ofrecer un servicio».</p>' +
+            '<ul><li>Sin un servicio publicado no te llegan pedidos.</li><li>Publicarlo es gratis y sin abono mensual.</li></ul>',
+          para: 'Con tu servicio publicado, te conectamos con quienes piden ' + (miOficio() ? esc(miOficio()) : 'lo tuyo') + ' en tu zona.',
+          estado: ['oro', 'Pendiente'], accionEnFoco: true,
+          acciones: [{txt: 'Ofrecer un servicio', clase: 'lleno', hacer: () => guiaAvanzarA('formulario')}] };
+      } },
+
+    { id: 'formulario', corto: 'Completar tu servicio', acompana: 'nuevo-proveedor', vuelveA: 'publicar',
+      pantalla(){ return misPerfiles.length && actual !== 'nuevo-proveedor' ? null : 'nuevo-proveedor'; },
+      abrir(){ abrirNuevoServicio('panel'); },
+      foco(){ return actual === 'nuevo-proveedor' ? $('p-guia') : null; },
+      hecho(){ return misPerfiles.length > 0; },
+      alCompletar: { paso: 'publicado', cuenta: () => misPerfiles.length, festejo: '¡Listo! Tu servicio quedó publicado.' },
+      textos(){
+        if(misPerfiles.length && actual !== 'nuevo-proveedor') return {
+          tit: 'Ya lo publicaste',
+          txt: '<p>Si querés cambiar algo, tocá «Editar» en tu servicio: está en Cuenta, en «Servicios que ofrecés», y en Mi perfil.</p>',
+          estado: ['verde', 'Publicado'] };
+        return {
+          tit: 'Completá tu servicio',
+          txt: '<ul><li><b>Zona:</b> dónde trabajás. Con eso te conectamos con pedidos cercanos.</li>' +
+            '<li><b>Precio desde y hasta:</b> tu rango habitual por trabajo. El precio de cada trabajo lo pasás después, en el presupuesto.</li>' +
+            '<li><b>Disponibilidad:</b> cuándo podés empezar.</li>' +
+            '<li><b>Qué ofrecés:</b> es lo primero que lee el cliente. Abajo del campo tenés trabajos típicos de tu rubro.</li></ul>',
+          para: 'Al final leé «Antes de publicar», tildá que estás de acuerdo y tocá «Publicar mi servicio». No se publica nada hasta que lo tocás vos.',
+          estado: misPerfiles.length ? ['verde', 'Publicado'] : ['oro', 'Sin publicar'],
+          acciones: [{txt: 'Completar el formulario', clase: 'lleno', hacer: () => guiaAcompanar('nuevo-proveedor', 'p-nombre')}] };
+      } },
+
+    { id: 'publicado', corto: 'Ver y editar tu servicio', pantalla: 'ficha',
+      abrir(){ abrirFicha(sesion.user.id, true); },
+      foco(){ return $('bl-servicios'); },
+      hecho(){ return misPerfiles.length > 0; },
+      textos(){
+        if(!misPerfiles.length) return {
+          tit: 'Acá va a aparecer tu servicio',
+          txt: '<p>Este es tu perfil, tal como lo ven los clientes. Tu servicio aparece en «Lo que ofrece» apenas lo publicás.</p>',
+          estado: ['oro', 'Sin publicar'],
+          acciones: [{txt: 'Ofrecer un servicio', clase: 'lleno', hacer: () => guiaAvanzarA('formulario')}] };
+        return {
+          tit: 'Tu servicio está publicado',
+          txt: '<p>Así lo ven los clientes en tu perfil, en «Lo que ofrece».</p>' +
+            '<ul><li><b>Para cambiarlo:</b> tocá «Editar» en el servicio. También lo encontrás en Cuenta, en «Servicios que ofrecés».</li>' +
+            '<li><b>Sobre mi trabajo:</b> sumá unas líneas sobre vos. Es lo primero que mira un cliente.</li></ul>',
+          estado: ['verde', 'Publicado'] };
+      } },
+
+    { id: 'avisos', corto: 'Notificaciones', clave: true, pantalla: 'perfil',
+      abrir(){ ir('perfil'); },
+      foco(){ return $('push-item'); },
+      hecho(){ return guiaPush === 'activas'; },
+      textos: guiaPasoAvisos },
+
+    { id: 'mp', corto: 'Mercado Pago', clave: true,
+      pantalla(){ return misPerfiles.length ? 'panel' : null; },
+      abrir(){ if(misPerfiles.length) ir('panel'); },
+      foco(){ return misPerfiles.length ? $('panel-cobros') : null; },
+      hecho(){ return guiaMP === 'conectada'; },
+      textos: guiaPasoMP },
+
+    { id: 'pedidos', corto: 'Pedidos, presupuestos y chat', pantalla: 'panel',
+      abrir(){ ir('panel'); },
+      foco(){ const s = $('panel-abiertos-sec'); return guiaVisible(s) ? s : tabDe('chats'); },
+      textos(){ return {
+        tit: 'Pedidos, presupuestos y chat',
+        txt: '<ul><li><b>Pedidos para vos</b> (en el Panel): pedidos de tu rubro que nadie cubrió todavía. Si te interesa uno, tocá «Me interesa» y se abre el chat con el cliente.</li>' +
+          '<li><b>Chats:</b> ahí conversás con cada cliente. También aparecen los pedidos con los que te conectamos.</li>' +
+          '<li><b>Presupuesto:</b> en el chat, tocá «Enviar presupuesto» y cargá monto, qué incluye y plazo. El cliente lo acepta o lo rechaza ahí mismo.</li>' +
+          '<li>Cuando terminás, tocá «Marcar trabajo terminado» y el cliente te paga por la app, si conectaste Mercado Pago.</li></ul>',
+        para: 'Que te lleguen pedidos depende de que alguien pida lo tuyo en tu zona: no es un trabajo asegurado.',
+        acciones: [{txt: 'Ver mis chats', clase: 'vacio-b', hacer: () => { guiaMarcarVisto(); ir('chats'); }}] }; } },
+
+    { id: 'listo', final: true, corto: 'Resumen', pantalla: null, foco(){ return null; }, textos(){ return guiaResumen(); } }
+  ],
+
+  cliente: [
+    { id: 'pedir', corto: 'Pedir un servicio', clave: true, pantalla: 'inicio',
+      abrir(){ ir('inicio'); },
+      foco(){ return $('ir-pedido'); },
+      hecho(){ return misPedidos.length > 0; },
+      textos(){ return {
+        tit: misPedidos.length ? 'Ya hiciste tu primer pedido' : 'Pedí un servicio',
+        txt: '<p>Todo arranca en «Pedir un servicio»: contás qué necesitás y buscamos quién lo hace en tu zona.</p>',
+        para: 'Te llegan presupuestos sin tener que llamar a nadie. Para el que pide, Tratto es gratis.',
+        estado: misPedidos.length ? ['verde', 'Hecho'] : null, accionEnFoco: !misPedidos.length,
+        acciones: [{txt: misPedidos.length ? 'Hacer otro pedido' : 'Pedir un servicio', clase: 'lleno', hacer: () => guiaAvanzarA('datos-pedido')}] }; } },
+
+    { id: 'datos-pedido', corto: 'Contar qué necesitás', acompana: 'nuevo-pedido', vuelveA: 'pedir',
+      pantalla: 'nuevo-pedido',
+      abrir(){ $('ir-pedido').click(); },
+      foco(){ return document.querySelector('#p-nuevo-pedido .tasar-modos'); },
+      hecho(){ return misPedidos.length > 0; },
+      alCompletar: { paso: 'chats', cuenta: () => misPedidos.length, festejo: 'Tu pedido salió. Ya estamos buscando quién lo haga en tu zona.' },
+      textos(){ return {
+        tit: 'Contá qué necesitás',
+        txt: '<ul><li><b>Con una foto o con tus palabras</b> (acá arriba): te damos una idea del precio con IA. Es opcional y la primera vez te pide un permiso aparte.</li>' +
+          '<li><b>O cargá los datos vos:</b> qué servicio necesitás (el rubro), tu zona, para cuándo y el detalle en una o dos líneas.</li>' +
+          '<li><b>Opcionales:</b> cuánto pensás gastar y una foto. La foto es lo que más ayuda a que te coticen bien.</li></ul>',
+        para: 'No se manda nada hasta que tocás «Buscar quién lo haga».',
+        estado: misPedidos.length ? ['verde', 'Ya hiciste un pedido'] : null,
+        acciones: [{txt: 'Completar el pedido', clase: 'lleno', hacer: () => guiaAcompanar('nuevo-pedido', 's-servicio')}] }; } },
+
+    { id: 'chats', corto: 'Chats y presupuestos', pantalla: 'chats',
+      abrir(){ ir('chats'); },
+      foco(){ return tabDe('chats'); },
+      textos(){ return {
+        tit: 'Conversaciones y presupuestos',
+        txt: '<ul><li><b>Chats:</b> acá hablás con quienes ofrecen el servicio. Aparece una conversación por cada persona que se conecta con tu pedido.</li>' +
+          '<li><b>Presupuestos:</b> te llegan dentro del chat, con monto, qué incluye y plazo. Los aceptás o los rechazás ahí mismo.</li>' +
+          '<li><b>Para comparar:</b> entrá a tu pedido desde Inicio. Ves a todos los que se conectaron y, con 2 presupuestos o más, un botón para compararlos (con IA, opcional).</li></ul>',
+        para: 'Elegís vos: no tenés que aceptar ninguno.' }; } },
+
+    { id: 'pago', corto: 'Cómo se paga', pantalla: null,
+      foco(){ return null; },
+      textos(){ return {
+        tit: 'Cómo se paga un trabajo',
+        txt: '<ul><li>No pagás nada por adelantado: aceptar un presupuesto no mueve plata.</li>' +
+          '<li>Cuando quien hizo el trabajo lo marca como terminado, en el chat te aparece «Pagar con tarjeta». Pagás con Mercado Pago sin salir de Tratto.</li>' +
+          '<li>No necesitás conectar ninguna cuenta: eso es solo para quien cobra. Los datos de tu tarjeta van directo a Mercado Pago; Tratto no los ve ni los guarda.</li></ul>' }; } },
+
+    { id: 'avisos', corto: 'Notificaciones', clave: true, pantalla: 'perfil',
+      abrir(){ ir('perfil'); },
+      foco(){ return $('push-item'); },
+      hecho(){ return guiaPush === 'activas'; },
+      textos: guiaPasoAvisos },
+
+    { id: 'cuenta', corto: 'Tu cuenta y tus permisos', pantalla: 'perfil',
+      abrir(){ ir('perfil'); },
+      foco(){ return [$('ia-caja'), $('push-item')]; },
+      textos(){ return {
+        tit: 'Tu cuenta y tus permisos',
+        txt: '<p>En Cuenta están tus datos y tus permisos. Ninguno es obligatorio y los cambiás cuando quieras:</p>' +
+          '<ul><li><b>Funciones con IA:</b> tasar por foto, comparar presupuestos y el asistente. Opcional.</li>' +
+          '<li><b>Novedades y promociones:</b> mails de publicidad. Opcional y aparte de los avisos de tus pedidos.</li>' +
+          '<li><b>Notificaciones en este dispositivo:</b> los avisos en la pantalla del celular.</li></ul>',
+        para: 'Acá también podés volver a ver esta guía cuando quieras.' }; } },
+
+    { id: 'listo', final: true, corto: 'Resumen', pantalla: null, foco(){ return null; }, textos(){ return guiaResumen(); } }
+  ]
+};
+
+const guiaPasos = () => GUIA_PASOS[modo === 'proveedor' ? 'proveedor' : 'cliente'];
+const guiaTotal = () => guiaPasos().filter(p => !p.final).length;
+function guiaIndice(){
+  if(!guia) return 0;
+  const i = guiaPasos().findIndex(p => p.id === guia.paso);
+  return i < 0 ? 0 : i;
+}
+const guiaActual = () => guia ? guiaPasos()[guiaIndice()] : null;
+const guiaPantallaDe = p => typeof p.pantalla === 'function' ? p.pantalla() : p.pantalla;
+const guiaHecho = p => !!(p.hecho && p.hecho());
+
+/* El resumen distingue lo hecho (comprobado) de lo que solo se vio. */
+function guiaResumen(){
+  const pasos = guiaPasos().filter(p => !p.final);
+  const prov = modo === 'proveedor';
+  const filas = pasos.map((p, i) => {
+    let sello;
+    if(p.hecho) sello = guiaHecho(p) ? ['verde', 'Hecho'] : ['oro', 'Pendiente'];
+    else sello = guia.vistos.includes(p.id) ? ['gris', 'Visto'] : ['gris', 'Sin ver'];
+    return '<li><button data-guia-ir="' + i + '" type="button"><span>' + esc(p.corto) + '</span>' +
+      '<span class="sello ' + sello[0] + '">' + sello[1] + '</span></button></li>';
+  }).join('');
+  const sinServicio = prov && !misPerfiles.length;
+  return {
+    tit: sinServicio ? 'Te falta lo más importante' : '¡Listo! Ya conocés lo básico',
+    txt: (sinServicio
+      ? '<p>Todavía no publicaste tu servicio, y sin él no te llegan pedidos.</p>'
+      : '<p>Tocá cualquier paso para repasarlo.</p>') +
+      '<ul class="gt-resumen">' + filas + '</ul>',
+    nota: 'En Cuenta, en «Guía de primeros pasos», la podés volver a ver cuando quieras.',
+    acciones: sinServicio ? [{txt: 'Ofrecer un servicio', clase: 'lleno', hacer: () => guiaAvanzarA('formulario')}] : []
+  };
+}
+
+/* ── Progreso guardado ─────────────────────────────────────────────────── */
+const guiaClave = () => 'tratto_guia:' + sesion.user.id + ':' + modo;
+
+function guiaLeer(){
+  if(!sesion) return null;
+  const enCuenta = (sesion.user.user_metadata || {})['guia_' + modo] || null;
+  let enTelefono = null;
+  try{ enTelefono = JSON.parse(localStorage.getItem(guiaClave()) || 'null'); }catch(e){}
+  const g = (enCuenta && enTelefono)
+    ? ((enTelefono.act || '') > (enCuenta.act || '') ? enTelefono : enCuenta)
+    : (enCuenta || enTelefono);
+  if(!g || typeof g !== 'object') return null;
+  return {v: 1, rol: modo, paso: g.paso || null, vistos: Array.isArray(g.vistos) ? g.vistos.slice(0, 20) : [],
+          estado: ['activa', 'pausada', 'terminada'].includes(g.estado) ? g.estado : 'pausada',
+          mp_intento: g.mp_intento || null, act: g.act || ''};
+}
+
+/* En el teléfono al instante; en la cuenta (sirve para seguir desde otro
+   dispositivo) un momento después, para no escribir a cada toque. */
+function guiaGuardar(ya){
+  if(!guia || !sesion) return;
+  guia.act = new Date().toISOString();
+  try{ localStorage.setItem(guiaClave(), JSON.stringify(guia)); }catch(e){}
+  clearTimeout(guiaTimer);
+  const subir = () => fetch(SUPABASE_URL + '/auth/v1/user', {
+      method: 'PUT',
+      headers: {'apikey': SUPABASE_ANON, 'Authorization': 'Bearer ' + sesion.access_token, 'Content-Type': 'application/json'},
+      body: JSON.stringify({data: {['guia_' + guia.rol]: guia}})
+    }).then(r => r.ok ? r.json() : null).then(u => { if(u && u.id && sesion && sesion.user.id === u.id) sesion.user = u; })
+      .catch(() => {});
+  if(ya) subir(); else guiaTimer = setTimeout(subir, 1200);
+}
+
+function guiaMarcarVisto(){
+  const p = guiaActual();
+  if(p && !p.final && !guia.vistos.includes(p.id)){ guia.vistos.push(p.id); guiaGuardar(); }
+}
+
+/* ── Abrir, moverse, achicar, cerrar ───────────────────────────────────── */
+function guiaReiniciar(){
+  guia = null; guiaVista = 'cerrada'; guiaEsperando = null; guiaDestino = null; guiaBase = null;
+  guiaFestejo = ''; guiaPush = '?'; guiaPushError = ''; guiaMP = '?'; guiaMPError = false;
+  clearTimeout(guiaTimer);
+  $('guia').hidden = true; $('guia-mini').hidden = true;
+  document.body.classList.remove('guia-abierta', 'guia-con-mini');
+}
+
+function guiaIrAPaso(i, festejo){
+  const pasos = guiaPasos();
+  i = Math.max(0, Math.min(pasos.length - 1, i));
+  guia.paso = pasos[i].id; guia.estado = 'activa';
+  guiaGuardar();
+  guiaFestejo = festejo || '';
+  guiaEsperando = null;
+  const p = pasos[i], destino = guiaPantallaDe(p);
+  if(destino && actual !== destino && p.abrir){ guiaDestino = destino; p.abrir(); }
+  guiaMostrar();
+}
+function guiaAvanzarA(id){ guiaMarcarVisto(); guiaIrAPaso(guiaPasos().findIndex(p => p.id === id)); }
+function guiaSiguiente(){ guiaMarcarVisto(); guiaIrAPaso(guiaIndice() + 1); }
+function guiaAtras(){ guiaIrAPaso(guiaIndice() - 1); }
+
+function guiaEmpezar(){
+  if(!sesion) return;
+  const antes = guia;
+  guia = {v: 1, rol: modo, paso: guiaPasos()[0].id, vistos: antes ? antes.vistos : [], estado: 'activa',
+          mp_intento: antes ? antes.mp_intento : null, act: ''};
+  guiaIrAPaso(0);
+}
+function guiaRetomar(){ if(!guia) return guiaEmpezar(); guiaIrAPaso(guiaIndice()); }
+function guiaDesdeBoton(){
+  if(!sesion) return;
+  if(!guia || guia.estado === 'terminada') guiaEmpezar(); else guiaRetomar();
+}
+
+function guiaPausar(){
+  if(!guia) return;
+  guia.estado = 'pausada'; guiaGuardar(true);
+  guiaOcultar(); pintarGuiaCuenta();
+}
+function guiaTerminar(){
+  if(!guia) return;
+  guiaMarcarVisto();
+  guia.estado = 'terminada'; guiaGuardar(true);
+  guiaOcultar(); pintarGuiaCuenta();
+}
+function guiaOcultar(){
+  guiaVista = 'cerrada'; guiaEsperando = null; guiaFestejo = '';
+  $('guia').hidden = true; $('guia-mini').hidden = true;
+  document.body.classList.remove('guia-abierta', 'guia-con-mini');
+}
+
+function guiaMostrar(){
+  if(!guia || !sesion || actual === 'auth') return;
+  guiaVista = 'tarjeta';
+  $('guia-mini').hidden = true; document.body.classList.remove('guia-con-mini');
+  $('guia').hidden = false; document.body.classList.add('guia-abierta');
+  $('guia-tarjeta').classList.toggle('prov', modo === 'proveedor');
+  guiaPintar();
+  guiaUbicar(true);
+  pintarGuiaCuenta();
+  setTimeout(() => { const t = $('guia-tit'); if(t && guiaVista === 'tarjeta') t.focus({preventScroll: true}); }, 80);
+}
+
+/* Achicada a la barrita: para completar un formulario sin nada encima, o
+   porque la persona tocó fuera de la tarjeta para mirar otra cosa. */
+function guiaMinimizar(esperando){
+  guiaVista = 'mini'; guiaEsperando = esperando || null; guiaFestejo = '';
+  if(esperando) guiaBase = {pedidos: misPedidos.length, servicios: misPerfiles.length};
+  $('guia').hidden = true; document.body.classList.remove('guia-abierta');
+  guiaPintarMini();
+}
+
+function guiaAcompanar(pantalla, campo){
+  guiaMarcarVisto();
+  const p = guiaActual();
+  if(actual !== pantalla && p && p.abrir){ guiaDestino = pantalla; p.abrir(); }
+  guiaMinimizar(pantalla);
+  const c = $(campo);
+  if(c) setTimeout(() => c.scrollIntoView({block: 'center', behavior: 'smooth'}), 60);
+}
+
+function guiaReabrir(){
+  const p = guiaActual(); if(!p) return;
+  if(!(guiaEsperando && actual === guiaEsperando)){
+    const destino = guiaPantallaDe(p);
+    if(destino && destino !== actual && p.abrir){ guiaDestino = destino; p.abrir(); }
+  }
+  guiaEsperando = null;
+  guiaMostrar();
+}
+
+/* Cada vez que cambia la pantalla (lo llama ir()). */
+function guiaAlNavegar(p){
+  if(!guia) return;
+  if(p === 'auth'){ guiaOcultar(); return; }
+  if(guiaDestino && p === guiaDestino){
+    guiaDestino = null;
+    if(guiaVista === 'tarjeta') requestAnimationFrame(() => { guiaPintar(); guiaUbicar(true); });
+    else if(guiaVista === 'mini') guiaPintarMini();
+    return;
+  }
+  if(guiaVista === 'cerrada') return;
+  const pasos = guiaPasos(), i = guiaIndice(), paso = pasos[i];
+  if(guiaVista === 'mini'){
+    if(guiaEsperando && p !== guiaEsperando){
+      /* Salió del formulario. Si lo mandó de verdad (hay un pedido o un
+         servicio más que cuando empezó), festejamos y seguimos; si no, la
+         guía vuelve al paso de antes, para retomarlo cuando quiera. */
+      const c = paso.alCompletar, base = guiaBase || {};
+      const antes = paso.id === 'formulario' ? base.servicios : base.pedidos;
+      guiaEsperando = null;
+      if(c && typeof antes === 'number' && c.cuenta() > antes){
+        guiaMarcarVisto();
+        guiaIrAPaso(pasos.findIndex(x => x.id === c.paso), c.festejo);
+        return;
+      }
+      if(paso.vuelveA){ guiaIrAPaso(pasos.findIndex(x => x.id === paso.vuelveA)); return; }
+      guiaMostrar();
+      return;
+    }
+    guiaPintarMini();
+    return;
+  }
+  /* La tarjeta estaba abierta y la persona se fue a otra pantalla. Si tocó el
+     botón que señalábamos, la guía la sigue al paso siguiente; si no, se
+     achica para no estorbar. */
+  const destino = guiaPantallaDe(paso);
+  if(destino && p !== destino){
+    const sig = pasos[i + 1];
+    if(sig && guiaPantallaDe(sig) === p){
+      guiaMarcarVisto(); guia.paso = sig.id; guiaGuardar();
+      requestAnimationFrame(guiaMostrar);
+      return;
+    }
+    guiaMinimizar(paso.acompana === p ? p : null);
+    return;
+  }
+  requestAnimationFrame(() => guiaUbicar(true));
+}
+
+/* Lo llaman las cargas de datos (servicios, pedidos, cobros, notificaciones):
+   la tarjeta muestra siempre el estado real. */
+function guiaRevisar(){
+  if(!guia || !sesion) return;
+  if(guiaVista === 'tarjeta'){ guiaPintar(); guiaUbicar(false); }
+  else if(guiaVista === 'mini') guiaPintarMini();
+  pintarGuiaCuenta();
+}
+
+/* ── Dibujo ───────────────────────────────────────────────────────────── */
+function guiaPintar(){
+  const pasos = guiaPasos(), i = guiaIndice(), p = pasos[i];
+  const c = p.textos() || {};
+  guiaAcciones = c.acciones || [];
+  const reales = pasos.filter(x => !x.final);
+  const hilo = reales.map((x, j) => {
+    const cls = (x.id === p.id) ? 'ahora' : guiaHecho(x) ? 'hecho' : guia.vistos.includes(x.id) ? 'visto' : '';
+    return (j ? '<span class="gt-tramo' + (j <= i ? ' ok' : '') + '"></span>' : '') +
+      '<span class="gt-nodo ' + cls + '"></span>';
+  }).join('');
+  const etiqueta = p.final ? 'Primeros pasos · Resumen' : 'Primeros pasos · Paso ' + (i + 1) + ' de ' + reales.length;
+  /* Si lo que se señala es el mismo botón de la acción, no se repite en la
+     tarjeta: se toca el de verdad. Si por algún motivo no se ve, va el de acá. */
+  const focoBoton = c.accionEnFoco && p.foco && guiaVisible(p.foco());
+  const acciones = focoBoton ? [] : guiaAcciones;
+  $('guia-tarjeta').innerHTML = '<div class="gt-cuerpo">' +
+    '<div class="gt-cab"><span class="gt-paso">' + etiqueta + '</span>' +
+      '<button class="gt-cerrar" data-g="ahora" type="button" aria-label="Cerrar la guía">&times;</button></div>' +
+    '<div class="gt-hilo" aria-hidden="true">' + hilo + '</div>' +
+    (guiaFestejo ? '<div class="gt-ok" role="status">' + ICO_TILDE + '<span>' + esc(guiaFestejo) + '</span></div>' : '') +
+    '<h2 class="gt-tit" id="guia-tit" tabindex="-1">' + esc(c.tit || '') + '</h2>' +
+    (c.estado ? '<div class="gt-estado"><span class="sello ' + c.estado[0] + '">' + esc(c.estado[1]) + '</span>' +
+      (c.estado[2] ? '<span>' + esc(c.estado[2]) + '</span>' : '') + '</div>' : '') +
+    '<div class="gt-txt">' + (c.txt || '') + '</div>' +
+    (c.para ? '<div class="gt-para"><b>Para qué sirve:</b> ' + c.para + '</div>' : '') +
+    (c.nota ? '<p class="gt-chico" style="margin-top:10px">' + c.nota + '</p>' : '') +
+    (focoBoton ? '<div class="gt-senal">Tocá el botón resaltado: «' + esc(guiaAcciones[0].txt) + '».</div>' : '') +
+    (acciones.length ? '<div class="gt-acciones">' + acciones.map((a, k) =>
+      '<button class="btn ' + a.clase + '" data-g-accion="' + k + '" type="button"><span class="rueda"></span>' +
+      '<span>' + esc(a.txt) + '</span></button>').join('') + '</div>' : '') +
+    '</div><div class="gt-nav">' +
+      '<button class="gt-atras" data-g="atras" type="button"' + (i === 0 ? ' disabled' : '') + '>Atrás</button>' +
+      '<button class="gt-ahora" data-g="ahora" type="button">Ahora no</button>' +
+      '<button class="btn lleno gt-sig" data-g="' + (p.final ? 'terminar' : 'siguiente') + '" type="button">' +
+        (p.final ? 'Terminar' : 'Siguiente') + '</button>' +
+    '</div>';
+}
+
+function guiaPintarMini(){
+  const m = $('guia-mini');
+  const ocultar = guiaVista !== 'mini' || !guia || ['chat', 'asistente', 'auth'].includes(actual);
+  if(ocultar){ m.hidden = true; document.body.classList.remove('guia-con-mini'); return; }
+  const pasos = guiaPasos(), i = guiaIndice(), p = pasos[i];
+  m.innerHTML = '<div class="gm-txt"><small>' + (p.final ? 'Primeros pasos' : 'Paso ' + (i + 1) + ' de ' + guiaTotal()) + '</small>' +
+    '<b>' + esc(p.corto) + '</b></div>' +
+    '<button class="gm-seguir" data-gm="seguir" type="button">' + (guiaEsperando && actual === guiaEsperando ? 'Ver ayuda' : 'Seguir la guía') + '</button>' +
+    '<button class="gm-cerrar" data-gm="cerrar" type="button" aria-label="Pausar la guía">&times;</button>';
+  m.hidden = false;
+  document.body.classList.add('guia-con-mini');
+  document.body.classList.toggle('con-tabs', !$('tabs').classList.contains('oculto'));
+}
+
+/* Ubica los velos alrededor de lo señalado y la tarjeta en el lado donde hay
+   más lugar, sin taparlo. En pantallas chicas la tarjeta se desplaza adentro. */
+function guiaUbicar(desplazar){
+  if(guiaVista !== 'tarjeta' || $('guia').hidden) return;
+  const p = guiaActual(); if(!p) return;
+  let objs = p.foco ? p.foco() : null;
+  objs = (Array.isArray(objs) ? objs : [objs]).filter(guiaVisible);
+  const vw = window.innerWidth, vh = window.innerHeight;
+  const tope = $('tabs'), barra = document.querySelector('.topbar');
+  const conTabs = guiaVisible(tope);
+  const sb = parseFloat(getComputedStyle(tope).paddingBottom) || 0;
+  const techo = Math.max(8, (barra ? barra.getBoundingClientRect().bottom : 0) + 8);
+  const piso = conTabs ? tope.getBoundingClientRect().top - 8 : vh - sb - 10;
+  const velos = document.querySelectorAll('[data-velo]');
+  const aro = $('guia-aro'), t = $('guia-tarjeta');
+  const poner = (el, x, y, w, h) => { el.style.left = x + 'px'; el.style.top = y + 'px'; el.style.width = Math.max(0, w) + 'px'; el.style.height = Math.max(0, h) + 'px'; };
+  t.style.top = ''; t.style.bottom = '';
+
+  if(!objs.length){
+    poner(velos[0], 0, 0, vw, vh); for(let k = 1; k < 4; k++) poner(velos[k], 0, 0, 0, 0);
+    aro.classList.add('oculto');
+    t.style.bottom = (vh - piso) + 'px';
+    t.style.maxHeight = Math.max(240, piso - techo) + 'px';
+    return;
+  }
+  if(desplazar){
+    const r0 = objs[0].getBoundingClientRect();
+    if(r0.top < techo || r0.bottom > piso) objs[0].scrollIntoView({block: 'center'});
+  }
+  const rs = objs.map(o => o.getBoundingClientRect());
+  const m = 6;
+  const r = {top: Math.min(...rs.map(x => x.top)) - m, left: Math.min(...rs.map(x => x.left)) - m,
+             bottom: Math.max(...rs.map(x => x.bottom)) + m, right: Math.max(...rs.map(x => x.right)) + m};
+  r.left = Math.max(2, r.left); r.right = Math.min(vw - 2, r.right);
+  poner(velos[0], 0, 0, vw, r.top);
+  poner(velos[1], 0, r.bottom, vw, vh - r.bottom);
+  poner(velos[2], 0, r.top, r.left, r.bottom - r.top);
+  poner(velos[3], r.right, r.top, vw - r.right, r.bottom - r.top);
+  poner(aro, r.left, r.top, r.right - r.left, r.bottom - r.top);
+  aro.classList.remove('oculto');
+
+  let arriba = r.top - 10 - techo, abajo = piso - (r.bottom + 10);
+  /* En pantallas chicas puede no quedar lugar ni arriba ni abajo: se sube la
+     página para que lo señalado quede arriba y la tarjeta entre debajo. Lo
+     que está fijo (la barra de abajo) no se mueve. */
+  if(desplazar && Math.max(arriba, abajo) < 220 && !objs.some(o => o.closest('.tabs'))){
+    const corrida = r.top - techo - 6;
+    if(corrida > 0){
+      const antes = window.scrollY;
+      window.scrollBy(0, corrida);
+      const movio = window.scrollY - antes;
+      if(movio){ return guiaUbicar(false); }
+    }
+  }
+  if(Math.max(arriba, abajo) >= 170){
+    if(abajo >= arriba){ t.style.top = (r.bottom + 10) + 'px'; t.style.maxHeight = abajo + 'px'; }
+    else{ t.style.bottom = (vh - (r.top - 10)) + 'px'; t.style.maxHeight = arriba + 'px'; }
+  }else{
+    /* Lo señalado es muy alto para esta pantalla: la tarjeta va abajo, chica,
+       y se desplaza adentro. */
+    t.style.bottom = (vh - piso) + 'px';
+    t.style.maxHeight = Math.max(240, Math.min(vh * .5, piso - techo)) + 'px';
+  }
+}
+
+let guiaCuadro = 0;
+const guiaReubicar = () => { cancelAnimationFrame(guiaCuadro); guiaCuadro = requestAnimationFrame(() => guiaUbicar(false)); };
+window.addEventListener('resize', guiaReubicar);
+window.addEventListener('scroll', guiaReubicar, {passive: true});
+window.addEventListener('orientationchange', () => setTimeout(() => guiaUbicar(true), 250));
+/* Las pantallas entran deslizándose: se vuelve a medir cuando terminan de llegar. */
+document.addEventListener('animationend', e => {
+  if(guiaVista === 'tarjeta' && e.target.classList && e.target.classList.contains('pantalla')) guiaReubicar();
+});
+
+$('guia-tarjeta').addEventListener('click', e => {
+  const b = e.target.closest('button'); if(!b) return;
+  if(b.dataset.gAccion != null){
+    const a = guiaAcciones[Number(b.dataset.gAccion)];
+    if(!a || b.disabled) return;
+    guiaMarcarVisto();
+    const r = a.hacer(b);
+    if(r && typeof r.then === 'function'){
+      b.disabled = true; b.classList.add('cargando');
+      r.catch(err => console.error(err)).finally(() => { if(b.isConnected){ b.disabled = false; b.classList.remove('cargando'); } });
+    }
+    return;
+  }
+  if(b.dataset.guiaIr != null){ guiaIrAPaso(Number(b.dataset.guiaIr)); return; }
+  const que = b.dataset.g;
+  if(que === 'siguiente') guiaSiguiente();
+  else if(que === 'atras') guiaAtras();
+  else if(que === 'ahora') guiaPausar();
+  else if(que === 'terminar') guiaTerminar();
+});
+document.querySelectorAll('[data-velo]').forEach(v => v.addEventListener('click', () => {
+  const p = guiaActual();
+  guiaMinimizar(p && p.acompana === actual ? actual : null);
+}));
+$('guia-mini').addEventListener('click', e => {
+  const b = e.target.closest('[data-gm]'); if(!b) return;
+  if(b.dataset.gm === 'cerrar') guiaPausar(); else guiaReabrir();
+});
+document.addEventListener('keydown', e => {
+  if(e.key === 'Escape' && guiaVista === 'tarjeta' && !document.querySelector('.telon.abierto')) guiaMinimizar(null);
+});
+/* Al volver de Mercado Pago (otra pestaña o Safari), se relee la cuenta. */
+document.addEventListener('visibilitychange', () => {
+  const p = guiaActual();
+  if(!document.hidden && sesion && p && p.id === 'mp' && guiaVista !== 'cerrada') cargarCobros();
+});
+
+/* ── Al entrar ─────────────────────────────────────────────────────────── */
+function guiaCorresponde(){
+  const alta = String(sesion.user.created_at || '').slice(0, 10);
+  return alta >= GUIA_DESDE || (modo === 'proveedor' && !misPerfiles.length);
+}
+
+/* Para que la hoja de "Que no se te pase ningún trabajo" no salga encima de
+   la guía: si la guía se va a mostrar, el permiso se pide en su paso. */
+function guiaTomaLosAvisos(){
+  if(!sesion) return false;
+  const g = guia || guiaLeer();
+  if(g) return g.estado === 'activa';
+  return String(sesion.user.created_at || '').slice(0, 10) >= GUIA_DESDE;
+}
+
+/* Si hay una hoja abierta (un permiso, por ejemplo), espera a que se cierre. */
+function guiaCuandoLibre(hacer, vueltas){
+  vueltas = vueltas || 0;
+  if(!sesion) return;
+  if(document.querySelector('.telon.abierto') || actual === 'auth'){
+    if(vueltas < 150) setTimeout(() => guiaCuandoLibre(hacer, vueltas + 1), 700);
+    return;
+  }
+  hacer();
+}
+
+function guiaAlEntrar(){
+  if(!sesion) return;
+  guia = guiaLeer();
+  pintarGuiaCuenta();
+  if(guia && guia.estado === 'activa'){ guiaCuandoLibre(() => guiaIrAPaso(guiaIndice())); return; }
+  if(!guia && guiaCorresponde()) guiaCuandoLibre(guiaEmpezar);
+}
+
+/* ── En Cuenta ─────────────────────────────────────────────────────────── */
+function pintarGuiaCuenta(){
+  if(!sesion) return;
+  const prov = modo === 'proveedor';
+  const pend = guiaPasos().filter(p => p.clave && !guiaHecho(p)).map(p => p.corto.toLowerCase());
+  $('guia-txt').textContent = (prov
+    ? 'Te acompaña a publicar tu servicio, activar los avisos y conectar Mercado Pago para cobrar.'
+    : 'Te muestra dónde pedir un servicio, cómo te llegan los presupuestos y cómo se paga.') +
+    (guia && pend.length ? ' Te falta: ' + pend.join(', ') + '.' : '');
+  const s = $('guia-sello');
+  if(!guia){ s.className = 'sello gris'; s.textContent = 'Sin empezar'; $('guia-ver-txt').textContent = 'Ver la guía'; }
+  else if(guia.estado === 'terminada'){ s.className = 'sello verde'; s.textContent = 'Recorrida'; $('guia-ver-txt').textContent = 'Verla de nuevo'; }
+  else{
+    s.className = 'sello oro'; s.textContent = 'Paso ' + Math.min(guiaIndice() + 1, guiaTotal()) + ' de ' + guiaTotal();
+    $('guia-ver-txt').textContent = guia.estado === 'pausada' ? 'Retomar la guía' : 'Seguir la guía';
+  }
+}
+$('guia-ver').addEventListener('click', guiaDesdeBoton);
+
 /* ══════════════════ ARRANQUE ══════════════════ */
 /* ══════════════════ ACTUALIZACIÓN AUTOMÁTICA ══════════════════ */
 /* Refresca las listas solas mientras mirás una pantalla, sin recargar la página. */
@@ -6261,6 +7402,8 @@ async function mirarSiHayNovedades(){
     if(actual === 'perfil')  await cargarPerfiles();
     if(actual === 'panel')   await cargarPanel();
     await cargarConexiones();
+    pintarAvisoServicio();
+    guiaRevisar();
   }catch(e){}
 }
 
@@ -6362,6 +7505,7 @@ document.addEventListener('visibilitychange', () => { if(document.visibilityStat
 
 function entrarApp(){
   const u = sesion.user;
+  guiaReiniciar();
   registrarVisita();
   $('saludo').textContent = 'Hola, ' + miPrimerNombre();
   $('c-nombre').textContent = miNombre();
@@ -6392,7 +7536,7 @@ function entrarApp(){
   pintarTransfer();
   pintarLegales();
   aplicarModo();
-  recargarTodo();
+  recargarTodo().then(guiaAlEntrar).catch(e => console.error(e));
   arrancarLatido();
 }
 
