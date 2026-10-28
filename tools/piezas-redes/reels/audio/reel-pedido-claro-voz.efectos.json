@@ -5,77 +5,77 @@
   "db": -12
  },
  {
-  "t": 5.04,
+  "t": 2.52,
   "efecto": "recibido",
   "db": -10
  },
  {
-  "t": 5.93,
+  "t": 5.9,
   "efecto": "latigazo",
   "db": 2
  },
  {
-  "t": 8.56,
+  "t": 8.02,
   "efecto": "golpe",
   "db": -11
  },
  {
-  "t": 9.67,
+  "t": 9.57,
   "efecto": "latigazo",
   "db": 2
  },
  {
-  "t": 9.69,
+  "t": 9.59,
   "efecto": "pop",
   "db": -12
  },
  {
-  "t": 12.0,
+  "t": 12.24,
   "efecto": "pop",
   "db": -12
  },
  {
-  "t": 13.09,
+  "t": 14.41,
   "efecto": "pop",
   "db": -12
  },
  {
-  "t": 15.78,
+  "t": 17.23,
   "efecto": "pop",
   "db": -12
  },
  {
-  "t": 18.52,
+  "t": 20.25,
   "efecto": "pop",
   "db": -12
  },
  {
-  "t": 13.49,
+  "t": 15.1,
   "efecto": "obturador",
   "db": -9
  },
  {
-  "t": 20.21,
+  "t": 22.38,
   "efecto": "latigazo",
   "db": 2
  },
  {
-  "t": 22.05,
+  "t": 23.82,
   "efecto": "campanita",
   "db": -13
  },
  {
-  "t": 24.74,
+  "t": 26.55,
   "efecto": "latigazo",
   "db": 2
  },
  {
-  "t": 30.290000000000003,
+  "t": 31.26,
   "efecto": "golpe",
   "db": -9
  },
  {
-  "t": 32.59,
+  "t": 33.56,
   "efecto": "sello",
   "db": -12
  }

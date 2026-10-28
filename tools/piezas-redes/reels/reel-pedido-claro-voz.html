@@ -3,8 +3,10 @@
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@500;600&family=IBM+Plex+Sans+Condensed:wght@600;700&family=IBM+Plex+Sans:wght@400;500;600&family=Montserrat:wght@500;600&display=block" rel="stylesheet">
 <link rel="stylesheet" href="comun-voz.css">
 <!--
-  Reel 1080×1920 narrado entero con la voz clonada del fundador (24/10/2026,
-  tools/voz-en-off/clonar.py), subtítulos de audio/voz-pedido-claro.palabras.json.
+  Reel 1080×1920 narrado entero con la voz clonada del fundador (rehecho el
+  28/10/2026 con la voz que aprobó: "ahora sí quedó perfecto"; guion con
+  "Primero, segundo…"; tools/voz-en-off/clonar.py), subtítulos de
+  audio/voz-pedido-claro.palabras.json.
   Base: comun-voz.css y comun-voz.js. Los tiempos de cada escena salen de las
   palabras (T('palabra', n)), así siguen sincronizados si se regenera la voz.
   Tema: el carrusel «Pedido claro» (5 datos para que te pasen un precio).
@@ -81,10 +83,10 @@ function T(palabra, n = 1, fin = false) {
   return fin ? hit[1] : hit[0];
 }
 const ULTIMA = W.length ? W.at(-1)[1] : 30;
-const t1 = T('te'), t2 = T('para'), t3 = T('que', 2), t4 = T('con', 2), t5 = T('en'), tFin = ULTIMA + 0.35;
+const t1 = T('te'), t2 = T('para'), t3 = T('primero'), t4 = T('con', 2), t5 = T('en'), tFin = ULTIMA + 0.35;
 window.REEL = {
   escenas: [['s1', -1, t2], ['s2', t2, t3], ['s3', t3, t4], ['s4', t4, t5], ['s5', t5, tFin]],
-  golpes: [T('depende'), T('cinco'), T('que', 2), T('desde'), T('foto'), T('donde'), T('para', 2), T('precio', 2), T('zona'), tFin + 0.1],
+  golpes: [T('depende'), T('cinco'), T('primero'), T('desde'), T('foto'), T('cuarto'), T('para', 2), T('precio', 2), T('zona'), tFin + 0.1],
   sinSubs: [],
   cierre: { entra: tFin, logo: tFin + 0.1, a: ['Pedí gratis en', tFin + 0.9], b: ['trattoapp.com.ar', tFin + 1.7], sello: ['Contalo una vez', tFin + 2.4] },
   animar,
@@ -107,7 +109,7 @@ function animar(t) {
   pop($('cosas'), t, T('cosas'), C);
 
   // 3 · los datos, cada uno cuando lo dice
-  [['d1', T('que', 2)], ['d2', T('desde')], ['d3', T('una')], ['d4', T('donde')], ['d5', T('para', 2)]].forEach(([id, a]) =>
+  [['d1', T('primero')], ['d2', T('segundo')], ['d3', T('tercero')], ['d4', T('cuarto')], ['d5', T('quinto')]].forEach(([id, a]) =>
     pop($(id), t, a, `translateX(${(1 - eo(P(t, a, a + 0.3))) * 80}px)`));
   const f = T('foto');
   $('flash').style.opacity = t >= f ? Math.max(0, 0.8 - (t - f) * 5) : 0;
