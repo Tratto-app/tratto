@@ -72,3 +72,85 @@ test('link con el pedido escrito: avisa al entrar y abre el formulario completo'
     assert.equal(await p.page.evaluate(() => aplicarPedidoLink()), false);
   } finally { await p.cerrar(); }
 });
+
+const hoyAR = () => new Date().toLocaleDateString('en-CA', {timeZone: 'America/Argentina/Buenos_Aires'});
+
+test('pedido: "Lo necesito hoy" y la franja se guardan con el día', async () => {
+  const p = await abrir(entorno);
+  try {
+    await p.page.evaluate(() => { $('ir-pedido').click(); });
+    await p.page.waitForFunction(() => actual === 'nuevo-pedido');
+    await p.page.fill('#s-nombre', 'Ana'); await p.page.fill('#s-email', 'ana@example.invalid'); await p.page.fill('#s-tel', '1155554444');
+    await p.page.selectOption('#s-servicio', 'Plomería y destapaciones'); await p.page.selectOption('#s-zona', 'CABA');
+    await p.page.fill('#s-desc', 'Pierde agua la canilla de la cocina');
+    // Sin elegir para cuándo, no se manda.
+    await p.page.click('#s-enviar');
+    assert.ok(await p.page.locator('#e-s-urgencia').isVisible());
+    // "Elegir el día" sin día tampoco.
+    await p.page.click('#s-cuando [data-v="Día"]');
+    assert.ok(await p.page.locator('#s-fecha').isVisible());
+    await p.page.click('#s-enviar');
+    assert.ok(await p.page.locator('#e-s-fecha').isVisible());
+    await p.page.click('#s-cuando [data-v="Hoy"]');
+    await p.page.click('#s-franjas [data-v="tarde"]');
+    assert.ok(!(await p.page.locator('#s-fecha').isVisible()));
+    assert.equal(await p.page.locator('#rv-urg').innerText(), 'Hoy · a la tarde');
+    await p.page.locator('#s-cuando').scrollIntoViewIfNeeded();
+    await p.foto('cuando-pedido');
+    await p.page.click('#s-enviar');
+    await p.page.waitForFunction(() => actual === 'inicio');
+    const post = p.calls.find(c => c.method === 'POST' && c.path.endsWith('/rest/v1/solicitudes'));
+    assert.equal(post.body.urgencia, 'Hoy');
+    assert.equal(post.body.para_el, hoyAR());
+    assert.equal(post.body.franja, 'tarde');
+    // El formulario queda limpio para el próximo pedido.
+    assert.equal(await p.page.locator('#s-cuando [aria-pressed="true"]').count(), 0);
+  } finally { await p.cerrar(); }
+});
+
+test('presupuesto: viene marcado el día que pidió el cliente y se manda "Puede ir"', async () => {
+  const hoy = hoyAR();
+  const match = {id: 77, estado: 'pendiente',
+    proveedores: {nombre: 'Yo', zona: 'CABA', rubro: 'Plomería y destapaciones', descripcion: '', precio_desde: 1, precio_hasta: 2, disponibilidad: ''},
+    solicitudes: {user_id: 'otro-cliente', nombre_cliente: 'Ana', servicio_necesitado: 'Plomería y destapaciones', zona: 'CABA',
+      presupuesto: null, urgencia: 'Hoy', para_el: hoy, franja: 'tarde', descripcion: 'Pierde la canilla'}};
+  const p = await abrir(entorno, {rol: 'proveedor', handler: c => {
+    if (c.path.endsWith('/rest/v1/matches')) return {json: [match]};
+    if (c.path.endsWith('/rest/v1/mensajes') && c.method === 'POST') return {status: 201, json: [{id: 900, created_at: new Date().toISOString(),
+      match_id: 77, remitente_tipo: 'proveedor', tipo: 'presupuesto', contenido: 'Presupuesto', monto: 45000, incluye: c.body.incluye,
+      plazo: c.body.plazo, visita_el: c.body.visita_el, visita_franja: c.body.visita_franja, estado_presupuesto: 'pendiente'}]};
+    return null;
+  }});
+  try {
+    await p.page.evaluate(() => abrirChat(77, 'chats'));
+    await p.page.waitForFunction(() => actual === 'chat');
+    await p.page.click('#ch-presu-abrir');
+    assert.match(await p.page.locator('#cp-pidio').innerText(), /Lo pidió para: Hoy · a la tarde/);
+    assert.equal(await p.page.getAttribute('#cp-cuando [data-v="hoy"]', 'aria-pressed'), 'true');
+    assert.equal(await p.page.getAttribute('#cp-franjas [data-v="tarde"]', 'aria-pressed'), 'true');
+    await p.page.fill('#cp-monto', '45000'); await p.page.fill('#cp-incluye', 'Mano de obra y el cuerito');
+    await p.page.fill('#cp-plazo', 'Lo dejo listo en el día');
+    await p.page.locator('#cp-cuando').scrollIntoViewIfNeeded();
+    await p.foto('cuando-presupuesto');
+    await p.page.click('#cp-enviar');
+    await p.page.waitForSelector('[data-presu="900"]');
+    const post = p.calls.find(c => c.method === 'POST' && c.path.endsWith('/rest/v1/mensajes'));
+    assert.equal(post.body.visita_el, hoy);
+    assert.equal(post.body.visita_franja, 'tarde');
+    assert.match(await p.page.locator('[data-presu="900"]').innerText(), /Puede ir\s*Hoy · a la tarde \(el día que lo pidió\)/i);
+  } finally { await p.cerrar(); }
+});
+
+test('pedidos abiertos: los de hoy se marcan', async () => {
+  const p = await abrir(entorno, {rol: 'proveedor', handler: c => c.path.endsWith('/rest/v1/pedidos_abiertos') ? {json: [
+    {id: 5, created_at: new Date().toISOString(), servicio_necesitado: 'Plomería y destapaciones', zona: 'CABA', urgencia: 'Hoy',
+     para_el: hoyAR(), franja: 'manana', descripcion: 'Se tapó el inodoro', cupo: 5, tomados: 0},
+    {id: 6, created_at: new Date().toISOString(), servicio_necesitado: 'Plomería y destapaciones', zona: 'CABA', urgencia: 'Esta semana',
+     descripcion: 'Cambiar el flexible', cupo: 5, tomados: 1}]} : null});
+  try {
+    await p.page.evaluate(() => { misPerfiles = [{id: 1, rubro: 'Plomería y destapaciones'}]; return cargarPedidosAbiertos(); });
+    const datos = await p.page.locator('#lista-abiertos .pedido-dato.hoy').allInnerTexts();
+    assert.deepEqual(datos.map(t => t.toLowerCase()), ['hoy · a la mañana']);
+    assert.match(await p.page.locator('#lista-abiertos').innerText(), /esta semana/i);
+  } finally { await p.cerrar(); }
+});
