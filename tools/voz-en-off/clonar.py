@@ -58,7 +58,9 @@ control falla, la voz no sale (codigo de salida 2, sin archivo).
    semitonos de variacion contra 3,6 a 3,9) y de volumen (7,4 dB contra
    7,9 a 8,4). Ahora, entre las tomas que pasan, se elige la de tono mas
    vivo, y la voz entera tiene que llegar a GANAS (lo minimo de sus
-   grabaciones reales). Si no llega, no sale (codigo 2).
+   grabaciones reales). Si no llega, no sale (codigo 2). Con la muestra del
+   tramo mas vivo de sus grabaciones (MUESTRA) salio una que el aprobo esa
+   misma tarde: "ahora si quedo perfecto".
 """
 import argparse, ctypes, difflib, gc, json, os, re, shutil, subprocess, sys, tempfile, unicodedata
 import numpy as np
@@ -69,10 +71,14 @@ from voz_en_off import ff, SR  # noqa: E402
 
 MODELO = "Qwen/Qwen3-TTS-12Hz-1.7B-Base"
 # Toma aprobada del fundador: los primeros 10,3 s de "Dos plomeros" y lo que dice.
-MUESTRA = os.path.join(D, "..", "piezas-redes", "reels", "audio", "voz-dos-plomeros.m4a")
-MUESTRA_SEG = 10.3
-MUESTRA_TEXTO = ("Dos plomeros, el mismo caño tapado. Uno te cobra $40.000 y el otro $120.000. "
-                 "¿Cuál te está viendo la cara? Una destapación simple hoy sale")
+# Muestra aprobada el 28/10/2026 ("ahora si quedo perfecto"): el tramo mas
+# vivo de sus grabaciones reales (presupuesto barato, desde 15,45 s). Con los
+# 10,3 s de "Dos plomeros" salia apagada.
+MUESTRA = os.path.join(D, "..", "piezas-redes", "reels", "audio", "voz-presupuesto-barato.m4a")
+MUESTRA_DESDE = 15.45
+MUESTRA_SEG = 10.76
+MUESTRA_TEXTO = ("Antes de aceptar, preguntá siempre qué incluye. O pedilo en Trato: te llegan los presupuestos "
+                 "y la app te muestra qué incluye y qué no en cada uno. Guardalo para la próxima vez que pintes.")
 OIDO = "medium"          # small dejaba pasar frases que no se entendian
 TOMAS = 2                # por tramo y por ronda, generadas juntas (4 juntas no entran en memoria)
 RONDAS = 6
@@ -91,11 +97,14 @@ CONTROL = {
     "ritmo": (1.8, 5.0),    # palabras por segundo (el fundador: 2,1 a 4,1)
 }
 # Lo minimo de las grabaciones reales del fundador (dos plomeros, mañana
-# paso, presupuesto barato y su video del 27/10), medido el 28/10/2026.
+# paso, presupuesto barato y su video del 27/10), medido el 28/10/2026. El
+# volumen, en lo que dio la voz que el aprobo ese dia ("ahora si quedo
+# perfecto": tono 3,97, rango 11,2, volumen 7,13, ritmo 2,86): se baja solo
+# con su OK, nunca para que algo pase.
 GANAS = {
     "tono_semitonos": 3.6,   # variacion del tono (desvio, en semitonos)
     "tono_rango": 8.9,       # del 10 al 90 % del tono, en semitonos
-    "volumen_db": 7.9,       # variacion del volumen mientras habla
+    "volumen_db": 7.1,       # variacion del volumen mientras habla (sus grabaciones: 7,9 a 8,4)
     "ritmo": 2.8,            # palabras por segundo, de la primera a la ultima
 }
 ENTRE_TRAMOS = 0.45
@@ -338,7 +347,8 @@ def hacer_tramo(a, n, palabras, carpeta):
         return e / e.norm()
 
     muestra = os.path.join(carpeta, "muestra.wav")
-    ff("-i", a.muestra or MUESTRA, *([] if a.muestra else ["-t", str(MUESTRA_SEG)]), "-ac", "1", "-ar", "24000", muestra)
+    ff(*([] if a.muestra else ["-ss", str(MUESTRA_DESDE)]), "-i", a.muestra or MUESTRA,
+       *([] if a.muestra else ["-t", str(MUESTRA_SEG)]), "-ac", "1", "-ar", "24000", muestra)
     prompt = modelo.create_voice_clone_prompt(ref_audio=muestra, ref_text=a.muestra_texto or MUESTRA_TEXTO)
     h_muestra = huella(leer(muestra, sr_voz))
     f0_muestra = tono(leer(muestra, 16000))
@@ -401,7 +411,7 @@ def main():
     ap.add_argument("guion")
     ap.add_argument("salida")
     ap.add_argument("--palabras")
-    ap.add_argument("--muestra", help=f"otra toma del fundador (por defecto {MUESTRA_SEG} s de voz-dos-plomeros)")
+    ap.add_argument("--muestra", help=f"otra toma del fundador (por defecto {MUESTRA_SEG} s de voz-presupuesto-barato)")
     ap.add_argument("--muestra-texto", help="lo que dice la muestra, palabra por palabra")
     ap.add_argument("--guardar-tomas", help="carpeta donde dejar todas las tomas, para revisarlas")
     ap.add_argument("--trabajo", help="carpeta para los tramos que pasaron: si se corta, se sigue desde ahi")

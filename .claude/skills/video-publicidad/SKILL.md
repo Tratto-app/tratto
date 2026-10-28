@@ -24,6 +24,13 @@ description: Hace videos y publicidades de Tratto para TikTok e Instagram (reels
 >   pregunta); sin citas entre comillas; el gancho, una pregunta directa.
 > - Lo que más rinde es su voz de verdad: si puede grabar el guion con el
 >   celular (30 segundos), va esa.
+>
+> **Voz nueva aprobada el 28/10/2026 a la tarde** ("ahora sí quedó
+> perfecto"): la muestra es el tramo más vivo de sus grabaciones (presupuesto
+> barato, desde 15,45 s, la de fábrica en `clonar.py`) y el guion de "Pedido
+> claro" reescrito con "Primero, segundo…". Medida: tono 3,97, rango 11,2,
+> volumen 7,13, ritmo 2,86 (`GANAS` quedó calibrado con eso). Hasta que él
+> diga otra cosa, cada audio clonado nuevo se le manda antes de programarlo.
 
 El fundador mandó un reel sobre clonar la voz gratis y pidió: "implementemos
 eso para todos los videos que hagamos". Su voz clonada sale de

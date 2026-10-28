@@ -22,6 +22,11 @@ clonada iba a 2,6 palabras por segundo contra 2,8 a 3,1 suyas, con 3,4
 semitonos de variación de tono contra 3,6 a 3,9 y 7,4 dB de variación de
 volumen contra 7,9 a 8,4.
 
+**Voz nueva aprobada esa misma tarde** ("ahora sí quedó perfecto"): muestra
+del tramo más vivo de sus grabaciones (presupuesto barato, desde 15,45 s;
+es la de fábrica de `clonar.py`). Hasta que él diga otra cosa, cada audio
+clonado nuevo se le manda antes de programarlo.
+
 **Habilitada de nuevo el 24/10/2026 a la noche, tomándolo muy en serio.** El
 primer reel narrado salió con una traba al principio, una frase con otra voz
 y "tracto" en vez de Tratto: los controles lo habían marcado y se aflojaron
