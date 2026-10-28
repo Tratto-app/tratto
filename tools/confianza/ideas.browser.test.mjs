@@ -394,3 +394,50 @@ test('Google: al volver por primera vez completa la cuenta y entra', async () =>
     assert.equal(await p.page.evaluate(() => JSON.parse(localStorage.getItem('tratto_oauth'))), null);
   } finally { await p.cerrar(); }
 });
+
+test('pagar con Mercado Pago: arma el pago y va a la página de Mercado Pago', async () => {
+  const p = await abrir(entorno, {handler: c => {
+    if (c.path.endsWith('/rest/v1/matches')) return {json: [matchChat(cliente)]};
+    if (c.path.endsWith('/rest/v1/mensajes')) return {json: [presu({estado_presupuesto: 'aceptado', trabajo_estado: 'terminado'})]};
+    if (c.path.endsWith('/functions/v1/pago-mp')) return {json: {link: entorno.origin + '/#mercado-pago-simulado'}};
+    return null;
+  }});
+  try {
+    await p.page.evaluate(() => abrirChat(77, 'chats'));
+    await p.page.waitForSelector('[data-pagar-mp="900"]');
+    assert.ok(await p.page.locator('[data-pagar-presu="900"]').isVisible());
+    assert.match(await p.page.locator('[data-presu="900"]').innerText(), /dinero de tu cuenta/);
+    await p.page.locator('[data-pagar-mp="900"]').scrollIntoViewIfNeeded();
+    await p.foto('pagar-mp');
+    await p.page.click('[data-pagar-mp="900"]');
+    await p.page.waitForFunction(() => location.hash === '#mercado-pago-simulado');
+    const llamada = p.calls.find(c => c.path.endsWith('/functions/v1/pago-mp'));
+    assert.deepEqual(llamada.body, {accion: 'preferencia', presupuesto_id: 900});
+    assert.deepEqual(await p.page.evaluate(() => { const g = JSON.parse(localStorage.getItem('tratto_pago_mp')); return [g.id, g.match_id]; }), [900, 77]);
+  } finally { await p.cerrar(); }
+});
+
+test('pagar con Mercado Pago: al volver confirma el pago y abre el chat con el resultado', async () => {
+  let pagado = false;
+  const p = await abrir(entorno, {rol: null, handler: c => {
+    if (c.path.endsWith('/auth/v1/user')) return {json: {id: cliente, email: 'ana@example.invalid', app_metadata: {provider: 'email'},
+      user_metadata: {rol: 'cliente', nombre: 'Ana', legales_aceptados: true}}};
+    if (c.path.endsWith('/functions/v1/pago-mp')) { pagado = true; return {json: {estado: 'cobrado'}}; }
+    if (c.path.endsWith('/rest/v1/matches') && c.query.includes('id=eq.77')) return {json: [matchChat(cliente)]};
+    if (c.path.endsWith('/rest/v1/mensajes')) return {json: [presu({estado_presupuesto: 'aceptado', trabajo_estado: 'terminado', pago_estado: pagado ? 'cobrado' : null})]};
+    return null;
+  }});
+  try {
+    await p.page.evaluate(() => {
+      localStorage.setItem('mkt_sesion', JSON.stringify({access_token: 'tk', refresh_token: 'rf', modo: 'cliente'}));
+      localStorage.setItem('tratto_pago_mp', JSON.stringify({id: 900, match_id: 77, fecha: Date.now()}));
+    });
+    await p.page.goto(entorno.origin + '/?pago_mp=900&payment_id=777&status=approved&external_reference=presu-900');
+    await p.page.waitForSelector('#arranque', {state: 'detached'});
+    await p.page.waitForFunction(() => actual === 'chat' && /el pago salió/.test(document.querySelector('#ch-aviso').innerText));
+    assert.ok(!(await p.page.evaluate(() => location.search)).includes('payment_id'));
+    const v = p.calls.find(c => c.path.endsWith('/functions/v1/pago-mp'));
+    assert.deepEqual(v.body, {accion: 'verificar', presupuesto_id: 900, pago_id: '777'});
+    await p.page.waitForFunction(() => /Pago hecho/i.test(document.querySelector('[data-presu="900"]').innerText));
+  } finally { await p.cerrar(); }
+});

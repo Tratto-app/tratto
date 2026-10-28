@@ -599,6 +599,7 @@
   .presu-datos dd{margin:0;font-size:13.5px;line-height:1.5}
   .presu-acciones{display:flex;gap:8px;margin-top:16px}
   .presu-acciones .btn{margin-top:0;padding:10px 14px;font-size:14px}
+  .presu-acciones.pago-opciones{flex-direction:column}
   /* Negociar el precio: la propuesta del cliente va dentro de la tarjeta. */
   .presu-contra-abrir{width:100%;margin-top:8px;padding:10px 14px;font-size:14px}
   .contra{margin-top:14px;padding:11px 12px;border-radius:var(--r-ch);background:rgba(201,162,39,.10);
@@ -2928,6 +2929,19 @@ let retornoOAuth = (() => {
   return {code, error, pendiente};
 })();
 
+/* Vuelta de pagar en Mercado Pago: /?pago_mp=<presupuesto>&payment_id=…&status=…
+   Se toma y se limpia la URL al cargar; se confirma después de entrar. */
+let retornoPagoMP = (() => {
+  const q = new URLSearchParams(location.search);
+  const id = Number(q.get('pago_mp'));
+  if(!id) return null;
+  const r = {id, pagoId: q.get('payment_id') || q.get('collection_id') || '', estado: q.get('status') || q.get('collection_status') || ''};
+  ['pago_mp','payment_id','collection_id','status','collection_status','external_reference','payment_type',
+   'merchant_order_id','preference_id','site_id','processing_mode','merchant_account_id'].forEach(k => q.delete(k));
+  history.replaceState(null, '', location.pathname + (q.toString() ? '?' + q : '') + location.hash);
+  return r;
+})();
+
 /* ══════════════════ DE DÓNDE VINO LA VISITA ══════════════════
    Para saber qué canal de marketing trae a cada usuario (TikTok, Instagram,
    la calculadora, un mail del CRM...). Se guarda la última visita que llegó
@@ -2938,7 +2952,7 @@ let retornoOAuth = (() => {
    dominio. */
 const ORIGEN_CLAVE = 'tratto_origen';
 (function guardarOrigen(){
-  if(retornoOAuth) return;   // la vuelta de Google o Apple no es una visita nueva
+  if(retornoOAuth || retornoPagoMP) return;   // volver de Google, Apple o Mercado Pago no es una visita nueva
   try{
     const q = new URLSearchParams(location.search), o = {};
     ['utm_source','utm_medium','utm_campaign','utm_content','gid'].forEach(k => {
@@ -4931,9 +4945,14 @@ function pagoHTML(m){
   /* Trabajo terminado y sin cobrar: le toca al cliente. */
   return miRol === 'cliente'
     ? nota('Quien hizo el trabajo lo dio por terminado. Si estás conforme, pagalo desde acá.') +
-      '<div class="presu-acciones">' +
-      '<button class="btn lleno" data-pagar-presu="'+m.id+'" data-monto="'+(m.monto||0)+'" ' +
-      'type="button">Pagar con tarjeta</button></div>'
+      '<div class="presu-acciones pago-opciones">' +
+      '<button class="btn lleno" data-pagar-mp="'+m.id+'" type="button"><span class="rueda"></span>' +
+      '<span>Pagar con Mercado Pago</span></button>' +
+      '<button class="btn vacio-b" data-pagar-presu="'+m.id+'" data-monto="'+(m.monto||0)+'" ' +
+      'type="button">Pagar con tarjeta acá</button></div>' +
+      nota('Con Mercado Pago podés usar el dinero de tu cuenta (la cargás con una transferencia desde tu banco), ' +
+        'una tarjeta o cuotas sin tarjeta.') +
+      '<div class="pago-error" data-pago-mp-error></div>'
     : nota('Avisaste que terminaste. Falta que el cliente pague por la app.');
 }
 
@@ -5567,6 +5586,31 @@ $('ch-hilo').addEventListener('click', async e => {
       if(msg) actualizarPresu(msg);
     }catch(ex){ console.error(ex); terminar.disabled = false; }
     return;
+  }
+});
+
+/* Pagar en la página de Mercado Pago (función pago-mp): dinero en cuenta,
+   tarjeta o cuotas sin tarjeta. Se va a Mercado Pago y se vuelve a
+   /?pago_mp=<presupuesto>; ahí se confirma con Mercado Pago (volverDePagoMP).
+   Mercado Pago además avisa a la función por su cuenta, por si la persona no
+   vuelve a la app. */
+const URL_PAGO_MP = SUPABASE_URL + '/functions/v1/pago-mp';
+const PAGO_MP_CLAVE = 'tratto_pago_mp';
+$('ch-hilo').addEventListener('click', async e => {
+  const b = e.target.closest('[data-pagar-mp]');
+  if(!b || !chatActual) return;
+  const id = Number(b.dataset.pagarMp), err = b.closest('.presu').querySelector('[data-pago-mp-error]');
+  err.classList.remove('visible');
+  b.disabled = true; b.classList.add('cargando');
+  try{
+    const r = await fetch(URL_PAGO_MP, {method:'POST', headers:cab(), body: JSON.stringify({accion:'preferencia', presupuesto_id:id})});
+    const j = await r.json().catch(() => ({}));
+    if(!r.ok || !j.link) throw new Error(j.error || 'No se pudo abrir Mercado Pago. Probá de nuevo.');
+    try{ localStorage.setItem(PAGO_MP_CLAVE, JSON.stringify({id, match_id: chatActual.id, fecha: Date.now()})); }catch(_){}
+    location.href = j.link;
+  }catch(ex){
+    err.textContent = ex.message; err.classList.add('visible');
+    b.disabled = false; b.classList.remove('cargando');
   }
 });
 
@@ -8184,7 +8228,7 @@ const GUIA_PASOS = {
       textos(){ return {
         tit: 'Cómo se paga un trabajo',
         txt: '<ul><li>No pagás nada por adelantado: aceptar un presupuesto no mueve plata.</li>' +
-          '<li>Cuando quien hizo el trabajo lo marca como terminado, en el chat te aparece «Pagar con tarjeta». Pagás con Mercado Pago sin salir de Tratto.</li>' +
+          '<li>Cuando quien hizo el trabajo lo marca como terminado, en el chat te aparecen dos botones. «Pagar con Mercado Pago» te lleva a Mercado Pago: pagás con el dinero de tu cuenta (la cargás con una transferencia desde tu banco), una tarjeta o cuotas sin tarjeta, y volvés a Tratto. «Pagar con tarjeta acá» es sin salir de Tratto.</li>' +
           '<li>No necesitás conectar ninguna cuenta: eso es solo para quien cobra. Los datos de tu tarjeta van directo a Mercado Pago; Tratto no los ve ni los guarda.</li></ul>' }; } },
 
     { id: 'avisos', corto: 'Notificaciones', clave: true, pantalla: 'perfil',
@@ -8783,6 +8827,28 @@ function registrarVisita(){
 }
 document.addEventListener('visibilitychange', () => { if(document.visibilityState === 'visible') registrarVisita(); });
 
+/* Al volver de Mercado Pago: se le pregunta a Mercado Pago (por la función)
+   si el pago salió, y se abre el chat de ese trabajo con el resultado. */
+async function volverDePagoMP({id, pagoId, estado}){
+  let guardado = null;
+  try{ guardado = JSON.parse(localStorage.getItem(PAGO_MP_CLAVE) || 'null'); localStorage.removeItem(PAGO_MP_CLAVE); }catch(e){}
+  let res = {estado: 'no', detalle: 'El pago no se completó. Podés intentarlo de nuevo desde acá.'};
+  if(pagoId && estado !== 'rejected' && estado !== 'null'){
+    try{
+      const r = await fetch(URL_PAGO_MP, {method:'POST', headers:cab(),
+        body: JSON.stringify({accion:'verificar', presupuesto_id:id, pago_id:String(pagoId)})});
+      res = await r.json().catch(() => res);
+    }catch(e){ console.error(e); res = {estado:'no', detalle:'No pudimos confirmar el pago. Si se te descontó, va a aparecer en un rato.'}; }
+  }
+  const mid = guardado && guardado.id === id ? guardado.match_id : null;
+  if(mid) await abrirChat(mid, 'chats');
+  if(res.estado === 'cobrado') pedirResenaTienda();
+  if(actual === 'chat'){
+    $('ch-aviso').textContent = res.estado === 'cobrado' ? 'Listo: el pago salió y le llegó a quien hizo el trabajo.' : (res.detalle || 'El pago no se completó.');
+    $('ch-aviso').className = 'aviso-chat visible';
+  }
+}
+
 function entrarApp(){
   const u = sesion.user;
   guiaReiniciar();
@@ -8816,7 +8882,11 @@ function entrarApp(){
   pintarTransfer();
   pintarLegales();
   aplicarModo();
-  recargarTodo().then(() => { if(!aplicarPedidoLink()) guiaAlEntrar(); }).catch(e => console.error(e));
+  const pagoMP = retornoPagoMP; retornoPagoMP = null;
+  recargarTodo().then(() => {
+    if(pagoMP) return volverDePagoMP(pagoMP);
+    if(!aplicarPedidoLink()) guiaAlEntrar();
+  }).catch(e => console.error(e));
   arrancarLatido();
 }
 
