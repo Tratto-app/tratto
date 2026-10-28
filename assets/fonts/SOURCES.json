@@ -1,0 +1,265 @@
+{
+  "retrieved_utc": "2026-10-28",
+  "sources": [
+    {
+      "url": "https://fonts.googleapis.com/css2?family=Montserrat:wght@500&text=TRAO&display=swap",
+      "file": null,
+      "sha256": "c83761dcf09e4785b6e1861f29e6db07eb2e91628afffe81065f250d9f2136da",
+      "kind": "original_css"
+    },
+    {
+      "url": "https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans+Condensed:wght@600;700&family=IBM+Plex+Sans:wght@400;450;500;600&display=swap",
+      "file": null,
+      "sha256": "102f77ce5422dc9eb9ceb1835b2eeef9847fa42b3787a68f55e554413f958ffa",
+      "kind": "original_css"
+    },
+    {
+      "url": "https://fonts.gstatic.com/l/font?kit=JTUHjIg1_i6t8kCHKm4532VJOt5-QNFgpCtZ6Ew7e3sV7Ojs&skey=7bc19f711c0de8f&v=v31",
+      "file": "assets/fonts/font-98cb1963e32307a2.woff2",
+      "bytes": 3584,
+      "sha256": "824693b58749c75d48a309777f58b961d99d606fcbd7e1e6bf0f2a00f2ee981f",
+      "kind": "font"
+    },
+    {
+      "url": "https://fonts.gstatic.com/s/ibmplexmono/v20/-F63fjptAgt5VM-kVkqdyU8n1iIq129k.woff2",
+      "file": "assets/fonts/font-d1b233760bed303a.woff2",
+      "bytes": 6912,
+      "sha256": "f8c22ec1804bd6966b70f43ac7c327025645b4c09597117fca2a5a6c750106fe",
+      "kind": "font"
+    },
+    {
+      "url": "https://fonts.gstatic.com/s/ibmplexmono/v20/-F63fjptAgt5VM-kVkqdyU8n1isq129k.woff2",
+      "file": "assets/fonts/font-f9c74283b1693b2d.woff2",
+      "bytes": 8356,
+      "sha256": "7635422bd10ddbbcb0e0caa1154b928298f5c8319b8c00b30978d4395f4783ce",
+      "kind": "font"
+    },
+    {
+      "url": "https://fonts.gstatic.com/s/ibmplexmono/v20/-F63fjptAgt5VM-kVkqdyU8n1iAq129k.woff2",
+      "file": "assets/fonts/font-2a73cdecea5ce99c.woff2",
+      "bytes": 5868,
+      "sha256": "62632b6375305e70ddcafdd895218e6ae41a184fcd280a69c739460604ca00a9",
+      "kind": "font"
+    },
+    {
+      "url": "https://fonts.gstatic.com/s/ibmplexmono/v20/-F63fjptAgt5VM-kVkqdyU8n1iEq129k.woff2",
+      "file": "assets/fonts/font-ae5fc1eadb0588e6.woff2",
+      "bytes": 13348,
+      "sha256": "6bc0f226a5b7884a8170e3f62c63d7675609d4631bdc5931b5cdab81821f00eb",
+      "kind": "font"
+    },
+    {
+      "url": "https://fonts.gstatic.com/s/ibmplexmono/v20/-F63fjptAgt5VM-kVkqdyU8n1i8q1w.woff2",
+      "file": "assets/fonts/font-7e3d7e3c7de8e8f7.woff2",
+      "bytes": 14708,
+      "sha256": "08949f728dc52d528e69b1667d15c89a5686a4ee9a296ff90983985f99c380f7",
+      "kind": "font"
+    },
+    {
+      "url": "https://fonts.gstatic.com/s/ibmplexmono/v20/-F6qfjptAgt5VM-kVkqdyU8n3twJwl1FgtIU.woff2",
+      "file": "assets/fonts/font-ed3206e8ede4a97a.woff2",
+      "bytes": 6972,
+      "sha256": "3febe5c7f22e4b07b4552738673c3dbe8bced2dc5f48b866edf7ccd9552d109a",
+      "kind": "font"
+    },
+    {
+      "url": "https://fonts.gstatic.com/s/ibmplexmono/v20/-F6qfjptAgt5VM-kVkqdyU8n3twJwlRFgtIU.woff2",
+      "file": "assets/fonts/font-c70f6b078a094422.woff2",
+      "bytes": 8460,
+      "sha256": "1d89462e86cb8e87e7e9d6f6635605bd7c3081baca6caaecee84916bf7b60edc",
+      "kind": "font"
+    },
+    {
+      "url": "https://fonts.gstatic.com/s/ibmplexmono/v20/-F6qfjptAgt5VM-kVkqdyU8n3twJwl9FgtIU.woff2",
+      "file": "assets/fonts/font-b06594e3dfbc9fab.woff2",
+      "bytes": 6040,
+      "sha256": "781633d95de88040fb77141d1e65d928c87c0144691fbc74da5a64d137a7e910",
+      "kind": "font"
+    },
+    {
+      "url": "https://fonts.gstatic.com/s/ibmplexmono/v20/-F6qfjptAgt5VM-kVkqdyU8n3twJwl5FgtIU.woff2",
+      "file": "assets/fonts/font-203ce92810c0a162.woff2",
+      "bytes": 13432,
+      "sha256": "6bb06407c97584b0867a959e05e8874693bfeb8c317de190811c51598f2d99ea",
+      "kind": "font"
+    },
+    {
+      "url": "https://fonts.gstatic.com/s/ibmplexmono/v20/-F6qfjptAgt5VM-kVkqdyU8n3twJwlBFgg.woff2",
+      "file": "assets/fonts/font-eb889034c0832c07.woff2",
+      "bytes": 14888,
+      "sha256": "01d285447409c8a588692162439a038b8cbd7871309ee20267b0d2d91c6e8e22",
+      "kind": "font"
+    },
+    {
+      "url": "https://fonts.gstatic.com/s/ibmplexmono/v20/-F6qfjptAgt5VM-kVkqdyU8n3vAOwl1FgtIU.woff2",
+      "file": "assets/fonts/font-fd3dd31c82271ef2.woff2",
+      "bytes": 7692,
+      "sha256": "83109cdd4f8665b475dfc11d61bd44da328bf7e6eab3d3953d39c49b1b9f6015",
+      "kind": "font"
+    },
+    {
+      "url": "https://fonts.gstatic.com/s/ibmplexmono/v20/-F6qfjptAgt5VM-kVkqdyU8n3vAOwlRFgtIU.woff2",
+      "file": "assets/fonts/font-132ba860efc49c6c.woff2",
+      "bytes": 9352,
+      "sha256": "2b05a8695c7f9f4abd7178b279646a3b005a8ce57546bef6fd145f25d131e0aa",
+      "kind": "font"
+    },
+    {
+      "url": "https://fonts.gstatic.com/s/ibmplexmono/v20/-F6qfjptAgt5VM-kVkqdyU8n3vAOwl9FgtIU.woff2",
+      "file": "assets/fonts/font-245a9a663e939379.woff2",
+      "bytes": 6932,
+      "sha256": "51b74d53e106ba8a26dd33464b231a562069be2a234b923c115beb622e6f6bc6",
+      "kind": "font"
+    },
+    {
+      "url": "https://fonts.gstatic.com/s/ibmplexmono/v20/-F6qfjptAgt5VM-kVkqdyU8n3vAOwl5FgtIU.woff2",
+      "file": "assets/fonts/font-796754f6fa2c0fca.woff2",
+      "bytes": 14328,
+      "sha256": "32057cf50dd14bdb21a2c93766c4a2c43e4abe688ea3922df3203cac7751a98b",
+      "kind": "font"
+    },
+    {
+      "url": "https://fonts.gstatic.com/s/ibmplexmono/v20/-F6qfjptAgt5VM-kVkqdyU8n3vAOwlBFgg.woff2",
+      "file": "assets/fonts/font-86628368fe0c7cce.woff2",
+      "bytes": 15620,
+      "sha256": "0d1f0b8d0722224e32e9f28261bdc86c79115be73444ae5eceb73976a1bcdf83",
+      "kind": "font"
+    },
+    {
+      "url": "https://fonts.gstatic.com/s/ibmplexsans/v23/zYXzKVElMYYaJe8bpLHnCwDKr932-G7dytD-Dmu1syxTKYbABA.woff2",
+      "file": "assets/fonts/font-13ff14c8cbbde52d.woff2",
+      "bytes": 23568,
+      "sha256": "7d0037a170882a49e65a45c38ef195237bb07b1cc791d078379f0ac0d7ae1935",
+      "kind": "font"
+    },
+    {
+      "url": "https://fonts.gstatic.com/s/ibmplexsans/v23/zYXzKVElMYYaJe8bpLHnCwDKr932-G7dytD-Dmu1syxaKYbABA.woff2",
+      "file": "assets/fonts/font-fd8b74284fe6ff97.woff2",
+      "bytes": 29512,
+      "sha256": "9409ee21811f0f5272b7e1d828fe8838005b0573481ef906e7e55b63f6610ab0",
+      "kind": "font"
+    },
+    {
+      "url": "https://fonts.gstatic.com/s/ibmplexsans/v23/zYXzKVElMYYaJe8bpLHnCwDKr932-G7dytD-Dmu1syxdKYbABA.woff2",
+      "file": "assets/fonts/font-560980fcddc4e6f4.woff2",
+      "bytes": 19500,
+      "sha256": "f598dd0700f155e2facfaa8ecfacace397d4c2c153e9ce37ab7ad310e8505bc2",
+      "kind": "font"
+    },
+    {
+      "url": "https://fonts.gstatic.com/s/ibmplexsans/v23/zYXzKVElMYYaJe8bpLHnCwDKr932-G7dytD-Dmu1syxRKYbABA.woff2",
+      "file": "assets/fonts/font-99228c3b93e78c59.woff2",
+      "bytes": 13160,
+      "sha256": "73e7f7b1c980416ae0c2461268b14c7cfcce0668e683dc43fbb11a82a227b9f2",
+      "kind": "font"
+    },
+    {
+      "url": "https://fonts.gstatic.com/s/ibmplexsans/v23/zYXzKVElMYYaJe8bpLHnCwDKr932-G7dytD-Dmu1syxQKYbABA.woff2",
+      "file": "assets/fonts/font-f582230492bfd11e.woff2",
+      "bytes": 30964,
+      "sha256": "d160e20920ae4d6556518d352d3af27a74e9b0de3d8fe17b1c1044fc75aa2f81",
+      "kind": "font"
+    },
+    {
+      "url": "https://fonts.gstatic.com/s/ibmplexsans/v23/zYXzKVElMYYaJe8bpLHnCwDKr932-G7dytD-Dmu1syxeKYY.woff2",
+      "file": "assets/fonts/font-6d5e7fb80500edbb.woff2",
+      "bytes": 45712,
+      "sha256": "e2291e842cf5af167122a22881a740c7f2dda7716f1e8cd76680264f4a859470",
+      "kind": "font"
+    },
+    {
+      "url": "https://fonts.gstatic.com/s/ibmplexsanscondensed/v15/Gg8gN4UfRSqiPg7Jn2ZI12V4DCEwkj1E4LVeHY527LvhpYY1Fw.woff2",
+      "file": "assets/fonts/font-3d5b3638e84c4fde.woff2",
+      "bytes": 1388,
+      "sha256": "322fe2fa28fbc6de0c6051eaed05eb5c26b2700c6158654276d68b48ccb7471f",
+      "kind": "font"
+    },
+    {
+      "url": "https://fonts.gstatic.com/s/ibmplexsanscondensed/v15/Gg8gN4UfRSqiPg7Jn2ZI12V4DCEwkj1E4LVeHY527LvjpYY1Fw.woff2",
+      "file": "assets/fonts/font-efc588a2fe4cb00b.woff2",
+      "bytes": 6808,
+      "sha256": "6f3305f395d85cef753c57a5b68b331761ca488abf55cce3834bfe87975202d3",
+      "kind": "font"
+    },
+    {
+      "url": "https://fonts.gstatic.com/s/ibmplexsanscondensed/v15/Gg8gN4UfRSqiPg7Jn2ZI12V4DCEwkj1E4LVeHY527LvipYY1Fw.woff2",
+      "file": "assets/fonts/font-f24edc0b5f7fe5ec.woff2",
+      "bytes": 16044,
+      "sha256": "014b6bf624d39ae76c07de342b45fab064e66321c9e0d78854750948c815ecf0",
+      "kind": "font"
+    },
+    {
+      "url": "https://fonts.gstatic.com/s/ibmplexsanscondensed/v15/Gg8gN4UfRSqiPg7Jn2ZI12V4DCEwkj1E4LVeHY527LvspYY.woff2",
+      "file": "assets/fonts/font-bbae8825fee675e2.woff2",
+      "bytes": 19816,
+      "sha256": "3d72a0923c5830358b0a8e25b258aecadbecbf542b6ee9a25f387803e37d56b9",
+      "kind": "font"
+    },
+    {
+      "url": "https://fonts.gstatic.com/s/ibmplexsanscondensed/v15/Gg8gN4UfRSqiPg7Jn2ZI12V4DCEwkj1E4LVeHY4S7bvhpYY1Fw.woff2",
+      "file": "assets/fonts/font-d57aa172357a7f52.woff2",
+      "bytes": 1364,
+      "sha256": "a77d0554ac2f8bf3f4bdb75152504fc87ddf03fc59dab698d03e9862a8991eb5",
+      "kind": "font"
+    },
+    {
+      "url": "https://fonts.gstatic.com/s/ibmplexsanscondensed/v15/Gg8gN4UfRSqiPg7Jn2ZI12V4DCEwkj1E4LVeHY4S7bvjpYY1Fw.woff2",
+      "file": "assets/fonts/font-a1523977f9ad7471.woff2",
+      "bytes": 6960,
+      "sha256": "aa1cf378e5023a10f3c9a0a00e5ed1311f7e5311eb3849b990d2ec9a7dc0cc9f",
+      "kind": "font"
+    },
+    {
+      "url": "https://fonts.gstatic.com/s/ibmplexsanscondensed/v15/Gg8gN4UfRSqiPg7Jn2ZI12V4DCEwkj1E4LVeHY4S7bvipYY1Fw.woff2",
+      "file": "assets/fonts/font-d9d2a4fe28e72390.woff2",
+      "bytes": 16092,
+      "sha256": "5a87e23666978e2a09671acd300ac22abc5c607e555fa96124221ddb187e145d",
+      "kind": "font"
+    },
+    {
+      "url": "https://fonts.gstatic.com/s/ibmplexsanscondensed/v15/Gg8gN4UfRSqiPg7Jn2ZI12V4DCEwkj1E4LVeHY4S7bvspYY.woff2",
+      "file": "assets/fonts/font-74d078ecf27e4a1d.woff2",
+      "bytes": 19352,
+      "sha256": "4768878c107d92c528a65bba206a87cdcf2c694514e75907fb91772cf8a388a5",
+      "kind": "font"
+    },
+    {
+      "url": "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.117.0/dist/umd/supabase.js",
+      "file": "vendor/supabase-2.117.0.js",
+      "bytes": 217874,
+      "sha256": "7b9e9c64109e15c338fa58c2bc77c32fb1c459bd587e22fc6b72cca80a388645",
+      "integrity": "sha384-xPW3QHswsICVC2mW6BFNwMbhpLkbZ133fKOhxNx3QGGgAOJfL3O9t8r2aWn1aez6",
+      "kind": "sdk"
+    },
+    {
+      "url": "https://raw.githubusercontent.com/google/fonts/main/ofl/montserrat/OFL.txt",
+      "file": "assets/fonts/OFL-Montserrat.txt",
+      "sha256": "8b7141c03fa4f8d44e6345d5d4931709290f0f67875e452e95ac1fd3a027802e",
+      "kind": "license"
+    },
+    {
+      "url": "https://raw.githubusercontent.com/google/fonts/main/ofl/ibmplexmono/OFL.txt",
+      "file": "assets/fonts/OFL-IBMPlexMono.txt",
+      "sha256": "7e6b2818edbd8f6a01ae80641cc8f16a51080d08fb4e532be3a0b6f74adb07da",
+      "kind": "license"
+    },
+    {
+      "url": "https://raw.githubusercontent.com/google/fonts/main/ofl/ibmplexsans/OFL.txt",
+      "file": "assets/fonts/OFL-IBMPlexSans.txt",
+      "sha256": "7e6b2818edbd8f6a01ae80641cc8f16a51080d08fb4e532be3a0b6f74adb07da",
+      "kind": "license"
+    },
+    {
+      "url": "https://raw.githubusercontent.com/google/fonts/main/ofl/ibmplexsanscondensed/OFL.txt",
+      "file": "assets/fonts/OFL-IBMPlexSansCondensed.txt",
+      "sha256": "7e6b2818edbd8f6a01ae80641cc8f16a51080d08fb4e532be3a0b6f74adb07da",
+      "kind": "license"
+    },
+    {
+      "url": "https://raw.githubusercontent.com/supabase/supabase-js/v2.117.0/LICENSE",
+      "file": "vendor/LICENSE-supabase-js.txt",
+      "sha256": "334dd6820e2eaeab2064e7c59001b810566728a28a41a7c1dbf69bbee17d0936",
+      "kind": "license"
+    }
+  ]
+}
