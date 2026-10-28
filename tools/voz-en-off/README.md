@@ -13,6 +13,15 @@ grabación nueva del fundador si la hay; si no, su voz clonada; nunca otra voz.
 
 ## Voz clonada (Qwen3-TTS, aprobada el 24/10/2026)
 
+**Frenada el 28/10/2026: no se programa ningún audio clonado sin que el
+fundador lo escuche y diga que sí.** Borró de TikTok "Pedido claro": "se
+trabó, habló mal, parezco re apagado, deprimido; necesito algo con más
+carisma, con más ganas". Había pasado todos los controles; los que faltaban
+eran los de ganas (`GANAS` en `clonar.py`, punto 7 de su encabezado): la
+clonada iba a 2,6 palabras por segundo contra 2,8 a 3,1 suyas, con 3,4
+semitonos de variación de tono contra 3,6 a 3,9 y 7,4 dB de variación de
+volumen contra 7,9 a 8,4.
+
 **Habilitada de nuevo el 24/10/2026 a la noche, tomándolo muy en serio.** El
 primer reel narrado salió con una traba al principio, una frase con otra voz
 y "tracto" en vez de Tratto: los controles lo habían marcado y se aflojaron

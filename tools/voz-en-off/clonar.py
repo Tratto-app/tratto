@@ -50,6 +50,15 @@ control falla, la voz no sale (codigo de salida 2, sin archivo).
    final se escucha entera otra vez y tiene que entenderse el guion.
 6. Con --palabras guarda [inicio, fin, palabra] de cada palabra del guion,
    con la ortografia del guion (para los subtitulos de comun-voz.js).
+7. Ganas (28/10/2026): el reel "Pedido claro" paso todos los controles de
+   arriba y el fundador lo borro de TikTok: "se trabo, hablo mal, parezco
+   re apagado, deprimido; necesito algo con mas carisma, con mas ganas".
+   Medido contra sus grabaciones reales, la voz clonada era mas lenta
+   (2,6 palabras por segundo contra 2,8 a 3,1), mas plana de tono (3,4
+   semitonos de variacion contra 3,6 a 3,9) y de volumen (7,4 dB contra
+   7,9 a 8,4). Ahora, entre las tomas que pasan, se elige la de tono mas
+   vivo, y la voz entera tiene que llegar a GANAS (lo minimo de sus
+   grabaciones reales). Si no llega, no sale (codigo 2).
 """
 import argparse, ctypes, difflib, gc, json, os, re, shutil, subprocess, sys, tempfile, unicodedata
 import numpy as np
@@ -80,6 +89,14 @@ CONTROL = {
     "tono": 0.22,           # contra la muestra
     "tono_pareja": 0.15,    # entre los tramos elegidos
     "ritmo": (1.8, 5.0),    # palabras por segundo (el fundador: 2,1 a 4,1)
+}
+# Lo minimo de las grabaciones reales del fundador (dos plomeros, mañana
+# paso, presupuesto barato y su video del 27/10), medido el 28/10/2026.
+GANAS = {
+    "tono_semitonos": 3.6,   # variacion del tono (desvio, en semitonos)
+    "tono_rango": 8.9,       # del 10 al 90 % del tono, en semitonos
+    "volumen_db": 7.9,       # variacion del volumen mientras habla
+    "ritmo": 2.8,            # palabras por segundo, de la primera a la ultima
 }
 ENTRE_TRAMOS = 0.45
 COLCHON = 0.5            # silencio delante de cada toma al escucharla: sin el, el oido duda de la primera palabra
@@ -133,6 +150,23 @@ def tono(x, sr=16000):
         if c[k] > 0.3 * c[0]:
             f.append(sr / k)
     return float(np.median(f)) if f else None
+
+
+def vida(x, sr=16000):
+    """Cuanto se mueve el tono y el volumen mientras habla: desvio y rango
+    (10 a 90 %) del tono en semitonos, y desvio del volumen en dB."""
+    import librosa
+    f0, voiced, _ = librosa.pyin(x, fmin=70, fmax=300, sr=sr, frame_length=1024, hop_length=160)
+    f0 = f0[voiced & ~np.isnan(f0)]
+    if len(f0) < 20:
+        return {"tono_semitonos": 0.0, "tono_rango": 0.0, "volumen_db": 0.0}
+    st = 12 * np.log2(f0 / np.median(f0))
+    rms = librosa.feature.rms(y=x, frame_length=1024, hop_length=160)[0]
+    nivel = 20 * np.log10(rms + 1e-9)
+    habla = nivel[nivel > nivel.max() - 35]
+    return {"tono_semitonos": float(np.std(st)),
+            "tono_rango": float(np.percentile(st, 90) - np.percentile(st, 10)),
+            "volumen_db": float(np.std(habla))}
 
 
 def alinear(guion, oidas):
@@ -341,7 +375,11 @@ def hacer_tramo(a, n, palabras, carpeta):
     meta = {"texto": " ".join(palabras), "muestra": [a.muestra, a.muestra_texto], "tomas": len(probadas),
             "pasaron": len(buenas)}
     if buenas:
-        mejor = max(buenas, key=lambda b: b["voz"])
+        # La de tono mas vivo (la mas parecida a la muestra salia la mas plana).
+        for b in buenas:
+            x = leer(b["toma"], 16000)
+            b["vida"] = vida(x[int(b["ini"] * 16000):int(b["fin"] * 16000)])["tono_semitonos"]
+        mejor = max(buenas, key=lambda b: (b["vida"], b["voz"]))
         shutil.copyfile(mejor["toma"], os.path.join(carpeta, f"tramo{n}.wav"))
         meta.update({k: mejor[k] for k in ("voz", "f0", "ini", "fin", "tiempos", "se_oye")})
     else:
@@ -463,6 +501,16 @@ def main():
                           "se_oye": " ".join(w[2].strip() for w in oidas), "tramos": informe}, ensure_ascii=False))
         print(f"Revisar: la voz entera se entiende distinto ({parecido:.0%}) y no se usa.")
         sys.exit(2)
+    # Ganas: tiene que moverse y avanzar como el fundador de verdad.
+    medida = vida(leer(final, 16000))
+    medida["ritmo"] = len(oidas) / max(oidas[-1][1] - oidas[0][0], 0.3)
+    flojas = [f"{k} {medida[k]:.2f} (mínimo {v})" for k, v in GANAS.items() if medida[k] < v]
+    if flojas:
+        print(json.dumps({"salida": None, "fallas": ["suena apagada: " + "; ".join(flojas)],
+                          "ganas": {k: round(v, 2) for k, v in medida.items()}, "tramos": informe},
+                         ensure_ascii=False))
+        print(f"Revisar: la voz suena apagada ({'; '.join(flojas)}) y no se usa.")
+        sys.exit(2)
     shutil.copyfile(final, a.salida)
     if tmp_obj:
         tmp_obj.cleanup()
@@ -495,6 +543,7 @@ def main():
             json.dump([[round(t[0], 2), round(t[1], 2), p] for t, p in zip(tiempos, guion)], f, ensure_ascii=False)
 
     print(json.dumps({"salida": a.salida, "duracion": round(duracion, 2), "parecido": round(parecido, 2),
+                      "ganas": {k: round(v, 2) for k, v in medida.items()},
                       "voz_min": min(t["voz"] for t in informe), "fallas": [],
                       "se_oye": " ".join(w[2].strip() for w in oidas), "tramos": informe}, ensure_ascii=False))
 

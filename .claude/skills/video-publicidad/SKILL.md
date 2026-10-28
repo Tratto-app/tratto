@@ -7,6 +7,24 @@ description: Hace videos y publicidades de Tratto para TikTok e Instagram (reels
 
 ## La voz del fundador en todos los videos (24/10/2026)
 
+> **Frenada el 28/10/2026: ningún video con voz clonada se programa sin que
+> el fundador escuche ese audio y diga que sí.** Borró de TikTok el reel
+> "Pedido claro" (había pasado todos los controles): "se trabó, habló mal,
+> parezco re apagado, deprimido. Necesito algo con más carisma, con más
+> ganas". Medido contra sus grabaciones reales, la clonada era más lenta,
+> más plana de tono y de volumen; además leyó la lista ("Qué pasa", "Dónde
+> estás") como preguntas y se trabó al arrancar ("Si mandás, se…").
+> Desde ese día:
+> - `clonar.py` controla las **ganas** (`GANAS`: tono, rango, volumen y
+>   ritmo, lo mínimo de sus grabaciones reales) y elige la toma más viva.
+> - Pasar los controles no alcanza: se le manda el audio y espera su sí. Sin
+>   su sí, el video sale sin voz o con una grabación suya.
+> - Guion para la voz: frases afirmativas; las listas con "Primero,
+>   segundo…" (nunca ítems que empiezan con "Qué" o "Dónde", que lee como
+>   pregunta); sin citas entre comillas; el gancho, una pregunta directa.
+> - Lo que más rinde es su voz de verdad: si puede grabar el guion con el
+>   celular (30 segundos), va esa.
+
 El fundador mandó un reel sobre clonar la voz gratis y pidió: "implementemos
 eso para todos los videos que hagamos". Su voz clonada sale de
 `tools/voz-en-off/clonar.py` (Qwen3-TTS, licencia Apache 2.0; instalación,
