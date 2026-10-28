@@ -1,7 +1,6 @@
 # Limpieza de fotos y evidencias privadas
 
-La función desplegada sigue siendo `limpieza-fotos`, invocada por la tarea
-diaria existente con `POST`. Conserva la autenticación por encabezado
+La función desplegada sigue siendo `limpieza-fotos`. Conserva la autenticación por encabezado
 `x-tratto-firma`, validado contra `PUSH_TRIGGER_SECRET` dentro del servidor.
 El despliegue debe conservar `verify_jwt=false`: esa configuración no sustituye
 la comprobación propia del encabezado. No se muestran ni se cambian secretos.
@@ -9,7 +8,28 @@ la comprobación propia del encabezado. No se muestran ni se cambian secretos.
 El paquete tiene dos archivos de despliegue: `index.ts` y `handler.mjs`.
 El SDK se fija en `npm:@supabase/supabase-js@2.117.0`.
 
-Ejecuta dos trabajos independientes, con nombres y límites definidos por el
+La revisión del 28/10 comprobó que la tarea histórica `limpiar-fotos` no estaba
+programada. Su migración original dejó la activación pendiente de aprobación
+por tratarse de borrados irreversibles. Este cambio **no activa esa tarea ni
+limpia publicaciones históricas**.
+
+La migración `20261028113131_servicio_evidencias_programar_limpieza.sql` crea
+la tarea nueva `servicio-evidencias-limpieza` a las 06:30 UTC. Llama por `POST`
+a `limpieza-fotos?solo=evidencias` y sólo procesa el bucket privado nuevo.
+Se debe desplegar primero el handler con ese modo y aplicar después esta
+migración: una versión anterior que ignorase la query no sirve para esta tarea.
+El modo normal, sin query, conserva los dos trabajos previos para sus llamadas
+administrativas existentes. Un modo desconocido, duplicado o parámetros de
+bucket/ruta se rechazan sin operaciones.
+
+El cron sólo guarda una llamada a una función privada, sin secreto literal.
+La función valida el destino Supabase configurado y resuelve la firma en Vault
+al ejecutar dentro del servidor; no devuelve ni registra el secreto. Sus permisos
+excluyen `PUBLIC`, `anon`, `authenticated` y `service_role`: la ejecuta el dueño
+administrativo de la tarea. Si faltan dependencias o configuración, la migración
+falla en lugar de afirmar que hay una tarea funcional.
+
+El modo normal ejecuta dos trabajos independientes, con nombres y límites definidos por el
 servidor; el solicitante no puede elegir un bucket ni pasar rutas:
 
 1. `fotos_para_borrar({limite:200})` → bucket `publicaciones` →
@@ -28,7 +48,7 @@ Si el borrado falla o es incierto no se confirma: queda para la siguiente
 ejecución. Si falla la confirmación, se responde error para que no se presente
 como una limpieza completa. No se usa `DELETE storage.objects`.
 
-Los dos trabajos se intentan aunque uno esté vacío o falle. La respuesta
+En modo normal ambos trabajos se intentan aunque uno esté vacío o falle. La respuesta
 mantiene `borradas` y `pedidos` y agrega `evidencias_borradas`,
 `evidencias_referencias` y errores por etapa sin rutas ni cuerpos sensibles.
 

@@ -104,8 +104,15 @@ Un resultado incierto se vuelve a comprobar: la cola devuelve también un
 objeto ya ausente hasta recibir confirmación. Los archivos huérfanos de más de
 24 horas también se encolan; no se puede publicar una referencia encolada.
 Un archivo que siga referenciado no se elimina. El endpoint existente
-`limpieza-fotos` consume esta cola además de su limpieza previa de publicaciones;
-debe desplegarse después de la migración incluyendo `index.ts` y `handler.mjs`.
+`limpieza-fotos?solo=evidencias` consume exclusivamente esta cola privada. La
+tarea histórica `limpiar-fotos` no estaba activa y no se habilita por este cambio:
+la migración original dejó la limpieza de publicaciones pendiente de aprobación.
+La tarea nueva `servicio-evidencias-limpieza` corre a las 06:30 UTC. Primero se
+despliega el handler con el modo privado incluyendo `index.ts` y `handler.mjs`;
+después se aplica `20261028113131_servicio_evidencias_programar_limpieza.sql`.
+Sin query, el endpoint conserva su comportamiento administrativo de ambos
+trabajos. El cron no guarda el secreto literal: lo resuelve dentro del servidor
+desde Vault. Configuración ausente hace fallar la migración o ejecución.
 
 ## Validación reproducible
 

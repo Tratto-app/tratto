@@ -22,8 +22,8 @@ function fixture(overrides = {}) {
   };
   return { handler: createCleanupHandler(client, 'test-signature', logger), calls };
 }
-const request = (signature = 'test-signature', method = 'POST') => new Request(
-  'https://example.test/limpieza-fotos', { method, headers: { 'x-tratto-firma': signature } });
+const request = (signature = 'test-signature', method = 'POST', query = '') => new Request(
+  'https://example.test/limpieza-fotos' + query, { method, headers: { 'x-tratto-firma': signature } });
 
 test('no signature/wrong signature performs no database or Storage operation', async () => {
   const f = fixture();
@@ -92,4 +92,29 @@ test('publications keep their own bucket and RPC while evidence cleanup also pro
   assert.deepEqual(f.calls.filter(x => x[0] === 'remove').map(x => x[1]),
     ['publicaciones','servicio-evidencias']);
   assert.deepEqual(f.calls.find(x => x[1] === 'fotos_borradas')[2], { nombres: ['pub.jpg'] });
+});
+
+test('evidence-only mode never selects, deletes or acknowledges publications', async () => {
+  const f = fixture();
+  const response = await f.handler(request('test-signature', 'POST', '?solo=evidencias'));
+  assert.equal(response.status, 200);
+  assert.deepEqual(f.calls.map(x => x.slice(0, 2)), [
+    ['rpc', 'servicio_evidencias_pendientes_borrado'],
+    ['remove', 'servicio-evidencias'], ['rpc', 'servicio_evidencias_borradas'],
+  ]);
+  const body = await response.json();
+  assert.equal(body.borradas, 0); assert.equal(body.pedidos, 0);
+  assert.equal(body.evidencias_borradas, 1);
+});
+
+test('unknown/ambiguous modes and bucket/path parameters do not run any job', async () => {
+  for (const query of ['?solo=publicaciones', '?solo=', '?solo=evidencias&solo=publicaciones',
+    '?bucket=publicaciones', '?solo=evidencias&path=other']) {
+    const f = fixture();
+    assert.equal((await f.handler(request('test-signature', 'POST', query))).status, 400);
+    assert.deepEqual(f.calls, []);
+  }
+  const f = fixture();
+  assert.equal((await f.handler(request('wrong', 'POST', '?solo=evidencias'))).status, 401);
+  assert.deepEqual(f.calls, []);
 });

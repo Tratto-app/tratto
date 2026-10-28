@@ -7,7 +7,9 @@
 //     o subidas huérfanas seleccionadas por la RPC de mantenimiento.
 // La base no puede borrar archivos de Storage por SQL, por eso esto vive acá.
 //
-// La llama pg_cron una vez por día (tarea "limpiar-fotos") con el encabezado
+// pg_cron llama el modo ?solo=evidencias a las 06:30 UTC (tarea
+// "servicio-evidencias-limpieza"). No activa la tarea histórica de publicaciones.
+// La llamada lleva el encabezado
 // x-tratto-firma = PUSH_TRIGGER_SECRET (en la base: Vault,
 // push_firma_quick_service). No recibe parámetros: qué borrar lo decide la
 // base (public.fotos_para_borrar). Usa la clave de servicio que Supabase

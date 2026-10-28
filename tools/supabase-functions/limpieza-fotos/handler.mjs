@@ -39,10 +39,20 @@ export function createCleanupHandler(client, signature, logger = console) {
       });
     }
 
+    // The scheduled evidence-only job must never clean historical publications.
+    // This selects one fixed server job, never a caller-supplied bucket or path.
+    const query = new URL(req.url).searchParams;
+    const mode = query.get('solo');
+    if ([...query.keys()].some(key => key !== 'solo') || query.getAll('solo').length > 1
+      || (mode !== null && mode !== 'evidencias')) {
+      return new Response('modo no permitido', { status: 400 });
+    }
+    const jobs = mode === 'evidencias' ? JOBS.filter(job => job.bucket === 'servicio-evidencias') : JOBS;
+
     const result = { ok: true, borradas: 0, pedidos: 0, evidencias_borradas: 0,
       evidencias_referencias: 0, errores: [] };
 
-    for (const job of JOBS) {
+    for (const job of jobs) {
       try {
         const listed = await client.rpc(job.list, job.listArgs);
         if (listed.error) {
