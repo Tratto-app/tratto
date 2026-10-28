@@ -9,6 +9,8 @@
 <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png">
 <link rel="icon" type="image/png" sizes="64x64" href="/favicon-64.png">
 <meta name="description" content="Pedís un servicio y te conectamos con quien lo hace en tu zona. Sacale una foto a lo que se rompió y te damos una idea del precio. Plomeros, pintores, cerrajeros, techistas y más, en Argentina.">
+<link rel="stylesheet" href="/assets/fonts/tratto-fonts.css">
+<link rel="stylesheet" href="/servicio-acuerdos.css">
 <link rel="canonical" href="https://www.trattoapp.com.ar/">
 <!-- Vista previa al compartir el link (WhatsApp, Instagram, Facebook, LinkedIn, X) -->
 <meta property="og:type" content="website">
@@ -43,10 +45,10 @@
 </script>
 <script defer src="/_vercel/insights/script.js"></script>
 <link rel="apple-touch-icon" href="/apple-touch-icon.png">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500&text=TRAO&display=swap" rel="stylesheet">
-<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans+Condensed:wght@600;700&family=IBM+Plex+Sans:wght@400;450;500;600&display=swap" rel="stylesheet">
+
+
+
+
 <style>
   :root{
     --noche:#0C2620; --noche-2:#123830; --noche-3:#1B4B40; --noche-4:#27604F;
@@ -495,6 +497,17 @@
     padding:14px 16px calc(14px + var(--sb));text-align:center;font-size:13px;
     color:var(--gris);line-height:1.5}
   #p-chat.cerrada .hilo-msg .presu-acciones{display:none}
+  .acuerdos-chat{flex:none;max-height:48dvh;overflow:auto;border-bottom:1px solid var(--linea);background:var(--claro)}
+  .acuerdos-chat>summary{padding:12px 16px;min-height:44px;color:var(--verde);font-weight:600;font-size:13px;cursor:pointer}
+  .acuerdos-chat>summary:focus-visible{outline:3px solid var(--laton);outline-offset:-3px}
+  .acuerdos-chat #ch-acuerdos{padding:0 12px 12px}
+  .pedido-ayuda{border:1px solid var(--linea-fuerte);border-radius:10px;margin-top:18px;padding:14px;background:var(--claro)}
+  .pedido-ayuda summary{font-weight:600;color:var(--verde);cursor:pointer;min-height:44px;display:flex;align-items:center}
+  .pedido-ayuda p{font-size:13px;line-height:1.6;margin:10px 0}
+  .pedido-ayuda .pasos{display:flex;gap:8px;flex-wrap:wrap}
+  .pedido-ayuda button{min-height:44px;padding:8px 12px}
+  .paso-pedido-enfocado{outline:3px solid var(--laton);outline-offset:5px;border-radius:5px}
+
   .chat-cerrado b{display:block;font-family:'IBM Plex Sans Condensed',sans-serif;
     font-size:15px;color:var(--tinta);margin-bottom:3px}
   .chat-cerrado button{margin-top:10px;background:none;border:1px solid var(--linea-fuerte);
@@ -1988,6 +2001,7 @@
         <a class="legales-btn" href="/privacidad.html" target="_blank" rel="noopener">Política de privacidad</a>
       </div>
       <div class="legales-estado" id="legales-estado"></div>
+      <p class="ayuda" style="margin:14px 0">Revisión del 28/10: aclaramos visitas, adicionales, retiros, reclamos y qué se conserva al borrar una cuenta. No cambian las comisiones ni los acuerdos anteriores. <a href="/privacidad.html">Leer privacidad</a> · <a href="/confianza.html">Cómo coordinar un trabajo</a></p>
 
       <div class="sec"><span class="sec-tit">Sesión</span></div>
       <button class="btn riesgo" id="salir" type="button">Cerrar sesión</button>
@@ -2001,6 +2015,12 @@
       <div class="kicker">Nuevo pedido</div>
       <h1>¿Qué necesitás?</h1>
       <p class="bajada">Buscamos quienes ofrezcan ese servicio en tu zona y dentro de tu presupuesto.</p>
+
+      <details class="pedido-ayuda" id="pedido-guia">
+        <summary>Ayudame a armar el pedido, paso a paso</summary>
+        <p id="pedido-guia-texto" role="status">Te acompañamos con los datos del formulario. No necesitás usar IA ni estimar un precio para publicar.</p>
+        <div class="pasos"><button class="btn vacio-b" id="pedido-guia-anterior" type="button">Anterior</button><button class="btn vacio-b" id="pedido-guia-siguiente" type="button">Empezar</button></div>
+      </details>
 
       <!-- Dos puertas a la misma estimación: la foto sirve para lo que se ve
            (una pérdida, una mancha, algo roto); para una clase de inglés o un
@@ -2312,6 +2332,10 @@
         </div>
       </div>
       <div class="aviso-chat" id="ch-aviso"></div>
+      <details id="ch-acuerdos-panel" class="acuerdos-chat">
+        <summary>Visita, adicionales, retiros y reclamos</summary>
+        <div id="ch-acuerdos"></div>
+      </details>
       <div class="hilo-msg" id="ch-hilo"></div>
 
       <button class="presu-abrir oculto" id="ch-presu-abrir" type="button">
@@ -2327,8 +2351,9 @@
           <div class="err" id="e-cp-monto">Cargá un monto mayor a cero.</div>
         </div>
         <div class="campo">
-          <label for="cp-incluye">Qué incluye</label>
+          <label for="cp-incluye">Trabajo, materiales y gastos incluidos</label>
           <textarea id="cp-incluye" maxlength="300" placeholder="Ej: Mano de obra y materiales. No incluye el termotanque nuevo."></textarea>
+          <p class="ayuda">Aclarale al cliente si incluye materiales, traslado o visita y qué queda afuera. Si después hace falta otro trabajo, proponé un adicional en Acuerdos: necesita su aceptación.</p>
           <div class="err" id="e-cp-incluye">Contale al cliente qué incluye el trabajo.</div>
         </div>
         <div class="campo">
@@ -2666,7 +2691,8 @@
   <nav class="tabs oculto" id="tabs"></nav>
 </div>
 
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.117.0/dist/umd/supabase.js"
+<script src="/servicio-acuerdos.js"></script>
+<script src="/vendor/supabase-2.117.0.js"
   integrity="sha384-xPW3QHswsICVC2mW6BFNwMbhpLkbZ133fKOhxNx3QGGgAOJfL3O9t8r2aWn1aez6"
   crossorigin="anonymous"></script>
 <script>
@@ -3599,6 +3625,27 @@ function resumenPedido(){
   set('rv-rubro',v('s-servicio')); set('rv-zona',v('s-zona')); set('rv-urg',v('s-urgencia'));
   $('s-cont').textContent = $('s-desc').value.length;
 }
+const GUIA_PEDIDO = [
+  ['s-servicio','1 de 5 · ¿Qué servicio necesitás? Elegí el rubro. Puede ser una clase, un evento, ayuda con tu negocio o un arreglo.'],
+  ['s-zona','2 de 5 · ¿Dónde lo necesitás? Elegí la zona. No publiques una dirección exacta ni datos de otras personas en la descripción.'],
+  ['s-desc','3 de 5 · Contá qué querés resolver, qué resultado esperás y algún detalle útil. No hace falta saber el nombre técnico. Una foto es opcional; evitá mostrar personas o documentación.'],
+  ['s-urgencia','4 de 5 · ¿Para cuándo? Elegí la urgencia. Eso ayuda a que quien cotiza sepa si puede hacerlo a tiempo.'],
+  ['s-enviar','5 de 5 · Revisá tu nombre, contacto y el resumen antes de publicar. El presupuesto orientativo es opcional. Tocar este paso no publica: confirmás con “Buscar quién lo haga”.']
+];
+let pasoPedido=-1;
+function guiarPedido(indice){
+  document.querySelectorAll('.paso-pedido-enfocado').forEach(x=>x.classList.remove('paso-pedido-enfocado'));
+  pasoPedido=Math.max(0,Math.min(GUIA_PEDIDO.length-1,indice));
+  const [id,texto]=GUIA_PEDIDO[pasoPedido], campo=$(id);
+  $('pedido-guia-texto').textContent=texto;
+  $('pedido-guia-anterior').disabled=pasoPedido===0;
+  $('pedido-guia-siguiente').textContent=pasoPedido===GUIA_PEDIDO.length-1?'Volver a empezar':'Siguiente';
+  campo.classList.add('paso-pedido-enfocado');campo.focus({preventScroll:true});
+  campo.scrollIntoView({block:'center',behavior:matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth'});
+}
+$('pedido-guia-siguiente').addEventListener('click',()=>guiarPedido(pasoPedido===GUIA_PEDIDO.length-1?0:pasoPedido+1));
+$('pedido-guia-anterior').addEventListener('click',()=>guiarPedido(pasoPedido-1));
+$('pedido-guia').addEventListener('toggle',()=>{if(!$('pedido-guia').open)document.querySelectorAll('.paso-pedido-enfocado').forEach(x=>x.classList.remove('paso-pedido-enfocado'));});
 CS.forEach(c => { $(c).addEventListener('input',()=>{resumenPedido();limpiar([c]);}); $(c).addEventListener('change',resumenPedido); });
 
 $('s-enviar').addEventListener('click', async () => {
@@ -4093,6 +4140,8 @@ async function abrirChat(matchId, desde){
   await cargarChatsCerrados();
   pintarCierreChat();
   await traerMensajes(true);
+  if(!chatActual || chatActual.id!==matchId) return;
+  montarAcuerdos();
   escuchar(matchId);
 }
 
@@ -4262,7 +4311,57 @@ function cerrarEscucha(){
   if(canal && sb){ try{ sb.removeChannel(canal); }catch(e){} canal = null; }
   if(sondeo){ clearInterval(sondeo); sondeo = null; }
 }
-function cerrarChat(){ cerrarEscucha(); chatActual = null; }
+function cerrarChat(){
+  cerrarEscucha();
+  if(window.TrattoAcuerdos) window.TrattoAcuerdos.unmount();
+  if($('ch-acuerdos')) $('ch-acuerdos').replaceChildren();
+  if($('ch-acuerdos-panel')) $('ch-acuerdos-panel').open = false;
+  chatActual = null;
+}
+
+/* El módulo solo recibe una conexión autenticada al mismo proyecto. Las fotos
+   del domicilio y del visitante son privadas, no publicaciones de perfil. */
+function montarAcuerdos(){
+  if(!chatActual || !sesion || !window.TrattoAcuerdos) return;
+  const matchId=chatActual.id, userId=sesion.user.id;
+  const pathFor = ref => {
+    if(!/^[0-9a-f-]{36}\/[1-9][0-9]*\/[0-9a-f-]{36}\.(jpg|png|webp)$/i.test(ref)) throw new Error('Referencia de foto inválida.');
+    return ref.split('/').map(encodeURIComponent).join('/');
+  };
+  window.TrattoAcuerdos.mount($('ch-acuerdos'),{
+    matchId,role:miRol,userId,
+    request:async(path,options={})=>{
+      if(!path.startsWith('/rest/v1/')) throw new Error('Ruta inválida.');
+      const r=await fetch(SUPABASE_URL+path,{method:options.method||'GET',headers:cab(),
+        ...(options.body!==undefined?{body:typeof options.body==='string'?options.body:JSON.stringify(options.body)}:{})});
+      const data=await r.json().catch(()=>null);
+      if(!r.ok) throw new Error(data && data.message || 'No se pudo confirmar la acción.');
+      return data;
+    },
+    uploadImage:async(file)=>{
+      if(!['image/jpeg','image/png','image/webp'].includes(file.type) || file.size>5*1024*1024)
+        throw new Error('Elegí una foto JPG, PNG o WebP de hasta 5 MB.');
+      const blob=await achicar(file,1600);
+      const ref=userId+'/'+matchId+'/'+crypto.randomUUID()+'.jpg';
+      const r=await fetch(SUPABASE_URL+'/storage/v1/object/servicio-evidencias/'+pathFor(ref),{
+        method:'POST',headers:cab({'Content-Type':'image/jpeg','x-upsert':'false'}),body:blob});
+      if(!r.ok) throw new Error('No se pudo guardar la foto privada.');
+      return ref;
+    },
+    resolveImage:async(ref)=>{
+      const r=await fetch(SUPABASE_URL+'/storage/v1/object/sign/servicio-evidencias/'+pathFor(ref),{
+        method:'POST',headers:cab(),body:JSON.stringify({expiresIn:60})});
+      const data=await r.json().catch(()=>null);
+      if(!r.ok || !data || !(data.signedURL||data.signedUrl)) throw new Error('No se pudo abrir la foto.');
+      const signed=data.signedURL||data.signedUrl;
+      // Storage devuelve /object/sign/...; una barra inicial con new URL
+      // perdería /storage/v1 y dejaría una foto privada inaccesible.
+      return new URL(signed.startsWith('/object/sign/')?'/storage/v1'+signed:signed,SUPABASE_URL+'/storage/v1/').href;
+    },
+    refreshChat:()=>chatActual && chatActual.id===matchId && traerMensajes(false)
+  });
+}
+
 
 /* ══════════════════ BLOQUEAR Y REPORTAR DESDE EL CHAT ══════════════════ */
 /* Qué conversaciones mías están cerradas por un bloqueo, y si el bloqueo lo
@@ -6194,14 +6293,14 @@ function mostrarCalificar(){
   h.insertAdjacentHTML('beforeend',
     '<div class="calificar" id="caja-calificar">' +
     '<div class="calificar-tit">¿Cómo fue trabajar con ' + esc((nombre||'').split(" ")[0]) + '? ' +
-    '<span class="ia-sello"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v3M12 18v3M3 12h3M18 12h3M6.3 6.3l2.1 2.1M15.6 15.6l2.1 2.1M17.7 6.3l-2.1 2.1M8.4 15.6l-2.1 2.1"/><circle cx="12" cy="12" r="3.2"/></svg>Con IA</span></div>' +
-    '<div class="calificar-txt">Tu calificación ayuda a otros clientes a elegir. ' +
-    'Para resumir en pocas palabras cómo trabajó, una inteligencia artificial lee ' +
-    'esta conversación una sola vez.</div>' +
+    '</div>' +
+    '<div class="calificar-txt">Tu calificación ayuda a otros clientes a elegir. Las estrellas y el comentario son tuyos; no necesitás activar IA para enviarlos.</div>' +
     '<div class="estrellas" id="estrellas">' +
     [1,2,3,4,5].map(n => '<button class="estrella" type="button" data-estrella="'+n+'" aria-label="'+n+'">'+ESTRELLA+'</button>').join('') +
     '</div>' +
-    '<textarea id="cal-comentario" maxlength="300" placeholder="Contá algo más si querés (opcional)"></textarea>' +
+    '<textarea id="cal-comentario" maxlength="300" aria-label="Comentario sobre el trabajo" placeholder="Contá algo más si querés (opcional)"></textarea>' +
+    '<label class="calificar-txt" style="display:flex;gap:10px;align-items:flex-start;padding:12px 0"><input id="cal-usar-ia" type="checkbox" style="width:20px;height:20px;flex:none">También quiero un resumen con IA de esta conversación (opcional; requiere tu permiso).</label>' +
+    '<div id="cal-error" role="alert" class="calificar-txt"></div>' +
     '<button class="btn lleno" id="cal-enviar" type="button">' +
     '<span class="rueda"></span><span id="cal-txt">Calificar</span></button>' +
     '<button class="btn vacio-b" id="cal-ahora-no" type="button">Ahora no</button>' +
@@ -6228,22 +6327,33 @@ $('ch-hilo').addEventListener('click', async e => {
     setTimeout(() => { if($('cal-txt')) $('cal-txt').textContent = 'Calificar'; }, 2200);
     return;
   }
-  /* La conversación que se lee es de dos personas, no de una: sin el permiso
-     del que califica no sale nada hacia afuera. */
-  if(!permisoIA()){ pedirPermisoIA(() => $('cal-enviar').click()); return; }
+  if(env.disabled) return;
+  const matchCalificado=chatActual && chatActual.id, cajaCalificada=$('caja-calificar');
+  if(!matchCalificado || !cajaCalificada) return;
+  const usarIA = !!$('cal-usar-ia').checked;
+  if(usarIA && !permisoIA()){
+    pedirPermisoIA(() => { if(chatActual && chatActual.id===matchCalificado && $('caja-calificar')===cajaCalificada) env.click(); });
+    return;
+  }
+  $('cal-error').textContent = '';
   env.disabled = true; env.classList.add('cargando'); $('cal-txt').textContent = 'Enviando…';
   try{
-    const r = await fetch(URL_CALIFICAR, {
-      method:'POST', headers:{'Content-Type':'application/json'},
-      body: JSON.stringify({
-        token: sesion.access_token,
-        matchId: chatActual.id,
-        puntaje: estrellasPuestas,
-        comentario: limpiarDatos($('cal-comentario').value.trim()),
-        permiso_ia: true
-      })
-    });
-    const d = await r.json();
+    const comentario = $('cal-comentario').value.trim();
+    const r = usarIA
+      ? await fetch(URL_CALIFICAR, {
+          method:'POST', headers:{'Content-Type':'application/json'},
+          body: JSON.stringify({token:sesion.access_token,matchId:matchCalificado,
+            puntaje:estrellasPuestas,comentario:limpiarDatos(comentario),permiso_ia:true})
+        })
+      : await fetch(SUPABASE_URL+'/rest/v1/rpc/servicio_calificar', {
+          method:'POST',headers:cab(),body:JSON.stringify({p_match_id:matchCalificado,
+            p_puntaje:estrellasPuestas,p_comentario:comentario})
+        });
+    const respuesta = await r.json().catch(() => null);
+    if(!chatActual || chatActual.id!==matchCalificado || $('caja-calificar')!==cajaCalificada) return;
+    if(!r.ok) throw new Error(respuesta && respuesta.message || 'No se pudo guardar la calificación. Probá de nuevo.');
+    const fila = Array.isArray(respuesta) ? respuesta[0] : respuesta;
+    const d = usarIA ? respuesta : fila && {ok:!!fila.id,atributos:[]};
     const caja = $('caja-calificar');
     if(d && d.ok){
       caja.innerHTML = '<div class="calificar-tit">¡Gracias!</div>' +
@@ -6259,7 +6369,9 @@ $('ch-hilo').addEventListener('click', async e => {
     }
   }catch(err){
     console.error(err);
+    if(!chatActual || chatActual.id!==matchCalificado || $('caja-calificar')!==cajaCalificada) return;
     if($('cal-txt')){ env.disabled=false; env.classList.remove('cargando'); $('cal-txt').textContent='Calificar'; }
+    if($('cal-error')) $('cal-error').textContent = err.message || 'No se pudo guardar. Probá de nuevo.';
   }
 });
 
@@ -6581,8 +6693,8 @@ const FAQ = [
     ['¿Qué pasa si nadie responde mi pedido?',
      'A los 15 días sin respuesta el pedido se da de baja solo y te avisamos. Podés volver a publicarlo cuando quieras.'],
     ['El trabajo salió mal, ¿qué hago?',
-     'Escribinos a trattoapp1@gmail.com contándonos qué pasó. Revisamos el caso y, si corresponde, ' +
-     'gestionamos la devolución del pago.']
+     'Abrí el chat del trabajo y entrá en <b>Acuerdos del trabajo → Reclamos</b>. Podés contar qué pasó, adjuntar fotos privadas y consultar el estado. ' +
+     'También podés escribir a trattoapp1@gmail.com. El reclamo se revisa; abrirlo no significa que haya una devolución aprobada.']
   ]],
   ['Si ofrecés un servicio', [
     ['¿Cuánto me cobra Tratto?',
@@ -6603,10 +6715,11 @@ const FAQ = [
      'Cuando terminás el trabajo lo marcás como terminado y el cliente paga desde la app. ' +
      'Conviene que lo hagas estando con el cliente, así cobrás en el momento.'],
     ['¿Qué pasa si el cliente no paga?',
-     'Escribinos a trattoapp1@gmail.com y lo revisamos. Al cliente que no paga le suspendemos la cuenta.'],
+     'Abrí un reclamo desde los Acuerdos del trabajo o escribinos a trattoapp1@gmail.com. ' +
+     'Revisamos lo ocurrido y la documentación disponible. Abrir un reclamo no garantiza el cobro ni suspende automáticamente una cuenta.'],
     ['¿Quién escribe las etiquetas de mi reputación?',
-     'Cuando un cliente te califica, una inteligencia artificial lee esa conversación y resume en pocas ' +
-     'palabras cómo trabajaste (por ejemplo "puntual" o "presupuesto claro"). ' +
+     'El cliente puede dejar estrellas y un comentario sin usar IA. Si elige la opción de IA y da permiso, ' +
+     'se analiza la conversación de ese trabajo para proponer etiquetas (por ejemplo "puntual" o "presupuesto claro"). ' +
      '<b>Si alguna etiqueta te parece injusta, reportala y la revisamos a mano.</b>'],
     ['¿Qué son los trabajos cerrados por Tratto?',
      'Es la cantidad de trabajos que cobraste por la app. Solo contamos esos porque son los únicos que podemos ' +

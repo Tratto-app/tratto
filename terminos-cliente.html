@@ -7,10 +7,7 @@
 <title>Términos · clientes · Tratto</title>
 <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png">
 <link rel="icon" type="image/png" sizes="64x64" href="/favicon-64.png">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500&text=TRAO&display=swap" rel="stylesheet">
-<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=IBM+Plex+Sans+Condensed:wght@600;700&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/fonts/tratto-fonts.css">
 <style>
   :root{
     --noche:#0C2620; --claro:#FCFBF8; --claro-2:#F2F0E9;
@@ -116,7 +113,7 @@
   <div class="kicker">Legales · Clientes</div>
   <h1>Términos y condiciones para Clientes</h1>
   <div class="hilo"></div>
-  <div class="vigente"><b>Versión vigente.</b> En vigencia desde el 25 de septiembre de 2026.</div>
+  <div class="vigente" id="revision-2026-10-28"><b>Revisión 2026-10-28 · 28 de octubre de 2026.</b> Aclaramos las herramientas voluntarias para visitas, adicionales, retiros y reclamos, y qué ocurre con los datos al borrar una cuenta. No cambian las comisiones ni se reescriben acuerdos ya aceptados. Cada acuerdo nuevo requiere la aceptación que se indica en la aplicación. Los cambios sustanciales para cuentas existentes siguen el procedimiento de aviso de este documento.</div>
   
   <blockquote>
   <p><strong>Por qué hay dos contratos.</strong> Porque son dos relaciones jurídicas distintas: con el Cliente
@@ -179,13 +176,24 @@
   </ol>
   <h3>3.2. Pedidos sin respuesta</h3>
   <p>Si a los <strong>15 días corridos</strong> de publicado un pedido ningún Proveedor respondió, el pedido <strong>vence automáticamente</strong> y las fotos que el Cliente haya cargado para ese pedido <strong>se eliminan de forma permanente</strong>. El Cliente puede volver a publicarlo cuando quiera.</p>
+  <h3 id="acuerdos-servicio">3.3. Visitas y acuerdos del servicio</h3>
+  <p>Una vez aceptado un presupuesto y antes de marcarlo como terminado o pagado, el Proveedor puede proponer dentro de la conversación una visita, un trabajo adicional o el retiro de un bien. Cada propuesta muestra quién la hizo, sus datos y su estado. <strong>Una propuesta pendiente no es un acuerdo:</strong> la otra parte debe aceptarla expresamente. La confirmación de una visita no acepta un presupuesto ni autoriza un pago.</p>
+  <p><strong>Quién va a ir.</strong> El Proveedor informa el nombre de la persona que realizará la visita y puede adjuntar una foto. Si cambia la persona, el día o la franja acordados, debe enviar una propuesta nueva para que el Cliente la revise. El Cliente puede aceptarla, rechazarla o pedir otra opción por el chat.</p>
+  <p>Esos datos y la foto son <strong>declarados por el Proveedor</strong>. Tratto no comprueba documentos de identidad, antecedentes penales, matrículas ni que la persona de una foto sea quien se presenta. Una cuenta de Mercado Pago conectada tampoco verifica a quien llega al domicilio. Si la persona que se presenta no coincide con la acordada, el Cliente no está obligado a permitir su ingreso y puede reportar la situación.</p>
+  <p><strong>Horario y recorrido.</strong> El día, la franja y los avisos de estado, como “en camino”, son información acordada o declarada por las partes. No son un seguimiento de ubicación, una asignación de trabajo por Tratto ni una garantía de llegada a una hora exacta. Los cambios requieren una nueva coordinación, sin cargos automáticos de cancelación.</p>
+  <h3 id="adicionales-servicio">3.4. Precio, alcance y adicionales</h3>
+  <p>Antes de aceptar un presupuesto, revisá la tarea, el monto, qué materiales o repuestos incluye, lo que queda fuera y el plazo. Si una visita de diagnóstico tiene costo, debe figurar expresamente en el presupuesto y ser aceptada antes de realizarse.</p>
+  <p>Un trabajo que no estaba incluido requiere <strong>una propuesta de adicional con su alcance y precio, aceptada por el Cliente antes de ejecutarlo</strong>. No se acepta por silencio, por confirmar una visita o por recibir un equipo de vuelta. El adicional aceptado queda como un presupuesto separado: no modifica el monto ni marca como pagado el presupuesto original. Se paga por el circuito de la aplicación cuando ese adicional se marca como terminado; aceptar la propuesta no cobra por sí solo.</p>
+  <h3 id="retiros-servicio">3.5. Si se retira un equipo o un bien</h3>
+  <p>Antes del retiro, las partes deben poder revisar y aceptar una constancia con la descripción del bien, su estado, accesorios y fecha prevista de devolución. Pueden agregar marca, modelo, número de serie y fotos si son necesarios para identificarlo. No incluyas contraseñas, documentos, datos de tarjetas ni información privada guardada dentro del equipo.</p>
+  <p>La constancia registra lo que las partes declararon y aceptaron. La devolución requiere la confirmación del Cliente; el aviso del Proveedor no acredita por sí solo que el Cliente recibió el bien conforme. Guardá una copia de la constancia si la necesitás. <strong>Tratto no toma custodia del bien ni ofrece por esta constancia un seguro o una garantía económica propia.</strong> El Proveedor sigue siendo responsable por su custodia, devolución y por los daños que legalmente le correspondan. Confirmar que recibiste el bien no implica renunciar a reclamar por daños o defectos.</p>
   <h2>4. Pagos</h2>
   <h3>4.1. Usar Tratto no te cuesta nada</h3>
   <p>Publicar pedidos, conversar con Proveedores y recibir presupuestos es <strong>gratuito para el
   Cliente</strong>. Tratto cobra una comisión al Proveedor sobre los trabajos que se pagan por la
   aplicación; esa comisión no se te suma al precio ni se te cobra por separado.</p>
   <h3>4.2. Cuándo y cómo pagás</h3>
-  <p>Pagás <strong>una sola vez, cuando el trabajo está terminado</strong> y el Proveedor lo marcó como tal en
+  <p>Pagás <strong>cada presupuesto aceptado una sola vez, cuando ese trabajo está terminado</strong> y el Proveedor lo marcó como tal en
   la aplicación. <strong>Aceptar un presupuesto no te cobra nada.</strong></p>
   <p>Los pagos se procesan a través de <strong>Mercado Pago</strong>, con tarjeta de crédito, débito o saldo en
   cuenta, según los medios que Mercado Pago habilite. El dinero <strong>va directamente a la cuenta del
@@ -241,6 +249,7 @@
   <p><strong>Sin ese permiso la plataforma funciona igual</strong>: se pueden publicar pedidos, recibir y aceptar
   presupuestos, conversar, contratar, cobrar y calificar exactamente lo mismo.</p>
   <p>Las condiciones del tratamiento están detalladas en la <strong>Política de Privacidad</strong>.</p>
+  <p><strong>Podés dejar estrellas y un comentario sin habilitar IA.</strong> El permiso solo corresponde a las funciones de IA, como generar etiquetas a partir de la conversación; no es una condición para calificar el trabajo.</p>
   <h3>5.3. Los resultados son orientativos y no obligan a nadie</h3>
   <p><strong>Los resultados de estas funciones pueden ser incorrectos.</strong> En particular:</p>
   <ul>
@@ -317,11 +326,11 @@
   </ul>
   <h2>12. Reclamos, suspensión y baja de cuentas</h2>
   <h3>12.1. Cómo se tramita un reclamo</h3>
-  <p>Tanto el Cliente como el Proveedor pueden abrir un reclamo escribiendo a
-  <strong>trattoapp1@gmail.com</strong>. Tratto se lo traslada a la otra parte y media entre las dos.</p>
-  <p><strong>Si la otra parte no responde en 30 días corridos, el reclamo se cierra.</strong> Cerrarlo no
-  significa dar la razón a nadie: significa que Tratto deja de mediar. Las partes conservan
-  íntegras las acciones judiciales o administrativas que les correspondan.</p>
+  <p>Tanto el Cliente como el Proveedor pueden <strong>abrir un reclamo desde la conversación del trabajo</strong>, con motivo, explicación y las pruebas pertinentes, o escribir a <strong>trattoapp1@gmail.com</strong>. El reclamo de la aplicación tiene una referencia y un estado que las partes pueden consultar. Los estados son “recibido”, “en revisión”, “resuelto” y “cerrado”. “Recibido” confirma el registro: no significa que se haya resuelto ni que alguien haya evaluado todavía el fondo.</p>
+  <p>Mientras el reclamo está recibido o en revisión, las partes pueden agregar información al expediente. Un expediente resuelto o cerrado no se reabre desde la aplicación; si necesitás revisión podés escribir a soporte con su referencia o abrir otro reclamo. Solo el personal de soporte autorizado cambia el estado del expediente: puede revisar las pruebas, solicitar aclaraciones y registrar el avance o el cierre con su explicación. <strong>No hay decisión automática sobre responsabilidad, devolución, cobro o sanción por abrir un reclamo.</strong> Si necesitás ayuda para entender o cuestionar un cierre, escribinos indicando su referencia.</p>
+  <p>Adjuntá solo información necesaria para ese problema. No subas documentos completos, contraseñas, tarjetas, historias clínicas ni imágenes de personas ajenas al servicio. La otra parte puede ver el contenido que se incorpora al expediente compartido. Si el caso involucra datos que no corresponde compartir con ella, consultá antes por el canal de contacto.</p>
+  <p>Los plazos indicados para solicitar una gestión interna <strong>no extinguen garantías legales, acciones judiciales ni derechos del consumidor</strong>. Una falta de respuesta no equivale a aceptar los hechos de la otra parte. Los estados del expediente no acreditan entrega de dinero, reparación o devolución de un bien.</p>
+  <p><strong>Si hay un riesgo inmediato para una persona, no esperes la respuesta de Tratto:</strong> recurrí a los servicios de emergencia de tu localidad. Este canal no es un servicio de emergencia, custodia ni monitoreo permanente.</p>
   <h3>12.2. Suspensión y baja</h3>
   <p><strong>Ninguna suspensión ni baja se dispone sin procedimiento.</strong> Salvo el caso urgente del párrafo
   siguiente, antes de suspender o dar de baja una cuenta Tratto te <strong>notifica el motivo</strong> al correo
@@ -335,11 +344,14 @@
   <p><strong>Lo que Tratto no puede hacer</strong> es suspender o dar de baja tu cuenta por haber dejado una
   calificación negativa, por haber reclamado, o por haber ejercido cualquier derecho que este
   contrato o la ley te reconocen.</p>
-  <p><strong>Baja voluntaria.</strong> Podés darte de baja en cualquier momento desde la aplicación. La baja
-  <strong>borra tu cuenta y tus datos personales</strong>. Lo único que se conserva es lo que la ley obliga a
-  conservar, detallado en la tabla de plazos de la Política de Privacidad: los registros de las
-  operaciones cobradas por la plataforma, reducidos al mínimo necesario, por <strong>10 años</strong> contados
-  desde la operación.</p>
+  <p><strong>Baja voluntaria.</strong> Podés borrar tu cuenta desde la aplicación. Se eliminan el perfil, los
+  pedidos, las publicaciones y las conversaciones vinculadas; las calificaciones que dejaste sobre otros
+  Proveedores pueden conservarse sin tu identificación. <strong>La baja no se bloquea por un reclamo o un
+  retiro pendiente.</strong> En esos casos se resguarda de forma privada, por un máximo de <strong>180 días
+  desde la baja</strong>, solo el expediente mínimo necesario que explica el punto 6.1 de la
+  <a href="/privacidad.html#baja-y-conservacion">Política de Privacidad</a>. No se conserva por esta excepción
+  toda la conversación ni se mantiene el perfil visible. La documentación fiscal que se hubiera emitido
+  se rige por sus obligaciones legales de conservación, separada de la cuenta.</p>
   <p>La baja <strong>no extingue</strong> las obligaciones pendientes: trabajos no pagados, comisiones adeudadas o
   reclamos en curso.</p>
   <h2>13. Responsabilidad</h2>
@@ -370,7 +382,7 @@
   <h2>15. Propiedad intelectual</h2>
   <p>La marca Tratto, el software, el diseño y los contenidos de la plataforma son propiedad de Tratto. El contenido que publica cada usuario (textos, fotos) sigue siendo suyo, pero al publicarlo autoriza a Tratto a mostrarlo dentro de la plataforma con el fin de prestar el servicio.</p>
   <h2>16. Cambios en estos Términos</h2>
-  <p>Tratto puede modificar estos Términos notificando con <strong>10 días corridos</strong> de anticipación al correo registrado y mediante un aviso en la aplicación. Si no estás de acuerdo, podés darte de baja. El uso posterior a la entrada en vigencia implica aceptación.</p>
+  <p>Tratto puede modificar estos Términos notificando con <strong>10 días corridos</strong> de anticipación al correo registrado y mediante un aviso en la aplicación. Si no estás de acuerdo, podés darte de baja. Los cambios no se aplican retroactivamente a acuerdos ya aceptados. Ver una explicación nueva o un aviso no equivale a aceptar un adicional, una visita, una transferencia opcional de datos ni una nueva autorización de pago. Cuando corresponda consentimiento expreso, se pide por separado.</p>
   <h2>17. Ley aplicable y jurisdicción</h2>
   <p>Estos Términos se rigen por las leyes de la <strong>República Argentina</strong>.</p>
   <p>Para toda controversia serán competentes los tribunales del <strong>domicilio real del Cliente</strong>, conforme al art. 36 de la Ley 24.240, que tiene por no escrita toda cláusula en contrario.</p>
@@ -434,13 +446,13 @@
   <p><strong>trattoapp1@gmail.com</strong>
   Remedios de Escalada 7646, Martín Coronado, Tres de Febrero (B1682), Provincia de Buenos Aires.</p>
   
-  <p><strong>Última actualización:</strong> 15 de octubre de 2026 (dónde se guardan tus datos, en Datos personales)
-  <strong>Vigencia:</strong> 25 de septiembre de 2026</p>
+  <p><strong>Revisión:</strong> 2026-10-28 · 28 de octubre de 2026.<br>Condiciones anteriores desde el 25 de septiembre de 2026; sin aplicación retroactiva de cambios sustanciales.</p>
   
   <div class="pie">
     <a href="/terminos-cliente.html">Términos · clientes</a>
     <a href="/terminos-proveedor.html">Términos · proveedores</a>
     <a href="/privacidad.html">Política de privacidad</a>
+    <a href="/confianza.html">Acuerdos y cuidado</a>
     <a href="mailto:trattoapp1@gmail.com">Escribinos</a>
   </div>
 </main>

@@ -1,0 +1,15 @@
+{
+  "name": "tratto-confianza-tests",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "test": "node --test ../confianza-ui.test.mjs backend.test.mjs rating.test.mjs browser.test.mjs cleanup-schedule.test.mjs",
+    "test:backend": "node --test backend.test.mjs",
+    "test:browser": "node --test browser.test.mjs",
+    "test:rating": "node --test rating.test.mjs"
+  },
+  "devDependencies": {
+    "@electric-sql/pglite": "0.5.10",
+    "@playwright/test": "1.63.0"
+  }
+}
