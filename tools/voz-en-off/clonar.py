@@ -321,7 +321,14 @@ def hacer_tramo(a, n, palabras, carpeta):
     import soundfile as sf
     from qwen_tts import Qwen3TTSModel
     from faster_whisper import WhisperModel
-    modelo = Qwen3TTSModel.from_pretrained(MODELO, device_map="cpu", dtype=torch.float32)
+    # Con la copia local no le pregunta nada a Hugging Face (por tramo lo
+    # consultaba y a veces devolvia "429 Too Many Requests").
+    from huggingface_hub import snapshot_download
+    try:
+        ruta = snapshot_download(MODELO, local_files_only=True)
+    except Exception:
+        ruta = MODELO
+    modelo = Qwen3TTSModel.from_pretrained(ruta, device_map="cpu", dtype=torch.float32)
     oido = WhisperModel(OIDO, device="cpu", compute_type="int8")
     sr_voz = modelo.model.speaker_encoder_sample_rate
 
