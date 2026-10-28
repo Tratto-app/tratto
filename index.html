@@ -1201,23 +1201,6 @@
     text-transform:uppercase;color:var(--laton-osc);font-weight:600;
     border:1px solid rgba(201,162,39,.5);border-radius:99px;padding:4px 10px;flex:none}
 
-  /* ═══════════ IDENTIDAD COMPROBADA ═══════════ */
-  /* Misma tarjeta que Cobros: sin comprobar es un formulario corto; comprobada
-     es un comprobante con el sello del escudo, igual al de Trabajo protegido. */
-  .ident-fotos{display:grid;gap:10px;margin-top:14px}
-  .ident-foto{display:flex;align-items:center;gap:11px;border:1px dashed var(--linea-fuerte);
-    border-radius:var(--r-ch);padding:10px 12px;cursor:pointer;background:var(--claro-2);font-size:13px}
-  .ident-foto input{position:absolute;width:1px;height:1px;opacity:0;pointer-events:none}
-  .ident-foto .ident-num{font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--laton-osc);
-    border:1px solid rgba(201,162,39,.5);border-radius:99px;width:22px;height:22px;display:grid;place-items:center;flex:none}
-  .ident-foto .ident-est{margin-left:auto;font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:.12em;
-    text-transform:uppercase;color:var(--gris-2);flex:none}
-  .ident-foto.lista{border-style:solid;border-color:rgba(30,93,73,.45);background:rgba(30,93,73,.05)}
-  .ident-foto.lista .ident-est{color:var(--verde)}
-  .ident-privado{font-size:11.5px;line-height:1.5;color:var(--gris-2);margin-top:12px}
-  .cobros .campo{margin-top:14px;margin-bottom:0}
-  .medalla.ident svg{stroke:currentColor;fill:none}
-
   /* ═══════════ XP DEL CLIENTE ═══════════ */
   /* ═══════════ VARIOS ═══════════ */
   .chip-zona{font-family:'IBM Plex Mono',monospace;font-size:8.5px;letter-spacing:.12em;
@@ -1935,8 +1918,6 @@
       <div id="perfil-cobros-sec" class="oculto">
         <div class="sec"><span class="sec-tit">Cobros</span></div>
         <div id="perfil-cobros"></div>
-        <div class="sec"><span class="sec-tit">Identidad</span></div>
-        <div id="perfil-identidad"></div>
       </div>
 
       <!-- Cuenta es la única pantalla que comparten los dos roles, así que es
@@ -2481,9 +2462,6 @@
 
         <div class="sec"><span class="sec-tit">Cobros</span></div>
         <div id="panel-cobros"></div>
-
-        <div class="sec"><span class="sec-tit">Identidad</span></div>
-        <div id="panel-identidad"></div>
 
         <div class="sec"><span class="sec-tit">Tu trayectoria</span></div>
         <div id="panel-medallas"></div>
@@ -4015,7 +3993,6 @@ async function cargarPerfiles(){
     $('lista-perfiles').innerHTML = cajaVacia('No se pudieron cargar','Tocá el botón de actualizar arriba a la derecha.','maleta');
   }
   cargarCobros();
-  cargarIdentidad();
   pintarAvisoServicio();
   guiaRevisar();
 }
@@ -4591,9 +4568,8 @@ $('ch-hilo').addEventListener('click', async (e) => {
 
 /* ══════════════════ TRABAJO PROTEGIDO ══════════════════ */
 /* El cliente paga una cuota (5 % del presupuesto, mínimo $1.500) a Tratto. Si
-   no le terminan el trabajo, elige: que Tratto le consiga otra persona con
-   identidad comprobada en 48 h hábiles, o no seguir y que le devuelvan la
-   cuota. Tratto no paga el trabajo ni la diferencia. Las reglas viven en la
+   no le terminan el trabajo, elige: que Tratto le consiga otra persona de su
+   zona en 48 h hábiles, o no seguir y que le devuelvan la cuota. Tratto no paga el trabajo ni la diferencia. Las reglas viven en la
    base (supabase/migrations/*_trabajo_protegido.sql); acá solo se muestran. */
 const URL_PROTEGIDO = SUPABASE_URL + '/functions/v1/trabajo-protegido';
 let presusPintados = {};        // presupuesto_id → último mensaje pintado
@@ -4629,7 +4605,7 @@ function protegidoHTML(m){
       '<div class="prot-tag">'+ESCUDO+'Trabajo protegido</div>' +
       '<div class="prot-tit">Protegé este trabajo por '+cuota+'</div>' +
       '<div class="prot-txt">Si no te lo terminan, en 48 horas hábiles te conseguimos otra persona de tu zona ' +
-        'con identidad comprobada para que lo termine. Si preferís no seguir, te devolvemos los '+cuota+'.</div>' +
+        'para que lo termine. Si preferís no seguir, te devolvemos los '+cuota+'.</div>' +
       chico('Es el 5 % del presupuesto y se paga una sola vez. No cubre plata dada por fuera de la app. ' +
         '<a href="/terminos-cliente.html#trabajo-protegido" target="_blank" rel="noopener">Cómo funciona</a>') +
       '<div class="prot-acciones"><button class="btn lleno" data-proteger="'+m.id+'" data-cuota="'+Number(c.cuota)+'" ' +
@@ -4638,7 +4614,7 @@ function protegidoHTML(m){
 
   if(miRol === 'proveedor'){
     const txt = {
-      activa: 'El cliente protegió este trabajo. Si no lo terminás, Tratto le consigue otra persona y perdés el distintivo de identidad comprobada.',
+      activa: 'El cliente protegió este trabajo. Si no lo terminás, Tratto le consigue otra persona para terminarlo y el reclamo queda registrado.',
       reclamada: 'El cliente reclamó que el trabajo no está terminado. Respondé en '+reclamos+': si lo vas a terminar, decí cuándo.'
     }[p.estado];
     return tarjeta(sello + (txt ? '<div class="prot-txt">'+txt+'</div>' : ''));
@@ -4653,7 +4629,7 @@ function protegidoHTML(m){
   }
   const txt = {
     reclamada: p.quiere_seguir
-      ? 'Reclamo en marcha. Antes del '+fechaPlazo(p.plazo_reemplazo)+' te pasamos otra persona con identidad comprobada ' +
+      ? 'Reclamo en marcha. Antes del '+fechaPlazo(p.plazo_reemplazo)+' te pasamos otra persona de tu zona ' +
         'para terminarlo. Si no la conseguimos, te devolvemos la cuota. Seguilo en '+reclamos+'.'
       : 'Reclamo en marcha. Te devolvemos la cuota por Mercado Pago, a la misma tarjeta. Seguilo en '+reclamos+'.',
     reemplazo_conseguido: 'Te conseguimos otra persona para terminarlo. Cómo seguir está en '+reclamos+'.',
@@ -4666,7 +4642,7 @@ function protegidoHTML(m){
 function reclamoProtegidoHTML(id){
   return '<div class="prot-form" data-prot-form="'+id+'">' +
     '<label class="prot-opcion"><input type="radio" name="prot-seguir-'+id+'" value="si" checked>' +
-      '<span><b>Que lo termine otra persona.</b> En 48 horas hábiles te pasamos a alguien de tu zona con identidad comprobada.</span></label>' +
+      '<span><b>Que lo termine otra persona.</b> En 48 horas hábiles te pasamos a alguien de tu zona.</span></label>' +
     '<label class="prot-opcion"><input type="radio" name="prot-seguir-'+id+'" value="no">' +
       '<span><b>No seguir.</b> Te devolvemos la cuota de Trabajo protegido.</span></label>' +
     '<div class="campo"><label>Contanos qué pasó</label>' +
@@ -5544,12 +5520,6 @@ async function abrirFicha(userId, propia){
       body: JSON.stringify({perfil_user_id:userId, visitante:sesion.user.id})}).catch(()=>{});
   }
 
-  /* El único dato del perfil que Tratto revisó: la identidad (DNI y selfie). */
-  let identidad = null;
-  try{ identidad = (await api('distintivos?user_id=eq.'+(fichaPropia ? sesion.user.id : userId)+'&tipo=eq.identidad&select=desde'))[0] || null; }
-  catch(e){ console.error(e); }
-  const identMes = identidad ? new Date(identidad.desde+'T12:00').toLocaleDateString('es-AR',{month:'long', year:'numeric'}) : '';
-
   const nombre = (perfil && perfil.nombre) || (servicios[0] && servicios[0].nombre) || 'Sin nombre';
   const trabajos = (perfil && perfil.trabajos_hechos) || 0;
 
@@ -5562,9 +5532,7 @@ async function abrirFicha(userId, propia){
     (zonas.length ? '<span>'+esc(zonas.join(' · '))+'</span>' : '') +
     (servicios[0] && servicios[0].disponibilidad ? '<span>Disponible: '+esc(servicios[0].disponibilidad)+'</span>' : '');
 
-  $('pf-medallas').innerHTML = htmlChapaTrabajos(trabajos) + ' ' + htmlMedalla(trabajos) +
-    (identidad ? ' <span class="medalla oro ident" title="Tratto comparó su DNI con una selfie en '+esc(identMes)+'">' +
-      ESCUDO + 'Identidad comprobada</span>' : '');
+  $('pf-medallas').innerHTML = htmlChapaTrabajos(trabajos) + ' ' + htmlMedalla(trabajos);
   $('pf-c-trabajos').textContent = trabajos;
   $('pf-c-exp').textContent = (perfil && perfil.anios_exp) ? perfil.anios_exp + ' años' : '—';
   const desde = servicios.length ? Math.min(...servicios.map(s => Number(s.precio_desde)||0)) : 0;
@@ -5645,11 +5613,8 @@ async function abrirFicha(userId, propia){
   /* pie: editar o contactar */
   $('pf-contacto').innerHTML = fichaPropia
     ? '<button class="btn vacio-b" id="pf-editar" type="button">Editar mi perfil</button>'
-    : '<div class="nota">' + (identidad
-        ? '<b>Tratto comprobó su identidad</b> (DNI y selfie, '+esc(identMes)+'). El resto de los datos los cargó ' +
-          'quien ofrece el servicio y no los verificamos: antes de contratar, pedile la documentación que corresponda.'
-        : 'Los datos de este perfil los cargó quien ofrece el servicio. ' +
-          '<b>Tratto no los verificó.</b> Antes de contratar, pedile la documentación que corresponda.') + '</div>' +
+    : '<div class="nota">Los datos de este perfil los cargó quien ofrece el servicio. ' +
+      '<b>Tratto no los verificó.</b> Antes de contratar, pedile la documentación que corresponda.</div>' +
       '<div style="margin-top:12px;text-align:center"><button class="reportar" data-reporta-perfil="'+esc(userId)+'" type="button">' +
       BANDERA_REP + 'Reportar este perfil</button></div>';
 
@@ -5804,130 +5769,6 @@ document.addEventListener('visibilitychange', () => {
   if(!document.hidden && sesion && (actual === 'panel' || actual === 'perfil')) cargarCobros();
 });
 
-/* ══════════════════ IDENTIDAD COMPROBADA ══════════════════ */
-/* Quien ofrece servicios manda su DNI (frente y dorso) y una selfie con el
-   DNI. Lo revisa una persona del equipo en el CRM; las fotos se borran apenas
-   se decide. Con la identidad comprobada aparece el distintivo en su perfil y
-   sus clientes pueden pagar Trabajo protegido. Las fotos van a un bucket
-   privado que nadie de afuera puede leer, ni siquiera quien las subió. */
-let identidadFotos = {};   // frente | dorso | selfie → ruta ya subida
-
-const IDENT_PASOS = [
-  ['frente', 'DNI de frente', 'environment'],
-  ['dorso',  'DNI de dorso',  'environment'],
-  ['selfie', 'Selfie sosteniendo tu DNI', 'user']
-];
-
-function identidadHTML(est){
-  const mes = d => new Date(d+'T12:00').toLocaleDateString('es-AR', {month:'long', year:'numeric'});
-  if(est && est.desde){
-    return '<div class="cobros puesta">' +
-      '<div class="cobros-tit">Tu identidad está comprobada</div>' +
-      '<div class="cobros-txt">Tus clientes ven el distintivo en tu perfil y pueden proteger los trabajos ' +
-        'que hacen con vos. Si dejás un trabajo protegido sin terminar, lo perdés.</div>' +
-      '<div class="cobros-firma"><span class="cobros-hilo"></span>' +
-        '<span class="cobros-sello">Desde '+esc(mes(est.desde))+'</span></div></div>';
-  }
-  if(est && est.estado === 'pendiente'){
-    return '<div class="cobros">' +
-      '<div class="cobros-tit">Estamos revisando tu identidad</div>' +
-      '<div class="cobros-txt">Una persona del equipo compara tu DNI con la selfie y con tu perfil. ' +
-        'Cuando esté lista, vas a ver acá el resultado.</div></div>';
-  }
-  const rechazo = est && est.estado === 'rechazada'
-    ? '<div class="pago-error visible" style="margin-top:12px">No la pudimos comprobar: '+esc(est.motivo || 'revisá las fotos.')+' Podés mandarla de nuevo.</div>'
-    : '';
-  return '<div class="cobros" data-ident-form>' +
-    '<div class="cobros-tit">Comprobá tu identidad</div>' +
-    '<div class="cobros-txt">Mandanos tu DNI de frente y de dorso y una selfie sosteniéndolo. Con la identidad ' +
-      'comprobada, tu perfil muestra el distintivo y tus clientes pueden pagar <b>Trabajo protegido</b>, ' +
-      'que les da tranquilidad para contratarte.</div>' + rechazo +
-    '<div class="campo"><label>Nombre y apellido como figuran en el DNI</label>' +
-      '<input data-ident-nombre type="text" maxlength="120" autocomplete="name"></div>' +
-    '<div class="ident-fotos">' + IDENT_PASOS.map(([k, txt, cam], i) =>
-      '<label class="ident-foto'+(identidadFotos[k]?' lista':'')+'" data-ident-paso="'+k+'">' +
-        '<span class="ident-num">'+(i+1)+'</span><span>'+txt+'</span>' +
-        '<span class="ident-est">'+(identidadFotos[k]?'Lista':'Subir')+'</span>' +
-        '<input type="file" accept="image/*" capture="'+cam+'" data-ident-archivo="'+k+'"></label>').join('') +
-    '</div>' +
-    '<div class="ident-privado">Las fotos las ve solo el equipo de Tratto, se usan únicamente para esta revisión y ' +
-      'se borran apenas la terminamos. Queda guardado que tu identidad está comprobada y desde cuándo.</div>' +
-    '<div class="pago-error" data-ident-error></div>' +
-    '<button class="btn lleno" data-ident-enviar type="button"><span class="rueda"></span><span>Mandar para revisar</span></button>' +
-    '</div>';
-}
-
-async function cargarIdentidad(){
-  const destinos = ['panel-identidad','perfil-identidad'].map($).filter(Boolean);
-  if(!destinos.length || !misPerfiles.length) return;
-  let est = null;
-  try{
-    const r = await fetch(SUPABASE_URL+'/rest/v1/rpc/identidad_mi_estado', {method:'POST', headers:cab(), body:'{}'});
-    if(r.ok) est = await r.json();
-  }catch(e){ console.error(e); }
-  const html = identidadHTML(est);
-  /* No pisar un formulario que se está llenando en la otra pantalla. */
-  destinos.forEach(d => { if(!d.querySelector('[data-ident-form] input[data-ident-nombre]:focus')) d.innerHTML = html; });
-}
-
-function nuevoId(){
-  if(window.crypto && crypto.randomUUID) return crypto.randomUUID();
-  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, c => {
-    const r = Math.random()*16|0; return (c === 'x' ? r : (r&0x3|0x8)).toString(16);
-  });
-}
-
-['panel-identidad','perfil-identidad'].forEach(id => {
-  $(id).addEventListener('change', async e => {
-    const inp = e.target.closest('[data-ident-archivo]');
-    if(!inp || !inp.files || !inp.files[0]) return;
-    const k = inp.dataset.identArchivo;
-    const caja = inp.closest('[data-ident-paso]');
-    const err = $(id).querySelector('[data-ident-error]');
-    err.classList.remove('visible');
-    caja.querySelector('.ident-est').textContent = 'Subiendo…';
-    try{
-      const chico = await achicar(inp.files[0], 1600);
-      const ruta = sesion.user.id + '/' + nuevoId() + '.jpg';
-      const r = await fetch(SUPABASE_URL + '/storage/v1/object/identidad/' + ruta, {method:'POST',
-        headers:{'apikey':SUPABASE_ANON, 'Authorization':'Bearer '+sesion.access_token, 'Content-Type':'image/jpeg'},
-        body: chico});
-      if(!r.ok) throw new Error(await r.text());
-      identidadFotos[k] = ruta;
-      caja.classList.add('lista');
-      caja.querySelector('.ident-est').textContent = 'Lista';
-    }catch(ex){
-      console.error(ex);
-      caja.classList.remove('lista');
-      caja.querySelector('.ident-est').textContent = 'Subir';
-      err.textContent = 'No pudimos subir esa foto. Probá de nuevo con buena luz y sin flash.';
-      err.classList.add('visible');
-    }
-  });
-  $(id).addEventListener('click', async e => {
-    const b = e.target.closest('[data-ident-enviar]');
-    if(!b || b.disabled) return;
-    const err = $(id).querySelector('[data-ident-error]');
-    const nombre = ($(id).querySelector('[data-ident-nombre]').value || '').trim();
-    err.classList.remove('visible');
-    const falta = IDENT_PASOS.find(([k]) => !identidadFotos[k]);
-    if(nombre.length < 3){ err.textContent = 'Escribí tu nombre y apellido como figuran en el DNI.'; err.classList.add('visible'); return; }
-    if(falta){ err.textContent = 'Falta la foto: ' + falta[1].toLowerCase() + '.'; err.classList.add('visible'); return; }
-    b.disabled = true; b.classList.add('cargando');
-    try{
-      const r = await fetch(SUPABASE_URL+'/rest/v1/rpc/identidad_pedir', {method:'POST', headers:cab(),
-        body: JSON.stringify({p_nombre:nombre, p_frente:identidadFotos.frente, p_dorso:identidadFotos.dorso, p_selfie:identidadFotos.selfie})});
-      if(!r.ok) throw new Error(errorDeRPC(await r.text(), 'No pudimos mandarla. Probá de nuevo.'));
-      identidadFotos = {};
-      cargarIdentidad();
-    }catch(ex){
-      console.error(ex);
-      err.textContent = ex.message; err.classList.add('visible');
-      b.disabled = false; b.classList.remove('cargando');
-    }
-  });
-});
-
 async function cargarPanel(){
   $('panel-saludo').textContent = 'Hola, ' + miPrimerNombre();
 
@@ -5941,7 +5782,6 @@ async function cargarPanel(){
   $('panel-sin-perfil').innerHTML = '';
   $('panel-datos').classList.remove('oculto');
   cargarCobros();
-  cargarIdentidad();
 
   let visitas = 0, leads = 0, presus = 0, cerrados = 0, monto = 0;
   try{
@@ -7094,14 +6934,13 @@ const FAQ = [
      'No. El pago va directo del cliente a quien hizo el trabajo, por Mercado Pago. ' +
      'Tratto nunca tiene los fondos: solo se retiene su comisión en el momento del cobro.'],
     ['¿Tratto verifica a quienes ofrecen servicios?',
-     'Solo la identidad, y solo de quien la manda: si en el perfil ves <b>Identidad comprobada</b>, alguien del equipo ' +
-     'comparó su DNI con una selfie. No verificamos matrículas ni antecedentes: el resto de lo que ves en cada perfil ' +
-     'lo declaró quien ofrece el servicio. Por eso mismo <b>no admitimos rubros que necesiten matrícula</b>, como gas, ' +
-     'electricidad o profesiones de la salud. Mirá las calificaciones y los trabajos cerrados por la app antes de decidir.'],
+     'No verificamos matrículas ni antecedentes: lo que ves en cada perfil lo declaró quien ofrece el servicio. ' +
+     'Por eso mismo <b>no admitimos rubros que necesiten matrícula</b>, como gas, electricidad o profesiones de la salud. ' +
+     'Mirá las calificaciones y los trabajos cerrados por la app antes de decidir.'],
     ['¿Qué es Trabajo protegido?',
-     'Algo que podés sumar cuando aceptás un presupuesto de alguien con identidad comprobada. Pagás el 5 % del ' +
+     'Algo que podés sumar cuando aceptás un presupuesto de alguien que cobra por la app. Pagás el 5 % del ' +
      'presupuesto (mínimo $1.500). Si no te terminan el trabajo, elegís: <b>te conseguimos otra persona de tu zona ' +
-     'con identidad comprobada en 48 horas hábiles</b>, o no seguís y te devolvemos lo que pagaste por la protección. ' +
+     'en 48 horas hábiles</b>, o no seguís y te devolvemos lo que pagaste por la protección. ' +
      'No es un seguro y Tratto no paga el trabajo ni la diferencia de precio. No cubre plata dada por fuera de la app.'],
     ['¿El precio que me da la foto es el que voy a pagar?',
      'No. Es una estimación que arma una inteligencia artificial mirando la foto, para que sepas ' +

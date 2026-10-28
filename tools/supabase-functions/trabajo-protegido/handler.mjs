@@ -10,6 +10,9 @@
 //   devolver (base, con firma)    → devuelve las cuotas que soporte aprobó.
 //   limpiar  (base, con firma)    → borra las fotos de identidad que ya no
 //                                   hacen falta (decididas, viejas o huérfanas).
+//   revisar  (base, con firma)    → dice si la cuenta de Mercado Pago de Tratto
+//                                   está cargada y responde (sí o no; nunca las
+//                                   claves).
 
 const ORIGENES = ['https://www.trattoapp.com.ar', 'https://trattoapp.com.ar'];
 
@@ -49,8 +52,9 @@ export function crearHandler({ sb, mp, firma, publicKey }) {
     const accion = b && b.accion;
 
     // ── Lo que llama la base (cron o una decisión de soporte) ──
-    if (accion === 'devolver' || accion === 'limpiar') {
+    if (accion === 'devolver' || accion === 'limpiar' || accion === 'revisar') {
       if (!firma || req.headers.get('x-tratto-firma') !== firma) return json({ error: 'No autorizado.' }, 401);
+      if (accion === 'revisar') return json(await revisar(mp, publicKey));
       return accion === 'devolver' ? json(await devolver(sb, mp)) : json(await limpiar(sb));
     }
 
@@ -117,6 +121,16 @@ export function crearHandler({ sb, mp, firma, publicKey }) {
   };
 }
 
+async function revisar(mp, publicKey) {
+  const yo = mp ? await mp.yo() : null;
+  return {
+    access_token: !!mp,
+    responde: !!(yo && yo.id),
+    public_key: typeof publicKey === 'string' && /^APP_USR-/.test(publicKey),
+    app: mp ? mp.app : null,
+  };
+}
+
 async function devolver(sb, mp) {
   if (!mp) return { ok: false, motivo: 'sin cuenta de Mercado Pago configurada' };
   const { data, error } = await sb.rpc('proteccion_devoluciones_pendientes');
@@ -157,6 +171,16 @@ export function crearMP(accessToken, fetchFn = fetch) {
     }
   };
   return {
+    // El número de aplicación va en el token (APP_USR-<aplicación>-…): es público.
+    app: /^APP_USR-(\d+)-/.exec(accessToken)?.[1] ?? null,
+    yo: async () => {
+      try {
+        const r = await fetchFn('https://api.mercadopago.com/users/me', { headers: { Authorization: 'Bearer ' + accessToken } });
+        return await r.json().catch(() => null);
+      } catch {
+        return null;
+      }
+    },
     cobrar: (cuerpo, idem) => pedir('https://api.mercadopago.com/v1/payments', cuerpo, idem),
     devolver: (pagoId, idem) =>
       pedir('https://api.mercadopago.com/v1/payments/' + encodeURIComponent(pagoId) + '/refunds', {}, idem),

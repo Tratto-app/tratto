@@ -1,5 +1,5 @@
-// Trabajo protegido e identidad comprobada en la app real, con el backend
-// simulado: ninguna llamada sale del navegador (ni pagos, ni fotos, ni avisos).
+// Trabajo protegido en la app real, con el backend
+// simulado: ninguna llamada sale del navegador (ni pagos ni avisos).
 //   node --test tools/confianza/trabajo-protegido.browser.test.mjs
 // Con CAPTURAS=carpeta deja capturas de cada estado para mirarlas.
 import {test, before, after} from 'node:test';
@@ -166,44 +166,8 @@ test('quien hace el trabajo ve que está protegido y no tiene botones del client
   try {
     await abrirChat(p);
     await p.page.waitForSelector('[data-prot="501"]');
-    assert.match(await p.page.locator('[data-prot="501"]').innerText(), /perdés el distintivo/);
+    assert.match(await p.page.locator('[data-prot="501"]').innerText(), /el reclamo queda registrado/);
     assert.equal(await p.page.locator('[data-prot-reclamar]').count(), 0);
     assert.equal(p.calls.some(c => c.path.endsWith('/rpc/proteccion_cotizar')), false);
-  } finally { await p.cerrar(); }
-});
-
-test('identidad: formulario, fotos y envío', async () => {
-  const subidas = [];
-  const p = await app({rol: 'proveedor', handler: c => {
-    if (c.path.endsWith('/rpc/identidad_mi_estado')) return {json: subidas.length >= 4 ? {estado: 'pendiente'} : {desde: null, estado: null}};
-    if (c.path.startsWith('/storage/v1/object/identidad/')) { subidas.push(c.path); return {json: {Key: c.path}}; }
-    if (c.path.endsWith('/rpc/identidad_pedir')) { subidas.push('pedido'); return {json: 'pendiente'}; }
-    return null;
-  }});
-  try {
-    await p.page.evaluate(() => {
-      misPerfiles = [{id: 1, rubro: 'Pintura'}]; ir('panel');
-      document.getElementById('panel-datos').classList.remove('oculto'); cargarIdentidad();
-    });
-    await p.page.waitForSelector('#panel-identidad [data-ident-form]');
-    await p.page.locator('#panel-identidad').scrollIntoViewIfNeeded();
-    await p.foto('6-identidad');
-    // Sin fotos no se manda.
-    await p.page.locator('#panel-identidad [data-ident-nombre]').fill('Juana Pérez');
-    await p.page.locator('#panel-identidad [data-ident-enviar]').click();
-    assert.match(await p.page.locator('#panel-identidad [data-ident-error]').innerText(), /Falta la foto/);
-    // Una imagen chica de verdad (1x1 PNG) para cada paso.
-    const png = Buffer.from('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8z8BQDwAEhQGAhKmMIQAAAABJRU5ErkJggg==', 'base64');
-    for (const k of ['frente', 'dorso', 'selfie']) {
-      await p.page.locator('#panel-identidad [data-ident-archivo="' + k + '"]').setInputFiles({name: k + '.png', mimeType: 'image/png', buffer: png});
-      await p.page.waitForFunction(k => document.querySelector('#panel-identidad [data-ident-paso="' + k + '"]').classList.contains('lista'), k);
-    }
-    assert.equal(subidas.length, 3);
-    assert.ok(subidas.every(s => /^\/storage\/v1\/object\/identidad\/22222222-2222-4222-8222-222222222222\/[0-9a-f-]{36}\.jpg$/.test(s)), 'rutas dentro de la carpeta propia');
-    await p.page.locator('#panel-identidad [data-ident-enviar]').click();
-    await p.page.waitForFunction(() => document.getElementById('panel-identidad').innerText.includes('Estamos revisando'));
-    const pedido = p.calls.find(c => c.path.endsWith('/rpc/identidad_pedir'));
-    assert.equal(pedido.body.p_nombre, 'Juana Pérez');
-    assert.ok(pedido.body.p_frente && pedido.body.p_dorso && pedido.body.p_selfie);
   } finally { await p.cerrar(); }
 });

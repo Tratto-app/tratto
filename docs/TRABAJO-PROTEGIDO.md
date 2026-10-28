@@ -1,6 +1,8 @@
-# Trabajo protegido e identidad comprobada
+# Trabajo protegido
 
-Decidido por el fundador el 28/10/2026. Este documento explica cómo funciona,
+Decidido por el fundador el 28/10/2026. Ese mismo día pidió fusionarlo **sin la
+verificación de identidad**: se ofrece con cualquiera que tenga Mercado Pago
+conectado. Este documento explica cómo funciona,
 qué falta para lanzarlo y qué hace soporte con cada caso.
 
 ## La regla
@@ -10,8 +12,7 @@ qué falta para lanzarlo y qué hace soporte con cada caso.
 - Si quien hace el trabajo no lo termina, el cliente reclama desde el
   presupuesto y elige:
   - **Seguir:** en 48 horas hábiles (lunes a viernes, sin descontar feriados)
-    Tratto le pasa otra persona de su zona con identidad comprobada que le
-    mande presupuesto para terminarlo. Si no se consigue a tiempo, se le
+    Tratto le pasa otra persona de su zona que le mande presupuesto para terminarlo. Si no se consigue a tiempo, se le
     devuelve la cuota.
   - **No seguir:** se le devuelve la cuota.
 - **Tratto no paga el trabajo, ni la diferencia de precio, ni materiales ni
@@ -19,38 +20,31 @@ qué falta para lanzarlo y qué hace soporte con cada caso.
 - No se llama "seguro" en ningún lado: vender seguros es solo para aseguradoras
   autorizadas por la Superintendencia de Seguros (Ley 20.091). Es un
   compromiso comercial de Tratto (punto 4.5 de los términos del cliente).
-- Solo se ofrece si quien hace el trabajo tiene **identidad comprobada** y
-  **Mercado Pago conectado** (el trabajo se tiene que poder pagar por la app).
-- Quien abandona un trabajo protegido pierde el distintivo de identidad.
+- Solo se ofrece si quien hace el trabajo tiene **Mercado Pago conectado** (el
+  trabajo se tiene que poder pagar por la app).
+- Si quien lo hacía lo abandona, el reclamo queda registrado (punto 14 de sus
+  términos).
 
-## Identidad comprobada
+## Identidad comprobada (apagada)
 
-Quien ofrece servicios manda desde Panel o Cuenta → Identidad: su nombre como
-figura en el DNI, foto del DNI de frente y de dorso, y una selfie
-sosteniéndolo. Te llega un mail ("Identidad para revisar") y aparece en el
-CRM → **Confianza**. Ahí mirás las tres fotos y apretás Aprobar o No aprobar
-(con el motivo, que la persona ve).
-
-- Las fotos están en el bucket privado `identidad`: solo las leen los
-  miembros owner/admin del CRM, con enlaces que vencen a los 10 minutos.
-- Se borran apenas decidís (la base llama a la función `trabajo-protegido`,
-  acción `limpiar`) y, si algo quedó, en la limpieza de cada noche (06:40 UTC,
-  tarea `trabajo-protegido-noche`). También se borran las subidas que nunca se
-  mandaron.
-- No hay reconocimiento facial automático ni consulta de antecedentes: lo
-  decide una persona.
-- Queda solo `public.distintivos` (user_id, tipo `identidad`, desde).
+Se armó y el fundador decidió no usarla por ahora. Quedan en la base, sin
+uso: `public.distintivos`, `privado.identidad_solicitudes`, el bucket privado
+`identidad` y las funciones `identidad_*`, a las que la app ya no puede llamar
+(migración `20261028210000_trabajo_protegido_sin_identidad.sql`). Para
+volver a usarla hay que devolverles el permiso, sumar de nuevo la tarjeta de
+la app y la sección del CRM (están en el historial de git, commit d5d9fdd) y
+los textos legales.
 
 ## Cómo está armado
 
 | Pieza | Dónde |
 |---|---|
-| Tablas, reglas y permisos | `supabase/migrations/20261028200000_trabajo_protegido.sql` y `20261028201000_trabajo_protegido_interruptor.sql` |
-| Cobro de la cuota, devoluciones y limpieza de fotos | función `trabajo-protegido` (`tools/supabase-functions/trabajo-protegido/`, pruebas en `handler.test.mjs`) |
-| Pantallas de la app | `index.html`: presupuesto aceptado (oferta, pago, sello, reclamo), Panel/Cuenta → Identidad, distintivo en el perfil, preguntas frecuentes |
-| Panel de soporte | CRM → Confianza (`growth/web/src/pages/Confianza.tsx`) |
+| Tablas, reglas y permisos | `supabase/migrations/20261028200000_trabajo_protegido.sql`, `20261028201000_trabajo_protegido_interruptor.sql` y `20261028210000_trabajo_protegido_sin_identidad.sql` |
+| Cobro de la cuota, devoluciones y revisión de la cuenta | función `trabajo-protegido` (`tools/supabase-functions/trabajo-protegido/`, pruebas en `handler.test.mjs`) |
+| Pantallas de la app | `index.html`: presupuesto aceptado (oferta, pago, sello, reclamo) y preguntas frecuentes |
+| Panel de soporte | CRM → Trabajo protegido (`growth/web/src/pages/Confianza.tsx`) |
 | Pruebas de la app | `tools/confianza/trabajo-protegido.browser.test.mjs` |
-| Textos legales | `terminos-cliente.html` 4.5 y 6.3, `terminos-proveedor.html` 8.3 y 8.4, `privacidad.html` 2.5, `confianza.html` 6 |
+| Textos legales | `terminos-cliente.html` 4.5, `terminos-proveedor.html` 8.3, `privacidad.html` 2.5, `confianza.html` 6 |
 
 - La cuota se calcula en la base (`privado.cuota_proteccion`), nunca en el
   navegador. El cobro va con `binary_mode` (aprobado o rechazado, sin
@@ -60,40 +54,32 @@ CRM → **Confianza**. Ahí mirás las tres fotos y apretás Aprobar o No aproba
 - Cuando el cliente paga el trabajo como terminado, la protección pasa sola a
   `cumplida`.
 
-## Para lanzarlo (en este orden)
+## Cómo se lanzó
 
-1. **Cuenta de Mercado Pago de Tratto en la función.** En Mercado Pago
-   Developers → Tus integraciones → la aplicación de Tratto → Credenciales de
-   producción, copiar el *Access Token* y la *Public Key*. En Supabase →
-   Edge Functions → Secrets, cargar `MP_TRATTO_ACCESS_TOKEN` y
-   `MP_TRATTO_PUBLIC_KEY`. Nunca pegarlos en el chat ni en el repo. Sin esto,
-   la función responde "todavía no está disponible" y no cobra nada.
-2. Que un abogado lea el punto 4.5 de los términos del cliente
-   (recomendado: es un compromiso de plata con consumidores, Ley 24.240).
-3. Fusionar la rama.
-4. Prender el interruptor:
-   `update privado.config set valor='si' where clave='trabajo_protegido_activo';`
-   Hasta entonces la app no ofrece proteger nada (la identidad sí se puede
-   mandar y revisar desde ya).
-5. Pedirles a quienes ofrecen servicios que comprueben su identidad: sin
-   ninguno comprobado, nadie puede proteger un trabajo.
+1. Cuenta de Mercado Pago de Tratto en la función: `MP_TRATTO_ACCESS_TOKEN` y
+   `MP_TRATTO_PUBLIC_KEY` en Supabase → Edge Functions → Secrets (aplicación
+   2631534334320257, la misma con la que cobran quienes ofrecen servicios).
+   Se comprueba sin ver las claves con
+   `select privado.trabajo_protegido_llamar('revisar');` y la respuesta en
+   `net._http_response` (`access_token`, `responde`, `public_key`, `app`).
+2. Fusión a main (28/10/2026).
+3. Interruptor: `update privado.config set valor='si' where clave='trabajo_protegido_activo';`
+   (con `'no'` la app deja de ofrecerlo sin tocar lo ya pagado).
 
 ## Qué hace soporte con un reclamo
 
 Llega el mail "Reclamo de Trabajo protegido" y el caso aparece primero en CRM
-→ Confianza, con el plazo.
+→ Trabajo protegido, con el plazo.
 
-- **Quiere seguir:** buscar a alguien con identidad comprobada del mismo rubro
-  y zona (Usuarios del CRM, `trabajo listo`) y pedirle que le escriba por la
+- **Quiere seguir:** buscar a alguien del mismo rubro y zona (Usuarios del CRM, `trabajo listo`) y pedirle que le escriba por la
   app. Cuando le mandó presupuesto: **Conseguimos a otra persona**. Si se vence
   el plazo sin nadie: **Devolver la cuota**.
 - **No quiere seguir:** **Devolver la cuota**. La devolución sale sola por
   Mercado Pago desde la cuenta de Tratto (y la reintenta cada noche si falla).
 - **Volvió quien lo hacía y el cliente está de acuerdo:** **Sigue el mismo**
-  (la protección vuelve a quedar activa y no pierde el distintivo).
+  (la protección vuelve a quedar activa).
 
-Conseguir reemplazo o devolver la cuota de un caso reclamado le saca el
-distintivo a quien abandonó. Cada decisión queda escrita en el reclamo del
+Cada decisión queda escrita en el reclamo del
 chat, a la vista del cliente.
 
 ## Adelanto por la app (segunda etapa, todavía no está)

@@ -36,6 +36,8 @@ function dobles({ preparar, activar = 'activa', pago = { id: 991, status: 'appro
     storage: { from: b => ({ remove: async n => { log.borrados.push([b, n]); return { error: null }; } }) },
   };
   const mp = {
+    app: '2631534334320257',
+    yo: async () => ({ id: 123 }),
     cobrar: async (cuerpo, idem) => { log.cobros.push([cuerpo, idem]); return pago; },
     devolver: async (id, idem) => { log.devoluciones.push([id, idem]); return { id: 'dev-' + id }; },
   };
@@ -142,4 +144,15 @@ test('crearMP manda la clave de idempotencia y la cuenta de Tratto', async () =>
   assert.equal(llamadas[0][0], 'https://api.mercadopago.com/v1/payments/42/refunds');
   assert.equal(llamadas[0][1].headers['X-Idempotency-Key'], 'k1');
   assert.equal(crearMP(''), null);
+});
+
+test('revisar dice si está la cuenta de Tratto sin mostrar las claves', async () => {
+  const { sb, mp } = dobles();
+  const h = crearHandler({ sb, mp, firma: 'f', publicKey: 'APP_USR-abc' });
+  assert.equal((await h(pedido({ accion: 'revisar' }, { token: '' }))).status, 401);
+  const b = await (await h(pedido({ accion: 'revisar' }, { token: '', firma: 'f' }))).json();
+  assert.deepEqual(b, { access_token: true, responde: true, public_key: true, app: '2631534334320257' });
+  const sin = await (await crearHandler({ sb, mp: null, firma: 'f', publicKey: null })(pedido({ accion: 'revisar' }, { token: '', firma: 'f' }))).json();
+  assert.deepEqual(sin, { access_token: false, responde: false, public_key: false, app: null });
+  assert.equal(crearMP('APP_USR-2631534334320257-102812-abc-99').app, '2631534334320257');
 });
