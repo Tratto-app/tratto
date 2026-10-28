@@ -602,6 +602,8 @@
     text-transform:uppercase;color:var(--laton-osc);font-weight:600;
     border:1px solid rgba(201,162,39,.5);border-radius:99px;padding:4px 10px;flex:none}
   .pago-nota{font-size:11.5px;color:var(--gris);line-height:1.45;margin-top:10px}
+  .auth-legal{text-align:center;font-size:12px;color:var(--gris-2);margin:26px 0 6px;line-height:1.8}
+  .auth-legal a{color:var(--gris);text-underline-offset:2px}
 
   /* ═══════════ TRABAJO PROTEGIDO ═══════════ */
   /* Vive dentro del presupuesto aceptado, debajo del pago: es una capa más
@@ -1857,6 +1859,11 @@
       <div class="oculto" id="a-recuperar-acciones">
         <button class="ver" id="a-recuperar-volver" type="button">Volver a iniciar sesión</button>
       </div>
+      <!-- Resolución 424/2020: el botón de arrepentimiento tiene que verse en
+           la primera pantalla, sin necesidad de tener cuenta. -->
+      <p class="auth-legal"><a href="/terminos-cliente.html" target="_blank" rel="noopener">Términos</a> ·
+        <a href="/privacidad.html" target="_blank" rel="noopener">Privacidad</a> ·
+        <a href="/arrepentimiento.html" target="_blank" rel="noopener">Botón de arrepentimiento</a></p>
     </section>
 
     <!-- ══════ INICIO ══════ -->
@@ -2033,6 +2040,7 @@
       <div class="legales-fila">
         <a class="legales-btn" id="legales-terminos" href="/terminos-cliente.html" target="_blank" rel="noopener">Términos y condiciones</a>
         <a class="legales-btn" href="/privacidad.html" target="_blank" rel="noopener">Política de privacidad</a>
+        <a class="legales-btn" href="/arrepentimiento.html" target="_blank" rel="noopener">Botón de arrepentimiento</a>
       </div>
       <div class="legales-estado" id="legales-estado"></div>
       <p class="ayuda" style="margin:14px 0">Revisión del 28/10: aclaramos visitas, adicionales, retiros, reclamos y qué se conserva al borrar una cuenta. No cambian las comisiones ni los acuerdos anteriores. <a href="/privacidad.html">Leer privacidad</a> · <a href="/confianza.html">Cómo coordinar un trabajo</a></p>
