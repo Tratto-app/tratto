@@ -1631,6 +1631,8 @@
         </div>
       </div>
 
+      <div class="aviso ok" id="a-pedido-link" role="status"></div>
+
       <div id="a-datos">
         <div class="pestanas" style="margin-top:24px">
           <button class="pest activa" id="tab-entrar" type="button">Iniciar sesión</button>
@@ -2788,6 +2790,32 @@ const ORIGEN_CLAVE = 'tratto_origen';
     localStorage.setItem(ORIGEN_CLAVE, JSON.stringify(o));
   }catch(e){}
 })();
+/* ══════════════════ LINKS CON EL PEDIDO ESCRITO ══════════════════
+   trattoapp.com.ar/?pedir=Destapar+la+pileta&rubro=Plomería+y+destapaciones&zona=CABA
+   abre "Nuevo pedido" con eso ya cargado. Lo usan las guías, las páginas de
+   precios, los videos y los anuncios. Se guarda 7 días en el teléfono para
+   que sobreviva a crear la cuenta o iniciar sesión; se usa una sola vez. */
+const PEDIDO_LINK_CLAVE = 'tratto_pedido_link';
+(function guardarPedidoLink(){
+  try{
+    const q = new URLSearchParams(location.search);
+    const texto = (q.get('pedir') || '').trim().slice(0, 500);
+    const rubro = (q.get('rubro') || '').trim().slice(0, 80);
+    const zona  = (q.get('zona')  || '').trim().slice(0, 60);
+    if(!texto && !rubro) return;
+    localStorage.setItem(PEDIDO_LINK_CLAVE, JSON.stringify({texto, rubro, zona, fecha: new Date().toISOString()}));
+    ['pedir','rubro','zona'].forEach(k => q.delete(k));
+    history.replaceState(null, '', location.pathname + (q.toString() ? '?' + q : '') + location.hash);
+  }catch(e){}
+})();
+function pedidoLink(){
+  try{
+    const o = JSON.parse(localStorage.getItem(PEDIDO_LINK_CLAVE) || 'null');
+    if(!o || !(Date.now() - Date.parse(o.fecha) < 7 * 864e5)){ localStorage.removeItem(PEDIDO_LINK_CLAVE); return null; }
+    return o;
+  }catch(e){ return null; }
+}
+
 function origenVisita(){
   try{
     const o = JSON.parse(localStorage.getItem(ORIGEN_CLAVE) || 'null');
@@ -3021,6 +3049,60 @@ $('volver').addEventListener('click', () => ir(volverA, 'entra'));
 $('ir-pedido').addEventListener('click', () => {
   volverA='inicio'; $('tasar-resultado').innerHTML=''; limpiarTasadorTexto(); ir('nuevo-pedido');
 });
+
+/* Si llegó por un link con el pedido escrito, lo dejamos cargado y avisamos.
+   Si el link no trae rubro, probamos adivinarlo por palabras del texto: si no
+   hay una sola coincidencia clara, queda para que lo elija la persona. */
+const PISTAS_RUBRO = [
+  [/pileta de (la )?cocina|canilla|inodoro|ca[nñ]o|destap|p[eé]rdida de agua|termotanque|calef[oó]n|bach[aá]|flexible/i, 'Plomería y destapaciones'],
+  [/pint(ar|ura|or)/i, 'Pintura'],
+  [/mueble|placard|alacena|carpinter|puerta de madera|estante/i, 'Carpintería y muebles'],
+  [/humedad|revoque|albañil|grieta|rajadura/i, 'Albañilería y refacciones'],
+  [/aire acondicionado|split/i, 'Aire acondicionado'],
+  [/flete|mudanza/i, 'Fletes y mudanzas'],
+  [/cerradura|cerrajer|me qued[eé] afuera/i, 'Cerrajería'],
+  [/reja|port[oó]n|soldad|herrer/i, 'Herrería y soldadura'],
+  [/vidrio|ventana|abertura|mampara/i, 'Vidrios y aberturas'],
+  [/techo|membrana|gotera/i, 'Techos e impermeabilización'],
+  [/durlock|cielorraso|tabique/i, 'Durlock y yeso'],
+  [/piso|cer[aá]mic|porcelanato|z[oó]calo/i, 'Pisos y revestimientos'],
+  [/lavarropas|heladera|microondas|lavavajillas/i, 'Service de electrodomésticos'],
+  [/pasto|jard[ií]n|poda|pileta de nataci[oó]n|piscina/i, 'Jardinería y piletas'],
+  [/limpieza|limpiar la casa/i, 'Servicios de limpieza'],
+  [/ingl[eé]s|idioma|portugu[eé]s|italiano/i, 'Idiomas'],
+  [/guitarra|piano|clases de canto/i, 'Clases de música'],
+  [/\bdj\b|sonido para (la )?fiesta/i, 'Música y sonido (DJ)'],
+  [/fot[oó]graf|filmaci[oó]n/i, 'Fotografía y video'],
+  [/catering|torta|mesa dulce/i, 'Catering y pastelería'],
+  [/paseador|paseo de perros|cuidar (a )?mi perro/i, 'Paseo y cuidado de mascotas'],
+  [/computadora|notebook|\bpc\b|celular roto|pantalla rota/i, 'Reparación y soporte técnico']
+];
+function adivinarRubro(texto){
+  const hits = [...new Set(PISTAS_RUBRO.filter(([re]) => re.test(texto || '')).map(([, r]) => r))];
+  return hits.length === 1 ? hits[0] : '';
+}
+/* En la pantalla de ingreso: que sepa que su pedido lo está esperando. */
+(function mostrarPedidoLinkEnIngreso(){
+  const o = pedidoLink();
+  if(!o) return;
+  const queTxt = o.texto ? '«' + o.texto.slice(0, 80) + (o.texto.length > 80 ? '…' : '') + '»' : (o.rubro || 'tu pedido');
+  $('a-pedido-link').textContent = 'Tu pedido ' + queTxt + ' quedó guardado. Creá tu cuenta o iniciá sesión y lo publicás en un toque.';
+  $('a-pedido-link').classList.add('visible');
+})();
+function aplicarPedidoLink(){
+  if(modo !== 'cliente') return false;
+  const o = pedidoLink();
+  if(!o) return false;
+  try{ localStorage.removeItem(PEDIDO_LINK_CLAVE); }catch(e){}
+  $('ir-pedido').click();
+  const rubro = RUBROS.includes(o.rubro) ? o.rubro : adivinarRubro(o.texto);
+  if(rubro) $('s-servicio').value = rubro;
+  if(ZONAS.includes(o.zona)) $('s-zona').value = o.zona;
+  if(o.texto && !$('s-desc').value.trim()) $('s-desc').value = o.texto.slice(0, 500);
+  resumenPedido();
+  avisar('s-aviso', 'Te dejamos el pedido escrito. Revisalo, completá lo que falte y tocá «Buscar quién lo haga».', 'ok');
+  return true;
+}
 $('ir-proveedor').addEventListener('click', () => abrirNuevoServicio('perfil'));
 
 /* Nombre y oficio vienen de la cuenta. El nombre queda editable --puede
@@ -7977,7 +8059,7 @@ function entrarApp(){
   pintarTransfer();
   pintarLegales();
   aplicarModo();
-  recargarTodo().then(guiaAlEntrar).catch(e => console.error(e));
+  recargarTodo().then(() => { if(!aplicarPedidoLink()) guiaAlEntrar(); }).catch(e => console.error(e));
   arrancarLatido();
 }
 

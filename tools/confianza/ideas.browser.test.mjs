@@ -48,3 +48,27 @@ test('si no hay sugeridos no se muestra la sección', async () => {
     assert.equal(await p.page.locator('#d-sugeridos').innerText(), '');
   } finally { await p.cerrar(); }
 });
+
+test('link con el pedido escrito: avisa al entrar y abre el formulario completo', async () => {
+  const ruta = '/?pedir=' + encodeURIComponent('Se me tapó la pileta de la cocina y no baja el agua') + '&zona=CABA&utm_source=prueba';
+  const p = await abrir(entorno, {rol: null, ruta});
+  try {
+    // Sin sesión: aviso en la pantalla de ingreso y el link limpio en la barra.
+    assert.match(await p.page.locator('#a-pedido-link').innerText(), /quedó guardado/);
+    assert.ok(!(await p.page.evaluate(() => location.search)).includes('pedir='));
+    await p.foto('link-ingreso');
+    // Entra como cliente: se abre el pedido con rubro adivinado, zona y texto.
+    await p.page.evaluate(c => {
+      sesion = {access_token: 't', user: {id: c, email: 'x@example.invalid', user_metadata: {rol: 'cliente', nombre: 'Ana'}}};
+      modo = 'cliente';
+      aplicarPedidoLink();
+    }, cliente);
+    await p.page.waitForFunction(() => actual === 'nuevo-pedido');
+    assert.equal(await p.page.inputValue('#s-servicio'), 'Plomería y destapaciones');
+    assert.equal(await p.page.inputValue('#s-zona'), 'CABA');
+    assert.match(await p.page.inputValue('#s-desc'), /pileta de la cocina/);
+    assert.match(await p.page.locator('#s-aviso').innerText(), /Te dejamos el pedido escrito/);
+    // Se usa una sola vez.
+    assert.equal(await p.page.evaluate(() => aplicarPedidoLink()), false);
+  } finally { await p.cerrar(); }
+});
