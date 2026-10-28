@@ -312,3 +312,16 @@ test('negociar: quien cotizó acepta y el trato se cierra a ese precio', async (
     assert.match(await p.page.locator('[data-presu="900"] .presu-monto').innerText(), /40\.000/);
   } finally { await p.cerrar(); }
 });
+
+test('presupuesto: consejos para que gane, con la guía completa', async () => {
+  const p = await abrir(entorno, {rol: 'proveedor', handler: c => c.path.endsWith('/rest/v1/matches') ? {json: [matchChat('otro-cliente')]} : null});
+  try {
+    await p.page.evaluate(() => abrirChat(77, 'chats'));
+    await p.page.waitForFunction(() => actual === 'chat');
+    await p.page.click('#ch-presu-abrir');
+    await p.page.click('.presu-consejos summary');
+    const txt = await p.page.locator('.presu-consejos').innerText();
+    assert.match(txt, /Decí qué incluye y qué no/);
+    assert.equal(await p.page.getAttribute('.presu-consejos a', 'href'), '/guias/como-armar-un-presupuesto/');
+  } finally { await p.cerrar(); }
+});

@@ -646,6 +646,10 @@
   .presu-panel{flex:none;background:var(--claro);border-top:1px solid var(--linea);
     padding:16px 16px 6px}
   .presu-panel .campo{margin-bottom:14px}
+  .presu-consejos{margin:0 0 14px;padding:10px 12px;border-radius:var(--r-ch);background:rgba(201,162,39,.10);font-size:13px;line-height:1.45}
+  .presu-consejos summary{cursor:pointer;font-weight:600;color:var(--laton-osc)}
+  .presu-consejos ul{margin:9px 0 8px;padding-left:18px;display:grid;gap:6px}
+  .presu-consejos a{color:var(--verde);font-weight:600}
   .presu-panel textarea{min-height:72px}
   .presu-panel .btn.lleno{background:var(--laton-osc)}
   .presu-panel .btn.lleno:active:not(:disabled){background:#755D0D}
@@ -2479,6 +2483,16 @@
       </button>
 
       <div class="presu-panel oculto" id="ch-presu-panel">
+        <details class="presu-consejos">
+          <summary>Cómo mandar un presupuesto que gana</summary>
+          <ul>
+            <li><b>Decí qué incluye y qué no:</b> materiales, traslado, visita. El cliente mira eso antes que el precio.</li>
+            <li><b>Marcá cuándo podés ir.</b> Si pidió para hoy y llegás, que lo vea.</li>
+            <li><b>Poné un precio cerrado o un rango corto.</b> Con un «depende» no puede comparar.</li>
+            <li><b>Contestá apenas puedas.</b> Muchos eligen entre los primeros que les responden.</li>
+          </ul>
+          <a href="/guias/como-armar-un-presupuesto/" target="_blank" rel="noopener">Leer la guía completa</a>
+        </details>
         <div class="campo">
           <label for="cp-monto">Monto</label>
           <div class="caja-monto"><span class="signo">$</span>
