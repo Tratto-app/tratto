@@ -91,7 +91,7 @@ CONTROL = {
     "pausa": 0.45, "pausa_coma": 0.75, "pausa_punto": 0.95,  # silencios medidos en el audio
     "palabra_larga": 0.90,
     "ruido_db": -38.0,      # nada que suene antes de la primera palabra o despues de la ultima
-    "voz": 0.975,           # parecido con la muestra (reales 0,97 a 0,99; la frase con otra voz dio 0,944)
+    "voz": 0.98,            # parecido con la muestra (la aprobada el 28/10: 0,982 a 0,99; la frase con otra voz dio 0,944)
     "tono": 0.22,           # contra la muestra
     "tono_pareja": 0.15,    # entre los tramos elegidos
     "ritmo": (1.8, 5.0),    # palabras por segundo (el fundador: 2,1 a 4,1)
@@ -101,12 +101,22 @@ CONTROL = {
 # volumen, en lo que dio la voz que el aprobo ese dia ("ahora si quedo
 # perfecto": tono 3,97, rango 11,2, volumen 7,13, ritmo 2,86): se baja solo
 # con su OK, nunca para que algo pase.
+# El mismo dia pidio: "no quiero escuchar cada audio; que seas muy estricto
+# con la voz y que quede exactamente igual" a la aprobada. Por eso tambien el
+# tono medio (la que borro estaba en 108 Hz, mas grave y "deprimida"; la
+# aprobada, 116) y, para las frases cortas (un gancho de 2 s mueve menos el
+# tono que 30 s de voz), la variacion del tono contra sus frases cortas
+# reales (la mediana de 28 frases de 1,5 a 3,5 s: 3,25; el gancho aprobado de
+# "Como se cobra", 3,31).
 GANAS = {
     "tono_semitonos": 3.6,   # variacion del tono (desvio, en semitonos)
     "tono_rango": 8.9,       # del 10 al 90 % del tono, en semitonos
     "volumen_db": 7.1,       # variacion del volumen mientras habla (sus grabaciones: 7,9 a 8,4)
     "ritmo": 2.8,            # palabras por segundo, de la primera a la ultima
+    "tono_hz": 110.0,        # tono medio (sus grabaciones: 110 a 118 Hz)
 }
+CORTA_SEG = 6.0              # menos de esto hablando es una frase corta
+GANAS_CORTA = {"tono_semitonos": 3.25}
 ENTRE_TRAMOS = 0.45
 COLCHON = 0.5            # silencio delante de cada toma al escucharla: sin el, el oido duda de la primera palabra
 TERMINAR = "acompressor=threshold=-20dB:ratio=2.5:attack=8:release=120:knee=4:makeup=2"
@@ -168,13 +178,14 @@ def vida(x, sr=16000):
     f0, voiced, _ = librosa.pyin(x, fmin=70, fmax=300, sr=sr, frame_length=1024, hop_length=160)
     f0 = f0[voiced & ~np.isnan(f0)]
     if len(f0) < 20:
-        return {"tono_semitonos": 0.0, "tono_rango": 0.0, "volumen_db": 0.0}
+        return {"tono_semitonos": 0.0, "tono_rango": 0.0, "volumen_db": 0.0, "tono_hz": 0.0}
     st = 12 * np.log2(f0 / np.median(f0))
     rms = librosa.feature.rms(y=x, frame_length=1024, hop_length=160)[0]
     nivel = 20 * np.log10(rms + 1e-9)
     habla = nivel[nivel > nivel.max() - 35]
     return {"tono_semitonos": float(np.std(st)),
             "tono_rango": float(np.percentile(st, 90) - np.percentile(st, 10)),
+            "tono_hz": float(np.median(f0)),
             "volumen_db": float(np.std(habla))}
 
 
@@ -520,8 +531,10 @@ def main():
         sys.exit(2)
     # Ganas: tiene que moverse y avanzar como el fundador de verdad.
     medida = vida(leer(final, 16000))
-    medida["ritmo"] = len(oidas) / max(oidas[-1][1] - oidas[0][0], 0.3)
-    flojas = [f"{k} {medida[k]:.2f} (mínimo {v})" for k, v in GANAS.items() if medida[k] < v]
+    habla = oidas[-1][1] - oidas[0][0]
+    medida["ritmo"] = len(oidas) / max(habla, 0.3)
+    minimos = {**GANAS, **(GANAS_CORTA if habla < CORTA_SEG else {})}
+    flojas = [f"{k} {medida[k]:.2f} (mínimo {v})" for k, v in minimos.items() if medida[k] < v]
     if flojas:
         print(json.dumps({"salida": None, "fallas": ["suena apagada: " + "; ".join(flojas)],
                           "ganas": {k: round(v, 2) for k, v in medida.items()}, "tramos": informe},

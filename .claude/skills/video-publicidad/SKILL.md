@@ -29,8 +29,17 @@ description: Hace videos y publicidades de Tratto para TikTok e Instagram (reels
 > perfecto"): la muestra es el tramo más vivo de sus grabaciones (presupuesto
 > barato, desde 15,45 s, la de fábrica en `clonar.py`) y el guion de "Pedido
 > claro" reescrito con "Primero, segundo…". Medida: tono 3,97, rango 11,2,
-> volumen 7,13, ritmo 2,86 (`GANAS` quedó calibrado con eso). Hasta que él
-> diga otra cosa, cada audio clonado nuevo se le manda antes de programarlo.
+> volumen 7,13, ritmo 2,86 (`GANAS` quedó calibrado con eso).
+>
+> **Sin escuchar cada audio, pero muy estricto (28/10/2026):** "no quiero
+> escuchar cada audio con mi voz. Que seas muy estricto con la voz y que
+> quede exactamente igual". Los videos vuelven a salir con su voz clonada sin
+> esperarlo, solo si `clonar.py` pasa todo: parecido con la muestra 0,98 o
+> más, tono medio 110 Hz o más, `GANAS` (y para frases cortas, la variación
+> de tono contra sus frases cortas reales). Con la misma frase y la misma
+> muestra la voz sale idéntica (el gancho de "Cómo se cobra" se regeneró de
+> cero y dio el mismo audio). Nunca se afloja un control; si no pasa, otra
+> frase o el video sale sin voz.
 
 El fundador mandó un reel sobre clonar la voz gratis y pidió: "implementemos
 eso para todos los videos que hagamos". Su voz clonada sale de
