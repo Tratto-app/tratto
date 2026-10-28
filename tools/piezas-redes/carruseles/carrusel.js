@@ -44,6 +44,12 @@
     pared: '<rect x="8" y="12" width="48" height="40" rx="3"/><path d="M8 25h48M8 38h48M24 12v13M40 12v13M16 25v13M32 25v13M48 25v13M24 38v14M40 38v14"/>',
     remera: '<path d="M22 10l-14 8 6 11 6-3v28h24V26l6 3 6-11-14-8c-2 5-6 7-10 7s-8-2-10-7z"/>',
     metro: '<rect x="8" y="22" width="48" height="20" rx="4"/><path d="M16 22v8M24 22v5M32 22v8M40 22v5M48 22v8"/>',
+    // antes del calor (28/10/2026)
+    sol: '<circle cx="32" cy="32" r="11"/><path d="M32 6v7M32 51v7M6 32h7M51 32h7M13.6 13.6l5 5M45.4 45.4l5 5M13.6 50.4l5-5M45.4 18.6l5-5"/>',
+    pileta: '<path d="M22 40V14a5 5 0 0 1 10 0M38 40V14a5 5 0 0 1 10 0M22 22h16M22 31h16"/><path d="M6 48c5 4 9 4 13 0s9-4 13 0 9 4 13 0 9-4 13 0"/>',
+    pasto: '<path d="M6 54h52"/><path d="M12 54c0-10-3-17-6-22M21 54c0-14 2-24 6-32M31 54c0-12-4-20-9-26M40 54c0-15 3-26 9-34M50 54c0-10 3-18 8-23"/>',
+    arbol: '<path d="M20 38a10 10 0 0 1-3-19 15 15 0 0 1 29-2 10 10 0 0 1 1 21z"/><path d="M32 56V30M32 44l-7-6M32 39l6-5"/>',
+    techo: '<path d="M6 32L32 10l26 22"/><path d="M32 36c-5 7-7 10-7 13a7 7 0 0 0 14 0c0-3-2-6-7-13z"/>',
   };
   const icono = (n, px = 64, color = 'currentColor', grosor = 4) =>
     `<svg width="${px}" height="${px}" viewBox="0 0 64 64" fill="none" stroke="${color}" stroke-width="${grosor}" stroke-linecap="round" stroke-linejoin="round">${ICONOS[n]}</svg>`;

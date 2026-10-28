@@ -1,0 +1,202 @@
+<!doctype html><html lang="es"><head><meta charset="utf-8">
+<title>Carrusel · Antes del calor: 5 cosas y cuánto sale cada una</title>
+<!-- Carrusel guardable (28/10/2026). Sigue al de la mudanza, el que más rindió en TikTok (539 vistas, 12 reacciones
+     y 2 compartidos contra unas 100 vistas de los videos): checklist de una situación con precios. Portada verde
+     clara (pedido claro es oscura, mudanza clara con manchas, a quién llamo latón, cumple verde y fotos blanca).
+     Precios de precios_referencia con el ajuste mensual del 2 % de la calculadora, redondeados igual, a oct-2026.
+     El mensaje de la placa 8 es un ejemplo y lo dice.
+     Exportar: python3 render-carrusel.py antes-del-calor.html carrusel-antes-del-calor
+               python3 render-carrusel.py antes-del-calor.html carrusel-antes-del-calor-tt --red tiktok -->
+<link rel="stylesheet" href="carrusel.css">
+<style>
+/* 1 · portada verde clara */
+.placa.fresca{background:var(--verde-claro)}
+.placa.fresca .pano{opacity:.55}
+.uno .chico{display:flex;align-items:center;gap:16px;font:600 30px/1.2 'IBM Plex Mono',monospace;letter-spacing:.14em;text-transform:uppercase;color:var(--laton-osc)}
+.uno h1{font:700 136px/.95 'IBM Plex Sans Condensed',sans-serif;letter-spacing:-.025em;color:var(--noche);margin:26px 0 40px}
+.uno h1 em{font-style:normal;color:var(--verde-vivo)}
+.uno .sub{font:500 48px/1.28 'IBM Plex Sans',sans-serif;color:var(--tinta-2);max-width:900px}
+.uno .iconos{display:flex;gap:22px;margin-top:66px}
+.uno .iconos div{width:150px;height:150px;border-radius:40px;background:#fff;color:var(--verde);display:flex;align-items:center;justify-content:center;
+  box-shadow:0 18px 40px rgba(12,38,32,.10)}
+.uno .iconos div:nth-child(2n){color:var(--laton-osc)}
+
+/* 2 · tres datos */
+.dos h2{font:700 100px/1 'IBM Plex Sans Condensed',sans-serif;letter-spacing:-.015em}
+.dos .bajada{font:500 44px/1.3 'IBM Plex Sans',sans-serif;color:var(--tinta-2);margin-top:26px}
+.datos{display:flex;flex-direction:column;gap:24px;margin-top:56px}
+.dato{display:flex;align-items:center;gap:30px;padding:30px 36px}
+.dato .n{flex:none;width:86px;height:86px;border-radius:50%;background:var(--verde);color:#fff;display:flex;align-items:center;justify-content:center;
+  font:700 52px/1 'IBM Plex Sans Condensed',sans-serif}
+.dato p{font:600 52px/1.15 'IBM Plex Sans',sans-serif}
+.dos .despues{font:600 42px/1.3 'IBM Plex Sans',sans-serif;color:var(--laton-osc);margin-top:40px}
+
+/* 3 a 7 · cada cosa */
+.paso{display:flex;align-items:center;gap:30px}
+.paso h2{font:700 108px/1 'IBM Plex Sans Condensed',sans-serif;letter-spacing:-.02em}
+.paso h2 .num{color:var(--laton-osc);margin-right:16px}
+.ico.grande{width:150px;height:150px;border-radius:40px}
+.precio{margin-top:60px;padding:40px 46px}
+.precio .que{font:500 44px/1.25 'IBM Plex Sans',sans-serif;color:var(--tinta-2)}
+.precio .rango{font:600 74px/1.1 'IBM Plex Mono',monospace;color:var(--verde);letter-spacing:-.03em;margin-top:14px;white-space:nowrap}
+.precio + .precio{margin-top:24px}
+.precio.chica{padding:30px 40px}
+.precio.chica .que{font-size:40px}
+.precio.chica .rango{font-size:62px;margin-top:10px}
+.consejo{display:flex;gap:24px;align-items:flex-start;margin-top:56px;font:500 46px/1.3 'IBM Plex Sans',sans-serif;color:var(--tinta)}
+.consejo b{font-weight:600;color:var(--verde-vivo)}
+.consejo .ico{color:var(--laton-osc)}
+
+/* 8 · mensaje de ejemplo */
+.ocho h2{font:700 100px/1 'IBM Plex Sans Condensed',sans-serif;letter-spacing:-.015em}
+.ocho .bajada{font:500 44px/1.3 'IBM Plex Sans',sans-serif;color:var(--tinta-2);margin-top:22px}
+.burbuja{position:relative;margin-top:84px;border-radius:44px 44px 44px 12px;padding:54px 54px 50px;font:500 50px/1.36 'IBM Plex Sans',sans-serif;
+  background:var(--verde-claro);color:var(--tinta);border:3px solid rgba(43,126,98,.25)}
+.burbuja .marca-ej{position:absolute;top:-30px;left:40px;transform:rotate(-3deg);font-size:26px}
+.burbuja u{text-decoration:none;border-bottom:4px solid var(--laton);padding:0 4px;color:var(--laton-osc);font-weight:600}
+.ocho .nota{font:600 40px/1.3 'IBM Plex Sans',sans-serif;color:var(--laton-osc);margin-top:44px}
+
+/* 9 · resumen para capturar */
+.placa.blanca{background:#fff}
+.placa.blanca .pano{display:none}
+.placa.blanca .cont{border:10px solid var(--verde);border-radius:0}
+.resumen h2{font:700 82px/1 'IBM Plex Sans Condensed',sans-serif;letter-spacing:-.015em}
+.tabla{margin-top:34px}
+.tabla .f{display:flex;justify-content:space-between;align-items:center;gap:20px;padding:19px 0;border-bottom:3px solid #E3EAE6}
+.tabla .f:last-child{border-bottom:0}
+.tabla .f span{font:500 40px/1.2 'IBM Plex Sans',sans-serif;color:var(--tinta)}
+.tabla .f b{font:600 38px/1 'IBM Plex Mono',monospace;color:var(--verde);white-space:nowrap;letter-spacing:-.02em}
+.resumen .manda{font:600 40px/1.3 'IBM Plex Sans',sans-serif;color:var(--laton-osc);margin-top:26px}
+
+/* 10 · cierre */
+.cierre h2{font:700 116px/1.0 'IBM Plex Sans Condensed',sans-serif;letter-spacing:-.015em;margin-top:60px}
+.cierre .bajada{font:500 46px/1.3 'IBM Plex Sans',sans-serif;color:#B9C2BC;margin-top:30px;max-width:880px}
+.cierre .url-caja{margin-top:56px}
+.cierre .bio{font:500 28px/1.3 'IBM Plex Mono',monospace;letter-spacing:.06em;color:var(--gris-2);margin-top:22px}
+.cierre .gratis{margin-top:70px}
+.cierre .gratis .sello{background:rgba(201,162,39,.12);color:#F3DE9A}
+</style></head><body>
+
+<!-- 1 · PORTADA -->
+<section class="placa fresca uno"><div class="cont">
+  <div class="medio">
+    <div class="chico"><i data-ico="sol" data-px="46"></i>Antes del calor · precios de octubre</div>
+    <h1>5 cosas para resolver <em>antes del verano</em></h1>
+    <p class="sub">El aire, la pileta, el pasto, los árboles y el techo, con lo que sale cada una.</p>
+    <div class="iconos"><div><i data-ico="aire" data-px="84"></i></div><div><i data-ico="pileta" data-px="84"></i></div><div><i data-ico="pasto" data-px="84"></i></div><div><i data-ico="arbol" data-px="84"></i></div><div><i data-ico="techo" data-px="84"></i></div></div>
+  </div>
+  <div class="pie"><span class="web">trattoapp.com.ar</span><span class="desliza">Guardalo · Deslizá →</span></div>
+</div></section>
+
+<!-- 2 · TRES DATOS -->
+<section class="placa dos"><div class="cont">
+  <div class="medio">
+    <h2>Antes de pedir, tené estos 3 datos.</h2>
+    <p class="bajada">Con eso te pueden pasar un precio sin ir a mirar.</p>
+    <div class="datos">
+      <div class="tarjeta dato"><span class="n">1</span><p>Qué es, con una foto</p></div>
+      <div class="tarjeta dato"><span class="n">2</span><p>La medida: frigorías, metros o altura</p></div>
+      <div class="tarjeta dato"><span class="n">3</span><p>Barrio y para cuándo</p></div>
+    </div>
+    <p class="despues">Ahora, una por una →</p>
+  </div>
+  <div class="pie"><span class="web">trattoapp.com.ar</span><span class="desliza">Deslizá →</span></div>
+</div></section>
+
+<!-- 3 · EL AIRE -->
+<section class="placa"><div class="cont">
+  <div class="medio">
+    <div class="paso"><div class="ico grande"><i data-ico="aire" data-px="92"></i></div><h2><span class="num">1.</span>El aire.</h2></div>
+    <div class="tarjeta precio chica"><div class="que">Instalar un split de hasta 3.000 frigorías</div><div class="rango">$90.000 a $175.000</div></div>
+    <div class="tarjeta precio chica"><div class="que">De 3.000 a 4.500 frigorías</div><div class="rango">$130.000 a $200.000</div></div>
+    <div class="consejo"><div class="ico chico"><i data-ico="check" data-px="52"></i></div><p>Decí el piso y <b>dónde va el equipo de afuera:</b> eso cambia el precio.</p></div>
+  </div>
+  <div class="pie"><span class="fuente">Precios de referencia · AMBA · oct-2026</span></div>
+</div></section>
+
+<!-- 4 · LA PILETA -->
+<section class="placa"><div class="cont">
+  <div class="medio">
+    <div class="paso"><div class="ico grande"><i data-ico="pileta" data-px="92"></i></div><h2><span class="num">2.</span>La pileta.</h2></div>
+    <div class="tarjeta precio"><div class="que">Mantenimiento completo, por mes</div><div class="rango">$88.000 a $146.000</div></div>
+    <div class="consejo"><div class="ico chico"><i data-ico="check" data-px="52"></i></div><p>Preguntá <b>cada cuánto vienen y si los productos están incluidos.</b></p></div>
+  </div>
+  <div class="pie"><span class="fuente">Precios de referencia · AMBA · oct-2026</span></div>
+</div></section>
+
+<!-- 5 · EL PASTO -->
+<section class="placa"><div class="cont">
+  <div class="medio">
+    <div class="paso"><div class="ico grande"><i data-ico="pasto" data-px="92"></i></div><h2><span class="num">3.</span>El pasto.</h2></div>
+    <div class="tarjeta precio chica"><div class="que">Corte, terreno de hasta 100 m²</div><div class="rango">$17.000 a $28.000</div></div>
+    <div class="tarjeta precio chica"><div class="que">Corte, de 100 a 300 m²</div><div class="rango">$28.000 a $45.000</div></div>
+    <div class="consejo"><div class="ico chico"><i data-ico="check" data-px="52"></i></div><p>Decí los metros, aunque sean a ojo, y <b>si se llevan el pasto cortado.</b></p></div>
+  </div>
+  <div class="pie"><span class="fuente">Precios de referencia · AMBA · oct-2026</span></div>
+</div></section>
+
+<!-- 6 · LOS ÁRBOLES -->
+<section class="placa"><div class="cont">
+  <div class="medio">
+    <div class="paso"><div class="ico grande"><i data-ico="arbol" data-px="92"></i></div><h2><span class="num">4.</span>Los árboles.</h2></div>
+    <div class="tarjeta precio"><div class="que">Poda de un árbol mediano (3 a 6 m)</div><div class="rango">$34.000 a $68.000</div></div>
+    <div class="consejo"><div class="ico chico"><i data-ico="check" data-px="52"></i></div><p>Mandá una foto del árbol entero y <b>decí si hay cables cerca.</b></p></div>
+  </div>
+  <div class="pie"><span class="fuente">Precios de referencia · AMBA · oct-2026</span></div>
+</div></section>
+
+<!-- 7 · EL TECHO -->
+<section class="placa"><div class="cont">
+  <div class="medio">
+    <div class="paso"><div class="ico grande"><i data-ico="techo" data-px="92"></i></div><h2><span class="num">5.</span>El techo.</h2></div>
+    <div class="tarjeta precio chica"><div class="que">Arreglar una gotera simple</div><div class="rango">$23.000 a $51.000</div></div>
+    <div class="tarjeta precio chica"><div class="que">Membrana, por m²</div><div class="rango">$11.500 a $23.000</div></div>
+    <div class="consejo"><div class="ico chico"><i data-ico="check" data-px="52"></i></div><p>Antes de las tormentas: <b>foto de la mancha de adentro y del techo.</b></p></div>
+  </div>
+  <div class="pie"><span class="fuente">Precios de referencia · AMBA · oct-2026</span></div>
+</div></section>
+
+<!-- 8 · PEDILO ASÍ -->
+<section class="placa ocho"><div class="cont">
+  <div class="medio">
+    <h2>Pedilo así.</h2>
+    <p class="bajada">Con los 3 datos, en un solo mensaje.</p>
+    <div class="burbuja"><span class="sello marca-ej">Ejemplo</span>Hola. Quiero instalar un split de <u>3.000 frigorías</u>. Es un <u>segundo piso</u> en <u>Ramos Mejía</u> y el equipo de afuera va al balcón. Te mando foto. ¿Puede ser <u>la primera semana de noviembre</u>?</div>
+    <p class="nota">Cambiá lo subrayado y sirve para cualquiera de los 5.</p>
+  </div>
+  <div class="pie"><span class="web">trattoapp.com.ar</span><span class="desliza">Deslizá →</span></div>
+</div></section>
+
+<!-- 9 · RESUMEN -->
+<section class="placa blanca resumen"><div class="cont">
+  <div class="medio">
+    <h2>Antes del calor, en una foto</h2>
+    <div class="tabla">
+      <div class="f"><span>Split hasta 3.000 frigorías</span><b>$90k a $175k</b></div>
+      <div class="f"><span>Split de 3.000 a 4.500</span><b>$130k a $200k</b></div>
+      <div class="f"><span>Pileta (por mes)</span><b>$88k a $146k</b></div>
+      <div class="f"><span>Pasto, hasta 100 m²</span><b>$17k a $28k</b></div>
+      <div class="f"><span>Pasto, 100 a 300 m²</span><b>$28k a $45k</b></div>
+      <div class="f"><span>Poda árbol (3 a 6 m)</span><b>$34k a $68k</b></div>
+      <div class="f"><span>Gotera simple</span><b>$23k a $51k</b></div>
+      <div class="f"><span>Membrana (por m²)</span><b>$11,5k a $23k</b></div>
+    </div>
+    <p class="manda">Precios de referencia de octubre. Sacale captura.</p>
+  </div>
+  <div class="pie"><span class="web">trattoapp.com.ar</span></div>
+</div></section>
+
+<!-- 10 · CIERRE -->
+<section class="placa noche cierre"><div class="cont">
+  <div class="medio">
+    <h2>Pedilo antes de que apriete el calor.</h2>
+    <p class="bajada">En Tratto contás qué necesitás y te llegan presupuestos de gente de tu zona, con lo que incluye cada uno.</p>
+    <div><span class="url-caja"><span id="logo-url"></span><span data-tiktok="trattoapp.com.ar/r/tt-calor">trattoapp.com.ar/r/ig-calor</span></span></div>
+    <p class="bio" data-tiktok="(escribilo en el navegador)">Tocá @trattoapp_ · link «Pedí un servicio»</p>
+    <div class="gratis"><span class="sello">Gratis para el que pide</span></div>
+  </div>
+</div></section>
+
+<script src="carrusel.js"></script>
+<script>document.getElementById('logo-url').outerHTML = LOGO(46, 'lu');</script>
+</body></html>
