@@ -94,3 +94,25 @@ jobs:
           cache-dependency-path: tools/app-users/package-lock.json
       - run: npm ci --no-audit --no-fund
       - run: npm test
+
+  confianza-servicios:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    defaults:
+      run:
+        working-directory: tools/confianza
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: tools/confianza/package-lock.json
+      - run: npm ci --no-audit --no-fund
+      - name: Instalar navegador de prueba
+        run: npx playwright install --with-deps chromium
+      - name: Acuerdos, permisos y experiencia móvil (sin servicios reales)
+        run: npm test
+      - name: Limpieza de fotos y fuentes locales
+        working-directory: .
+        run: node --test tools/supabase-functions/limpieza-fotos/handler.test.mjs && node assets/fonts/verificar.mjs
