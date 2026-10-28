@@ -1,0 +1,23 @@
+.conf-kpis { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:12px; margin-bottom:18px; }
+@media (max-width: 760px) { .conf-kpis { grid-template-columns:repeat(2,minmax(0,1fr)); } }
+.confianza .card + .card { margin-top:18px; }
+.conf-lista { list-style:none; margin:0; padding:0; }
+.conf-ident, .conf-prot { border-top:1px solid var(--borde); padding:16px 0; display:grid; gap:12px; }
+.conf-ident:first-child, .conf-prot:first-child { border-top:none; }
+.conf-prot.abierto { border-left:3px solid var(--rojo); padding-left:12px; }
+.conf-ident-cab { display:flex; justify-content:space-between; gap:12px; flex-wrap:wrap; align-items:flex-start; }
+.conf-ident-cab strong { display:block; font-size:15px; overflow-wrap:anywhere; }
+.conf-ident-cab small { display:block; color:var(--texto-2); margin-top:3px; overflow-wrap:anywhere; }
+.conf-fotos { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:10px; }
+@media (max-width: 560px) { .conf-fotos { grid-template-columns:1fr; } }
+.conf-foto { display:grid; gap:6px; color:var(--texto-2); font-size:12px; }
+.conf-foto img, .conf-foto > .muted { width:100%; aspect-ratio:4/3; object-fit:contain; background:var(--sup-2);
+  border:1px solid var(--borde); border-radius:8px; display:grid; place-items:center; }
+.conf-rechazo { display:grid; gap:8px; }
+.conf-rechazo label { display:grid; gap:6px; color:var(--texto-2); font-size:13px; }
+.conf-rechazo input, .conf-rechazo textarea { width:100%; }
+.conf-sugerencias { display:flex; flex-wrap:wrap; gap:6px; }
+.conf-acciones { display:flex; flex-wrap:wrap; gap:8px; }
+.conf-error { color:var(--rojo); margin:0; font-size:13px; }
+.conf-reclamo p { margin:0 0 4px; }
+.conf-vencido { color:var(--rojo); font-weight:600; }
