@@ -4910,6 +4910,8 @@ function agregarMensaje(m){
 function actualizarPresu(m, forzar){
   const el = document.querySelector('[data-presu="'+m.id+'"]');
   if(!el) return;
+  const antes = presusPintados[m.id];
+  if(antes && antes.pago_estado !== 'cobrado' && m.pago_estado === 'cobrado') pedirResenaTienda();
   if(forzar){
     const caja = document.createElement('div');
     caja.innerHTML = presuHTML(m);
@@ -7247,6 +7249,24 @@ async function compararPresupuestos(solicitudId){
   }finally{ comparando = false; }
 }
 
+/* ══════════════════ RESEÑA EN LA APP STORE ══════════════════ */
+/* En la app de iPhone, después de un trabajo pagado o de una calificación de
+   4 o 5 estrellas, se pide la reseña con la ventanita oficial de Apple (el
+   plugin InAppReview; Apple no permite carteles propios para esto). Apple
+   decide si la muestra y no pasa de 3 veces por año; nosotros, como mucho
+   una vez cada 4 meses. En la web y en Android no hace nada. */
+const RESENA_CLAVE = 'tratto_resena_tienda';
+function pedirResenaTienda(){
+  try{
+    const C = window.Capacitor, plugin = C && C.isNativePlatform && C.isNativePlatform() && C.Plugins && C.Plugins.InAppReview;
+    if(!plugin) return;
+    const ultima = Number(localStorage.getItem(RESENA_CLAVE) || 0);
+    if(Date.now() - ultima < 120 * 864e5) return;
+    localStorage.setItem(RESENA_CLAVE, String(Date.now()));
+    plugin.requestReview().catch(() => {});
+  }catch(e){}
+}
+
 /* ══════════════════ CALIFICAR AL PROVEEDOR ══════════════════ */
 const URL_CALIFICAR = 'https://marketplace-servicios.app.n8n.cloud/webhook/calificar';
 let estrellasPuestas = 0;
@@ -7324,6 +7344,7 @@ $('ch-hilo').addEventListener('click', async e => {
     const d = usarIA ? respuesta : fila && {ok:!!fila.id,atributos:[]};
     const caja = $('caja-calificar');
     if(d && d.ok){
+      if(estrellasPuestas >= 4) setTimeout(pedirResenaTienda, 1500);
       caja.innerHTML = '<div class="calificar-tit">¡Gracias!</div>' +
         '<div class="calificar-txt">Tu calificación ya está en el perfil.</div>' +
         (Array.isArray(d.atributos) && d.atributos.length

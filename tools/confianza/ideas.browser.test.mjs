@@ -325,3 +325,25 @@ test('presupuesto: consejos para que gane, con la guía completa', async () => {
     assert.equal(await p.page.getAttribute('.presu-consejos a', 'href'), '/guias/como-armar-un-presupuesto/');
   } finally { await p.cerrar(); }
 });
+
+test('reseña en la App Store: se pide al confirmarse el pago, una vez cada 4 meses', async () => {
+  const p = await abrir(entorno, {handler: c => {
+    if (c.path.endsWith('/rest/v1/matches')) return {json: [matchChat(cliente)]};
+    if (c.path.endsWith('/rest/v1/mensajes')) return {json: [presu({estado_presupuesto: 'aceptado'})]};
+    return null;
+  }});
+  try {
+    await p.page.evaluate(() => {
+      window.__resenas = 0;
+      window.Capacitor = {isNativePlatform: () => true, Plugins: {InAppReview: {requestReview: async () => { window.__resenas++; }}}};
+      return abrirChat(77, 'chats');
+    });
+    await p.page.waitForSelector('[data-presu="900"]');
+    const pagado = presu({estado_presupuesto: 'aceptado', pago_estado: 'cobrado'});
+    await p.page.evaluate(m => actualizarPresu(m), pagado);
+    assert.equal(await p.page.evaluate(() => window.__resenas), 1);
+    // Otro pago enseguida: no se vuelve a pedir.
+    await p.page.evaluate(m => { presusPintados[m.id].pago_estado = null; actualizarPresu(m); }, pagado);
+    assert.equal(await p.page.evaluate(() => window.__resenas), 1);
+  } finally { await p.cerrar(); }
+});
