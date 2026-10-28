@@ -1,4 +1,5 @@
-# La voz del dueño no va al repo (es publico): sirve para clonarla.
+# La voz del dueño no va al repo (es publico): sirve para clonarla. Tampoco
+# lo que sale de clonar.py.
 # Las grabaciones y los masters se guardan en el Drive de Tratto.
 *.wav
 *.m4a

@@ -24,7 +24,14 @@ graphify-src/
 # Salidas del render de los videos (el MP4 que se publica se copia a redes/)
 tools/piezas-redes/reels/salida/video-*
 tools/piezas-redes/reels/salida/previa-*
+tools/piezas-redes/reels/salida/anuncio-*
+tools/piezas-redes/reels/salida/publicidad-*
 tools/piezas-redes/reels/audio/musica-*.wav
+# Voz clonada del fundador (clonar.py): no va al repo, que es público.
+tools/piezas-redes/reels/audio/voz-*.wav
 
 # Caché de Python
 __pycache__/
+
+# Muestras de voz para que el fundador escuche (no van al repo).
+muestras-voz/

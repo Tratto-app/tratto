@@ -530,6 +530,12 @@ Números de la semana: `select mkt_prospeccion_numeros(7);`
   14/10). Desde el 22/10/2026 sale al día siguiente a las 18 y lo manda n8n, en
   el mismo hilo, para todos los de la cola; no hay otros seguimientos. Nada si
   hay pausa o un 5.7.1.
+- **Excepción: trabajo listo (fundador, 23/10/2026).** Si entra un pedido real
+  de un rubro sin nadie publicado en esa zona, se le puede volver a escribir a
+  alguien ya contactado de ese rubro, una vez por pedido y como mucho una vez
+  cada 7 días, con el pedido sin datos del cliente. Lo arma la base y lo manda
+  n8n (`tools/n8n/README.md`, `trabajo-listo.json`); los WhatsApp los manda el
+  fundador a mano.
 - Las respuestas nunca se envían solas: quedan como borrador.
 - La meta del día (`meta_por_fecha`: 50 el 17 y el 18/10, 70 desde el 19/10) en mails que **lleguen**, de un solo rubro (fundador, 15 y
   16/10/2026). Se reparte

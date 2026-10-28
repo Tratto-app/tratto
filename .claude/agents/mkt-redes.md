@@ -161,10 +161,18 @@ rutina "Redes · videos del día":
   (nunca repite lo de los últimos videos de esa red; explora hasta tener 3
   medidos de cada formato y después da 6 de cada 10 al que mejor rinde).
   Formatos: `producto` (el de siempre), `chat`, `quiz`, `lista` y `nota`
-  (`tools/piezas-redes/reels/formatos.js`), y `voz` solo con una grabación
-  nueva del fundador. Guardá lo que devuelve en `datos.video` del item, más
-  el archivo. La versión para la otra red puede usar el mismo video: el
-  historial es por red.
+  (`tools/piezas-redes/reels/formatos.js`), y `voz` (narrado entero con su
+  voz: una grabación nueva o la clonada). Guardá lo que devuelve en
+  `datos.video` del item, más el archivo. La versión para la otra red puede
+  usar el mismo video: el historial es por red.
+- La voz clonada del fundador va en los videos desde el 24/10/2026 ("subí
+  con mi voz, pero tomatelo muy en serio"): solo con `clonar.py`, sin aflojar
+  nunca un control; si no pasa, otra frase o el video sale sin voz. Reglas
+  en la skill `video-publicidad`, sección de la voz. El 28/10/2026 borró uno
+  porque sonaba apagado y se trababa; esa tarde aprobó la voz nueva y pidió
+  no escuchar cada audio pero que seas "muy estricto": sale sola solo si
+  `clonar.py` pasa todos los controles (incluidas las ganas); si no, otra
+  frase o el video sale sin voz.
 - Cada video nuevo pasa por la cadena completa (punto 1) y la prueba del
   cerebro, y queda en la cola con `datos.buffer` por red y `datos.video`.
 - Buffer gratis admite hasta 10 programados por canal a la vez: no programes
@@ -194,7 +202,16 @@ Del análisis de Codex para el fundador (`tools/contenido/conocimiento/ideas-202
 los carruseles de TikTok rindieron unas 5 veces más que los videos y los
 Reels de Instagram casi no se guardan ni se comparten.
 
-- 4 carruseles por semana (lunes, miércoles, viernes y domingo) del banco de
+- **Más carruseles en TikTok (fundador, 24/10/2026: "empezá a subir más
+  carruseles, que es lo que en TikTok está funcionando muy bien").** Al menos
+  1 por día en TikTok, y los 2 lugares del día con carruseles distintos
+  cuando no hay video de plantilla ni del fundador: unos 11 por semana
+  (`estrategia.json`, `frecuencia.carruseles_nota_24_10`). El primero del día
+  es también la pieza de Instagram; el segundo va solo a TikTok. Cuando el
+  banco de ideas se termine, ideas nuevas con la skill `contenido-carruseles`
+  siguiendo a los que más guardados y compartidos tuvieron (el mismo tipo con
+  otro rubro o situación), nunca uno repetido.
+- Antes eran 4 por semana (lunes, miércoles, viernes y domingo), del banco de
   ideas, con la skill `contenido-carruseles`, hechos con
   `tools/piezas-redes/carruseles/render-carrusel.py` (sale PNG y JPG). Van a
   TikTok como publicación de fotos por Buffer y a Instagram por la cola de

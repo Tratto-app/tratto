@@ -1,9 +1,86 @@
 ---
 name: video-publicidad
-description: Hace videos y publicidades de Tratto para TikTok e Instagram (reels, anuncios, promociones de la app, de la calculadora o de una función). Hay cinco formatos que rotan para no repetir (presentación de producto, chat, quiz de precios, lista con cortes secos y notas del celular), ocho músicas propias y la voz del fundador cuando hay grabación; el formato, la música, el gancho y el largo de cada video los elige `node tools/contenido/cli.mjs variedad` según el historial de la red. Usar SIEMPRE que se pida un video, una publicidad, un anuncio o un reel nuevo.
+description: Hace videos y publicidades de Tratto para TikTok e Instagram (reels, anuncios, promociones de la app, de la calculadora o de una función). Hay cinco formatos que rotan para no repetir (presentación de producto, chat, quiz de precios, lista con cortes secos y notas del celular), ocho músicas propias y la voz del fundador (grabada o clonada, aprobada el 24/10); el formato, la música, el gancho y el largo de cada video los elige `node tools/contenido/cli.mjs variedad` según el historial de la red. Usar SIEMPRE que se pida un video, una publicidad, un anuncio o un reel nuevo.
 ---
 
 # Videos de Tratto
+
+## La voz del fundador en todos los videos (24/10/2026)
+
+> **Frenada el 28/10/2026: ningún video con voz clonada se programa sin que
+> el fundador escuche ese audio y diga que sí.** Borró de TikTok el reel
+> "Pedido claro" (había pasado todos los controles): "se trabó, habló mal,
+> parezco re apagado, deprimido. Necesito algo con más carisma, con más
+> ganas". Medido contra sus grabaciones reales, la clonada era más lenta,
+> más plana de tono y de volumen; además leyó la lista ("Qué pasa", "Dónde
+> estás") como preguntas y se trabó al arrancar ("Si mandás, se…").
+> Desde ese día:
+> - `clonar.py` controla las **ganas** (`GANAS`: tono, rango, volumen y
+>   ritmo, lo mínimo de sus grabaciones reales) y elige la toma más viva.
+> - Pasar los controles no alcanza: se le manda el audio y espera su sí. Sin
+>   su sí, el video sale sin voz o con una grabación suya.
+> - Guion para la voz: frases afirmativas; las listas con "Primero,
+>   segundo…" (nunca ítems que empiezan con "Qué" o "Dónde", que lee como
+>   pregunta); sin citas entre comillas; el gancho, una pregunta directa.
+> - Lo que más rinde es su voz de verdad: si puede grabar el guion con el
+>   celular (30 segundos), va esa.
+>
+> **Voz nueva aprobada el 28/10/2026 a la tarde** ("ahora sí quedó
+> perfecto"): la muestra es el tramo más vivo de sus grabaciones (presupuesto
+> barato, desde 15,45 s, la de fábrica en `clonar.py`) y el guion de "Pedido
+> claro" reescrito con "Primero, segundo…". Medida: tono 3,97, rango 11,2,
+> volumen 7,13, ritmo 2,86 (`GANAS` quedó calibrado con eso).
+>
+> **Sin escuchar cada audio, pero muy estricto (28/10/2026):** "no quiero
+> escuchar cada audio con mi voz. Que seas muy estricto con la voz y que
+> quede exactamente igual". Los videos vuelven a salir con su voz clonada sin
+> esperarlo, solo si `clonar.py` pasa todo: parecido con la muestra 0,98 o
+> más, tono medio 110 Hz o más, `GANAS` (y para frases cortas, la variación
+> de tono contra sus frases cortas reales). Con la misma frase y la misma
+> muestra la voz sale idéntica (el gancho de "Cómo se cobra" se regeneró de
+> cero y dio el mismo audio). Nunca se afloja un control; si no pasa, otra
+> frase o el video sale sin voz.
+
+El fundador mandó un reel sobre clonar la voz gratis y pidió: "implementemos
+eso para todos los videos que hagamos". Su voz clonada sale de
+`tools/voz-en-off/clonar.py` (Qwen3-TTS, licencia Apache 2.0; instalación,
+controles y reglas en `tools/voz-en-off/README.md`).
+
+- **Habilitada de nuevo el 24/10/2026 a la noche, tomándolo muy en serio.**
+  El primer reel narrado salió con una traba al principio, una parte con otra
+  voz y "tracto" en vez de Tratto; los controles lo habían marcado y se
+  aflojaron para que pasara (eso no se hace nunca más) y se pausó. Rehecho
+  con `clonar.py` por tramos y controles estrictos, el fundador lo puntuó 8
+  de 10: "para los videos que apliques, hacelo así. Subí con mi voz. Pero
+  concentrate siempre en que salga bien la voz. Tomatelo muy en serio, porque
+  se van a cagar de risa si subo un video y tiene la voz en cualquier cosa".
+  Desde entonces los videos salen con su voz clonada sin esperar su
+  aprobación, con estas reglas:
+  - Siempre con `clonar.py` tal como está. **Nunca se afloja un control** (ni
+    `CONTROL`, ni `TOMAS`/`RONDAS` para menos) para que algo pase. Si la voz
+    no pasa, se cambia la frase (más corta, más simple, sin citas raras) y se
+    prueba otra vez; si tampoco, el video sale sin voz y se le avisa.
+  - Antes de programar, mirá el informe de `clonar.py` (lo que se oye en
+    cada tramo y entera): tiene que decir el guion, palabra por palabra.
+    Ante la duda, sin voz: un video sin voz no da vergüenza; uno con la voz
+    rara, sí.
+  - Al avisarle lo programado, decí que lleva su voz clonada.
+- La condición de cuando aprobó la muestra sigue igual: "que quede prolija la
+  voz, que no se trabe al hablar ni cambie el formato de la voz, que se
+  escuche prolijo y parejo". `clonar.py` lo controla; si un control falla,
+  la voz no se usa, sin excepciones.
+- Cada video lleva su voz: en el formato `voz`, el guion entero con
+  subtítulos; en los demás formatos, el gancho
+  (`hacer-video.py --voz-gancho "…"`). La frase del cierre (`--voz-cierre`)
+  solo si entra: el cierre de `formatos.js` dura unos 2,5 s. Números en
+  letras y frases completas. Si la voz no pasa los controles, `hacer-video.py`
+  frena: cambiá la frase; si tampoco, el video sale sin voz y se avisa.
+- Si hay una grabación nueva suya, va esa y no la clonada. Nunca otra voz.
+- Avisar que es IA: en TikTok, `metadata.tiktok.isAiGenerated: true` en Buffer;
+  en Instagram y Facebook, la línea "Voz hecha con IA a partir de la voz de
+  Agustín" antes de los hashtags (la conexión de Composio no tiene la marca).
+- `datos.video.voz` = `clonada`, `grabada` o `sin voz` (lo devuelve
+  `hacer-video.py`), para medir si la voz rinde más.
 
 ## Ningún video igual al anterior (fundador, 21/10/2026)
 
@@ -32,7 +109,7 @@ anterior para probar qué se pega y qué no." Desde entonces:
 | `quiz` | Adiviná el precio: opciones A/B/C, cuenta regresiva y revelación con el precio real | `formatos.js` |
 | `lista` | Cortes secos de color con números gigantes, sin desenfoque | `formatos.js` |
 | `nota` | Notas del celular que se escriben solas y se tildan | `formatos.js` |
-| `voz` | La voz del fundador con subtítulos (solo con grabación nueva) | `comun-voz.js` |
+| `voz` | La voz del fundador con subtítulos (grabación nueva o su voz clonada, `clonar.py --palabras`) | `comun-voz.js` |
 
 Los formatos de `formatos.js` son solo datos: un HTML chico con
 `window.RED = { url, ig? }` y `window.GUION = { formato, ... }` (mirá los

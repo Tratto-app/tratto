@@ -88,17 +88,31 @@ prueba cerrada con verificadores reales, porque los verificadores usaron poco
 la app o porque no se vieron comentarios ni versiones nuevas con cambios.
 Había 12 verificadores, justo el mínimo, y una sola versión subida: los cambios
 de la web llegan solos a la app, pero Google solo ve las versiones subidas a Play.
-1. 🟢 La misma prueba cerrada sigue. Juntá **20 verificadores** con Android que
-   la usen de verdad: los que ya se anotaron en Tratto, los comercios de las
-   recorridas, familia y amigos. Un **Grupo de Google** como lista de
-   verificadores evita cargar los mails uno por uno.
-2. 🟢 Que la abran 3 o 4 veces por semana y te cuenten qué no anda (WhatsApp o
-   comentarios privados desde la ficha de Play Store).
-3. 🔵 Subimos **2 versiones nuevas** durante la prueba (versionCode 2 y 3), con
-   cambios que salgan de esos comentarios y notas que lo digan. Necesita la
-   clave de subida (`clave-android.zip`).
-4. 🟢 A los 14 días volvés a pedir producción con las respuestas reales:
+Lo que Google pide sí o sí es **12 verificadores anotados durante 14 días
+seguidos**, con la app instalada todo ese tiempo. Cuánto la tienen que usar no
+lo publica: mira que la usen de verdad y que haya comentarios y versiones con
+cambios. Los "20 verificadores que la abran 3 o 4 veces por semana" eran un
+margen de seguridad, no una regla, y no son realistas con verificadores que
+se anotaron para hacer un favor (corregido el 28/10/2026).
+1. 🟢 A los 12 que ya están, pediles solo dos cosas: que **no la desinstalen ni
+   se salgan de la prueba** durante los 14 días y que la abran cuando puedan
+   (con una vez por semana alcanza). Si uno se sale, se corta la cuenta.
+2. 🟢 **3 o 4 de confianza la prueban en serio**: la abren 3 o 4 veces por
+   semana, hacen un pedido de prueba, usan el chat y te cuentan qué no anda
+   (WhatsApp o comentarios privados desde la ficha de Play Store). Anotá cada
+   comentario con fecha: son las respuestas del cuestionario.
+3. 🟢 Sumá de margen a quienes ya **ofrecen servicios en Tratto desde un
+   Android** (al 28/10 son unos 10) y a los comercios de las recorridas: a
+   ellos la app les sirve porque ahí les llegan los pedidos. Un **Grupo de
+   Google** como lista de verificadores evita cargar los mails uno por uno.
+4. 🔵 Subimos **2 versiones nuevas** durante la prueba (versionCode 2 y 3), con
+   cambios que salgan de esos comentarios y notas que lo digan. Esto es lo que
+   más pesa y depende de nosotros. Necesita la clave de subida
+   (`clave-android.zip`).
+5. 🟢 A los 14 días volvés a pedir producción con las respuestas reales:
    cuántos probaron, qué dijeron y qué cambió en cada versión.
+6. 🟢 Mientras tanto, en Android Tratto funciona desde la web: los anuncios y
+   las publicaciones pueden llevar a la web sin esperar a Play Store.
 
 ## Paso 6 · Publicar
 1. 🟢 **Producción** → **Crear versión** → **Agregar desde biblioteca** → la `1.0.0` que ya probaron.

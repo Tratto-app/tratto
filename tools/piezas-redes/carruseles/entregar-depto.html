@@ -1,0 +1,195 @@
+<!doctype html><html lang="es"><head><meta charset="utf-8">
+<title>Carrusel · Antes de entregar el depto que alquilás</title>
+<!-- Carrusel guardable (28/10/2026). Mismo molde que el de la mudanza y el de antes del calor (checklist de una
+     situación con precios), ahora para quien entrega el departamento al terminar el alquiler. Portada clara con
+     manchas. No dice qué exige la ley ni el contrato: manda a leer el contrato. Precios de precios_referencia con
+     el ajuste mensual del 2 % de la calculadora, redondeados igual, a oct-2026.
+     Exportar: python3 render-carrusel.py entregar-depto.html carrusel-entregar-depto
+               python3 render-carrusel.py entregar-depto.html carrusel-entregar-depto-tt --red tiktok -->
+<link rel="stylesheet" href="carrusel.css">
+<style>
+/* 1 · portada clara con manchas */
+.uno .chico{display:flex;align-items:center;gap:16px;font:600 30px/1.2 'IBM Plex Mono',monospace;letter-spacing:.14em;text-transform:uppercase;color:var(--laton-osc)}
+.uno h1{font:700 136px/.95 'IBM Plex Sans Condensed',sans-serif;letter-spacing:-.025em;color:var(--noche);margin:26px 0 40px}
+.uno h1 em{font-style:normal;color:var(--verde-vivo)}
+.uno .sub{font:500 48px/1.28 'IBM Plex Sans',sans-serif;color:var(--tinta-2);max-width:900px}
+.uno .iconos{display:flex;gap:18px;margin-top:66px}
+.uno .iconos div{width:128px;height:128px;border-radius:40px;background:#fff;color:var(--verde);display:flex;align-items:center;justify-content:center;
+  box-shadow:0 18px 40px rgba(12,38,32,.10)}
+.uno .iconos div:nth-child(2n){color:var(--laton-osc)}
+
+/* 2 · tres datos */
+.dos h2{font:700 100px/1 'IBM Plex Sans Condensed',sans-serif;letter-spacing:-.015em}
+.dos .bajada{font:500 44px/1.3 'IBM Plex Sans',sans-serif;color:var(--tinta-2);margin-top:26px}
+.datos{display:flex;flex-direction:column;gap:24px;margin-top:56px}
+.dato{display:flex;align-items:center;gap:30px;padding:30px 36px}
+.dato .n{flex:none;width:86px;height:86px;border-radius:50%;background:var(--verde);color:#fff;display:flex;align-items:center;justify-content:center;
+  font:700 52px/1 'IBM Plex Sans Condensed',sans-serif}
+.dato p{font:600 52px/1.15 'IBM Plex Sans',sans-serif}
+.dos .despues{font:600 42px/1.3 'IBM Plex Sans',sans-serif;color:var(--laton-osc);margin-top:40px}
+
+/* 3 a 7 · cada cosa */
+.paso{display:flex;align-items:center;gap:30px}
+.paso h2{font:700 108px/1 'IBM Plex Sans Condensed',sans-serif;letter-spacing:-.02em}
+.paso h2 .num{color:var(--laton-osc);margin-right:16px}
+.ico.grande{width:150px;height:150px;border-radius:40px}
+.precio{margin-top:60px;padding:40px 46px}
+.precio .que{font:500 44px/1.25 'IBM Plex Sans',sans-serif;color:var(--tinta-2)}
+.precio .rango{font:600 74px/1.1 'IBM Plex Mono',monospace;color:var(--verde);letter-spacing:-.03em;margin-top:14px;white-space:nowrap}
+.precio + .precio{margin-top:24px}
+.precio.chica{padding:30px 40px}
+.precio.chica .que{font-size:40px}
+.precio.chica .rango{font-size:62px;margin-top:10px}
+.consejo{display:flex;gap:24px;align-items:flex-start;margin-top:56px;font:500 46px/1.3 'IBM Plex Sans',sans-serif;color:var(--tinta)}
+.consejo b{font-weight:600;color:var(--verde-vivo)}
+.consejo .ico{color:var(--laton-osc)}
+
+/* 8 · mensaje de ejemplo */
+.ocho h2{font:700 100px/1 'IBM Plex Sans Condensed',sans-serif;letter-spacing:-.015em}
+.ocho .bajada{font:500 44px/1.3 'IBM Plex Sans',sans-serif;color:var(--tinta-2);margin-top:22px}
+.burbuja{position:relative;margin-top:84px;border-radius:44px 44px 44px 12px;padding:54px 54px 50px;font:500 50px/1.36 'IBM Plex Sans',sans-serif;
+  background:var(--verde-claro);color:var(--tinta);border:3px solid rgba(43,126,98,.25)}
+.burbuja .marca-ej{position:absolute;top:-30px;left:40px;transform:rotate(-3deg);font-size:26px}
+.burbuja u{text-decoration:none;border-bottom:4px solid var(--laton);padding:0 4px;color:var(--laton-osc);font-weight:600}
+.ocho .nota{font:600 40px/1.3 'IBM Plex Sans',sans-serif;color:var(--laton-osc);margin-top:44px}
+
+/* 9 · resumen para capturar */
+.placa.blanca{background:#fff}
+.placa.blanca .pano{display:none}
+.placa.blanca .cont{border:10px solid var(--verde);border-radius:0}
+.resumen h2{font:700 82px/1 'IBM Plex Sans Condensed',sans-serif;letter-spacing:-.015em}
+.tabla{margin-top:34px}
+.tabla .f{display:flex;justify-content:space-between;align-items:center;gap:20px;padding:19px 0;border-bottom:3px solid #E3EAE6}
+.tabla .f:last-child{border-bottom:0}
+.tabla .f span{font:500 40px/1.2 'IBM Plex Sans',sans-serif;color:var(--tinta)}
+.tabla .f b{font:600 38px/1 'IBM Plex Mono',monospace;color:var(--verde);white-space:nowrap;letter-spacing:-.02em}
+.resumen .manda{font:600 40px/1.3 'IBM Plex Sans',sans-serif;color:var(--laton-osc);margin-top:26px}
+
+/* 10 · cierre */
+.cierre h2{font:700 116px/1.0 'IBM Plex Sans Condensed',sans-serif;letter-spacing:-.015em;margin-top:60px}
+.cierre .bajada{font:500 46px/1.3 'IBM Plex Sans',sans-serif;color:#B9C2BC;margin-top:30px;max-width:880px}
+.cierre .url-caja{margin-top:56px}
+.cierre .bio{font:500 28px/1.3 'IBM Plex Mono',monospace;letter-spacing:.06em;color:var(--gris-2);margin-top:22px}
+.cierre .gratis{margin-top:70px}
+.cierre .gratis .sello{background:rgba(201,162,39,.12);color:#F3DE9A}
+</style></head><body>
+
+<!-- 1 · PORTADA -->
+<section class="placa uno"><div class="cont">
+  <div class="medio">
+    <div class="chico"><i data-ico="casa" data-px="46"></i>Fin de contrato · precios de octubre</div>
+    <h1>Antes de entregar el depto <em>que alquilás</em></h1>
+    <p class="sub">6 cosas para dejarlo en orden y cuánto sale cada una.</p>
+    <div class="iconos"><div><i data-ico="rodillo" data-px="72"></i></div><div><i data-ico="pared" data-px="72"></i></div><div><i data-ico="canilla" data-px="72"></i></div><div><i data-ico="puerta" data-px="72"></i></div><div><i data-ico="llave" data-px="72"></i></div><div><i data-ico="escoba" data-px="72"></i></div></div>
+  </div>
+  <div class="pie"><span class="web">trattoapp.com.ar</span><span class="desliza">Guardalo · Deslizá →</span></div>
+</div></section>
+
+<!-- 2 · PRIMERO -->
+<section class="placa dos"><div class="cont">
+  <div class="medio">
+    <h2>Primero, 3 cosas.</h2>
+    <p class="bajada">Antes de llamar a nadie, para saber qué hace falta.</p>
+    <div class="datos">
+      <div class="tarjeta dato"><span class="n">1</span><p>Leé el contrato: dice cómo lo tenés que devolver</p></div>
+      <div class="tarjeta dato"><span class="n">2</span><p>Recorré cada ambiente y anotá lo que falla</p></div>
+      <div class="tarjeta dato"><span class="n">3</span><p>Sacá fotos de todo el día que entregás</p></div>
+    </div>
+    <p class="despues">Ahora, una por una →</p>
+  </div>
+  <div class="pie"><span class="web">trattoapp.com.ar</span><span class="desliza">Deslizá →</span></div>
+</div></section>
+
+<!-- 3 · LA PINTURA. -->
+<section class="placa"><div class="cont">
+  <div class="medio">
+    <div class="paso"><div class="ico grande"><i data-ico="rodillo" data-px="92"></i></div><h2><span class="num">1.</span>La pintura.</h2></div>
+    <div class="tarjeta precio chica"><div class="que">Habitación chica (3x3 m)</div><div class="rango">$113.000 a $175.000</div></div><div class="tarjeta precio chica"><div class="que">Departamento de 2 ambientes</div><div class="rango">$507.000 a $805.000</div></div>
+    <div class="consejo"><div class="ico chico"><i data-ico="check" data-px="52"></i></div><p>Fijate si el contrato pide <b>entregarlo pintado.</b></p></div>
+  </div>
+  <div class="pie"><span class="fuente">Precios de referencia · AMBA · oct-2026</span></div>
+</div></section>
+
+<!-- 4 · LOS AGUJEROS. -->
+<section class="placa"><div class="cont">
+  <div class="medio">
+    <div class="paso"><div class="ico grande"><i data-ico="pared" data-px="92"></i></div><h2><span class="num">2.</span>Los agujeros.</h2></div>
+    <div class="tarjeta precio"><div class="que">Tapar fisuras y agujeros, por m²</div><div class="rango">$6.500 a $17.000</div></div>
+    <div class="consejo"><div class="ico chico"><i data-ico="check" data-px="52"></i></div><p>Los de cuadros y estantes se tapan <b>antes de pintar, no después.</b></p></div>
+  </div>
+  <div class="pie"><span class="fuente">Precios de referencia · AMBA · oct-2026</span></div>
+</div></section>
+
+<!-- 5 · LAS CANILLAS. -->
+<section class="placa"><div class="cont">
+  <div class="medio">
+    <div class="paso"><div class="ico grande"><i data-ico="canilla" data-px="92"></i></div><h2><span class="num">3.</span>Las canillas.</h2></div>
+    <div class="tarjeta precio"><div class="que">Arreglo o cambio de canilla</div><div class="rango">$35.000 a $60.000</div></div>
+    <div class="consejo"><div class="ico chico"><i data-ico="check" data-px="52"></i></div><p>Si gotea más de una, <b>pedí todo en un solo mensaje.</b></p></div>
+  </div>
+  <div class="pie"><span class="fuente">Precios de referencia · AMBA · oct-2026</span></div>
+</div></section>
+
+<!-- 6 · PUERTAS Y CAJONES. -->
+<section class="placa"><div class="cont">
+  <div class="medio">
+    <div class="paso"><div class="ico grande"><i data-ico="puerta" data-px="92"></i></div><h2><span class="num">4.</span>Puertas y cajones.</h2></div>
+    <div class="tarjeta precio chica"><div class="que">Ajuste de puerta o mueble</div><div class="rango">$22.000 a $40.000</div></div><div class="tarjeta precio chica"><div class="que">Cambio de correderas de cajón</div><div class="rango">$9.000 a $28.000</div></div>
+    <div class="consejo"><div class="ico chico"><i data-ico="check" data-px="52"></i></div><p>Abrí y cerrá <b>cada puerta, placard y cajón.</b></p></div>
+  </div>
+  <div class="pie"><span class="fuente">Precios de referencia · AMBA · oct-2026</span></div>
+</div></section>
+
+<!-- 7 · LAS LLAVES. -->
+<section class="placa"><div class="cont">
+  <div class="medio">
+    <div class="paso"><div class="ico grande"><i data-ico="llave" data-px="92"></i></div><h2><span class="num">5.</span>Las llaves.</h2></div>
+    <div class="tarjeta precio"><div class="que">Copia de llave común</div><div class="rango">$4.500 a $12.500</div></div>
+    <div class="consejo"><div class="ico chico"><i data-ico="check" data-px="52"></i></div><p>Contá las copias que te dieron: <b>devolvé las mismas.</b></p></div>
+  </div>
+  <div class="pie"><span class="fuente">Precios de referencia · AMBA · oct-2026</span></div>
+</div></section>
+
+<!-- 8 · LA LIMPIEZA FINAL. -->
+<section class="placa"><div class="cont">
+  <div class="medio">
+    <div class="paso"><div class="ico grande"><i data-ico="escoba" data-px="92"></i></div><h2><span class="num">6.</span>La limpieza final.</h2></div>
+    <div class="tarjeta precio"><div class="que">Media jornada (4 horas)</div><div class="rango">$35.000 a $51.000</div></div>
+    <div class="consejo"><div class="ico chico"><i data-ico="check" data-px="52"></i></div><p>Hacela con el depto <b>ya vacío</b>, después del flete.</p></div>
+  </div>
+  <div class="pie"><span class="fuente">Precios de referencia · AMBA · oct-2026</span></div>
+</div></section>
+
+<!-- 9 · RESUMEN -->
+<section class="placa blanca resumen"><div class="cont">
+  <div class="medio">
+    <h2>Para entregar el depto, en una foto</h2>
+    <div class="tabla">
+      <div class="f"><span>Pintar habitación 3x3</span><b>$113k a $175k</b></div>
+      <div class="f"><span>Pintar 2 ambientes</span><b>$507k a $805k</b></div>
+      <div class="f"><span>Tapar agujeros (por m²)</span><b>$6,5k a $17k</b></div>
+      <div class="f"><span>Canilla</span><b>$35k a $60k</b></div>
+      <div class="f"><span>Puerta o mueble</span><b>$22k a $40k</b></div>
+      <div class="f"><span>Correderas de cajón</span><b>$9k a $28k</b></div>
+      <div class="f"><span>Copia de llave</span><b>$4,5k a $12,5k</b></div>
+      <div class="f"><span>Limpieza (4 horas)</span><b>$35k a $51k</b></div>
+    </div>
+    <p class="manda">Precios de referencia de octubre. Sacale captura.</p>
+  </div>
+  <div class="pie"><span class="web">trattoapp.com.ar</span></div>
+</div></section>
+
+<!-- 10 · CIERRE -->
+<section class="placa noche cierre"><div class="cont">
+  <div class="medio">
+    <h2>Pedilo con tiempo y entregá tranquilo.</h2>
+    <p class="bajada">En Tratto contás qué necesitás y te llegan presupuestos de gente de tu zona, con lo que incluye cada uno.</p>
+    <div><span class="url-caja"><span id="logo-url"></span><span data-tiktok="trattoapp.com.ar/r/tt-depto">trattoapp.com.ar/r/ig-depto</span></span></div>
+    <p class="bio" data-tiktok="(escribilo en el navegador)">Tocá @trattoapp_ · link «Pedí un servicio»</p>
+    <div class="gratis"><span class="sello">Gratis para el que pide</span></div>
+  </div>
+</div></section>
+
+<script src="carrusel.js"></script>
+<script>document.getElementById('logo-url').outerHTML = LOGO(46, 'lu');</script>
+</body></html>

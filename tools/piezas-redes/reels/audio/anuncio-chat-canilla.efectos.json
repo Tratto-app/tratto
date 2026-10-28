@@ -1,0 +1,87 @@
+[
+ {
+  "efecto": "enviado",
+  "t": 0.12,
+  "db": -16
+ },
+ {
+  "efecto": "recibido",
+  "t": 1.62,
+  "db": -15
+ },
+ {
+  "efecto": "enviado",
+  "t": 2.65,
+  "db": -16
+ },
+ {
+  "efecto": "tic",
+  "t": 3.65,
+  "db": -18
+ },
+ {
+  "efecto": "latigazo",
+  "t": 4.45,
+  "db": -16
+ },
+ {
+  "efecto": "enviado",
+  "t": 5.8,
+  "db": -16
+ },
+ {
+  "efecto": "tic",
+  "t": 7,
+  "db": -18
+ },
+ {
+  "efecto": "latigazo",
+  "t": 7.8,
+  "db": -16
+ },
+ {
+  "efecto": "pop",
+  "t": 8.15,
+  "db": -15
+ },
+ {
+  "efecto": "pop",
+  "t": 8.4,
+  "db": -18
+ },
+ {
+  "efecto": "pop",
+  "t": 8.7,
+  "db": -18
+ },
+ {
+  "efecto": "pop",
+  "t": 9,
+  "db": -18
+ },
+ {
+  "efecto": "pop",
+  "t": 9.3,
+  "db": -18
+ },
+ {
+  "efecto": "latigazo",
+  "t": 11,
+  "db": -16
+ },
+ {
+  "efecto": "pop",
+  "t": 11.8,
+  "db": -15
+ },
+ {
+  "efecto": "latigazo",
+  "t": 13.5,
+  "db": -16
+ },
+ {
+  "efecto": "pop",
+  "t": 13.85,
+  "db": -15
+ }
+]

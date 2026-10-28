@@ -1,0 +1,190 @@
+<!doctype html><html lang="es"><head><meta charset="utf-8">
+<title>Carrusel · Pedido incompleto contra pedido claro</title>
+<!-- Carrusel guardable (24/10/2026, banco de ideas del 22/10, idea 1). Portada oscura con el pedido mal
+     hecho en grande, para que no se parezca al de la mudanza (portada clara). Los pedidos son ejemplos
+     y lo dicen: no son mensajes de clientes reales.
+     Exportar: python3 render-carrusel.py pedido-claro.html carrusel-pedido-claro
+               python3 render-carrusel.py pedido-claro.html carrusel-pedido-claro-tt --red tiktok -->
+<link rel="stylesheet" href="carrusel.css">
+<style>
+/* Burbujas de chat: el elemento de esta pieza */
+.burbuja{position:relative;border-radius:44px 44px 44px 12px;padding:50px 54px;font:500 56px/1.35 'IBM Plex Sans',sans-serif;
+  box-shadow:0 30px 70px rgba(0,0,0,.22)}
+.burbuja.mala{background:#1B4B40;color:#E8EBEA;border:3px solid rgba(143,217,188,.18)}
+.burbuja.buena{background:var(--verde-claro);color:var(--tinta);border:3px solid rgba(43,126,98,.25);font-size:48px}
+.burbuja .marca-ej{position:absolute;top:-30px;left:40px;transform:rotate(-3deg);font-size:26px}
+.burbuja u{text-decoration:none;border-bottom:4px solid var(--laton);padding:0 4px;color:var(--laton-osc);font-weight:600}
+.veredicto{display:flex;align-items:center;gap:22px;margin-top:44px;font:600 50px/1.2 'IBM Plex Sans',sans-serif}
+
+/* 1 · portada oscura */
+.uno .chico{font:600 30px/1.2 'IBM Plex Mono',monospace;letter-spacing:.14em;text-transform:uppercase;color:#F3DE9A}
+.uno h1{font:700 120px/.98 'IBM Plex Sans Condensed',sans-serif;letter-spacing:-.02em;color:#FCFBF8;margin:26px 0 60px}
+.uno h1 em{font-style:normal;color:var(--laton)}
+.uno .veredicto{color:#B9C2BC}
+.uno .veredicto b{color:#F3DE9A}
+
+/* 2 · el mismo, bien contado */
+.dos h2{font:700 100px/1 'IBM Plex Sans Condensed',sans-serif;letter-spacing:-.015em;margin-bottom:64px}
+.dos .veredicto{color:var(--verde-vivo)}
+
+/* 3 a 7 · las cinco cosas */
+.paso{display:flex;align-items:center;gap:30px}
+.paso h2{font:700 104px/1 'IBM Plex Sans Condensed',sans-serif;letter-spacing:-.02em}
+.paso h2 .num{color:var(--laton-osc);margin-right:14px}
+.ico.grande{width:150px;height:150px;border-radius:40px}
+.antes-despues{margin-top:64px;display:flex;flex-direction:column;gap:24px}
+.ad{padding:36px 42px;display:flex;gap:26px;align-items:flex-start}
+.ad .ico{width:70px;height:70px;border-radius:20px;box-shadow:none;background:transparent}
+.ad p{font:500 46px/1.3 'IBM Plex Sans',sans-serif;color:var(--tinta)}
+.ad.no p{color:var(--gris)}
+.ad.no{background:rgba(255,255,255,.6)}
+.porque{margin-top:46px;font:600 42px/1.3 'IBM Plex Sans',sans-serif;color:var(--verde-vivo)}
+
+/* 8 · plantilla */
+.ocho h2{font:700 96px/1 'IBM Plex Sans Condensed',sans-serif;letter-spacing:-.015em;margin-bottom:76px}
+
+/* 9 · lista para capturar */
+.placa.blanca{background:#fff}
+.placa.blanca .pano{display:none}
+.placa.blanca .cont{border:10px solid var(--verde);border-radius:0}
+.nueve h2{font:700 96px/1 'IBM Plex Sans Condensed',sans-serif;letter-spacing:-.015em}
+.checks{margin-top:40px}
+.chk{display:flex;align-items:center;gap:28px;padding:22px 0;border-bottom:3px solid #E3EAE6}
+.chk:last-child{border-bottom:0}
+.chk .caja{width:62px;height:62px;border-radius:16px;border:5px solid var(--verde);flex:none}
+.chk span{font:600 56px/1.1 'IBM Plex Sans',sans-serif;color:var(--tinta)}
+.nueve .manda{font:600 44px/1.3 'IBM Plex Sans',sans-serif;color:var(--verde-vivo);margin-top:36px}
+
+/* 10 · cierre */
+.cierre h2{font:700 116px/1.0 'IBM Plex Sans Condensed',sans-serif;letter-spacing:-.015em;margin-top:60px}
+.cierre .bajada{font:500 46px/1.3 'IBM Plex Sans',sans-serif;color:#B9C2BC;margin-top:30px;max-width:860px}
+.cierre .url-caja{margin-top:56px}
+.cierre .bio{font:500 28px/1.3 'IBM Plex Mono',monospace;letter-spacing:.06em;color:var(--gris-2);margin-top:22px}
+.cierre .gratis{margin-top:70px}
+.cierre .gratis .sello{background:rgba(201,162,39,.12);color:#F3DE9A}
+</style></head><body>
+
+<!-- 1 · PORTADA -->
+<section class="placa noche uno"><div class="cont">
+  <div class="medio">
+    <h1>Este pedido recibe <em>«depende»</em> como respuesta.</h1>
+    <div class="burbuja mala">Hola, se me rompió algo del baño. ¿Cuánto sale?</div>
+    <div class="veredicto"><i data-ico="cruz" data-px="64" data-color="#F3DE9A"></i><span>Le faltan <b>5 datos.</b></span></div>
+  </div>
+  <div class="pie"><span class="web" style="color:#8FD9BC">trattoapp.com.ar</span><span class="desliza" style="color:#F3DE9A">Guardalo · Deslizá →</span></div>
+</div></section>
+
+<!-- 2 · EL MISMO, BIEN CONTADO -->
+<section class="placa dos"><div class="cont">
+  <div class="medio">
+    <h2>El mismo pedido, bien contado:</h2>
+    <div class="burbuja buena"><span class="sello marca-ej">Ejemplo</span>Hola. Gotea la canilla del lavatorio hace 3 días, aunque esté cerrada. Te mando foto. Estoy en Caseros, planta baja. ¿Podés esta semana?</div>
+    <div class="veredicto"><i data-ico="check" data-px="64"></i><span>Con esto te pueden pasar un precio de verdad.</span></div>
+  </div>
+  <div class="pie"><span class="web">trattoapp.com.ar</span><span class="desliza">Deslizá →</span></div>
+</div></section>
+
+<!-- 3 · QUÉ PASA -->
+<section class="placa"><div class="cont">
+  <div class="medio">
+    <div class="paso"><div class="ico grande"><i data-ico="chat" data-px="92"></i></div><h2><span class="num">1.</span>Qué pasa.</h2></div>
+    <div class="antes-despues">
+      <div class="tarjeta ad no"><div class="ico"><i data-ico="cruz" data-px="56" data-color="#94A19B"></i></div><p>«Se rompió algo del baño»</p></div>
+      <div class="tarjeta ad"><div class="ico"><i data-ico="check" data-px="56"></i></div><p>«Gotea la canilla del lavatorio aunque esté cerrada»</p></div>
+    </div>
+    <p class="porque">No hace falta el nombre técnico: contalo con tus palabras.</p>
+  </div>
+  <div class="pie"><span class="web">trattoapp.com.ar</span></div>
+</div></section>
+
+<!-- 4 · DESDE CUÁNDO -->
+<section class="placa"><div class="cont">
+  <div class="medio">
+    <div class="paso"><div class="ico grande"><i data-ico="reloj" data-px="92"></i></div><h2><span class="num">2.</span>Desde cuándo.</h2></div>
+    <div class="antes-despues">
+      <div class="tarjeta ad no"><div class="ico"><i data-ico="cruz" data-px="56" data-color="#94A19B"></i></div><p>Ni lo menciona</p></div>
+      <div class="tarjeta ad"><div class="ico"><i data-ico="check" data-px="56"></i></div><p>«Desde hace 3 días, y cada vez gotea más»</p></div>
+    </div>
+    <p class="porque">Ayuda a saber si es algo nuevo o algo que viene de antes.</p>
+  </div>
+  <div class="pie"><span class="web">trattoapp.com.ar</span></div>
+</div></section>
+
+<!-- 5 · UNA FOTO -->
+<section class="placa"><div class="cont">
+  <div class="medio">
+    <div class="paso"><div class="ico grande"><i data-ico="camara" data-px="92"></i></div><h2><span class="num">3.</span>Una foto.</h2></div>
+    <div class="antes-despues">
+      <div class="tarjeta ad"><div class="ico"><i data-ico="check" data-px="56"></i></div><p>Una de cerca, donde está el problema</p></div>
+      <div class="tarjeta ad"><div class="ico"><i data-ico="check" data-px="56"></i></div><p>Si podés, otra de lejos, para que se entienda dónde está</p></div>
+    </div>
+    <p class="porque">Con una buena foto se evita una visita solo para mirar.</p>
+  </div>
+  <div class="pie"><span class="web">trattoapp.com.ar</span></div>
+</div></section>
+
+<!-- 6 · DÓNDE -->
+<section class="placa"><div class="cont">
+  <div class="medio">
+    <div class="paso"><div class="ico grande"><i data-ico="casa" data-px="92"></i></div><h2><span class="num">4.</span>Dónde.</h2></div>
+    <div class="antes-despues">
+      <div class="tarjeta ad"><div class="ico"><i data-ico="check" data-px="56"></i></div><p>El barrio (no hace falta la dirección)</p></div>
+      <div class="tarjeta ad"><div class="ico"><i data-ico="check" data-px="56"></i></div><p>Piso y si hay ascensor, si hay que subir cosas</p></div>
+    </div>
+    <p class="porque">La distancia y el acceso también entran en el precio.</p>
+  </div>
+  <div class="pie"><span class="web">trattoapp.com.ar</span></div>
+</div></section>
+
+<!-- 7 · PARA CUÁNDO -->
+<section class="placa"><div class="cont">
+  <div class="medio">
+    <div class="paso"><div class="ico grande"><i data-ico="calendario" data-px="92"></i></div><h2><span class="num">5.</span>Para cuándo.</h2></div>
+    <div class="antes-despues">
+      <div class="tarjeta ad no"><div class="ico"><i data-ico="cruz" data-px="56" data-color="#94A19B"></i></div><p>«Cuando puedas»</p></div>
+      <div class="tarjeta ad"><div class="ico"><i data-ico="check" data-px="56"></i></div><p>«Esta semana, a la tarde»</p></div>
+    </div>
+    <p class="porque">Si es urgente, decilo: una urgencia suele costar más.</p>
+  </div>
+  <div class="pie"><span class="web">trattoapp.com.ar</span></div>
+</div></section>
+
+<!-- 8 · PLANTILLA -->
+<section class="placa ocho"><div class="cont">
+  <div class="medio">
+    <h2>Copiá y completá:</h2>
+    <div class="burbuja buena"><span class="sello marca-ej">Plantilla</span>Hola. Tengo este problema: <u>qué pasa</u>, desde <u>cuándo</u>. Te mando foto. Estoy en <u>barrio</u>, piso <u>__</u>. ¿Podés <u>para cuándo</u>? ¿Me pasás presupuesto con lo que incluye?</div>
+  </div>
+  <div class="pie"><span class="web">trattoapp.com.ar</span></div>
+</div></section>
+
+<!-- 9 · LISTA PARA CAPTURAR -->
+<section class="placa blanca nueve"><div class="cont">
+  <div class="medio">
+    <h2>Antes de pedir, tildá:</h2>
+    <div class="checks">
+      <div class="chk"><div class="caja"></div><span>Qué pasa, con tus palabras</span></div>
+      <div class="chk"><div class="caja"></div><span>Desde cuándo</span></div>
+      <div class="chk"><div class="caja"></div><span>Foto de cerca (y de lejos)</span></div>
+      <div class="chk"><div class="caja"></div><span>Barrio, piso y acceso</span></div>
+      <div class="chk"><div class="caja"></div><span>Para cuándo lo necesitás</span></div>
+    </div>
+    <p class="manda">Sacale captura para la próxima.</p>
+  </div>
+  <div class="pie"><span class="web">trattoapp.com.ar</span></div>
+</div></section>
+
+<!-- 10 · CIERRE -->
+<section class="placa noche cierre"><div class="cont">
+  <div class="medio">
+    <h2>Contalo una vez, bien.</h2>
+    <p class="bajada">En Tratto el pedido te pregunta zona, urgencia y foto. Te llegan presupuestos de gente de tu zona.</p>
+    <div><span class="url-caja"><span id="logo-url"></span><span data-tiktok="trattoapp.com.ar/r/tt-pedido-claro">trattoapp.com.ar/r/ig-pedido-claro</span></span></div>
+    <p class="bio" data-tiktok="(escribilo en el navegador)">Tocá @trattoapp_ · link «Pedí un servicio»</p>
+    <div class="gratis"><span class="sello">Gratis para el que pide</span></div>
+  </div>
+</div></section>
+
+<script src="carrusel.js"></script>
+<script>document.getElementById('logo-url').outerHTML = LOGO(46, 'lu');</script>
+</body></html>
