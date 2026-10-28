@@ -347,3 +347,47 @@ test('reseña en la App Store: se pide al confirmarse el pago, una vez cada 4 me
     assert.equal(await p.page.evaluate(() => window.__resenas), 1);
   } finally { await p.cerrar(); }
 });
+
+test('Google y Apple: los botones aparecen solo si están prendidos', async () => {
+  const p = await abrir(entorno, {rol: null, handler: c => c.path.endsWith('/auth/v1/settings') ? {json: {external: {google: true, apple: false}}} : null});
+  try {
+    await p.page.waitForSelector('#a-google:not(.oculto)');
+    assert.ok(await p.page.locator('#a-apple').isHidden());
+    await p.page.locator('#a-sociales').scrollIntoViewIfNeeded();
+    await p.foto('sociales');
+  } finally { await p.cerrar(); }
+});
+
+test('Google: al volver por primera vez completa la cuenta y entra', async () => {
+  let put = null;
+  const p = await abrir(entorno, {rol: null, handler: c => {
+    if (c.path.endsWith('/auth/v1/settings')) return {json: {external: {google: true, apple: true}}};
+    if (c.path.endsWith('/auth/v1/token') && c.query.includes('grant_type=pkce')) return {json: {access_token: 'tk', refresh_token: 'rf',
+      user: {id: cliente, email: 'ana@example.invalid', app_metadata: {provider: 'google'}, user_metadata: {full_name: 'Ana Pérez'}}}};
+    if (c.path.endsWith('/auth/v1/user') && c.method === 'PUT') { put = c.body;
+      return {json: {id: cliente, email: 'ana@example.invalid', app_metadata: {provider: 'google'}, user_metadata: {full_name: 'Ana Pérez', ...c.body.data}}}; }
+    return null;
+  }});
+  try {
+    await p.page.evaluate(() => localStorage.setItem('tratto_oauth', JSON.stringify({verificador: 'v'.repeat(43), fecha: Date.now(), rol: null})));
+    await p.page.goto(entorno.origin + '/?code=abc123&utm_source=prueba');
+    await p.page.waitForSelector('#arranque', {state: 'detached'});
+    await p.page.waitForSelector('#p-auth.completando');
+    assert.ok(!(await p.page.evaluate(() => location.search)).includes('code='));
+    const pkce = p.calls.find(c => c.path.endsWith('/auth/v1/token'));
+    assert.deepEqual(pkce.body, {auth_code: 'abc123', code_verifier: 'v'.repeat(43)});
+    assert.match(await p.page.locator('#a-completar').innerText(), /Entraste como ana@example\.invalid/);
+    assert.ok(await p.page.locator('#a-email').isHidden());
+    await p.page.click('#rol-cliente');
+    assert.equal(await p.page.inputValue('#a-nombre'), 'Ana Pérez');
+    await p.page.fill('#a-tel', '11 5555 4444');
+    await p.page.click('#a-legales');
+    await p.foto('completar');
+    await p.page.click('#a-enviar');
+    await p.page.waitForFunction(() => actual === 'inicio');
+    assert.equal(put.data.rol, 'cliente');
+    assert.equal(put.data.telefono, '11 5555 4444');
+    assert.equal(put.data.legales_aceptados, true);
+    assert.equal(await p.page.evaluate(() => JSON.parse(localStorage.getItem('tratto_oauth'))), null);
+  } finally { await p.cerrar(); }
+});

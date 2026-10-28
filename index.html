@@ -1059,8 +1059,23 @@
   /* Dos puertas: cada rol tiene su color de punta a punta (verde quien pide,
      latón quien ofrece) y cuenta en 3 pasos qué pasa después de elegirlo.
      Mientras no se elige, el formulario y el botón no aparecen. */
-  #p-auth.eligiendo #a-datos > :not(.pestanas):not(#sel-rol),
+  #p-auth.eligiendo #a-datos > :not(.pestanas):not(#sel-rol):not(#a-completar),
   #p-auth.eligiendo #a-enviar{display:none!important}
+  /* Entrar con Google o Apple */
+  .sociales{margin-top:18px;display:grid;gap:10px}
+  .sociales .bifurca{margin-top:6px}
+  .btn.social{margin-top:0;display:flex;align-items:center;justify-content:center;gap:10px;font-weight:600}
+  .btn.social svg{width:19px;height:19px;flex:none}
+  .btn.social.google{background:#fff;color:#1F1F1F;border:1px solid var(--linea-fuerte)}
+  .btn.social.google:active{background:var(--claro-2)}
+  .btn.social.apple{background:#000;color:#fff;border:1px solid #000}
+  .btn.social.apple:active{background:#222}
+  .completar-cab{display:none;margin:22px 0 14px}
+  .completar-tit{font-family:'IBM Plex Sans Condensed',sans-serif;font-weight:700;font-size:22px}
+  .completar-txt{font-size:14px;color:var(--gris);line-height:1.5;margin:6px 0 4px}
+  #p-auth.completando .completar-cab{display:block}
+  #p-auth.completando .pestanas,#p-auth.completando #a-sociales,#p-auth.completando #a-email-caja,
+  #p-auth.completando #a-pass-caja,#p-auth.completando #a-olvido,#p-auth.completando #a-pedido-link{display:none!important}
   #a-datos{scroll-margin-top:84px}
   .roles{display:grid;gap:14px;margin-bottom:6px}
   .roles-tit{font-family:'IBM Plex Sans Condensed',sans-serif;font-weight:700;font-size:23px;
@@ -1713,6 +1728,26 @@
           <button class="pest" id="tab-crear" type="button">Crear cuenta</button>
         </div>
 
+        <!-- Quien entró por primera vez con Google o Apple completa acá lo que
+             la cuenta necesita (rol, nombre, teléfono, términos). -->
+        <div class="completar-cab" id="a-completar">
+          <div class="completar-tit">Completá tu cuenta</div>
+          <p class="completar-txt" id="a-completar-txt"></p>
+          <button class="ver" id="a-completar-otra" type="button">Usar otra cuenta</button>
+        </div>
+
+        <!-- Entrar con Google o Apple: cada botón aparece solo si ese proveedor
+             está prendido en Supabase (auth/v1/settings). -->
+        <div class="sociales oculto" id="a-sociales">
+          <button class="btn social google oculto" id="a-google" type="button">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 0 1-2.2 3.32v2.77h3.57c2.08-1.92 3.27-4.74 3.27-8.1z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84A11 11 0 0 0 12 23z"/><path fill="#FBBC05" d="M5.84 14.1A6.6 6.6 0 0 1 5.5 12c0-.73.13-1.44.34-2.1V7.06H2.18A11 11 0 0 0 1 12c0 1.78.43 3.45 1.18 4.94l3.66-2.84z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1A11 11 0 0 0 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z"/></svg>
+            Continuar con Google</button>
+          <button class="btn social apple oculto" id="a-apple" type="button">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M16.37 12.67c-.02-2.4 1.96-3.56 2.05-3.62-1.12-1.64-2.86-1.86-3.48-1.89-1.48-.15-2.89.87-3.64.87-.75 0-1.91-.85-3.14-.83-1.62.02-3.11.94-3.94 2.39-1.68 2.92-.43 7.24 1.21 9.6.8 1.16 1.75 2.46 3 2.41 1.2-.05 1.66-.78 3.11-.78 1.46 0 1.86.78 3.13.75 1.3-.02 2.12-1.18 2.91-2.34.92-1.34 1.3-2.65 1.32-2.72-.03-.01-2.53-.97-2.55-3.84zM14.03 5.6c.66-.8 1.11-1.92.99-3.03-.95.04-2.11.64-2.8 1.44-.61.71-1.15 1.85-1 2.94 1.06.08 2.15-.54 2.81-1.35z"/></svg>
+            Continuar con Apple</button>
+          <p class="bifurca">o con tu email</p>
+        </div>
+
         <!-- Dos puertas. Quienes ofrecen servicios se anotaban como clientes
              (fundador, 23/10/2026): la elección aparecía arriba de las pestañas,
              fuera de la vista, y venía marcada como cliente. Ahora es lo primero
@@ -1836,12 +1871,12 @@
           <div class="err" id="e-a-fiscal">Elegí tu condición frente al IVA.</div>
         </div>
 
-        <div class="campo">
+        <div class="campo" id="a-email-caja">
           <label for="a-email">Email</label>
           <input id="a-email" type="email" autocomplete="email" placeholder="tucorreo@ejemplo.com">
           <div class="err" id="e-a-email">Revisá el email: falta el @ o el dominio.</div>
         </div>
-        <div class="campo">
+        <div class="campo" id="a-pass-caja">
           <div class="campo-top">
             <label for="a-pass">Contraseña</label>
             <button class="ver" id="ver-pass" type="button">Mostrar</button>
@@ -2877,6 +2912,21 @@ let retornoRecuperacion = (() => {
   return retorno;
 })();
 
+/* Vuelta de "Continuar con Google / Apple" (flujo PKCE): Supabase vuelve con
+   ?code= o con ?error=. Solo cuenta si salió de acá (hay un verificador
+   guardado); la URL se limpia en el acto. */
+const OAUTH_CLAVE = 'tratto_oauth';
+let retornoOAuth = (() => {
+  const q = new URLSearchParams(location.search);
+  const code = q.get('code'), error = q.get('error_description') || q.get('error');
+  let pendiente = null;
+  try{ pendiente = JSON.parse(localStorage.getItem(OAUTH_CLAVE) || 'null'); }catch(e){}
+  if(!pendiente || (!code && !error)) return null;
+  ['code','error','error_code','error_description','state'].forEach(k => q.delete(k));
+  history.replaceState(null, '', location.pathname + (q.toString() ? '?' + q : '') + location.hash);
+  return {code, error, pendiente};
+})();
+
 /* ══════════════════ DE DÓNDE VINO LA VISITA ══════════════════
    Para saber qué canal de marketing trae a cada usuario (TikTok, Instagram,
    la calculadora, un mail del CRM...). Se guarda la última visita que llegó
@@ -2887,6 +2937,7 @@ let retornoRecuperacion = (() => {
    dominio. */
 const ORIGEN_CLAVE = 'tratto_origen';
 (function guardarOrigen(){
+  if(retornoOAuth) return;   // la vuelta de Google o Apple no es una visita nueva
   try{
     const q = new URLSearchParams(location.search), o = {};
     ['utm_source','utm_medium','utm_campaign','utm_content','gid'].forEach(k => {
@@ -3499,36 +3550,80 @@ function traducir(t){
   return 'No se pudo completar: ' + (t || 'error desconocido');
 }
 
+/* Lo que se pide para crear la cuenta, menos email y contraseña. Lo usa el
+   alta con email y "Completá tu cuenta" de quien entró con Google o Apple. */
+function validarDatosAlta(r){
+  limpiarTransfer();
+  limpiar(['a-nombre','a-tel','a-rubro','a-otro-rubro','a-rubro-padre','a-cuit','a-fiscal']);
+  if($('a-nombre').value.trim().length < 2) fallar('a-nombre',r);
+  if($('a-tel').value.replace(/\D/g,'').length < 6) fallar('a-tel',r);
+  if(rolElegido === 'proveedor'){
+    if(!$('a-rubro').value) fallar('a-rubro',r);
+    else if($('a-rubro').value === RUBRO_OTRO){
+      if($('a-otro-rubro').value.trim().length < 3) fallar('a-otro-rubro',r);
+      if(!$('a-rubro-padre').value) fallar('a-rubro-padre',r);
+    }
+    if(!cuitValido($('a-cuit').value)) fallar('a-cuit',r);
+    if(!$('a-fiscal').value) fallar('a-fiscal',r);
+  }
+}
+/* El cuadradito es de 20px: si el error se marcara solo ahí no se vería.
+   Se pinta el renglón entero. */
+function validarLegales(r){
+  if($('a-legales').checked) return;
+  $('a-legales-fila').classList.add('mal');
+  $('e-a-legales').classList.add('visible');
+  if(!r.p) r.p = 'a-legales';
+}
+/* El permiso viaja en el mismo alta que lo necesita, no en una llamada
+   posterior que podría no llegar. Queda en user_metadata con fecha: sin eso
+   no hay forma de acreditar cuándo se dio. */
+function datosAlta(){
+  return { rol: rolElegido,
+    nombre: $('a-nombre').value.trim(),
+    telefono: $('a-tel').value.trim(),
+    /* Igual que en el formulario de servicio: si el oficio es propio, se
+       guarda el nombre lindo aparte y el rubro parecido es el que usa el
+       matching. */
+    rubro: rolElegido !== 'proveedor' ? null
+         : ($('a-rubro').value === RUBRO_OTRO ? $('a-rubro-padre').value : $('a-rubro').value),
+    rubro_personalizado: (rolElegido === 'proveedor' && $('a-rubro').value === RUBRO_OTRO)
+         ? $('a-otro-rubro').value.trim() : null,
+    /* Tratto le factura al Proveedor su comisión por cada trabajo cobrado, y
+       para eso necesita su identificación fiscal. Al Cliente no le factura
+       nada, así que no se lo pide. Es el punto 5.4 del contrato de
+       Proveedores. */
+    cuit: rolElegido === 'proveedor' ? soloNumeros($('a-cuit').value) : null,
+    condicion_fiscal: rolElegido === 'proveedor' ? $('a-fiscal').value : null,
+    /* El permiso de transferencia se da en la misma casilla de los términos,
+       que lo nombra expresamente. */
+    transfer_permiso:true, transfer_permiso_fecha:new Date().toISOString(),
+    transfer_permiso_forma:'casilla de términos',
+    legales_aceptados:true, legales_fecha:new Date().toISOString(),
+    legales_version:VERSION_LEGALES, legales_rol:rolElegido,
+    /* Publicidad: solo si tildó la casilla opcional. Mismo formato que
+       guardarPermisoPublicidad (Ajustes); el CRM lo toma como opt_in recién
+       cuando la persona confirma el mail (crm_registrar_usuario y
+       crm_desde_confirmacion). */
+    publicidad_permiso: $('a-publi').checked,
+    publicidad_permiso_fecha: $('a-publi').checked ? new Date().toISOString() : null,
+    /* Canal de marketing por el que llegó (ver origenVisita) */
+    origen: origenVisita() };
+}
+
 $('a-enviar').addEventListener('click', async () => {
   if(pasoAuth === 'recuperar') return pedirRecuperacion();
   if(pasoAuth === 'nueva-clave') return guardarNuevaClave();
   if(pasoAuth === 'codigo') return confirmarCodigo();
+  if(pasoAuth === 'completar') return completarCuenta();
   limpiar(['a-email','a-pass']);
   limpiarTransfer();
   limpiar(['a-nombre','a-tel','a-rubro','a-otro-rubro','a-rubro-padre','a-cuit','a-fiscal']);
   const r={p:null}, email=$('a-email').value.trim(), pass=$('a-pass').value;
-  if(modoAuth === 'crear'){
-    if($('a-nombre').value.trim().length < 2) fallar('a-nombre',r);
-    if($('a-tel').value.replace(/\D/g,'').length < 6) fallar('a-tel',r);
-    if(rolElegido === 'proveedor'){
-      if(!$('a-rubro').value) fallar('a-rubro',r);
-      else if($('a-rubro').value === RUBRO_OTRO){
-        if($('a-otro-rubro').value.trim().length < 3) fallar('a-otro-rubro',r);
-        if(!$('a-rubro-padre').value) fallar('a-rubro-padre',r);
-      }
-      if(!cuitValido($('a-cuit').value)) fallar('a-cuit',r);
-      if(!$('a-fiscal').value) fallar('a-fiscal',r);
-    }
-  }
+  if(modoAuth === 'crear') validarDatosAlta(r);
   if(!mailOk(email)) fallar('a-email',r);
   if(pass.length<8) fallar('a-pass',r);
-  /* El cuadradito es de 20px: si el error se marcara solo ahí no se vería.
-     Se pinta el renglón entero. */
-  if(modoAuth === 'crear' && !$('a-legales').checked){
-    $('a-legales-fila').classList.add('mal');
-    $('e-a-legales').classList.add('visible');
-    if(!r.p) r.p = 'a-legales';
-  }
+  if(modoAuth === 'crear') validarLegales(r);
   if(enfocar(r)) return;
 
   const b=$('a-enviar'); b.disabled=true; b.classList.add('cargando');
@@ -3536,42 +3631,7 @@ $('a-enviar').addEventListener('click', async () => {
   try{
     const res = await fetch(SUPABASE_URL + (modoAuth==='crear' ? '/auth/v1/signup':'/auth/v1/token?grant_type=password'), {
       method:'POST', headers:{'apikey':SUPABASE_ANON,'Content-Type':'application/json'},
-      /* El permiso viaja en el mismo alta que lo necesita, no en una llamada
-         posterior que podría no llegar. Queda en user_metadata con fecha: sin
-         eso no hay forma de acreditar cuándo se dio. */
-      body: JSON.stringify(modoAuth === 'crear'
-        ? {email, password:pass,
-           data:{ rol: rolElegido,
-                  nombre: $('a-nombre').value.trim(),
-                  telefono: $('a-tel').value.trim(),
-                  /* Igual que en el formulario de servicio: si el oficio es
-                     propio, se guarda el nombre lindo aparte y el rubro
-                     parecido es el que usa el matching. */
-                  rubro: rolElegido !== 'proveedor' ? null
-                       : ($('a-rubro').value === RUBRO_OTRO ? $('a-rubro-padre').value : $('a-rubro').value),
-                  rubro_personalizado: (rolElegido === 'proveedor' && $('a-rubro').value === RUBRO_OTRO)
-                       ? $('a-otro-rubro').value.trim() : null,
-                  /* Tratto le factura al Proveedor su comisión por cada trabajo
-                     cobrado, y para eso necesita su identificación fiscal. Al
-                     Cliente no le factura nada, así que no se lo pide. Es el
-                     punto 5.4 del contrato de Proveedores. */
-                  cuit: rolElegido === 'proveedor' ? soloNumeros($('a-cuit').value) : null,
-                  condicion_fiscal: rolElegido === 'proveedor' ? $('a-fiscal').value : null,
-                  /* El permiso de transferencia se da en la misma casilla de
-                     los términos, que lo nombra expresamente. */
-                  transfer_permiso:true, transfer_permiso_fecha:new Date().toISOString(),
-                  transfer_permiso_forma:'casilla de términos',
-                  legales_aceptados:true, legales_fecha:new Date().toISOString(),
-                  legales_version:VERSION_LEGALES, legales_rol:rolElegido,
-                  /* Publicidad: solo si tildó la casilla opcional. Mismo formato
-                     que guardarPermisoPublicidad (Ajustes); el CRM lo toma como
-                     opt_in recién cuando la persona confirma el mail
-                     (crm_registrar_usuario y crm_desde_confirmacion). */
-                  publicidad_permiso: $('a-publi').checked,
-                  publicidad_permiso_fecha: $('a-publi').checked ? new Date().toISOString() : null,
-                  /* Canal de marketing por el que llegó (ver origenVisita) */
-                  origen: origenVisita() }}
-        : {email, password:pass})
+      body: JSON.stringify(modoAuth === 'crear' ? {email, password:pass, data: datosAlta()} : {email, password:pass})
     });
     const j = await res.json();
     if(!res.ok){
@@ -5942,6 +6002,117 @@ $('rol-cambiar').addEventListener('click', () => {
   pintarEleccion();
   $('a-datos').scrollIntoView({block:'start', behavior:'smooth'});
 });
+
+/* ══════════════════ ENTRAR CON GOOGLE O APPLE ══════════════════ */
+/* Flujo PKCE de Supabase Auth: se guarda un verificador en el teléfono, se va
+   a /auth/v1/authorize y se vuelve con ?code=, que se cambia por la sesión.
+   Los botones aparecen solo si el proveedor está prendido en Supabase.
+   En la app de iPhone Google no deja entrar desde una vista web embebida, así
+   que ahí va solo Apple, y recién desde la build que lo permite (la que
+   agrega "TrattoApp/2" al navegador y deja navegar a Supabase y a Apple).
+   La primera vez, la cuenta no tiene rol, teléfono ni términos aceptados:
+   se piden en "Completá tu cuenta", con el mismo formulario del alta. */
+const enAppNativa = () => !!(window.Capacitor && window.Capacitor.isNativePlatform && window.Capacitor.isNativePlatform());
+const b64url = buf => btoa(String.fromCharCode(...new Uint8Array(buf))).replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,'');
+async function pintarSociales(){
+  let ext = {};
+  try{
+    const r = await fetch(SUPABASE_URL+'/auth/v1/settings', {headers:{apikey:SUPABASE_ANON}});
+    if(r.ok) ext = (await r.json()).external || {};
+  }catch(e){}
+  const ios = enAppNativa(), iosListo = /TrattoApp\/2/.test(navigator.userAgent);
+  const google = !!ext.google && !ios, apple = !!ext.apple && (!ios || iosListo);
+  $('a-google').classList.toggle('oculto', !google);
+  $('a-apple').classList.toggle('oculto', !apple);
+  $('a-sociales').classList.toggle('oculto', !google && !apple);
+}
+async function entrarCon(proveedor){
+  try{
+    const verificador = b64url(crypto.getRandomValues(new Uint8Array(32)));
+    const desafio = b64url(await crypto.subtle.digest('SHA-256', new TextEncoder().encode(verificador)));
+    localStorage.setItem(OAUTH_CLAVE, JSON.stringify({verificador, fecha: Date.now(),
+      rol: modoAuth === 'crear' && rolTocado ? rolElegido : null}));
+    location.href = SUPABASE_URL + '/auth/v1/authorize?' + new URLSearchParams({provider: proveedor,
+      redirect_to: location.origin + '/', code_challenge: desafio, code_challenge_method: 's256'});
+  }catch(e){
+    console.error(e);
+    avisar('a-aviso', 'No se pudo abrir. Probá de nuevo o entrá con tu email.', 'mal');
+  }
+}
+$('a-google').addEventListener('click', () => entrarCon('google'));
+$('a-apple').addEventListener('click', () => entrarCon('apple'));
+
+/* Cuentas de Google o Apple que todavía no completaron el alta. Las cuentas
+   viejas con email pueden no tener rol en los datos: a esas no se les pide. */
+const faltaCompletar = u => !!u && ['google','apple'].includes((u.app_metadata || {}).provider) &&
+  !(u.user_metadata || {}).legales_aceptados;
+
+async function volverDeOAuth({code, error, pendiente}){
+  try{ localStorage.removeItem(OAUTH_CLAVE); }catch(e){}
+  ir('auth','entra');
+  if(error || !code || !pendiente.verificador || Date.now() - pendiente.fecha > 30 * 6e4){
+    avisar('a-aviso', 'No pudimos entrar con esa cuenta. Probá de nuevo o entrá con tu email.', 'mal');
+    return;
+  }
+  try{
+    const r = await fetch(SUPABASE_URL+'/auth/v1/token?grant_type=pkce', {method:'POST',
+      headers:{apikey:SUPABASE_ANON, 'Content-Type':'application/json'},
+      body: JSON.stringify({auth_code: code, code_verifier: pendiente.verificador})});
+    const j = await r.json();
+    if(!r.ok || !j.access_token){ avisar('a-aviso', traducir(j.msg || j.error_description || j.message), 'mal'); return; }
+    const meta = j.user.user_metadata || {};
+    sesion = {access_token: j.access_token, user: j.user};
+    store.escribir({access_token: j.access_token, refresh_token: j.refresh_token, modo: meta.rol || pendiente.rol || 'cliente'});
+    if(faltaCompletar(j.user)){ abrirCompletar(pendiente.rol); return; }
+    entrarApp();
+    setTimeout(() => sincronizarAvisos(true), 900);
+  }catch(e){ console.error(e); avisar('a-aviso', 'No se pudo conectar. Revisá tu conexión.', 'mal'); }
+}
+
+function abrirCompletar(rol){
+  const meta = sesion.user.user_metadata || {};
+  ir('auth','entra');
+  cambiarAuth('crear');
+  pasoAuth = 'completar';
+  $('p-auth').classList.add('completando');
+  $('a-completar-txt').textContent = 'Entraste como ' + sesion.user.email +
+    '. Faltan unos datos para armar tu cuenta: es una sola vez.';
+  if(!$('a-nombre').value) $('a-nombre').value = String(meta.full_name || meta.name || meta.nombre || '').slice(0, 60);
+  if(rol){ elegirRol(rol); } else { rolTocado = false; pintarEleccion(); }
+  $('a-txt').textContent = 'Terminar y entrar';
+}
+function cerrarCompletar(){
+  $('p-auth').classList.remove('completando');
+  pasoAuth = 'datos';
+  cambiarAuth('entrar');
+}
+$('a-completar-otra').addEventListener('click', () => {
+  store.borrar(); sesion = null;
+  cerrarCompletar();
+});
+
+async function completarCuenta(){
+  const r = {p:null};
+  validarDatosAlta(r);
+  validarLegales(r);
+  if(enfocar(r)) return;
+  const b = $('a-enviar'); b.disabled = true; b.classList.add('cargando');
+  try{
+    const res = await fetch(SUPABASE_URL+'/auth/v1/user', {method:'PUT',
+      headers:{apikey:SUPABASE_ANON, 'Authorization':'Bearer '+sesion.access_token, 'Content-Type':'application/json'},
+      body: JSON.stringify({data: datosAlta()})});
+    const j = await res.json();
+    if(!res.ok){ avisar('a-aviso', traducir(j.msg || j.error_description || j.message), 'mal'); return; }
+    sesion.user = j;
+    modo = rolElegido;
+    const g = store.leer() || {}; g.modo = rolElegido; store.escribir(g);
+    cerrarCompletar();
+    entrarApp();
+    setTimeout(() => sincronizarAvisos(true), 900);
+  }catch(e){ console.error(e); avisar('a-aviso', 'No se pudo conectar. Revisá tu conexión.', 'mal'); }
+  finally{ b.disabled = false; b.classList.remove('cargando'); if(pasoAuth === 'completar') $('a-txt').textContent = 'Terminar y entrar'; }
+}
+pintarSociales();
 
 /* ══════════════════ RUBRO PERSONALIZADO ══════════════════ */
 $('p-rubro').addEventListener('change', () => {
@@ -8655,6 +8826,11 @@ function bajarTelon(){
 }
 
 (async function iniciar(){
+  if(retornoOAuth){
+    const retorno = retornoOAuth; retornoOAuth = null;
+    try{ await volverDeOAuth(retorno); }finally{ bajarTelon(); }
+    return;
+  }
   if(retornoRecuperacion){
     const retorno=retornoRecuperacion; retornoRecuperacion=null;
     try{ await recuperarDesdeEnlace(retorno); }finally{ bajarTelon(); }
@@ -8668,6 +8844,7 @@ function bajarTelon(){
     });
     if(!r.ok){ store.borrar(); ir('auth','entra'); bajarTelon(); return; }
     sesion = {access_token:s.access_token, user: await r.json()};
+    if(faltaCompletar(sesion.user)){ abrirCompletar(null); return; }
     entrarApp();
     sincronizarAvisos(false);
   }catch(e){ console.error(e); ir('auth','entra'); }
