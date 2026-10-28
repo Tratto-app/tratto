@@ -50,6 +50,14 @@
     pasto: '<path d="M6 54h52"/><path d="M12 54c0-10-3-17-6-22M21 54c0-14 2-24 6-32M31 54c0-12-4-20-9-26M40 54c0-15 3-26 9-34M50 54c0-10 3-18 8-23"/>',
     arbol: '<path d="M20 38a10 10 0 0 1-3-19 15 15 0 0 1 29-2 10 10 0 0 1 1 21z"/><path d="M32 56V30M32 44l-7-6M32 39l6-5"/>',
     techo: '<path d="M6 32L32 10l26 22"/><path d="M32 36c-5 7-7 10-7 13a7 7 0 0 0 14 0c0-3-2-6-7-13z"/>',
+    // nombre técnico, a quién llamo (mueble) y entregar el depto (28/10/2026)
+    canilla: '<path d="M8 22h26a8 8 0 0 1 8 8v4"/><path d="M8 15v14"/><path d="M22 22v-9M15 13h14"/><path d="M42 42c0 4-3 6-3 9a3 3 0 0 0 6 0c0-3-3-5-3-9z"/>',
+    inodoro: '<rect x="12" y="8" width="26" height="16" rx="3"/><path d="M8 28h44c0 9-7 15-16 16v10H20V44c-7-2-12-8-12-16z"/>',
+    sillon: '<path d="M14 30V20a6 6 0 0 1 6-6h24a6 6 0 0 1 6 6v10"/><rect x="6" y="30" width="10" height="16" rx="4"/><rect x="48" y="30" width="10" height="16" rx="4"/><path d="M16 36h32v10H16z"/><path d="M12 46v6M52 46v6"/>',
+    puerta: '<rect x="16" y="8" width="32" height="48" rx="2"/><path d="M39 33h3"/><path d="M8 56h48"/>',
+    cajon: '<rect x="8" y="12" width="48" height="40" rx="4"/><path d="M8 32h48"/><path d="M27 22h10M27 42h10"/>',
+    silla: '<path d="M20 8v48"/><path d="M46 38v18"/><rect x="18" y="30" width="32" height="8" rx="3"/>',
+    cerradura: '<rect x="18" y="8" width="28" height="48" rx="6"/><circle cx="32" cy="28" r="5"/><path d="M32 33v10"/>',
   };
   const icono = (n, px = 64, color = 'currentColor', grosor = 4) =>
     `<svg width="${px}" height="${px}" viewBox="0 0 64 64" fill="none" stroke="${color}" stroke-width="${grosor}" stroke-linecap="round" stroke-linejoin="round">${ICONOS[n]}</svg>`;
