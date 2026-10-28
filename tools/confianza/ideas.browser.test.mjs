@@ -212,3 +212,34 @@ test('te lo buscamos: recién publicado no aparece', async () => {
     assert.equal(await p.page.locator('#d-ayuda').innerText(), '');
   } finally { await p.cerrar(); }
 });
+
+test('pedido guiado: preguntas del rubro y las respuestas van en la descripción', async () => {
+  const p = await abrir(entorno);
+  try {
+    await p.page.evaluate(() => { $('ir-pedido').click(); });
+    await p.page.waitForFunction(() => actual === 'nuevo-pedido');
+    assert.ok(await p.page.locator('#s-preguntas').isHidden());
+    await p.page.selectOption('#s-servicio', 'Pintura');
+    assert.match(await p.page.locator('#s-preguntas').innerText(), /3 preguntas rápidas/);
+    await p.page.click('#s-preguntas [data-preg="0"][data-v="Interior"]');
+    await p.page.click('#s-preguntas [data-preg="1"][data-v="2"]');
+    await p.page.click('#s-preguntas [data-preg="1"][data-v="3"]');   // cambia de idea
+    await p.page.locator('#s-preguntas').scrollIntoViewIfNeeded();
+    await p.foto('preguntas-rubro');
+    // Cambiar de rubro borra las respuestas del anterior.
+    await p.page.selectOption('#s-servicio', 'Cerrajería');
+    assert.match(await p.page.locator('#s-preguntas').innerText(), /Una pregunta rápida/);
+    await p.page.selectOption('#s-servicio', 'Pintura');
+    await p.page.click('#s-preguntas [data-preg="0"][data-v="Interior"]');
+    await p.page.click('#s-preguntas [data-preg="1"][data-v="3"]');
+    await p.page.fill('#s-nombre', 'Ana'); await p.page.fill('#s-email', 'ana@example.invalid'); await p.page.fill('#s-tel', '1155554444');
+    await p.page.selectOption('#s-zona', 'CABA'); await p.page.fill('#s-desc', 'Pintar el living y un cuarto');
+    await p.page.click('#s-cuando [data-v="Esta semana"]');
+    await p.page.click('#s-enviar');
+    await p.page.waitForFunction(() => actual === 'inicio');
+    const post = p.calls.find(c => c.method === 'POST' && c.path.endsWith('/rest/v1/solicitudes'));
+    assert.equal(post.body.descripcion, 'Pintar el living y un cuarto\n\nQué: Interior · Ambientes: 3');
+    assert.equal(post.body.urgencia, 'Esta semana');
+    assert.equal(post.body.para_el, null);
+  } finally { await p.cerrar(); }
+});

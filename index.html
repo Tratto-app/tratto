@@ -278,6 +278,9 @@
   .cuando-sub{display:block;font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:.15em;
     text-transform:uppercase;font-weight:600;color:var(--gris);margin:14px 0 8px}
   .cuando-dia input{max-width:220px}
+  .preguntas{margin-top:12px;padding:12px 13px 14px;background:var(--claro-2);border-radius:var(--r-ch)}
+  .preguntas-tit{font-size:12.5px;color:var(--gris);line-height:1.4}
+  .preguntas .cuando-sub{margin-top:12px}
   .cuando-pidio{font-size:12.5px;color:var(--verde);background:rgba(30,93,73,.07);border-radius:var(--r-ch);
     padding:8px 11px;margin-bottom:10px;line-height:1.4}
   .ayuda{font-size:12px;color:var(--gris);margin-top:7px;line-height:1.45}
@@ -401,7 +404,7 @@
   .cabecera-det > *{position:relative;z-index:1}
   .det-tit{font-family:'IBM Plex Sans Condensed',sans-serif;font-weight:700;font-size:24px;
     line-height:1.12;letter-spacing:-.015em}
-  .det-desc{margin-top:11px;font-size:14px;color:var(--gris-2);line-height:1.55}
+  .det-desc{margin-top:11px;font-size:14px;color:var(--gris-2);line-height:1.55;white-space:pre-line}
   .det-datos{margin-top:16px;border-top:1px solid var(--noche-3);padding-top:3px}
 
   /* Barra de estado del pedido: cinco puntos unidos por un hilo que se va
@@ -928,7 +931,8 @@
   .pedido-cupo{font-family:'IBM Plex Mono',monospace;font-size:8.5px;letter-spacing:.14em;
     text-transform:uppercase;font-weight:600;color:var(--laton-osc);flex:none;
     border:1px solid rgba(201,162,39,.5);border-radius:99px;padding:3px 9px}
-  .pedido-desc{font-size:13.5px;line-height:1.5;color:var(--gris);margin-top:7px}
+  .pedido-desc{font-size:13.5px;line-height:1.5;color:var(--gris);margin-top:7px;white-space:pre-line}
+  #ch-desc{white-space:pre-line}
   .pedido-datos{display:flex;flex-wrap:wrap;gap:7px;margin-top:11px}
   .pedido-dato{font-family:'IBM Plex Mono',monospace;font-size:8.5px;letter-spacing:.12em;
     text-transform:uppercase;font-weight:600;background:var(--claro-2);color:var(--gris);
@@ -2177,6 +2181,7 @@
           <label for="s-servicio"><span class="indice">04</span>Qué servicio necesitás</label>
           <select id="s-servicio"><option value="">Elegí el rubro</option></select>
           <div class="err" id="e-s-servicio">Elegí un rubro para poder buscar quién lo haga.</div>
+          <div class="preguntas oculto" id="s-preguntas"></div>
         </div>
         <div class="campo">
           <label for="s-zona"><span class="indice">05</span>Zona</label>
@@ -3875,6 +3880,120 @@ $('copiar').addEventListener('click', async () => {
 });
 
 /* ══════════════════ NUEVO PEDIDO ══════════════════ */
+/* Pedido guiado: 1 a 3 preguntas rápidas según el rubro. Las respuestas se
+   suman al final de la descripción ("Qué: Pérdida de agua · Dónde: Cocina"),
+   así las ve quien cotiza en la app, en el mail y en el CRM. Formato:
+   [pregunta, nombre corto para la descripción, opciones]. */
+const PREGUNTAS_RUBRO = {
+  'Plomería y destapaciones': [['¿Qué pasa?','Qué',['Pérdida de agua','Destapación','Instalación nueva','Termotanque o calefón']],
+    ['¿Dónde?','Dónde',['Cocina','Baño','Patio o terraza','Otro lugar']]],
+  'Albañilería y refacciones': [['¿Qué tipo de trabajo?','Trabajo',['Un arreglo chico','Refacción de un ambiente','Una obra más grande']],
+    ['¿Hay humedad?','Humedad',['Sí','No','No sé']]],
+  'Pintura': [['¿Qué hay que pintar?','Qué',['Interior','Exterior','Rejas o aberturas']],
+    ['¿Cuántos ambientes?','Ambientes',['1','2','3','4 o más']],
+    ['¿Tenés la pintura?','Pintura',['Sí, la tengo','No, que la compre','A definir']]],
+  'Carpintería y muebles': [['¿Qué necesitás?','Qué',['Arreglar un mueble','Mueble a medida','Placard o cocina','Puertas']]],
+  'Herrería y soldadura': [['¿Qué necesitás?','Qué',['Reja o portón nuevo','Arreglo o soldadura','Estructura']]],
+  'Techos e impermeabilización': [['¿Qué techo es?','Techo',['Losa o terraza','Chapa','Tejas']],
+    ['¿Hay goteras ahora?','Goteras',['Sí','No']]],
+  'Durlock y yeso': [['¿Qué necesitás?','Qué',['Tabique','Cielorraso','Mueble o nicho','Un arreglo']],
+    ['¿Cuántos metros, más o menos?','Metros',['Hasta 10 m²','10 a 30 m²','Más de 30 m²']]],
+  'Pisos y revestimientos': [['¿Qué material?','Material',['Cerámica o porcelanato','Madera o flotante','Vinílico','Otro']],
+    ['¿Cuántos metros?','Metros',['Hasta 10 m²','10 a 30 m²','Más de 30 m²']],
+    ['¿Hay que sacar el piso viejo?','Sacar el viejo',['Sí','No']]],
+  'Vidrios y aberturas': [['¿Qué necesitás?','Qué',['Cambiar un vidrio','Ventana o puerta nueva','Arreglar una abertura','Mampara']]],
+  'Cerrajería': [['¿Qué pasó?','Qué',['Me quedé afuera','Cambiar la cerradura','Copias o combinación','Cerradura de auto']]],
+  'Aire acondicionado': [['¿Qué necesitás?','Qué',['Instalación','Service o carga de gas','Reparación']],
+    ['¿De cuántas frigorías?','Frigorías',['Hasta 3000','3000 a 4500','Más de 4500','No sé']]],
+  'Service de electrodomésticos': [['¿Qué equipo?','Equipo',['Lavarropas','Heladera','Cocina u horno','Otro']]],
+  'Jardinería y piletas': [['¿Qué necesitás?','Qué',['Corte de pasto','Poda','Mantenimiento de pileta','Diseño de jardín']],
+    ['¿De qué tamaño?','Tamaño',['Chico','Mediano','Grande']]],
+  'Arreglos generales': [['¿Cuántos arreglos son?','Arreglos',['Uno','Dos o tres','Varios']],
+    ['¿Tenés los materiales?','Materiales',['Sí','No','No sé qué hace falta']]],
+  'Servicios de limpieza': [['¿Qué tipo de limpieza?','Tipo',['Por horas','A fondo','Final de obra','Oficina o local']],
+    ['¿Cada cuánto?','Frecuencia',['Una vez','Todas las semanas','Cada quince días']],
+    ['¿Cuántos ambientes?','Ambientes',['1 o 2','3 o 4','5 o más']]],
+  'Mecánica del automotor': [['¿Qué necesitás?','Qué',['Service','Un ruido o una falla','Frenos o tren delantero','Otro']],
+    ['¿El auto anda?','Anda',['Sí, lo llevo','No, hay que buscarlo']]],
+  'Chapa y pintura': [['¿Qué tiene?','Qué',['Rayones','Abolladura','Un choque','Pintura completa']]],
+  'Gomería y auxilio': [['¿Qué necesitás?','Qué',['Arreglar una pinchadura','Cambiar cubiertas','Auxilio en la calle']]],
+  'Lavado de autos': [['¿Qué lavado?','Lavado',['Exterior','Completo','Detailing']],
+    ['¿A domicilio?','A domicilio',['Sí','No']]],
+  'Fletes y mudanzas': [['¿Qué hay que llevar?','Carga',['Unas cosas','Un ambiente','Una casa entera']],
+    ['¿Hay escaleras?','Escaleras',['No','Hasta 2 pisos','Más de 2 pisos']],
+    ['¿Necesitás ayudantes?','Ayudantes',['Sí','No']]],
+  'Contabilidad e impuestos': [['¿Qué necesitás?','Qué',['Monotributo','Responsable inscripto','Ganancias o Bienes Personales','Una sociedad']],
+    ['¿Es todos los meses?','Mensual',['Sí','Una sola vez']]],
+  'Gestoría y trámites': [['¿Qué trámite?','Trámite',['De un auto','Documentos','De un inmueble','Otro']]],
+  'Asistente administrativo': [['¿Cuánto tiempo?','Tiempo',['Unas horas','Medio tiempo','Por tarea']],
+    ['¿Dónde?','Modalidad',['A distancia','Presencial','Las dos']]],
+  'Diseño gráfico': [['¿Qué necesitás?','Qué',['Logo o marca','Piezas para redes','Folletos o impresos','Otro']]],
+  'Programación y desarrollo': [['¿Qué necesitás?','Qué',['Página web','Tienda online','App','Arreglar o mejorar algo']]],
+  'Marketing y redes sociales': [['¿Qué necesitás?','Qué',['Manejo de redes','Anuncios pagos','Una estrategia','Contenido']]],
+  'Fotografía y video': [['¿Para qué?','Para',['Un evento','Productos','Retratos','Un inmueble']]],
+  'Reparación y soporte técnico': [['¿Qué equipo?','Equipo',['Computadora o notebook','Celular','Impresora','Internet o wifi']]],
+  'Estética, maquillaje y peinados': [['¿Para qué?','Para',['Un evento','Casamiento o 15','El día a día']],
+    ['¿A domicilio?','A domicilio',['Sí','No']]],
+  'Personal trainer, yoga y pilates': [['¿Qué buscás?','Qué',['Personal trainer','Yoga','Pilates']],
+    ['¿Dónde?','Dónde',['A domicilio','Al aire libre','Online']]],
+  'Masajes': [['¿Qué masaje?','Masaje',['Descontracturante','Relajante','Deportivo']],
+    ['¿A domicilio?','A domicilio',['Sí','No']]],
+  'Cuidado de adultos mayores': [['¿Qué horario?','Horario',['Por horas','Día completo','De noche']],
+    ['¿Cuántos días?','Días',['Algunos días','Toda la semana']]],
+  'Catering y pastelería': [['¿Qué necesitás?','Qué',['Catering','Torta o mesa dulce','Las dos cosas']],
+    ['¿Para cuántas personas?','Personas',['Hasta 20','20 a 50','Más de 50']]],
+  'Música y sonido (DJ)': [['¿Qué evento?','Evento',['Cumpleaños','Casamiento o 15','De empresa','Otro']],
+    ['¿Cuántos invitados?','Invitados',['Hasta 50','50 a 150','Más de 150']]],
+  'Animación y organización de eventos': [['¿Qué evento?','Evento',['Cumpleaños infantil','Casamiento o 15','De empresa','Otro']],
+    ['¿Cuántos invitados?','Invitados',['Hasta 30','30 a 100','Más de 100']]],
+  'Apoyo escolar y universitario': [['¿Qué nivel?','Nivel',['Primaria','Secundaria','Universidad']],
+    ['¿Dónde?','Dónde',['A domicilio','Online']]],
+  'Idiomas': [['¿Qué idioma?','Idioma',['Inglés','Portugués','Italiano','Otro']],
+    ['¿Para qué?','Para',['Trabajo','Un viaje','Un examen','La escuela']]],
+  'Clases de música': [['¿Qué instrumento?','Instrumento',['Guitarra','Piano','Canto','Otro']],
+    ['¿Qué nivel?','Nivel',['Desde cero','Algo sé','Avanzado']]],
+  'Computación y capacitación': [['¿Qué querés aprender?','Aprender',['Lo básico','Excel y oficina','Programas de diseño','Otro']],
+    ['¿Dónde?','Dónde',['A domicilio','Online']]],
+  'Clases de manejo': [['¿Tenés auto para practicar?','Auto propio',['Sí','No']],
+    ['¿Qué nivel?','Nivel',['Desde cero','Algo sé','Para el examen']]],
+  'Paseo y cuidado de mascotas': [['¿Qué necesitás?','Qué',['Paseos','Cuidado en casa','Guardería']],
+    ['¿De qué tamaño?','Tamaño',['Chico','Mediano','Grande']]],
+  'Peluquería y adiestramiento canino': [['¿Qué necesitás?','Qué',['Baño y corte','Adiestramiento']],
+    ['¿De qué tamaño?','Tamaño',['Chico','Mediano','Grande']]],
+  'Costura y arreglos de ropa': [['¿Qué necesitás?','Qué',['Ruedo o ajuste','Cambiar un cierre','Ropa a medida','Otro']],
+    ['¿Cuántas prendas?','Prendas',['Una','2 a 5','Más de 5']]],
+  'Tapicería y restauración': [['¿Qué mueble?','Mueble',['Sillas','Sillón o sofá','Respaldo de cama','Otro']],
+    ['¿Cuántos?','Cantidad',['Uno','2 a 4','Más de 4']]],
+  'Decoración e interiores': [['¿Qué necesitás?','Qué',['Asesoramiento','Un proyecto completo','Cortinas o empapelado']],
+    ['¿Cuántos ambientes?','Ambientes',['1','2 o 3','La casa entera']]],
+  'Mandados y mensajería': [['¿Qué necesitás?','Qué',['Enviar un paquete','Hacer compras','Un trámite en persona']],
+    ['¿Es para hoy?','Para hoy',['Sí','No']]]
+};
+let respuestasPedido = {}, preguntasDe = null;
+function pintarPreguntas(){
+  const rubro = $('s-servicio').value, qs = PREGUNTAS_RUBRO[rubro], caja = $('s-preguntas');
+  if(rubro === preguntasDe) return;
+  preguntasDe = rubro; respuestasPedido = {};
+  caja.classList.toggle('oculto', !qs);
+  caja.innerHTML = !qs ? '' : '<div class="preguntas-tit">'+(qs.length === 1 ? 'Una pregunta rápida' : qs.length + ' preguntas rápidas') +
+    ' para que te coticen mejor (opcional):</div>' +
+    qs.map(([q, , ops], i) => '<div class="cuando-sub" id="l-preg-'+i+'">'+esc(q)+'</div>' +
+      '<div class="pastillas chicas" role="group" aria-labelledby="l-preg-'+i+'">' +
+      ops.map(o => '<button type="button" class="pastilla" data-preg="'+i+'" data-v="'+esc(o)+'" aria-pressed="false">'+esc(o)+'</button>').join('') +
+      '</div>').join('');
+}
+$('s-preguntas').addEventListener('click', e => {
+  const b = e.target.closest('[data-preg]'); if(!b) return;
+  const i = b.dataset.preg;
+  respuestasPedido[i] = respuestasPedido[i] === b.dataset.v ? undefined : b.dataset.v;
+  $('s-preguntas').querySelectorAll('[data-preg="'+i+'"]').forEach(x => x.setAttribute('aria-pressed', String(x.dataset.v === respuestasPedido[i])));
+});
+/* "Qué: Pérdida de agua · Dónde: Cocina", o vacío si no respondió nada. */
+function respuestasTxt(){
+  const qs = PREGUNTAS_RUBRO[preguntasDe] || [];
+  return qs.map(([, k], i) => respuestasPedido[i] ? k + ': ' + respuestasPedido[i] : '').filter(Boolean).join(' · ');
+}
+
 const CS = ['s-nombre','s-email','s-tel','s-servicio','s-zona','s-presupuesto','s-urgencia','s-fecha','s-franja','s-desc'];
 armarPastillas('s-cuando', 's-urgencia',
   [['Hoy', RELOJ + 'Lo necesito hoy', '', 'hoy'], ['Esta semana', 'Esta semana'], ['Este mes', 'Este mes'],
@@ -3890,6 +4009,7 @@ function cuandoPedido(){
   return {urgencia: u, para_el: null, franja};
 }
 function resumenPedido(){
+  pintarPreguntas();
   pintarPastillas('s-cuando', 's-urgencia'); pintarPastillas('s-franjas', 's-franja');
   $('s-dia-caja').classList.toggle('oculto', $('s-urgencia').value !== 'Día');
   const v = id => $(id).value.trim();
@@ -3950,7 +4070,7 @@ $('s-enviar').addEventListener('click', async () => {
            nada" es la ausencia de dato. Confundirlos hace que el proveedor lea
            que el cliente no quiere pagar. */
         presupuesto: num(v('s-presupuesto')) || null, ...cuandoPedido(),
-        descripcion:v('s-desc'), estado:'pendiente', user_id:sesion.user.id,
+        descripcion: v('s-desc') + (respuestasTxt() ? '\n\n' + respuestasTxt() : ''), estado:'pendiente', user_id:sesion.user.id,
         foto_url: fotoPedido
       })
     });
