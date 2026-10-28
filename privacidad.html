@@ -7,10 +7,7 @@
 <title>Política de privacidad · Tratto</title>
 <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png">
 <link rel="icon" type="image/png" sizes="64x64" href="/favicon-64.png">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500&text=TRAO&display=swap" rel="stylesheet">
-<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=IBM+Plex+Sans+Condensed:wght@600;700&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/fonts/tratto-fonts.css">
 <style>
   :root{
     --noche:#0C2620; --claro:#FCFBF8; --claro-2:#F2F0E9;
@@ -116,7 +113,7 @@
   <div class="kicker">Legales</div>
   <h1>Política de privacidad</h1>
   <div class="hilo"></div>
-  <div class="vigente"><b>Versión vigente.</b> En vigencia desde el 25 de septiembre de 2026.</div>
+  <div class="vigente" id="revision-2026-10-28"><b>Revisión 2026-10-28 · 28 de octubre de 2026.</b> Aclaramos las herramientas voluntarias para visitas, adicionales, retiros y reclamos, y qué ocurre con los datos al borrar una cuenta. No cambian las comisiones ni se reescriben acuerdos ya aceptados. Cada acuerdo nuevo requiere la aceptación que se indica en la aplicación. Los cambios sustanciales para cuentas existentes siguen el procedimiento de aviso de este documento.</div>
   
   
   <h2>1. Quién es responsable de tus datos</h2>
@@ -128,17 +125,17 @@
   <p><strong>Al crear tu cuenta:</strong> correo electrónico, contraseña, <strong>tu nombre</strong>, <strong>tu teléfono</strong> y <strong>el
   tipo de cuenta que elegís</strong> —Cliente o Proveedor (quien ofrece servicios)—, que queda fijado y determina cuál de los dos contratos aceptás.
   Si te registrás como Proveedor, además <strong>tu oficio</strong>, que también queda fijado, y <strong>tu CUIT o
-  CUIL y tu condición fiscal</strong>. La contraseña se guarda cifrada; nadie en Tratto puede verla.</p>
+  CUIL y tu condición fiscal</strong>. La contraseña se almacena mediante un resumen criptográfico, no en texto claro; nadie en Tratto puede recuperarla para leerla.</p>
   <p><strong>Por qué le pedimos el CUIT al Proveedor y no al Cliente.</strong> Porque Tratto le factura al
   Proveedor su comisión por cada trabajo cobrado, y para emitir esa factura necesita su
   identificación fiscal. Al Cliente no le factura nada, así que no se lo pide. El CUIT del
   Proveedor puede verificarse contra los registros públicos del organismo recaudador, que son
   públicos y no requieren tu autorización para consultarse.</p>
-  <p><strong>No te pedimos el número de documento.</strong> Lo evaluamos y decidimos que no: no tenemos forma de
-  verificar que un documento tipeado sea real ni que sea tuyo, así que guardarlo sumaría un dato
-  sensible de todos nuestros usuarios sin darnos a cambio la certeza que justificaría pedirlo.
-  Cuando la identidad hace falta de verdad —al cobrar o al pagar— la verifica Mercado Pago, que
-  sí puede hacerlo.</p>
+  <p><strong>No te pedimos el número de documento ni un certificado de antecedentes.</strong> Los datos de
+  la persona que realiza una visita son declarados por el Proveedor. Una foto, un correo confirmado o
+  una cuenta de Mercado Pago conectada no acreditan por sí solos su identidad, habilitación o conducta.
+  Mercado Pago realiza los controles que corresponden a su propio servicio de pagos; no verifica por
+  Tratto a la persona que llega al domicilio.</p>
   <p><strong>Si pedís un servicio:</strong> los datos de contacto ya cargados —que podés cambiar para ese pedido en
   particular—, qué servicio necesitás, zona, urgencia,
   descripción del trabajo y, si querés, una <strong>foto</strong> y un <strong>presupuesto orientativo</strong>. Los dos
@@ -147,7 +144,16 @@
   disponibilidad y descripción de tu trabajo. El rubro no se vuelve a pedir: es el oficio que
   elegiste al crear la cuenta. Opcionalmente, estudios, matrículas, experiencia y logros que quieras publicar, y fotos de trabajos realizados.</p>
   <p><strong>Cuando conversás:</strong> el contenido de los mensajes que intercambiás con la otra parte por el chat de la aplicación.</p>
-  <p><strong>Cuando calificás:</strong> la puntuación y el comentario que dejás sobre un trabajo.</p>
+  <p><strong>Cuando calificás:</strong> la puntuación y el comentario que dejás sobre un trabajo. Podés
+  hacerlo sin habilitar IA; generar etiquetas automáticas es una función separada y opcional.</p>
+  <p><strong>Cuando coordinás una visita o un acuerdo del servicio:</strong> fecha o franja, persona que irá
+  y foto opcional declarada, alcance y monto de un adicional, descripción/estado/accesorios de un bien
+  retirado y devolución prevista, las propuestas, aceptaciones y cambios de estado. No se registra GPS
+  ni se verifica identidad a partir de esos datos. No subas documentos, antecedentes penales, claves ni
+  información privada del equipo.</p>
+  <p><strong>Cuando reclamás:</strong> motivo, explicación, pruebas y comentarios que agregues al
+  expediente, su referencia, fechas, estado e intervenciones de revisión. Pueden contener datos de las
+  partes: incluí solo lo necesario. No se envían automáticamente a una función de IA.</p>
   <p><strong>Si usás la calculadora de precios</strong> (trattoapp.com.ar/calculadora, no hace falta cuenta): tu
   correo electrónico, el servicio, la zona, si ya lo pagaste o es un presupuesto, el precio que cargaste y
   de qué red o campaña llegaste. Lo usamos para mostrarte el resultado y para mejorar los precios de
@@ -265,6 +271,15 @@
   base le entrega al Proveedor en esa pantalla. No es que la aplicación elija no mostrarlos.</p>
   <p>Un mismo pedido lo puede tomar un número limitado de Proveedores; después se cierra. Eso también
   te protege a vos: evita que un pedido termine en veinte conversaciones abiertas.</p>
+  <h3>4.2.1. Acuerdos y reclamos del trabajo</h3>
+  <p>Las partes de esa conversación pueden consultar los acuerdos y expedientes compartidos asociados
+  a su trabajo. No se publican en el perfil ni en una lista abierta a otros Proveedores. Para revisar un
+  reclamo o atender un pedido de soporte, el personal autorizado puede acceder a la información necesaria;
+  sus intervenciones en el expediente quedan registradas. No es un permiso para recorrer conversaciones
+  ajenas sin una finalidad de atención, seguridad o cumplimiento legal.</p>
+  <p>Las fotos opcionales de visita o de bienes y las pruebas se guardan en un espacio privado y se
+  muestran a los participantes mediante enlaces temporarios, para coordinar y documentar ese servicio. No se usan como publicidad de Tratto ni para reconocimiento facial. No compartas fotos
+  de personas ajenas sin autorización ni imágenes que revelen datos que no hagan falta.</p>
   <h3>4.3. Con proveedores de servicios (encargados de tratamiento)</h3>
   <p>Para que la aplicación funcione, algunos terceros procesan datos por cuenta de Tratto:</p>
   <div class="tabla"><table>
@@ -305,11 +320,6 @@
   <td><strong>Brevo (Sendinblue SAS)</strong></td>
   <td>Envío de los correos de la aplicación</td>
   <td><strong>Francia (Unión Europea)</strong></td>
-  </tr>
-  <tr>
-  <td><strong>Google Fonts / jsDelivr</strong></td>
-  <td>Tipografías y librerías del sitio; reciben la dirección IP del visitante</td>
-  <td>Estados Unidos y red global</td>
   </tr>
   </tbody>
   </table></div>
@@ -415,45 +425,12 @@
   </tr>
   </tbody>
   </table></div>
-  <h4>Flujo 3 — Tipografías y librerías: tu dirección IP</h4>
-  <div class="tabla"><table>
-  <thead>
-  <tr>
-  <th></th>
-  <th></th>
-  </tr>
-  </thead>
-  <tbody>
-  <tr>
-  <td><strong>Quién</strong></td>
-  <td>Google Fonts · jsDelivr</td>
-  </tr>
-  <tr>
-  <td><strong>País</strong></td>
-  <td><strong>Estados Unidos</strong> y red global</td>
-  </tr>
-  <tr>
-  <td><strong>Qué datos</strong></td>
-  <td>Tu <strong>dirección IP</strong> y los datos técnicos del navegador, por el solo hecho de cargar la página</td>
-  </tr>
-  <tr>
-  <td><strong>Para qué</strong></td>
-  <td>Descargar las tipografías y las librerías con las que se dibuja la aplicación</td>
-  </tr>
-  <tr>
-  <td><strong>Base jurídica</strong></td>
-  <td>Tu <strong>permiso expreso</strong> en el alta, junto con el del flujo 1</td>
-  </tr>
-  <tr>
-  <td><strong>Cuánto tiempo</strong></td>
-  <td>Lo determina cada proveedor. Tratto no recibe ni guarda esos registros</td>
-  </tr>
-  <tr>
-  <td><strong>¿Es opcional?</strong></td>
-  <td><strong>No</strong>, mientras esos recursos se sirvan desde afuera</td>
-  </tr>
-  </tbody>
-  </table></div>
+  <h4>Tipografías y librería de la aplicación</h4>
+  <p>La aplicación principal y estas páginas legales descargan las tipografías y la librería de
+  conexión a la base de datos desde el propio alojamiento de Tratto. Por cargar esos recursos no se
+  abre una conexión a Google Fonts ni a jsDelivr. El alojamiento recibe los datos técnicos necesarios
+  para servirlos, como la dirección IP, según el flujo de alojamiento de arriba. Esto no extiende la
+  afirmación a enlaces externos u otras herramientas independientes que abras desde el sitio.</p>
   <h4>Los que no necesitan permiso</h4>
   <div class="tabla"><table>
   <thead>
@@ -528,8 +505,7 @@
   <p><strong>Este permiso, a diferencia del de IA, no es opcional</strong>, y la aplicación te lo dice con esas
   palabras: sin base de datos y sin alojamiento Tratto no existe. Si no estás de acuerdo, no
   crees la cuenta. Si ya la tenés y cambiás de idea, la única forma de retirarlo es <strong>darte de
-  baja</strong>, y se va todo con ella. Preferimos decírtelo así antes que ofrecerte un interruptor que
-  en realidad borraría tu cuenta.</p>
+  baja</strong>. Se aplica la eliminación y el resguardo limitado de los puntos 6 y 6.1; no se mantiene una cuenta visible por ese resguardo.</p>
   <h3>4.5. Con autoridades</h3>
   <p>Cuando una autoridad judicial o administrativa competente lo requiera legalmente.</p>
   <h2>5. Las funciones de inteligencia artificial</h2>
@@ -559,8 +535,8 @@
   </tr>
   <tr>
   <td><strong>Etiquetas de reputación</strong></td>
-  <td>El cliente, al calificar</td>
-  <td>El contenido de la conversación de ese trabajo, <strong>una sola vez</strong></td>
+  <td>El cliente, si elige generar etiquetas con IA al calificar</td>
+  <td>El contenido de la conversación de ese trabajo, <strong>una sola vez</strong>. Las estrellas y el comentario se pueden guardar sin usar esta función</td>
   </tr>
   <tr>
   <td><strong>Asistente de ayuda</strong></td>
@@ -609,110 +585,44 @@
     rectificación del art. 16 de la Ley 25.326.</li>
   </ul>
   <h2>6. Cuánto tiempo guardamos tus datos</h2>
-  <p>"Mientras la cuenta esté activa" no es un plazo, y el art. 4 inc. 7 de la Ley 25.326 exige
-  destruir los datos cuando dejan de ser necesarios. Así que acá va la tabla concreta.</p>
+  <p>Esta tabla distingue los registros que siguen a tu cuenta de los expedientes que tienen un plazo
+  de eliminación propio. Los datos se usan solo mientras son necesarios para su finalidad. <strong>No es
+  un servicio de archivo ni prometemos guardar tus conversaciones durante cinco años:</strong> si borrás
+  la cuenta, se aplica el punto 6.1. Guardá los comprobantes de acuerdos que necesites conservar.</p>
   <div class="tabla"><table>
-  <thead>
-  <tr>
-  <th>Dato</th>
-  <th>Cuánto se conserva</th>
-  <th>Por qué</th>
-  </tr>
-  </thead>
+  <thead><tr><th>Dato</th><th>Cuánto se conserva</th><th>Finalidad y baja</th></tr></thead>
   <tbody>
-  <tr>
-  <td><strong>Correo, nombre, teléfono, oficio</strong></td>
-  <td>Mientras la cuenta esté activa, y hasta 30 días después de la baja</td>
-  <td>Es la cuenta. Los 30 días son para poder revertir una baja pedida por error</td>
-  </tr>
-  <tr>
-  <td><strong>CUIT o CUIL y condición fiscal del Proveedor</strong></td>
-  <td>Mientras la cuenta esté activa, y <strong>10 años</strong> desde la última operación cobrada</td>
-  <td>Es el dato con el que se emite la factura de la comisión. Su plazo lo fija la normativa fiscal, no Tratto</td>
-  </tr>
-  <tr>
-  <td><strong>Pedidos y presupuestos</strong></td>
-  <td>5 años desde el cierre del pedido</td>
-  <td>Plazo de prescripción de las acciones derivadas del contrato</td>
-  </tr>
-  <tr>
-  <td><strong>Mensajes del chat vinculados a un trabajo</strong></td>
-  <td>5 años desde el cierre del trabajo</td>
-  <td>Son la constancia de lo que se acordó, y la prueba si hay reclamo</td>
-  </tr>
-  <tr>
-  <td><strong>Mensajes de conversaciones que no derivaron en trabajo</strong></td>
-  <td>1 año</td>
-  <td>Sin trabajo no hay contrato que probar</td>
-  </tr>
-  <tr>
-  <td><strong>Calificaciones y etiquetas</strong></td>
-  <td>Mientras el perfil esté activo. Con la baja se <strong>anonimizan</strong>: se conserva la calificación agregada, se borra quién la dejó</td>
-  <td>La reputación es de quien la construyó; la identidad de quien calificó no hace falta para sostenerla</td>
-  </tr>
-  <tr>
-  <td><strong>Visitas individuales a perfiles</strong></td>
-  <td><strong>30 días.</strong> Después queda solo el número agregado, sin identificar a quién visitó</td>
-  <td>Es el dato con el argumento de necesidad más débil de toda la política. Para una métrica alcanza el total</td>
-  </tr>
-  <tr>
-  <td><strong>Fotos de pedidos sin respuesta</strong></td>
-  <td>15 días corridos; después el pedido vence y la foto <strong>se elimina</strong></td>
-  <td>No hay finalidad que las sostenga</td>
-  </tr>
-  <tr>
-  <td><strong>Fotos de publicaciones de Proveedores</strong></td>
-  <td>Mientras la publicación esté activa, y hasta 30 días después de darla de baja</td>
-  <td></td>
-  </tr>
-  <tr>
-  <td><strong>Registro del permiso de IA y del de transferencia</strong> (fecha, hora, versión)</td>
-  <td>5 años desde que se retiró o desde la baja</td>
-  <td>Es lo que acredita que la transferencia tuvo base legal. Sin esto no se puede probar el cumplimiento</td>
-  </tr>
-  <tr>
-  <td><strong>Comprobantes y registros de operaciones cobradas</strong></td>
-  <td><strong>10 años</strong> desde la operación</td>
-  <td>Art. 328 del CCyC y normativa fiscal. Es el único bloque que sobrevive a la baja</td>
-  </tr>
-  <tr>
-  <td><strong>Código irreversible derivado del teléfono</strong>, si hubo deuda confirmada</td>
-  <td>2 años, o hasta que la deuda se salde</td>
-  <td>Único fin: impedir el reingreso con otro correo. No se cede a nadie</td>
-  </tr>
-  <tr>
-  <td><strong>Registros de incidentes de seguridad</strong></td>
-  <td>5 años</td>
-  <td>Obligación de rendir cuentas ante la autoridad de control</td>
-  </tr>
-  <tr>
-  <td><strong>Datos enviados a la IA</strong></td>
-  <td>No guardamos copia. El proveedor los conserva hasta 30 días (punto 5.3)</td>
-  <td></td>
-  </tr>
-  </tbody>
-  </table></div>
-  <h3>6.1. Qué sobrevive exactamente a la baja</h3>
-  <p>Con la baja se borran tu correo, tu nombre, tu teléfono, tu oficio, tus fotos, tus mensajes y
-  tus datos de contacto. <strong>Lo único que queda es el registro contable de las operaciones que
-  cobraste o pagaste por la plataforma</strong>, y queda reducido a estos campos:</p>
-  <ul>
-  <li>identificador interno de la operación;</li>
-  <li>fecha;</li>
-  <li>monto y comisión;</li>
-  <li>CUIT o CUIL de la parte obligada a facturar;</li>
-  <li>número y CAE del comprobante emitido.</li>
-  </ul>
-  <p><strong>No sobrevive</strong> tu nombre, ni tu correo, ni tu teléfono, ni el contenido del trabajo, ni las
-  conversaciones, ni las fotos.</p>
-  <p><strong>Las calificaciones son el único caso intermedio.</strong> Las que vos dejaste sobre un Proveedor
-  <strong>sobreviven anonimizadas</strong>: se conserva la puntuación, se borra quién la dejó y se corta el
-  vínculo con la conversación. Es la reputación de otra persona, construida con trabajo real, y
-  borrarla porque vos te vas sería destruir algo ajeno. Las calificaciones <strong>sobre vos</strong>, en
-  cambio, se eliminan: sin perfil no hay reputación que sostener.</p>
-  <p><strong>Cuándo empieza a existir ese registro.</strong> La obligación de conservación nace con la primera
-  operación cobrada a través de la plataforma. Si nunca cobraste ni pagaste nada por Tratto, la baja no
-  conserva absolutamente nada: borra todo.</p>
+  <tr><td>Cuenta: correo, nombre, teléfono, oficio y datos fiscales del perfil</td><td>Mientras la cuenta esté activa; se eliminan al procesar la baja</td><td>Registro y funcionamiento. La baja no tiene un período de recuperación de 30 días.</td></tr>
+  <tr><td>Pedidos, presupuestos, mensajes y acuerdos de visitas/adicionales/retiros</td><td>Mientras exista la conversación vinculada a la cuenta; se eliminan con la baja, salvo el resguardo del punto 6.1</td><td>Coordinar el trabajo y consultar lo pactado. Se borran con las conversaciones vinculadas a la cuenta.</td></tr>
+  <tr><td>Conversaciones que no derivaron en trabajo</td><td>Mientras exista la conversación vinculada a la cuenta; se eliminan con la baja</td><td>Coordinación; no se conservan como una copia permanente.</td></tr>
+  <tr><td>Reclamos y pruebas del expediente</td><td>Mientras se atiende el reclamo; se programa su eliminación a los 180 días desde que se resuelve o cierra, o con la baja y el resguardo limitado del punto 6.1</td><td>Tramitar el problema y permitir revisión humana.</td></tr>
+  <tr><td>Resguardo privado por baja con reclamo abierto o retiro confirmado pendiente de devolución</td><td>180 días desde la baja; después se elimina mediante la tarea de purga</td><td>Solo constancia mínima del caso, sin todo el chat ni fotos; acceso restringido a soporte autorizado.</td></tr>
+  <tr><td>Calificaciones y etiquetas</td><td>Mientras exista el perfil al que se refieren</td><td>Al borrar la cuenta, las que dejaste sobre otros pueden conservarse sin tu identificación; las de tu propio perfil se eliminan.</td></tr>
+  <tr><td>Visitas individuales a perfiles</td><td>Mientras existe el perfil visitado; se eliminan con su baja. La aplicación no tiene hoy una eliminación automática a los 30 días</td><td>Estadística de visitas. Al dar de baja al visitante se elimina el vínculo a su cuenta, aunque el registro de visita puede seguir vinculado al perfil visitado.</td></tr>
+  <tr><td>Fotos de pedidos sin respuesta y de publicaciones</td><td>Pedido sin respuesta: hasta 15 días; publicación: mientras esté activa y hasta 30 días después de retirarla</td><td>La eliminación de archivos de almacenamiento se procesa por separado de la baja de los registros de la cuenta.</td></tr>
+  <tr><td>Permisos de IA, publicidad y transferencia guardados en la cuenta</td><td>Mientras la cuenta exista; la baja elimina esos datos de la cuenta</td><td>Aplicar tus elecciones. No afirmamos que un registro independiente de consentimiento sobreviva cinco años.</td></tr>
+  <tr><td>Documentación fiscal emitida por operaciones efectivamente cobradas</td><td>El plazo que imponga la normativa, hasta 10 años cuando corresponda</td><td>Los comprobantes que deban conservarse se mantienen separados del perfil. Esto no supone conservar todo el chat ni crear una factura por un presupuesto no cobrado.</td></tr>
+  <tr><td>Datos enviados a la IA</td><td>Tratto no conserva una copia adicional; el proveedor informa hasta 30 días según 5.3</td><td>Solo la función consentida. La baja no puede retirar de forma retroactiva un envío ya procesado.</td></tr>
+  </tbody></table></div>
+  <h3 id="baja-y-conservacion">6.1. Qué ocurre al borrar tu cuenta</h3>
+  <p>Se eliminan tu cuenta, perfil, pedidos, servicios publicados, conversaciones y acuerdos vinculados.
+  Las calificaciones que dejaste sobre otros Proveedores pueden conservarse <strong>sin tu identificación
+  ni el vínculo a la conversación</strong>; las referidas a tu perfil se eliminan. Las credenciales de tu
+  conexión a Mercado Pago se eliminan de Tratto, pero eso no revoca por sí solo el permiso en Mercado
+  Pago: podés revisar las aplicaciones autorizadas desde ese servicio.</p>
+  <p><strong>Excepción limitada para un problema pendiente.</strong> Si al dar la baja existe un reclamo
+  abierto o un retiro confirmado todavía no devuelto, se guarda un expediente privado mínimo durante
+  <strong>180 días desde la baja</strong>. La baja se procesa igual: no se mantiene una cuenta visible ni
+  se obliga a seguir usando Tratto.</p>
+  <p>Ese resguardo contiene la referencia del caso, fechas, estado y el detalle estrictamente pertinente
+  del reclamo y sus comentarios, o la constancia del bien retirado. Se excluyen las columnas que identifican la cuenta,
+  los nombres y datos de contacto del perfil, las fotos y el chat general. <strong>El texto libre puede
+  contener datos personales que alguna parte haya escrito:</strong> por eso el resguardo no se considera
+  anónimo y su acceso está restringido al soporte autorizado. No se usa para publicidad ni se publica en
+  perfiles. Su eliminación se programa al cumplirse los 180 días mediante una tarea diaria.</p>
+  <p>La documentación fiscal que deba conservarse por una operación cobrada se limita a lo exigido por
+  la normativa; no es una copia del perfil ni de las conversaciones. Una obligación legal concreta de
+  conservación se atiende por el canal de privacidad y no habilita retener datos ajenos a su finalidad.</p>
   <h2 id="derechos">7. Tus derechos</h2>
   <p>Como titular de los datos, la Ley 25.326 te reconoce el derecho a:</p>
   <ul>
@@ -731,15 +641,13 @@
     más al proveedor de inteligencia artificial.</li>
   <li><strong>Darte de baja</strong> en cualquier momento, desde la misma sección Cuenta.</li>
   </ul>
-  <p><strong>Qué hace exactamente la baja.</strong> Al darte de baja se <strong>borran tu cuenta y tus datos
-  personales</strong>: tu perfil, tus pedidos, tus servicios publicados, tus mensajes, tus fotos y las
-  calificaciones que dejaste.</p>
-  <p>Lo único que sobrevive es el <strong>registro de las operaciones que se cobraron por la plataforma</strong>,
-  reducido al mínimo que exigen las normas fiscales y comerciales, porque conservarlo no es una
-  opción nuestra: es una obligación legal. Ese registro no incluye tus mensajes ni tus fotos.</p>
+  <p><strong>Qué hace exactamente la baja.</strong> Elimina la cuenta y sus registros vinculados. La
+  excepción de resguardo por un reclamo o retiro pendiente, los datos que comprende y su plazo de 180
+  días están explicados en el <a href="#baja-y-conservacion">punto 6.1</a>. No se bloquea la baja por esa
+  excepción ni se promete guardar cinco años tus conversaciones después de ella.</p>
   <p><strong>La AGENCIA DE ACCESO A LA INFORMACIÓN PÚBLICA</strong>, órgano de control de la Ley 25.326, tiene la atribución de atender denuncias y reclamos de quienes vean afectados sus derechos.</p>
   <h2>8. Seguridad</h2>
-  <p>Las comunicaciones viajan cifradas y las contraseñas se almacenan cifradas, no en texto claro.
+  <p>Las comunicaciones viajan cifradas y las contraseñas se almacenan como resúmenes criptográficos, no en texto claro.
   El acceso a la base de datos está restringido por reglas que limitan a cada usuario a sus
   propios datos.</p>
   <p>Ningún sistema es completamente seguro.</p>
@@ -810,18 +718,21 @@
   tu sistema operativo te pida permiso y se lo des. Ese permiso es <strong>del dispositivo</strong> y lo podés
   revocar desde la configuración del teléfono, sin pasar por Tratto.</p>
   <h2>12. Cambios en esta política</h2>
-  <p>Si modificamos esta política, te avisamos por correo y mediante un aviso en la aplicación con <strong>10 días corridos</strong> de anticipación.</p>
+  <p>Los cambios sustanciales siguen el aviso por correo y aplicación con <strong>10 días corridos</strong>
+  de anticipación. Una aclaración del funcionamiento no modifica permisos ya dados ni habilita usos
+  nuevos de tus datos. Si un tratamiento requiere un consentimiento nuevo, se pide expresamente antes
+  de realizarlo; ver un aviso o seguir navegando no lo reemplaza.</p>
   <h2>13. Contacto</h2>
   <p><strong>trattoapp1@gmail.com</strong>
   Remedios de Escalada 7646, Martín Coronado, Tres de Febrero (B1682), Provincia de Buenos Aires.</p>
   
-  <p><strong>Última actualización:</strong> 15 de octubre de 2026 (cómo se da el permiso de transferencia, punto 4.4)
-  <strong>Vigencia:</strong> 25 de septiembre de 2026</p>
+  <p><strong>Revisión:</strong> 2026-10-28 · 28 de octubre de 2026.<br>Condiciones anteriores desde el 25 de septiembre de 2026; sin aplicación retroactiva de cambios sustanciales.</p>
   
   <div class="pie">
     <a href="/terminos-cliente.html">Términos · clientes</a>
     <a href="/terminos-proveedor.html">Términos · proveedores</a>
     <a href="/privacidad.html">Política de privacidad</a>
+    <a href="/confianza.html">Acuerdos y cuidado</a>
     <a href="mailto:trattoapp1@gmail.com">Escribinos</a>
   </div>
 </main>
