@@ -426,6 +426,13 @@
     text-transform:uppercase;color:var(--laton-osc);margin-bottom:3px}
   .barrita{display:grid;grid-template-columns:repeat(5,1fr);gap:3px;margin-top:11px}
   .barrita:empty{display:none}
+  /* "Te lo buscamos": aparece cuando pasó un rato y nadie respondió. */
+  .ayuda-caja{background:var(--claro);border:1px solid var(--linea);border-left:3px solid var(--laton);
+    border-radius:var(--r);box-shadow:var(--sombra);padding:16px;margin:-10px 0 22px}
+  .ayuda-tit{font-family:'IBM Plex Sans Condensed',sans-serif;font-weight:700;font-size:17px;line-height:1.2}
+  .ayuda-txt{font-size:13.5px;color:var(--gris);line-height:1.5;margin-top:6px}
+  .ayuda-caja .btn{margin-top:12px}
+  .ayuda-caja .aviso{margin-top:10px}
   .barrita i{height:4px;border-radius:2px;background:var(--linea)}
   .barrita i.hecha{background:var(--verde)}
   .barrita i.actual{background:var(--laton)}
@@ -2404,6 +2411,7 @@
         </dl>
       </div>
       <div id="d-etapas"></div>
+      <div id="d-ayuda"></div>
       <div id="d-comparador"></div>
       <div class="sec"><span class="sec-tit">Conectados con tu pedido</span><span class="sec-num" id="d-num"></span></div>
       <div id="d-lista"></div>
@@ -4219,6 +4227,48 @@ function etapasHTML(s, x){
     ETAPAS.map((t, i) => '<li class="'+(i < e ? 'hecha' : i === e ? 'actual' : '')+'"'+(i === e ? ' aria-current="step"' : '')+'>'+t+'</li>').join('') +
     '</ol><div class="etapas-sigue"><b>'+(venc ? 'Vencido' : 'Qué sigue')+'</b>'+esc(queSigue(s, x))+'</div></div>';
 }
+/* "Si nadie te responde, te lo buscamos": a la media hora sin nadie (o a las 2
+   horas si no es para hoy), o al día sin presupuesto. Si la búsqueda
+   automática de "Trabajo listo" ya está andando, se lo contamos. */
+const WHATSAPP_AYUDA = '';   // número de ayuda con código de país y sin "+"; vacío: no se muestra el botón
+async function pintarAyuda(s, x){
+  const caja = $('d-ayuda');
+  if(vencidoSinTrato(s, x) || etapaDe(x) >= 2){ caja.innerHTML = ''; return; }
+  const horas = (Date.now() - Date.parse(s.created_at)) / 36e5, hoy = esParaHoy(s);
+  const toca = etapaDe(x) === 0 ? horas >= (hoy ? .5 : 2) : horas >= (hoy ? 3 : 24);
+  let est = {};
+  try{
+    const r = await fetch(SUPABASE_URL+'/rest/v1/rpc/pedido_ayuda_estado', {method:'POST', headers:cab(),
+      body: JSON.stringify({p_solicitud_id: s.id})});
+    if(r.ok) est = (await r.json())[0] || {};
+  }catch(e){ console.error(e); }
+  if(actual !== 'detalle') return;
+  const wa = WHATSAPP_AYUDA ? '<a class="btn vacio-b" target="_blank" rel="noopener" href="https://wa.me/'+WHATSAPP_AYUDA+'?text=' +
+    encodeURIComponent('Hola, necesito ayuda con mi pedido #'+s.id+' de '+s.servicio_necesitado+'.')+'">Prefiero hablar por WhatsApp</a>' : '';
+  if(est.pedida_at || est.automatica){
+    caja.innerHTML = '<div class="ayuda-caja"><div class="ayuda-tit">Lo estamos buscando</div>' +
+      '<div class="ayuda-txt">'+(est.pedida_at ? 'Nos lo pediste '+diaTxt(new Date(est.pedida_at).toLocaleDateString('en-CA', {timeZone: TZ_AR})).toLowerCase()+'. ' : '') +
+      'Les escribimos a quienes conocemos de este oficio y te avisamos por mail apenas alguien lo pueda hacer.</div>'+wa+'</div>';
+    return;
+  }
+  if(!toca){ caja.innerHTML = ''; return; }
+  caja.innerHTML = '<div class="ayuda-caja"><div class="ayuda-tit">¿Nadie te responde? Te lo buscamos nosotros</div>' +
+    '<div class="ayuda-txt">Les escribimos a quienes conocemos de este oficio en tu zona y te avisamos por mail apenas ' +
+    'alguien lo pueda hacer. Es gratis.</div>' +
+    '<button class="btn lleno" id="d-ayuda-pedir" type="button"><span class="rueda"></span><span>Buscámelo</span></button>' +
+    wa + '<div class="aviso" id="d-ayuda-aviso" role="status"></div></div>';
+  $('d-ayuda-pedir').addEventListener('click', async () => {
+    const b = $('d-ayuda-pedir'); b.disabled = true; b.classList.add('cargando');
+    try{
+      const r = await fetch(SUPABASE_URL+'/rest/v1/rpc/pedido_te_lo_buscamos', {method:'POST', headers:cab(),
+        body: JSON.stringify({p_solicitud_id: s.id})});
+      if(!r.ok){ avisar('d-ayuda-aviso', errorDeRPC(await r.text()) || 'No se pudo pedir. Probá de nuevo.', 'mal'); return; }
+      pintarAyuda(s, x);
+    }catch(e){ console.error(e); avisar('d-ayuda-aviso', 'No se pudo conectar. Probá de nuevo.', 'mal'); }
+    finally{ b.disabled = false; b.classList.remove('cargando'); }
+  });
+}
+
 /* En la lista: la barrita, el sello y el pie con el paso en el que está. */
 function pintarProgresos(){
   misPedidos.forEach(s => {
@@ -5359,8 +5409,9 @@ async function abrirDetalle(id){
   const etapas = x => {
     $('d-etapas').innerHTML = etapasHTML(s, x);
     $('d-estado').textContent = vencidoSinTrato(s, x) ? 'Vencido' : ETAPAS[etapaDe(x)];
+    pintarAyuda(s, x);
   };
-  $('d-etapas').innerHTML = '';
+  $('d-etapas').innerHTML = ''; $('d-ayuda').innerHTML = '';
   if(misProgresos[id]) etapas(misProgresos[id]);
   progresoPedidos([id]).then(p => { if(actual === 'detalle') etapas(p[id]); }).catch(console.error);
   $('d-sugeridos').innerHTML = '';

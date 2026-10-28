@@ -182,3 +182,33 @@ test('barra de estado: la lista y el detalle dicen en qué paso está y qué sig
     await p.foto('etapas-detalle');
   } finally { await p.cerrar(); }
 });
+
+test('te lo buscamos: si nadie respondió aparece el botón y queda "Lo estamos buscando"', async () => {
+  let pedida = null;
+  const p = await abrir(entorno, {handler: c => {
+    if (c.path.endsWith('/rpc/pedido_ayuda_estado')) return {json: [{pedida_at: pedida, automatica: false}]};
+    if (c.path.endsWith('/rpc/pedido_te_lo_buscamos')) { pedida = new Date().toISOString(); return {json: pedida}; }
+    return null;
+  }});
+  try {
+    const hace3h = new Date(Date.now() - 3 * 36e5).toISOString();
+    await p.page.evaluate(p => { misPedidos = [p]; abrirDetalle(69); }, pedido({created_at: hace3h}));
+    await p.page.waitForSelector('#d-ayuda-pedir');
+    assert.match(await p.page.locator('#d-ayuda').innerText(), /Nadie te responde\? Te lo buscamos nosotros/i);
+    await p.foto('te-lo-buscamos');
+    await p.page.click('#d-ayuda-pedir');
+    await p.page.waitForFunction(() => /Lo estamos buscando/.test(document.querySelector('#d-ayuda').innerText));
+    assert.match(await p.page.locator('#d-ayuda').innerText(), /Nos lo pediste hoy/);
+    assert.deepEqual(p.calls.find(c => c.path.endsWith('/rpc/pedido_te_lo_buscamos')).body, {p_solicitud_id: 69});
+  } finally { await p.cerrar(); }
+});
+
+test('te lo buscamos: recién publicado no aparece', async () => {
+  const p = await abrir(entorno, {handler: c => c.path.endsWith('/rpc/pedido_ayuda_estado') ? {json: [{pedida_at: null, automatica: false}]} : null});
+  try {
+    await p.page.evaluate(p => { misPedidos = [p]; abrirDetalle(69); }, pedido({created_at: new Date().toISOString()}));
+    await p.page.waitForSelector('#d-etapas li.actual');
+    await p.page.waitForTimeout(400);
+    assert.equal(await p.page.locator('#d-ayuda').innerText(), '');
+  } finally { await p.cerrar(); }
+});
