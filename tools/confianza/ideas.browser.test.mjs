@@ -243,3 +243,72 @@ test('pedido guiado: preguntas del rubro y las respuestas van en la descripción
     assert.equal(post.body.para_el, null);
   } finally { await p.cerrar(); }
 });
+
+const presu = (extra = {}) => ({id: 900, created_at: new Date().toISOString(), match_id: 77, remitente_tipo: 'proveedor', tipo: 'presupuesto',
+  contenido: 'Presupuesto: $45.000', monto: 45000, incluye: 'Mano de obra', plazo: 'En el día', estado_presupuesto: 'pendiente', ...extra});
+const matchChat = cliente => ({id: 77, estado: 'pendiente',
+  proveedores: {nombre: 'Raúl', zona: 'CABA', rubro: 'Pintura', descripcion: '', precio_desde: 1, precio_hasta: 2, disponibilidad: ''},
+  solicitudes: {user_id: cliente, nombre_cliente: 'Ana', servicio_necesitado: 'Pintura', zona: 'CABA', presupuesto: null,
+    urgencia: 'Esta semana', descripcion: 'Pintar el living'}});
+
+test('negociar: el cliente propone otro precio desde el presupuesto', async () => {
+  let contras = [];
+  const p = await abrir(entorno, {handler: c => {
+    if (c.path.endsWith('/rest/v1/matches')) return {json: [matchChat(cliente)]};
+    if (c.path.endsWith('/rest/v1/mensajes')) return {json: [presu()]};
+    if (c.path.endsWith('/rest/v1/contraofertas')) return {json: contras};
+    if (c.path.endsWith('/rpc/contraoferta_proponer')) {
+      contras = [{id: 1, presupuesto_id: 900, match_id: 77, monto: c.body.p_monto, monto_original: 45000, nota: c.body.p_nota, estado: 'propuesta'}];
+      return {json: 1};
+    }
+    return null;
+  }});
+  try {
+    await p.page.evaluate(() => abrirChat(77, 'chats'));
+    await p.page.waitForSelector('[data-contra-abrir="900"]');
+    await p.page.click('[data-contra-abrir="900"]');
+    // Más caro que el presupuesto: no se manda.
+    await p.page.fill('[data-contra-monto]', '50000');
+    await p.page.click('[data-contra-enviar="900"]');
+    assert.match(await p.page.locator('[data-contra-aviso]').innerText(), /menor a \$\s?45\.000/);
+    await p.page.fill('[data-contra-monto]', '40000');
+    await p.page.fill('[data-contra-nota]', 'La pintura la compro yo');
+    await p.foto('contra-form');
+    await p.page.click('[data-contra-enviar="900"]');
+    await p.page.waitForFunction(() => /Propusiste/.test(document.querySelector('[data-presu="900"]').innerText));
+    const post = p.calls.find(c => c.path.endsWith('/rpc/contraoferta_proponer'));
+    assert.deepEqual(post.body, {p_presupuesto_id: 900, p_monto: 40000, p_nota: 'La pintura la compro yo'});
+    const card = await p.page.locator('[data-presu="900"]').innerText();
+    assert.match(card, /Esperando que responda/);
+    assert.equal(await p.page.locator('[data-contra-abrir="900"]').count(), 0);
+  } finally { await p.cerrar(); }
+});
+
+test('negociar: quien cotizó acepta y el trato se cierra a ese precio', async () => {
+  let contras = [{id: 1, presupuesto_id: 900, match_id: 77, monto: 40000, monto_original: 45000, nota: 'La pintura la compro yo', estado: 'propuesta'}];
+  let msj = presu();
+  const p = await abrir(entorno, {rol: 'proveedor', handler: c => {
+    if (c.path.endsWith('/rest/v1/matches')) return {json: [matchChat('otro-cliente')]};
+    if (c.path.endsWith('/rest/v1/mensajes')) return {json: [msj]};
+    if (c.path.endsWith('/rest/v1/contraofertas')) return {json: contras};
+    if (c.path.endsWith('/rpc/contraoferta_responder')) {
+      contras = [{...contras[0], estado: 'aceptada'}];
+      msj = presu({monto: 40000, contenido: 'Presupuesto: $40.000', estado_presupuesto: 'aceptado'});
+      return {json: 'aceptada'};
+    }
+    return null;
+  }});
+  try {
+    await p.page.evaluate(() => abrirChat(77, 'chats'));
+    await p.page.waitForSelector('[data-contra-si="1"]');
+    const card = await p.page.locator('[data-presu="900"]').innerText();
+    assert.match(card, /Te propone \$\s?40\.000/);
+    assert.match(card, /La pintura la compro yo/);
+    await p.foto('contra-proveedor');
+    await p.page.click('[data-contra-si="1"]');
+    await p.page.waitForFunction(() => /Precio acordado/.test(document.querySelector('[data-presu="900"]').innerText));
+    assert.deepEqual(p.calls.find(c => c.path.endsWith('/rpc/contraoferta_responder')).body, {p_id: 1, p_acepta: true});
+    assert.equal(await p.page.getAttribute('[data-presu="900"]', 'data-estado'), 'aceptado');
+    assert.match(await p.page.locator('[data-presu="900"] .presu-monto').innerText(), /40\.000/);
+  } finally { await p.cerrar(); }
+});

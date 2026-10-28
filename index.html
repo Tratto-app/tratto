@@ -558,7 +558,7 @@
   .chat-cerrado{flex:none;background:var(--claro);border-top:1px solid var(--linea);
     padding:14px 16px calc(14px + var(--sb));text-align:center;font-size:13px;
     color:var(--gris);line-height:1.5}
-  #p-chat.cerrada .hilo-msg .presu-acciones{display:none}
+  #p-chat.cerrada .hilo-msg .presu-acciones,#p-chat.cerrada .hilo-msg .presu-contra-abrir{display:none}
   .acuerdos-chat{flex:none;max-height:48dvh;overflow:auto;border-bottom:1px solid var(--linea);background:var(--claro)}
   .acuerdos-chat>summary{padding:12px 16px;min-height:44px;color:var(--verde);font-weight:600;font-size:13px;cursor:pointer}
   .acuerdos-chat>summary:focus-visible{outline:3px solid var(--laton);outline-offset:-3px}
@@ -598,6 +598,18 @@
   .presu-datos dd{margin:0;font-size:13.5px;line-height:1.5}
   .presu-acciones{display:flex;gap:8px;margin-top:16px}
   .presu-acciones .btn{margin-top:0;padding:10px 14px;font-size:14px}
+  /* Negociar el precio: la propuesta del cliente va dentro de la tarjeta. */
+  .presu-contra-abrir{width:100%;margin-top:8px;padding:10px 14px;font-size:14px}
+  .contra{margin-top:14px;padding:11px 12px;border-radius:var(--r-ch);background:rgba(201,162,39,.10);
+    font-size:13.5px;line-height:1.45}
+  .contra.hecha{background:rgba(30,93,73,.07);color:var(--verde)}
+  .contra-tit{font-family:'IBM Plex Sans Condensed',sans-serif;font-weight:700;font-size:17px}
+  .contra-nota{color:var(--gris);margin-top:4px;font-size:13px}
+  .contra .presu-acciones{margin-top:11px}
+  .contra-form{margin-top:12px}
+  .contra-form label{font-size:13px}
+  .contra-form input[data-contra-nota]{margin-top:8px;font-size:14px}
+  .contra-form .presu-acciones{margin-top:10px}
   .presu .hora{display:block;margin-top:12px;font-size:10.5px;
     font-family:'IBM Plex Mono',monospace;color:var(--gris-2)}
   .sello.alerta{color:var(--alerta);border:1px solid rgba(166,58,28,.4);background:var(--alerta-luz)}
@@ -4602,7 +4614,7 @@ async function abrirChat(matchId, desde){
   }
   chatActual = m;
   volverA = desde || 'chats';
-  presusPintados = {}; protecciones = {}; cotizaciones = {};
+  presusPintados = {}; protecciones = {}; cotizaciones = {}; contraofertas = {};
 
   const soyCliente = m.solicitudes && m.solicitudes.user_id === sesion.user.id;
   miRol = soyCliente ? 'cliente' : 'proveedor';
@@ -4647,6 +4659,7 @@ async function abrirChat(matchId, desde){
   montarAcuerdos();
   escuchar(matchId);
   cargarProtecciones();
+  cargarContraofertas();
 }
 
 async function traerMensajes(primera){
@@ -4667,6 +4680,113 @@ function burbHTML(m){
     '<span class="hora">'+hora(m.created_at)+'</span></div>';
 }
 
+/* ══════════════════ NEGOCIAR EL PRECIO ══════════════════ */
+/* Sobre un presupuesto pendiente el cliente propone otro monto (hasta dos
+   veces). Quien cotizó lo acepta --el presupuesto pasa a ese monto y queda
+   aceptado-- o mantiene su precio. Las reglas viven en la base
+   (contraoferta_proponer y contraoferta_responder). */
+let contraofertas = {};   // presupuesto_id → propuestas, de la más vieja a la más nueva
+const ultimaContra = m => { const l = contraofertas[m.id] || []; return l[l.length - 1]; };
+function puedeProponer(m){
+  const l = contraofertas[m.id] || [];
+  return miRol === 'cliente' && m.estado_presupuesto === 'pendiente' && l.length < 2 &&
+    !l.some(c => c.estado === 'propuesta');
+}
+function contraofertaHTML(m){
+  const c = ultimaContra(m);
+  if(!c) return '';
+  if(m.estado_presupuesto === 'aceptado' && c.estado === 'aceptada')
+    return '<div class="contra hecha">Precio acordado en el chat. El presupuesto original era de '+pesos(c.monto_original)+'.</div>';
+  if(m.estado_presupuesto !== 'pendiente') return '';
+  if(c.estado === 'rechazada')
+    return '<div class="contra">'+(miRol === 'cliente' ? 'Prefirió mantener su precio.' : 'Mantuviste tu precio.')+'</div>';
+  if(c.estado !== 'propuesta') return '';
+  return '<div class="contra"><div class="contra-tit">'+(miRol === 'cliente' ? 'Propusiste ' : 'Te propone ')+pesos(c.monto)+'</div>' +
+    (c.nota ? '<div class="contra-nota">«'+esc(c.nota)+'»</div>' : '') +
+    (miRol === 'proveedor'
+      ? '<div class="presu-acciones"><button class="btn vacio-b" data-contra-no="'+c.id+'" type="button">Mantener mi precio</button>' +
+        '<button class="btn lleno" data-contra-si="'+c.id+'" type="button">Aceptar '+pesos(c.monto)+'</button></div>' +
+        '<div class="contra-nota">Si aceptás, el trato se cierra a ese precio.</div>'
+      : '<div class="contra-nota">Esperando que responda. Mientras, podés aceptar el precio original.</div>') +
+    '</div>';
+}
+async function cargarContraofertas(){
+  if(!chatActual) return;
+  const mid = chatActual.id;
+  let filas;
+  try{ filas = await api('contraofertas?match_id=eq.'+mid+'&order=id.asc'); }catch(e){ console.error(e); return; }
+  if(!chatActual || chatActual.id !== mid || !Array.isArray(filas)) return;
+  const nuevas = {};
+  filas.forEach(f => (nuevas[f.presupuesto_id] = nuevas[f.presupuesto_id] || []).push(f));
+  const cambio = JSON.stringify(nuevas) !== JSON.stringify(contraofertas);
+  contraofertas = nuevas;
+  if(!cambio) return;
+  /* Se repintan con el presupuesto recién leído: si aceptó la propuesta, ya
+     viene aceptado y con el monto nuevo, y el cliente ve Trabajo protegido. */
+  const ids = Object.keys(nuevas).filter(id => presusPintados[id]);
+  if(!ids.length) return;
+  let frescos;
+  try{ frescos = await api('mensajes?id=in.('+ids.join(',')+')&tipo=eq.presupuesto'); }
+  catch(e){ frescos = ids.map(id => presusPintados[id]); }
+  if(!chatActual || chatActual.id !== mid) return;
+  frescos.forEach(m => actualizarPresu(m));
+  if(miRol === 'cliente' && frescos.some(m => m.estado_presupuesto === 'aceptado')) cargarProtecciones();
+}
+$('ch-hilo').addEventListener('click', async e => {
+  const abrirF = e.target.closest('[data-contra-abrir]'), cancelar = e.target.closest('[data-contra-cancelar]');
+  const enviar = e.target.closest('[data-contra-enviar]'), resp = e.target.closest('[data-contra-si],[data-contra-no]');
+  if(abrirF){
+    const id = abrirF.dataset.contraAbrir;
+    abrirF.insertAdjacentHTML('afterend', '<div class="contra-form" data-contra-form="'+id+'">' +
+      '<label for="contra-monto-'+id+'">¿Cuánto proponés?</label>' +
+      '<div class="caja-monto"><span class="signo">$</span><input id="contra-monto-'+id+'" type="text" inputmode="numeric" data-contra-monto></div>' +
+      '<input type="text" maxlength="300" data-contra-nota placeholder="Opcional: por qué (ej.: los materiales los compro yo)">' +
+      '<div class="presu-acciones"><button class="btn vacio-b" data-contra-cancelar type="button">Cancelar</button>' +
+      '<button class="btn lleno" data-contra-enviar="'+id+'" type="button"><span class="rueda"></span><span>Proponer</span></button></div>' +
+      '<div class="aviso" role="status" data-contra-aviso></div></div>');
+    abrirF.remove();
+    $('contra-monto-'+id).focus();
+    return;
+  }
+  if(cancelar){
+    const m = presusPintados[cancelar.closest('[data-contra-form]').dataset.contraForm];
+    cancelar.closest('[data-contra-form]').remove();
+    if(m) actualizarPresu(m, true);
+    return;
+  }
+  const aviso = (form, t) => { const a = form.querySelector('[data-contra-aviso]'); a.className = 'aviso visible mal'; a.textContent = t; };
+  if(enviar){
+    const form = enviar.closest('[data-contra-form]'), m = presusPintados[enviar.dataset.contraEnviar];
+    const monto = num(form.querySelector('[data-contra-monto]').value), nota = form.querySelector('[data-contra-nota]').value.trim();
+    if(!m) return;
+    if(!(monto > 0 && monto < Number(m.monto))) return aviso(form, 'Poné un monto menor a '+pesos(m.monto)+'.');
+    enviar.disabled = true; enviar.classList.add('cargando');
+    try{
+      const r = await fetch(SUPABASE_URL+'/rest/v1/rpc/contraoferta_proponer', {method:'POST', headers:cab(),
+        body: JSON.stringify({p_presupuesto_id: m.id, p_monto: monto, p_nota: nota || null})});
+      if(!r.ok){ const t = await r.text(); aviso(form, limiteDe(t) || errorDeRPC(t, 'No se pudo mandar. Probá de nuevo.')); return; }
+      form.remove();
+      await cargarContraofertas();
+      traerMensajes(true);
+    }catch(err){ console.error(err); aviso(form, 'No se pudo conectar. Probá de nuevo.'); }
+    finally{ enviar.disabled = false; enviar.classList.remove('cargando'); }
+    return;
+  }
+  if(resp){
+    const acepta = !!resp.dataset.contraSi, id = Number(resp.dataset.contraSi || resp.dataset.contraNo);
+    const caja = resp.closest('.contra');
+    caja.querySelectorAll('button').forEach(b => b.disabled = true);
+    try{
+      const r = await fetch(SUPABASE_URL+'/rest/v1/rpc/contraoferta_responder', {method:'POST', headers:cab(),
+        body: JSON.stringify({p_id: id, p_acepta: acepta})});
+      if(!r.ok){ const t = await r.text(); caja.querySelectorAll('button').forEach(b => b.disabled = false);
+        caja.insertAdjacentHTML('beforeend', '<div class="contra-nota">'+esc(limiteDe(t) || errorDeRPC(t, 'No se pudo responder. Probá de nuevo.'))+'</div>'); return; }
+      await cargarContraofertas();
+      traerMensajes(true);
+    }catch(err){ console.error(err); caja.querySelectorAll('button').forEach(b => b.disabled = false); }
+  }
+});
+
 /* "Hoy · a la tarde", y si coincide con lo que pidió el cliente, se lo dice. */
 function visitaTxt(m){
   const s = (chatActual && chatActual.solicitudes) || {};
@@ -4685,7 +4805,8 @@ function presuHTML(m){
   const acciones = (est === 'pendiente' && miRol === 'cliente')
     ? '<div class="presu-acciones">' +
       '<button class="btn vacio-b" data-rechazar-presu="'+m.id+'" type="button">Rechazar</button>' +
-      '<button class="btn lleno" data-aceptar-presu="'+m.id+'" type="button">Aceptar</button></div>'
+      '<button class="btn lleno" data-aceptar-presu="'+m.id+'" type="button">Aceptar</button></div>' +
+      (puedeProponer(m) ? '<button class="btn vacio-b presu-contra-abrir" data-contra-abrir="'+m.id+'" type="button">Proponer otro precio</button>' : '')
     : '';
   const estado = (est === 'aceptado' || est === 'rechazado') ? est : 'pendiente';
   return '<div class="presu '+(mia?'mia':'')+'" data-estado="'+estado+'" data-presu="'+m.id+'">' +
@@ -4697,6 +4818,7 @@ function presuHTML(m){
         '<div><dt>Plazo</dt><dd>'+esc(m.plazo)+'</dd></div>' +
         (m.visita_el ? '<div><dt>Puede ir</dt><dd>'+esc(visitaTxt(m))+'</dd></div>' : '') +
       '</dl>' +
+      contraofertaHTML(m) +
       acciones +
       '<div class="presu-firma"><span class="presu-hilo"></span>' +
         '<span class="presu-sello">Trato cerrado</span></div>' +
@@ -4767,6 +4889,8 @@ function agregarMensaje(m){
   h.insertAdjacentHTML('beforeend', m.tipo === 'presupuesto' ? presuHTML(m) : burbHTML(m));
   if(mia || cerca) h.scrollTop = h.scrollHeight;
   if(m.id > ultimoId) ultimoId = m.id;
+  // Una propuesta de precio o su respuesta llega como mensaje: se repinta la tarjeta.
+  if(!mia && m.tipo === 'texto') cargarContraofertas();
 }
 
 function actualizarPresu(m, forzar){
@@ -4783,6 +4907,7 @@ function actualizarPresu(m, forzar){
      escrito. Solo dejamos pasar el repintado cuando el pago cambió de estado
      de verdad, que es justo cuando el formulario ya no hace falta. */
   if(el.querySelector('[data-pago-panel]') && !m.pago_estado) return;
+  if(el.querySelector('[data-contra-form]') && m.estado_presupuesto === 'pendiente') return;
   const envoltorio = document.createElement('div');
   envoltorio.innerHTML = presuHTML(m);
   el.replaceWith(envoltorio.firstElementChild);
