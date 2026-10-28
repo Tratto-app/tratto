@@ -435,6 +435,7 @@
   .ayuda-tit{font-family:'IBM Plex Sans Condensed',sans-serif;font-weight:700;font-size:17px;line-height:1.2}
   .ayuda-txt{font-size:13.5px;color:var(--gris);line-height:1.5;margin-top:6px}
   .ayuda-caja .btn{margin-top:12px}
+  .ayuda-caja a.btn{display:flex;align-items:center;justify-content:center;text-decoration:none}
   .ayuda-caja .aviso{margin-top:10px}
   .barrita i{height:4px;border-radius:2px;background:var(--linea)}
   .barrita i.hecha{background:var(--verde)}
@@ -4436,7 +4437,7 @@ function etapasHTML(s, x){
 /* "Si nadie te responde, te lo buscamos": a la media hora sin nadie (o a las 2
    horas si no es para hoy), o al día sin presupuesto. Si la búsqueda
    automática de "Trabajo listo" ya está andando, se lo contamos. */
-const WHATSAPP_AYUDA = '';   // número de ayuda con código de país y sin "+"; vacío: no se muestra el botón
+const WHATSAPP_AYUDA = '5491131549885';   // número de ayuda con código de país y sin "+"; vacío: no se muestra el botón
 async function pintarAyuda(s, x){
   const caja = $('d-ayuda');
   if(vencidoSinTrato(s, x) || etapaDe(x) >= 2){ caja.innerHTML = ''; return; }

@@ -195,6 +195,9 @@ test('te lo buscamos: si nadie respondió aparece el botón y queda "Lo estamos 
     await p.page.evaluate(p => { misPedidos = [p]; abrirDetalle(69); }, pedido({created_at: hace3h}));
     await p.page.waitForSelector('#d-ayuda-pedir');
     assert.match(await p.page.locator('#d-ayuda').innerText(), /Nadie te responde\? Te lo buscamos nosotros/i);
+    const wa = await p.page.getAttribute('#d-ayuda a[href^="https://wa.me/"]', 'href');
+    assert.ok(wa.startsWith('https://wa.me/5491131549885?text='));
+    assert.match(decodeURIComponent(wa), /pedido #69 de Carpintería y muebles/);
     await p.foto('te-lo-buscamos');
     await p.page.click('#d-ayuda-pedir');
     await p.page.waitForFunction(() => /Lo estamos buscando/.test(document.querySelector('#d-ayuda').innerText));
