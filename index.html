@@ -404,6 +404,32 @@
   .det-desc{margin-top:11px;font-size:14px;color:var(--gris-2);line-height:1.55}
   .det-datos{margin-top:16px;border-top:1px solid var(--noche-3);padding-top:3px}
 
+  /* Barra de estado del pedido: cinco puntos unidos por un hilo que se va
+     llenando de verde; el paso en el que está lleva el latón del sello. */
+  .etapas{background:var(--claro);border:1px solid var(--linea);border-radius:var(--r);
+    box-shadow:var(--sombra);padding:16px 12px 14px;margin:-8px 0 22px}
+  .etapas ol{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(5,1fr)}
+  .etapas li{position:relative;text-align:center;padding-top:22px;font-family:'IBM Plex Mono',monospace;
+    font-size:8px;letter-spacing:.08em;text-transform:uppercase;font-weight:600;color:var(--gris-2);line-height:1.3}
+  .etapas li::before{content:'';position:absolute;top:3px;left:50%;transform:translateX(-50%);
+    width:13px;height:13px;border-radius:50%;background:var(--claro);border:2px solid var(--linea-fuerte);
+    box-sizing:border-box;z-index:1}
+  .etapas li::after{content:'';position:absolute;top:8.5px;right:50%;width:100%;height:2px;background:var(--linea)}
+  .etapas li:first-child::after{display:none}
+  .etapas li.hecha,.etapas li.actual{color:var(--tinta)}
+  .etapas li.hecha::before{background:var(--verde);border-color:var(--verde)}
+  .etapas li.hecha::after,.etapas li.actual::after{background:var(--verde)}
+  .etapas li.actual::before{background:var(--laton);border-color:var(--laton);box-shadow:0 0 0 4px rgba(201,162,39,.22)}
+  .etapas.vencido li.actual::before{background:var(--gris-2);border-color:var(--gris-2);box-shadow:none}
+  .etapas-sigue{margin-top:14px;padding-top:12px;border-top:1px solid var(--linea);font-size:13.5px;line-height:1.5}
+  .etapas-sigue b{display:block;font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:.15em;
+    text-transform:uppercase;color:var(--laton-osc);margin-bottom:3px}
+  .barrita{display:grid;grid-template-columns:repeat(5,1fr);gap:3px;margin-top:11px}
+  .barrita:empty{display:none}
+  .barrita i{height:4px;border-radius:2px;background:var(--linea)}
+  .barrita i.hecha{background:var(--verde)}
+  .barrita i.actual{background:var(--laton)}
+
   .prov{background:var(--claro);border:1px solid var(--linea);border-radius:var(--r);
     box-shadow:var(--sombra);margin-bottom:11px;overflow:hidden}
   .prov.oro{border-left:3px solid var(--laton)}
@@ -2377,6 +2403,7 @@
           <div class="rd"><dt>Estado</dt><dd id="d-estado">—</dd></div>
         </dl>
       </div>
+      <div id="d-etapas"></div>
       <div id="d-comparador"></div>
       <div class="sec"><span class="sec-tit">Conectados con tu pedido</span><span class="sec-num" id="d-num"></span></div>
       <div id="d-lista"></div>
@@ -4144,6 +4171,66 @@ $('p-rubro-padre').addEventListener('change', pintarEjemplosRubro);
 /* ══════════════════ LISTAS ══════════════════ */
 let misPedidos = [], misPerfiles = [];
 
+/* Estado del pedido en cinco pasos, para que el cliente sepa en qué anda y qué
+   le toca hacer. Sale de las conexiones y de los presupuestos del chat. */
+const ETAPAS = ['Publicado','Conectado','Presupuesto','Trato cerrado','Terminado'];
+const ETAPAS_PIE = ['Buscando quién lo haga','Pedí presupuesto por el chat','Compará y elegí','Coordiná la visita','Terminado'];
+let misProgresos = {};
+async function progresoPedidos(ids){
+  const prog = {};
+  ids.forEach(id => prog[id] = {conectados: 0, presus: 0, aceptado: false, pagado: false, terminado: false});
+  if(!ids.length) return prog;
+  const ms = await api('matches?solicitud_id=in.('+ids.join(',')+')&select=id,solicitud_id');
+  ms.forEach(m => { if(prog[m.solicitud_id]) prog[m.solicitud_id].conectados++; });
+  if(ms.length){
+    const deMatch = Object.fromEntries(ms.map(m => [m.id, m.solicitud_id]));
+    const ps = await api('mensajes?match_id=in.('+ms.map(m => m.id).join(',')+')&tipo=eq.presupuesto' +
+      '&select=match_id,estado_presupuesto,pago_estado,trabajo_estado');
+    ps.forEach(p => {
+      const x = prog[deMatch[p.match_id]]; if(!x) return;
+      x.presus++;
+      if(p.estado_presupuesto !== 'aceptado') return;
+      x.aceptado = true;
+      if(p.pago_estado === 'cobrado') x.pagado = true;
+      if(p.trabajo_estado === 'terminado') x.terminado = true;
+    });
+  }
+  Object.assign(misProgresos, prog);
+  return prog;
+}
+const etapaDe = x => x.terminado ? 4 : x.aceptado ? 3 : x.presus ? 2 : x.conectados ? 1 : 0;
+const vencidoSinTrato = (s, x) => s.estado === 'vencida' && !x.aceptado;
+function queSigue(s, x){
+  if(vencidoSinTrato(s, x)) return 'Nadie respondió en 15 días. Podés volver a pedirlo.';
+  return [
+    'Te avisamos apenas alguien de tu zona se conecte. Mientras, mirá abajo a quién podés escribirle.',
+    (x.conectados === 1 ? 'Te conectamos con 1 persona.' : 'Te conectamos con '+x.conectados+' personas.') +
+      ' Escribiles por el chat y pediles presupuesto.',
+    (x.presus === 1 ? 'Te mandaron 1 presupuesto.' : 'Te mandaron '+x.presus+' presupuestos.') +
+      ' Compará y aceptá el que más te convenga.',
+    'Coordiná la visita por el chat.' + (x.pagado ? ' Ya pagaste por la app.' : '') +
+      ' Cuando termine, quien lo hizo lo marca como terminado.',
+    'Listo. Si quedaste conforme, calificalo en el chat: ayuda a otros a elegir.'
+  ][etapaDe(x)];
+}
+function etapasHTML(s, x){
+  const e = etapaDe(x), venc = vencidoSinTrato(s, x);
+  return '<div class="etapas'+(venc ? ' vencido' : '')+'" role="group" aria-label="Estado del pedido: '+ETAPAS[e]+'"><ol>' +
+    ETAPAS.map((t, i) => '<li class="'+(i < e ? 'hecha' : i === e ? 'actual' : '')+'"'+(i === e ? ' aria-current="step"' : '')+'>'+t+'</li>').join('') +
+    '</ol><div class="etapas-sigue"><b>'+(venc ? 'Vencido' : 'Qué sigue')+'</b>'+esc(queSigue(s, x))+'</div></div>';
+}
+/* En la lista: la barrita, el sello y el pie con el paso en el que está. */
+function pintarProgresos(){
+  misPedidos.forEach(s => {
+    const x = misProgresos[s.id], item = document.querySelector('[data-pedido="'+s.id+'"]');
+    if(!x || !item || vencidoSinTrato(s, x)) return;
+    const e = etapaDe(x);
+    item.querySelector('.barrita').innerHTML = ETAPAS.map((t, i) => '<i class="'+(i < e ? 'hecha' : i === e ? 'actual' : '')+'"></i>').join('');
+    if(e){ const sello = item.querySelector('.sello'); sello.className = 'sello '+(e === 4 ? 'oro' : 'verde'); sello.textContent = ETAPAS[e]; }
+    item.querySelector('.item-pie span').textContent = 'Paso '+(e+1)+' de 5 · '+ETAPAS_PIE[e];
+  });
+}
+
 async function cargarPedidos(){
   $('lista-pedidos').innerHTML = esqueleto(2);
   try{
@@ -4167,6 +4254,7 @@ async function cargarPedidos(){
         '<div class="item-meta"><span>'+esc(s.zona)+'</span>' +
         (s.presupuesto ? '<span>tiene en mente '+pesos(s.presupuesto)+'</span>' : '') +
         '<span>'+esc(cuandoTxt(s))+'</span></div>' +
+        '<span class="barrita" aria-hidden="true"></span>' +
         '<div class="item-pie"><span>'+(vencido
             ? 'Nadie respondió en 15 días. Podés volver a pedirlo.'
             : listo ? 'Ver quién te podemos conectar' : 'Buscando quién lo haga')+'</span>' +
@@ -4174,6 +4262,7 @@ async function cargarPedidos(){
     }).join('');
     document.querySelectorAll('[data-pedido]').forEach(b =>
       b.addEventListener('click', () => abrirDetalle(Number(b.dataset.pedido))));
+    progresoPedidos(misPedidos.map(s => s.id)).then(pintarProgresos).catch(console.error);
   }catch(e){
     console.error(e);
     $('lista-pedidos').innerHTML = cajaVacia('No se pudieron cargar','Tocá el botón de actualizar arriba a la derecha.','pedido');
@@ -5267,6 +5356,13 @@ async function abrirDetalle(id){
   $('d-estado').textContent = s.estado === 'vencida' ? 'Vencido'
     : s.estado === 'con_match' ? 'Conectado' : 'Buscando';
   $('d-lista').innerHTML = esqueleto(2);
+  const etapas = x => {
+    $('d-etapas').innerHTML = etapasHTML(s, x);
+    $('d-estado').textContent = vencidoSinTrato(s, x) ? 'Vencido' : ETAPAS[etapaDe(x)];
+  };
+  $('d-etapas').innerHTML = '';
+  if(misProgresos[id]) etapas(misProgresos[id]);
+  progresoPedidos([id]).then(p => { if(actual === 'detalle') etapas(p[id]); }).catch(console.error);
   $('d-sugeridos').innerHTML = '';
   $('d-comparador').innerHTML = '';
   $('d-num').textContent = '';

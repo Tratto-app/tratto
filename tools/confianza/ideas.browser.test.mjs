@@ -154,3 +154,31 @@ test('pedidos abiertos: los de hoy se marcan', async () => {
     assert.match(await p.page.locator('#lista-abiertos').innerText(), /esta semana/i);
   } finally { await p.cerrar(); }
 });
+
+test('barra de estado: la lista y el detalle dicen en qué paso está y qué sigue', async () => {
+  const pedidos = [pedido({id: 69, estado: 'con_match'}), pedido({id: 70, estado: 'pendiente', servicio_necesitado: 'Pintura'})];
+  const p = await abrir(entorno, {handler: c => {
+    if (c.path.endsWith('/rest/v1/solicitudes')) return {json: pedidos};
+    if (c.path.endsWith('/rest/v1/matches') && c.query.includes('solicitud_id=in.')) return {json: [{id: 501, solicitud_id: 69}, {id: 502, solicitud_id: 69}]};
+    if (c.path.endsWith('/rest/v1/matches')) return {json: []};
+    if (c.path.endsWith('/rest/v1/mensajes') && c.query.includes('tipo=eq.presupuesto')) return {json: [
+      {match_id: 501, estado_presupuesto: 'aceptado', pago_estado: 'cobrado', trabajo_estado: null},
+      {match_id: 502, estado_presupuesto: 'rechazado', pago_estado: null, trabajo_estado: null}]};
+    return null;
+  }});
+  try {
+    await p.page.evaluate(() => cargarPedidos());
+    await p.page.waitForFunction(() => /Paso 4 de 5/.test(document.querySelector('[data-pedido="69"]').innerText));
+    const item69 = await p.page.locator('[data-pedido="69"]').innerText();
+    assert.match(item69, /Trato cerrado/i);
+    assert.match(item69, /Coordiná la visita/);
+    assert.equal(await p.page.locator('[data-pedido="69"] .barrita i.hecha').count(), 3);
+    assert.match(await p.page.locator('[data-pedido="70"]').innerText(), /Paso 1 de 5 · Buscando quién lo haga/);
+    await p.foto('etapas-lista');
+    await p.page.evaluate(() => abrirDetalle(69));
+    await p.page.waitForSelector('#d-etapas li.actual');
+    assert.equal(await p.page.locator('#d-etapas li.actual').innerText(), 'TRATO CERRADO');
+    assert.match(await p.page.locator('#d-etapas .etapas-sigue').innerText(), /Ya pagaste por la app/);
+    await p.foto('etapas-detalle');
+  } finally { await p.cerrar(); }
+});
