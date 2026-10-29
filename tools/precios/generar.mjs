@@ -254,6 +254,7 @@ function paginaIndice(rubros) {
 ${lista}
           <li><a href="/precios/clases-de-ingles/">Clases de inglés (guía aparte)</a></li>
       </ul>
+      <p style="margin-top:18px">¿Sos periodista? <a href="/precios/indice/">Acá está el índice del mes</a>, con todos los rubros en una tabla, cómo citarlo y la planilla para bajar.</p>
     </section>
   </div>
 </main>
@@ -261,6 +262,84 @@ ${pie}
 </body>
 </html>
 `;
+}
+
+// Índice para prensa: todos los rubros en una página, con cómo citarlo y la
+// planilla para bajar. Se rehace cada mes con los datos del mes.
+function paginaIndicePrensa(rubros) {
+  const url = 'https://www.trattoapp.com.ar/precios/indice/';
+  const mesTxt = mes(exportado), mesCap = mesTxt.charAt(0).toUpperCase() + mesTxt.slice(1);
+  const csv = `precios-servicios-amba-${exportado.slice(0, 7)}.csv`;
+  const titulo = `Precios de servicios en el AMBA · ${mesTxt} | Tratto`;
+  const descripcion = `Cuánto se paga en ${mesTxt} por 135 trabajos de 46 rubros en CABA y el Gran Buenos Aires, con fecha y fuente de cada dato. Se puede citar.`;
+  const recientes = filas.filter(f => (new Date(exportado) - new Date(f[5])) <= 92 * 864e5).length;
+  const tabla = rubros.map(r => porRubro.get(r).map((i, k) => `    <tr>${k === 0 ? `<th scope="rowgroup" rowspan="${porRubro.get(r).length}" class="rubro">${esc(r)}</th>` : ''}<td class="trabajo">${esc(i.servicio)}</td><td class="rango">${pesos(i.min)} a ${pesos(i.max)}</td><td class="unidad">${esc(i.unidad)}</td><td class="dato">${mes(i.relevado)}</td><td class="fuente">${esc(i.fuente)}</td></tr>`).join('\n')).join('\n');
+  return `${cabeza({ titulo, descripcion, url, ld: [{ '@context': 'https://schema.org', '@type': 'Dataset', name: `Precios de servicios en el AMBA, ${mesTxt}`,
+    description: descripcion, url, creator: { '@type': 'Organization', name: 'Tratto', url: 'https://www.trattoapp.com.ar/' },
+    temporalCoverage: exportado.slice(0, 7), spatialCoverage: 'Área Metropolitana de Buenos Aires, Argentina',
+    distribution: [{ '@type': 'DataDownload', encodingFormat: 'text/csv', contentUrl: url + csv }] }] })}
+<body>
+<header class="tope ancho"><a href="/?${esc(utm('precios-indice-prensa', 'cabecera'))}"><img src="/icon-192.png" alt="" width="30" height="30"><b>Tratto</b></a></header>
+<section class="hero ancho">
+  <nav class="migas" aria-label="Estás en">
+    <ol><li><a href="/">Inicio</a></li><li><a href="/precios/">Precios</a></li><li aria-current="page">Índice ${esc(mesTxt)}</li></ol>
+  </nav>
+  <p class="ceja">Para prensa · ${esc(mesCap)}</p>
+  <h1>¿Cuánto se paga por un servicio en ${esc(mesTxt)}?<span class="bajo">${filas.length} trabajos de ${rubros.length} rubros en el AMBA</span></h1>
+  <p class="sub">Tratto junta todos los meses los precios de referencia que usa su calculadora: de un plomero a un DJ, de clases de inglés a una mudanza. Cada dato dice de cuándo es y de dónde sale. Lo pueden usar y citar.</p>
+  <div class="botones"><a class="boton laton" href="${csv}" download>Bajar la planilla (CSV)</a></div>
+</section>
+<main class="hoja">
+  <div class="hoja-in ancho">
+    <section aria-labelledby="t-citar">
+      <h2 id="t-citar">Cómo citarlo</h2>
+      <div class="nota">
+        <p>«Precios de servicios en el AMBA, ${esc(mesTxt)}. Relevamiento de Tratto (trattoapp.com.ar/precios/indice/)».</p>
+        <p>Para consultas o datos de un rubro: <a href="mailto:trattoapp1@gmail.com">trattoapp1@gmail.com</a>.</p>
+      </div>
+    </section>
+    <section aria-labelledby="t-como">
+      <h2 id="t-como">Cómo se arma</h2>
+      <ul class="factores">
+        <li><strong>De dónde salen los datos.</strong>De precios publicados por plataformas de servicios, colegios y cámaras de cada oficio, y de avisos de quienes trabajan en cada rubro. La fuente está en cada fila.</li>
+        <li><strong>De cuándo es cada dato.</strong>Cada fila dice el mes en que se relevó. Este mes, ${recientes} de los ${filas.length} datos son de los últimos tres meses.</li>
+        <li><strong>Algunas son estimaciones.</strong>En ${filas.filter(f => /^Estimado/.test(f[6])).length} trabajos sin un precio publicado confiable, el rango lo estimamos a partir de rubros parecidos; la fuente lo dice («Estimado: …»).</li>
+        <li><strong>Sin ajustes.</strong>Los números van como se publicaron, sin actualizar por inflación. La calculadora de Tratto sí les suma un ajuste mensual estimado.</li>
+        <li><strong>Qué no es.</strong>No son precios fijos ni de Tratto: cada persona que hace el trabajo arma su presupuesto.</li>
+      </ul>
+    </section>
+    <section aria-labelledby="t-tabla">
+      <h2 id="t-tabla">Los precios</h2>
+<table class="precios indice">
+  <caption class="sr">Precios de referencia de servicios en el AMBA, ${esc(mesTxt)}</caption>
+  <thead><tr><th scope="col">Rubro</th><th scope="col">Trabajo</th><th scope="col">Rango</th><th scope="col">Unidad</th><th scope="col">Dato de</th><th scope="col">Fuente</th></tr></thead>
+  <tbody>
+${tabla}
+  </tbody>
+</table>
+    </section>
+  </div>
+</main>
+${pie}
+<style>
+  .precios.indice .rubro{font-weight:600;vertical-align:top}
+  @media (max-width:640px){
+    .precios.indice tr{grid-template-columns:minmax(0,1fr) auto}
+    .precios.indice .rubro{display:none}
+    .precios.indice .dato{grid-column:1/-1;grid-row:3;text-align:left;font:500 .74rem/1.2 var(--f-mono);color:var(--gris)}
+    .precios.indice .fuente{grid-column:1/-1;grid-row:4;white-space:normal;margin-top:0}
+    .precios.indice .fuente::after{display:none}
+  }
+</style>
+</body>
+</html>
+`;
+}
+function csvIndice(rubros) {
+  const c = v => /[",\n;]/.test(String(v)) ? '"' + String(v).replace(/"/g, '""') + '"' : String(v);
+  const lineas = [['rubro', 'trabajo', 'precio_min', 'precio_max', 'unidad', 'dato_de', 'fuente'].join(',')];
+  for (const r of rubros) for (const i of porRubro.get(r)) lineas.push([r, i.servicio, i.min, i.max, i.unidad, i.relevado.slice(0, 7), i.fuente].map(c).join(','));
+  return lineas.join('\n') + '\n';
 }
 
 const rubros = [...porRubro.keys()].sort((a, b) => a.localeCompare(b, 'es'));
@@ -273,6 +352,10 @@ for (const r of rubros) {
   hechas.push(slug(r));
 }
 writeFileSync(path.join(raiz, 'precios', 'index.html'), paginaIndice(rubros));
+mkdirSync(path.join(raiz, 'precios', 'indice'), { recursive: true });
+writeFileSync(path.join(raiz, 'precios', 'indice', 'index.html'), paginaIndicePrensa(rubros));
+writeFileSync(path.join(raiz, 'precios', 'indice', `precios-servicios-amba-${exportado.slice(0, 7)}.csv`), csvIndice(rubros));
+hechas.push('indice');
 
 // Sitemap: se agregan (o actualizan) las páginas generadas y el índice.
 const sm = path.join(raiz, 'sitemap.xml');
