@@ -1,0 +1,198 @@
+<!doctype html><html lang="es"><head><meta charset="utf-8">
+<title>Carrusel · Antes de vender el auto</title>
+<!-- Carrusel guardable (29/10/2026). Mismo molde que la mudanza, antes del calor y entregar el depto (checklist de
+     una situación con precios), ahora para quien vende el auto: rubros Gestoría y trámites, Mecánica del automotor,
+     Chapa y pintura y Lavado de autos. Portada verde (el jueves fue noche y el viernes clara y latón). No dice qué
+     exige la ley: solo qué conviene resolver y cuánto sale. Precios de precios_referencia con el ajuste mensual del
+     2 % de la calculadora, redondeados igual, a oct-2026 (el gestor da lo mismo que el quiz del 21/10).
+     Exportar: python3 render-carrusel.py vender-auto.html carrusel-vender-auto
+               python3 render-carrusel.py vender-auto.html carrusel-vender-auto-tt --red tiktok -->
+<link rel="stylesheet" href="carrusel.css">
+<style>
+/* 1 · portada verde */
+.placa.verde-portada{background:var(--verde)}
+.placa.verde-portada .pano{opacity:.18}
+.placa.verde-portada .marca span{color:#EAF4EF}
+.placa.verde-portada .marca .logo{background:rgba(255,255,255,.08);border:2px solid rgba(143,217,188,.3)}
+.placa.verde-portada .cuenta{color:var(--verde-luz)}
+.placa.verde-portada .cuenta b{color:#fff}
+.placa.verde-portada .pie .web{color:var(--verde-luz)}
+.placa.verde-portada .pie .desliza{color:#F3DE9A}
+.uno .chico{font:600 30px/1.2 'IBM Plex Mono',monospace;letter-spacing:.14em;text-transform:uppercase;color:#F3DE9A}
+.uno h1{font:700 132px/.95 'IBM Plex Sans Condensed',sans-serif;letter-spacing:-.025em;color:#fff;margin:26px 0 40px}
+.uno .sub{font:500 48px/1.28 'IBM Plex Sans',sans-serif;color:#D4EDE3;max-width:900px}
+.uno .iconos{display:flex;gap:22px;margin-top:66px}
+.uno .iconos div{width:150px;height:150px;border-radius:40px;background:rgba(255,255,255,.1);border:3px solid rgba(143,217,188,.35);
+  display:flex;align-items:center;justify-content:center;color:#fff}
+.uno .iconos div:nth-child(2n){color:#F3DE9A}
+
+/* 2 · tres datos */
+.dos h2{font:700 100px/1 'IBM Plex Sans Condensed',sans-serif;letter-spacing:-.015em}
+.dos .bajada{font:500 44px/1.3 'IBM Plex Sans',sans-serif;color:var(--tinta-2);margin-top:26px}
+.datos{display:flex;flex-direction:column;gap:24px;margin-top:56px}
+.dato{display:flex;align-items:center;gap:30px;padding:30px 36px}
+.dato .n{flex:none;width:86px;height:86px;border-radius:50%;background:var(--verde);color:#fff;display:flex;align-items:center;justify-content:center;
+  font:700 52px/1 'IBM Plex Sans Condensed',sans-serif}
+.dato p{font:600 52px/1.15 'IBM Plex Sans',sans-serif}
+.dos .despues{font:600 42px/1.3 'IBM Plex Sans',sans-serif;color:var(--laton-osc);margin-top:40px}
+
+/* 3 a 7 · cada cosa */
+.paso{display:flex;align-items:center;gap:30px}
+.paso h2{font:700 108px/1 'IBM Plex Sans Condensed',sans-serif;letter-spacing:-.02em}
+.paso h2 .num{color:var(--laton-osc);margin-right:16px}
+.ico.grande{width:150px;height:150px;border-radius:40px}
+.precio{margin-top:60px;padding:40px 46px}
+.precio .que{font:500 44px/1.25 'IBM Plex Sans',sans-serif;color:var(--tinta-2)}
+.precio .rango{font:600 74px/1.1 'IBM Plex Mono',monospace;color:var(--verde);letter-spacing:-.03em;margin-top:14px;white-space:nowrap}
+.precio + .precio{margin-top:24px}
+.precio.chica{padding:30px 40px}
+.precio.chica .que{font-size:40px}
+.precio.chica .rango{font-size:62px;margin-top:10px}
+.consejo{display:flex;gap:24px;align-items:flex-start;margin-top:56px;font:500 46px/1.3 'IBM Plex Sans',sans-serif;color:var(--tinta)}
+.consejo b{font-weight:600;color:var(--verde-vivo)}
+.consejo .ico{color:var(--laton-osc)}
+
+/* 8 · mensaje de ejemplo */
+.ocho h2{font:700 100px/1 'IBM Plex Sans Condensed',sans-serif;letter-spacing:-.015em}
+.ocho .bajada{font:500 44px/1.3 'IBM Plex Sans',sans-serif;color:var(--tinta-2);margin-top:22px}
+.burbuja{position:relative;margin-top:84px;border-radius:44px 44px 44px 12px;padding:54px 54px 50px;font:500 50px/1.36 'IBM Plex Sans',sans-serif;
+  background:var(--verde-claro);color:var(--tinta);border:3px solid rgba(43,126,98,.25)}
+.burbuja .marca-ej{position:absolute;top:-30px;left:40px;transform:rotate(-3deg);font-size:26px}
+.burbuja u{text-decoration:none;border-bottom:4px solid var(--laton);padding:0 4px;color:var(--laton-osc);font-weight:600}
+.ocho .nota{font:600 40px/1.3 'IBM Plex Sans',sans-serif;color:var(--laton-osc);margin-top:44px}
+
+/* 9 · resumen para capturar */
+.placa.blanca{background:#fff}
+.placa.blanca .pano{display:none}
+.placa.blanca .cont{border:10px solid var(--verde);border-radius:0}
+.resumen h2{font:700 82px/1 'IBM Plex Sans Condensed',sans-serif;letter-spacing:-.015em}
+.tabla{margin-top:34px}
+.tabla .f{display:flex;justify-content:space-between;align-items:center;gap:20px;padding:19px 0;border-bottom:3px solid #E3EAE6}
+.tabla .f:last-child{border-bottom:0}
+.tabla .f span{font:500 40px/1.2 'IBM Plex Sans',sans-serif;color:var(--tinta)}
+.tabla .f b{font:600 38px/1 'IBM Plex Mono',monospace;color:var(--verde);white-space:nowrap;letter-spacing:-.02em}
+.resumen .manda{font:600 40px/1.3 'IBM Plex Sans',sans-serif;color:var(--laton-osc);margin-top:26px}
+
+/* 10 · cierre */
+.cierre h2{font:700 116px/1.0 'IBM Plex Sans Condensed',sans-serif;letter-spacing:-.015em;margin-top:60px}
+.cierre .bajada{font:500 46px/1.3 'IBM Plex Sans',sans-serif;color:#B9C2BC;margin-top:30px;max-width:880px}
+.cierre .url-caja{margin-top:56px}
+.cierre .bio{font:500 28px/1.3 'IBM Plex Mono',monospace;letter-spacing:.06em;color:var(--gris-2);margin-top:22px}
+.cierre .gratis{margin-top:70px}
+.cierre .gratis .sello{background:rgba(201,162,39,.12);color:#F3DE9A}
+</style></head><body>
+
+<!-- 1 · PORTADA -->
+<section class="placa verde-portada uno"><div class="cont">
+  <div class="medio">
+    <div class="chico">Vender el auto · precios de octubre</div>
+    <h1>Antes de vender el auto</h1>
+    <p class="sub">6 cosas para resolver antes de publicarlo y cuánto sale cada una.</p>
+    <div class="iconos"><div><i data-ico="pedido" data-px="84"></i></div><div><i data-ico="volante" data-px="84"></i></div><div><i data-ico="rodillo" data-px="84"></i></div><div><i data-ico="gota" data-px="84"></i></div><div><i data-ico="billete" data-px="84"></i></div></div>
+  </div>
+  <div class="pie"><span class="web">trattoapp.com.ar</span><span class="desliza">Guardalo · Deslizá →</span></div>
+</div></section>
+
+<!-- 2 · PRIMERO -->
+<section class="placa dos"><div class="cont">
+  <div class="medio">
+    <h2>Primero, 3 cosas.</h2>
+    <p class="bajada">Antes de llamar a nadie, para saber qué hace falta.</p>
+    <div class="datos">
+      <div class="tarjeta dato"><span class="n">1</span><p>Juntá el título, la cédula y los papeles del último service</p></div>
+      <div class="tarjeta dato"><span class="n">2</span><p>Fijate si debe patentes o multas</p></div>
+      <div class="tarjeta dato"><span class="n">3</span><p>Mirá cuánto piden por autos iguales al tuyo</p></div>
+    </div>
+    <p class="despues">Ahora, una por una →</p>
+  </div>
+  <div class="pie"><span class="web">trattoapp.com.ar</span><span class="desliza">Deslizá →</span></div>
+</div></section>
+
+<!-- 3 · LOS PAPELES. -->
+<section class="placa"><div class="cont">
+  <div class="medio">
+    <div class="paso"><div class="ico grande"><i data-ico="pedido" data-px="92"></i></div><h2><span class="num">1.</span>Los papeles.</h2></div>
+    <div class="tarjeta precio"><div class="que">Informe de dominio</div><div class="rango">$20.000 a $39.000</div></div>
+    <div class="consejo"><div class="ico chico"><i data-ico="check" data-px="52"></i></div><p>Muestra si el auto tiene <b>prendas o embargos.</b> Pedilo antes de publicar.</p></div>
+  </div>
+  <div class="pie"><span class="fuente">Precios de referencia · AMBA · oct-2026</span></div>
+</div></section>
+<!-- 4 · EL SERVICE. -->
+<section class="placa"><div class="cont">
+  <div class="medio">
+    <div class="paso"><div class="ico grande"><i data-ico="reloj" data-px="92"></i></div><h2><span class="num">2.</span>El service.</h2></div>
+    <div class="tarjeta precio chica"><div class="que">Service completo</div><div class="rango">$117.000 a $220.000</div></div><div class="tarjeta precio chica"><div class="que">Cambio de aceite y filtro</div><div class="rango">$66.000 a $117.000</div></div>
+    <div class="consejo"><div class="ico chico"><i data-ico="check" data-px="52"></i></div><p>Guardá la factura: <b>al que compra le sirve verla.</b></p></div>
+  </div>
+  <div class="pie"><span class="fuente">Precios de referencia · AMBA · oct-2026</span></div>
+</div></section>
+<!-- 5 · FRENOS Y TREN DELANTERO. -->
+<section class="placa"><div class="cont">
+  <div class="medio">
+    <div class="paso"><div class="ico grande"><i data-ico="volante" data-px="92"></i></div><h2 style="font-size:92px"><span class="num">3.</span>Frenos y tren delantero.</h2></div>
+    <div class="tarjeta precio chica"><div class="que">Alineación y balanceo</div><div class="rango">$37.000 a $66.000</div></div><div class="tarjeta precio chica"><div class="que">Cambio de pastillas de freno</div><div class="rango">$51.000 a $102.000</div></div>
+    <div class="consejo"><div class="ico chico"><i data-ico="check" data-px="52"></i></div><p>Si el volante tira para un lado, <b>se nota en la prueba de manejo.</b></p></div>
+  </div>
+  <div class="pie"><span class="fuente">Precios de referencia · AMBA · oct-2026</span></div>
+</div></section>
+<!-- 6 · LA CHAPA. -->
+<section class="placa"><div class="cont">
+  <div class="medio">
+    <div class="paso"><div class="ico grande"><i data-ico="rodillo" data-px="92"></i></div><h2><span class="num">4.</span>La chapa.</h2></div>
+    <div class="tarjeta precio"><div class="que">Pintura de un paño (puerta, guardabarros)</div><div class="rango">$170.000 a $488.000</div></div>
+    <div class="consejo"><div class="ico chico"><i data-ico="check" data-px="52"></i></div><p>Mandá una foto de cerca y otra de lejos y <b>decidí con el presupuesto en la mano.</b></p></div>
+  </div>
+  <div class="pie"><span class="fuente">Precios de referencia · AMBA · oct-2026</span></div>
+</div></section>
+<!-- 7 · EL LAVADO. -->
+<section class="placa"><div class="cont">
+  <div class="medio">
+    <div class="paso"><div class="ico grande"><i data-ico="gota" data-px="92"></i></div><h2><span class="num">5.</span>El lavado.</h2></div>
+    <div class="tarjeta precio chica"><div class="que">Lavado completo, por dentro y por fuera</div><div class="rango">$23.000 a $51.000</div></div><div class="tarjeta precio chica"><div class="que">Detailing</div><div class="rango">$113.000 a $220.000</div></div>
+    <div class="consejo"><div class="ico chico"><i data-ico="check" data-px="52"></i></div><p>Hacelo <b>antes de sacar las fotos</b> de la publicación.</p></div>
+  </div>
+  <div class="pie"><span class="fuente">Precios de referencia · AMBA · oct-2026</span></div>
+</div></section>
+<!-- 8 · LA TRANSFERENCIA. -->
+<section class="placa"><div class="cont">
+  <div class="medio">
+    <div class="paso"><div class="ico grande"><i data-ico="billete" data-px="92"></i></div><h2><span class="num">6.</span>La transferencia.</h2></div>
+    <div class="tarjeta precio"><div class="que">Gestor para la transferencia</div><div class="rango">$94.000 a $166.000</div></div>
+    <div class="consejo"><div class="ico chico"><i data-ico="check" data-px="52"></i></div><p>Preguntá <b>si incluye los aranceles del registro</b> o van aparte.</p></div>
+  </div>
+  <div class="pie"><span class="fuente">Precios de referencia · AMBA · oct-2026</span></div>
+</div></section>
+
+<!-- 9 · RESUMEN -->
+<section class="placa blanca resumen"><div class="cont">
+  <div class="medio">
+    <h2>Para vender el auto, en una foto</h2>
+    <div class="tabla">
+      <div class="f"><span>Informe de dominio</span><b>$20k a $39k</b></div>
+      <div class="f"><span>Service completo</span><b>$117k a $220k</b></div>
+      <div class="f"><span>Aceite y filtro</span><b>$66k a $117k</b></div>
+      <div class="f"><span>Alineación y balanceo</span><b>$37k a $66k</b></div>
+      <div class="f"><span>Pastillas de freno</span><b>$51k a $102k</b></div>
+      <div class="f"><span>Pintura de un paño</span><b>$170k a $488k</b></div>
+      <div class="f"><span>Lavado completo</span><b>$23k a $51k</b></div>
+      <div class="f"><span>Gestor (transferencia)</span><b>$94k a $166k</b></div>
+    </div>
+    <p class="manda">Precios de referencia de octubre. Sacale captura.</p>
+  </div>
+  <div class="pie"><span class="web">trattoapp.com.ar</span></div>
+</div></section>
+
+<!-- 10 · CIERRE -->
+<section class="placa noche cierre"><div class="cont">
+  <div class="medio">
+    <h2>Dejalo listo y vendelo tranquilo.</h2>
+    <p class="bajada">En Tratto contás qué necesitás y te llegan presupuestos de gente de tu zona, con lo que incluye cada uno.</p>
+    <div><span class="url-caja"><span id="logo-url"></span><span data-tiktok="trattoapp.com.ar/r/tt-auto">trattoapp.com.ar/r/ig-auto</span></span></div>
+    <p class="bio" data-tiktok="(escribilo en el navegador)">Tocá @trattoapp_ · link «Pedí un servicio»</p>
+    <div class="gratis"><span class="sello">Gratis para el que pide</span></div>
+  </div>
+</div></section>
+
+<script src="carrusel.js"></script>
+<script>document.getElementById('logo-url').outerHTML = LOGO(46, 'lu');</script>
+</body></html>

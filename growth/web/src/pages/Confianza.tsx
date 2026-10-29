@@ -79,8 +79,49 @@ function FichaProtegido({ t, onListo }: { t: Protegido; onListo: () => void }) {
   </li>;
 }
 
+type Arrepentimiento = { id: number; codigo: string; nombre: string; email: string; que: string; referencia: string | null;
+  detalle: string | null; estado: string; nota: string | null; created_at: string };
+
+// Botón de arrepentimiento (Resolución 424/2020): hay que responder por mail
+// dentro de las 24 horas. Si es Trabajo protegido sin reclamo, se devuelve la
+// cuota desde la ficha del trabajo ("Devolver la cuota").
+function FichaArrepentimiento({ a, onListo }: { a: Arrepentimiento; onListo: () => void }) {
+  const [nota, setNota] = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(null);
+  const vence = new Date(new Date(a.created_at).getTime() + 24 * 3600 * 1000);
+  const guardar = async () => {
+    setError(null);
+    try { await rpc('soporte_arrepentimiento_resolver', { p_id: a.id, p_nota: nota }); onListo(); }
+    catch (e) { setError(e instanceof Error ? e.message : 'No se pudo guardar.'); }
+  };
+  return <li className={`conf-prot${a.estado === 'recibido' ? ' abierto' : ''}`}>
+    <div className="conf-cab">
+      <div>
+        <strong>{a.codigo} · {a.que === 'trabajo_protegido' ? 'Trabajo protegido' : 'Otra contratación'}</strong>
+        <small>{a.nombre} · <a href={`mailto:${a.email}?subject=${encodeURIComponent('Tu pedido de arrepentimiento ' + a.codigo)}`}>{a.email}</a> · {fecha(a.created_at)}{a.referencia ? ` · Ref. ${a.referencia}` : ''}</small>
+      </div>
+      <Badge tone={a.estado === 'recibido' ? 'rojo' : ''}>{a.estado === 'recibido' ? `Responder antes del ${fecha(vence.toISOString())}` : 'Resuelto'}</Badge>
+    </div>
+    {a.detalle && <p className="muted">«{a.detalle}»</p>}
+    {a.nota && <p className="muted pequeño">Qué se hizo: {a.nota}</p>}
+    {a.estado === 'recibido' && (nota === null
+      ? <div className="conf-acciones"><button className="btn" onClick={() => setNota('Le respondimos por mail y ')}>Marcar resuelto</button></div>
+      : <div className="conf-rechazo">
+          <label>Qué se hizo (queda anotado)
+            <textarea value={nota} onChange={e => setNota(e.target.value)} maxLength={2000} rows={2} />
+          </label>
+          {error && <p className="conf-error">{error}</p>}
+          <div className="conf-acciones">
+            <button className="btn primario" disabled={nota.trim().length < 3} onClick={guardar}>Guardar</button>
+            <button className="btn" onClick={() => setNota(null)}>Volver</button>
+          </div>
+        </div>)}
+  </li>;
+}
+
 export default function Confianza() {
   const prot = useAsync(() => rpc<Protegido[]>('soporte_trabajos_protegidos', {}), []);
+  const arr = useAsync(() => rpc<Arrepentimiento[]>('soporte_arrepentimientos', {}), []);
 
   const k = useMemo(() => {
     const filas = prot.data ?? [];
@@ -95,7 +136,7 @@ export default function Confianza() {
 
   return <div className="confianza">
     <PageHeader title="Trabajo protegido" desc="Los trabajos que protegieron los clientes y sus reclamos. Lo que decidas acá lo ve el cliente en su reclamo, en la app."
-      actions={<button className="btn" onClick={prot.reload}>Actualizar</button>} />
+      actions={<button className="btn" onClick={() => { prot.reload(); arr.reload(); }}>Actualizar</button>} />
 
     <div className="conf-kpis">
       <Kpi label="Cuotas devueltas" value={k.devuelto} raw={pesos(k.devuelto)} />
@@ -108,6 +149,12 @@ export default function Confianza() {
       {prot.loading && !prot.data ? <Loading /> : prot.error ? <ErrorBox error={prot.error} onRetry={prot.reload} />
         : !prot.data?.length ? <Empty title="Todavía no hay trabajos protegidos">Aparecen cuando un cliente paga la cuota del 5 %. Los reclamos van primero, ordenados por plazo.</Empty>
         : <ul className="conf-lista">{prot.data.map(t => <FichaProtegido key={t.id + t.version} t={t} onListo={prot.reload} />)}</ul>}
+    </Card>
+
+    <Card title="Botón de arrepentimiento">
+      {arr.loading && !arr.data ? <Loading /> : arr.error ? <ErrorBox error={arr.error} onRetry={arr.reload} />
+        : !arr.data?.length ? <Empty title="No hay pedidos de arrepentimiento">Cuando alguien lo use, te llega un mail y aparece acá. Hay que responderle dentro de las 24 horas.</Empty>
+        : <ul className="conf-lista">{arr.data.map(a => <FichaArrepentimiento key={a.id + a.estado} a={a} onListo={arr.reload} />)}</ul>}
     </Card>
   </div>;
 }

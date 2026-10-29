@@ -4,8 +4,11 @@
   "webDir": "www",
   "server": {
     "url": "https://www.trattoapp.com.ar/?utm_source=ios_app",
-    "errorPath": "index.html"
+    "errorPath": "index.html",
+    "allowNavigation": ["qglsonbcsncgekzbfafk.supabase.co", "appleid.apple.com", "*.apple.com",
+      "*.mercadopago.com.ar", "*.mercadopago.com", "*.mercadolibre.com"]
   },
+  "appendUserAgent": "TrattoApp/2",
   "backgroundColor": "#0C2620",
   "ios": {
     "contentInset": "never",

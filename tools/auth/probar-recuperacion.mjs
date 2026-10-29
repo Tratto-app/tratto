@@ -38,6 +38,9 @@ async function pagina(handler, {width=390, guardada=false}={}){
     }
     if(url.pathname.startsWith('/auth/v1/')){
       if(req.method() === 'OPTIONS') return route.fulfill({status:204,headers:{'Access-Control-Allow-Origin':origen,'Access-Control-Allow-Headers':'*','Access-Control-Allow-Methods':'GET,POST,PUT'}});
+      // La app pregunta al cargar si Google y Apple están prendidos: acá van
+      // apagados y no cuenta como llamada de los flujos que se prueban.
+      if(url.pathname === '/auth/v1/settings') return route.fulfill({status:200,contentType:'application/json',body:JSON.stringify({external:{}}),headers:{'Access-Control-Allow-Origin':origen}});
       const llamada={path:url.pathname,search:url.search,method:req.method(),authorization:req.headers().authorization,body:req.postDataJSON()};
       llamadas.push(llamada);
       const r=await handler(llamada);

@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="es-AR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="robots" content="index,follow">
+<title>Botón de arrepentimiento · Tratto</title>
+<meta name="description" content="Pedí la revocación de lo que contrataste con Tratto por internet, sin dar motivos, dentro de los 10 días corridos.">
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png">
+<link rel="icon" type="image/png" sizes="64x64" href="/favicon-64.png">
+<link rel="stylesheet" href="/assets/fonts/tratto-fonts.css">
+<style>
+  :root{
+    --noche:#0C2620; --claro:#FCFBF8; --claro-2:#F2F0E9;
+    --tinta:#0E1815; --gris:#68766F; --gris-2:#94A19B;
+    --verde:#1E5D49; --verde-luz:#8FD9BC;
+    --laton:#C9A227; --laton-osc:#8A6E10;
+    --linea:#E0DCD0; --linea-fuerte:#CFC9BA;
+    --r:10px; --st:env(safe-area-inset-top,0px); --sb:env(safe-area-inset-bottom,0px);
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{background:var(--claro-2);color:var(--tinta);
+    font-family:'IBM Plex Sans',system-ui,sans-serif;font-size:15px;line-height:1.6;
+    -webkit-text-size-adjust:100%}
+
+  /* La cabecera repite el glifo de la app: dos nodos unidos, el segundo en
+     latón. Es lo mismo que ve el usuario al abrir Tratto. */
+  .barra{background:var(--noche);color:var(--claro);padding:calc(14px + var(--st)) 18px 14px;
+    display:flex;align-items:center;gap:11px;position:sticky;top:0;z-index:5}
+  .barra svg{width:22px;height:22px;flex:none}
+  .barra-marca{font-family:'Montserrat','IBM Plex Sans',sans-serif;font-weight:500;font-size:13px;letter-spacing:.3em;text-transform:uppercase}
+  .barra a{margin-left:auto;color:var(--verde-luz);text-decoration:none;
+    font-family:'IBM Plex Mono',monospace;font-size:9.5px;letter-spacing:.15em;
+    text-transform:uppercase;font-weight:600}
+
+  .hoja{max-width:720px;margin:0 auto;padding:26px 18px calc(60px + var(--sb));
+    background:var(--claro);min-height:100vh}
+  @media(min-width:760px){ .hoja{margin:26px auto;min-height:0;
+    border:1px solid var(--linea);border-radius:var(--r)} }
+
+  .kicker{font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:.19em;
+    text-transform:uppercase;color:var(--laton-osc);font-weight:600}
+
+  /* El hilo con remate en latón: el mismo sello que en la app marca lo que
+     quedó firme. Acá cierra el título del documento. */
+  .hilo{height:1px;background:linear-gradient(90deg,var(--verde),var(--laton));
+    margin:14px 0 20px}
+
+  .vigente{background:rgba(43,126,98,.08);border:1px solid rgba(43,126,98,.35);border-radius:10px;
+    padding:12px 16px;font-size:14px;line-height:1.5;margin:0 0 22px}
+  .vigente b{font-weight:600}
+
+  h1{font-family:'IBM Plex Sans Condensed',sans-serif;font-weight:700;
+    font-size:29px;line-height:1.12;letter-spacing:-.02em;margin-top:7px}
+  /* El primer h2 no lleva raya: ya viene el hilo del título. */
+  h2:first-of-type{border-top:none;padding-top:0;margin-top:26px}
+  h2{font-family:'IBM Plex Sans Condensed',sans-serif;font-weight:700;
+    font-size:20px;margin:34px 0 10px;padding-top:20px;border-top:1px solid var(--linea);
+    letter-spacing:-.01em}
+  h3{font-family:'IBM Plex Sans Condensed',sans-serif;font-weight:700;
+    font-size:16.5px;margin:22px 0 8px}
+  h4{font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:.15em;
+    text-transform:uppercase;color:var(--laton-osc);margin:20px 0 8px;font-weight:600}
+  p{margin:11px 0;color:var(--gris)}
+  p strong,li strong,td strong{color:var(--tinta);font-weight:600}
+  ul,ol{margin:11px 0 11px 20px;color:var(--gris)}
+  li{margin:6px 0}
+  a{color:var(--verde);text-decoration:underline;text-underline-offset:2px}
+  code{font-family:'IBM Plex Mono',monospace;font-size:.88em;background:var(--claro-2);
+    border:1px solid var(--linea);border-radius:4px;padding:1px 5px}
+  hr{border:none;border-top:1px solid var(--linea);margin:30px 0}
+
+  /* Las tablas son anchas y el teléfono es angosto: scrollean solas en vez de
+     desbordar la página. La sombra del borde derecho aparece sola cuando queda
+     tabla por ver y se apaga al llegar al final: sin eso, en el teléfono la
+     columna cortada parece que no existe. */
+  .tabla{overflow-x:auto;-webkit-overflow-scrolling:touch;margin:16px 0;
+    border:1px solid var(--linea);border-radius:var(--r);
+    background:
+      linear-gradient(90deg, var(--claro) 30%, rgba(252,251,248,0)) left / 26px 100% no-repeat local,
+      linear-gradient(90deg, rgba(252,251,248,0), var(--claro) 70%) right / 26px 100% no-repeat local,
+      radial-gradient(farthest-side at 0 50%, rgba(14,24,21,.13), transparent) left / 11px 100% no-repeat scroll,
+      radial-gradient(farthest-side at 100% 50%, rgba(14,24,21,.13), transparent) right / 11px 100% no-repeat scroll}
+  table{border-collapse:collapse;width:100%;min-width:460px;font-size:13.5px}
+  th,td{text-align:left;padding:10px 13px;border-bottom:1px solid var(--linea);
+    vertical-align:top;color:var(--gris)}
+  th{background:var(--claro-2);color:var(--tinta);font-weight:600;
+    font-family:'IBM Plex Sans Condensed',sans-serif;white-space:nowrap}
+  tr:last-child td{border-bottom:none}
+
+  .pie{margin-top:38px;padding-top:20px;border-top:1px solid var(--linea);
+    display:flex;flex-wrap:wrap;gap:10px}
+  .pie a{font-family:'IBM Plex Mono',monospace;font-size:9.5px;letter-spacing:.14em;
+    text-transform:uppercase;font-weight:600;color:var(--laton-osc);text-decoration:none;
+    border:1px solid var(--linea-fuerte);border-radius:99px;padding:8px 14px}
+
+  /* Formulario: mismos campos que la app, en la hoja legal. */
+  form{margin-top:18px}
+  label{display:block;font-weight:600;font-size:14px;color:var(--tinta);margin:16px 0 6px}
+  input[type=text],input[type=email],textarea{width:100%;font:inherit;font-size:16px;color:var(--tinta);
+    background:#fff;border:1px solid var(--linea-fuerte);border-radius:8px;padding:11px 12px}
+  textarea{min-height:90px;resize:vertical}
+  .opcion{display:flex;gap:10px;align-items:flex-start;border:1px solid var(--linea);border-radius:8px;
+    padding:11px 12px;margin-bottom:8px;background:#fff;cursor:pointer;font-weight:400;color:var(--gris)}
+  .opcion input{margin-top:4px;accent-color:var(--verde)}
+  .opcion b{color:var(--tinta)}
+  .ayuda{font-size:12.5px;color:var(--gris-2);margin-top:5px}
+  button{margin-top:20px;width:100%;font:inherit;font-weight:600;font-size:16px;color:#fff;background:var(--verde);
+    border:none;border-radius:8px;padding:14px;cursor:pointer}
+  button:disabled{opacity:.6}
+  .error{display:none;background:#FBE9E6;color:#9B2C1F;border-radius:8px;padding:11px 13px;margin-top:14px;font-size:14px}
+  .error.visible{display:block}
+  .listo{display:none;border:1px solid rgba(201,162,39,.55);background:rgba(201,162,39,.08);border-radius:10px;
+    padding:18px;margin-top:20px}
+  .listo.visible{display:block}
+  .codigo{font-family:'IBM Plex Mono',monospace;font-size:24px;font-weight:600;letter-spacing:.06em;color:var(--tinta);margin:8px 0}
+</style>
+</head>
+<body>
+
+<div class="barra">
+  <svg viewBox="0 0 32 32" fill="none" aria-hidden="true">
+    <defs><linearGradient id="glifo-privacidad-1" gradientUnits="userSpaceOnUse" x1="10.3" y1="10.37" x2="22.54" y2="22.46"><stop offset="0" stop-color="#96E7CE"/><stop offset="1" stop-color="#62AD98"/></linearGradient></defs>
+    <path d="M10.3 10.37 L22.54 22.46" stroke="url(#glifo-privacidad-1)" stroke-width="2.39"/>
+    <circle cx="7.47" cy="7.58" r="5.23" stroke="#9EECD4" stroke-width="2.5"/>
+    <path d="M10.3 10.37 L12.08 12.13" stroke="#96E7CE" stroke-width="2.39"/>
+    <circle cx="25.12" cy="25.02" r="4.76" stroke="#F7CA55" stroke-width="2.24"/>
+    <path d="M20.95 20.89 L22.54 22.46" stroke="#9EECD4" stroke-opacity=".32" stroke-width="2.39"/>
+  </svg>
+  <span class="barra-marca">Tratto</span>
+  <a href="/">Volver a la app</a>
+</div>
+
+<main class="hoja">
+  <div class="kicker">Tus derechos</div>
+  <h1>Botón de arrepentimiento</h1>
+  <div class="hilo"></div>
+  <p>Si contrataste algo con Tratto por internet, como <strong>Trabajo protegido</strong>, tenés
+  <strong>10 días corridos</strong> desde que lo pagaste para arrepentirte, sin dar motivos y sin costo
+  (Ley 24.240, artículo 34, y Resolución 424/2020). Completá esto y te damos un código de trámite en el acto.</p>
+  <div class="vigente"><b>Qué pasa después.</b> Te respondemos por mail dentro de las 24 horas con tu código.
+  Si es Trabajo protegido y todavía no reclamaste, te devolvemos la cuota por Mercado Pago, al mismo medio
+  con que pagaste. No hace falta tener cuenta para pedirlo.</div>
+
+  <form id="form" novalidate>
+    <label for="nombre">Tu nombre y apellido</label>
+    <input id="nombre" type="text" autocomplete="name" maxlength="120">
+    <label for="email">Tu email</label>
+    <input id="email" type="email" autocomplete="email" maxlength="160">
+    <div class="ayuda">El mismo con el que usás Tratto, si tenés cuenta. Ahí te respondemos.</div>
+    <label>Qué querés revocar</label>
+    <label class="opcion"><input type="radio" name="que" value="trabajo_protegido" checked>
+      <span><b>Trabajo protegido.</b> La cuota que le pagaste a Tratto para proteger un trabajo.</span></label>
+    <label class="opcion"><input type="radio" name="que" value="otro">
+      <span><b>Otra contratación con Tratto.</b> Contanos cuál en el detalle.</span></label>
+    <label for="referencia">Número de operación o del presupuesto <span style="font-weight:400;color:var(--gris-2)">(opcional)</span></label>
+    <input id="referencia" type="text" maxlength="120" placeholder="Lo ves en el mail de Mercado Pago">
+    <label for="detalle">Detalle <span style="font-weight:400;color:var(--gris-2)">(opcional)</span></label>
+    <textarea id="detalle" maxlength="2000"></textarea>
+    <div class="error" id="error" role="alert"></div>
+    <button id="enviar" type="submit">Pedir la revocación</button>
+  </form>
+
+  <div class="listo" id="listo" role="status">
+    <div class="kicker">Pedido recibido</div>
+    <div class="codigo" id="codigo"></div>
+    <p>Guardá este código: es el número de tu trámite. Te escribimos dentro de las 24 horas al mail que nos
+    dejaste. Si no te llega, escribinos a <a href="mailto:trattoapp1@gmail.com">trattoapp1@gmail.com</a> con el código.</p>
+  </div>
+
+  <p style="margin-top:26px">El pago de un trabajo va directo a quien lo hizo. Si tenés un problema con un
+  trabajo, escribile por el chat de la app o abrí un reclamo desde el presupuesto. Esto no reemplaza tus otros
+  derechos como consumidor.</p>
+
+  <div class="pie">
+    <a href="/">Volver a la app</a>
+    <a href="/terminos-cliente.html">Términos · clientes</a>
+    <a href="/privacidad.html">Privacidad</a>
+  </div>
+</main>
+
+<script>
+(function(){
+  var URL = 'https://qglsonbcsncgekzbfafk.supabase.co/rest/v1/rpc/arrepentimiento_pedir';
+  var ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFnbHNvbmJjc25jZ2VremJmYWZrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODU3MDU2NzksImV4cCI6MjEwMTI4MTY3OX0.bdToh3Rt3XQaFOvHZmO0t1bHIlSKPv-YOVLHe3ljXiA';
+  var $ = function(id){ return document.getElementById(id); };
+  $('form').addEventListener('submit', function(e){
+    e.preventDefault();
+    var err = $('error'), b = $('enviar');
+    var nombre = $('nombre').value.trim(), email = $('email').value.trim();
+    var que = (document.querySelector('input[name="que"]:checked') || {}).value;
+    err.classList.remove('visible');
+    if(nombre.length < 2){ err.textContent = 'Escribí tu nombre.'; err.classList.add('visible'); return; }
+    if(!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)){ err.textContent = 'Revisá el email.'; err.classList.add('visible'); return; }
+    b.disabled = true; b.textContent = 'Enviando…';
+    fetch(URL, {method:'POST', headers:{'apikey':ANON,'Authorization':'Bearer '+ANON,'Content-Type':'application/json'},
+      body: JSON.stringify({p_nombre:nombre, p_email:email, p_que:que,
+        p_referencia:$('referencia').value.trim() || null, p_detalle:$('detalle').value.trim() || null})})
+    .then(function(r){ return r.text().then(function(t){ return {ok:r.ok, t:t}; }); })
+    .then(function(x){
+      var j = null; try{ j = JSON.parse(x.t); }catch(e){}
+      if(!x.ok || typeof j !== 'string'){
+        throw new Error((j && j.message && j.message.length < 160) ? j.message : 'No pudimos registrarlo. Probá de nuevo o escribinos a trattoapp1@gmail.com.');
+      }
+      $('codigo').textContent = j;
+      $('form').style.display = 'none';
+      $('listo').classList.add('visible');
+    })
+    .catch(function(ex){
+      err.textContent = ex.message; err.classList.add('visible');
+      b.disabled = false; b.textContent = 'Pedir la revocación';
+    });
+  });
+})();
+</script>
+</body>
+</html>

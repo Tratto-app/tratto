@@ -10,6 +10,11 @@ La web de `www.trattoapp.com.ar` dentro de una app nativa hecha con
   `quick-service` (código en `tools/supabase-functions/`) manda por APNs.
 - Ícono, pantalla de inicio y permisos de cámara y fotos en español.
 - Pantalla propia si no hay conexión (`www/index.html`).
+- **Pedido de reseña de la App Store** con la ventanita oficial de Apple
+  (plugin `@capacitor-community/in-app-review`, desde el 28/10/2026). La web
+  lo llama después de un trabajo pagado o de una calificación de 4 o 5
+  estrellas, como mucho una vez cada 4 meses (`pedirResenaTienda` en
+  `index.html`). Hasta que no se suba una build nueva, la web no hace nada.
 
 Datos fijos: bundle `ar.com.trattoapp`, versión 1.0.0, solo iPhone, iOS 15+.
 La app carga la web en vivo, así que los cambios de la web llegan sin subir
