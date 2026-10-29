@@ -48,6 +48,12 @@ En Codemagic → la app → **Start new build** → workflow *Tratto iOS →
 TestFlight*. En unos 15 minutos aparece en TestFlight, lista para probar en un
 iPhone y para mandar a revisión.
 
+Cuando Apple aprueba una versión, no acepta más compilaciones con ese número
+(error 90062 / 90186 al publicar): hay que subir `MARKETING_VERSION` en
+`ios/App/App.xcodeproj/project.pbxproj` (1.0.0 aprobada en octubre de 2026;
+1.1.0 trae entrar con Apple y el pedido de reseña). El número de build lo
+pone solo el workflow.
+
 ## Probar las notificaciones
 
 Instalar desde TestFlight, entrar, aceptar el permiso, y desde otra cuenta
