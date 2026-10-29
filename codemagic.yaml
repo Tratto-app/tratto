@@ -46,7 +46,11 @@ workflows:
     publishing:
       app_store_connect:
         auth: integration
-        submit_to_testflight: true
+        # Solo sube la build: queda en TestFlight para quienes prueban desde la
+        # cuenta y lista para elegirla en la versión de la App Store. Mandarla
+        # a la revisión de TestFlight externo pide datos de prueba que no
+        # usamos y deja la build en rojo aunque la subida haya andado.
+        submit_to_testflight: false
 
   # Sube la ficha de la App Store (textos, capturas, categorías, clasificación
   # por edad, datos para el revisor y la build) desde tools/tiendas. No compila
