@@ -17,6 +17,13 @@
 //   aviso       (Mercado Pago)       → la notificación de pago; se confirma igual,
 //                                      preguntándole a Mercado Pago (no se cree
 //                                      en lo que llega).
+//   medio       (cliente con sesión) → si quien cobra tiene un cobro sin comisión
+//                                      (premio de referidos): la app lo manda a
+//                                      pagar acá en vez de con tarjeta por n8n.
+//
+// Premio de referidos: si quien cobra tiene un cobro sin comisión libre, se
+// reserva para este presupuesto (credito_cobro_reservar) y el pago va sin
+// marketplace_fee; al confirmarse, el premio queda usado (credito_cobro_usar).
 
 export const COMISION_PORC = 3;
 const APP = 'https://www.trattoapp.com.ar';
@@ -67,6 +74,7 @@ async function confirmar(sb, mp, cobro, pagoId) {
   if (pago.currency_id !== 'ARS' || Number(pago.transaction_amount) + 0.5 < Number(x.monto)) {
     return { estado: 'no', detalle: 'El monto pagado no coincide con el presupuesto. Escribinos a soporte.' };
   }
+  await sb.rpc('credito_cobro_usar', { p_presupuesto_id: x.id });
   const { error } = await sb.from('mensajes').update({
     pago_id: String(pago.id), pago_estado: 'cobrado',
     jurisdiccion_proveedor: jurisdiccionDe(m.proveedores.zona),
@@ -115,6 +123,12 @@ export function crearHandler({ sb, mpDe, urlFuncion, app = APP }) {
     if (!cobro || cobro.m.solicitudes.user_id !== usuario.id) return json({ error: 'Ese presupuesto no es tuyo.' }, 403);
     const { x, m } = cobro;
 
+    if (b.accion === 'medio') {
+      const { data: libres } = await sb.from('creditos').select('id,reservado_en')
+        .eq('user_id', m.proveedores.user_id).eq('tipo', 'cobro_sin_comision').is('usado_at', null);
+      return json({ sin_comision: (libres || []).some(k => k.reservado_en == null || Number(k.reservado_en) === id) });
+    }
+
     if (b.accion === 'preferencia') {
       if (x.pago_estado) return json({ error: 'Ese trabajo ya está pagado.' }, 409);
       if (x.estado_presupuesto !== 'aceptado' || x.trabajo_estado !== 'terminado') {
@@ -122,6 +136,7 @@ export function crearHandler({ sb, mpDe, urlFuncion, app = APP }) {
       }
       if (!cobro.token) return json({ error: 'Quien hizo el trabajo todavía no conectó su cuenta de Mercado Pago.' }, 409);
       const monto = Number(x.monto);
+      const { data: sinComision } = await sb.rpc('credito_cobro_reservar', { p_proveedor: m.proveedores.user_id, p_presupuesto_id: id });
       const pref = await mpDe(cobro.token).preferencia({
         items: [{
           id: 'presu-' + id,
@@ -129,7 +144,7 @@ export function crearHandler({ sb, mpDe, urlFuncion, app = APP }) {
           description: 'Presupuesto #' + id,
           quantity: 1, unit_price: monto, currency_id: 'ARS',
         }],
-        marketplace_fee: Math.round(monto * COMISION_PORC / 100),
+        marketplace_fee: sinComision === true ? 0 : Math.round(monto * COMISION_PORC / 100),
         external_reference: 'presu-' + id,
         payer: { email: usuario.email },
         back_urls: { success: app + '/?pago_mp=' + id, pending: app + '/?pago_mp=' + id, failure: app + '/?pago_mp=' + id },
@@ -142,7 +157,7 @@ export function crearHandler({ sb, mpDe, urlFuncion, app = APP }) {
       if (!pref || !pref.init_point) {
         return json({ error: 'Mercado Pago no respondió. Probá de nuevo o pagá con tarjeta desde acá.' }, 502);
       }
-      return json({ link: pref.init_point });
+      return json({ link: pref.init_point, sin_comision: sinComision === true });
     }
 
     if (b.accion === 'verificar') {

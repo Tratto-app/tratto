@@ -447,6 +447,7 @@ test('referidos: el link de invitación se anota al entrar y el perfil muestra e
     if (c.path.endsWith('/rpc/referido_registrar')) return {json: true};
     if (c.path.endsWith('/rpc/referidos_mi_codigo')) return {json: 'zz99yy88'};
     if (c.path.endsWith('/rpc/referidos_resumen')) return {json: [{invitados: 2, con_trabajo: 1}]};
+    if (c.path.endsWith('/rest/v1/creditos')) return {json: [{tipo: 'protegido_gratis'}]};
     return null;
   }});
   try {
@@ -462,6 +463,70 @@ test('referidos: el link de invitación se anota al entrar y el perfil muestra e
     assert.deepEqual(reg.body, {p_codigo: 'abcd1234'});
     assert.equal(await p.page.evaluate(() => localStorage.getItem('tratto_ref')), null);
     assert.match(await p.page.locator('#invitar-txt').textContent(), /Se anotaron 2 personas con tu link; 1 ya hizo su primer trabajo/);
+    assert.match(await p.page.locator('#invitar-txt').textContent(), /ganan los dos/);
+    assert.equal(await p.page.locator('#invitar-premio').textContent(), 'Tenés 1 Trabajo protegido de regalo.');
     assert.equal(await p.page.evaluate(() => miLinkInvitar), 'https://www.trattoapp.com.ar/?ref=zz99yy88');
+  } finally { await p.cerrar(); }
+});
+
+test('premio de referidos: el Trabajo protegido de regalo se activa sin pagar', async () => {
+  let activado = false;
+  const p = await abrir(entorno, {handler: c => {
+    if (c.path.endsWith('/rest/v1/matches')) return {json: [matchChat(cliente)]};
+    if (c.path.endsWith('/rest/v1/mensajes')) return {json: [presu({estado_presupuesto: 'aceptado'})]};
+    if (c.path.endsWith('/rpc/proteccion_cotizar')) return {json: {puede: true, cuota: 1500, monto: 30000, gratis: true}};
+    if (c.path.endsWith('/rpc/proteccion_activar_gratis')) { activado = true; return {json: 'activa'}; }
+    if (c.path.endsWith('/rest/v1/trabajos_protegidos')) return {json: activado
+      ? [{id: 5, presupuesto_id: 900, estado: 'activa', quiere_seguir: null, plazo_reemplazo: null, cuota: 0}] : []};
+    return null;
+  }});
+  try {
+    await p.page.evaluate(() => abrirChat(77, 'chats'));
+    await p.page.waitForSelector('[data-proteger-gratis="900"]');
+    const txt = await p.page.locator('[data-prot="900"]').innerText();
+    assert.match(txt, /Protegé este trabajo gratis/);
+    assert.doesNotMatch(txt, /\$/);
+    assert.equal(await p.page.locator('[data-proteger="900"]').count(), 0);
+    await p.page.locator('[data-prot="900"]').scrollIntoViewIfNeeded();
+    await p.foto('protegido-de-regalo');
+    await p.page.click('[data-proteger-gratis="900"]');
+    await p.page.waitForSelector('[data-proteger-gratis="900"]', {state: 'detached'});
+    const r = p.calls.find(c => c.path.endsWith('/rpc/proteccion_activar_gratis'));
+    assert.deepEqual(r.body, {p_presupuesto_id: 900});
+    assert.equal(p.calls.some(c => c.path.includes('/functions/v1/trabajo-protegido')), false, 'no cobra nada');
+  } finally { await p.cerrar(); }
+});
+
+test('premio de referidos: si quien cobra tiene un cobro sin comisión, "Pagar con tarjeta" va a Mercado Pago', async () => {
+  const p = await abrir(entorno, {handler: c => {
+    if (c.path.endsWith('/rest/v1/matches')) return {json: [matchChat(cliente)]};
+    if (c.path.endsWith('/rest/v1/mensajes')) return {json: [presu({estado_presupuesto: 'aceptado', trabajo_estado: 'terminado'})]};
+    if (c.path.endsWith('/functions/v1/pago-mp')) return {json: c.body.accion === 'medio'
+      ? {sin_comision: true} : {link: entorno.origin + '/#mercado-pago-simulado', sin_comision: true}};
+    return null;
+  }});
+  try {
+    await p.page.evaluate(() => abrirChat(77, 'chats'));
+    await p.page.waitForSelector('[data-pagar-presu="900"]');
+    await p.page.click('[data-pagar-presu="900"]');
+    await p.page.waitForFunction(() => location.hash === '#mercado-pago-simulado');
+    const acciones = p.calls.filter(c => c.path.endsWith('/functions/v1/pago-mp')).map(c => c.body.accion);
+    assert.deepEqual(acciones, ['medio', 'preferencia']);
+  } finally { await p.cerrar(); }
+});
+
+test('sin premio, "Pagar con tarjeta" abre el formulario de siempre', async () => {
+  const p = await abrir(entorno, {handler: c => {
+    if (c.path.endsWith('/rest/v1/matches')) return {json: [matchChat(cliente)]};
+    if (c.path.endsWith('/rest/v1/mensajes')) return {json: [presu({estado_presupuesto: 'aceptado', trabajo_estado: 'terminado'})]};
+    if (c.path.endsWith('/functions/v1/pago-mp')) return {json: {sin_comision: false}};
+    return null;
+  }});
+  try {
+    await p.page.evaluate(() => abrirChat(77, 'chats'));
+    await p.page.waitForSelector('[data-pagar-presu="900"]');
+    await p.page.click('[data-pagar-presu="900"]');
+    await p.page.waitForSelector('[data-pago-panel="900"]');
+    assert.equal(p.calls.filter(c => c.path.endsWith('/functions/v1/pago-mp')).length, 1);
   } finally { await p.cerrar(); }
 });

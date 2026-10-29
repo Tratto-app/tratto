@@ -2088,6 +2088,7 @@
       <div class="item oculto" id="invitar-item">
         <div class="item-top"><span class="item-tit">Invitá a alguien a Tratto</span></div>
         <div class="item-meta"><span id="invitar-txt">—</span></div>
+        <div class="item-meta oculto" id="invitar-premio" style="color:var(--verde);font-weight:600"></div>
         <div class="item-pie">
           <button class="cambiar-modo" id="invitar-compartir" type="button">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="2.5"/><circle cx="6" cy="12" r="2.5"/><circle cx="18" cy="19" r="2.5"/><path d="M8.2 10.8l7.6-4.4M8.2 13.2l7.6 4.4"/></svg>
@@ -5359,6 +5360,17 @@ function protegidoHTML(m){
   if(!p){
     const c = cotizaciones[m.id];
     if(miRol !== 'cliente' || !c || !c.puede || m.trabajo_estado || m.pago_estado) return '';
+    /* Premio de referidos: el Trabajo protegido de este trabajo, de regalo. */
+    if(c.gratis) return tarjeta(
+      '<div class="prot-tag">'+ESCUDO+'Trabajo protegido · de regalo</div>' +
+      '<div class="prot-tit">Protegé este trabajo gratis</div>' +
+      '<div class="prot-txt">Te lo regalamos por la invitación. Si no te lo terminan, en 48 horas hábiles te ' +
+        'conseguimos otra persona de tu zona para que lo termine.</div>' +
+      chico('Es uno solo: si lo usás acá, no queda para otro trabajo. ' +
+        '<a href="/terminos-cliente.html#trabajo-protegido" target="_blank" rel="noopener">Cómo funciona</a>') +
+      '<div class="prot-acciones"><button class="btn lleno" data-proteger-gratis="'+m.id+'" type="button">' +
+        '<span class="rueda"></span><span>Protegerlo gratis</span></button></div>' +
+      '<div class="pago-error" data-prot-gratis-error></div>');
     const cuota = pesos(c.cuota);
     return tarjeta(
       '<div class="prot-tag">'+ESCUDO+'Trabajo protegido</div>' +
@@ -5393,7 +5405,9 @@ function protegidoHTML(m){
       : 'Reclamo en marcha. Te devolvemos la cuota por Mercado Pago, a la misma tarjeta. Seguilo en '+reclamos+'.',
     reemplazo_conseguido: 'Te conseguimos otra persona para terminarlo. Cómo seguir está en '+reclamos+'.',
     devolucion_pendiente: 'Estamos devolviéndote la cuota por Mercado Pago, a la misma tarjeta.',
-    devuelta: 'Te devolvimos la cuota de Trabajo protegido. Según tu banco, puede tardar unos días en verse.'
+    devuelta: Number(p.cuota) === 0
+      ? 'Te devolvimos tu Trabajo protegido de regalo: lo podés usar en otro trabajo.'
+      : 'Te devolvimos la cuota de Trabajo protegido. Según tu banco, puede tardar unos días en verse.'
   }[p.estado];
   return tarjeta(sello + (txt ? '<div class="prot-txt">'+txt+'</div>' : ''));
 }
@@ -5455,6 +5469,21 @@ function errorDeRPC(crudo, porDefecto){
 }
 
 $('ch-hilo').addEventListener('click', async e => {
+  const gratis = e.target.closest('[data-proteger-gratis]');
+  if(gratis){
+    const id = Number(gratis.dataset.protegerGratis), err = gratis.closest('.prot').querySelector('[data-prot-gratis-error]');
+    gratis.disabled = true; gratis.classList.add('cargando'); err.classList.remove('visible');
+    try{
+      const r = await fetch(SUPABASE_URL+'/rest/v1/rpc/proteccion_activar_gratis', {method:'POST', headers:cab(),
+        body: JSON.stringify({p_presupuesto_id: id})});
+      if(!r.ok) throw new Error(errorDeRPC(await r.text(), 'No se pudo activar. Probá de nuevo.'));
+      await cargarProtecciones();
+    }catch(ex){
+      err.textContent = ex.message; err.classList.add('visible');
+      gratis.disabled = false; gratis.classList.remove('cargando');
+    }
+    return;
+  }
   const proteger = e.target.closest('[data-proteger]');
   if(proteger){
     const id = Number(proteger.dataset.proteger);
@@ -5576,6 +5605,19 @@ $('ch-hilo').addEventListener('click', async e => {
     const id = Number(abrir.dataset.pagarPresu);
     const tarjeta = document.querySelector('[data-presu="'+id+'"]');
     if(!tarjeta || tarjeta.querySelector('[data-pago-panel]')) return;
+    /* Premio de referidos: si quien hizo el trabajo tiene un cobro sin comisión,
+       el pago va por Mercado Pago (también acepta tarjeta) para que se aplique. */
+    if(abrir.disabled) return;
+    abrir.disabled = true;
+    try{
+      const r = await fetch(URL_PAGO_MP, {method:'POST', headers:cab(), body: JSON.stringify({accion:'medio', presupuesto_id:id})});
+      const j = r.ok ? await r.json() : {};
+      const mp = tarjeta.querySelector('[data-pagar-mp]');
+      if(j.sin_comision && mp){
+        abrir.textContent = 'Te llevamos a Mercado Pago: ahí también pagás con tarjeta';
+        mp.click(); abrir.disabled = false; return;
+      }
+    }catch(_){}
     const monto = Number(abrir.dataset.monto || 0);
     abrir.closest('.presu-acciones').remove();
     /* Antes de la hora, para que el pie de la tarjeta siga siendo el pie. */
@@ -8900,17 +8942,27 @@ async function pintarInvitar(){
     miLinkInvitar = 'https://www.trattoapp.com.ar/?ref=' + await rc.json();
     const res = rr.ok ? ((await rr.json())[0] || {}) : {};
     const inv = res.invitados || 0, con = res.con_trabajo || 0;
-    $('invitar-txt').textContent = inv
-      ? (inv === 1 ? 'Se anotó 1 persona con tu link' : 'Se anotaron ' + inv + ' personas con tu link') +
-        (con ? (con === 1 ? '; 1 ya hizo su primer trabajo por la app.' : '; ' + con + ' ya hicieron su primer trabajo por la app.') : '.')
-      : 'Pasale tu link a alguien que necesite un servicio o que ofrezca uno.';
+    let libres = [];
+    try{ libres = await api('creditos?usado_at=is.null&select=tipo'); }catch(e){}
+    const prot = libres.filter(k => k.tipo === 'protegido_gratis').length, cob = libres.filter(k => k.tipo === 'cobro_sin_comision').length;
+    $('invitar-txt').textContent =
+      'Cuando alguien se anota con tu link y hace su primer trabajo pagado por la app, ganan los dos: ' +
+      'a quien pide le regalamos el Trabajo protegido de su próximo trabajo y a quien ofrece servicios, un cobro sin el 3 %. ' +
+      (inv ? (inv === 1 ? 'Se anotó 1 persona con tu link' : 'Se anotaron ' + inv + ' personas con tu link') +
+        (con ? (con === 1 ? '; 1 ya hizo su primer trabajo.' : '; ' + con + ' ya hicieron su primer trabajo.') : '.') : '');
+    $('invitar-premio').textContent = [
+      prot ? (prot === 1 ? 'Tenés 1 Trabajo protegido de regalo.' : 'Tenés ' + prot + ' Trabajos protegidos de regalo.') : '',
+      cob ? (cob === 1 ? 'Tu próximo cobro por la app va sin el 3 %.' : 'Tus próximos ' + cob + ' cobros por la app van sin el 3 %.') : ''
+    ].filter(Boolean).join(' ');
+    $('invitar-premio').classList.toggle('oculto', !prot && !cob);
     $('invitar-item').classList.remove('oculto');
   }catch(e){ console.error(e); }
 }
 $('invitar-compartir').addEventListener('click', async () => {
   if(!miLinkInvitar) return;
   const texto = 'Te paso Tratto: contás qué necesitás y te llegan presupuestos de gente de tu zona. ' +
-    'Si ofrecés un servicio, anotarte es gratis. Entrá desde acá: ' + miLinkInvitar;
+    'Si ofrecés un servicio, anotarte es gratis. Si entrás con mi link y hacés tu primer trabajo por la app, ' +
+    'los dos tenemos un premio. Entrá desde acá: ' + miLinkInvitar;
   try{
     if(navigator.share){ await navigator.share({text: texto}); return; }
     await navigator.clipboard.writeText(texto);

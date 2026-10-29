@@ -14,9 +14,9 @@ function pedido(cuerpo, { token = 'tok-cliente', query = '' } = {}) {
   return new Request(FUNC + query, { method: 'POST', headers, body: JSON.stringify(cuerpo) });
 }
 
-function dobles({ presu = {}, cuenta = { access_token: 'APP_USR-prov' }, pago = { id: 777, status: 'approved',
+function dobles({ credito = false, presu = {}, cuenta = { access_token: 'APP_USR-prov' }, pago = { id: 777, status: 'approved',
   external_reference: 'presu-900', transaction_amount: 45000, currency_id: 'ARS' }, pref = { init_point: 'https://mp/pagar' } } = {}) {
-  const log = { prefs: [], pagos: [], updates: [], tokens: [] };
+  const log = { prefs: [], pagos: [], updates: [], tokens: [], rpc: [] };
   const fila = { id: 900, match_id: 77, tipo: 'presupuesto', monto: 45000, estado_presupuesto: 'aceptado',
     trabajo_estado: 'terminado', pago_estado: null, ...presu };
   const tablas = {
@@ -25,9 +25,11 @@ function dobles({ presu = {}, cuenta = { access_token: 'APP_USR-prov' }, pago = 
       proveedores: { user_id: 'u-prov', zona: 'CABA' } },
     cuentas_mp: cuenta,
   };
+  const libres = credito ? [{ id: 1, reservado_en: null }] : [];
   const desde = tabla => {
     const q = {
-      select: () => q, eq: () => q, is: () => q,
+      select: () => q, eq: () => q,
+      is: () => (tabla === 'creditos' ? Promise.resolve({ data: libres, error: null }) : q),
       maybeSingle: async () => ({ data: tablas[tabla], error: null }),
       update: datos => { log.updates.push([tabla, datos]); return { eq: () => ({ is: async () => ({ error: null }) }) }; },
     };
@@ -39,6 +41,8 @@ function dobles({ presu = {}, cuenta = { access_token: 'APP_USR-prov' }, pago = 
       : t === 'tok-otro' ? { data: { user: { id: 'u-otro', email: 'o@x.com' } }, error: null }
       : { data: { user: null }, error: { message: 'no' } } },
     from: desde,
+    rpc: async (nombre, args) => { log.rpc.push([nombre, args]);
+      return { data: nombre === 'credito_cobro_reservar' ? credito : null, error: null }; },
   };
   const mpDe = token => {
     log.tokens.push(token);
@@ -56,7 +60,7 @@ test('arma el pago en Mercado Pago con la cuenta de quien cobra y la comisión d
   const d = dobles();
   const r = await handler(d)(pedido({ accion: 'preferencia', presupuesto_id: 900 }));
   assert.equal(r.status, 200);
-  assert.deepEqual(await r.json(), { link: 'https://mp/pagar' });
+  assert.deepEqual(await r.json(), { link: 'https://mp/pagar', sin_comision: false });
   assert.deepEqual(d.log.tokens, ['APP_USR-prov']);
   const [cuerpo] = d.log.prefs[0];
   assert.equal(cuerpo.items[0].unit_price, 45000);
@@ -132,4 +136,20 @@ test('crearMP pide la preferencia y el pago con el token de quien cobra', async 
   assert.equal(pedidos[0][1].headers.Authorization, 'Bearer APP_USR-prov');
   assert.equal(pedidos[0][1].headers['X-Idempotency-Key'], 'idem-1');
   assert.equal(pedidos[1][0], 'https://api.mercadopago.com/v1/payments/777');
+});
+
+test('premio de referidos: si quien cobra tiene un cobro sin comisión, el pago va sin la comisión y se marca usado', async () => {
+  const d = dobles({ credito: true });
+  const r = await handler(d)(pedido({ accion: 'preferencia', presupuesto_id: 900 }));
+  assert.deepEqual(await r.json(), { link: 'https://mp/pagar', sin_comision: true });
+  assert.equal(d.log.prefs[0][0].marketplace_fee, 0);
+  assert.deepEqual(d.log.rpc[0], ['credito_cobro_reservar', { p_proveedor: 'u-prov', p_presupuesto_id: 900 }]);
+  const m = await handler(d)(pedido({ accion: 'medio', presupuesto_id: 900 }));
+  assert.deepEqual(await m.json(), { sin_comision: true });
+  await handler(d)(pedido({ accion: 'verificar', presupuesto_id: 900, pago_id: '777' }));
+  assert.ok(d.log.rpc.some(([n, a]) => n === 'credito_cobro_usar' && a.p_presupuesto_id === 900));
+  // Sin premio, la comisión de siempre.
+  const sin = dobles();
+  await handler(sin)(pedido({ accion: 'preferencia', presupuesto_id: 900 }));
+  assert.equal(sin.log.prefs[0][0].marketplace_fee, Math.round(45000 * COMISION_PORC / 100));
 });
