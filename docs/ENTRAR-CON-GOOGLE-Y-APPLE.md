@@ -27,19 +27,24 @@ agrega `TrattoApp/2` y deja navegar a Supabase y a Apple sin salir de la app).
 
 ### Google (gratis, unos 10 minutos)
 
-1. Entrá a https://console.cloud.google.com/apis/credentials/consent con tu
-   cuenta de Google y creá un proyecto "Tratto" si te lo pide.
-2. Pantalla de consentimiento: tipo **Externo**, nombre **Tratto**, tu mail de
-   soporte, dominio autorizado **trattoapp.com.ar**. Guardá y publicá la app
-   (botón "Publicar app").
-3. https://console.cloud.google.com/apis/credentials → **Crear credenciales**
-   → **ID de cliente de OAuth** → tipo **Aplicación web**.
+Google pasó la configuración a "Google Auth Platform" (links al 29/10/2026).
+
+1. https://console.cloud.google.com/auth/overview con tu cuenta de Google →
+   **Comenzar**. Si te pide proyecto, creá uno llamado "Tratto". Nombre de la
+   app **Tratto**, tu mail de soporte, público **Externo**, tu mail de
+   contacto, aceptá y **Crear**.
+2. https://console.cloud.google.com/auth/branding → en *Dominios
+   autorizados* sumá `trattoapp.com.ar` (y si querés, el logo). Guardá.
+3. https://console.cloud.google.com/auth/audience → **Publicar app**. Con
+   nombre, mail y foto (lo único que pide Tratto) no hace falta verificación.
+4. https://console.cloud.google.com/auth/clients/create → tipo **Aplicación
+   web**, nombre "Tratto web".
    - Orígenes autorizados de JavaScript: `https://www.trattoapp.com.ar`
    - URI de redireccionamiento autorizados:
      `https://qglsonbcsncgekzbfafk.supabase.co/auth/v1/callback`
-4. Copiá el **ID de cliente** y el **Secreto**.
-5. https://supabase.com/dashboard/project/qglsonbcsncgekzbfafk/auth/providers
-   → **Google** → prendelo, pegá el ID y el secreto, y guardá.
+   - **Crear** y copiá el **ID de cliente** y el **Secreto del cliente**.
+5. https://supabase.com/dashboard/project/qglsonbcsncgekzbfafk/auth/providers?provider=Google
+   → prendelo, pegá el ID y el secreto, y **Guardar**.
 
 ### Apple (necesita la cuenta de Apple Developer, que ya tenés)
 
@@ -57,9 +62,11 @@ En https://developer.apple.com/account/resources/identifiers/list:
    el **Key ID**. El **Team ID** está arriba a la derecha.
 4. En https://supabase.com/dashboard/project/qglsonbcsncgekzbfafk/auth/providers
    → **Apple**: prendelo; en *Client IDs* poné `ar.com.trattoapp.web` primero;
-   en *Secret Key* pegá la clave que se genera con el `.p8`, el Team ID, el
-   Key ID y el Services ID (Supabase tiene la herramienta en su guía
-   https://supabase.com/docs/guides/auth/social-sign-in/auth-apple).
+   en *Secret Key* pegá la clave que arma la herramienta de la guía de
+   Supabase (https://supabase.com/docs/guides/auth/social-sign-in/auth-apple,
+   abajo de todo): le cargás el Team ID (*Account ID*), el Services ID, el
+   Key ID y el archivo `.p8`. Corre en tu navegador: la clave no sale de tu
+   computadora.
 5. **Importante:** Apple obliga a generar esa clave de nuevo cada 6 meses con
    el mismo `.p8`. Si no se renueva, deja de andar el botón. Guardá el `.p8` en
    un lugar seguro.
