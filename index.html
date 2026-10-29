@@ -2084,6 +2084,18 @@
         </div>
       </div>
 
+      <!-- Invitá a alguien: el link propio (/?ref=) y cuántos se anotaron. -->
+      <div class="item oculto" id="invitar-item">
+        <div class="item-top"><span class="item-tit">Invitá a alguien a Tratto</span></div>
+        <div class="item-meta"><span id="invitar-txt">—</span></div>
+        <div class="item-pie">
+          <button class="cambiar-modo" id="invitar-compartir" type="button">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="2.5"/><circle cx="6" cy="12" r="2.5"/><circle cx="18" cy="19" r="2.5"/><path d="M8.2 10.8l7.6-4.4M8.2 13.2l7.6 4.4"/></svg>
+            <span id="invitar-compartir-txt">Compartir mi link</span>
+          </button>
+        </div>
+      </div>
+
       <div class="sec"><span class="sec-tit">Tus datos</span></div>
       <div class="item" id="ia-caja">
         <div class="item-top">
@@ -2940,6 +2952,19 @@ let retornoPagoMP = (() => {
    'merchant_order_id','preference_id','site_id','processing_mode','merchant_account_id'].forEach(k => q.delete(k));
   history.replaceState(null, '', location.pathname + (q.toString() ? '?' + q : '') + location.hash);
   return r;
+})();
+
+/* Link de invitación (/?ref=<código>): se guarda 30 días para que llegue al
+   alta aunque la persona se registre otro día, y se limpia de la URL. */
+const REF_CLAVE = 'tratto_ref';
+(function guardarReferido(){
+  try{
+    const q = new URLSearchParams(location.search), c = (q.get('ref') || '').trim().toLowerCase();
+    if(!/^[a-z0-9]{8}$/.test(c)) return;
+    localStorage.setItem(REF_CLAVE, JSON.stringify({codigo: c, fecha: Date.now()}));
+    q.delete('ref');
+    history.replaceState(null, '', location.pathname + (q.toString() ? '?' + q : '') + location.hash);
+  }catch(e){}
 })();
 
 /* ══════════════════ DE DÓNDE VINO LA VISITA ══════════════════
@@ -8849,6 +8874,51 @@ async function volverDePagoMP({id, pagoId, estado}){
   }
 }
 
+/* Si llegó con un link de invitación, se anota quién la invitó. La base solo
+   lo acepta en cuentas de hasta 2 días y una sola vez. */
+async function registrarReferido(){
+  let g = null;
+  try{ g = JSON.parse(localStorage.getItem(REF_CLAVE) || 'null'); }catch(e){}
+  if(!g || !g.codigo) return;
+  if(Date.now() - g.fecha > 30 * 864e5){ try{ localStorage.removeItem(REF_CLAVE); }catch(e){} return; }
+  try{
+    const r = await fetch(SUPABASE_URL+'/rest/v1/rpc/referido_registrar', {method:'POST', headers:cab(),
+      body: JSON.stringify({p_codigo: g.codigo})});
+    if(r.ok) localStorage.removeItem(REF_CLAVE);
+  }catch(e){ console.error(e); }
+}
+
+/* Tarjeta "Invitá a alguien" del perfil: el link propio y cuántas personas
+   invitadas ya hicieron su primer trabajo pagado por la app. */
+let miLinkInvitar = '';
+async function pintarInvitar(){
+  try{
+    const [rc, rr] = await Promise.all([
+      fetch(SUPABASE_URL+'/rest/v1/rpc/referidos_mi_codigo', {method:'POST', headers:cab(), body:'{}'}),
+      fetch(SUPABASE_URL+'/rest/v1/rpc/referidos_resumen', {method:'POST', headers:cab(), body:'{}'})]);
+    if(!rc.ok) return;
+    miLinkInvitar = 'https://www.trattoapp.com.ar/?ref=' + await rc.json();
+    const res = rr.ok ? ((await rr.json())[0] || {}) : {};
+    const inv = res.invitados || 0, con = res.con_trabajo || 0;
+    $('invitar-txt').textContent = inv
+      ? (inv === 1 ? 'Se anotó 1 persona con tu link' : 'Se anotaron ' + inv + ' personas con tu link') +
+        (con ? (con === 1 ? '; 1 ya hizo su primer trabajo por la app.' : '; ' + con + ' ya hicieron su primer trabajo por la app.') : '.')
+      : 'Pasale tu link a alguien que necesite un servicio o que ofrezca uno.';
+    $('invitar-item').classList.remove('oculto');
+  }catch(e){ console.error(e); }
+}
+$('invitar-compartir').addEventListener('click', async () => {
+  if(!miLinkInvitar) return;
+  const texto = 'Te paso Tratto: contás qué necesitás y te llegan presupuestos de gente de tu zona. ' +
+    'Si ofrecés un servicio, anotarte es gratis. Entrá desde acá: ' + miLinkInvitar;
+  try{
+    if(navigator.share){ await navigator.share({text: texto}); return; }
+    await navigator.clipboard.writeText(texto);
+    $('invitar-compartir-txt').textContent = '¡Link copiado!';
+    setTimeout(() => $('invitar-compartir-txt').textContent = 'Compartir mi link', 1800);
+  }catch(e){}
+});
+
 function entrarApp(){
   const u = sesion.user;
   guiaReiniciar();
@@ -8882,6 +8952,7 @@ function entrarApp(){
   pintarTransfer();
   pintarLegales();
   aplicarModo();
+  registrarReferido().then(pintarInvitar);
   const pagoMP = retornoPagoMP; retornoPagoMP = null;
   recargarTodo().then(() => {
     if(pagoMP) return volverDePagoMP(pagoMP);

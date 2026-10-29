@@ -441,3 +441,27 @@ test('pagar con Mercado Pago: al volver confirma el pago y abre el chat con el r
     await p.page.waitForFunction(() => /Pago hecho/i.test(document.querySelector('[data-presu="900"]').innerText));
   } finally { await p.cerrar(); }
 });
+
+test('referidos: el link de invitación se anota al entrar y el perfil muestra el propio', async () => {
+  const p = await abrir(entorno, {rol: null, ruta: '/?ref=abcd1234&utm_source=prueba', handler: c => {
+    if (c.path.endsWith('/rpc/referido_registrar')) return {json: true};
+    if (c.path.endsWith('/rpc/referidos_mi_codigo')) return {json: 'zz99yy88'};
+    if (c.path.endsWith('/rpc/referidos_resumen')) return {json: [{invitados: 2, con_trabajo: 1}]};
+    return null;
+  }});
+  try {
+    assert.ok(!(await p.page.evaluate(() => location.search)).includes('ref='));
+    assert.equal(await p.page.evaluate(() => JSON.parse(localStorage.getItem('tratto_ref')).codigo), 'abcd1234');
+    await p.page.evaluate(c => {
+      sesion = {access_token: 't', user: {id: c, email: 'x@example.invalid', created_at: new Date().toISOString(),
+        app_metadata: {provider: 'email'}, user_metadata: {rol: 'cliente', nombre: 'Ana', legales_aceptados: true}}};
+      modo = 'cliente'; entrarApp();
+    }, cliente);
+    await p.page.waitForSelector('#invitar-item:not(.oculto)', {state: 'attached'});
+    const reg = p.calls.find(c => c.path.endsWith('/rpc/referido_registrar'));
+    assert.deepEqual(reg.body, {p_codigo: 'abcd1234'});
+    assert.equal(await p.page.evaluate(() => localStorage.getItem('tratto_ref')), null);
+    assert.match(await p.page.locator('#invitar-txt').textContent(), /Se anotaron 2 personas con tu link; 1 ya hizo su primer trabajo/);
+    assert.equal(await p.page.evaluate(() => miLinkInvitar), 'https://www.trattoapp.com.ar/?ref=zz99yy88');
+  } finally { await p.cerrar(); }
+});
