@@ -8,7 +8,7 @@
     "allowNavigation": ["qglsonbcsncgekzbfafk.supabase.co", "appleid.apple.com", "*.apple.com",
       "*.mercadopago.com.ar", "*.mercadopago.com", "*.mercadolibre.com"]
   },
-  "appendUserAgent": "TrattoApp/2",
+  "appendUserAgent": "TrattoApp/3",
   "backgroundColor": "#0C2620",
   "ios": {
     "contentInset": "never",
