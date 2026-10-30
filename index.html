@@ -1061,7 +1061,7 @@
   /* Dos puertas: cada rol tiene su color de punta a punta (verde quien pide,
      latón quien ofrece) y cuenta en 3 pasos qué pasa después de elegirlo.
      Mientras no se elige, el formulario y el botón no aparecen. */
-  #p-auth.eligiendo #a-datos > :not(.pestanas):not(#sel-rol):not(#a-completar),
+  #p-auth.eligiendo #a-datos > :not(.pestanas):not(#sel-rol):not(#a-completar):not(#a-sociales),
   #p-auth.eligiendo #a-enviar{display:none!important}
   /* Entrar con Google o Apple */
   .sociales{margin-top:18px;display:grid;gap:10px}
@@ -6119,12 +6119,16 @@ $('rol-cambiar').addEventListener('click', () => {
 /* Flujo PKCE de Supabase Auth: se guarda un verificador en el teléfono, se va
    a /auth/v1/authorize y se vuelve con ?code=, que se cambia por la sesión.
    Los botones aparecen solo si el proveedor está prendido en Supabase.
-   En la app de iPhone Google no deja entrar desde una vista web embebida, así
-   que ahí va solo Apple, y recién desde la build que lo permite (la que
-   agrega "TrattoApp/2" al navegador y deja navegar a Supabase y a Apple).
+   El puente TrattoApp/3 de iPhone usa AuthenticationServices: Google sale a la sesión
+   segura del sistema y Apple usa su autorización nativa. Las builds viejas
+   conservan su flujo: mostrar Google dentro de WKWebView no lo arregla.
    La primera vez, la cuenta no tiene rol, teléfono ni términos aceptados:
    se piden en "Completá tu cuenta", con el mismo formulario del alta. */
 const enAppNativa = () => !!(window.Capacitor && window.Capacitor.isNativePlatform && window.Capacitor.isNativePlatform());
+const authNativa = () => enAppNativa() && window.Capacitor.isPluginAvailable?.('TrattoAuth')
+  ? window.Capacitor.Plugins.TrattoAuth : null;
+const CALLBACK_AUTH_IOS = 'ar.com.trattoapp.auth://callback';
+let oauthOcupado = false;
 const b64url = buf => btoa(String.fromCharCode(...new Uint8Array(buf))).replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,'');
 async function pintarSociales(){
   let ext = {};
@@ -6133,22 +6137,62 @@ async function pintarSociales(){
     if(r.ok) ext = (await r.json()).external || {};
   }catch(e){}
   const ios = enAppNativa(), iosListo = /TrattoApp\/2/.test(navigator.userAgent);
-  const google = !!ext.google && !ios, apple = !!ext.apple && (!ios || iosListo);
+  const nativa = authNativa();
+  const google = !!ext.google && (!ios || !!nativa), apple = !!ext.apple && (!ios || !!nativa || iosListo);
   $('a-google').classList.toggle('oculto', !google);
   $('a-apple').classList.toggle('oculto', !apple);
   $('a-sociales').classList.toggle('oculto', !google && !apple);
 }
 async function entrarCon(proveedor){
+  if(oauthOcupado || !['google','apple'].includes(proveedor)) return;
+  oauthOcupado = true;
+  $('a-google').disabled = $('a-apple').disabled = true;
+  let navegando = false;
   try{
+    const nativa = authNativa();
+    const rol = modoAuth === 'crear' && rolTocado ? rolElegido : null;
+    if(nativa && proveedor === 'apple'){
+      const nonce = b64url(crypto.getRandomValues(new Uint8Array(32)));
+      const nonceHash = [...new Uint8Array(await crypto.subtle.digest('SHA-256', new TextEncoder().encode(nonce)))]
+        .map(b => b.toString(16).padStart(2,'0')).join('');
+      const credencial = await nativa.signInWithApple({nonceHash});
+      if(!credencial.identityToken) throw new Error('Apple no devolvió una credencial.');
+      const r = await fetch(SUPABASE_URL+'/auth/v1/token?grant_type=id_token', {method:'POST',
+        headers:{apikey:SUPABASE_ANON, 'Content-Type':'application/json'},
+        body:JSON.stringify({provider:'apple', id_token:credencial.identityToken, nonce})});
+      const j = await r.json();
+      if(!r.ok || !j.access_token){ avisar('a-aviso', traducir(j.msg || j.error_description || j.message), 'mal'); return; }
+      // Apple entrega el nombre sólo en la primera autorización. Se propone
+      // en el formulario; la persona lo confirma al completar su cuenta.
+      if(credencial.fullName && !(j.user.user_metadata || {}).full_name)
+        j.user.user_metadata = {...j.user.user_metadata, full_name:credencial.fullName};
+      recibirSesionSocial(j, rol);
+      return;
+    }
     const verificador = b64url(crypto.getRandomValues(new Uint8Array(32)));
     const desafio = b64url(await crypto.subtle.digest('SHA-256', new TextEncoder().encode(verificador)));
-    localStorage.setItem(OAUTH_CLAVE, JSON.stringify({verificador, fecha: Date.now(),
-      rol: modoAuth === 'crear' && rolTocado ? rolElegido : null}));
-    location.href = SUPABASE_URL + '/auth/v1/authorize?' + new URLSearchParams({provider: proveedor,
-      redirect_to: location.origin + '/', code_challenge: desafio, code_challenge_method: 's256'});
+    const pendiente = {verificador, fecha: Date.now(), rol};
+    localStorage.setItem(OAUTH_CLAVE, JSON.stringify(pendiente));
+    const url = SUPABASE_URL + '/auth/v1/authorize?' + new URLSearchParams({provider: proveedor,
+      redirect_to: nativa ? CALLBACK_AUTH_IOS : location.origin + '/', code_challenge: desafio, code_challenge_method: 's256'});
+    if(nativa){
+      const retorno = await nativa.openOAuth({url});
+      const callback = new URL(retorno.callbackUrl);
+      if(callback.protocol !== 'ar.com.trattoapp.auth:' || callback.hostname !== 'callback' ||
+        !['','/'].includes(callback.pathname) || callback.username || callback.password || callback.port || callback.hash)
+        throw new Error('El regreso de la autorización no es válido.');
+      await volverDeOAuth({code:callback.searchParams.get('code'),
+        error:callback.searchParams.get('error_description') || callback.searchParams.get('error'), pendiente});
+    }else{
+      location.href = url;
+      navegando = true;
+    }
   }catch(e){
-    console.error(e);
-    avisar('a-aviso', 'No se pudo abrir. Probá de nuevo o entrá con tu email.', 'mal');
+    try{ localStorage.removeItem(OAUTH_CLAVE); }catch(_){}
+    if(e.code === 'AUTH_CANCELED') avisar('a-aviso', 'Cancelaste el ingreso. Podés volver a intentarlo.', '');
+    else avisar('a-aviso', 'No se pudo completar el ingreso. Probá de nuevo o entrá con tu email.', 'mal');
+  }finally{
+    if(!navegando){ oauthOcupado = false; $('a-google').disabled = $('a-apple').disabled = false; }
   }
 }
 $('a-google').addEventListener('click', () => entrarCon('google'));
@@ -6172,13 +6216,17 @@ async function volverDeOAuth({code, error, pendiente}){
       body: JSON.stringify({auth_code: code, code_verifier: pendiente.verificador})});
     const j = await r.json();
     if(!r.ok || !j.access_token){ avisar('a-aviso', traducir(j.msg || j.error_description || j.message), 'mal'); return; }
-    const meta = j.user.user_metadata || {};
-    sesion = {access_token: j.access_token, user: j.user};
-    store.escribir({access_token: j.access_token, refresh_token: j.refresh_token, modo: meta.rol || pendiente.rol || 'cliente'});
-    if(faltaCompletar(j.user)){ abrirCompletar(pendiente.rol); return; }
-    entrarApp();
-    setTimeout(() => sincronizarAvisos(true), 900);
+    recibirSesionSocial(j, pendiente.rol);
   }catch(e){ console.error(e); avisar('a-aviso', 'No se pudo conectar. Revisá tu conexión.', 'mal'); }
+}
+
+function recibirSesionSocial(j, rol){
+  const meta = j.user.user_metadata || {};
+  sesion = {access_token: j.access_token, user: j.user};
+  store.escribir({access_token: j.access_token, refresh_token: j.refresh_token, modo: meta.rol || rol || 'cliente'});
+  if(faltaCompletar(j.user)){ abrirCompletar(rol); return; }
+  entrarApp();
+  setTimeout(() => sincronizarAvisos(true), 900);
 }
 
 function abrirCompletar(rol){

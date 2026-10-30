@@ -49,6 +49,10 @@ jobs:
         run: npx playwright install --with-deps chromium
       - name: Recuperación de contraseña de la app (Auth simulado)
         run: node --test ../../tools/auth/probar-recuperacion.mjs
+      - name: Google y Apple en login y registro (puente iOS simulado)
+        run: node --test ../../tools/confianza/auth-social.browser.test.mjs
+        env:
+          TRATTO_PLAYWRIGHT_MODULE: ../../growth/web/node_modules/playwright/index.mjs
       - name: Panel de usuarios (Auth y datos simulados)
         run: npx playwright test --config playwright-users.config.ts
       - name: Build
