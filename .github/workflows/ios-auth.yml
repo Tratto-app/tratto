@@ -1,0 +1,36 @@
+name: iOS — compilar sin firma
+
+on:
+  pull_request:
+    paths:
+      - 'tools/ios-app/**'
+      - '.github/workflows/ios-auth.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  ios-simulator:
+    runs-on: macos-latest
+    timeout-minutes: 20
+    defaults:
+      run:
+        working-directory: tools/ios-app
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: tools/ios-app/package-lock.json
+      - run: npm ci --no-audit --no-fund
+      - name: Sincronizar Capacitor y plugins
+        run: npx cap sync ios
+      - name: Compilar app para simulador sin claves ni publicación
+        run: |
+          xcodebuild -version
+          xcodebuild -project ios/App/App.xcodeproj -scheme App \
+            -destination 'generic/platform=iOS Simulator' \
+            -derivedDataPath "$RUNNER_TEMP/tratto-ios" \
+            CODE_SIGNING_ALLOWED=NO build

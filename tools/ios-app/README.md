@@ -119,9 +119,15 @@ de una compilación pendiente en App Store Connect.
    `.p8`, JWT, tokens o secretos en Git, informes ni chats. La corrección de
    código por sí sola no demuestra la causa exacta de `invalid_client`.
 
-No se verificaron ni cambiaron estos ajustes de los paneles durante la
-preparación del arreglo: los conectores de administración de Auth/Codemagic
-no estaban conectados y no había acceso al portal de Apple Developer.
+**Actualización tras conectar Supabase el 30/10:** proyecto ACTIVE_HEALTHY;
+se agregaron los redirects `https://www.trattoapp.com.ar`,
+`https://www.trattoapp.com.ar/**` y `ar.com.trattoapp.auth://callback`,
+preservando las dos entradas existentes del dominio sin `www`. Se agregó
+`ar.com.trattoapp` a Client IDs de Apple, conservando `ar.com.trattoapp.web`
+primero. Una lectura posterior confirmó ambos cambios y que Google, el
+Services ID web y `site_url` permanecieron iguales. La solicitud pública de
+Apple sigue devolviendo `invalid_client`; falta verificar la configuración
+en Apple Developer. No se leyeron ni cambiaron claves privadas.
 
 ### Validación y condición de salida
 
@@ -131,6 +137,9 @@ no estaban conectados y no había acceso al portal de Apple Developer.
   de que Apple o Google hayan aceptado credenciales reales.
 - En Mac: ejecutar `npm ci && npx cap sync ios`, compilar con Xcode, comprobar
   firma y entitlement y subir a TestFlight sólo después de los ajustes.
+  El workflow `iOS — compilar sin firma` comprueba por separado la compilación
+  para simulador en macOS, sin certificados, secretos ni subida a Apple; no
+  acredita el funcionamiento real del login ni la firma de distribución.
 - En iPhone real: probar Google y Apple desde **Iniciar sesión** y **Crear
   cuenta**, con cada rol, cuenta nueva y existente, cancelar/reintentar,
   cierre/reapertura y notificaciones. Probar compartir/ocultar email en Apple.
