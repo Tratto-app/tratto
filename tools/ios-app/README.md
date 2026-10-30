@@ -87,6 +87,11 @@ Los dos proveedores estaban habilitados en Auth y Google web tenía accesos
 exitosos. Apple redirigía con Services ID `ar.com.trattoapp.web` y callback
 `https://qglsonbcsncgekzbfafk.supabase.co/auth/v1/callback`, pero los intentos
 observados no completaban el regreso. Eso no prueba que falte una cuenta.
+La solicitud pública directa a Apple con ese Services ID y esa Return URL
+reprodujo `errorCode: invalid_client` / `errorMessage: Invalid client.` antes
+de iniciar sesión, sin utilizar credenciales de ninguna persona. Queda
+confirmado el rechazo de esa configuración, pero distinguir entre Services
+ID, asociación al App ID y Return URL requiere revisar el portal.
 La consulta pública de App Store devolvía versión 1.0.0; no informa el estado
 de una compilación pendiente en App Store Connect.
 
