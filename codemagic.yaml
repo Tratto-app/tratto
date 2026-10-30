@@ -1,5 +1,6 @@
 # Compila la app de iPhone en la nube (Codemagic tiene Macs) y la sube a
 # TestFlight. La app vive en tools/ios-app. Se corre a mano desde codemagic.io.
+# También arma el paquete de Android para Play (workflow android-play, abajo).
 # Requisitos (una sola vez), ver tools/ios-app/README.md:
 #   - integración "Tratto App Store Connect" (clave API de App Store Connect)
 #   - APP_STORE_APPLE_ID: el número de la app en App Store Connect
@@ -66,3 +67,44 @@ workflows:
     scripts:
       - name: Subir la ficha
         script: node tools/tiendas/subir-ficha-ios.mjs
+
+  # Arma el paquete de Android (tools/android-twa) firmado con la clave de
+  # subida, listo para cargar a mano en Play Console. La versión sale de
+  # tools/android-twa/twa-manifest.json (appVersionName y appVersionCode).
+  # Requisito (una sola vez): la clave de subida en Team settings → Code
+  # signing identities → Android keystores, con el nombre "tratto_upload".
+  # La clave nunca pasa por el repo.
+  android-play:
+    name: Tratto Android → paquete para Play
+    max_build_duration: 30
+    instance_type: mac_mini_m2
+    environment:
+      android_signing:
+        - tratto_upload   # CM_KEYSTORE_PATH, CM_KEYSTORE_PASSWORD, CM_KEY_ALIAS, CM_KEY_PASSWORD
+      java: 17
+      node: 22
+      vars:
+        TWA_DIR: /tmp/twa
+    scripts:
+      - name: Generar el proyecto
+        script: |
+          cd tools/android-twa
+          npm i --no-save @bubblewrap/core@1.25.0
+          node generar.js
+      - name: Compilar
+        script: |
+          cd "$TWA_DIR"
+          chmod +x gradlew
+          ./gradlew bundleRelease
+      - name: Firmar
+        script: |
+          set -e
+          VERSION=$(node -p "require('./tools/android-twa/twa-manifest.json').appVersionName")
+          mkdir -p salida-android
+          cp "$TWA_DIR/app/build/outputs/bundle/release/app-release.aab" "salida-android/tratto-$VERSION.aab"
+          jarsigner -sigalg SHA256withRSA -digestalg SHA-256 \
+            -keystore "$CM_KEYSTORE_PATH" -storepass "$CM_KEYSTORE_PASSWORD" -keypass "$CM_KEY_PASSWORD" \
+            "salida-android/tratto-$VERSION.aab" "$CM_KEY_ALIAS"
+          jarsigner -verify "salida-android/tratto-$VERSION.aab"
+    artifacts:
+      - salida-android/*.aab

@@ -6,7 +6,8 @@ llega solo a la app; solo hay que subir una versión nueva a Play si cambia algo
 del paquete (ícono, nombre, colores, permisos).
 
 - Paquete: `ar.com.trattoapp` (no se puede cambiar una vez publicado).
-- Versión 1.0.0 (versionCode 1). Cada subida a Play necesita un versionCode mayor.
+- La versión está en `twa-manifest.json` (`appVersionName` y `appVersionCode`;
+  hoy 1.0.1, versionCode 2). Cada subida a Play necesita un versionCode mayor.
 - targetSdk 36, minSdk 23. Notificaciones habilitadas (se delegan a la web).
 
 ## La clave de firma
@@ -19,7 +20,20 @@ Signing, si se pierde se puede pedir un reseteo a Google, pero lleva días.
 **y** la de la clave de firma de Play (Play Console → Configuración → Integridad
 de la app). Sin eso la app muestra la barra del navegador arriba.
 
-## Volver a generar
+## Armar una versión nueva (Codemagic)
+
+1. Subir `appVersionName` y `appVersionCode` en `twa-manifest.json` y anotar
+   los cambios en `NOTAS-VERSIONES.md`.
+2. Codemagic → la app → **Start new build** → workflow *Tratto Android →
+   paquete para Play*. En unos minutos deja `tratto-<versión>.aab` firmado
+   para descargar.
+3. Play Console → Prueba cerrada (o Producción) → Crear versión → subir el
+   `.aab` y pegar la nota de `NOTAS-VERSIONES.md`.
+
+La clave de subida vive solo en Codemagic (Team settings → Code signing
+identities → Android keystores, nombre `tratto_upload`, alias `tratto`).
+
+## Volver a generar a mano
 
 ```bash
 npm i @bubblewrap/core@1.25.0
