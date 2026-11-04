@@ -6575,8 +6575,10 @@ async function entrarNativo(proveedor){
       .catch(e => { socialListo = null; throw e; });
     await socialListo;
     nonce = b64url(crypto.getRandomValues(new Uint8Array(24)));
-    res = await SL.login({provider: proveedor, options: {scopes: proveedor === 'apple' ? ['name', 'email'] : ['profile', 'email'],
-      nonce: await huellaNonce(nonce)}});
+    // Sin "scopes": el complemento pide por defecto nombre y mail a Apple
+    // (fullName, email) y email, profile y openid a Google, que es lo que hace
+    // falta. Pasarle nombres propios a Apple puede hacer que rechace el pedido.
+    res = await SL.login({provider: proveedor, options: {nonce: await huellaNonce(nonce)}});
   }catch(e){
     // Si la persona cerró la hoja de Apple o de Google, no es un error.
     if(/cancel|1001|12501/i.test(String((e && (e.code || e.message)) || e))) return;
