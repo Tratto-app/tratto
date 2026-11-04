@@ -31,9 +31,11 @@ export async function iniciar() {
 }
 
 // rol: 'cliente' | 'proveedor' | null (sin sesión). handler(call) devuelve {json, status} o null.
-export async function abrir(entorno, {rol = 'cliente', handler, width = 390, ruta = '/'} = {}) {
+// antes: función que corre en la página antes que la app (por ejemplo, un doble de un script externo).
+export async function abrir(entorno, {rol = 'cliente', handler, width = 390, ruta = '/', antes} = {}) {
   const {origin, browser} = entorno;
   const context = await browser.newContext({viewport: {width, height: 844}});
+  if (antes) await context.addInitScript(antes);
   const page = await context.newPage(), calls = [], errors = [];
   page.setDefaultTimeout(8000);
   page.on('pageerror', e => errors.push(e.message));

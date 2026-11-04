@@ -1,5 +1,10 @@
 # Grupos de Facebook para sumar a quienes ofrecen servicios
 
+> **Frenado (fundador, 04/11/2026): "Quiero que me dejes de traer grupos de
+> Facebook".** Se borró la rutina "Grupos de Facebook · preparar el día". No
+> se buscan ni se proponen grupos nuevos, ni desde una rutina ni desde el CMO,
+> hasta que el fundador lo vuelva a pedir. Lo que sigue queda como referencia.
+
 Pedido del fundador (21/10/2026): llegar a mucha gente de una vez publicando
 en grupos de Facebook de oficios. Publicar en grupos no se puede automatizar
 por la conexión oficial (Facebook cerró esa opción en 2024 y Composio solo

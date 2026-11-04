@@ -1065,6 +1065,9 @@
   #p-auth.eligiendo #a-enviar{display:none!important}
   /* Entrar con Google o Apple */
   .sociales{margin-top:18px;display:grid;gap:10px}
+  /* Botón oficial de Google (Google Identity Services): lo dibuja Google en su
+     propio marco, así que acá solo se centra y se le da la altura de los otros. */
+  .google-gis{display:flex;justify-content:center;min-height:44px}
   .sociales .bifurca{margin-top:6px}
   .btn.social{margin-top:0;display:flex;align-items:center;justify-content:center;gap:10px;font-weight:600}
   .btn.social svg{width:19px;height:19px;flex:none}
@@ -1815,6 +1818,7 @@
           <button class="btn social google oculto" id="a-google" type="button">
             <svg viewBox="0 0 24 24" aria-hidden="true"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 0 1-2.2 3.32v2.77h3.57c2.08-1.92 3.27-4.74 3.27-8.1z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84A11 11 0 0 0 12 23z"/><path fill="#FBBC05" d="M5.84 14.1A6.6 6.6 0 0 1 5.5 12c0-.73.13-1.44.34-2.1V7.06H2.18A11 11 0 0 0 1 12c0 1.78.43 3.45 1.18 4.94l3.66-2.84z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1A11 11 0 0 0 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z"/></svg>
             Continuar con Google</button>
+          <div class="google-gis oculto" id="a-google-gis"></div>
           <button class="btn social apple oculto" id="a-apple" type="button">
             <svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M16.37 12.67c-.02-2.4 1.96-3.56 2.05-3.62-1.12-1.64-2.86-1.86-3.48-1.89-1.48-.15-2.89.87-3.64.87-.75 0-1.91-.85-3.14-.83-1.62.02-3.11.94-3.94 2.39-1.68 2.92-.43 7.24 1.21 9.6.8 1.16 1.75 2.46 3 2.41 1.2-.05 1.66-.78 3.11-.78 1.46 0 1.86.78 3.13.75 1.3-.02 2.12-1.18 2.91-2.34.92-1.34 1.3-2.65 1.32-2.72-.03-.01-2.53-.97-2.55-3.84zM14.03 5.6c.66-.8 1.11-1.92.99-3.03-.95.04-2.11.64-2.8 1.44-.61.71-1.15 1.85-1 2.94 1.06.08 2.15-.54 2.81-1.35z"/></svg>
             Continuar con Apple</button>
@@ -6521,9 +6525,7 @@ $('rol-cambiar').addEventListener('click', () => {
 /* Flujo PKCE de Supabase Auth: se guarda un verificador en el teléfono, se va
    a /auth/v1/authorize y se vuelve con ?code=, que se cambia por la sesión.
    Los botones aparecen solo si el proveedor está prendido en Supabase.
-   En la app de iPhone Google no deja entrar desde una vista web embebida, así
-   que ahí va solo Apple, y recién desde la build que lo permite (la que
-   agrega "TrattoApp/2" al navegador y deja navegar a Supabase y a Apple).
+   En la app de iPhone no se muestran por ahora (ver pintarSociales).
    La primera vez, la cuenta no tiene rol, teléfono ni términos aceptados:
    se piden en "Completá tu cuenta", con el mismo formulario del alta. */
 const enAppNativa = () => !!(window.Capacitor && window.Capacitor.isNativePlatform && window.Capacitor.isNativePlatform());
@@ -6534,11 +6536,84 @@ async function pintarSociales(){
     const r = await fetch(SUPABASE_URL+'/auth/v1/settings', {headers:{apikey:SUPABASE_ANON}});
     if(r.ok) ext = (await r.json()).external || {};
   }catch(e){}
-  const ios = enAppNativa(), iosListo = /TrattoApp\/2/.test(navigator.userAgent);
-  const google = !!ext.google && !ios, apple = !!ext.apple && (!ios || iosListo);
+  /* En la app de iPhone no va ninguno de los dos por ahora: Google no deja
+     entrar desde una vista web embebida, y Apple dentro de esa vista termina
+     en "Sin conexión" (fundador, 04/11/2026). Ahí corresponde el inicio nativo
+     de Apple y de Google, que llega con una versión nueva de la app. */
+  const ios = enAppNativa();
+  const google = !!ext.google && !ios, apple = !!ext.apple && !ios;
   $('a-google').classList.toggle('oculto', !google);
   $('a-apple').classList.toggle('oculto', !apple);
   $('a-sociales').classList.toggle('oculto', !google && !apple);
+  if(google) prepararBotonGoogle();
+}
+
+/* Google con su botón oficial (Google Identity Services) en vez de ir a
+   Google pasando por Supabase: así la ventana de Google dice "continuar a
+   trattoapp.com.ar" y no la dirección técnica de Supabase, que generaba
+   desconfianza (fundador, 04/11/2026). Google devuelve un token firmado que
+   Supabase cambia por la sesión (grant_type=id_token). El nonce va con su
+   huella a Google y tal cual a Supabase, que los compara. Si el botón oficial
+   no carga, queda el de siempre (redirección), que también funciona. */
+const GOOGLE_CLIENT_ID = '975806137803-eniddr3vsprk701nrm6ltim8ii2t6av3.apps.googleusercontent.com';
+let gisCarga = null, nonceGoogle = '';
+function cargarGIS(){
+  if(gisCarga) return gisCarga;
+  gisCarga = new Promise((ok, mal) => {
+    const s = document.createElement('script');
+    s.src = 'https://accounts.google.com/gsi/client'; s.async = true;
+    s.onload = () => (window.google && google.accounts && google.accounts.id) ? ok() : mal(new Error('sin gis'));
+    s.onerror = () => mal(new Error('no cargó'));
+    setTimeout(() => mal(new Error('tardó')), 8000);
+    document.head.appendChild(s);
+  }).catch(e => { gisCarga = null; throw e; });
+  return gisCarga;
+}
+async function prepararBotonGoogle(){
+  const caja = $('a-google-gis');
+  try{
+    await cargarGIS();
+    nonceGoogle = b64url(crypto.getRandomValues(new Uint8Array(24)));
+    const huella = [...new Uint8Array(await crypto.subtle.digest('SHA-256', new TextEncoder().encode(nonceGoogle)))]
+      .map(b => b.toString(16).padStart(2, '0')).join('');
+    google.accounts.id.initialize({client_id: GOOGLE_CLIENT_ID, callback: entrarConGoogleToken, nonce: huella,
+      ux_mode: 'popup', auto_select: false, context: 'signin', itp_support: true});
+    caja.innerHTML = '';
+    // Mismo ancho que el botón de Apple (Google acepta hasta 400).
+    const ancho = Math.round($('a-sociales').clientWidth || (document.documentElement.clientWidth - 32));
+    google.accounts.id.renderButton(caja, {type: 'standard', theme: 'outline', size: 'large', text: 'continue_with',
+      shape: 'rectangular', logo_alignment: 'center', locale: 'es-419', width: Math.max(220, Math.min(400, ancho))});
+    caja.classList.remove('oculto');
+    $('a-google').classList.add('oculto');
+  }catch(e){
+    caja.classList.add('oculto');
+    $('a-google').classList.remove('oculto');
+  }
+}
+async function entrarConGoogleToken(resp){
+  const rol = modoAuth === 'crear' && rolTocado ? rolElegido : null;
+  try{
+    const r = await fetch(SUPABASE_URL + '/auth/v1/token?grant_type=id_token', {method: 'POST',
+      headers: {apikey: SUPABASE_ANON, 'Content-Type': 'application/json'},
+      body: JSON.stringify({provider: 'google', id_token: resp && resp.credential, nonce: nonceGoogle})});
+    const j = await r.json().catch(() => ({}));
+    if(!r.ok || !j.access_token){
+      avisar('a-aviso', 'No pudimos entrar con Google. Probá de nuevo o entrá con tu email.', 'mal');
+      prepararBotonGoogle();
+      return;
+    }
+    entrarConSesionSocial(j, rol);
+  }catch(e){ console.error(e); avisar('a-aviso', 'No se pudo conectar. Revisá tu conexión.', 'mal'); prepararBotonGoogle(); }
+}
+/* Lo mismo para las dos formas de entrar con Google o Apple: guarda la
+   sesión y, si es la primera vez, pide "Completá tu cuenta". */
+function entrarConSesionSocial(j, rol){
+  const meta = j.user.user_metadata || {};
+  sesion = {access_token: j.access_token, user: j.user};
+  store.escribir({access_token: j.access_token, refresh_token: j.refresh_token, modo: meta.rol || rol || 'cliente'});
+  if(faltaCompletar(j.user)){ abrirCompletar(rol); return; }
+  entrarApp();
+  setTimeout(() => sincronizarAvisos(true), 900);
 }
 async function entrarCon(proveedor){
   try{
@@ -6574,12 +6649,7 @@ async function volverDeOAuth({code, error, pendiente}){
       body: JSON.stringify({auth_code: code, code_verifier: pendiente.verificador})});
     const j = await r.json();
     if(!r.ok || !j.access_token){ avisar('a-aviso', traducir(j.msg || j.error_description || j.message), 'mal'); return; }
-    const meta = j.user.user_metadata || {};
-    sesion = {access_token: j.access_token, user: j.user};
-    store.escribir({access_token: j.access_token, refresh_token: j.refresh_token, modo: meta.rol || pendiente.rol || 'cliente'});
-    if(faltaCompletar(j.user)){ abrirCompletar(pendiente.rol); return; }
-    entrarApp();
-    setTimeout(() => sincronizarAvisos(true), 900);
+    entrarConSesionSocial(j, pendiente.rol);
   }catch(e){ console.error(e); avisar('a-aviso', 'No se pudo conectar. Revisá tu conexión.', 'mal'); }
 }
 
