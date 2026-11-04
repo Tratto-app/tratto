@@ -1,0 +1,143 @@
+<!doctype html><html lang="es"><head><meta charset="utf-8">
+<title>Carrusel · Vacaciones: quién cuida al perro y cuánto sale</title>
+<!-- Carrusel guardable (3/11/2026, para el miércoles 4/11 12:00 en TikTok). Mismo molde que la mudanza, el
+     carrusel que más rindió (una situación, cada cosa con su precio), ahora para quien se va en el verano y
+     tiene mascota: rubros Paseo y cuidado de mascotas y Peluquería y adiestramiento canino. Portada nueva:
+     un pasaje (ninguno de los anteriores la usó). Precios de precios_referencia con el ajuste mensual del 2 %
+     de la calculadora y su redondeo, a nov-2026. El mensaje de la placa 7 es un ejemplo, marcado como tal.
+     Exportar: python3 render-carrusel.py mascotas-vacaciones.html carrusel-mascotas-tt --red tiktok
+               python3 render-carrusel.py mascotas-vacaciones.html carrusel-mascotas   (Instagram) -->
+<link rel="stylesheet" href="carrusel.css">
+<link rel="stylesheet" href="molde.css">
+<style>
+/* 1 · portada: un pasaje */
+.placa.pasaje{background:var(--verde-claro)}
+.placa.pasaje .pano{opacity:.55}
+.uno .chico{display:flex;align-items:center;gap:16px;font:600 30px/1.2 'IBM Plex Mono',monospace;letter-spacing:.14em;text-transform:uppercase;color:var(--verde)}
+.uno h1{font:700 120px/.95 'IBM Plex Sans Condensed',sans-serif;letter-spacing:-.025em;color:var(--tinta);margin:24px 0 46px}
+.uno h1 em{font-style:normal;color:var(--verde-vivo)}
+.ticket{position:relative;background:#fff;border-radius:36px;box-shadow:0 30px 70px rgba(12,38,32,.16);padding:44px 50px 0;overflow:hidden}
+.ticket .fila{display:flex;gap:30px;margin-bottom:34px}
+.ticket .fila > div{flex:1;display:flex;flex-direction:column;gap:10px}
+.ticket .k{font:600 24px/1 'IBM Plex Mono',monospace;letter-spacing:.16em;text-transform:uppercase;color:var(--gris)}
+.ticket .v{font:700 66px/1 'IBM Plex Sans Condensed',sans-serif;color:var(--tinta)}
+.ticket .v.oro{color:var(--laton-osc)}
+.ticket .corte{position:relative;height:0;border-top:5px dashed #CFDCD5;margin:6px -50px 0}
+.ticket .corte::before,.ticket .corte::after{content:"";position:absolute;top:-30px;width:56px;height:56px;border-radius:50%;background:var(--verde-claro)}
+.ticket .corte::before{left:-28px}.ticket .corte::after{right:-28px}
+.ticket .talon{display:flex;align-items:center;gap:20px;padding:30px 0 36px;font:600 34px/1.2 'IBM Plex Sans',sans-serif;color:var(--verde)}
+.ticket .talon svg{color:var(--laton-osc)}
+</style></head><body>
+
+<!-- 1 · PORTADA -->
+<section class="placa pasaje uno"><div class="cont">
+  <div class="medio">
+    <div class="chico"><i data-ico="valija" data-px="46"></i>Vacaciones · precios de noviembre</div>
+    <h1>Te vas de vacaciones. <em>¿Y el perro?</em></h1>
+    <div class="ticket">
+      <div class="fila"><div><span class="k">Viajás</span><span class="v">Vos</span></div><div><span class="k">Salida</span><span class="v">Enero</span></div></div>
+      <div class="fila"><div><span class="k">Se queda</span><span class="v">El perro</span></div><div><span class="k">Lo cuida</span><span class="v oro">¿Quién?</span></div></div>
+      <div class="corte"></div>
+      <div class="talon"><i data-ico="huella" data-px="54"></i>4 opciones · la más barata, $7.500</div>
+    </div>
+  </div>
+  <div class="pie"><span class="web">trattoapp.com.ar</span><span class="desliza">Guardalo · Deslizá →</span></div>
+</div></section>
+
+<!-- 2 · TRES DATOS -->
+<section class="placa dos"><div class="cont">
+  <div class="medio">
+    <h2>Antes de pedir, tené estos 3 datos.</h2>
+    <p class="bajada">Con eso te pueden pasar un precio sin vueltas.</p>
+    <div class="datos">
+      <div class="tarjeta dato"><span class="n">1</span><p>Las fechas: cuándo te vas y cuándo volvés</p></div>
+      <div class="tarjeta dato"><span class="n">2</span><p>Cómo es: tamaño, edad y si toma algún remedio</p></div>
+      <div class="tarjeta dato"><span class="n">3</span><p>Dónde: en tu casa o en la de quien lo cuida</p></div>
+    </div>
+    <p class="despues">De la más completa a la más corta. La 3 sale menos que un día de hospedaje →</p>
+  </div>
+  <div class="pie"><span class="web">trattoapp.com.ar</span><span class="desliza">Deslizá →</span></div>
+</div></section>
+
+<!-- 3 · HOSPEDAJE -->
+<section class="placa"><div class="cont">
+  <div class="medio">
+    <div class="paso"><div class="ico grande"><i data-ico="casa" data-px="92"></i></div><h2><span class="num">1.</span>Hospedaje.</h2></div>
+    <div class="tarjeta precio"><div class="que">Se queda en la casa de quien lo cuida, por día</div><div class="rango">$30.000 a $60.000</div></div>
+    <div class="consejo"><div class="ico chico"><i data-ico="check" data-px="52"></i></div><p>Preguntá <b>si hay otros perros</b> y pedí una foto o un video por día.</p></div>
+  </div>
+  <div class="pie"><span class="fuente">Precios de referencia · AMBA · nov-2026</span></div>
+</div></section>
+
+<!-- 4 · CUIDADO DE DÍA -->
+<section class="placa"><div class="cont">
+  <div class="medio">
+    <div class="paso"><div class="ico grande"><i data-ico="reloj" data-px="92"></i></div><h2 style="font-size:96px"><span class="num">2.</span>Cuidado de día.</h2></div>
+    <div class="tarjeta precio"><div class="que">Cuidado diurno (8 horas), por día</div><div class="rango">$23.000 a $38.000</div></div>
+    <div class="consejo"><div class="ico chico"><i data-ico="check" data-px="52"></i></div><p>Sirve para una escapada corta. Dejá <b>por escrito los horarios de comida y de salida.</b></p></div>
+  </div>
+  <div class="pie"><span class="fuente">Precios de referencia · AMBA · nov-2026</span></div>
+</div></section>
+
+<!-- 5 · PASEOS -->
+<section class="placa"><div class="cont">
+  <div class="medio">
+    <div class="paso"><div class="ico grande"><i data-ico="huella" data-px="92"></i></div><h2><span class="num">3.</span>Paseos.</h2></div>
+    <div class="tarjeta precio"><div class="que">Paseo individual</div><div class="rango">$7.500 a $15.000</div></div>
+    <div class="consejo"><div class="ico chico"><i data-ico="check" data-px="52"></i></div><p>Si alguien de la familia le da de comer, <b>sumá un paseo por día</b> y no se queda encerrado.</p></div>
+  </div>
+  <div class="pie"><span class="fuente">Precios de referencia · AMBA · nov-2026</span></div>
+</div></section>
+
+<!-- 6 · BAÑO -->
+<section class="placa"><div class="cont">
+  <div class="medio">
+    <div class="paso"><div class="ico grande"><i data-ico="gota" data-px="92"></i></div><h2><span class="num">4.</span>El baño.</h2></div>
+    <div class="tarjeta precio chica"><div class="que">Baño de perro chico o mediano</div><div class="rango">$28.000 a $39.000</div></div>
+    <div class="tarjeta precio chica"><div class="que">Baño y corte</div><div class="rango">$39.000 a $68.000</div></div>
+    <div class="consejo"><div class="ico chico"><i data-ico="check" data-px="52"></i></div><p>Si va a hospedaje, preguntá <b>si te lo devuelven bañado y cuánto suma.</b></p></div>
+  </div>
+  <div class="pie"><span class="fuente">Precios de referencia · AMBA · nov-2026</span></div>
+</div></section>
+
+<!-- 7 · PEDILO ASÍ -->
+<section class="placa"><div class="cont">
+  <div class="medio">
+    <div class="grande-titulo">Pedilo así.</div>
+    <p class="bajada">Copialo y cambiá los datos.</p>
+    <div style="margin-top:44px"><span class="ejemplo-etq">Ejemplo</span></div>
+    <div class="tarjeta mensaje">Me voy <b>del 3 al 17 de enero</b>. Tengo una perra <b>mediana de 6 años</b>, tranquila y sin remedios. Busco <b>hospedaje en Caballito</b> o alguien que venga a casa dos veces por día.</div>
+  </div>
+  <div class="pie"><span class="web">trattoapp.com.ar</span><span class="desliza">Deslizá →</span></div>
+</div></section>
+
+<!-- 8 · RESUMEN -->
+<section class="placa blanca resumen"><div class="cont">
+  <div class="medio">
+    <h2>Las vacaciones del perro, en una foto</h2>
+    <div class="tabla">
+      <div class="f"><span>Hospedaje (por día)</span><b>$30k a $60k</b></div>
+      <div class="f"><span>Cuidado de día (8 h)</span><b>$23k a $38k</b></div>
+      <div class="f"><span>Paseo</span><b>$7,5k a $15k</b></div>
+      <div class="f"><span>Baño, chico o mediano</span><b>$28k a $39k</b></div>
+      <div class="f"><span>Baño y corte</span><b>$39k a $68k</b></div>
+    </div>
+    <p class="manda">Precios de noviembre. Sacale captura o mandáselo a quien se va con perro.</p>
+  </div>
+  <div class="pie"><span class="web">trattoapp.com.ar</span></div>
+</div></section>
+
+<!-- 9 · CIERRE -->
+<section class="placa noche cierre"><div class="cont">
+  <div class="medio">
+    <h2>Reservalo antes de sacar los pasajes.</h2>
+    <p class="bajada">En Tratto contás las fechas y cómo es tu mascota, y te llegan presupuestos de gente de tu zona para comparar.</p>
+    <div><span class="url-caja"><span id="logo-url"></span><span data-tiktok="trattoapp.com.ar/r/tt-mascotas">trattoapp.com.ar/r/ig-mascotas</span></span></div>
+    <p class="bio" data-tiktok="(escribilo en el navegador)">Tocá @trattoapp_ · link «Pedí un servicio»</p>
+    <div class="gratis"><span class="sello">Gratis para el que pide</span></div>
+  </div>
+</div></section>
+
+<script src="carrusel.js"></script>
+<script>document.getElementById('logo-url').outerHTML = LOGO(46, 'lu');</script>
+</body></html>
