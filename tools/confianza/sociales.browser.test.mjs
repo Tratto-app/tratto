@@ -66,7 +66,94 @@ test('Google: si el botón oficial no carga, queda el de siempre', async () => {
   } finally { await p.cerrar(); }
 });
 
-test('app de iPhone: no muestra Google ni Apple hasta tener el inicio nativo', async () => {
+// Doble del complemento nativo SocialLogin (app de iPhone 1.2.0 en adelante).
+const APP_NATIVA = () => {
+  window.__sl = {};
+  window.Capacitor = {isNativePlatform: () => true, isPluginAvailable: n => n === 'SocialLogin',
+    Plugins: {SocialLogin: {
+      initialize: async o => { window.__sl.init = o; },
+      login: async o => {
+        window.__sl.login = o;
+        if (window.__sl.cancelar) throw Object.assign(new Error('The user canceled the authorization attempt'), {code: '1001'});
+        return {provider: o.provider, result: {idToken: 'token-de-apple-de-prueba',
+          profile: {user: 'u1', email: null, givenName: 'Ana', familyName: 'Pérez'}}};
+      },
+    }}};
+};
+
+test('app de iPhone con inicio nativo: Apple con la hoja de Apple y sesión por id_token', async () => {
+  const p = await abrir(entorno, {rol: null, handler: c => {
+    if (c.path.endsWith('/auth/v1/settings')) return {json: {external: {google: true, apple: true, email: true}}};
+    if (c.path.endsWith('/auth/v1/token') && c.query.includes('grant_type=id_token')) return {json: {
+      access_token: 'tok', refresh_token: 'r', user: {id: cliente, email: 'ana@privaterelay.appleid.com',
+        app_metadata: {provider: 'apple'}, user_metadata: {}}}};
+    return null;
+  }, antes: APP_NATIVA});
+  try {
+    await p.page.waitForSelector('#a-apple:not(.oculto)');
+    // En la app, Google va con su botón de siempre (nativo), no con el de la web.
+    assert.ok(await p.page.locator('#a-google').isVisible());
+    assert.ok(await p.page.locator('#a-google-gis').isHidden());
+    await p.page.click('#rol-cliente').catch(() => {});
+    await p.page.click('#a-apple');
+    await p.page.waitForSelector('#p-auth.completando');
+    const sl = await p.page.evaluate(() => window.__sl);
+    assert.deepEqual(Object.keys(sl.init).sort(), ['apple', 'google']);
+    assert.deepEqual(sl.init.apple, {});
+    assert.match(sl.init.google.iOSClientId, /^975806137803-.*\.apps\.googleusercontent\.com$/);
+    assert.equal(sl.init.google.mode, 'online');
+    assert.equal(sl.login.provider, 'apple');
+    assert.deepEqual(sl.login.options.scopes, ['name', 'email']);
+    const llamada = p.calls.find(c => c.path.endsWith('/auth/v1/token') && c.query.includes('grant_type=id_token'));
+    assert.equal(llamada.body.provider, 'apple');
+    assert.equal(llamada.body.id_token, 'token-de-apple-de-prueba');
+    // A Apple va la huella del nonce; a Supabase, el nonce tal cual.
+    assert.equal(createHash('sha256').update(llamada.body.nonce).digest('hex'), sl.login.options.nonce);
+    // Apple da el nombre solo la primera vez y no viene en el token.
+    assert.equal(await p.page.inputValue('#a-nombre'), 'Ana Pérez');
+    assert.ok(!p.calls.some(c => c.path.endsWith('/auth/v1/authorize')), 'no pasa por la página web de Apple');
+    assert.deepEqual(p.errors, []);
+  } finally { await p.cerrar(); }
+});
+
+test('app de iPhone con inicio nativo: Google con la hoja de Google y sesión por id_token', async () => {
+  const p = await abrir(entorno, {rol: null, handler: c => {
+    if (c.path.endsWith('/auth/v1/settings')) return {json: {external: {google: true, apple: true, email: true}}};
+    if (c.path.endsWith('/auth/v1/token') && c.query.includes('grant_type=id_token')) return {json: {
+      access_token: 'tok', refresh_token: 'r', user: {id: cliente, email: 'ana@example.invalid',
+        app_metadata: {provider: 'google'}, user_metadata: {full_name: 'Ana Pérez'}}}};
+    return null;
+  }, antes: APP_NATIVA});
+  try {
+    await p.page.waitForSelector('#a-google:not(.oculto)');
+    await p.page.click('#a-google');
+    await p.page.waitForSelector('#p-auth.completando');
+    const sl = await p.page.evaluate(() => window.__sl);
+    assert.equal(sl.login.provider, 'google');
+    assert.deepEqual(sl.login.options.scopes, ['profile', 'email']);
+    const llamada = p.calls.find(c => c.path.endsWith('/auth/v1/token') && c.query.includes('grant_type=id_token'));
+    assert.equal(llamada.body.provider, 'google');
+    assert.equal(createHash('sha256').update(llamada.body.nonce).digest('hex'), sl.login.options.nonce);
+    assert.ok(!p.calls.some(c => c.path.endsWith('/auth/v1/authorize')), 'no pasa por la página web de Google');
+    assert.deepEqual(p.errors, []);
+  } finally { await p.cerrar(); }
+});
+
+test('app de iPhone con inicio nativo: si cierra la hoja de Apple no aparece un error', async () => {
+  const q = await abrir(entorno, {rol: null, handler: ajustes({google: true, apple: true, email: true}),
+    antes: APP_NATIVA});
+  try {
+    await q.page.waitForSelector('#a-apple:not(.oculto)');
+    await q.page.evaluate(() => { window.__sl.cancelar = true; });
+    await q.page.click('#a-apple');
+    await q.page.waitForFunction(() => window.__sl.login);
+    await q.page.waitForTimeout(300);
+    assert.equal((await q.page.textContent('#a-aviso')).trim(), '');
+    assert.ok(!q.calls.some(c => c.path.endsWith('/auth/v1/token')));
+  } finally { await q.cerrar(); }
+});
+
+test('app de iPhone sin el complemento (versión vieja): no muestra Google ni Apple', async () => {
   const p = await abrir(entorno, {rol: null, handler: ajustes({google: true, apple: true, email: true}),
     antes: () => { window.Capacitor = {isNativePlatform: () => true}; }});
   try {

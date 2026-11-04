@@ -25,11 +25,14 @@ no se ve nada distinto.
 Al completar la cuenta, la base la vuelve a pasar al CRM con lo que cargó
 (trigger `crm_completar`).
 
-En la app de iPhone no aparece ninguno de los dos (desde el 04/11/2026):
-Google no deja entrar desde una vista web dentro de una app, y Apple dentro de
-esa vista terminaba en "Sin conexión". Lo que corresponde ahí es el inicio
-nativo de Apple y de Google (con Face ID), que necesita una versión nueva de
-la app.
+En la app de iPhone, Google no deja entrar desde una vista web dentro de una
+app y Apple dentro de esa vista terminaba en "Sin conexión". Por eso ahí van
+con el **inicio nativo** (la hoja de Apple o la de Google), que llega con la
+versión 1.2.0 de la app (complemento `@capgo/capacitor-social-login`). En las
+versiones anteriores de la app no aparece ninguno de los dos. Google en la app
+usa además la credencial de iPhone de Google Cloud ("Tratto iPhone", creada el
+04/11/2026, `GOOGLE_IOS_CLIENT_ID` en `index.html` y su esquema en el
+`Info.plist` de la app).
 
 ## Lo que tenés que hacer vos
 
@@ -88,16 +91,35 @@ En https://developer.apple.com/account/resources/identifiers/list:
 En https://supabase.com/dashboard/project/qglsonbcsncgekzbfafk/auth/url-configuration
 fijate que en *Redirect URLs* esté `https://www.trattoapp.com.ar/**`.
 
-### App de iPhone
+### App de iPhone (versión 1.2.0, inicio nativo)
 
-Para que aparezca Apple dentro de la app hay que subir una build nueva desde
-Codemagic (`ios-testflight`). La misma build trae el pedido de reseña de la
-App Store.
+1. **Apple:** en https://supabase.com/dashboard/project/qglsonbcsncgekzbfafk/auth/providers
+   → **Apple** → *Client IDs*: dejá `ar.com.trattoapp.web` y agregá
+   `ar.com.trattoapp` separado por una coma
+   (`ar.com.trattoapp.web,ar.com.trattoapp`) → **Save**. El token que da el
+   iPhone viene a nombre de la app (`ar.com.trattoapp`) y no del Services ID.
+2. **Google:** https://console.cloud.google.com/auth/clients/create → tipo
+   **iOS**, nombre "Tratto iPhone", ID del paquete `ar.com.trattoapp`, ID del
+   equipo `X2Q35VKG23` → **Crear**. Copiá el **ID de cliente** (termina en
+   `.apps.googleusercontent.com`; no es secreto). Va en `GOOGLE_IOS_CLIENT_ID`
+   (`index.html`), en `CFBundleURLSchemes` de `tools/ios-app/ios/App/App/Info.plist`
+   (al revés: `com.googleusercontent.apps.<número>`) y en Supabase → **Google**
+   → *Client IDs*, después del de la web, separado por una coma.
+3. **Codemagic:** https://codemagic.io → la app → **Start new build** →
+   *Tratto iOS → TestFlight*. Tarda unos 15 minutos.
+4. **App Store Connect:** https://appstoreconnect.apple.com → Tratto → **+**
+   versión **1.2.0** → elegí la build nueva → en *Novedades*: "Ahora podés
+   entrar con Apple y con Google desde la app." → **Enviar a revisión**.
 
 ## Dónde está el código
 
-- `index.html`: `pintarSociales`, `entrarCon`, `volverDeOAuth`,
+- `index.html`: `pintarSociales`, `entrarCon`, `prepararBotonGoogle`,
+  `entrarConGoogleToken`, `entrarNativo` (app de iPhone), `volverDeOAuth`,
   `abrirCompletar`, `completarCuenta`; los datos del alta en `datosAlta`.
 - `supabase/migrations/20261029150000_crm_completar_cuenta.sql`.
-- `tools/ios-app/capacitor.config.json`: `allowNavigation` y `appendUserAgent`.
-- Prueba: `tools/confianza/ideas.browser.test.mjs`.
+- `tools/ios-app/capacitor.config.json`: `allowNavigation`, `appendUserAgent`
+  y `plugins.SocialLogin` (Apple y Google prendidos; Facebook y X afuera, así
+  no se suma el kit de Facebook). Permiso de Apple en
+  `tools/ios-app/ios/App/App/App.entitlements`.
+- Pruebas: `tools/confianza/sociales.browser.test.mjs` y
+  `tools/confianza/ideas.browser.test.mjs`.

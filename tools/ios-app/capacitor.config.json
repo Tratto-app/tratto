@@ -5,8 +5,14 @@
   "server": {
     "url": "https://www.trattoapp.com.ar/?utm_source=ios_app",
     "errorPath": "index.html",
-    "allowNavigation": ["qglsonbcsncgekzbfafk.supabase.co", "appleid.apple.com", "*.apple.com",
-      "*.mercadopago.com.ar", "*.mercadopago.com", "*.mercadolibre.com"]
+    "allowNavigation": [
+      "qglsonbcsncgekzbfafk.supabase.co",
+      "appleid.apple.com",
+      "*.apple.com",
+      "*.mercadopago.com.ar",
+      "*.mercadopago.com",
+      "*.mercadolibre.com"
+    ]
   },
   "appendUserAgent": "TrattoApp/2",
   "backgroundColor": "#0C2620",
@@ -17,7 +23,20 @@
   },
   "plugins": {
     "PushNotifications": {
-      "presentationOptions": ["badge", "sound", "alert"]
+      "presentationOptions": [
+        "badge",
+        "sound",
+        "alert"
+      ]
+    },
+    "SocialLogin": {
+      "providers": {
+        "apple": true,
+        "google": true,
+        "facebook": false,
+        "twitter": false
+      },
+      "logLevel": 1
     }
   }
 }

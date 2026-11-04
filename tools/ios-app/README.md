@@ -10,13 +10,18 @@ La web de `www.trattoapp.com.ar` dentro de una app nativa hecha con
   `quick-service` (código en `tools/supabase-functions/`) manda por APNs.
 - Ícono, pantalla de inicio y permisos de cámara y fotos en español.
 - Pantalla propia si no hay conexión (`www/index.html`).
+- **Entrar con Apple y con Google nativos** (complemento
+  `@capgo/capacitor-social-login`, desde la versión 1.2.0). La web los usa
+  solo si el complemento está (`entrarNativo` en `index.html`); en las
+  versiones anteriores esconde los dos botones. Pasos en
+  `docs/ENTRAR-CON-GOOGLE-Y-APPLE.md`, sección "App de iPhone".
 - **Pedido de reseña de la App Store** con la ventanita oficial de Apple
   (plugin `@capacitor-community/in-app-review`, desde el 28/10/2026). La web
   lo llama después de un trabajo pagado o de una calificación de 4 o 5
   estrellas, como mucho una vez cada 4 meses (`pedirResenaTienda` en
   `index.html`). Hasta que no se suba una build nueva, la web no hace nada.
 
-Datos fijos: bundle `ar.com.trattoapp`, versión 1.0.0, solo iPhone, iOS 15+.
+Datos fijos: bundle `ar.com.trattoapp`, solo iPhone, iOS 15+.
 La app carga la web en vivo, así que los cambios de la web llegan sin subir
 una versión nueva. Solo hace falta una build nueva si cambia algo nativo.
 
@@ -51,7 +56,8 @@ iPhone y para mandar a revisión.
 Cuando Apple aprueba una versión, no acepta más compilaciones con ese número
 (error 90062 / 90186 al publicar): hay que subir `MARKETING_VERSION` en
 `ios/App/App.xcodeproj/project.pbxproj` (1.0.0 aprobada en octubre de 2026;
-1.1.0 trae entrar con Apple y el pedido de reseña). El número de build lo
+1.1.0, con el pedido de reseña, publicada el 30/10/2026; 1.2.0 trae entrar con
+Apple y con Google nativos). El número de build lo
 pone solo el workflow.
 
 ## Probar las notificaciones
