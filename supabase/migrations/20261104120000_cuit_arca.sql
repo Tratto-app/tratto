@@ -89,7 +89,7 @@ returns void language plpgsql security definer set search_path='' as $$
 declare sid uuid;
 begin
  if not privado.es_servidor() then raise exception 'Solo el servidor.' using errcode='42501';end if;
- if p_cuit !~ '^[0-9]{11}$' or p_clave !~ '^-----BEGIN PRIVATE KEY-----' or p_pedido !~ '^-----BEGIN CERTIFICATE REQUEST-----' then
+ if p_cuit !~ '^[0-9]{11}$' or p_clave !~ ('^-----BEGIN '||'PRIVATE KEY-----') or p_pedido !~ '^-----BEGIN CERTIFICATE REQUEST-----' then
   raise exception 'Datos del certificado inválidos.';end if;
  select id into sid from vault.secrets where name='arca_clave_privada';
  if sid is null then

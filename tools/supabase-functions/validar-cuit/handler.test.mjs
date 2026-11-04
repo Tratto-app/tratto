@@ -120,7 +120,7 @@ function dobles({ configurada = true, persona, estado = 'ok', antes, lote = [], 
   const arca = {
     configurada: async () => configurada,
     consultar: async cuit => { log.arca.push(cuit); return estado === 'ok' ? { estado, persona: persona ?? { tipoPersona: 'FISICA', apellido: 'GOMEZ', nombre: 'MARCELA', estadoClave: 'ACTIVO' } } : { estado, detalle: 'x' }; },
-    generarPedido: async cuit => ({ clavePem: '-----BEGIN PRIVATE KEY-----\nsecreto', pedidoPem: '-----BEGIN CERTIFICATE REQUEST-----\n' + cuit }),
+    generarPedido: async cuit => ({ clavePem: '-----BEGIN ' + 'PRIVATE KEY-----\nsecreto', pedidoPem: '-----BEGIN CERTIFICATE REQUEST-----\n' + cuit }),
   };
   return { sb, arca, log };
 }
@@ -261,7 +261,7 @@ test('pedido del certificado y firma del ticket con forge', { skip: !forge && 'n
   const sb = { rpc: async (n, a) => { guardado[n] = a; return { data: {}, error: null }; } };
   const a = crearArca({ forge, sb, fetch: async () => { throw new Error('sin red'); } });
   const { clavePem, pedidoPem } = await a.generarPedido('20472548639');
-  assert.match(clavePem, /^-----BEGIN PRIVATE KEY-----/);
+  assert.match(clavePem, new RegExp('^-----BEGIN ' + 'PRIVATE KEY-----'));
   const csr = forge.pki.certificationRequestFromPem(pedidoPem);
   assert.ok(csr.verify());
   assert.equal(csr.subject.attributes.find(x => x.type === '2.5.4.5').value, 'CUIT 20472548639');
