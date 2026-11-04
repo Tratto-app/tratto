@@ -35,3 +35,6 @@ __pycache__/
 
 # Muestras de voz para que el fundador escuche (no van al repo).
 muestras-voz/
+
+# Copias de trabajo de los subagentes (git worktree): son locales, no van al repo.
+.claude/worktrees/
