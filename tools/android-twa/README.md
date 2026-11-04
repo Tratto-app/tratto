@@ -7,7 +7,7 @@ del paquete (ícono, nombre, colores, permisos).
 
 - Paquete: `ar.com.trattoapp` (no se puede cambiar una vez publicado).
 - La versión está en `twa-manifest.json` (`appVersionName` y `appVersionCode`;
-  hoy 1.0.1, versionCode 2). Cada subida a Play necesita un versionCode mayor.
+  hoy 1.0.2, versionCode 3). Cada subida a Play necesita un versionCode mayor.
 - targetSdk 36, minSdk 23. Notificaciones habilitadas (se delegan a la web).
 
 ## La clave de firma

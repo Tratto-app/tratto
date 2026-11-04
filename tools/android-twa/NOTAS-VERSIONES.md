@@ -4,6 +4,23 @@ Lo que cambió en la app entre una versión subida a Play y la siguiente, con de
 dónde salió cada cambio. Sirve para las notas de la versión y para contestar el
 pedido de acceso a producción con lo que pasó de verdad.
 
+## 1.0.2 (versionCode 3) · lista el 04/11/2026
+
+- CUIL/CUIT con ARCA (04/11/2026): quien ofrece servicios elige "Por mi
+  cuenta" o "Con una empresa", escribe el nombre y el CUIL o CUIT, y solo
+  puede seguir si coinciden con el padrón de ARCA. Su perfil muestra "CUIL
+  verificado" (o "CUIT verificado"). De dónde salió: el fundador pidió
+  reemplazar la foto del DNI por algo que se pueda comprobar.
+- Entrar con Google con el botón oficial (04/11/2026): la ventana de Google
+  dice trattoapp.com.ar y no la dirección técnica de Supabase, que generaba
+  desconfianza (fundador).
+- Entrar con Apple anda en la web, y por lo tanto en esta app (04/11/2026).
+
+Nota para Play (219 caracteres, humanizador 15 %, solo por las siglas): "Quienes
+ofrecen servicios ahora confirman su CUIL o CUIT con ARCA al registrarse, y su
+perfil muestra CUIL verificado. Al entrar con Google, la ventana dice
+trattoapp.com.ar. Y ya se puede entrar con tu cuenta de Apple."
+
 ## 1.0.1 (versionCode 2) · lista el 30/10/2026
 
 - Registro más claro (23/10/2026): al crear la cuenta lo primero es
