@@ -2,25 +2,10 @@
 -- "CUIL verificado" para personas, "CUIT verificado" para empresas) y una
 -- consulta pública para que el registro sepa si el chequeo con ARCA ya está
 -- andando: sin certificado cargado, la app no promete un chequeo que no hace.
-
-alter table public.distintivos drop constraint distintivos_tipo_check;
-alter table public.distintivos add constraint distintivos_tipo_check check(tipo in('identidad','cuit','cuil'));
-
-create or replace function public.cuit_marcar_verificado(p_user uuid,p_cuit text,p_tipo text)
-returns void language plpgsql security definer set search_path='' as $$
-declare sello text := case when p_tipo='empresa' then 'cuit' else 'cuil' end;
-begin
- if not privado.es_servidor() then raise exception 'Solo el servidor.' using errcode='42501';end if;
- insert into privado.cuit_estado(user_id,resultado,cuit,tipo,intentos,proximo,updated_at)
- values(p_user,'coincide',p_cuit,p_tipo,0,null,now())
- on conflict(user_id) do update set resultado='coincide',cuit=excluded.cuit,tipo=excluded.tipo,
-  intentos=0,proximo=null,updated_at=now();
- delete from public.distintivos where user_id=p_user and tipo in('cuit','cuil') and tipo<>sello;
- insert into public.distintivos(user_id,tipo,desde) values(p_user,sello,current_date)
- on conflict(user_id,tipo) do nothing;
-end $$;
-revoke all on function public.cuit_marcar_verificado(uuid,text,text) from public,anon,authenticated;
-grant execute on function public.cuit_marcar_verificado(uuid,text,text) to service_role;
+--
+-- El distintivo sigue siendo uno solo (tipo 'cuit'); si es de persona o de
+-- empresa sale de privado.cuit_estado. Así no hace falta tocar la regla de
+-- la tabla de distintivos.
 
 create function public.cuit_verificacion_activa()
 returns boolean language sql stable security definer set search_path='' as $$
@@ -29,3 +14,14 @@ returns boolean language sql stable security definer set search_path='' as $$
 $$;
 revoke all on function public.cuit_verificacion_activa() from public;
 grant execute on function public.cuit_verificacion_activa() to anon,authenticated;
+
+-- Para la ficha pública: 'cuil' (persona) o 'cuit' (empresa) de quienes
+-- tienen el sello. Es lo mismo que ya muestra el sello; no expone el número.
+create function public.sello_fiscal(p_user uuid)
+returns text language sql stable security definer set search_path='' as $$
+ select case when e.tipo='empresa' then 'cuit' else 'cuil' end
+ from public.distintivos d join privado.cuit_estado e on e.user_id=d.user_id and e.resultado='coincide'
+ where d.user_id=p_user and d.tipo='cuit';
+$$;
+revoke all on function public.sello_fiscal(uuid) from public;
+grant execute on function public.sello_fiscal(uuid) to anon,authenticated;
