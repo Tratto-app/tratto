@@ -1,0 +1,139 @@
+<!doctype html><html lang="es"><head><meta charset="utf-8">
+<title>Carrusel · ¿Vendés por redes? Listo antes de diciembre</title>
+<!-- Carrusel guardable (3/11/2026, para el viernes 6/11 18:00 en TikTok). Mismo molde que la mudanza (una
+     situación, cada cosa con su precio), para quien tiene un emprendimiento y vende por redes en las fiestas:
+     rubros Diseño gráfico, Fotografía y video y Marketing y redes sociales. Portada nueva: una nota adhesiva con
+     la lista sin tildar. Precios de precios_referencia con el ajuste mensual del 2 % de la calculadora y su
+     redondeo, a nov-2026.
+     Exportar: python3 render-carrusel.py emprendimiento-diciembre.html carrusel-emprende-tt --red tiktok
+               python3 render-carrusel.py emprendimiento-diciembre.html carrusel-emprende   (Instagram) -->
+<link rel="stylesheet" href="carrusel.css">
+<link rel="stylesheet" href="molde.css">
+<style>
+/* 1 · portada: nota adhesiva */
+.uno .chico{font:600 28px/1.25 'IBM Plex Mono',monospace;letter-spacing:.14em;text-transform:uppercase;color:var(--verde)}
+.uno h1{font:700 112px/.95 'IBM Plex Sans Condensed',sans-serif;letter-spacing:-.02em;margin:20px 0 50px}
+.uno h1 em{font-style:normal;color:var(--verde-vivo)}
+.nota{align-self:flex-start;width:860px;background:#F7E7A6;border-radius:6px;padding:46px 54px 50px;transform:rotate(-2.2deg);
+  box-shadow:0 28px 50px rgba(90,70,10,.22), inset 0 -10px 0 rgba(138,110,16,.08);position:relative}
+.nota::before{content:"";position:absolute;top:-26px;left:50%;width:220px;height:52px;transform:translateX(-50%) rotate(2deg);background:rgba(255,255,255,.55);border-radius:4px}
+.nota .t{font:600 30px/1 'IBM Plex Mono',monospace;letter-spacing:.12em;text-transform:uppercase;color:var(--laton-osc);margin-bottom:24px}
+.nota .item{display:flex;align-items:center;gap:26px;font:600 50px/1.45 'IBM Plex Sans',sans-serif;color:#3A2F08}
+.nota .item span{flex:none;width:46px;height:46px;border:5px solid #8A6E10;border-radius:10px}
+</style></head><body>
+
+<!-- 1 · PORTADA -->
+<section class="placa uno"><div class="cont">
+  <div class="medio">
+    <div class="chico">Emprendimientos · precios de noviembre</div>
+    <h1>¿Vendés por redes? <em>Tenelo listo antes de diciembre.</em></h1>
+    <div class="nota">
+      <div class="t">Pendientes · desde $17.000</div>
+      <div class="item"><span></span>Logo</div>
+      <div class="item"><span></span>Fotos de los productos</div>
+      <div class="item"><span></span>Flyer para las fiestas</div>
+      <div class="item"><span></span>Posteos del mes</div>
+      <div class="item"><span></span>Alguien para las redes</div>
+    </div>
+  </div>
+  <div class="pie"><span class="web">trattoapp.com.ar</span><span class="desliza">Guardalo · Deslizá →</span></div>
+</div></section>
+
+<!-- 2 · TRES DATOS -->
+<section class="placa dos"><div class="cont">
+  <div class="medio">
+    <h2>Antes de pedir, tené estos 3 datos.</h2>
+    <p class="bajada">Así te pasan un precio que se puede comparar.</p>
+    <div class="datos">
+      <div class="tarjeta dato"><span class="n">1</span><p>Qué vendés y a quién</p></div>
+      <div class="tarjeta dato"><span class="n">2</span><p>Para cuándo lo necesitás</p></div>
+      <div class="tarjeta dato"><span class="n">3</span><p>Qué ya tenés: logo, fotos o colores</p></div>
+    </div>
+    <p class="despues">Cada cosa con su precio. La 3 es la más barata de la lista →</p>
+  </div>
+  <div class="pie"><span class="web">trattoapp.com.ar</span><span class="desliza">Deslizá →</span></div>
+</div></section>
+
+<!-- 3 · LOGO -->
+<section class="placa"><div class="cont">
+  <div class="medio">
+    <div class="paso"><div class="ico grande"><i data-ico="lapiz" data-px="92"></i></div><h2><span class="num">1.</span>El logo.</h2></div>
+    <div class="tarjeta precio"><div class="que">Diseño de logo</div><div class="rango">$92.000 a $345.000</div></div>
+    <div class="consejo"><div class="ico chico"><i data-ico="check" data-px="52"></i></div><p>Pedí <b>los archivos editables y un PNG con fondo transparente.</b></p></div>
+  </div>
+  <div class="pie"><span class="fuente">Precios de referencia · AMBA · nov-2026</span></div>
+</div></section>
+
+<!-- 4 · FOTOS -->
+<section class="placa"><div class="cont">
+  <div class="medio">
+    <div class="paso"><div class="ico grande"><i data-ico="camara" data-px="92"></i></div><h2><span class="num">2.</span>Las fotos.</h2></div>
+    <div class="tarjeta precio chica"><div class="que">Una foto o un video de contenido</div><div class="rango">$23.000 a $63.000</div></div>
+    <div class="tarjeta precio chica"><div class="que">Sesión de fotos</div><div class="rango">$92.000 a $207.000</div></div>
+    <div class="consejo"><div class="ico chico"><i data-ico="check" data-px="52"></i></div><p>Decí cuántos productos son y <b>si van sobre fondo liso o en uso.</b></p></div>
+  </div>
+  <div class="pie"><span class="fuente">Precios de referencia · AMBA · nov-2026</span></div>
+</div></section>
+
+<!-- 5 · FLYER -->
+<section class="placa"><div class="cont">
+  <div class="medio">
+    <div class="paso"><div class="ico grande"><i data-ico="megafono" data-px="92"></i></div><h2><span class="num">3.</span>El flyer.</h2></div>
+    <div class="tarjeta precio"><div class="que">Flyer o pieza suelta</div><div class="rango">$17.000 a $46.000</div></div>
+    <div class="consejo"><div class="ico chico"><i data-ico="check" data-px="52"></i></div><p>Pedí <b>la versión para historia y la versión para publicación.</b></p></div>
+  </div>
+  <div class="pie"><span class="fuente">Precios de referencia · AMBA · nov-2026</span></div>
+</div></section>
+
+<!-- 6 · POSTEOS -->
+<section class="placa"><div class="cont">
+  <div class="medio">
+    <div class="paso"><div class="ico grande"><i data-ico="celular" data-px="92"></i></div><h2><span class="num">4.</span>Posteos del mes.</h2></div>
+    <div class="tarjeta precio"><div class="que">Pack mensual de posteos para redes</div><div class="rango">$103.000 a $287.000</div></div>
+    <div class="consejo"><div class="ico chico"><i data-ico="check" data-px="52"></i></div><p>Preguntá <b>cuántos posteos incluye</b> y si suma historias.</p></div>
+  </div>
+  <div class="pie"><span class="fuente">Precios de referencia · AMBA · nov-2026</span></div>
+</div></section>
+
+<!-- 7 · REDES -->
+<section class="placa"><div class="cont">
+  <div class="medio">
+    <div class="paso"><div class="ico grande"><i data-ico="chat" data-px="92"></i></div><h2 style="font-size:90px"><span class="num">5.</span>Alguien para las redes.</h2></div>
+    <div class="tarjeta precio chica"><div class="que">Community manager, 1 red (por mes)</div><div class="rango">$126.000 a $230.000</div></div>
+    <div class="tarjeta precio chica"><div class="que">Community manager, 2 redes (por mes)</div><div class="rango">$230.000 a $437.000</div></div>
+    <div class="consejo"><div class="ico chico"><i data-ico="check" data-px="52"></i></div><p>Preguntá <b>si contesta mensajes</b> y si te pasa un resumen del mes.</p></div>
+  </div>
+  <div class="pie"><span class="fuente">Precios de referencia · AMBA · nov-2026</span></div>
+</div></section>
+
+<!-- 8 · RESUMEN -->
+<section class="placa blanca resumen"><div class="cont">
+  <div class="medio">
+    <h2>Tu emprendimiento, en una foto</h2>
+    <div class="tabla">
+      <div class="f"><span>Logo</span><b>$92k a $345k</b></div>
+      <div class="f"><span>Foto o video de contenido</span><b>$23k a $63k</b></div>
+      <div class="f"><span>Sesión de fotos</span><b>$92k a $207k</b></div>
+      <div class="f"><span>Flyer</span><b>$17k a $46k</b></div>
+      <div class="f"><span>Posteos del mes</span><b>$103k a $287k</b></div>
+      <div class="f"><span>Redes, 1 red (por mes)</span><b>$126k a $230k</b></div>
+    </div>
+    <p class="manda">Precios de noviembre. Sacale captura o mandásela a quien vende por redes.</p>
+  </div>
+  <div class="pie"><span class="web">trattoapp.com.ar</span></div>
+</div></section>
+
+<!-- 9 · CIERRE -->
+<section class="placa noche cierre"><div class="cont">
+  <div class="medio">
+    <h2>Para diciembre, pedilo en noviembre.</h2>
+    <p class="bajada">En Tratto contás qué necesita tu emprendimiento y te llegan presupuestos de quienes hacen diseño, fotos y redes en tu zona.</p>
+    <div><span class="url-caja"><span id="logo-url"></span><span data-tiktok="trattoapp.com.ar/r/tt-emprende">trattoapp.com.ar/r/ig-emprende</span></span></div>
+    <p class="bio" data-tiktok="(escribilo en el navegador)">Tocá @trattoapp_ · link «Pedí un servicio»</p>
+    <div class="gratis"><span class="sello">Gratis para el que pide</span></div>
+  </div>
+</div></section>
+
+<script src="carrusel.js"></script>
+<script>document.getElementById('logo-url').outerHTML = LOGO(46, 'lu');</script>
+</body></html>

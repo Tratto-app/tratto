@@ -1,0 +1,141 @@
+<!doctype html><html lang="es"><head><meta charset="utf-8">
+<title>Carrusel · Contestá un pedido en 4 renglones</title>
+<!-- Carrusel guardable para quienes ofrecen servicios (3/11/2026, para el miércoles 4/11 18:00 en TikTok).
+     Una plantilla para contestar un pedido en cualquier rubro (pilar "Para quienes ofrecen servicios":
+     presupuestar mejor). Portada nueva: un número gigante sobre latón claro. Los mensajes son un ejemplo,
+     marcados como tal; el precio del ejemplo está dentro del rango de referencia de noviembre para una clase
+     de inglés para un examen ($27.000 a $38.000 la hora, precios_referencia con el ajuste de la calculadora).
+     Exportar: python3 render-carrusel.py contestar-pedido.html carrusel-renglones-tt --red tiktok
+               python3 render-carrusel.py contestar-pedido.html carrusel-renglones   (Instagram) -->
+<link rel="stylesheet" href="carrusel.css">
+<link rel="stylesheet" href="molde.css">
+<style>
+/* 1 · portada: número gigante */
+.placa.latonada{background:var(--laton-claro)}
+.placa.latonada .pano{opacity:.35}
+.uno .grilla{display:flex;align-items:flex-end;gap:34px}
+.uno .cuatro{font:700 600px/.74 'IBM Plex Sans Condensed',sans-serif;color:var(--verde);letter-spacing:-.04em;margin-left:-12px}
+.uno .lado{padding-bottom:18px}
+.uno .chico{font:600 28px/1.25 'IBM Plex Mono',monospace;letter-spacing:.14em;text-transform:uppercase;color:var(--laton-osc)}
+.uno h1{font:700 104px/.95 'IBM Plex Sans Condensed',sans-serif;letter-spacing:-.02em;color:var(--tinta);margin-top:20px}
+.uno .sub{font:500 44px/1.3 'IBM Plex Sans',sans-serif;color:var(--tinta-2);margin-top:56px;max-width:900px}
+.uno .sub b{font-weight:600;color:var(--verde-vivo)}
+
+/* renglones */
+.renglon{font:600 30px/1 'IBM Plex Mono',monospace;letter-spacing:.14em;text-transform:uppercase;color:var(--laton-osc)}
+.titular{font:700 100px/1 'IBM Plex Sans Condensed',sans-serif;letter-spacing:-.02em;margin-top:18px}
+.mala{background:#FBEDEA;border:3px solid #E9C3BB;color:#5A2B22}
+.etq-mala{display:inline-block;font:600 26px/1 'IBM Plex Mono',monospace;letter-spacing:.14em;text-transform:uppercase;color:#8E3B2C;background:#FBEDEA;border-radius:999px;padding:12px 22px}
+.explica{font:500 46px/1.32 'IBM Plex Sans',sans-serif;color:var(--tinta-2);margin-top:48px}
+.explica b{font-weight:600;color:var(--tinta)}
+
+/* plantilla */
+.plantilla{margin-top:34px;display:flex;flex-direction:column;gap:22px}
+.plantilla p{font:500 44px/1.32 'IBM Plex Sans',sans-serif;padding-left:30px;border-left:8px solid var(--verde-luz)}
+.plantilla span{font:600 40px/1 'IBM Plex Mono',monospace;color:var(--verde-vivo);background:var(--verde-claro);border-radius:10px;padding:2px 10px;letter-spacing:-.02em}
+</style></head><body>
+
+<!-- 1 · PORTADA -->
+<section class="placa latonada uno"><div class="cont">
+  <div class="medio">
+    <div class="grilla">
+      <div class="cuatro">4</div>
+      <div class="lado">
+        <div class="chico">Si ofrecés un servicio</div>
+        <h1>renglones para contestar un pedido</h1>
+      </div>
+    </div>
+    <p class="sub">Sirve para <b>cualquier rubro</b>: clases, eventos, belleza, autos o la casa. El 2 es el que evita el «eso era aparte».</p>
+  </div>
+  <div class="pie"><span class="web">trattoapp.com.ar</span><span class="desliza">Guardalo · Deslizá →</span></div>
+</div></section>
+
+<!-- 2 · EL PROBLEMA -->
+<section class="placa"><div class="cont">
+  <div class="medio">
+    <div class="titular" style="margin-top:0">Un número solo no se puede comparar.</div>
+    <div style="margin-top:50px"><span class="etq-mala">Así no</span></div>
+    <div class="mensaje mala">Hola, sale 45 mil. Avisame.</div>
+    <p class="explica">Quien pide recibe varias respuestas y las mira una al lado de la otra. Si la tuya es solo un número, <b>tiene que volver a preguntarte todo.</b></p>
+    <p class="explica" style="margin-top:30px;color:var(--laton-osc);font-weight:600">En la 7 está la plantilla para copiar →</p>
+  </div>
+  <div class="pie"><span class="web">trattoapp.com.ar</span><span class="desliza">Deslizá →</span></div>
+</div></section>
+
+<!-- 3 · RENGLÓN 1 -->
+<section class="placa"><div class="cont">
+  <div class="medio">
+    <div class="renglon">Renglón 1</div>
+    <div class="titular">Saludo y lo que entendiste.</div>
+    <div style="margin-top:44px"><span class="ejemplo-etq">Ejemplo · clase de inglés</span></div>
+    <div class="tarjeta mensaje">Hola, Laura. Entendí que querés <b>clases de inglés para rendir en diciembre</b>, dos por semana.</div>
+    <div class="consejo"><div class="ico chico"><i data-ico="check" data-px="52"></i></div><p>Así sabe que <b>leíste el pedido</b> y que no es una respuesta copiada.</p></div>
+  </div>
+  <div class="pie"><span class="web">trattoapp.com.ar</span><span class="desliza">Deslizá →</span></div>
+</div></section>
+
+<!-- 4 · RENGLÓN 2 -->
+<section class="placa"><div class="cont">
+  <div class="medio">
+    <div class="renglon">Renglón 2</div>
+    <div class="titular">Qué incluye y qué no.</div>
+    <div style="margin-top:44px"><span class="ejemplo-etq">Ejemplo · clase de inglés</span></div>
+    <div class="tarjeta mensaje">Incluye <b>el material y una prueba de práctica por semana</b>. No incluye la inscripción al examen.</div>
+    <div class="consejo"><div class="ico chico"><i data-ico="check" data-px="52"></i></div><p>Es el renglón que evita el <b>«eso era aparte»</b>.</p></div>
+  </div>
+  <div class="pie"><span class="web">trattoapp.com.ar</span><span class="desliza">Deslizá →</span></div>
+</div></section>
+
+<!-- 5 · RENGLÓN 3 -->
+<section class="placa"><div class="cont">
+  <div class="medio">
+    <div class="renglon">Renglón 3</div>
+    <div class="titular">El precio y qué lo cambia.</div>
+    <div style="margin-top:44px"><span class="ejemplo-etq">Ejemplo · clase de inglés</span></div>
+    <div class="tarjeta mensaje">Cada clase de una hora sale <b>$30.000</b>. Si querés sumar una tercera por semana, lo vemos.</div>
+    <div class="consejo"><div class="ico chico"><i data-ico="check" data-px="52"></i></div><p>Si no podés dar un número cerrado, <b>da un rango y decí de qué depende.</b></p></div>
+  </div>
+  <div class="pie"><span class="fuente">Referencia · inglés para un examen: $27.000 a $38.000 la hora · AMBA · nov-2026</span></div>
+</div></section>
+
+<!-- 6 · RENGLÓN 4 -->
+<section class="placa"><div class="cont">
+  <div class="medio">
+    <div class="renglon">Renglón 4</div>
+    <div class="titular">Cuándo podés y hasta cuándo vale.</div>
+    <div style="margin-top:44px"><span class="ejemplo-etq">Ejemplo · clase de inglés</span></div>
+    <div class="tarjeta mensaje">Puedo arrancar el <b>martes 10, martes y jueves a las 18</b>. El precio vale hasta el 30/11.</div>
+    <div class="consejo"><div class="ico chico"><i data-ico="check" data-px="52"></i></div><p>Con una fecha concreta, <b>la persona sabe qué está eligiendo.</b></p></div>
+  </div>
+  <div class="pie"><span class="web">trattoapp.com.ar</span><span class="desliza">Deslizá →</span></div>
+</div></section>
+
+<!-- 7 · PLANTILLA -->
+<section class="placa blanca resumen"><div class="cont">
+  <div class="medio">
+    <h2>Copiá y completá:</h2>
+    <div class="plantilla">
+      <p>Hola, <span>nombre</span>. Entendí que necesitás <span>lo que pidió</span>.</p>
+      <p>Incluye <span>esto</span>. No incluye <span>esto otro</span>.</p>
+      <p>Sale <span>precio o rango</span>. Puede cambiar si <span>tal cosa</span>.</p>
+      <p>Puedo <span>día y horario</span>. Vale hasta <span>fecha</span>.</p>
+    </div>
+    <p class="manda">Sacale captura o mandásela a un colega.</p>
+  </div>
+  <div class="pie"><span class="web">trattoapp.com.ar</span></div>
+</div></section>
+
+<!-- 8 · CIERRE -->
+<section class="placa noche cierre"><div class="cont">
+  <div class="medio">
+    <h2>Pedidos de tu zona, sin abono.</h2>
+    <p class="bajada">Tratto te avisa al celular cuando alguien de tu zona pide lo que hacés, en más de 40 rubros. Registrarte es gratis: se cobra el 3 % solo cuando cobrás por la app.</p>
+    <div><span class="url-caja"><span id="logo-url"></span><span data-tiktok="trattoapp.com.ar/r/tt-renglones">trattoapp.com.ar/r/ig-renglones</span></span></div>
+    <p class="bio" data-tiktok="(escribilo en el navegador)">Tocá @trattoapp_ · link «Ofrezco un servicio»</p>
+    <div class="gratis"><span class="sello">Sin abono mensual</span></div>
+  </div>
+</div></section>
+
+<script src="carrusel.js"></script>
+<script>document.getElementById('logo-url').outerHTML = LOGO(46, 'lu');</script>
+</body></html>

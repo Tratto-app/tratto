@@ -58,6 +58,20 @@
     cajon: '<rect x="8" y="12" width="48" height="40" rx="4"/><path d="M8 32h48"/><path d="M27 22h10M27 42h10"/>',
     silla: '<path d="M20 8v48"/><path d="M46 38v18"/><rect x="18" y="30" width="32" height="8" rx="3"/>',
     cerradura: '<rect x="18" y="8" width="28" height="48" rx="6"/><circle cx="32" cy="28" r="5"/><path d="M32 33v10"/>',
+    // mascotas, campera, belleza, emprendimiento y preguntas antes de aceptar (3/11/2026)
+    valija: '<rect x="8" y="20" width="48" height="34" rx="6"/><path d="M24 20v-7h16v7"/><path d="M20 20v34M44 20v34"/>',
+    tijera: '<circle cx="18" cy="46" r="8"/><circle cx="46" cy="46" r="8"/><path d="M23 40L48 10M41 40L16 10"/>',
+    cierre: '<path d="M32 6v52"/><path d="M26 12h12M26 20h12M26 28h12"/><rect x="25" y="34" width="14" height="12" rx="3"/>',
+    pincel: '<path d="M44 8l12 12-22 22-12-12z"/><path d="M22 30c-7 0-11 5-11 11 0 5-3 9-5 11 9 0 20-2 24-9"/>',
+    celular: '<rect x="18" y="6" width="28" height="52" rx="6"/><path d="M28 50h8"/>',
+    megafono: '<path d="M10 26v12h10l20 12V14L20 26z"/><path d="M48 24c3 2 5 5 5 8s-2 6-5 8"/>',
+    lapiz: '<path d="M14 50l4-14 26-26 10 10-26 26z"/><path d="M38 16l10 10"/>',
+    hoja: '<path d="M12 52C12 26 28 12 54 10c-2 26-16 42-42 42z"/><path d="M12 52L36 28"/>',
+    estrella: '<path d="M32 6c2 14 6 18 20 20-14 2-18 6-20 20-2-14-6-18-20-20 14-2 18-6 20-20z"/>',
+    pin: '<path d="M32 58S14 38 14 25a18 18 0 0 1 36 0c0 13-18 33-18 33z"/><circle cx="32" cy="25" r="6"/>',
+    caja: '<path d="M8 20l24-12 24 12v26L32 58 8 46z"/><path d="M8 20l24 12 24-12M32 32v26"/>',
+    volver: '<path d="M48 22A20 20 0 1 0 52 36"/><path d="M50 10v13H37"/>',
+    tarjeta: '<rect x="6" y="14" width="52" height="36" rx="5"/><path d="M6 24h52M14 40h12"/>',
   };
   const icono = (n, px = 64, color = 'currentColor', grosor = 4) =>
     `<svg width="${px}" height="${px}" viewBox="0 0 64 64" fill="none" stroke="${color}" stroke-width="${grosor}" stroke-linecap="round" stroke-linejoin="round">${ICONOS[n]}</svg>`;

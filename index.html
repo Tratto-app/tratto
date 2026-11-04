@@ -1132,6 +1132,46 @@
     border:none;cursor:pointer;padding:8px 0;display:inline-flex;align-items:center;gap:7px}
   .cambiar-modo svg{width:15px;height:15px}
 
+  /* ═══════════ CUIL O CUIT CON ARCA ═══════════
+     Quien ofrece servicios dice si trabaja por su cuenta o con una empresa, y
+     el nombre y el número quedan unidos por un hilo que se pone de latón cuando
+     ARCA confirma que van juntos: la confianza se ve, no se explica. Reemplaza
+     a la foto del DNI (fundador, 04/11/2026). */
+  .ident-elige{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-bottom:12px}
+  .ident-op{font:inherit;text-align:left;cursor:pointer;color:var(--tinta);background:var(--claro);
+    border:1px solid var(--linea-fuerte);border-radius:var(--r);padding:11px 12px;font-size:14px;
+    font-weight:600;line-height:1.3;transition:border-color .15s,background .15s,color .15s}
+  .ident-op small{display:block;font-weight:400;font-size:11.5px;color:var(--gris);margin-top:2px}
+  .ident-op[aria-checked="true"]{border:1.5px solid var(--verde);background:rgba(30,93,73,.06);color:var(--verde)}
+  .ident-op:focus-visible{outline:2px solid var(--verde-vivo);outline-offset:2px}
+  .ident-intro{font-size:12.5px;color:var(--gris);line-height:1.45;margin:0 0 16px}
+  .ident-par.con-hilo{padding-left:20px}
+  .ident-par.con-hilo > .campo{position:relative}
+  .ident-par.con-hilo > .campo::before{content:'';position:absolute;left:-19px;top:46px;width:8px;height:8px;
+    border-radius:50%;background:var(--claro);border:2px solid var(--linea-fuerte);transition:background .25s,border-color .25s}
+  .ident-par.con-hilo > .campo:first-child::after{content:'';position:absolute;left:-14px;top:52px;bottom:-71px;
+    width:2px;border-radius:2px;background:var(--linea-fuerte);transition:background .25s}
+  .ident-par.revisa > .campo:first-child::after{background:linear-gradient(180deg,var(--verde-luz),var(--linea-fuerte))}
+  .ident-par.ok > .campo:first-child::after{background:linear-gradient(180deg,var(--verde),var(--laton))}
+  .ident-par.ok > .campo::before{border-color:var(--laton);background:var(--laton)}
+  .ident-par.ok input{border-color:rgba(30,93,73,.55)}
+  .ident-par.no > .campo:first-child::after{background:var(--alerta);opacity:.5}
+  .ident-par.no > .campo::before{border-color:var(--alerta)}
+  .ident-par.no input{border-color:var(--alerta);background:#FEFAF8}
+  .ident-estado{margin:-6px 0 19px 20px;font-size:12.5px;line-height:1.45}
+  .ident-estado.mal{color:var(--alerta);font-weight:500}
+  .ident-estado.nota{color:var(--gris)}
+  .ident-estado a{color:inherit;font-weight:600}
+  .ident-estado .sello{font-size:9.5px;padding:5px 10px}
+  .sello .punto{display:inline-block;width:7px;height:7px;border-radius:50%;background:var(--verde-vivo);
+    margin-right:6px;vertical-align:0;animation:latir 1s ease-in-out infinite}
+  @keyframes latir{50%{opacity:.3}}
+  @media (prefers-reduced-motion:reduce){.sello .punto{animation:none}}
+  input.mono{font-family:'IBM Plex Mono',monospace;letter-spacing:.04em}
+  /* En la tapa oscura de la ficha el latón va claro, como un sello en relieve. */
+  .sello-fiscal{color:var(--laton);border:1px solid rgba(201,162,39,.6);background:rgba(201,162,39,.12)}
+  .cuil-aviso{border-color:rgba(201,162,39,.55)}
+
   /* ═══════════ PERFIL PÚBLICO DEL PROVEEDOR ═══════════ */
   .pp-tapa{background:var(--noche);color:var(--claro);margin:-22px -16px 0;
     padding:calc(var(--st) + 26px) 20px 22px;position:relative;overflow:hidden}
@@ -1559,6 +1599,37 @@
   </div>
 </div>
 
+<!-- ═══════════ CONFIRMAR CUIL O CUIT (cuentas que ya estaban) ═══════════ -->
+<!-- La misma pareja nombre + número del registro, con su hilo. El nombre que
+     ven los clientes no cambia: esto solo confirma la identidad fiscal. -->
+<div class="telon" id="telon-cuil">
+  <div class="hoja">
+    <div class="hoja-tit">Confirmá tu CUIL o CUIT</div>
+    <div class="hoja-txt">Lo chequeamos con ARCA en el momento. No tenés que sacarle foto a nada y el nombre que ven los clientes no cambia.</div>
+    <div class="ident-elige" style="margin-top:16px" role="radiogroup" aria-label="Cómo trabajás">
+      <button class="ident-op" type="button" role="radio" aria-checked="true" data-cc-ident="persona">Por mi cuenta<small>Con tu CUIL o CUIT</small></button>
+      <button class="ident-op" type="button" role="radio" aria-checked="false" data-cc-ident="empresa">Con una empresa<small>Con el CUIT de la empresa</small></button>
+    </div>
+    <div class="ident-par con-hilo" id="cc-par" style="margin-top:8px">
+      <div class="campo">
+        <label for="cc-nombre" id="cc-nombre-label">Nombre y apellido</label>
+        <input id="cc-nombre" type="text" maxlength="120" autocomplete="name">
+        <div class="ayuda" id="cc-nombre-ayuda">Como figura en tu DNI.</div>
+      </div>
+      <div class="campo">
+        <label for="cc-cuit" id="cc-cuit-label">Tu CUIL o CUIT</label>
+        <input id="cc-cuit" class="mono" type="text" inputmode="numeric" maxlength="13" placeholder="20-12345678-6" autocomplete="off">
+      </div>
+    </div>
+    <div class="ident-estado oculto" id="cc-estado" aria-live="polite"></div>
+    <div class="presu-acciones">
+      <button class="btn vacio-b" id="cc-cancelar" type="button" style="flex:1">Ahora no</button>
+      <button class="btn lleno" id="cc-confirmar" type="button" style="flex:1">
+        <span class="rueda"></span><span id="cc-txt">Confirmar</span></button>
+    </div>
+  </div>
+</div>
+
 <!-- ═══════════ A DÓNDE VAN LOS DATOS ═══════════ -->
 <!-- Este permiso no es opcional como el de la IA: sin estos servicios la app no
      existe. Por eso la hoja no ofrece un "ahora no" que seria mentira; dice que
@@ -1836,11 +1907,36 @@
           </div>
         </div>
 
-        <div class="campo oculto" id="a-nombre-caja">
-          <label for="a-nombre">Tu nombre</label>
-          <input id="a-nombre" type="text" autocomplete="name" maxlength="60" placeholder="Ej: Raúl Gómez">
-          <div class="ayuda" id="a-nombre-ayuda">Es como te van a ver quienes ofrecen los servicios.</div>
-          <div class="err" id="e-a-nombre">Escribí tu nombre.</div>
+        <!-- Quien ofrece servicios confirma su nombre con su CUIL o CUIT (o la
+             razón social con el CUIT de la empresa) contra ARCA, en vez de
+             subir fotos del DNI (fundador, 04/11/2026). El chequeo lo hace la
+             función validar-cuit; acá solo se muestra el resultado. Al
+             cliente le queda solo "Tu nombre", como antes. -->
+        <div class="ident" id="a-ident">
+          <div class="ident-elige oculto" id="a-ident-elige" role="radiogroup" aria-label="Cómo trabajás">
+            <button class="ident-op" type="button" role="radio" aria-checked="true" data-ident="persona">Por mi cuenta<small>Con tu CUIL o CUIT</small></button>
+            <button class="ident-op" type="button" role="radio" aria-checked="false" data-ident="empresa">Con una empresa<small>Con el CUIT de la empresa</small></button>
+          </div>
+          <p class="ident-intro oculto" id="a-ident-intro">Lo chequeamos con ARCA en el momento. No tenés que sacarle foto a nada.</p>
+          <div class="ident-par" id="a-ident-par">
+            <div class="campo oculto" id="a-nombre-caja">
+              <label for="a-nombre" id="a-nombre-label">Tu nombre</label>
+              <input id="a-nombre" type="text" autocomplete="name" maxlength="60" placeholder="Ej: Raúl Gómez">
+              <div class="ayuda" id="a-nombre-ayuda">Es como te van a ver quienes ofrecen los servicios.</div>
+              <div class="err" id="e-a-nombre">Escribí tu nombre.</div>
+            </div>
+            <!-- Solo el Proveedor. Tratto le factura su comisión por cada trabajo
+                 cobrado, y para emitir esa factura necesita su identificación
+                 fiscal. Al Cliente no le factura nada, así que no se lo pide.
+                 Es el punto 5.4 del contrato de Proveedores. -->
+            <div class="campo oculto" id="a-cuit-caja">
+              <label for="a-cuit" id="a-cuit-label">Tu CUIL o CUIT</label>
+              <input id="a-cuit" class="mono" type="text" inputmode="numeric" maxlength="13" placeholder="20-12345678-3" autocomplete="off">
+              <div class="ayuda" id="a-cuit-ayuda">Lo necesitamos para facturarte la comisión de cada trabajo que cobres.</div>
+              <div class="err" id="e-a-cuit">Revisá el número: son 11 cifras.</div>
+            </div>
+          </div>
+          <div class="ident-estado oculto" id="a-ident-estado" aria-live="polite"></div>
         </div>
 
         <div class="campo oculto" id="a-tel-caja">
@@ -1850,16 +1946,6 @@
           <div class="err" id="e-a-tel">Cargá un teléfono de contacto.</div>
         </div>
 
-        <!-- Solo el Proveedor. Tratto le factura su comisión por cada trabajo
-             cobrado, y para emitir esa factura necesita su identificación
-             fiscal. Al Cliente no le factura nada, así que no se lo pide.
-             Es el punto 5.4 del contrato de Proveedores. -->
-        <div class="campo oculto" id="a-cuit-caja">
-          <label for="a-cuit">Tu CUIT o CUIL</label>
-          <input id="a-cuit" type="text" inputmode="numeric" maxlength="13" placeholder="20-12345678-3">
-          <div class="ayuda">Lo necesitamos para facturarte la comisión de cada trabajo que cobres.</div>
-          <div class="err" id="e-a-cuit">Revisá el CUIT: son 11 números.</div>
-        </div>
         <div class="campo oculto" id="a-fiscal-caja">
           <label for="a-fiscal">Tu condición frente al IVA</label>
           <select id="a-fiscal">
@@ -2603,6 +2689,9 @@
       <p class="bajada">Cómo viene tu trabajo en la app. Se actualiza solo.</p>
 
       <div id="panel-sin-perfil"></div>
+      <!-- "Confirmá tu CUIL": solo para cuentas que ARCA no pudo confirmar
+           (las que estaban antes del chequeo o pusieron mal el nombre). -->
+      <div id="panel-cuil"></div>
 
       <!-- Va arriba de los números: cuando el proveedor abre la app, lo primero
            que tiene que ver es trabajo disponible, no sus estadísticas. -->
@@ -3524,6 +3613,311 @@ tildable('a-legales-fila',  'a-legales');
 tildable('a-publi-fila',    'a-publi');
 tildable('p-declara-fila',  'p-declara');
 
+/* ══════════════════ CUIL O CUIT CON ARCA ══════════════════
+   Reemplaza a la foto del DNI (fundador, 04/11/2026: "que solamente te deje
+   avanzar si coincide el CUIL con el nombre, o el CUIT y el nombre de la
+   empresa"). Quien ofrece servicios elige si trabaja por su cuenta o con una
+   empresa, escribe el nombre y el número, y la función validar-cuit le
+   pregunta a ARCA si van juntos. La función nunca devuelve el nombre que
+   tiene ARCA: solo el resultado. Mientras ARCA no esté conectado
+   (cuit_verificacion_activa da false) el formulario no promete el chequeo y
+   sigue como antes; la base revisa esas cuentas después, sola. */
+const URL_VALIDAR_CUIT = SUPABASE_URL + '/functions/v1/validar-cuit';
+const IDENT_BLOQUEA = ['no_coincide', 'no_existe', 'inactiva', 'tipo_distinto', 'limite'];
+const IDENT_TXT = {
+  no_coincide: t => t === 'empresa'
+    ? 'Ese nombre no coincide con el de ese CUIT en ARCA. Escribí la razón social como figura en tu constancia.'
+    : 'Ese nombre no coincide con el de ese CUIL en ARCA. Escribilo completo, como en tu DNI.',
+  no_existe: () => 'Ese número no figura en ARCA. Revisalo.',
+  inactiva: t => 'Ese ' + (t === 'empresa' ? 'CUIT' : 'CUIL') + ' figura inactivo en ARCA.',
+  tipo_distinto: t => t === 'empresa'
+    ? 'Ese número es de una persona. Si trabajás por tu cuenta, elegí «Por mi cuenta».'
+    : 'Ese número es de una empresa. Elegí «Con una empresa».',
+  limite: () => 'Hiciste muchos intentos seguidos. Esperá un rato y probá de nuevo.',
+};
+let identTipo = 'persona';                    // 'persona' | 'empresa'
+let arcaActiva = null;                        // null: todavía no se preguntó
+let identEstado = {clave: '', resultado: null};
+let identTimer = null, identEnCurso = null;
+const digitos = s => String(s == null ? '' : s).replace(/\D/g, '');
+const identEnJuego = () => modoAuth === 'crear' && rolElegido === 'proveedor';
+// 20, 23, 24 y 27: personas. 30, 33 y 34: empresas.
+function tipoDeCuit(v){
+  const p = digitos(v).slice(0, 2);
+  return ['20','23','24','27'].includes(p) ? 'persona' : ['30','33','34'].includes(p) ? 'empresa' : null;
+}
+function formatoCuit(v){
+  const d = digitos(v).slice(0, 11);
+  return d.length > 10 ? d.slice(0,2) + '-' + d.slice(2,10) + '-' + d.slice(10)
+       : d.length > 2 ? d.slice(0,2) + '-' + d.slice(2) : d;
+}
+const claveIdent = () => identTipo + '|' + digitos($('a-cuit').value) + '|' + $('a-nombre').value.trim().toLowerCase();
+function identListo(){
+  const n = $('a-nombre').value.trim();
+  return digitos($('a-cuit').value).length === 11 && cuitValido($('a-cuit').value) &&
+    (identTipo === 'empresa' ? n.length >= 3 : n.split(/\s+/).filter(Boolean).length >= 2);
+}
+// El número es de una empresa y eligió "Por mi cuenta", o al revés. No hace
+// falta ARCA para saberlo y frena igual, esté conectado o no.
+function tipoLocalDistinto(){
+  const n = digitos($('a-cuit').value);
+  if(n.length !== 11 || !cuitValido(n)) return false;
+  const t = tipoDeCuit(n);
+  return !!t && t !== identTipo;
+}
+
+async function cargarArcaActiva(){
+  if(arcaActiva !== null) return arcaActiva;
+  try{
+    const r = await fetch(SUPABASE_URL + '/rest/v1/rpc/cuit_verificacion_activa', {method:'POST',
+      headers:{apikey:SUPABASE_ANON, 'Authorization':'Bearer '+SUPABASE_ANON, 'Content-Type':'application/json'}, body:'{}'});
+    arcaActiva = r.ok ? (await r.json()) === true : false;
+  }catch(e){ arcaActiva = false; }
+  pintarIdent();
+  return arcaActiva;
+}
+
+function pintarIdent(){
+  const prov = identEnJuego(), emp = prov && identTipo === 'empresa';
+  $('a-ident-elige').classList.toggle('oculto', !prov);
+  document.querySelectorAll('[data-ident]').forEach(b => b.setAttribute('aria-checked', String(b.dataset.ident === identTipo)));
+  $('a-ident-intro').classList.toggle('oculto', !(prov && arcaActiva));
+  $('a-ident-par').classList.toggle('con-hilo', !!(prov && arcaActiva));
+  $('a-nombre-label').textContent = !prov ? 'Tu nombre' : emp ? 'Nombre de la empresa' : 'Nombre y apellido';
+  $('a-nombre').placeholder = emp ? 'Ej: Climatizar del Sur SRL' : 'Ej: Raúl Gómez';
+  $('a-nombre').setAttribute('autocomplete', emp ? 'organization' : 'name');
+  $('a-nombre-ayuda').textContent = !prov ? 'Es como te van a ver quienes ofrecen los servicios.'
+    : emp ? 'La razón social, como figura en ARCA. Es como te van a ver los clientes.'
+    : 'Como figura en tu DNI. Es como te van a ver los clientes.';
+  $('e-a-nombre').textContent = !prov ? 'Escribí tu nombre.' : emp ? 'Escribí el nombre de la empresa.' : 'Escribí tu nombre y apellido.';
+  $('a-cuit-label').textContent = emp ? 'CUIT de la empresa' : 'Tu CUIL o CUIT';
+  $('a-cuit').placeholder = emp ? '30-12345678-1' : '20-12345678-6';
+  $('a-cuit-ayuda').textContent = arcaActiva
+    ? 'Lo usamos para confirmar que sos vos y para facturarte la comisión de cada trabajo que cobres.'
+    : 'Lo necesitamos para facturarte la comisión de cada trabajo que cobres.';
+  pintarIdentEstado();
+}
+
+function ayudaIdent(){
+  if(!WHATSAPP_AYUDA) return '';
+  return ' ¿Está bien y no pasa? <a href="https://wa.me/' + WHATSAPP_AYUDA + '?text=' +
+    encodeURIComponent('Hola, me quiero anotar en Tratto y no me valida el CUIL o CUIT.') +
+    '" target="_blank" rel="noopener">Escribinos</a> y lo revisamos a mano.';
+}
+
+function resultadoIdent(){
+  if(!identEnJuego()) return null;
+  if(tipoLocalDistinto()) return 'tipo_distinto';
+  if(arcaActiva && identEstado.clave === claveIdent()) return identEstado.resultado;
+  return null;
+}
+
+function pintarIdentEstado(){
+  const r = resultadoIdent(), caja = $('a-ident-estado'), par = $('a-ident-par');
+  const bloquea = IDENT_BLOQUEA.includes(r);
+  par.classList.toggle('revisa', r === 'revisando');
+  par.classList.toggle('ok', r === 'coincide');
+  par.classList.toggle('no', bloquea);
+  caja.className = 'ident-estado' + (r ? '' : ' oculto') + (bloquea ? ' mal' : r === 'pendiente' ? ' nota' : '');
+  caja.innerHTML = !r ? ''
+    : r === 'revisando' ? '<span class="sello gris"><span class="punto"></span>Revisando con ARCA…</span>'
+    : r === 'coincide' ? '<span class="sello oro">✓ Coincide con ARCA</span>'
+    : r === 'pendiente' ? 'No pudimos chequearlo ahora con ARCA. Podés seguir: lo revisamos en un rato.'
+    : esc(IDENT_TXT[r](identTipo)) + (r !== 'tipo_distinto' ? ayudaIdent() : '');
+}
+
+// Pregunta a ARCA (por la función) si el nombre y el número van juntos. Una
+// sola consulta por combinación: si ya se preguntó o se está preguntando, no
+// repite.
+function consultarIdent(){
+  if(!identEnJuego() || !arcaActiva || !identListo() || tipoLocalDistinto()) return Promise.resolve();
+  const clave = claveIdent();
+  if(identEnCurso && identEnCurso.clave === clave) return identEnCurso.p;
+  if(identEstado.clave === clave && identEstado.resultado && identEstado.resultado !== 'revisando') return Promise.resolve();
+  identEstado = {clave, resultado: 'revisando'};
+  pintarIdentEstado();
+  const cuerpo = {accion:'consultar', cuit: digitos($('a-cuit').value), tipo: identTipo, nombre: $('a-nombre').value.trim()};
+  const p = (async () => {
+    let res = 'pendiente', silencioso = false;
+    // Si ARCA tarda más de 10 segundos, se sigue como "pendiente": nadie se
+    // queda trabado en el registro esperando a ARCA.
+    const corte = new AbortController(), reloj = setTimeout(() => corte.abort(), 10000);
+    try{
+      const r = await fetch(URL_VALIDAR_CUIT, {method:'POST', signal: corte.signal,
+        headers:{apikey:SUPABASE_ANON, 'Content-Type':'application/json'}, body: JSON.stringify(cuerpo)});
+      const j = await r.json().catch(() => ({}));
+      if(r.ok && j.resultado){ res = j.resultado; silencioso = !!j.silencioso; }
+    }catch(e){ console.error(e); }
+    finally{ clearTimeout(reloj); }
+    if(identEstado.clave === clave) identEstado = {clave, resultado: res};
+    if(identEnCurso && identEnCurso.clave === clave) identEnCurso = null;
+    // ARCA se desconectó: no se promete un chequeo que no se hace.
+    if(silencioso){ arcaActiva = false; pintarIdent(); } else pintarIdentEstado();
+  })();
+  identEnCurso = {clave, p};
+  return p;
+}
+function programarIdent(ms){
+  clearTimeout(identTimer);
+  identTimer = setTimeout(consultarIdent, ms);
+}
+// Antes de crear la cuenta: si falta el chequeo de lo que está escrito, se
+// hace ahora y se espera.
+async function asegurarIdent(){
+  if(!identEnJuego()) return;
+  await cargarArcaActiva();
+  clearTimeout(identTimer);
+  await consultarIdent();
+  pintarIdentEstado();
+}
+const identBloquea = () => IDENT_BLOQUEA.includes(resultadoIdent());
+// Recién creada la cuenta: la función vuelve a chequear del lado del servidor
+// y, si coincide, le pone el sello "CUIL verificado". Si no llega, lo hace la
+// revisión de cada hora.
+function confirmarIdentidad(){
+  if(rolElegido !== 'proveedor' || !sesion) return;
+  fetch(URL_VALIDAR_CUIT, {method:'POST', headers:cab(), body: JSON.stringify({accion:'confirmar'})}).catch(() => {});
+}
+
+/* Ficha pública: "CUIL verificado" (persona) o "CUIT verificado" (empresa)
+   cuando ARCA confirmó que el nombre y el número van juntos. */
+async function pintarSelloFiscal(userId){
+  let t = null;
+  try{
+    const r = await fetch(SUPABASE_URL + '/rest/v1/rpc/sello_fiscal', {method:'POST', headers:cab(),
+      body: JSON.stringify({p_user: userId})});
+    if(r.ok) t = await r.json();
+  }catch(e){}
+  if(fichaActual !== userId || (t !== 'cuil' && t !== 'cuit')) return;
+  const num = t === 'cuit' ? 'CUIT' : 'CUIL';
+  $('pf-medallas').insertAdjacentHTML('beforeend', ' <span class="sello sello-fiscal" ' +
+    'title="Confirmamos con ARCA que el nombre y el número coinciden.">✓ ' + num + ' verificado</span>');
+  // El pie decía que Tratto no verificó nada: ahora una parte sí.
+  const nota = $('pf-nota-datos');
+  if(nota) nota.innerHTML = 'Confirmamos con ARCA que su nombre y su ' + num + ' van juntos. ' +
+    'El resto de los datos los cargó quien ofrece el servicio y <b>no los verificamos</b> (títulos, matrículas ni antecedentes). ' +
+    'Antes de contratar, pedile la documentación que corresponda.';
+}
+
+/* Panel: a quien ARCA no pudo confirmar (cuentas de antes del chequeo, o con
+   el nombre distinto) se le pide una vez, con una tarjeta y la hoja. */
+const CUIL_PEDIR = ['no_coincide', 'no_existe', 'inactiva', 'tipo_distinto', 'sin_cuit'];
+async function pintarAvisoCuil(){
+  const caja = $('panel-cuil');
+  let e = null;
+  try{
+    const r = await fetch(SUPABASE_URL + '/rest/v1/rpc/cuit_mi_estado', {method:'POST', headers:cab(), body:'{}'});
+    if(r.ok) e = await r.json();
+  }catch(x){}
+  const pedir = !!(e && e.activa && CUIL_PEDIR.includes(e.resultado));
+  caja.innerHTML = !pedir ? '' : '<div class="cobros cuil-aviso">' +
+    '<div class="cobros-tit">Confirmá tu CUIL</div>' +
+    '<div class="cobros-txt">' + (e.resultado === 'sin_cuit'
+      ? 'Todavía no cargaste tu CUIL o CUIT.'
+      : 'No pudimos confirmar con ARCA que tu nombre y tu CUIL o CUIT van juntos.') +
+    ' Cuando coinciden, tu perfil muestra el sello «CUIL verificado» y los clientes te eligen con más confianza.' +
+    ' Es un minuto y no hace falta foto del DNI.</div>' +
+    '<button class="btn lleno" id="cuil-abrir" type="button">Confirmar ahora</button></div>';
+  if(pedir) $('cuil-abrir').addEventListener('click', abrirHojaCuil);
+}
+
+let ccTipo = 'persona';
+function pintarHojaCuil(){
+  const emp = ccTipo === 'empresa';
+  document.querySelectorAll('[data-cc-ident]').forEach(b => b.setAttribute('aria-checked', String(b.dataset.ccIdent === ccTipo)));
+  $('cc-nombre-label').textContent = emp ? 'Nombre de la empresa' : 'Nombre y apellido';
+  $('cc-nombre-ayuda').textContent = emp ? 'La razón social, como figura en ARCA.' : 'Como figura en tu DNI.';
+  $('cc-nombre').setAttribute('autocomplete', emp ? 'organization' : 'name');
+  $('cc-cuit-label').textContent = emp ? 'CUIT de la empresa' : 'Tu CUIL o CUIT';
+  $('cc-cuit').placeholder = emp ? '30-12345678-1' : '20-12345678-6';
+}
+function estadoHojaCuil(r){
+  const caja = $('cc-estado'), par = $('cc-par'), bloquea = IDENT_BLOQUEA.includes(r);
+  par.classList.toggle('revisa', r === 'revisando');
+  par.classList.toggle('ok', r === 'coincide');
+  par.classList.toggle('no', bloquea);
+  caja.className = 'ident-estado' + (r ? '' : ' oculto') + (bloquea || r === 'datos' ? ' mal' : r === 'pendiente' ? ' nota' : '');
+  caja.innerHTML = !r ? ''
+    : r === 'revisando' ? '<span class="sello gris"><span class="punto"></span>Revisando con ARCA…</span>'
+    : r === 'coincide' ? '<span class="sello oro">✓ Coincide con ARCA</span>'
+    : r === 'pendiente' ? 'No pudimos chequearlo ahora con ARCA. Probá de nuevo en un rato.'
+    : r === 'datos' ? 'Revisá el nombre y el número: son 11 cifras.'
+    : esc(IDENT_TXT[r](ccTipo)) + (r !== 'tipo_distinto' ? ayudaIdent() : '');
+}
+function abrirHojaCuil(){
+  const m = (sesion && sesion.user && sesion.user.user_metadata) || {};
+  ccTipo = m.cuit_tipo || tipoDeCuit(m.cuit) || 'persona';
+  $('cc-cuit').value = formatoCuit(m.cuit || '');
+  $('cc-nombre').value = String(m.nombre || '').slice(0, 120);
+  pintarHojaCuil();
+  estadoHojaCuil(null);
+  $('telon-cuil').classList.add('abierto');
+}
+document.querySelectorAll('[data-cc-ident]').forEach(b => b.addEventListener('click', () => {
+  ccTipo = b.dataset.ccIdent; pintarHojaCuil(); estadoHojaCuil(null);
+}));
+$('cc-cuit').addEventListener('input', e => {
+  const i = $('cc-cuit');
+  if(!String(e.inputType || '').startsWith('delete')){ const f = formatoCuit(i.value); if(f !== i.value) i.value = f; }
+  if(ccTipo === 'persona' && digitos(i.value).length === 11 && tipoDeCuit(i.value) === 'empresa'){ ccTipo = 'empresa'; pintarHojaCuil(); }
+  estadoHojaCuil(null);
+});
+$('cc-nombre').addEventListener('input', () => estadoHojaCuil(null));
+$('cc-cancelar').addEventListener('click', () => $('telon-cuil').classList.remove('abierto'));
+$('telon-cuil').addEventListener('click', e => { if(e.target.id === 'telon-cuil') $('telon-cuil').classList.remove('abierto'); });
+$('cc-confirmar').addEventListener('click', async () => {
+  const cuit = digitos($('cc-cuit').value), nombre = $('cc-nombre').value.trim();
+  if(cuit.length !== 11 || !cuitValido(cuit) || nombre.length < 2) return estadoHojaCuil('datos');
+  if(tipoDeCuit(cuit) && tipoDeCuit(cuit) !== ccTipo) return estadoHojaCuil('tipo_distinto');
+  const b = $('cc-confirmar'); b.disabled = true; b.classList.add('cargando');
+  estadoHojaCuil('revisando');
+  let res = 'pendiente';
+  try{
+    const r = await fetch(URL_VALIDAR_CUIT, {method:'POST', headers:cab(),
+      body: JSON.stringify({accion:'confirmar', cuit, tipo: ccTipo, nombre})});
+    const j = await r.json().catch(() => ({}));
+    if(j.resultado && j.resultado !== 'no_aplica' && j.resultado !== 'sin_cuit') res = j.resultado;
+  }catch(e){ console.error(e); }
+  b.disabled = false; b.classList.remove('cargando');
+  estadoHojaCuil(res);
+  if(res === 'coincide'){
+    const m = sesion.user.user_metadata || (sesion.user.user_metadata = {});
+    m.cuit = cuit; m.cuit_tipo = ccTipo;
+    setTimeout(() => { $('telon-cuil').classList.remove('abierto'); pintarAvisoCuil(); }, 1400);
+  }
+});
+
+function elegirIdent(t){
+  if(identTipo === t) return;
+  identTipo = t;
+  limpiar(['a-nombre','a-cuit']);
+  pintarIdent();
+  programarIdent(500);
+}
+document.querySelectorAll('[data-ident]').forEach(b => b.addEventListener('click', () => elegirIdent(b.dataset.ident)));
+$('a-cuit').addEventListener('input', e => {
+  const i = $('a-cuit');
+  // Los guiones se ponen solos (20-12345678-6), salvo cuando está borrando.
+  if(!String(e.inputType || '').startsWith('delete')){
+    const f = formatoCuit(i.value);
+    if(f !== i.value) i.value = f;
+  }
+  limpiar(['a-cuit']);
+  if(!identEnJuego()) return;
+  // Un CUIT de empresa con "Por mi cuenta": pasa solo a "Con una empresa".
+  if(identTipo === 'persona' && digitos(i.value).length === 11 && cuitValido(i.value) && tipoDeCuit(i.value) === 'empresa'){
+    elegirIdent('empresa');
+    return;
+  }
+  pintarIdentEstado();
+  programarIdent(700);
+});
+$('a-nombre').addEventListener('input', () => {
+  if(!identEnJuego()) return;
+  pintarIdentEstado();
+  programarIdent(900);
+});
+
 /* El oficio solo se le pregunta al proveedor, y el subcampo del oficio propio
    solo si eligió "Otro". Se recalcula cuando cambia la pestaña o el rol. */
 function pintarCamposDeRol(){
@@ -3533,10 +3927,8 @@ function pintarCamposDeRol(){
     !(creando && prov && $('a-rubro').value === RUBRO_OTRO));
   $('a-cuit-caja').classList.toggle('oculto',   !(creando && prov));
   $('a-fiscal-caja').classList.toggle('oculto', !(creando && prov));
-  $('a-nombre-ayuda').textContent = prov
-    ? 'Es como te van a ver los clientes. Puede ser tu nombre o el de tu negocio.'
-    : 'Es como te van a ver quienes ofrecen los servicios.';
-  $('a-nombre').placeholder = prov ? 'Ej: Raúl Gómez / Pinturería Gómez' : 'Ej: Raúl Gómez';
+  pintarIdent();
+  if(creando && prov) cargarArcaActiva();
   $('a-tel-ayuda').textContent = prov
     ? 'Es el que van a ver los clientes con los que trabajes.'
     : 'Es el que van a ver las personas con las que trabajes.';
@@ -3605,6 +3997,9 @@ function validarDatosAlta(r){
       if(!$('a-rubro-padre').value) fallar('a-rubro-padre',r);
     }
     if(!cuitValido($('a-cuit').value)) fallar('a-cuit',r);
+    /* ARCA dijo que el nombre y el número no van juntos (o el número es del
+       otro tipo): el motivo ya está escrito debajo del número. */
+    else if(identBloquea()){ $('a-cuit').classList.add('mal'); if(!r.p) r.p = 'a-cuit'; }
     if(!$('a-fiscal').value) fallar('a-fiscal',r);
   }
 }
@@ -3635,6 +4030,7 @@ function datosAlta(){
        nada, así que no se lo pide. Es el punto 5.4 del contrato de
        Proveedores. */
     cuit: rolElegido === 'proveedor' ? soloNumeros($('a-cuit').value) : null,
+    cuit_tipo: rolElegido === 'proveedor' ? identTipo : null,
     condicion_fiscal: rolElegido === 'proveedor' ? $('a-fiscal').value : null,
     /* El permiso de transferencia se da en la misma casilla de los términos,
        que lo nombra expresamente. */
@@ -3657,6 +4053,10 @@ $('a-enviar').addEventListener('click', async () => {
   if(pasoAuth === 'nueva-clave') return guardarNuevaClave();
   if(pasoAuth === 'codigo') return confirmarCodigo();
   if(pasoAuth === 'completar') return completarCuenta();
+  if(identEnJuego()){
+    const b0 = $('a-enviar'); b0.disabled = true;
+    try{ await asegurarIdent(); } finally { b0.disabled = false; }
+  }
   limpiar(['a-email','a-pass']);
   limpiarTransfer();
   limpiar(['a-nombre','a-tel','a-rubro','a-otro-rubro','a-rubro-padre','a-cuit','a-fiscal']);
@@ -3700,6 +4100,7 @@ $('a-enviar').addEventListener('click', async () => {
     sesion = {access_token:j.access_token, user:j.user};
     modo = rolElegido;
     $('a-pass').value='';
+    if(modoAuth === 'crear') confirmarIdentidad();
     entrarApp();
     setTimeout(() => sincronizarAvisos(true), 900);
   }catch(e){ console.error(e); avisar('a-aviso','No se pudo conectar. Revisá tu conexión.','mal'); }
@@ -3781,6 +4182,7 @@ async function confirmarCodigo(){
     sesion = {access_token:j.access_token, user:j.user};
     modo = rolElegido;
     $('a-pass').value = '';
+    confirmarIdentidad();
     volverAPasoDatos();
     $('a-aviso').className = 'aviso';
     entrarApp();
@@ -6205,6 +6607,10 @@ $('a-completar-otra').addEventListener('click', () => {
 
 async function completarCuenta(){
   const r = {p:null};
+  if(identEnJuego()){
+    const b0 = $('a-enviar'); b0.disabled = true;
+    try{ await asegurarIdent(); } finally { b0.disabled = false; }
+  }
   validarDatosAlta(r);
   validarLegales(r);
   if(enfocar(r)) return;
@@ -6218,6 +6624,7 @@ async function completarCuenta(){
     sesion.user = j;
     modo = rolElegido;
     const g = store.leer() || {}; g.modo = rolElegido; store.escribir(g);
+    confirmarIdentidad();
     cerrarCompletar();
     entrarApp();
     setTimeout(() => sincronizarAvisos(true), 900);
@@ -6535,6 +6942,7 @@ async function abrirFicha(userId, propia){
     (servicios[0] && servicios[0].disponibilidad ? '<span>Disponible: '+esc(servicios[0].disponibilidad)+'</span>' : '');
 
   $('pf-medallas').innerHTML = htmlChapaTrabajos(trabajos) + ' ' + htmlMedalla(trabajos);
+  pintarSelloFiscal(userId);
   $('pf-c-trabajos').textContent = trabajos;
   $('pf-c-exp').textContent = (perfil && perfil.anios_exp) ? perfil.anios_exp + ' años' : '—';
   const desde = servicios.length ? Math.min(...servicios.map(s => Number(s.precio_desde)||0)) : 0;
@@ -6615,7 +7023,7 @@ async function abrirFicha(userId, propia){
   /* pie: editar o contactar */
   $('pf-contacto').innerHTML = fichaPropia
     ? '<button class="btn vacio-b" id="pf-editar" type="button">Editar mi perfil</button>'
-    : '<div class="nota">Los datos de este perfil los cargó quien ofrece el servicio. ' +
+    : '<div class="nota" id="pf-nota-datos">Los datos de este perfil los cargó quien ofrece el servicio. ' +
       '<b>Tratto no los verificó.</b> Antes de contratar, pedile la documentación que corresponda.</div>' +
       '<div style="margin-top:12px;text-align:center"><button class="reportar" data-reporta-perfil="'+esc(userId)+'" type="button">' +
       BANDERA_REP + 'Reportar este perfil</button></div>';
@@ -6773,6 +7181,7 @@ document.addEventListener('visibilitychange', () => {
 
 async function cargarPanel(){
   $('panel-saludo').textContent = 'Hola, ' + miPrimerNombre();
+  pintarAvisoCuil();
 
   if(!misPerfiles.length){
     $('panel-datos').classList.add('oculto');

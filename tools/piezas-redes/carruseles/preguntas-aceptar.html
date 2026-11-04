@@ -1,0 +1,144 @@
+<!doctype html><html lang="es"><head><meta charset="utf-8">
+<title>Carrusel · 5 preguntas antes de aceptar un trabajo</title>
+<!-- Carrusel guardable para quienes ofrecen servicios (3/11/2026, para el jueves 5/11 18:00 en TikTok). Pilar
+     "Para quienes ofrecen servicios" (cuidar el trabajo y la reputación), para cualquier rubro: fletes, eventos,
+     clases a domicilio, belleza, autos o la casa. Portada nueva: partida en dos, verde arriba y clara abajo.
+     Sin precios ni datos de la cuenta: son preguntas.
+     Exportar: python3 render-carrusel.py preguntas-aceptar.html carrusel-preguntas-tt --red tiktok
+               python3 render-carrusel.py preguntas-aceptar.html carrusel-preguntas   (Instagram) -->
+<link rel="stylesheet" href="carrusel.css">
+<link rel="stylesheet" href="molde.css">
+<style>
+/* 1 · portada partida */
+.placa.partida{background:linear-gradient(180deg,var(--verde) 0 52%,var(--claro) 52% 100%)}
+.placa.partida .pano{display:none}
+.placa.partida .marca span{color:#EAF4EF}
+.placa.partida .marca .logo{background:rgba(255,255,255,.08);border:2px solid rgba(143,217,188,.3)}
+.placa.partida .cuenta{color:var(--verde-luz)}
+.placa.partida .cuenta b{color:#fff}
+.uno .medio{justify-content:flex-start;padding-top:70px}
+.uno .chico{font:600 30px/1.2 'IBM Plex Mono',monospace;letter-spacing:.14em;text-transform:uppercase;color:#F3DE9A}
+.uno h1{font:700 150px/.92 'IBM Plex Sans Condensed',sans-serif;letter-spacing:-.025em;color:#fff;margin-top:24px}
+.uno .abajo{position:absolute;left:92px;right:92px;top:790px}
+.uno .abajo p{font:700 84px/1 'IBM Plex Sans Condensed',sans-serif;letter-spacing:-.015em;color:var(--tinta)}
+.uno .abajo p em{font-style:normal;color:var(--verde-vivo)}
+.uno .abajo .rubros{font:500 40px/1.3 'IBM Plex Sans',sans-serif;color:var(--tinta-2);margin-top:22px}
+
+/* 2 */
+.perdidas{display:flex;flex-direction:column;gap:22px;margin-top:50px}
+.perdidas .tarjeta{display:flex;align-items:center;gap:26px;padding:28px 34px;font:600 48px/1.15 'IBM Plex Sans',sans-serif}
+.perdidas svg{flex:none;color:#B4543F}
+
+/* preguntas */
+.pregunta h2{font-size:92px}
+.pregunta .tarjeta.mensaje{border-radius:30px}
+</style></head><body>
+
+<!-- 1 · PORTADA -->
+<section class="placa partida uno"><div class="cont">
+  <div class="medio">
+    <div class="chico">Si ofrecés un servicio</div>
+    <h1>Antes de decir que sí</h1>
+    <div class="abajo">
+      <p>5 preguntas para hacer <em>antes de aceptar un trabajo</em></p>
+      <p class="rubros">Sirven para un flete, un evento, una clase o un arreglo. ¿Hacés las 5?</p>
+    </div>
+  </div>
+  <div class="pie"><span class="web">trattoapp.com.ar</span><span class="desliza">Guardalo · Deslizá →</span></div>
+</div></section>
+
+<!-- 2 · POR QUÉ -->
+<section class="placa"><div class="cont">
+  <div class="medio">
+    <div class="grande-titulo">Un sí apurado sale caro.</div>
+    <p class="bajada">Lo que no preguntás antes, lo pagás después:</p>
+    <div class="perdidas">
+      <div class="tarjeta"><i data-ico="cruz" data-px="64"></i>Un viaje de más</div>
+      <div class="tarjeta"><i data-ico="cruz" data-px="64"></i>Un material que no estaba</div>
+      <div class="tarjeta"><i data-ico="cruz" data-px="64"></i>Un cobro que se estira</div>
+    </div>
+    <p style="margin-top:44px;font:600 42px/1.3 'IBM Plex Sans',sans-serif;color:var(--laton-osc)">Al final, las 5 en una placa para sacarle captura →</p>
+  </div>
+  <div class="pie"><span class="web">trattoapp.com.ar</span><span class="desliza">Deslizá →</span></div>
+</div></section>
+
+<!-- 3 -->
+<section class="placa pregunta"><div class="cont">
+  <div class="medio">
+    <div class="paso"><div class="ico grande"><i data-ico="pin" data-px="92"></i></div><h2><span class="num">1.</span>¿Dónde es?</h2></div>
+    <div class="tarjeta mensaje">Barrio, piso, si hay ascensor y dónde se puede estacionar.</div>
+    <div class="consejo"><div class="ico chico"><i data-ico="check" data-px="52"></i></div><p>Para un flete, un evento o una clase a domicilio, <b>cambia el tiempo y el precio.</b></p></div>
+  </div>
+  <div class="pie"><span class="web">trattoapp.com.ar</span><span class="desliza">Deslizá →</span></div>
+</div></section>
+
+<!-- 4 -->
+<section class="placa pregunta"><div class="cont">
+  <div class="medio">
+    <div class="paso"><div class="ico grande"><i data-ico="calendario" data-px="92"></i></div><h2><span class="num">2.</span>¿Para cuándo?</h2></div>
+    <div class="tarjeta mensaje">El día, la franja horaria y si es urgente.</div>
+    <div class="consejo"><div class="ico chico"><i data-ico="check" data-px="52"></i></div><p>Si es urgente, <b>decilo en el precio.</b> Si no, ofrecé dos días para elegir.</p></div>
+  </div>
+  <div class="pie"><span class="web">trattoapp.com.ar</span><span class="desliza">Deslizá →</span></div>
+</div></section>
+
+<!-- 5 -->
+<section class="placa pregunta"><div class="cont">
+  <div class="medio">
+    <div class="paso"><div class="ico grande"><i data-ico="caja" data-px="92"></i></div><h2><span class="num">3.</span>¿Quién compra qué?</h2></div>
+    <div class="tarjeta mensaje">Materiales, repuestos, telas o insumos: quién los compra y si están en el precio.</div>
+    <div class="consejo"><div class="ico chico"><i data-ico="check" data-px="52"></i></div><p>Que quede <b>por escrito antes de empezar.</b></p></div>
+  </div>
+  <div class="pie"><span class="web">trattoapp.com.ar</span><span class="desliza">Deslizá →</span></div>
+</div></section>
+
+<!-- 6 -->
+<section class="placa pregunta"><div class="cont">
+  <div class="medio">
+    <div class="paso"><div class="ico grande"><i data-ico="tarjeta" data-px="92"></i></div><h2><span class="num">4.</span>¿Cómo se paga?</h2></div>
+    <div class="tarjeta mensaje">Si hay seña, cuándo va el saldo y por qué medio.</div>
+    <div class="consejo"><div class="ico chico"><i data-ico="check" data-px="52"></i></div><p>Acordalo antes del primer día, <b>no cuando terminás.</b></p></div>
+  </div>
+  <div class="pie"><span class="web">trattoapp.com.ar</span><span class="desliza">Deslizá →</span></div>
+</div></section>
+
+<!-- 7 -->
+<section class="placa pregunta"><div class="cont">
+  <div class="medio">
+    <div class="paso"><div class="ico grande"><i data-ico="volver" data-px="92"></i></div><h2 style="font-size:84px"><span class="num">5.</span>¿Y si hay que volver?</h2></div>
+    <div class="tarjeta mensaje">Si algo falla o queda algo por terminar.</div>
+    <div class="consejo"><div class="ico chico"><i data-ico="check" data-px="52"></i></div><p>Decí desde el principio <b>si la segunda visita se cobra.</b></p></div>
+  </div>
+  <div class="pie"><span class="web">trattoapp.com.ar</span><span class="desliza">Deslizá →</span></div>
+</div></section>
+
+<!-- 8 · RESUMEN -->
+<section class="placa blanca resumen"><div class="cont">
+  <div class="medio">
+    <h2>Las 5, en una foto</h2>
+    <div class="lista-check">
+      <div><i data-ico="check" data-px="56"></i>¿Dónde es, exactamente?</div>
+      <div><i data-ico="check" data-px="56"></i>¿Para cuándo y qué tan urgente?</div>
+      <div><i data-ico="check" data-px="56"></i>¿Quién compra los materiales?</div>
+      <div><i data-ico="check" data-px="56"></i>¿Cómo y cuándo se paga?</div>
+      <div><i data-ico="check" data-px="56"></i>¿Qué pasa si hay que volver?</div>
+    </div>
+    <p class="manda">Sacale captura o mandásela a alguien que arranca a trabajar por su cuenta.</p>
+  </div>
+  <div class="pie"><span class="web">trattoapp.com.ar</span></div>
+</div></section>
+
+<!-- 9 · CIERRE -->
+<section class="placa noche cierre"><div class="cont">
+  <div class="medio">
+    <h2>En Tratto queda todo por escrito.</h2>
+    <p class="bajada">El pedido, el presupuesto y lo que acuerdan quedan en el chat de la app, y cobrás por Mercado Pago. Más de 40 rubros y sin abono: 3 % solo cuando cobrás por la app.</p>
+    <div><span class="url-caja"><span id="logo-url"></span><span data-tiktok="trattoapp.com.ar/r/tt-preguntas">trattoapp.com.ar/r/ig-preguntas</span></span></div>
+    <p class="bio" data-tiktok="(escribilo en el navegador)">Tocá @trattoapp_ · link «Ofrezco un servicio»</p>
+    <div class="gratis"><span class="sello">Sin abono mensual</span></div>
+  </div>
+</div></section>
+
+<script src="carrusel.js"></script>
+<script>document.getElementById('logo-url').outerHTML = LOGO(46, 'lu');</script>
+</body></html>

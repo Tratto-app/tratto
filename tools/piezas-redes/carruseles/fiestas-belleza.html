@@ -1,0 +1,134 @@
+<!doctype html><html lang="es"><head><meta charset="utf-8">
+<title>Carrusel · Para las fiestas: uñas, maquillaje, masaje y fotos</title>
+<!-- Carrusel guardable (3/11/2026, para el viernes 6/11 12:00 en TikTok). Mismo molde que la mudanza (una
+     situación, cada cosa con su precio), para las fiestas de fin de año y los egresados: rubros Estética,
+     maquillaje y peinados, Masajes y Fotografía y video. Portada nueva: un espejo (círculo con borde latón)
+     sobre blanco. Precios de precios_referencia con el ajuste mensual del 2 % de la calculadora y su redondeo,
+     a nov-2026. Peinado no va: no hay precio de referencia.
+     Exportar: python3 render-carrusel.py fiestas-belleza.html carrusel-belleza-tt --red tiktok
+               python3 render-carrusel.py fiestas-belleza.html carrusel-belleza   (Instagram) -->
+<link rel="stylesheet" href="carrusel.css">
+<link rel="stylesheet" href="molde.css">
+<style>
+/* 1 · portada: espejo */
+.placa.espejo{background:#fff}
+.placa.espejo .pano{opacity:.45}
+.uno .medio{align-items:center;text-align:center}
+.uno .circulo{position:relative;width:880px;height:880px;border-radius:50%;border:18px solid var(--laton);background:radial-gradient(circle at 35% 30%,#FFFFFF 0%,#EEF6F2 55%,#DDF3EA 100%);
+  box-shadow:0 30px 80px rgba(138,110,16,.18), inset 0 0 0 10px #F6EBC4;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:0 96px}
+.uno .chico{font:600 28px/1.25 'IBM Plex Mono',monospace;letter-spacing:.14em;text-transform:uppercase;color:var(--laton-osc)}
+.uno h1{font:700 112px/.95 'IBM Plex Sans Condensed',sans-serif;letter-spacing:-.02em;color:var(--tinta);margin:22px 0 26px}
+.uno h1 em{font-style:normal;color:var(--verde-vivo)}
+.uno .sub{font:500 38px/1.3 'IBM Plex Sans',sans-serif;color:var(--tinta-2)}
+.uno .brillo{position:absolute;color:var(--laton)}
+.uno .b1{top:40px;right:60px}.uno .b2{bottom:70px;left:30px}.uno .b3{top:150px;left:-10px}
+</style></head><body>
+
+<!-- 1 · PORTADA -->
+<section class="placa espejo uno"><div class="cont">
+  <div class="medio">
+    <div class="circulo">
+      <span class="brillo b1"><i data-ico="estrella" data-px="96"></i></span><span class="brillo b2"><i data-ico="estrella" data-px="64"></i></span><span class="brillo b3"><i data-ico="estrella" data-px="48"></i></span>
+      <div class="chico">Precios de noviembre</div>
+      <h1>¿Cuánto sale ponerse a punto <em>para las fiestas?</em></h1>
+      <p class="sub">Uñas desde $17.000. ¿Y el maquillaje, el masaje y las fotos?</p>
+    </div>
+  </div>
+  <div class="pie"><span class="web">trattoapp.com.ar</span><span class="desliza">Guardalo · Deslizá →</span></div>
+</div></section>
+
+<!-- 2 · TRES DATOS -->
+<section class="placa dos"><div class="cont">
+  <div class="medio">
+    <h2>Antes de pedir turno, tené estos 3 datos.</h2>
+    <p class="bajada">Así te pasan el precio sin vueltas.</p>
+    <div class="datos">
+      <div class="tarjeta dato"><span class="n">1</span><p>La fecha y la hora del evento</p></div>
+      <div class="tarjeta dato"><span class="n">2</span><p>Dónde: en tu casa o en el local</p></div>
+      <div class="tarjeta dato"><span class="n">3</span><p>Si son varias personas</p></div>
+    </div>
+    <p class="despues">Cada cosa con su precio. La 4 sirve también para regalar →</p>
+  </div>
+  <div class="pie"><span class="web">trattoapp.com.ar</span><span class="desliza">Deslizá →</span></div>
+</div></section>
+
+<!-- 3 · UÑAS -->
+<section class="placa"><div class="cont">
+  <div class="medio">
+    <div class="paso"><div class="ico grande"><i data-ico="esmalte" data-px="92"></i></div><h2><span class="num">1.</span>Uñas.</h2></div>
+    <div class="tarjeta precio"><div class="que">Manicura semipermanente</div><div class="rango">$17.000 a $29.000</div></div>
+    <div class="consejo"><div class="ico chico"><i data-ico="check" data-px="52"></i></div><p>Preguntá cuánto dura y <b>si incluye sacar el esmalte anterior.</b></p></div>
+  </div>
+  <div class="pie"><span class="fuente">Precios de referencia · AMBA · nov-2026</span></div>
+</div></section>
+
+<!-- 4 · MANOS Y PIES -->
+<section class="placa"><div class="cont">
+  <div class="medio">
+    <div class="paso"><div class="ico grande"><i data-ico="esmalte" data-px="92"></i></div><h2><span class="num">2.</span>Manos y pies.</h2></div>
+    <div class="tarjeta precio"><div class="que">Manicura y pedicura</div><div class="rango">$29.000 a $46.000</div></div>
+    <div class="consejo"><div class="ico chico"><i data-ico="check" data-px="52"></i></div><p>Si es a domicilio, preguntá <b>si el traslado está incluido.</b></p></div>
+  </div>
+  <div class="pie"><span class="fuente">Precios de referencia · AMBA · nov-2026</span></div>
+</div></section>
+
+<!-- 5 · MAQUILLAJE -->
+<section class="placa"><div class="cont">
+  <div class="medio">
+    <div class="paso"><div class="ico grande"><i data-ico="pincel" data-px="92"></i></div><h2><span class="num">3.</span>Maquillaje.</h2></div>
+    <div class="tarjeta precio"><div class="que">Maquillaje social</div><div class="rango">$65.000 a $130.000</div></div>
+    <div class="consejo"><div class="ico chico"><i data-ico="check" data-px="52"></i></div><p>Mandá una foto de la ropa y una referencia. <b>Preguntá si hay prueba.</b></p></div>
+  </div>
+  <div class="pie"><span class="fuente">Precios de referencia · AMBA · nov-2026</span></div>
+</div></section>
+
+<!-- 6 · MASAJE -->
+<section class="placa"><div class="cont">
+  <div class="medio">
+    <div class="paso"><div class="ico grande"><i data-ico="hoja" data-px="92"></i></div><h2><span class="num">4.</span>Un masaje.</h2></div>
+    <div class="tarjeta precio"><div class="que">Masaje descontracturante (1 hora)</div><div class="rango">$38.000 a $65.000</div></div>
+    <div class="consejo"><div class="ico chico"><i data-ico="check" data-px="52"></i></div><p>Para después de las fiestas o para regalar: <b>preguntá si se puede reservar para otra persona.</b></p></div>
+  </div>
+  <div class="pie"><span class="fuente">Precios de referencia · AMBA · nov-2026</span></div>
+</div></section>
+
+<!-- 7 · FOTOS -->
+<section class="placa"><div class="cont">
+  <div class="medio">
+    <div class="paso"><div class="ico grande"><i data-ico="camara" data-px="92"></i></div><h2><span class="num">5.</span>Las fotos.</h2></div>
+    <div class="tarjeta precio"><div class="que">Sesión de fotos</div><div class="rango">$92.000 a $207.000</div></div>
+    <div class="consejo"><div class="ico chico"><i data-ico="check" data-px="52"></i></div><p>Si se juntan todos arreglados, preguntá <b>cuántas fotos editadas entregan.</b></p></div>
+  </div>
+  <div class="pie"><span class="fuente">Precios de referencia · AMBA · nov-2026</span></div>
+</div></section>
+
+<!-- 8 · RESUMEN -->
+<section class="placa blanca resumen"><div class="cont">
+  <div class="medio">
+    <h2>Las fiestas, en una foto</h2>
+    <div class="tabla">
+      <div class="f"><span>Manicura semipermanente</span><b>$17k a $29k</b></div>
+      <div class="f"><span>Manicura y pedicura</span><b>$29k a $46k</b></div>
+      <div class="f"><span>Maquillaje social</span><b>$65k a $130k</b></div>
+      <div class="f"><span>Masaje (1 hora)</span><b>$38k a $65k</b></div>
+      <div class="f"><span>Sesión de fotos</span><b>$92k a $207k</b></div>
+    </div>
+    <p class="manda">Precios de noviembre. Sacale captura o mandáselo a quien se arregla con vos.</p>
+  </div>
+  <div class="pie"><span class="web">trattoapp.com.ar</span></div>
+</div></section>
+
+<!-- 9 · CIERRE -->
+<section class="placa noche cierre"><div class="cont">
+  <div class="medio">
+    <h2>Pedí turno con tiempo y compará.</h2>
+    <p class="bajada">En Tratto contás qué necesitás, dónde y para cuándo, y te llegan presupuestos de gente de tu zona.</p>
+    <div><span class="url-caja"><span id="logo-url"></span><span data-tiktok="trattoapp.com.ar/r/tt-belleza">trattoapp.com.ar/r/ig-belleza</span></span></div>
+    <p class="bio" data-tiktok="(escribilo en el navegador)">Tocá @trattoapp_ · link «Pedí un servicio»</p>
+    <div class="gratis"><span class="sello">Gratis para el que pide</span></div>
+  </div>
+</div></section>
+
+<script src="carrusel.js"></script>
+<script>document.getElementById('logo-url').outerHTML = LOGO(46, 'lu');</script>
+</body></html>

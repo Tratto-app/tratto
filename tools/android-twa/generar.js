@@ -1,5 +1,8 @@
 const {TwaManifest, TwaGenerator, ConsoleLog} = require('@bubblewrap/core');
 const path = require('path');
+/* La versión sale de twa-manifest.json (subirla ahí antes de cada versión para
+   Play). En Codemagic la clave de subida y la carpeta llegan por variables. */
+const base = require('./twa-manifest.json');
 (async () => {
   const log = new ConsoleLog('twa');
   const m = new TwaManifest({
@@ -20,10 +23,11 @@ const path = require('path');
     startUrl: '/?utm_source=android_app',
     iconUrl: 'https://www.trattoapp.com.ar/icon-512.png',
     maskableIconUrl: 'https://www.trattoapp.com.ar/icon-maskable-512.png',
-    appVersion: '1.0.0',
-    appVersionCode: 1,
+    appVersion: base.appVersionName,
+    appVersionCode: base.appVersionCode,
     shortcuts: [],
-    signingKey: {path: '/opt/twa-build/tratto-upload.keystore', alias: 'tratto'},
+    signingKey: {path: process.env.CM_KEYSTORE_PATH || '/opt/twa-build/tratto-upload.keystore',
+      alias: process.env.CM_KEY_ALIAS || 'tratto'},
     splashScreenFadeOutDuration: 300,
     generatorApp: 'bubblewrap-cli',
     webManifestUrl: 'https://www.trattoapp.com.ar/manifest.json',
@@ -40,7 +44,7 @@ const path = require('path');
     retainedBundles: [],
     protocolHandlers: [],
   });
-  const dir = '/opt/twa-build/proyecto';
+  const dir = process.env.TWA_DIR || '/opt/twa-build/proyecto';
   await new TwaGenerator().createTwaProject(dir, m, log);
   await m.saveToFile(path.join(dir, 'twa-manifest.json'));
   console.log('OK proyecto en', dir);
