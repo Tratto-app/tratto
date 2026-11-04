@@ -7,7 +7,13 @@ no se ve nada distinto.
 
 ## Cómo funciona
 
-1. La persona toca el botón y va a Google o a Apple (flujo PKCE de Supabase).
+1. Google: en la web se usa el botón oficial de Google (Google Identity
+   Services). La ventana de Google dice "continuar a trattoapp.com.ar" y
+   devuelve un token que Supabase cambia por la sesión (`grant_type=id_token`,
+   con nonce). Si ese botón no carga, queda el de siempre, que va a Google
+   pasando por Supabase (flujo PKCE); ese muestra la dirección técnica de
+   Supabase, que generaba desconfianza (fundador, 04/11/2026).
+   Apple: flujo PKCE de Supabase.
 2. Vuelve a `https://www.trattoapp.com.ar/` con su sesión.
 3. Si es la primera vez, ve **"Completá tu cuenta"**: el mismo formulario del
    alta sin email ni contraseña (para qué usa Tratto, nombre, teléfono, oficio
@@ -19,9 +25,11 @@ no se ve nada distinto.
 Al completar la cuenta, la base la vuelve a pasar al CRM con lo que cargó
 (trigger `crm_completar`).
 
-En la app de iPhone, Google no deja entrar desde una vista web dentro de una
-app, así que ahí solo aparece Apple, y recién desde la próxima build (la que
-agrega `TrattoApp/2` y deja navegar a Supabase y a Apple sin salir de la app).
+En la app de iPhone no aparece ninguno de los dos (desde el 04/11/2026):
+Google no deja entrar desde una vista web dentro de una app, y Apple dentro de
+esa vista terminaba en "Sin conexión". Lo que corresponde ahí es el inicio
+nativo de Apple y de Google (con Face ID), que necesita una versión nueva de
+la app.
 
 ## Lo que tenés que hacer vos
 
