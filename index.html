@@ -6525,7 +6525,8 @@ $('rol-cambiar').addEventListener('click', () => {
 /* Flujo PKCE de Supabase Auth: se guarda un verificador en el teléfono, se va
    a /auth/v1/authorize y se vuelve con ?code=, que se cambia por la sesión.
    Los botones aparecen solo si el proveedor está prendido en Supabase.
-   En la app de iPhone no se muestran por ahora (ver pintarSociales).
+   En la app de iPhone van con el inicio nativo (ver pintarSociales y
+   entrarNativo).
    La primera vez, la cuenta no tiene rol, teléfono ni términos aceptados:
    se piden en "Completá tu cuenta", con el mismo formulario del alta. */
 const enAppNativa = () => !!(window.Capacitor && window.Capacitor.isNativePlatform && window.Capacitor.isNativePlatform());
@@ -6536,16 +6537,65 @@ async function pintarSociales(){
     const r = await fetch(SUPABASE_URL+'/auth/v1/settings', {headers:{apikey:SUPABASE_ANON}});
     if(r.ok) ext = (await r.json()).external || {};
   }catch(e){}
-  /* En la app de iPhone no va ninguno de los dos por ahora: Google no deja
-     entrar desde una vista web embebida, y Apple dentro de esa vista termina
-     en "Sin conexión" (fundador, 04/11/2026). Ahí corresponde el inicio nativo
-     de Apple y de Google, que llega con una versión nueva de la app. */
-  const ios = enAppNativa();
-  const google = !!ext.google && !ios, apple = !!ext.apple && !ios;
+  /* En la app de iPhone, Google no deja entrar desde una vista web embebida y
+     Apple dentro de esa vista termina en "Sin conexión" (fundador, 04/11/2026).
+     Por eso ahí solo van con el inicio nativo (complemento SocialLogin, desde
+     la versión 1.2.0 de la app). Las versiones anteriores no lo tienen, así que
+     en esas no se muestra ninguno de los dos. */
+  const ios = enAppNativa(), nativo = socialNativo();
+  const google = !!ext.google && (!ios || (nativo && !!GOOGLE_IOS_CLIENT_ID));
+  const apple = !!ext.apple && (!ios || nativo);
   $('a-google').classList.toggle('oculto', !google);
   $('a-apple').classList.toggle('oculto', !apple);
   $('a-sociales').classList.toggle('oculto', !google && !apple);
-  if(google) prepararBotonGoogle();
+  if(google && !ios) prepararBotonGoogle();
+}
+
+/* Inicio nativo en la app de iPhone: la hoja de Apple o la de Google, sin
+   vista web. El complemento devuelve un token firmado que Supabase cambia por
+   la sesión (grant_type=id_token), igual que el botón oficial de Google en la
+   web. Al complemento va la huella del nonce y a Supabase el nonce tal cual.
+   Google necesita la credencial de iPhone de Google Cloud (GOOGLE_IOS_CLIENT_ID):
+   mientras esté vacía, en la app solo aparece Apple. */
+const GOOGLE_IOS_CLIENT_ID = '';
+const socialNativo = () => enAppNativa() && !!(window.Capacitor.isPluginAvailable &&
+  window.Capacitor.isPluginAvailable('SocialLogin') && window.Capacitor.Plugins && window.Capacitor.Plugins.SocialLogin);
+const huellaNonce = async n => [...new Uint8Array(await crypto.subtle.digest('SHA-256', new TextEncoder().encode(n)))]
+  .map(b => b.toString(16).padStart(2, '0')).join('');
+let socialListo = null;
+async function entrarNativo(proveedor){
+  const SL = window.Capacitor.Plugins.SocialLogin;
+  const nombre = proveedor === 'apple' ? 'Apple' : 'Google';
+  const rol = modoAuth === 'crear' && rolTocado ? rolElegido : null;
+  let res, nonce = '';
+  try{
+    socialListo = socialListo || SL.initialize(Object.assign({apple: {}}, GOOGLE_IOS_CLIENT_ID
+      ? {google: {iOSClientId: GOOGLE_IOS_CLIENT_ID, iOSServerClientId: GOOGLE_CLIENT_ID, mode: 'online'}} : {}))
+      .catch(e => { socialListo = null; throw e; });
+    await socialListo;
+    nonce = b64url(crypto.getRandomValues(new Uint8Array(24)));
+    res = await SL.login({provider: proveedor, options: {scopes: proveedor === 'apple' ? ['name', 'email'] : ['profile', 'email'],
+      nonce: await huellaNonce(nonce)}});
+  }catch(e){
+    // Si la persona cerró la hoja de Apple o de Google, no es un error.
+    if(/cancel|1001|12501/i.test(String((e && (e.code || e.message)) || e))) return;
+    console.error(e);
+    avisar('a-aviso', 'No pudimos abrir ' + nombre + '. Probá de nuevo o entrá con tu email.', 'mal');
+    return;
+  }
+  const r = (res && res.result) || {}, perfil = r.profile || {};
+  if(!r.idToken){ avisar('a-aviso', 'No pudimos entrar con ' + nombre + '. Probá de nuevo o entrá con tu email.', 'mal'); return; }
+  try{
+    const t = await fetch(SUPABASE_URL + '/auth/v1/token?grant_type=id_token', {method: 'POST',
+      headers: {apikey: SUPABASE_ANON, 'Content-Type': 'application/json'},
+      body: JSON.stringify({provider: proveedor, id_token: r.idToken, nonce})});
+    const j = await t.json().catch(() => ({}));
+    if(!t.ok || !j.access_token){ avisar('a-aviso', 'No pudimos entrar con ' + nombre + '. Probá de nuevo o entrá con tu email.', 'mal'); return; }
+    // Apple manda el nombre solo la primera vez y no viene en el token.
+    const completo = [perfil.givenName, perfil.familyName].filter(Boolean).join(' ').trim();
+    if(completo && !$('a-nombre').value) $('a-nombre').value = completo.slice(0, 60);
+    entrarConSesionSocial(j, rol);
+  }catch(e){ console.error(e); avisar('a-aviso', 'No se pudo conectar. Revisá tu conexión.', 'mal'); }
 }
 
 /* Google con su botón oficial (Google Identity Services) en vez de ir a
@@ -6628,8 +6678,8 @@ async function entrarCon(proveedor){
     avisar('a-aviso', 'No se pudo abrir. Probá de nuevo o entrá con tu email.', 'mal');
   }
 }
-$('a-google').addEventListener('click', () => entrarCon('google'));
-$('a-apple').addEventListener('click', () => entrarCon('apple'));
+$('a-google').addEventListener('click', () => socialNativo() ? entrarNativo('google') : entrarCon('google'));
+$('a-apple').addEventListener('click', () => socialNativo() ? entrarNativo('apple') : entrarCon('apple'));
 
 /* Cuentas de Google o Apple que todavía no completaron el alta. Las cuentas
    viejas con email pueden no tener rol en los datos: a esas no se les pide. */
