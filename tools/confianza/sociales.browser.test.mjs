@@ -91,14 +91,17 @@ test('app de iPhone con inicio nativo: Apple con la hoja de Apple y sesión por 
   }, antes: APP_NATIVA});
   try {
     await p.page.waitForSelector('#a-apple:not(.oculto)');
-    // Sin la credencial de iPhone de Google Cloud, Google no aparece en la app.
-    assert.ok(await p.page.locator('#a-google').isHidden());
+    // En la app, Google va con su botón de siempre (nativo), no con el de la web.
+    assert.ok(await p.page.locator('#a-google').isVisible());
     assert.ok(await p.page.locator('#a-google-gis').isHidden());
     await p.page.click('#rol-cliente').catch(() => {});
     await p.page.click('#a-apple');
     await p.page.waitForSelector('#p-auth.completando');
     const sl = await p.page.evaluate(() => window.__sl);
-    assert.deepEqual(sl.init, {apple: {}});
+    assert.deepEqual(Object.keys(sl.init).sort(), ['apple', 'google']);
+    assert.deepEqual(sl.init.apple, {});
+    assert.match(sl.init.google.iOSClientId, /^975806137803-.*\.apps\.googleusercontent\.com$/);
+    assert.equal(sl.init.google.mode, 'online');
     assert.equal(sl.login.provider, 'apple');
     assert.deepEqual(sl.login.options.scopes, ['name', 'email']);
     const llamada = p.calls.find(c => c.path.endsWith('/auth/v1/token') && c.query.includes('grant_type=id_token'));
@@ -109,6 +112,29 @@ test('app de iPhone con inicio nativo: Apple con la hoja de Apple y sesión por 
     // Apple da el nombre solo la primera vez y no viene en el token.
     assert.equal(await p.page.inputValue('#a-nombre'), 'Ana Pérez');
     assert.ok(!p.calls.some(c => c.path.endsWith('/auth/v1/authorize')), 'no pasa por la página web de Apple');
+    assert.deepEqual(p.errors, []);
+  } finally { await p.cerrar(); }
+});
+
+test('app de iPhone con inicio nativo: Google con la hoja de Google y sesión por id_token', async () => {
+  const p = await abrir(entorno, {rol: null, handler: c => {
+    if (c.path.endsWith('/auth/v1/settings')) return {json: {external: {google: true, apple: true, email: true}}};
+    if (c.path.endsWith('/auth/v1/token') && c.query.includes('grant_type=id_token')) return {json: {
+      access_token: 'tok', refresh_token: 'r', user: {id: cliente, email: 'ana@example.invalid',
+        app_metadata: {provider: 'google'}, user_metadata: {full_name: 'Ana Pérez'}}}};
+    return null;
+  }, antes: APP_NATIVA});
+  try {
+    await p.page.waitForSelector('#a-google:not(.oculto)');
+    await p.page.click('#a-google');
+    await p.page.waitForSelector('#p-auth.completando');
+    const sl = await p.page.evaluate(() => window.__sl);
+    assert.equal(sl.login.provider, 'google');
+    assert.deepEqual(sl.login.options.scopes, ['profile', 'email']);
+    const llamada = p.calls.find(c => c.path.endsWith('/auth/v1/token') && c.query.includes('grant_type=id_token'));
+    assert.equal(llamada.body.provider, 'google');
+    assert.equal(createHash('sha256').update(llamada.body.nonce).digest('hex'), sl.login.options.nonce);
+    assert.ok(!p.calls.some(c => c.path.endsWith('/auth/v1/authorize')), 'no pasa por la página web de Google');
     assert.deepEqual(p.errors, []);
   } finally { await p.cerrar(); }
 });

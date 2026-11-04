@@ -30,8 +30,9 @@ app y Apple dentro de esa vista terminaba en "Sin conexión". Por eso ahí van
 con el **inicio nativo** (la hoja de Apple o la de Google), que llega con la
 versión 1.2.0 de la app (complemento `@capgo/capacitor-social-login`). En las
 versiones anteriores de la app no aparece ninguno de los dos. Google en la app
-necesita además la credencial de iPhone de Google Cloud (`GOOGLE_IOS_CLIENT_ID`
-en `index.html`): mientras esté vacía, en la app solo aparece Apple.
+usa además la credencial de iPhone de Google Cloud ("Tratto iPhone", creada el
+04/11/2026, `GOOGLE_IOS_CLIENT_ID` en `index.html` y su esquema en el
+`Info.plist` de la app).
 
 ## Lo que tenés que hacer vos
 

@@ -6555,9 +6555,10 @@ async function pintarSociales(){
    vista web. El complemento devuelve un token firmado que Supabase cambia por
    la sesión (grant_type=id_token), igual que el botón oficial de Google en la
    web. Al complemento va la huella del nonce y a Supabase el nonce tal cual.
-   Google necesita la credencial de iPhone de Google Cloud (GOOGLE_IOS_CLIENT_ID):
-   mientras esté vacía, en la app solo aparece Apple. */
-const GOOGLE_IOS_CLIENT_ID = '';
+   Google usa la credencial de iPhone de Google Cloud ("Tratto iPhone",
+   GOOGLE_IOS_CLIENT_ID), cuyo esquema va en el Info.plist de la app; si se
+   vaciara, en la app quedaría solo Apple. */
+const GOOGLE_IOS_CLIENT_ID = '975806137803-dg5dtjv6jt1qcgtj5rie279p71co8hml.apps.googleusercontent.com';
 const socialNativo = () => enAppNativa() && !!(window.Capacitor.isPluginAvailable &&
   window.Capacitor.isPluginAvailable('SocialLogin') && window.Capacitor.Plugins && window.Capacitor.Plugins.SocialLogin);
 const huellaNonce = async n => [...new Uint8Array(await crypto.subtle.digest('SHA-256', new TextEncoder().encode(n)))]
