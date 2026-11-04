@@ -103,7 +103,7 @@ test('app de iPhone con inicio nativo: Apple con la hoja de Apple y sesión por 
     assert.match(sl.init.google.iOSClientId, /^975806137803-.*\.apps\.googleusercontent\.com$/);
     assert.equal(sl.init.google.mode, 'online');
     assert.equal(sl.login.provider, 'apple');
-    assert.deepEqual(sl.login.options.scopes, ['name', 'email']);
+    assert.deepEqual(Object.keys(sl.login.options), ['nonce'], 'sin scopes: Apple usa nombre y mail por defecto');
     const llamada = p.calls.find(c => c.path.endsWith('/auth/v1/token') && c.query.includes('grant_type=id_token'));
     assert.equal(llamada.body.provider, 'apple');
     assert.equal(llamada.body.id_token, 'token-de-apple-de-prueba');
@@ -130,7 +130,7 @@ test('app de iPhone con inicio nativo: Google con la hoja de Google y sesión po
     await p.page.waitForSelector('#p-auth.completando');
     const sl = await p.page.evaluate(() => window.__sl);
     assert.equal(sl.login.provider, 'google');
-    assert.deepEqual(sl.login.options.scopes, ['profile', 'email']);
+    assert.deepEqual(Object.keys(sl.login.options), ['nonce'], 'sin scopes: Google usa email, profile y openid');
     const llamada = p.calls.find(c => c.path.endsWith('/auth/v1/token') && c.query.includes('grant_type=id_token'));
     assert.equal(llamada.body.provider, 'google');
     assert.equal(createHash('sha256').update(llamada.body.nonce).digest('hex'), sl.login.options.nonce);
