@@ -39,3 +39,4 @@ muestras-voz/
 # Copias de trabajo de los subagentes (git worktree): son locales, no van al repo.
 .claude/worktrees/
 tools/piezas-redes/reels/audio/*-base.wav
+tools/piezas-redes/reels/audio/voz3d-*.wav
