@@ -345,7 +345,8 @@
   window.KIT3D = kit;
   const E = window.ESCENA3D;
   E.armar(kit);
-  window.PUBLI = { duracion: E.duracion, cierre: E.cierre, tema: '3d' };
+  // Lo lee render-reel.py --info (y hacer-3d.py): largo, cierre y efectos de sonido
+  window.PUBLI = { duracion: E.duracion, cierre: E.cierre, tema: '3d', efectos: E.efectos || [] };
   window.render = function (t) {
     E.animar(t, kit);
     subtitulos(t);

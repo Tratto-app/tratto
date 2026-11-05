@@ -14,9 +14,9 @@ window.ESCENA3D = (function () {
   // Tiempos, a partir de la voz (window.PALABRAS); valores de respaldo para las previas
   const P = {};
   function tiempos() {
-    P.en = k.palabra('ojo', 1, 4.4);           // "¡Ojo con lo que te cobran!" (frase del precio)
+    P.en = k.palabra('en', 1, 4.4);            // "En un terreno…" (frase del precio)
     P.precio = k.palabra('diecisiete', 1, 7.8);
-    P.si = k.palabra('piden', 1, 11.1) - 0.25; // "¿Te piden mucho más?"
+    P.si = k.palabra('y', 3, 10.9);            // "¿Y si te piden mucho más?" (antes: «y no sabés» y «mil y veintinueve»)
     P.pub = k.palabra('publicá', 1, 14.6);      // "Publicá tu pedido gratis…"
     P.fin = k.finVoz(19.0);
     P.cierre = P.fin + 0.35;
@@ -85,6 +85,19 @@ window.ESCENA3D = (function () {
   return {
     get duracion() { return P.cierre + 2.8; },
     get cierre() { return P.cierre; },
+    // efectos (sonido.py): cortes de cámara, el precio, el chip y el logo
+    get efectos() {
+      return [
+        { efecto: 'latigazo', t: +(P.en - 0.2).toFixed(2), db: -18 },
+        { efecto: 'pop', t: +(P.precio - 0.15).toFixed(2), db: -16 },
+        { efecto: 'campanita', t: +(P.precio + 0.05).toFixed(2), db: -18 },
+        { efecto: 'sello', t: +(P.precio + 0.3).toFixed(2), db: -18 },
+        { efecto: 'latigazo', t: +(P.si - 0.2).toFixed(2), db: -19 },
+        { efecto: 'latigazo', t: +(P.pub - 0.2).toFixed(2), db: -19 },
+        { efecto: 'pop', t: +(P.pub + 0.25).toFixed(2), db: -16 },
+        { efecto: 'golpe', t: +(P.cierre + 0.1).toFixed(2), db: -14 },
+      ];
+    },
     armar(kit) {
       k = kit; tiempos(); recorrido();
       const zona = k.patio({ ancho: 6.4, fondo: 8 });
