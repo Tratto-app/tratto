@@ -33,6 +33,7 @@ def main():
     ap.add_argument("--palabras", required=True, help="tiempos de cada palabra (clonar.py --palabras)")
     ap.add_argument("--voz", help="la voz que pasó los controles de clonar.py")
     ap.add_argument("--musica", default="acustico")
+    ap.add_argument("--voz-nombre", default="tratto-3d", help="qué voz es, para datos.video.voz (tratto-3d, clonada, grabada)")
     ap.add_argument("--previa")
     a = ap.parse_args()
     nombre = os.path.splitext(os.path.basename(a.html))[0]
@@ -63,7 +64,7 @@ def main():
     mezcla = f"audio/{nombre}-mezcla.m4a"
     correr("sonido.py", base, efectos, mezcla, "--segundos", str(seg))
     correr("render-reel.py", a.html, "--segundos", str(seg), "--palabras", a.palabras, "--audio", mezcla)
-    print(json.dumps({"formato": "3d", "musica": a.musica, "duracion": seg, "voz": "clonada" if a.voz else "sin voz",
+    print(json.dumps({"formato": "3d", "musica": a.musica, "duracion": seg, "voz": a.voz_nombre if a.voz else "sin voz",
                       "archivo": f"salida/{nombre}.mp4"}, ensure_ascii=False))
 
 

@@ -147,3 +147,13 @@ No en este repo: es público, y una grabación limpia de la voz alcanza para
 clonarla (el `.gitignore` de esta carpeta bloquea los archivos de audio).
 La toma original y el master aprobado (`tratto-voz-en-off.wav`) se guardan
 en el Drive de Tratto.
+
+## Voz Tratto 3D (05/11/2026)
+
+Para los videos 3D el fundador no quiere su voz: pidió una como la del reel
+3D de otra app de servicios. Esa voz no se clona (es de otra persona o de
+otra marca). Se describió su estilo y `disenar_voz.py` (Qwen3-TTS VoiceDesign,
+Apache 2.0, gratis) creó una voz nueva, que no es de nadie. La muestra fija es
+`muestra-voz-3d.wav` (su texto, `muestra-voz-3d.txt`) y se usa con
+`clonar.py --muestra … --muestra-texto …` y los mismos controles. Se avisa
+que es voz hecha con IA.

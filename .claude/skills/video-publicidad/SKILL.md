@@ -112,8 +112,28 @@ Tratto (verde bosque, latón, IBM Plex).
   --palabras … --previa` → música (`musica.py`, suave debajo de la voz) +
   voz con `sidechaincompress` + efectos (`sonido.py`) → `render-reel.py …
   --palabras … --audio …` → prueba del cerebro.
-- **Voz:** la de siempre, con todos los controles de `clonar.py`. Si no pasa,
-  frase más corta; si tampoco, el video sale con subtítulos y sin voz.
+- **Voz: la "voz Tratto 3D", no la del fundador** (05/11/2026: "No quiero
+  que le pongas mi voz. Quiero que quede… con la misma voz que tiene el del
+  video de aLaburar"). La voz de ese reel no se clona (es de otra persona o de
+  otra marca, y la gente confundiría los videos): se escuchó para describir su
+  estilo (hombre de unos 30, porteño, 132 Hz, unas 3 palabras por segundo,
+  canchero, contando una anécdota) y `tools/voz-en-off/disenar_voz.py`
+  (Qwen3-TTS VoiceDesign, Apache 2.0) creó una voz nueva con esa descripción.
+  La toma elegida es la muestra fija `tools/voz-en-off/muestra-voz-3d.wav`
+  (texto en `muestra-voz-3d.txt`): 138 Hz, con voseo. Cada video:
+  `clonar.py "<guion>" … --muestra ../../voz-en-off/muestra-voz-3d.wav
+  --muestra-texto "$(cat ../../voz-en-off/muestra-voz-3d.txt)"`, con todos los
+  controles de siempre. Avisar que es IA: en TikTok `isAiGenerated`; en
+  Instagram y Facebook, "Voz hecha con IA" (no "a partir de la voz de
+  Agustín"). `datos.video.voz = "tratto-3d"`.
+- **Guion como el de referencia:** una historia en escalera, en segunda
+  persona, con humor: cada intento sale peor (llovió el finde, y el otro
+  también; la máquina del vecino, sin nafta) y recién ahí aparece quien
+  ofrece el servicio, el precio real y el pedido gratis. Frases cortas; nada
+  de palabras que el oído escriba separado ("finde" → "fin de semana").
+- **Carteles que señalan objetos** (`k.etiqueta`), lluvia, humo y cortes de
+  cámara en cada frase: la escena toma el comienzo de cada frase de la voz
+  (`k.frase(n)`).
 - **Variedad dentro del 3D:** cambia el tema, el lugar, la cámara, la música
   y el tipo de gancho respecto del video anterior de esa red (`variedad`
   sigue eligiendo música, gancho y largo).
