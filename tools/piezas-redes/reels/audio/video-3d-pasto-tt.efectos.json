@@ -1,0 +1,42 @@
+[
+ {
+  "efecto": "latigazo",
+  "t": 4.75,
+  "db": -18
+ },
+ {
+  "efecto": "pop",
+  "t": 8.58,
+  "db": -16
+ },
+ {
+  "efecto": "campanita",
+  "t": 8.78,
+  "db": -18
+ },
+ {
+  "efecto": "sello",
+  "t": 9.03,
+  "db": -18
+ },
+ {
+  "efecto": "latigazo",
+  "t": 10.85,
+  "db": -19
+ },
+ {
+  "efecto": "latigazo",
+  "t": 15.25,
+  "db": -19
+ },
+ {
+  "efecto": "pop",
+  "t": 15.7,
+  "db": -16
+ },
+ {
+  "efecto": "golpe",
+  "t": 20.1,
+  "db": -14
+ }
+]

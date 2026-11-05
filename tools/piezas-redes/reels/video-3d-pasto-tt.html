@@ -15,8 +15,8 @@ window.ESCENA3D = (function () {
   const P = {};
   function tiempos() {
     P.en = k.palabra('en', 1, 4.4);            // "En un terreno…" (frase del precio)
-    P.precio = k.palabra('diecisiete', 1, 7.8);
-    P.si = k.palabra('y', 3, 10.9);            // "¿Y si te piden mucho más?" (antes: «y no sabés» y «mil y veintinueve»)
+    P.precio = k.palabra('diecisiete', 1, k.palabra('17', 1, 7.8));
+    P.si = k.palabra('piden', 1, 11.2) - 0.3;  // "…te piden mucho más"
     P.pub = k.palabra('publicá', 1, 14.6);      // "Publicá tu pedido gratis…"
     P.fin = k.finVoz(19.0);
     P.cierre = P.fin + 0.35;

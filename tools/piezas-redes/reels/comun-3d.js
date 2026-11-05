@@ -264,7 +264,9 @@
       const largo = cur.map(x => x.txt).join(' ').length;
       const corte = /[.,;:?!¿]$/.test(w[2]);
       const sig = pal[i + 1];
-      if (corte || largo >= 15 || cur.length >= 4 || !sig || (sig && sig[0] - w[1] > 0.35)) { out.push(cur); cur = []; }
+      // una palabra corta que cierra la frase no queda sola en su bloque
+      const ultimaCorta = sig && /[.?!]$/.test(sig[2]) && sig[2].length <= 5 && sig[0] - w[1] < 0.35;
+      if (corte || !sig || sig[0] - w[1] > 0.35 || (!ultimaCorta && (largo >= 15 || cur.length >= 4))) { out.push(cur); cur = []; }
     });
     if (cur.length) out.push(cur);
     return out;
