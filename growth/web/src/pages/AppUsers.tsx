@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Badge, Card, Empty, ErrorBox, Loading, PageHeader, Pager } from '../components/ui';
 import { rpc } from '../lib/api';
-import { accountDate, percentage, type UsersOverview } from '../lib/app-users';
+import { accountDate, accountLogin, percentage, type UsersOverview } from '../lib/app-users';
 import { useAsync, useDebounced } from '../lib/hooks';
 import { useWs } from '../lib/workspace';
 import './app-users.css';
@@ -89,7 +89,7 @@ export default function AppUsers() {
           <div className="au-person-head"><div className="au-avatar" aria-hidden="true">{u.nombre.slice(0,1).toUpperCase()}</div><div className="au-person-name"><strong>{u.nombre}</strong><span>{u.email||'Sin email'}</span></div><Badge tone={u.tipo==='provider'?'laton':'verde'}>{u.tipo==='provider'?'Oferente':u.tipo==='customer'?'Cliente':'Sin perfil definido'}</Badge></div>
           <div className="au-person-rubros">{u.rubros.length?u.rubros.join(' · '):'Sin rubro de servicio'}</div>
           <div className="au-person-stats"><div><span>Notificaciones</span><b className={u.dispositivos?'au-ok':'muted'}>{u.dispositivos?`${u.dispositivos} dispositivo${u.dispositivos>1?'s':''}`:'Sin suscripción'}</b></div>{u.tipo==='provider'?<><div><span>Servicios</span><b>{u.servicios?`${u.servicios} publicado${u.servicios>1?'s':''}`:'Pendiente de publicar'}</b></div><div><span>Trabajos en el perfil</span><b>{u.trabajos}</b></div></>:<div><span>Pedidos publicados</span><b>{u.pedidos}</b></div>}</div>
-          <div className="au-person-foot"><span>Alta {accountDate(u.registrado_at)}</span>{u.crm_id && <Link to={`/users/${u.crm_id}`}>Ver ficha CRM →</Link>}</div>
+          <div className="au-person-foot"><span>Alta {accountDate(u.registrado_at)} · Ingreso: {accountLogin(u.metodo_ingreso)}</span>{u.crm_id && <Link to={`/users/${u.crm_id}`}>Ver ficha CRM →</Link>}</div>
         </article>)}</div>}
         <Pager page={page} pageSize={50} total={data.total_filtrado} onPage={setPage}/>
       </Card>

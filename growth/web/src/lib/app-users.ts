@@ -2,7 +2,9 @@ export interface AccountRow {
   user_id: string; nombre: string; email: string | null; tipo: 'provider' | 'customer' | 'unknown';
   rubros: string[]; registrado_at: string; servicios: number; trabajos: number; pedidos: number;
   dispositivos: number; crm_id: string | null;
+  metodo_ingreso?: string;
 }
+export const accountLogin = (method?: string) => ({google:'Google',apple:'Apple',email:'email'}[method || ''] || 'Método no informado');
 export interface UsersOverview {
   corte_at: string;
   totales: { usuarios: number; proveedores: number; clientes: number; sin_tipo: number; proveedores_push: number;
