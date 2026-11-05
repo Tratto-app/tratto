@@ -194,12 +194,12 @@
     const m = new T.Matrix4(), q = new T.Quaternion(), e = new T.Euler(), s = new T.Vector3(), p = new T.Vector3();
     return {
       bri, malla,
-      animar(t, viento = 1) {
+      animar(t, viento = 1, crecer = 1) {
         for (let i = 0; i < n; i++) {
           const b = bri[i];
           const cortado = t >= b.tCorte;
           const caida = cortado ? 1 - suave((t - b.tCorte) / 0.12) : 1;
-          const alto = cortado ? lerp(b.corto, b.alto, caida) : b.alto;
+          const alto = cortado ? lerp(b.corto, b.alto * crecer, caida) : b.alto * crecer;
           const vaiven = cortado ? 0 : Math.sin(t * 2.2 + b.fase + b.x * 0.6) * 0.09 * viento;
           e.set(b.incl * Math.cos(b.giro) + vaiven, b.giro, b.incl * Math.sin(b.giro) + vaiven * 0.5);
           q.setFromEuler(e); s.set(1, alto, 1); p.set(b.x, 0.07, b.z);
@@ -231,6 +231,7 @@
     const malla = new T.InstancedMesh(geo, new T.MeshLambertMaterial({ color: '#7FB24C', flatShading: true }), n);
     const r = azar(99), ps = [];
     for (let i = 0; i < n; i++) ps.push({ u: r(), vx: lerp(-1.2, 1.2, r()), vy: lerp(1.6, 3.2, r()), vz: lerp(-1.2, 1.2, r()), giro: r() * 6 });
+    malla.frustumCulled = false; // las gotas se mueven: que three.js no las saltee
     escena.add(malla);
     const m = new T.Matrix4(), q = new T.Quaternion(), e = new T.Euler(), p = new T.Vector3(), s = new T.Vector3();
     return {
@@ -251,9 +252,78 @@
     };
   }
 
+  // Lluvia: gotas finas que caen sobre la zona (intensidad 0 a 1)
+  function lluvia(o = {}) {
+    const n = o.cantidad || 2000, r = azar(o.semilla || 31), alto = 6.5;
+    const { x0, x1, z0, z1 } = o.zona || { x0: -6, x1: 6, z0: -7, z1: 7 };
+    const malla = new T.InstancedMesh(new T.BoxGeometry(0.035, 0.62, 0.035),
+      new T.MeshBasicMaterial({ color: '#F2F7FA', transparent: true, opacity: 0.8 }), n);
+    const gs = []; for (let i = 0; i < n; i++) gs.push({ x: lerp(x0, x1, r()), z: lerp(z0, z1, r()), f: r(), u: r() });
+    malla.frustumCulled = false; // las gotas se mueven: que three.js no las saltee
+    escena.add(malla);
+    const m = new T.Matrix4(), q = new T.Quaternion().setFromEuler(new T.Euler(0.12, 0, 0.06)), p = new T.Vector3(), s = new T.Vector3();
+    return {
+      animar(t, intensidad) {
+        for (let i = 0; i < n; i++) {
+          const g = gs[i];
+          if (g.u >= intensidad) { s.set(0, 0, 0); p.set(0, -9, 0); }
+          else { s.set(1, 1, 1); p.set(g.x + 0.3 * ((t * 13 + g.f * alto) % alto) / alto, alto - ((t * 13 + g.f * alto) % alto), g.z); }
+          m.compose(p, q, s); malla.setMatrixAt(i, m);
+        }
+        malla.instanceMatrix.needsUpdate = true;
+      },
+    };
+  }
+  // Cielo: de soleado (0) a nublado (1)
+  const fondoSol = new T.Color('#C9D8D0'), fondoNube = new T.Color('#7F8B8D');
+  const tormenta = document.createElement('div'); tormenta.className = 'tormenta';
+  document.getElementById('escena').appendChild(tormenta);
+  function clima(nublado) {
+    tormenta.style.opacity = (0.5 * nublado).toFixed(3);
+    escena.background.copy(fondoSol).lerp(fondoNube, nublado);
+    escena.fog.color.copy(escena.background);
+    cielo.intensity = lerp(1.25, 0.6, nublado); sol.intensity = lerp(2.1, 0.15, nublado);
+  }
+  // Humo: bocanadas grises que suben (un motor que no arranca)
+  function humo(n = 16) {
+    const malla = new T.InstancedMesh(new T.IcosahedronGeometry(0.14, 0), mat('#8E9490'), n);
+    const r = azar(57), ps = []; for (let i = 0; i < n; i++) ps.push({ u: r(), dx: lerp(-0.4, 0.4, r()), dz: lerp(-0.3, 0.3, r()) });
+    malla.frustumCulled = false; // las gotas se mueven: que three.js no las saltee
+    escena.add(malla);
+    const m = new T.Matrix4(), q = new T.Quaternion(), p = new T.Vector3(), s = new T.Vector3();
+    return {
+      animar(t, desde, hasta, punto) {
+        for (let i = 0; i < n; i++) {
+          const a = ps[i], t0 = lerp(desde, hasta - 0.6, a.u), e = t - t0;
+          if (e < 0 || e > 1.1 || t > hasta + 0.5) { s.set(0, 0, 0); p.set(0, -9, 0); }
+          else { const k = 0.6 + e * 1.6 * (1 - suave((e - 0.8) / 0.3)); s.set(k, k, k); p.set(punto.x + a.dx * e, punto.y + e * 0.9, punto.z + a.dz * e); }
+          m.compose(p, q, s); malla.setMatrixAt(i, m);
+        }
+        malla.instanceMatrix.needsUpdate = true;
+      },
+    };
+  }
+
   // ---------- textos (HTML encima del 3D) ----------
   const capa = document.getElementById('textos');
   function el(html, cls) { const d = document.createElement('div'); if (cls) d.className = cls; d.innerHTML = html; capa.appendChild(d); return d; }
+
+  // Cartel que señala algo de la escena (pastilla de latón con una línea al objeto)
+  function etiqueta(texto) {
+    const linea = el('', 'etq-linea'), pas = el(texto, 'etq');
+    const v = new T.Vector3();
+    return {
+      animar(t, desde, hasta, punto, dx = 140, dy = -150) {
+        if (t < desde || t > hasta) { pas.style.opacity = linea.style.opacity = 0; return; }
+        v.set(punto.x, punto.y, punto.z).project(camara);
+        const px = (v.x + 1) / 2 * W, py = (1 - v.y) / 2 * H;
+        const e = rebote((t - desde) / 0.35), o = Math.min(1, (t - desde) / 0.12) * (1 - suave((t - (hasta - 0.2)) / 0.2));
+        const ax = px + dx, ay = py + dy, largo = Math.hypot(ax - px, ay - py), ang = Math.atan2(ay - py, ax - px);
+        Object.assign(linea.style, { left: px + 'px', top: py + 'px', width: largo * Math.min(1, e) + 'px', transform: `rotate(${ang}rad)`, opacity: o });
+        Object.assign(pas.style, { left: ax + 'px', top: ay + 'px', opacity: o, transform: `translate(${dx < 0 ? '-100%' : '0'}, -50%) scale(${0.7 + 0.3 * e})` });
+      },
+    };
+  }
 
   // Subtítulos karaoke: de a 2 a 4 palabras, la que se dice resaltada
   const subt = el('', 'subt');
@@ -339,6 +409,7 @@
 
   // ---------- armar y dibujar ----------
   const kit = { THREE: T, C, escena, camara, sol, renderer, mat, caja, personaje, pose, patio, pasto, cortadora, recortes,
+    lluvia, clima, humo, etiqueta,
     el, tarjeta, mostrar, cierre, etiquetaUrl, lerp, clamp, suave, rebote, azar,
     palabra(txt, n = 1, def = 0) { // segundo en que se dice esa palabra (n-ésima vez)
       const pal = window.PALABRAS || []; let k = 0;

@@ -3,6 +3,7 @@
 *{margin:0;padding:0;box-sizing:border-box}
 html,body{width:1080px;height:1920px;overflow:hidden;background:#0E1815}
 #escena,#textos{position:absolute;inset:0}
+.tormenta{position:absolute;inset:0;pointer-events:none;opacity:0;background:linear-gradient(180deg,rgba(28,40,50,.85) 0%,rgba(30,42,48,.55) 60%,rgba(30,42,48,.4) 100%)}
 #lienzo3d{display:block;width:1080px;height:1920px}
 #textos{z-index:2;pointer-events:none}
 
@@ -49,3 +50,9 @@ html,body{width:1080px;height:1920px;overflow:hidden;background:#0E1815}
 .c-b{font:700 104px/1.02 'IBM Plex Sans Condensed',sans-serif;color:#C9A227}
 .c-url{font:600 46px/1.2 'IBM Plex Mono',monospace;color:#8FD9BC;margin-top:30px;padding:16px 30px;border-radius:999px;border:3px solid rgba(143,217,188,.5)}
 .c-nota{font:500 32px/1.2 'IBM Plex Mono',monospace;color:#B9C7C0}
+
+/* Cartel que señala algo de la escena */
+.etq{position:absolute;padding:12px 22px;border-radius:14px;background:#C9A227;color:#0E1815;white-space:nowrap;
+  font:600 32px/1 'IBM Plex Mono',monospace;letter-spacing:1px;text-transform:uppercase;box-shadow:0 8px 0 rgba(14,24,21,.3);opacity:0}
+.etq-linea{position:absolute;height:4px;background:#C9A227;transform-origin:0 50%;opacity:0;box-shadow:0 3px 0 rgba(14,24,21,.25)}
+.etq-linea::before{content:'';position:absolute;left:-9px;top:-7px;width:18px;height:18px;border-radius:50%;background:#C9A227}
