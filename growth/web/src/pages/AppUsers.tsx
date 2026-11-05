@@ -11,6 +11,7 @@ export default function AppUsers() {
   const { ws, kind } = useWs();
   const [query, setQuery] = useState(''), search = useDebounced(query);
   const [stage, setStage] = useState(''), [rubro, setRubro] = useState('');
+  const [withoutProfile, setWithoutProfile] = useState(false);
   const [sort, setSort] = useState<'registrados'|'con_push'|'con_servicio'>('registrados');
   const [page, setPage] = useState(0), [tick, setTick] = useState(0);
   const refresh = () => setTick(t => t + 1);
@@ -20,10 +21,11 @@ export default function AppUsers() {
     return () => { window.clearInterval(timer); window.removeEventListener('focus', reload); };
   }, []);
   useEffect(() => setPage(0), [ws!.id, search, kind]);
+  useEffect(() => setWithoutProfile(false), [ws!.id, kind]);
   const results = useAsync(() => rpc<UsersOverview>('growth_app_users_overview', {
-    p_workspace: ws!.id, p_query: search, p_kind: kind, p_stage: stage || null,
+    p_workspace: ws!.id, p_query: search, p_kind: withoutProfile ? 'unknown' : kind, p_stage: stage || null,
     p_rubro: rubro || null, p_page: page,
-  }), [ws!.id, search, kind, stage, rubro, page, tick]);
+  }), [ws!.id, search, kind, withoutProfile, stage, rubro, page, tick]);
   const data = results.data, t = data?.totales;
   const rubros = [...(data?.rubros || [])].sort((a,b) => b[sort]-a[sort] || a.rubro.localeCompare(b.rubro));
   const maxRubro = Math.max(1, ...rubros.map(r => r.registrados));
@@ -41,11 +43,17 @@ export default function AppUsers() {
         <Metric label="Cuentas registradas" value={t.usuarios} detail="Sin cuentas demo ni eliminadas"/>
         <Metric label="Oferentes de servicios" value={t.proveedores} detail={`${t.proveedores_pendientes} todavía sin servicio publicado`} tone="gold"/>
         <Metric label="Clientes" value={t.clientes} detail={`${t.clientes_push} con notificaciones push registradas`}/>
+        <Metric label="Sin perfil definido" value={t.sin_tipo} detail="Cuentas sin tipo de cliente u oferente guardado"/>
         <Metric label="Oferentes con notificaciones" value={t.proveedores_push} detail={`${percentage(t.proveedores_push,t.proveedores)}% de los oferentes`} tone="green"/>
         <Metric label="Oferentes con servicio" value={t.proveedores_publicados} detail={`${t.servicios} servicios publicados en total`} tone="green"/>
         <Metric label="Registros de hoy" value={t.altas_hoy} detail="Altas de cuentas · día de Buenos Aires"/>
       </div>
-      {t.sin_tipo>0 && <p className="au-note">Hay {t.sin_tipo} cuentas que aún no tienen un tipo definido.</p>}
+      <div className="au-heading" aria-label="Desglose de cuentas">
+        <p className="au-note">{t.usuarios} cuentas = {t.proveedores} oferentes + {t.clientes} clientes + {t.sin_tipo} sin perfil definido.</p>
+        {(t.sin_tipo>0 || withoutProfile) && <button className="btn chico" aria-pressed={withoutProfile} onClick={()=>{
+          setWithoutProfile(v=>!v); setQuery(''); setStage(''); setRubro(''); setPage(0);
+        }}>{withoutProfile ? 'Quitar filtro sin perfil' : 'Ver cuentas sin perfil'}</button>}
+      </div>
       <div className="au-panels">
         <Card title="Qué tan completos están los perfiles">
           <Progress label="Publicaron un servicio" n={t.proveedores_publicados} total={t.proveedores}/>
@@ -76,9 +84,9 @@ export default function AppUsers() {
       <Card className="mt" title="Personas registradas" actions={<span className="muted pequeño">{data.total_filtrado} en esta selección</span>}>
         <div className="au-filters"><input aria-label="Buscar persona" placeholder="Buscar nombre o email…" value={query} onChange={e=>{setQuery(e.target.value);setPage(0);}}/><select aria-label="Filtrar rubro" value={rubro} onChange={e=>changeRubro(e.target.value)}><option value="">Todos los rubros</option>{data.rubros.map(r=><option key={r.rubro}>{r.rubro}</option>)}</select></div>
         <div className="au-filter-pills" aria-label="Estado del registro">{FILTERS.map(([value,label])=><button className={`btn chico ${stage===value?'primario':''}`} key={value} aria-pressed={stage===value} onClick={()=>changeStage(value)}>{label}</button>)}</div>
-        <p className="au-note">El selector superior de clientes / proveedores filtra esta lista. El panorama general muestra siempre el acumulado completo.</p>
-        {results.loading ? <Loading text="Actualizando personas…"/> : !data.usuarios.length ? <Empty title="No hay personas con estos filtros"><button className="btn" onClick={()=>{setQuery('');changeStage('');changeRubro('');}}>Limpiar búsqueda y filtros</button></Empty> : <div className="au-people">{data.usuarios.map(u=><article className="au-person" key={u.user_id}>
-          <div className="au-person-head"><div className="au-avatar" aria-hidden="true">{u.nombre.slice(0,1).toUpperCase()}</div><div className="au-person-name"><strong>{u.nombre}</strong><span>{u.email||'Sin email'}</span></div><Badge tone={u.tipo==='provider'?'laton':'verde'}>{u.tipo==='provider'?'Oferente':u.tipo==='customer'?'Cliente':'Sin tipo'}</Badge></div>
+        <p className="au-note">{withoutProfile ? 'Mostrando cuentas sin perfil definido, independientemente del selector superior.' : 'El selector superior de clientes / proveedores filtra esta lista.'} El panorama general muestra siempre el acumulado completo.</p>
+        {results.loading ? <Loading text="Actualizando personas…"/> : !data.usuarios.length ? <Empty title="No hay personas con estos filtros"><button className="btn" onClick={()=>{setQuery('');setWithoutProfile(false);changeStage('');changeRubro('');}}>Limpiar búsqueda y filtros</button></Empty> : <div className="au-people">{data.usuarios.map(u=><article className="au-person" key={u.user_id}>
+          <div className="au-person-head"><div className="au-avatar" aria-hidden="true">{u.nombre.slice(0,1).toUpperCase()}</div><div className="au-person-name"><strong>{u.nombre}</strong><span>{u.email||'Sin email'}</span></div><Badge tone={u.tipo==='provider'?'laton':'verde'}>{u.tipo==='provider'?'Oferente':u.tipo==='customer'?'Cliente':'Sin perfil definido'}</Badge></div>
           <div className="au-person-rubros">{u.rubros.length?u.rubros.join(' · '):'Sin rubro de servicio'}</div>
           <div className="au-person-stats"><div><span>Notificaciones</span><b className={u.dispositivos?'au-ok':'muted'}>{u.dispositivos?`${u.dispositivos} dispositivo${u.dispositivos>1?'s':''}`:'Sin suscripción'}</b></div>{u.tipo==='provider'?<><div><span>Servicios</span><b>{u.servicios?`${u.servicios} publicado${u.servicios>1?'s':''}`:'Pendiente de publicar'}</b></div><div><span>Trabajos en el perfil</span><b>{u.trabajos}</b></div></>:<div><span>Pedidos publicados</span><b>{u.pedidos}</b></div>}</div>
           <div className="au-person-foot"><span>Alta {accountDate(u.registrado_at)}</span>{u.crm_id && <Link to={`/users/${u.crm_id}`}>Ver ficha CRM →</Link>}</div>
