@@ -14,10 +14,10 @@ window.ESCENA3D = (function () {
   // Tiempos, a partir de la voz (window.PALABRAS); valores de respaldo para las previas
   const P = {};
   function tiempos() {
-    P.en = k.palabra('en', 1, 4.4);            // "En un terreno…" (frase del precio)
+    P.en = k.frase(2, 4.4);                    // la segunda frase: entra quien corta el pasto
     P.precio = k.palabra('diecisiete', 1, k.palabra('17', 1, 7.8));
     P.si = k.palabra('piden', 1, 11.2) - 0.3;  // "…te piden mucho más"
-    P.pub = k.palabra('publicá', 1, 14.6);      // "Publicá tu pedido gratis…"
+    P.pub = k.palabra('publicá', 1, 0) || (k.palabra('tratto', 1, 0) - 0.2) || 14.6; // "Publicá…" o "En Tratto lo pedís gratis…"
     P.fin = k.finVoz(19.0);
     P.cierre = P.fin + 0.35;
     P.m0 = P.en + 0.25;                         // entra el jardinero

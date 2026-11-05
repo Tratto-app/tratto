@@ -1,42 +1,42 @@
 [
  {
   "efecto": "latigazo",
-  "t": 4.75,
+  "t": 3.79,
   "db": -18
  },
  {
   "efecto": "pop",
-  "t": 8.58,
+  "t": 9.81,
   "db": -16
  },
  {
   "efecto": "campanita",
-  "t": 8.78,
+  "t": 10.01,
   "db": -18
  },
  {
   "efecto": "sello",
-  "t": 9.03,
+  "t": 10.26,
   "db": -18
  },
  {
   "efecto": "latigazo",
-  "t": 10.85,
+  "t": 12.45,
   "db": -19
  },
  {
   "efecto": "latigazo",
-  "t": 15.25,
+  "t": 19.99,
   "db": -19
  },
  {
   "efecto": "pop",
-  "t": 15.7,
+  "t": 20.44,
   "db": -16
  },
  {
   "efecto": "golpe",
-  "t": 20.1,
+  "t": 24.34,
   "db": -14
  }
 ]

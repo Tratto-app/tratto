@@ -345,6 +345,11 @@
       for (const w of pal) if (w[2].toLowerCase().replace(/[^a-záéíóúñü0-9]/g, '') === txt.toLowerCase()) { k++; if (k === n) return w[0]; }
       return def;
     },
+    frase(n, def = 0) { // segundo en que arranca la frase n (1, 2, …) del guion
+      const pal = window.PALABRAS || []; let k = 0;
+      for (let i = 0; i < pal.length; i++) if (i === 0 || /[.?!]$/.test(pal[i - 1][2])) { k++; if (k === n) return pal[i][0]; }
+      return def;
+    },
     finVoz(def) { const pal = window.PALABRAS || []; return pal.length ? pal[pal.length - 1][1] : def; },
   };
   window.KIT3D = kit;
