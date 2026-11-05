@@ -14,9 +14,9 @@ window.ESCENA3D = (function () {
   // Tiempos, a partir de la voz (window.PALABRAS); valores de respaldo para las previas
   const P = {};
   function tiempos() {
-    P.en = k.palabra('en', 1, 4.4);            // "En un terreno…" (frase del precio)
+    P.en = k.palabra('ojo', 1, 4.4);           // "¡Ojo con lo que te cobran!" (frase del precio)
     P.precio = k.palabra('diecisiete', 1, 7.8);
-    P.si = k.palabra('si', 1, 10.9);            // "Si te piden mucho más…"
+    P.si = k.palabra('piden', 1, 11.1) - 0.25; // "¿Te piden mucho más?"
     P.pub = k.palabra('publicá', 1, 14.6);      // "Publicá tu pedido gratis…"
     P.fin = k.finVoz(19.0);
     P.cierre = P.fin + 0.35;
