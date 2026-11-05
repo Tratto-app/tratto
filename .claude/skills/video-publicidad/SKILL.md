@@ -84,6 +84,17 @@ controles y reglas en `tools/voz-en-off/README.md`).
 
 ## Formato "3d": animación low-poly con voz (fundador, 05/11/2026)
 
+**Un video 3D por día, cada uno de un rubro distinto** (fundador, 05/11/2026,
+después de ver el del pasto: "me gustó… quiero que todos los días hagas un
+video de ese estilo y lo subas con un rubro totalmente diferente, es decir hoy
+hiciste jardinería, mañana clases de canto, después plomería y así"). El orden
+está en `tools/piezas-redes/reels/rubros-3d.json` (rubro, servicio con precio
+real e idea de partida; se marca "hecho" al publicarlo). Lo hace la rutina
+"Redes · videos del día" y reemplaza a los videos de plantilla. Sale en TikTok
+(20:00), Facebook (19:00) e Instagram (el próximo día libre de la cola), cada
+uno con su versión (`video-3d-<tema>-tt/ig/fb.html`, misma escena
+`escena-3d-<tema>.js`).
+
 El fundador mandó un reel animado en 3D de otra app de servicios (patio lleno
 de escombros, personaje de bloques, voz que lo cuenta, subtítulos palabra por
 palabra; 25,6 mil me gusta, 4,1 mil guardados y 4,2 mil compartidos) y pidió:

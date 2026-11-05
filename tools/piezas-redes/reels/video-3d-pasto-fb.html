@@ -1,0 +1,24 @@
+<!doctype html>
+<html lang="es"><head><meta charset="utf-8">
+<link rel="stylesheet" href="comun-3d.css">
+<!-- Formato 3d (comun-3d.js). Tema: pasto alto → corte de pasto.
+     Historia en escalera, como los reels 3D que le funcionan a otra app: cada
+     intento sale peor (llueve el finde, llueve el otro, la máquina del vecino
+     sin nafta) hasta que llega quien ofrece el servicio.
+     Guion (6 frases; la escena toma el comienzo de cada una de la voz):
+       1 ¿El pasto ya te llega a las rodillas?
+       2 Lo ibas a cortar el fin de semana, pero llovió.
+       3 ¡Y el otro también!
+       4 Así que le pediste la máquina al vecino, y te la prestó sin nafta.
+       5 Tranqui: cortar un terreno de hasta cien metros sale entre diecisiete y veintinueve mil pesos.
+       6 ¡Pedilo gratis en Tratto y te pasan presupuestos de gente de tu zona!
+     Precio: precios_referencia id 38 (corte de pasto, terreno de hasta 100 m²,
+     15.000 a 25.000, relevado abr-2026) con el ajuste de la calculadora
+     (2 % por mes, 7 meses → 17.230 y 28.717, redondeados a 17.000 y 29.000). -->
+</head><body>
+<div id="escena"></div><div id="textos"></div>
+<script>window.RED = { url: 'trattoapp.com.ar/r/fb-pasto' };</script>
+<script src="escena-3d-pasto.js"></script>
+<script src="lib/three-0.170.0.min.js"></script>
+<script src="comun-3d.js"></script>
+</body></html>
