@@ -82,6 +82,42 @@ controles y reglas en `tools/voz-en-off/README.md`).
 - `datos.video.voz` = `clonada`, `grabada` o `sin voz` (lo devuelve
   `hacer-video.py`), para medir si la voz rinde más.
 
+## Formato "3d": animación low-poly con voz (fundador, 05/11/2026)
+
+El fundador mandó un reel animado en 3D de otra app de servicios (patio lleno
+de escombros, personaje de bloques, voz que lo cuenta, subtítulos palabra por
+palabra; 25,6 mil me gusta, 4,1 mil guardados y 4,2 mil compartidos) y pidió:
+"quiero que a partir de ahora hagamos todos videos así para subir. Lo
+repliquemos y lo hagamos así… con la voz y todo". Se copia la forma, nunca
+el contenido ni la marca del otro: tema, escena, colores y textos son de
+Tratto (verde bosque, latón, IBM Plex).
+
+- **Cómo es:** escena 3D low-poly de una casa o un lugar de todos los días
+  (patio, cocina, auto, vereda…), cámara alta de 3/4, personajes de bloques,
+  un problema que se ve (pasto alto, humedad, una pérdida…) y alguien que
+  ofrece el servicio y lo resuelve. Voz que lo cuenta, con subtítulos karaoke
+  arriba (la palabra que se dice, en una caja verde bosque con filo de latón),
+  tarjeta con el precio real (`precios_referencia` con el ajuste mensual) y
+  cierre con el ícono y el link. De 20 a 30 segundos.
+- **Archivos:** `comun-3d.js` (kit: patio, personajes, pasto, cortadora,
+  recortes, subtítulos, tarjeta, chip y cierre), `comun-3d.css` y
+  `lib/three-0.170.0.min.js` (three.js, licencia MIT, armado como script común
+  para que ande desde `file://`). Cada video es un HTML con su escena y sus
+  tiempos tomados de la voz (`k.palabra('…')`). Muestra:
+  `video-3d-pasto-tt.html`. Para otra escena se agregan piezas al kit (no se
+  arranca de cero).
+- **Pasos:** guion (gancho con pregunta directa, número en letras, frases
+  afirmativas) → `clonar.py "<guion>" audio/voz-3d-<tema>.wav --palabras
+  audio/voz-3d-<tema>.palabras.json` → cuadros sueltos con `render-reel.py …
+  --palabras … --previa` → música (`musica.py`, suave debajo de la voz) +
+  voz con `sidechaincompress` + efectos (`sonido.py`) → `render-reel.py …
+  --palabras … --audio …` → prueba del cerebro.
+- **Voz:** la de siempre, con todos los controles de `clonar.py`. Si no pasa,
+  frase más corta; si tampoco, el video sale con subtítulos y sin voz.
+- **Variedad dentro del 3D:** cambia el tema, el lugar, la cámara, la música
+  y el tipo de gancho respecto del video anterior de esa red (`variedad`
+  sigue eligiendo música, gancho y largo).
+
 ## Ningún video igual al anterior (fundador, 21/10/2026)
 
 "Estás haciendo todas las publicaciones iguales, cambiando solo el texto, con

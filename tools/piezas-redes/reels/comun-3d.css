@@ -1,0 +1,51 @@
+/* Formato "3d" (comun-3d.js): escena low-poly abajo, textos encima. */
+@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@500;600&family=IBM+Plex+Sans+Condensed:wght@600;700&family=IBM+Plex+Sans:wght@400;500;600&display=block');
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{width:1080px;height:1920px;overflow:hidden;background:#0E1815}
+#escena,#textos{position:absolute;inset:0}
+#lienzo3d{display:block;width:1080px;height:1920px}
+#textos{z-index:2;pointer-events:none}
+
+/* Subtítulos palabra por palabra: blancos con borde tinta; la que se dice, en
+   una caja verde bosque con filo de latón (el sello de Tratto) */
+.subt{position:absolute;left:70px;right:150px;top:270px;text-align:center;
+  font:700 96px/1.18 'IBM Plex Sans Condensed',sans-serif;color:#FCFBF8;letter-spacing:-.5px;
+  -webkit-text-stroke:10px #0E1815;paint-order:stroke fill;text-shadow:0 8px 0 rgba(14,24,21,.35);transform-origin:50% 60%}
+.subt .pal{display:inline-block;padding:2px 14px 8px;border-radius:20px;margin:0 -4px;color:rgba(252,251,248,.86)}
+.subt .pal.dicha{color:#FCFBF8}
+.subt .pal.activa{background:#1E5D49;box-shadow:inset 0 0 0 6px #C9A227,0 10px 0 rgba(14,24,21,.35);-webkit-text-stroke:0;
+  text-shadow:none;color:#FCFBF8;transform:scale(1.06)}
+
+/* Link fijo (TikTok: el link va escrito en el video) */
+.url-fija{position:absolute;left:60px;bottom:430px;padding:16px 26px;border-radius:999px;background:rgba(14,24,21,.82);
+  color:#8FD9BC;font:600 34px/1 'IBM Plex Mono',monospace;border:3px solid rgba(201,162,39,.75)}
+.url-fija b{color:#FCFBF8;font-weight:600}
+
+/* Tarjeta de precio: papel con sello de latón */
+.tarjeta{position:absolute;left:50%;top:1040px;width:820px;padding:34px 40px 30px;border-radius:40px;background:#FCFBF8;
+  box-shadow:0 22px 0 rgba(14,24,21,.28),0 30px 60px rgba(14,24,21,.25);color:#0E1815;text-align:left;transform-origin:50% 100%}
+.tarjeta .t-et{font:600 30px/1.2 'IBM Plex Mono',monospace;color:#2B7E62;letter-spacing:1px}
+.tarjeta .t-precio{font:700 100px/1.02 'IBM Plex Sans Condensed',sans-serif;margin-top:10px;letter-spacing:-1px}
+.tarjeta .t-precio span{font-size:60px;color:#5D6A64;margin:0 8px}
+.tarjeta .t-nota{font:500 28px/1.3 'IBM Plex Sans',sans-serif;color:#5D6A64;margin-top:12px}
+.tarjeta .sello{position:absolute;right:-34px;top:-92px;width:150px;height:150px;border-radius:50%;background:#C9A227;
+  color:#0E1815;display:flex;align-items:center;justify-content:center;text-align:center;transform:rotate(12deg);
+  font:700 28px/1.05 'IBM Plex Sans Condensed',sans-serif;box-shadow:inset 0 0 0 6px #8A6E10,0 8px 0 rgba(14,24,21,.3)}
+
+/* Chip tipo notificación de la app */
+.chip3d{position:absolute;left:50%;top:1120px;display:flex;align-items:center;gap:22px;padding:24px 34px 24px 24px;border-radius:34px;
+  background:#FCFBF8;color:#0E1815;box-shadow:0 18px 0 rgba(14,24,21,.25);white-space:nowrap}
+.chip3d .ok{width:76px;height:76px;border-radius:22px;background:#2B7E62;color:#FCFBF8;display:flex;align-items:center;justify-content:center;font:700 50px 'IBM Plex Sans',sans-serif}
+.chip3d .c1{font:700 44px/1.1 'IBM Plex Sans Condensed',sans-serif}
+.chip3d .c2{font:500 30px/1.25 'IBM Plex Mono',monospace;color:#2B7E62}
+
+/* Cierre: se abre en círculo, verde noche */
+.cierre3d{position:absolute;inset:0;z-index:5;background:radial-gradient(110% 70% at 50% 40%,#1E5D49 0%,#12332A 60%,#0B1D18 100%);
+  display:flex;align-items:center;justify-content:center;text-align:center;color:#FCFBF8;opacity:0}
+.cierre3d .c-in{display:flex;flex-direction:column;align-items:center;gap:22px;margin-top:-120px}
+.c-logo{width:190px;height:190px;border-radius:46px;background:#FCFBF8 url('../../../icon-512.png') center/cover;box-shadow:0 14px 0 rgba(0,0,0,.25)}
+.c-logo span{display:none}
+.c-a{font:700 104px/1.02 'IBM Plex Sans Condensed',sans-serif;margin-top:20px}
+.c-b{font:700 104px/1.02 'IBM Plex Sans Condensed',sans-serif;color:#C9A227}
+.c-url{font:600 46px/1.2 'IBM Plex Mono',monospace;color:#8FD9BC;margin-top:30px;padding:16px 30px;border-radius:999px;border:3px solid rgba(143,217,188,.5)}
+.c-nota{font:500 32px/1.2 'IBM Plex Mono',monospace;color:#B9C7C0}
