@@ -17,6 +17,7 @@ before(async()=>{
  create function public.crm_ws() returns uuid language sql as $$select '${ws}'::uuid$$;
  create function public.growth_is_member(uuid) returns boolean language sql as $$select $1='${ws}'::uuid and auth.uid()='${uid(1)}'::uuid$$;`);
  await db.exec(await readFile(new URL('../../supabase/migrations/20261020004423_app_users_visual_overview.sql',import.meta.url),'utf8'));
+ await db.exec(await readFile(new URL('../../supabase/migrations/20261105231159_crm_social_names_phone_matching.sql',import.meta.url),'utf8'));
  fixtureDay=(await db.query("select to_char(now() at time zone 'America/Argentina/Buenos_Aires','YYYY-MM-DD') d")).rows[0].d;
  for(const [n,rol,rubro,demo,deleted] of [[1,'cliente',null,false,false],[2,'proveedor','Pintura',false,false],[3,'proveedor','Cerrajería',false,false],[4,'cliente',null,true,false],[5,'proveedor','Pintura',true,false],[6,'proveedor','Pintura',false,true],[7,'cliente',null,false,false]]){
   await db.query('insert into auth.users values($1,$2,$3,$4,$5,$6)',[uid(n),`test${n}@example.invalid`,n===3?`${fixtureDay}T03:01:00Z`:`${fixtureDay}T02:59:00Z`,deleted?'2026-10-20T00:00:00Z':null,{nombre:`Persona ${n}`,rol,rubro},{demo}]);
@@ -64,5 +65,20 @@ test('páginas completas sin omitir ni duplicar cuentas con misma fecha',async()
  try{
   for(let n=100;n<153;n++) await db.query('insert into auth.users values($1,$2,now(),null,$3,$4)',[uid(n),`p${n}@example.invalid`,{nombre:'Alta de prueba',rol:'cliente'},{}]);
   const a=await call(),b=await call({page:1});assert.equal(a.total_filtrado,57);assert.equal(a.usuarios.length,50);assert.equal(b.usuarios.length,7);assert.equal(new Set([...a.usuarios,...b.usuarios].map(x=>x.user_id)).size,57);
+ }finally{await db.exec('rollback');}
+});
+test('Google y Apple cuentan como cuentas reales y conservan el rol pendiente',async()=>{
+ await db.exec('begin');
+ try{
+  for(const [n,meta,provider] of [[201,{full_name:'Nombre de Google'},'google'],[202,{name:'Segundo nombre'},'google'],[203,{},'apple'],[204,{nombre:'Nombre elegido',full_name:'Nombre social',rol:'cliente'},'google']]){
+   await db.query('insert into auth.users values($1,$2,now(),null,$3,$4)',[uid(n),`social${n}@example.invalid`,meta,{provider}]);
+  }
+  const d=await call();assert.equal(d.totales.usuarios,8);assert.equal(d.totales.sin_tipo,3);
+  const account=n=>d.usuarios.find(u=>u.user_id===uid(n));
+  assert.equal(account(201).nombre,'Nombre de Google');assert.equal(account(202).nombre,'Segundo nombre');
+  assert.equal(account(203).nombre,'Nombre no informado');assert.equal(account(203).metodo_ingreso,'apple');
+  assert.equal(account(204).nombre,'Nombre elegido');assert.equal(account(204).tipo,'customer');
+  assert.equal((await call({query:'Nombre de Google'})).total_filtrado,1);
+  assert.ok([201,202,203].every(n=>account(n).tipo==='unknown'));
  }finally{await db.exec('rollback');}
 });

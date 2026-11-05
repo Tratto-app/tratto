@@ -4,7 +4,7 @@ const people=[
  {user_id:'new',nombre:'Oferente nuevo',email:'nuevo@example.invalid',tipo:'provider',rubros:['Cerrajería'],registrado_at:'2026-10-19T15:00:00Z',servicios:0,trabajos:0,pedidos:0,dispositivos:1,crm_id:null},
  {user_id:'published',nombre:'Negocio de prueba',email:'negocio@example.invalid',tipo:'provider',rubros:['Plomería'],registrado_at:'2026-10-18T15:00:00Z',servicios:2,trabajos:1,pedidos:0,dispositivos:0,crm_id:null},
  {user_id:'customer',nombre:'Cliente de prueba',email:'cliente@example.invalid',tipo:'customer',rubros:[],registrado_at:'2026-10-17T15:00:00Z',servicios:0,trabajos:0,pedidos:1,dispositivos:1,crm_id:null},
- {user_id:'unknown',nombre:'Cuenta sin perfil',email:'sinperfil@example.invalid',tipo:'unknown',rubros:[],registrado_at:'2026-10-20T15:00:00Z',servicios:0,trabajos:0,pedidos:0,dispositivos:0,crm_id:null},
+ {user_id:'unknown',nombre:'Cuenta sin perfil',email:'sinperfil@example.invalid',tipo:'unknown',metodo_ingreso:'google',rubros:[],registrado_at:'2026-10-20T15:00:00Z',servicios:0,trabajos:0,pedidos:0,dispositivos:0,crm_id:null},
 ];
 for(const width of [390,1440]) test(`resumen, filtros y menú con ${width}px`,async({page})=>{
  const errors:string[]=[];page.on('pageerror',e=>errors.push(e.message));
@@ -39,6 +39,7 @@ for(const width of [390,1440]) test(`resumen, filtros y menú con ${width}px`,as
  await page.getByRole('button',{name:'Ver cuentas sin perfil',exact:true}).click();
  await expect(page.locator('.au-person')).toHaveCount(1);
  await expect(page.locator('.au-person')).toContainText('Cuenta sin perfil');
+ await expect(page.locator('.au-person')).toContainText('Ingreso: Google');
  await expect(page.getByLabel('Desglose de cuentas')).toContainText('4 cuentas = 2 oferentes + 1 clientes + 1 sin perfil definido.');
  await page.getByRole('radio',{name:'Clientes',exact:true}).click();
  await expect(page.locator('.au-person')).toHaveCount(1);

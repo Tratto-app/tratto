@@ -9,6 +9,8 @@ const P = '00000000-0000-4000-b000-000000000001';
 const U = '00000000-0000-4000-c000-000000000001';
 const G = '00000000-0000-4000-d000-000000000001';
 const migration = await readFile(new URL('../../supabase/migrations/20261015013759_whatsapp_observacion_solo_lectura.sql', import.meta.url), 'utf8');
+const crmPhoneMigration = await readFile(new URL('../../supabase/migrations/20261105231159_crm_social_names_phone_matching.sql', import.meta.url), 'utf8');
+const phoneFix = crmPhoneMigration.match(/create or replace function public\.growth_wa_observer_phone\(p_phone text\)[\s\S]*?\$\$;/)[0];
 async function fixture() {
   const db = new PGlite();
   await db.exec(`create role anon; create role authenticated; create role service_role;
@@ -29,12 +31,23 @@ async function fixture() {
   values('${P}','${A}','+5491100000001','business@example.invalid','${G}','{"whatsapp_manual":{"fecha_lista":"2026-10-14"}}','registered','2026-10-14','2026-10-14');
   insert into public.growth_app_users values('${G}','${A}','${P}','${U}');`);
   await db.exec(migration);
+  await db.exec(phoneFix);
   await db.exec(`insert into public.growth_wa_observer_config(workspace_id) values('${A}'),('${B}');`);
   return db;
 }
 async function enabled(db) {
   await db.exec(`update public.growth_wa_observer_config set receiving_enabled=true,waba_id='12345',phone_number_id='123',business_phone='+5491100000000',owner_authorized_at=now(),coexistence_verified_at=now() where workspace_id='${A}';`);
 }
+test('teléfono local de Buenos Aires encuentra registro sin confundir cuentas compartidas',async()=>{
+ const db=await fixture();try{
+  await db.exec(`delete from growth_app_users;update growth_prospects set email=null,app_user_id=null where id='${P}';insert into proveedores values('${U}','1100000001',false);`);
+  assert.equal((await db.query('select growth_wa_private.registration($1,$2) r',[A,P])).rows[0].r.estado,'registrado_verificado');
+  const other='00000000-0000-4000-c000-000000000002';
+  await db.exec(`insert into auth.users(id,email) values('${other}','other@example.invalid');insert into proveedores values('${other}','+54 9 11 0000-0001',false);`);
+  assert.equal((await db.query('select growth_wa_private.registration($1,$2) r',[A,P])).rows[0].r.estado,'identidad_ambigua_revision_humana');
+  for(const phone of ['12345678','91100000001','+1 212 555 0100','01100000001']) assert.equal((await db.query('select growth_wa_observer_phone($1) p',[phone])).rows[0].p,null);
+ }finally{await db.close();}
+});
 function event(id, direction='out', body='Hola', extra={}) {
   return { waba_id:'12345',phone_number_id:'123',key: 'message:'+id,kind:'message',external_id:id,phone:'5491100000001',direction,source:direction==='out'?'smb_message_echoes':'messages',body,text_available:true,message_type:'text',timestamp:String(Math.floor(Date.now()/1000)-300),...extra };
 }
