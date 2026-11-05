@@ -284,7 +284,10 @@
     if (idx < 0) { subt.style.opacity = 0; return; }
     const bl = _bloques[idx];
     if (_bloqueHtml !== idx) {
-      subt.innerHTML = bl.map(w => `<span class="pal" data-i="${w.i}">${w.txt.replace(/^¿/, '¿').replace(/[.,;:!]$/, '')}</span>`).join(' ');
+      subt.innerHTML = bl.map(w => `<span class="pal" data-i="${w.i}">${w.txt.replace(/[.,;:!]$/, '')}</span>`).join(' ');
+      // en un solo renglón: si el bloque es largo, la letra se achica un poco
+      const largo = bl.map(w => w.txt).join(' ').length;
+      subt.style.fontSize = (largo > 16 ? Math.max(72, Math.round(96 * 16 / largo)) : 96) + 'px';
       _bloqueHtml = idx;
     }
     subt.style.opacity = 1;
