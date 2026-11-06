@@ -141,7 +141,21 @@ Tratto (verde bosque, latón, IBM Plex).
   persona, con humor: cada intento sale peor (llovió el finde, y el otro
   también; la máquina del vecino, sin nafta) y recién ahí aparece quien
   ofrece el servicio, el precio real y el pedido gratis. Frases cortas; nada
-  de palabras que el oído escriba separado ("finde" → "fin de semana").
+  de palabras que el oído escriba separado ("finde" → "fin de semana",
+  "Pedila" → se oye "Pedí la": usar "Pedilo").
+- **Cómo hacer que la voz 3D pase los controles** (aprendido el 06/11 con el
+  de canto, 12 intentos): con esta voz, una frase con "¡…!" sale unos 160 Hz y
+  una tranquila unos 120 a 130, así que mezclar las dos rompe el tono parejo
+  (15 %). Sin "¡…!" el tono queda parejo pero suena apagada (volumen menor a
+  7,1). Lo que funcionó: **todas tranquilas y con comas que les den subidas y
+  bajadas** ("El vecino, cansado, te golpea la pared."; "Pedilo gratis en
+  Tratto, y te pasan…"): volumen 7,67. Pero cada coma suma pausa y el ritmo
+  baja (mínimo 2,8): dos o tres comas en total, no en todas las frases.
+  Si una corrida falla, no regenerar a ciegas: `clonar.py` guarda la toma
+  que pasó de cada frase en la carpeta `--trabajo` (se pisa al cambiar el
+  texto), así que conviene copiarlas a un banco y probar combinaciones con
+  `tools/voz-en-off/combinar.py` (simula el pegado final y da tono, volumen y
+  ritmo aproximado; el ritmo real sale unos 0,15 más bajo).
 - **Carteles que señalan objetos** (`k.etiqueta`), lluvia, humo y cortes de
   cámara en cada frase: la escena toma el comienzo de cada frase de la voz
   (`k.frase(n)`).
