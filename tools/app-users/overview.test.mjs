@@ -125,7 +125,9 @@ test('cuatro cuentas sociales aparecen en la lista normal según su ficha CRM, s
   const same=(await db.query('select * from public.crm_usuarios_app($1)',[ws])).rows;
   assert.equal(same.find(u=>u.id===uid(401)).rol,'ofrece');assert.equal(same.find(u=>u.id===uid(401)).nombre,'Negocio Google');
   assert.equal(same.find(u=>u.id===uid(404)).rol,'cliente');assert.equal(same.find(u=>u.id===uid(404)).email,'cuenta404@example.invalid');
+  await db.exec('savepoint denied_workspace');
   await assert.rejects(db.query('select * from public.crm_usuarios_app($1)',[uid(999)]),/permiso/);
+  await db.exec('rollback to savepoint denied_workspace');
   assert.equal((await call({kind:'provider',query:'Negocio Google'})).total_filtrado,1);
   assert.equal((await call({kind:'customer',query:'cuenta404'})).total_filtrado,1);
   await db.query('update auth.users set raw_user_meta_data=$1 where id=$2',[{nombre:'Ahora cliente',rol:'cliente'},uid(401)]);
