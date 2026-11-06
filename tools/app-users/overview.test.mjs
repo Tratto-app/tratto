@@ -13,12 +13,14 @@ before(async()=>{
  create table public.push_subscripciones(user_id uuid,endpoint text);
  create table public.publicaciones(user_id uuid,tipo text,estado text);
  create table public.solicitudes(user_id uuid,demo boolean);
- create table public.growth_app_users(id uuid,workspace_id uuid,external_user_id text,created_at timestamptz,name text,kind text,activated_at timestamptz);
+ create table public.growth_prospects(id uuid,workspace_id uuid,kind text,rubro text,first_name text,last_name text);
+ create table public.growth_app_users(prospect_id uuid,id uuid,workspace_id uuid,external_user_id text,created_at timestamptz,name text,kind text,activated_at timestamptz);
  create function public.crm_ws() returns uuid language sql as $$select '${ws}'::uuid$$;
  create function public.growth_is_member(uuid) returns boolean language sql as $$select $1='${ws}'::uuid and auth.uid()='${uid(1)}'::uuid$$;`);
  await db.exec(await readFile(new URL('../../supabase/migrations/20261020004423_app_users_visual_overview.sql',import.meta.url),'utf8'));
  await db.exec(await readFile(new URL('../../supabase/migrations/20261105231159_crm_social_names_phone_matching.sql',import.meta.url),'utf8'));
  await db.exec(await readFile(new URL('../../supabase/migrations/20261106012212_crm_social_identity_sync.sql',import.meta.url),'utf8'));
+ await db.exec((await readFile(new URL('../../supabase/migrations/20261106120336_crm_unify_social_account_classification.sql',import.meta.url),'utf8')).split('create or replace function public.crm_usuarios_app')[0]);
  fixtureDay=(await db.query("select to_char(now() at time zone 'America/Argentina/Buenos_Aires','YYYY-MM-DD') d")).rows[0].d;
  for(const [n,rol,rubro,demo,deleted] of [[1,'cliente',null,false,false],[2,'proveedor','Pintura',false,false],[3,'proveedor','Cerrajería',false,false],[4,'cliente',null,true,false],[5,'proveedor','Pintura',true,false],[6,'proveedor','Pintura',false,true],[7,'cliente',null,false,false]]){
   await db.query('insert into auth.users values($1,$2,$3,$4,$5,$6)',[uid(n),`test${n}@example.invalid`,n===3?`${fixtureDay}T03:01:00Z`:`${fixtureDay}T02:59:00Z`,deleted?'2026-10-20T00:00:00Z':null,{nombre:`Persona ${n}`,rol,rubro},{demo}]);
@@ -102,7 +104,35 @@ test('el nombre social se guarda en la ficha existente y se conserva el nombre m
   await db.query('update auth.users set raw_user_meta_data=$1 where id=$2',[{},uid(302)]);
   await db.query('update growth_app_users set name=$1 where id=$2',['Nombre confirmado en CRM',uid(302)]);
   assert.equal((await call({query:'Nombre confirmado en CRM'})).usuarios[0].nombre,'Nombre confirmado en CRM');
-  assert.equal((await call({query:'Nombre confirmado en CRM'})).usuarios[0].tipo,'unknown');
+  assert.equal((await call({query:'Nombre confirmado en CRM'})).usuarios[0].tipo,'provider');
   assert.equal((await db.query("select has_function_privilege('authenticated','growth_users_private.sync_identity_name()','execute') allowed")).rows[0].allowed,false);
+ }finally{await db.exec('rollback');}
+});
+
+test('cuatro cuentas sociales aparecen en la lista normal según su ficha CRM, sin alterar Auth ni inventar servicios',async()=>{
+ await db.exec('begin');try{
+  const entries=[[401,{full_name:'Negocio Google'},'provider','Reparación y soporte técnico'],[402,{full_name:'Cliente Google'},'customer',null],[403,{name:'Otro Google'},'customer',null],[404,{},'customer',null]];
+  for(const [n,meta,kind,rubro] of entries){
+   await db.query('insert into auth.users values($1,$2,now(),null,$3,$4)',[uid(n),`cuenta${n}@example.invalid`,meta,{provider:n===404?'apple':'google'}]);
+   await db.query('insert into growth_prospects values($1,$2,$3,$4,null,null)',[uid(n+1000),ws,kind,rubro]);
+   await db.query('insert into growth_app_users(id,workspace_id,external_user_id,created_at,kind,prospect_id)values($1,$2,$3,now(),$4,$5)',[uid(n),ws,uid(n),kind,uid(n+1000)]);
+  }
+  const d=await call();assert.equal(d.usuarios.find(u=>u.user_id===uid(401)).rubros[0],'Reparación y soporte técnico');assert.equal(d.totales.sin_tipo,0);assert.equal(d.totales.usuarios,d.totales.proveedores+d.totales.clientes);
+  for(const [n,meta,kind] of entries){const a=d.usuarios.find(u=>u.user_id===uid(n));assert.equal(a.tipo,kind);assert.equal(a.servicios,0);assert.equal(a.trabajos,0);assert.equal(a.pedidos,0);assert.equal(a.email,`cuenta${n}@example.invalid`);assert.deepEqual((await db.query('select raw_user_meta_data from auth.users where id=$1',[uid(n)])).rows[0].raw_user_meta_data,meta);}
+  assert.equal(d.usuarios.find(u=>u.user_id===uid(404)).nombre,'Nombre no informado');
+  await db.exec('alter table auth.users add column last_sign_in_at timestamptz;alter table proveedores add column zona text;alter table solicitudes add column zona text;create table growth_members(workspace_id uuid,user_id uuid)');
+  await db.exec('create or replace function public.crm_usuarios_app'+(await readFile(new URL('../../supabase/migrations/20261106120336_crm_unify_social_account_classification.sql',import.meta.url),'utf8')).split('create or replace function public.crm_usuarios_app')[1]);
+  const same=(await db.query('select * from public.crm_usuarios_app($1)',[ws])).rows;
+  assert.equal(same.find(u=>u.id===uid(401)).rol,'ofrece');assert.equal(same.find(u=>u.id===uid(401)).nombre,'Negocio Google');
+  assert.equal(same.find(u=>u.id===uid(404)).rol,'cliente');assert.equal(same.find(u=>u.id===uid(404)).email,'cuenta404@example.invalid');
+  await db.exec('savepoint denied_workspace');
+  await assert.rejects(db.query('select * from public.crm_usuarios_app($1)',[uid(999)]),/permiso/);
+  await db.exec('rollback to savepoint denied_workspace');
+  assert.equal((await call({kind:'provider',query:'Negocio Google'})).total_filtrado,1);
+  assert.equal((await call({kind:'customer',query:'cuenta404'})).total_filtrado,1);
+  await db.query('update auth.users set raw_user_meta_data=$1 where id=$2',[{nombre:'Ahora cliente',rol:'cliente'},uid(401)]);
+  assert.equal((await call({query:'Ahora cliente'})).usuarios[0].tipo,'customer');
+  await db.query('update growth_app_users set workspace_id=$1 where id=$2',[uid(999),uid(402)]);
+  assert.equal((await call({query:'cuenta402'})).usuarios[0].tipo,'unknown');
  }finally{await db.exec('rollback');}
 });
