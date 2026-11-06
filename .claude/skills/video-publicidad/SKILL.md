@@ -95,6 +95,41 @@ real e idea de partida; se marca "hecho" al publicarlo). Lo hace la rutina
 uno con su versión (`video-3d-<tema>-tt/ig/fb.html`, misma escena
 `escena-3d-<tema>.js`).
 
+**Dos reglas del fundador (06/11/2026), después de ver el de canto:**
+
+1. **Gracioso, no serio.** "Quiero que sea humorístico, que sea gracioso… No
+   que sea serio, como el de la jardinería. Quiero que sea más entretenido."
+   El de canto es el modelo (vecino golpeando la pared, el perro aullando,
+   cartel "Afinación: dudosa", el vecino aplaudiendo al final). Cada video
+   tiene que pasar esta lista antes de renderizar:
+   - **Escalera de desastres exagerados:** tres intentos caseros, cada uno
+     más ridículo que el anterior (no solo "sale peor": se va de las manos).
+   - **Un testigo que reacciona:** un vecino, el perro, el gato, la abuela o
+     las visitas, con una reacción física (se tapa los oídos, se desmaya, se
+     muda, saca una foto).
+   - **Dos o tres carteles chistosos** que señalan algo (`k.etiqueta`) con
+     falso dato técnico o porcentaje absurdo: "Afinación: dudosa",
+     "Cinta: 0 % efectiva", "Plic: 3.400".
+   - **Remate con vuelta al final**, después del precio: el testigo cambia
+     (aplaude, vuelve a ser sólido, se ofende y se va). La cámara termina en
+     él, no en el problema resuelto.
+   - **El chiste es la situación, nunca la persona que ofrece el servicio**
+     (ella llega, lo resuelve y queda bien) ni quien mira el video.
+   - El guion se cuenta tranquilo, como una anécdota, y el humor lo ponen la
+     escena y las palabras ("te golpea la pared", "el perro se suma"), no los
+     gritos: así la voz sigue pasando los controles (ver más abajo).
+2. **Solo rubros con gente registrada.** "Quiero que lo hagas siempre con los
+   rubros que ya tenemos en la app… gente registrada." Antes de elegir, la
+   rutina consulta cuántas personas ofrecen cada rubro:
+   `select r as rubro, count(*) n from growth_users_private.accounts() a,
+   unnest(a.rubros) r where a.tipo='provider' group by r order by n desc;`
+   y toma **el primero de `rubros-3d.json` sin "hecho" que tenga al menos
+   una**. Los rubros sin nadie se saltean (quedan al final de la lista) hasta
+   que alguien se registre. Cuando se terminen los rubros con gente, se vuelve
+   a empezar por el que más personas tiene, con otra situación graciosa del
+   mismo rubro. Nunca se promete en el video que hay mucha gente: "gente de
+   tu zona" alcanza.
+
 El fundador mandó un reel animado en 3D de otra app de servicios (patio lleno
 de escombros, personaje de bloques, voz que lo cuenta, subtítulos palabra por
 palabra; 25,6 mil me gusta, 4,1 mil guardados y 4,2 mil compartidos) y pidió:
@@ -138,7 +173,7 @@ Tratto (verde bosque, latón, IBM Plex).
   Instagram y Facebook, "Voz hecha con IA" (no "a partir de la voz de
   Agustín"). `datos.video.voz = "tratto-3d"`.
 - **Guion como el de referencia:** una historia en escalera, en segunda
-  persona, con humor: cada intento sale peor (llovió el finde, y el otro
+  persona, graciosa (lista de arriba): cada intento sale peor (llovió el finde, y el otro
   también; la máquina del vecino, sin nafta) y recién ahí aparece quien
   ofrece el servicio, el precio real y el pedido gratis. Frases cortas; nada
   de palabras que el oído escriba separado ("finde" → "fin de semana",
