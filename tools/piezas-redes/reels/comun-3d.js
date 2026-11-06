@@ -112,6 +112,131 @@
     }
     if (o.saludo) { u.brazoD.rotation.set(0, 0, -2.6 + Math.sin(o.saludo * 12) * 0.35); }
     if (o.brazosCruzados) { u.brazoI.rotation.set(-1.3, 0.6, 0.3); u.brazoD.rotation.set(-1.3, -0.6, -0.3); }
+    // cantar: la mano derecha en la boca (micrófono o lo que haya a mano) y el otro brazo al aire
+    if (o.cantar) {
+      const c = o.cantar, d = o.drama ?? 1;
+      u.brazoD.rotation.set(-2.1, 0, -0.45);
+      u.brazoI.rotation.set(-0.35 + Math.sin(c * 3) * 0.25 * d, 0, -1.25 * d - Math.sin(c * 2.2) * 0.3 * d);
+      u.cuello.rotation.x = -0.22 + Math.sin(c * 4) * 0.06;
+      u.cuello.rotation.z = Math.sin(c * 2.6) * 0.1 * d;
+    }
+    // golpear una pared que tiene adelante (puño derecho)
+    if (o.golpear) {
+      u.brazoD.rotation.set(-1.25 - Math.abs(Math.sin(o.golpear * 9)) * 0.35, 0, -0.1);
+      u.brazoI.rotation.set(-0.2, 0, -0.55); u.cuello.rotation.x = -0.05;
+    }
+    // las dos manos en la garganta, tosiendo
+    if (o.garganta) {
+      const g = Math.sin(o.garganta * 16) * 0.05;
+      u.brazoI.rotation.set(-1.75 + g, 0, 0.55); u.brazoD.rotation.set(-1.75 - g, 0, -0.55);
+      u.cuello.rotation.x = 0.25 + Math.abs(Math.sin(o.garganta * 8)) * 0.15;
+    }
+    // aplaudir
+    if (o.aplaudir) {
+      const a = Math.abs(Math.sin(o.aplaudir * 11)) * 0.28;
+      u.brazoI.rotation.set(-1.35, 0, 0.32 + a); u.brazoD.rotation.set(-1.35, 0, -0.32 - a);
+    }
+    // tocar un teclado que tiene adelante
+    if (o.tocar) {
+      const a = Math.sin(o.tocar * 10) * 0.07, b = Math.sin(o.tocar * 8.3 + 1) * 0.07;
+      u.brazoI.rotation.set(-0.95 + a, 0, 0.18); u.brazoD.rotation.set(-0.95 + b, 0, -0.18);
+      u.cuello.rotation.x = 0.18;
+    }
+  }
+
+  // Perro de bloques (mira hacia +z). posePerro: caminar, aullar, sentado, cola.
+  function perro(o = {}) {
+    const g = new T.Group(), col = o.color || '#C08A4E', osc = o.oscuro || '#8C5A2E';
+    const cuerpo = new T.Group(); cuerpo.position.y = 0.42; g.add(cuerpo);
+    caja(0.36, 0.32, 0.78, col, 0, 0, 0, cuerpo);
+    caja(0.37, 0.12, 0.3, osc, 0, 0.11, -0.1, cuerpo, false);
+    const cuello = new T.Group(); cuello.position.set(0, 0.12, 0.34); cuerpo.add(cuello);
+    caja(0.34, 0.32, 0.34, col, 0, 0.16, 0.08, cuello);
+    caja(0.2, 0.13, 0.2, '#E8D2B0', 0, 0.1, 0.32, cuello);
+    caja(0.09, 0.07, 0.05, C.tinta, 0, 0.16, 0.43, cuello, false);
+    caja(0.05, 0.06, 0.02, C.tinta, -0.09, 0.24, 0.255, cuello, false);
+    caja(0.05, 0.06, 0.02, C.tinta, 0.09, 0.24, 0.255, cuello, false);
+    const orejaI = caja(0.08, 0.2, 0.13, osc, -0.17, 0.3, 0.04, cuello); orejaI.rotation.z = 0.35;
+    const orejaD = caja(0.08, 0.2, 0.13, osc, 0.17, 0.3, 0.04, cuello); orejaD.rotation.z = -0.35;
+    const boca = new T.Group(); boca.position.set(0, 0.04, 0.24); cuello.add(boca);
+    caja(0.17, 0.05, 0.17, '#7A3B32', 0, -0.01, 0.08, boca, false);
+    const cola = new T.Group(); cola.position.set(0, 0.1, -0.39); cuerpo.add(cola);
+    caja(0.07, 0.07, 0.32, osc, 0, 0, -0.16, cola);
+    const patas = [[-0.11, 0.27], [0.11, 0.27], [-0.11, -0.27], [0.11, -0.27]].map(([x, z]) => {
+      const p = new T.Group(); p.position.set(x, -0.14, z); cuerpo.add(p);
+      caja(0.1, 0.3, 0.1, col, 0, -0.14, 0, p); return p;
+    });
+    g.userData = { cuerpo, cuello, boca, cola, patas };
+    escena.add(g); return g;
+  }
+  function posePerro(p, o = {}) {
+    const u = p.userData, amp = o.caminar ?? 0, s = Math.sin((o.paso ?? 0) * Math.PI * 2);
+    u.cuerpo.rotation.set(0, 0, 0); u.cuerpo.position.y = 0.42;
+    u.patas.forEach((pt, i) => { pt.rotation.set((i === 0 || i === 3 ? s : -s) * 0.55 * amp, 0, 0); });
+    u.cuello.rotation.set(o.cabezaX || 0, o.cabezaY || 0, 0); u.boca.rotation.x = 0;
+    u.cola.rotation.set(-0.75, o.cola ? Math.sin(o.cola * 15) * 0.7 : 0, 0);
+    if (o.sentado) {
+      u.cuerpo.rotation.x = -0.5; u.cuerpo.position.y = 0.38;
+      u.patas[0].rotation.x = u.patas[1].rotation.x = 0.5; u.patas[2].rotation.x = u.patas[3].rotation.x = -1.0;
+    }
+    if (o.aullar) {
+      u.cuello.rotation.x = -0.95 + Math.sin(o.aullar * 2) * 0.08 + (o.sentado ? 0.4 : 0);
+      u.boca.rotation.x = 0.35 + Math.sin(o.aullar * 9) * 0.12;
+    }
+  }
+
+  // Notas musicales que suben (afinadas: suaves; desafinadas: se tambalean)
+  function notas(n = 12, color = C.tinta, semilla = 5) {
+    const r = azar(semilla), ns = [];
+    for (let i = 0; i < n; i++) {
+      const g = new T.Group();
+      const cab = new T.Mesh(new T.SphereGeometry(0.075, 8, 6), mat(color)); cab.scale.set(1.25, 0.9, 0.7); g.add(cab);
+      caja(0.028, 0.28, 0.028, color, 0.075, 0.14, 0, g, false);
+      if (i % 2) caja(0.11, 0.045, 0.028, color, 0.12, 0.26, 0, g, false);
+      g.visible = false; escena.add(g);
+      ns.push({ g, u: (i + r() * 0.6) / n, dx: lerp(-0.55, 0.55, r()), dz: lerp(-0.25, 0.25, r()), fase: r() * 6.28 });
+    }
+    return {
+      animar(t, desde, hasta, punto, o = {}) {
+        const vida = o.vida || 1.5, tambaleo = o.tambaleo ?? 1;
+        for (const a of ns) {
+          const t0 = lerp(desde, Math.max(desde, hasta - vida * 0.6), a.u), e = t - t0;
+          if (t < desde || e < 0 || e > vida) { a.g.visible = false; continue; }
+          const x = e / vida, esc = suave(x / 0.15) * (1 - suave((x - 0.75) / 0.25)) * (o.escala || 1);
+          a.g.visible = true; a.g.scale.setScalar(Math.max(0.001, esc));
+          a.g.position.set(punto.x + a.dx * x * 1.6 + Math.sin(e * 5 + a.fase) * 0.12 * tambaleo, punto.y + 0.15 + x * 1.1, punto.z + a.dz * x);
+          a.g.rotation.set(0, (o.mirarY || 0), Math.sin(e * 7 + a.fase) * 0.45 * tambaleo);
+        }
+      },
+    };
+  }
+
+  // Teclado de pie
+  function teclado() {
+    const g = new T.Group();
+    [[-0.55, -0.12], [-0.55, 0.12], [0.55, -0.12], [0.55, 0.12]].forEach(([x, z]) => caja(0.05, 0.8, 0.05, '#2A2E2C', x, 0.4, z, g));
+    caja(1.2, 0.04, 0.05, '#2A2E2C', 0, 0.35, 0, g, false);
+    caja(1.42, 0.1, 0.42, '#1B1F1D', 0, 0.85, 0, g);
+    caja(1.3, 0.04, 0.2, '#F4F2EC', 0, 0.91, 0.08, g, false);
+    // teclas negras entre las blancas (18 blancas de 0,072): patrón 2 + 3 por octava
+    for (let i = 0; i < 17; i++) if ([0, 1, 3, 4, 5].includes(i % 7)) caja(0.045, 0.05, 0.11, '#111412', -0.65 + (i + 1) * 0.072, 0.93, 0.04, g, false);
+    caja(0.3, 0.03, 0.08, C.laton, -0.45, 0.91, -0.12, g, false);
+    escena.add(g); return g;
+  }
+
+  // Celular en un trípode con un video en la pantalla (mira hacia +z)
+  function celular() {
+    const g = new T.Group();
+    caja(0.38, 0.03, 0.38, '#2A2E2C', 0, 0.02, 0, g);
+    caja(0.04, 1.2, 0.04, '#2A2E2C', 0, 0.62, 0, g);
+    caja(0.38, 0.68, 0.04, '#121614', 0, 1.45, 0, g);
+    caja(0.33, 0.62, 0.01, '#EDEFEA', 0, 1.45, 0.025, g, false);
+    caja(0.29, 0.2, 0.012, '#C8473A', 0, 1.56, 0.032, g, false);
+    const play = new T.Mesh(new T.CylinderGeometry(0.055, 0.055, 0.01, 3), mat('#FCFBF8'));
+    play.rotation.set(Math.PI / 2, 0, Math.PI / 2); play.position.set(0.005, 1.56, 0.04); g.add(play);
+    caja(0.25, 0.03, 0.012, '#9AA39E', 0, 1.37, 0.032, g, false);
+    caja(0.18, 0.03, 0.012, '#9AA39E', -0.035, 1.31, 0.032, g, false);
+    escena.add(g); return g;
   }
 
   // Patio de una casa: pared con ventana y puerta, medianera de ladrillo,
@@ -254,9 +379,9 @@
 
   // Lluvia: gotas finas que caen sobre la zona (intensidad 0 a 1)
   function lluvia(o = {}) {
-    const n = o.cantidad || 2000, r = azar(o.semilla || 31), alto = 6.5;
+    const n = o.cantidad || 2000, r = azar(o.semilla || 31), alto = o.alto || 6.5; // alto: de dónde caen (una ducha: 2,3)
     const { x0, x1, z0, z1 } = o.zona || { x0: -6, x1: 6, z0: -7, z1: 7 };
-    const malla = new T.InstancedMesh(new T.BoxGeometry(0.035, 0.62, 0.035),
+    const malla = new T.InstancedMesh(new T.BoxGeometry(0.035, o.gota || 0.62, 0.035),
       new T.MeshBasicMaterial({ color: '#F2F7FA', transparent: true, opacity: 0.8 }), n);
     const gs = []; for (let i = 0; i < n; i++) gs.push({ x: lerp(x0, x1, r()), z: lerp(z0, z1, r()), f: r(), u: r() });
     malla.frustumCulled = false; // las gotas se mueven: que three.js no las saltee
@@ -285,8 +410,8 @@
     cielo.intensity = lerp(1.25, 0.6, nublado); sol.intensity = lerp(2.1, 0.15, nublado);
   }
   // Humo: bocanadas grises que suben (un motor que no arranca)
-  function humo(n = 16) {
-    const malla = new T.InstancedMesh(new T.IcosahedronGeometry(0.14, 0), mat('#8E9490'), n);
+  function humo(n = 16, color = '#8E9490') { // también vapor de la ducha (color claro) o una tos
+    const malla = new T.InstancedMesh(new T.IcosahedronGeometry(0.14, 0), mat(color), n);
     const r = azar(57), ps = []; for (let i = 0; i < n; i++) ps.push({ u: r(), dx: lerp(-0.4, 0.4, r()), dz: lerp(-0.3, 0.3, r()) });
     malla.frustumCulled = false; // las gotas se mueven: que three.js no las saltee
     escena.add(malla);
@@ -408,8 +533,8 @@
   }
 
   // ---------- armar y dibujar ----------
-  const kit = { THREE: T, C, escena, camara, sol, renderer, mat, caja, personaje, pose, patio, pasto, cortadora, recortes,
-    lluvia, clima, humo, etiqueta,
+  const kit = { THREE: T, C, escena, camara, sol, cielo, renderer, mat, caja, personaje, pose, patio, pasto, cortadora, recortes,
+    lluvia, clima, humo, etiqueta, perro, posePerro, notas, teclado, celular,
     el, tarjeta, mostrar, cierre, etiquetaUrl, lerp, clamp, suave, rebote, azar,
     palabra(txt, n = 1, def = 0) { // segundo en que se dice esa palabra (n-ésima vez)
       const pal = window.PALABRAS || []; let k = 0;
