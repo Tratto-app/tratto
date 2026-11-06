@@ -6595,10 +6595,34 @@ async function entrarNativo(proveedor){
     const j = await t.json().catch(() => ({}));
     if(!t.ok || !j.access_token){ avisar('a-aviso', 'No pudimos entrar con ' + nombre + '. Probá de nuevo o entrá con tu email.', 'mal'); return; }
     // Apple manda el nombre solo la primera vez y no viene en el token.
-    const completo = [perfil.givenName, perfil.familyName].filter(Boolean).join(' ').trim();
+    const completo = [perfil.givenName, perfil.familyName].filter(Boolean).join(' ').trim()
+      || (typeof perfil.name === 'string' ? perfil.name.trim() : '');
+    await guardarNombreSocial(j, completo);
     if(completo && !$('a-nombre').value) $('a-nombre').value = completo.slice(0, 60);
     entrarConSesionSocial(j, rol);
   }catch(e){ console.error(e); avisar('a-aviso', 'No se pudo conectar. Revisá tu conexión.', 'mal'); }
+}
+
+/* Apple puede entregar el nombre una sola vez, fuera del token. Guardarlo
+   al recibirlo permite mostrar la cuenta en el CRM aunque el alta se termine
+   después. No guarda rol, permisos ni aceptación de términos. */
+async function guardarNombreSocial(j, nombre){
+  const m = (j.user && j.user.user_metadata) || {};
+  const recibido = typeof nombre === 'string' ? nombre.trim().slice(0, 60) : '';
+  if(!recibido || !j.access_token || !j.user || [m.nombre,m.full_name,m.name].some(n => typeof n === 'string' && n.trim())) return j;
+  const control = new AbortController(), reloj = setTimeout(() => control.abort(), 5000);
+  try{
+    const res = await fetch(SUPABASE_URL+'/auth/v1/user', {method:'PUT',
+      signal:control.signal,
+      headers:{apikey:SUPABASE_ANON, 'Authorization':'Bearer '+j.access_token, 'Content-Type':'application/json'},
+      body:JSON.stringify({data:{full_name:recibido}})});
+    if(res.ok){
+      const user = await res.json();
+      if(user && user.id === j.user.id) j.user = user;
+    }
+  }catch(e){ /* El formulario mantiene el nombre precargado para reintentar al completar. */ }
+  finally{ clearTimeout(reloj); }
+  return j;
 }
 
 /* Google con su botón oficial (Google Identity Services) en vez de ir a

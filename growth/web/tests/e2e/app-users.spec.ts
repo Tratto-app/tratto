@@ -40,6 +40,8 @@ for(const width of [390,1440]) test(`resumen, filtros y menú con ${width}px`,as
  await expect(page.locator('.au-person')).toHaveCount(1);
  await expect(page.locator('.au-person')).toContainText('Cuenta sin perfil');
  await expect(page.locator('.au-person')).toContainText('Ingreso: Google');
+ await expect(page.locator('.au-person')).toContainText('Servicios0 publicados');
+ await expect(page.locator('.au-person')).toContainText('Trabajos en el perfil0');
  await expect(page.getByLabel('Desglose de cuentas')).toContainText('4 cuentas = 2 oferentes + 1 clientes + 1 sin perfil definido.');
  await page.getByRole('radio',{name:'Clientes',exact:true}).click();
  await expect(page.locator('.au-person')).toHaveCount(1);
