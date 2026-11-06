@@ -1,51 +1,284 @@
 {
   "nota": "Video 3D del día (fundador, 05/11/2026: \"todos los días hagas un video de ese estilo y lo subas con un rubro totalmente diferente, es decir hoy hiciste jardinería, mañana clases de canto, después plomería y así\"). La rutina 'Redes · videos del día' toma el primero sin 'hecho', arma la escena con comun-3d.js, la voz Tratto 3D y el precio real de precios_referencia (servicio que dice 'servicio'), lo publica en TikTok, Instagram y Facebook y anota aquí 'hecho' (fecha) y 'archivo'. Al terminar la lista se vuelve a empezar con otra situación del mismo rubro. Nunca gas, electricidad ni salud (rubros con matrícula). 'idea' es un punto de partida para la historia en escalera (cada intento sale peor); se puede cambiar.",
   "orden": [
-    {"rubro": "Jardinería y piletas", "servicio": "Corte de pasto, terreno de hasta 100 m²", "idea": "El pasto por las rodillas: llovió el finde, y el otro; la máquina del vecino sin nafta.", "hecho": "2026-11-05", "archivo": "video-3d-pasto"},
-    {"rubro": "Clases de música", "servicio": "Canto (1 hora)", "idea": "Cantás en la ducha: el vecino golpea la pared, el perro aúlla, el tutorial de internet te deja afónico; una clase de canto.", "hecho": null},
-    {"rubro": "Plomería y destapaciones", "servicio": "Cambio o arreglo de canilla", "idea": "La canilla gotea toda la noche: el balde se llena, la cinta no aguanta, el tutorial lo empeora y sale un chorro.", "hecho": null},
-    {"rubro": "Paseo y cuidado de mascotas", "servicio": "Paseo individual", "idea": "El perro te mira con la correa en la boca: llueve, llegás tarde, lo sacás a las apuradas y te arrastra; un paseador.", "hecho": null},
-    {"rubro": "Fletes y mudanzas", "servicio": "Flete en furgón chico", "idea": "Te mudás con el auto: el colchón en el techo, el sillón no entra, el amigo que iba a ayudar no viene.", "hecho": null},
-    {"rubro": "Estética, maquillaje y peinados", "servicio": "Manicura semipermanente", "idea": "Te pintás las uñas sola para la fiesta: se corre, se mancha y se seca torcido.", "hecho": null},
-    {"rubro": "Cerrajería", "servicio": "Apertura de puerta sin rotura", "idea": "Te quedaste afuera: probás con la tarjeta, con una horquilla y por la ventana del vecino.", "hecho": null},
-    {"rubro": "Animación y organización de eventos", "servicio": "Animación infantil (2 horas)", "idea": "El cumple del nene: veinte chicos, los globos se revientan, el juego improvisado termina en llanto.", "hecho": null},
-    {"rubro": "Mecánica del automotor", "servicio": "Cambio de aceite y filtro", "idea": "La lucecita del tablero: le ponés cinta, le subís la radio, sale humo.", "hecho": null},
-    {"rubro": "Apoyo escolar y universitario", "servicio": "Secundaria", "idea": "Se llevó matemática a diciembre: le explicás vos, buscás un video, termina explicándote él a vos.", "hecho": null},
-    {"rubro": "Pintura", "servicio": "Habitación chica (3x3 m)", "idea": "Pintás la pieza vos: manchás el piso, quedan marcas del rodillo, te falta pintura en la última pared.", "hecho": null},
-    {"rubro": "Peluquería y adiestramiento canino", "servicio": "Baño y corte", "idea": "Bañás al perro en la bañadera: se escapa mojado, sacude todo y termina más sucio.", "hecho": null},
-    {"rubro": "Servicios de limpieza", "servicio": "Media jornada (4 horas)", "idea": "Vienen visitas en una hora: escondés todo en el placard, se cae; el polvo vuelve.", "hecho": null},
-    {"rubro": "Fotografía y video", "servicio": "Sesión de fotos", "idea": "Las fotos del cumple con el celular: el flash, todos con ojos cerrados, el pulgar en la foto.", "hecho": null},
-    {"rubro": "Techos e impermeabilización", "servicio": "Reparación de gotera simple", "idea": "Gotera: un balde, después dos, después la olla; cada lluvia aparece otra.", "hecho": null},
-    {"rubro": "Idiomas", "servicio": "Inglés general (1 hora)", "idea": "Te sale el viaje: la app de idiomas te felicita, pero en el aeropuerto no entendés nada.", "hecho": null},
-    {"rubro": "Gomería y auxilio", "servicio": "Auxilio para cambio de rueda", "idea": "Pinchaste: no encontrás el gato, la rueda de auxilio también está baja, empieza a llover.", "hecho": null},
-    {"rubro": "Costura y arreglos de ropa", "servicio": "Ruedo de pantalón", "idea": "El pantalón largo: lo doblás, lo abrochás con un gancho, se te desarma en la calle.", "hecho": null},
-    {"rubro": "Aire acondicionado", "servicio": "Instalación de split hasta 3.000 frigorías", "idea": "Llega el calor: el ventilador tira aire caliente, la heladera abierta no alcanza; el aire nuevo en la caja.", "hecho": null},
-    {"rubro": "Música y sonido (DJ)", "servicio": "DJ para cumpleaños o fiesta (4 a 5 horas)", "idea": "La música de la fiesta con el celular: se corta con cada mensaje, se queda sin batería.", "hecho": null},
-    {"rubro": "Reparación y soporte técnico", "servicio": "Formateo o puesta a punto de computadora", "idea": "La compu tarda diez minutos en prender: cerrás pestañas, le pegás, se cuelga en la reunión.", "hecho": null},
-    {"rubro": "Carpintería y muebles", "servicio": "Ajuste o arreglo de puerta o mueble", "idea": "La puerta del placard se sale: la trabás con una silla, con un libro, se cae entera.", "hecho": null},
-    {"rubro": "Personal trainer, yoga y pilates", "servicio": "Entrenamiento a domicilio", "idea": "El lunes arrancás el gimnasio: el lunes llueve, el otro lunes también, la bici se volvió perchero.", "hecho": null},
-    {"rubro": "Gestoría y trámites", "servicio": "Transferencia de auto", "idea": "Vendés el auto: turno que no hay, papel que falta, otra vez la fila.", "hecho": null},
-    {"rubro": "Herrería y soldadura", "servicio": "Soldadura o arreglo de reja o portón", "idea": "El portón se traba: lo empujás, lo atás con alambre, se sale de la guía.", "hecho": null},
-    {"rubro": "Catering y pastelería", "servicio": "Torta artesanal", "idea": "Hacés la torta vos: se hunde en el medio, el relleno se escapa, la decoración se derrite.", "hecho": null},
-    {"rubro": "Lavado de autos", "servicio": "Lavado completo (interior y exterior)", "idea": "Lavás el auto el domingo: a la hora llueve, después pasan los pájaros.", "hecho": null},
-    {"rubro": "Masajes", "servicio": "Masaje descontracturante (1 hora)", "idea": "La contractura: la almohada nueva, la pelotita de tenis contra la pared, dormís torcido.", "hecho": null},
-    {"rubro": "Durlock y yeso", "servicio": "Tabique simple de durlock", "idea": "Querés dividir el ambiente: una cortina, una biblioteca, la cortina se cae.", "hecho": null},
-    {"rubro": "Clases de manejo", "servicio": "Clase práctica (1 hora)", "idea": "Aprendés con tu viejo: grita, frenás de golpe, el auto se apaga en la subida.", "hecho": null},
-    {"rubro": "Service de electrodomésticos", "servicio": "Visita de diagnóstico", "idea": "El lavarropas camina por el lavadero: le ponés un ladrillo, dos, se sale la manguera.", "hecho": null},
-    {"rubro": "Diseño gráfico", "servicio": "Diseño de logo", "idea": "El logo del emprendimiento: lo hiciste con una app, nadie lo lee, se ve pixelado en el cartel.", "hecho": null},
-    {"rubro": "Cuidado de adultos mayores", "servicio": "Cuidador con experiencia", "idea": "El abuelo solo a la tarde: lo llamás cada hora, no atiende, te vas del trabajo corriendo.", "hecho": null},
-    {"rubro": "Vidrios y aberturas", "servicio": "Vidrio común 3 mm colocado", "idea": "La pelota rompió el vidrio: cartón, cinta, nylon; entra el viento igual.", "hecho": null},
-    {"rubro": "Contabilidad e impuestos", "servicio": "Gestión mensual de monotributo", "idea": "Vence el monotributo: no te acordás la clave, la página se cae, se pasa la fecha.", "hecho": null},
-    {"rubro": "Tapicería y restauración", "servicio": "Retapizado de asiento de silla", "idea": "La silla rota: un almohadón, una manta, el resorte que te pincha igual.", "hecho": null},
-    {"rubro": "Albañilería y refacciones", "servicio": "Jornal de albañil oficial", "idea": "Una grieta en la pared: la tapás con un cuadro, con otro cuadro más grande, se agranda.", "hecho": null},
-    {"rubro": "Mandados y mensajería", "servicio": "Mandado o envío en moto (hasta 8 km)", "idea": "Tenés que mandar un sobre urgente: el colectivo no pasa, el taxi no para, llegás tarde.", "hecho": null},
-    {"rubro": "Pisos y revestimientos", "servicio": "Colocación de cerámica", "idea": "La baldosa floja: le ponés una alfombra, te tropezás, se parte.", "hecho": null},
-    {"rubro": "Computación y capacitación", "servicio": "Clase de computación (1 hora)", "idea": "Tu mamá con el celular nuevo: te llama por cada botón, manda audios sin querer.", "hecho": null},
-    {"rubro": "Marketing y redes sociales", "servicio": "Community manager, 1 red", "idea": "El emprendimiento en redes: publicás a las tres de la mañana, tres me gusta, uno es tu tía.", "hecho": null},
-    {"rubro": "Decoración e interiores", "servicio": "Asesoramiento y proyecto de un ambiente", "idea": "Decorás el living: el sillón no entra, los colores pelean, parece una mueblería.", "hecho": null},
-    {"rubro": "Programación y desarrollo", "servicio": "Página web a medida", "idea": "La página del negocio la hizo tu sobrino: no anda en el celular, el sobrino se fue de viaje.", "hecho": null},
-    {"rubro": "Arreglos generales", "servicio": "Visita de 2 horas (hasta 3 tareas simples)", "idea": "La lista de arreglos en la heladera: el estante, la lamparita, la manija; la lista crece.", "hecho": null},
-    {"rubro": "Chapa y pintura", "servicio": "Pintura de un paño (puerta, guardabarros)", "idea": "El raspón en la puerta del auto: el marcador, el esmalte de uñas, se nota más.", "hecho": null},
-    {"rubro": "Asistente administrativo", "servicio": "Tareas administrativas", "idea": "Los papeles del negocio en una caja: facturas mezcladas, la caja se moja, no encontrás nada.", "hecho": null}
+    {
+      "rubro": "Jardinería y piletas",
+      "servicio": "Corte de pasto, terreno de hasta 100 m²",
+      "idea": "El pasto por las rodillas: llovió el finde, y el otro; la máquina del vecino sin nafta.",
+      "hecho": "2026-11-05",
+      "archivo": "video-3d-pasto"
+    },
+    {
+      "rubro": "Clases de música",
+      "servicio": "Canto (1 hora)",
+      "idea": "Cantás en la ducha: el vecino golpea la pared, el perro aúlla, el tutorial de internet te deja afónico; una clase de canto.",
+      "hecho": "2026-11-06",
+      "archivo": "video-3d-canto",
+      "nota": "Sin voz: la voz Tratto 3D no pasó los controles en 4 intentos; salió con subtítulos y música."
+    },
+    {
+      "rubro": "Plomería y destapaciones",
+      "servicio": "Cambio o arreglo de canilla",
+      "idea": "La canilla gotea toda la noche: el balde se llena, la cinta no aguanta, el tutorial lo empeora y sale un chorro.",
+      "hecho": null
+    },
+    {
+      "rubro": "Paseo y cuidado de mascotas",
+      "servicio": "Paseo individual",
+      "idea": "El perro te mira con la correa en la boca: llueve, llegás tarde, lo sacás a las apuradas y te arrastra; un paseador.",
+      "hecho": null
+    },
+    {
+      "rubro": "Fletes y mudanzas",
+      "servicio": "Flete en furgón chico",
+      "idea": "Te mudás con el auto: el colchón en el techo, el sillón no entra, el amigo que iba a ayudar no viene.",
+      "hecho": null
+    },
+    {
+      "rubro": "Estética, maquillaje y peinados",
+      "servicio": "Manicura semipermanente",
+      "idea": "Te pintás las uñas sola para la fiesta: se corre, se mancha y se seca torcido.",
+      "hecho": null
+    },
+    {
+      "rubro": "Cerrajería",
+      "servicio": "Apertura de puerta sin rotura",
+      "idea": "Te quedaste afuera: probás con la tarjeta, con una horquilla y por la ventana del vecino.",
+      "hecho": null
+    },
+    {
+      "rubro": "Animación y organización de eventos",
+      "servicio": "Animación infantil (2 horas)",
+      "idea": "El cumple del nene: veinte chicos, los globos se revientan, el juego improvisado termina en llanto.",
+      "hecho": null
+    },
+    {
+      "rubro": "Mecánica del automotor",
+      "servicio": "Cambio de aceite y filtro",
+      "idea": "La lucecita del tablero: le ponés cinta, le subís la radio, sale humo.",
+      "hecho": null
+    },
+    {
+      "rubro": "Apoyo escolar y universitario",
+      "servicio": "Secundaria",
+      "idea": "Se llevó matemática a diciembre: le explicás vos, buscás un video, termina explicándote él a vos.",
+      "hecho": null
+    },
+    {
+      "rubro": "Pintura",
+      "servicio": "Habitación chica (3x3 m)",
+      "idea": "Pintás la pieza vos: manchás el piso, quedan marcas del rodillo, te falta pintura en la última pared.",
+      "hecho": null
+    },
+    {
+      "rubro": "Peluquería y adiestramiento canino",
+      "servicio": "Baño y corte",
+      "idea": "Bañás al perro en la bañadera: se escapa mojado, sacude todo y termina más sucio.",
+      "hecho": null
+    },
+    {
+      "rubro": "Servicios de limpieza",
+      "servicio": "Media jornada (4 horas)",
+      "idea": "Vienen visitas en una hora: escondés todo en el placard, se cae; el polvo vuelve.",
+      "hecho": null
+    },
+    {
+      "rubro": "Fotografía y video",
+      "servicio": "Sesión de fotos",
+      "idea": "Las fotos del cumple con el celular: el flash, todos con ojos cerrados, el pulgar en la foto.",
+      "hecho": null
+    },
+    {
+      "rubro": "Techos e impermeabilización",
+      "servicio": "Reparación de gotera simple",
+      "idea": "Gotera: un balde, después dos, después la olla; cada lluvia aparece otra.",
+      "hecho": null
+    },
+    {
+      "rubro": "Idiomas",
+      "servicio": "Inglés general (1 hora)",
+      "idea": "Te sale el viaje: la app de idiomas te felicita, pero en el aeropuerto no entendés nada.",
+      "hecho": null
+    },
+    {
+      "rubro": "Gomería y auxilio",
+      "servicio": "Auxilio para cambio de rueda",
+      "idea": "Pinchaste: no encontrás el gato, la rueda de auxilio también está baja, empieza a llover.",
+      "hecho": null
+    },
+    {
+      "rubro": "Costura y arreglos de ropa",
+      "servicio": "Ruedo de pantalón",
+      "idea": "El pantalón largo: lo doblás, lo abrochás con un gancho, se te desarma en la calle.",
+      "hecho": null
+    },
+    {
+      "rubro": "Aire acondicionado",
+      "servicio": "Instalación de split hasta 3.000 frigorías",
+      "idea": "Llega el calor: el ventilador tira aire caliente, la heladera abierta no alcanza; el aire nuevo en la caja.",
+      "hecho": null
+    },
+    {
+      "rubro": "Música y sonido (DJ)",
+      "servicio": "DJ para cumpleaños o fiesta (4 a 5 horas)",
+      "idea": "La música de la fiesta con el celular: se corta con cada mensaje, se queda sin batería.",
+      "hecho": null
+    },
+    {
+      "rubro": "Reparación y soporte técnico",
+      "servicio": "Formateo o puesta a punto de computadora",
+      "idea": "La compu tarda diez minutos en prender: cerrás pestañas, le pegás, se cuelga en la reunión.",
+      "hecho": null
+    },
+    {
+      "rubro": "Carpintería y muebles",
+      "servicio": "Ajuste o arreglo de puerta o mueble",
+      "idea": "La puerta del placard se sale: la trabás con una silla, con un libro, se cae entera.",
+      "hecho": null
+    },
+    {
+      "rubro": "Personal trainer, yoga y pilates",
+      "servicio": "Entrenamiento a domicilio",
+      "idea": "El lunes arrancás el gimnasio: el lunes llueve, el otro lunes también, la bici se volvió perchero.",
+      "hecho": null
+    },
+    {
+      "rubro": "Gestoría y trámites",
+      "servicio": "Transferencia de auto",
+      "idea": "Vendés el auto: turno que no hay, papel que falta, otra vez la fila.",
+      "hecho": null
+    },
+    {
+      "rubro": "Herrería y soldadura",
+      "servicio": "Soldadura o arreglo de reja o portón",
+      "idea": "El portón se traba: lo empujás, lo atás con alambre, se sale de la guía.",
+      "hecho": null
+    },
+    {
+      "rubro": "Catering y pastelería",
+      "servicio": "Torta artesanal",
+      "idea": "Hacés la torta vos: se hunde en el medio, el relleno se escapa, la decoración se derrite.",
+      "hecho": null
+    },
+    {
+      "rubro": "Lavado de autos",
+      "servicio": "Lavado completo (interior y exterior)",
+      "idea": "Lavás el auto el domingo: a la hora llueve, después pasan los pájaros.",
+      "hecho": null
+    },
+    {
+      "rubro": "Masajes",
+      "servicio": "Masaje descontracturante (1 hora)",
+      "idea": "La contractura: la almohada nueva, la pelotita de tenis contra la pared, dormís torcido.",
+      "hecho": null
+    },
+    {
+      "rubro": "Durlock y yeso",
+      "servicio": "Tabique simple de durlock",
+      "idea": "Querés dividir el ambiente: una cortina, una biblioteca, la cortina se cae.",
+      "hecho": null
+    },
+    {
+      "rubro": "Clases de manejo",
+      "servicio": "Clase práctica (1 hora)",
+      "idea": "Aprendés con tu viejo: grita, frenás de golpe, el auto se apaga en la subida.",
+      "hecho": null
+    },
+    {
+      "rubro": "Service de electrodomésticos",
+      "servicio": "Visita de diagnóstico",
+      "idea": "El lavarropas camina por el lavadero: le ponés un ladrillo, dos, se sale la manguera.",
+      "hecho": null
+    },
+    {
+      "rubro": "Diseño gráfico",
+      "servicio": "Diseño de logo",
+      "idea": "El logo del emprendimiento: lo hiciste con una app, nadie lo lee, se ve pixelado en el cartel.",
+      "hecho": null
+    },
+    {
+      "rubro": "Cuidado de adultos mayores",
+      "servicio": "Cuidador con experiencia",
+      "idea": "El abuelo solo a la tarde: lo llamás cada hora, no atiende, te vas del trabajo corriendo.",
+      "hecho": null
+    },
+    {
+      "rubro": "Vidrios y aberturas",
+      "servicio": "Vidrio común 3 mm colocado",
+      "idea": "La pelota rompió el vidrio: cartón, cinta, nylon; entra el viento igual.",
+      "hecho": null
+    },
+    {
+      "rubro": "Contabilidad e impuestos",
+      "servicio": "Gestión mensual de monotributo",
+      "idea": "Vence el monotributo: no te acordás la clave, la página se cae, se pasa la fecha.",
+      "hecho": null
+    },
+    {
+      "rubro": "Tapicería y restauración",
+      "servicio": "Retapizado de asiento de silla",
+      "idea": "La silla rota: un almohadón, una manta, el resorte que te pincha igual.",
+      "hecho": null
+    },
+    {
+      "rubro": "Albañilería y refacciones",
+      "servicio": "Jornal de albañil oficial",
+      "idea": "Una grieta en la pared: la tapás con un cuadro, con otro cuadro más grande, se agranda.",
+      "hecho": null
+    },
+    {
+      "rubro": "Mandados y mensajería",
+      "servicio": "Mandado o envío en moto (hasta 8 km)",
+      "idea": "Tenés que mandar un sobre urgente: el colectivo no pasa, el taxi no para, llegás tarde.",
+      "hecho": null
+    },
+    {
+      "rubro": "Pisos y revestimientos",
+      "servicio": "Colocación de cerámica",
+      "idea": "La baldosa floja: le ponés una alfombra, te tropezás, se parte.",
+      "hecho": null
+    },
+    {
+      "rubro": "Computación y capacitación",
+      "servicio": "Clase de computación (1 hora)",
+      "idea": "Tu mamá con el celular nuevo: te llama por cada botón, manda audios sin querer.",
+      "hecho": null
+    },
+    {
+      "rubro": "Marketing y redes sociales",
+      "servicio": "Community manager, 1 red",
+      "idea": "El emprendimiento en redes: publicás a las tres de la mañana, tres me gusta, uno es tu tía.",
+      "hecho": null
+    },
+    {
+      "rubro": "Decoración e interiores",
+      "servicio": "Asesoramiento y proyecto de un ambiente",
+      "idea": "Decorás el living: el sillón no entra, los colores pelean, parece una mueblería.",
+      "hecho": null
+    },
+    {
+      "rubro": "Programación y desarrollo",
+      "servicio": "Página web a medida",
+      "idea": "La página del negocio la hizo tu sobrino: no anda en el celular, el sobrino se fue de viaje.",
+      "hecho": null
+    },
+    {
+      "rubro": "Arreglos generales",
+      "servicio": "Visita de 2 horas (hasta 3 tareas simples)",
+      "idea": "La lista de arreglos en la heladera: el estante, la lamparita, la manija; la lista crece.",
+      "hecho": null
+    },
+    {
+      "rubro": "Chapa y pintura",
+      "servicio": "Pintura de un paño (puerta, guardabarros)",
+      "idea": "El raspón en la puerta del auto: el marcador, el esmalte de uñas, se nota más.",
+      "hecho": null
+    },
+    {
+      "rubro": "Asistente administrativo",
+      "servicio": "Tareas administrativas",
+      "idea": "Los papeles del negocio en una caja: facturas mezcladas, la caja se moja, no encontrás nada.",
+      "hecho": null
+    }
   ]
 }
