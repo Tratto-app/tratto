@@ -49,6 +49,8 @@ jobs:
         run: npx playwright install --with-deps chromium
       - name: Recuperación de contraseña de la app (Auth simulado)
         run: node --test ../../tools/auth/probar-recuperacion.mjs
+      - name: Nombre del ingreso social (sin cuentas reales)
+        run: node --test ../../tools/auth/social-name.test.mjs
       - name: Panel de usuarios (Auth y datos simulados)
         run: npx playwright test --config playwright-users.config.ts
       - name: Build

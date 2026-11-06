@@ -13,11 +13,12 @@ before(async()=>{
  create table public.push_subscripciones(user_id uuid,endpoint text);
  create table public.publicaciones(user_id uuid,tipo text,estado text);
  create table public.solicitudes(user_id uuid,demo boolean);
- create table public.growth_app_users(id uuid,workspace_id uuid,external_user_id text,created_at timestamptz);
+ create table public.growth_app_users(id uuid,workspace_id uuid,external_user_id text,created_at timestamptz,name text,kind text,activated_at timestamptz);
  create function public.crm_ws() returns uuid language sql as $$select '${ws}'::uuid$$;
  create function public.growth_is_member(uuid) returns boolean language sql as $$select $1='${ws}'::uuid and auth.uid()='${uid(1)}'::uuid$$;`);
  await db.exec(await readFile(new URL('../../supabase/migrations/20261020004423_app_users_visual_overview.sql',import.meta.url),'utf8'));
  await db.exec(await readFile(new URL('../../supabase/migrations/20261105231159_crm_social_names_phone_matching.sql',import.meta.url),'utf8'));
+ await db.exec(await readFile(new URL('../../supabase/migrations/20261106012212_crm_social_identity_sync.sql',import.meta.url),'utf8'));
  fixtureDay=(await db.query("select to_char(now() at time zone 'America/Argentina/Buenos_Aires','YYYY-MM-DD') d")).rows[0].d;
  for(const [n,rol,rubro,demo,deleted] of [[1,'cliente',null,false,false],[2,'proveedor','Pintura',false,false],[3,'proveedor','Cerrajería',false,false],[4,'cliente',null,true,false],[5,'proveedor','Pintura',true,false],[6,'proveedor','Pintura',false,true],[7,'cliente',null,false,false]]){
   await db.query('insert into auth.users values($1,$2,$3,$4,$5,$6)',[uid(n),`test${n}@example.invalid`,n===3?`${fixtureDay}T03:01:00Z`:`${fixtureDay}T02:59:00Z`,deleted?'2026-10-20T00:00:00Z':null,{nombre:`Persona ${n}`,rol,rubro},{demo}]);
@@ -80,5 +81,28 @@ test('Google y Apple cuentan como cuentas reales y conservan el rol pendiente',a
   assert.equal(account(204).nombre,'Nombre elegido');assert.equal(account(204).tipo,'customer');
   assert.equal((await call({query:'Nombre de Google'})).total_filtrado,1);
   assert.ok([201,202,203].every(n=>account(n).tipo==='unknown'));
+ }finally{await db.exec('rollback');}
+});
+test('el nombre social se guarda en la ficha existente y se conserva el nombre manual',async()=>{
+ await db.exec('begin');try{
+  await db.exec(`create function public.test_capture_user() returns trigger language plpgsql as $$begin insert into growth_app_users(id,workspace_id,external_user_id,created_at,kind,activated_at)values(new.id,'${ws}',new.id::text,now(),'provider','2026-10-01');return new;end$$;
+   create trigger crm_registro after insert on auth.users for each row execute function public.test_capture_user();`);
+  await db.query('insert into auth.users values($1,$2,now(),null,$3,$4)',[uid(301),'google@example.invalid',{full_name:'Nombre Google'},{provider:'google'}]);
+  let g=(await db.query('select name,kind,activated_at from growth_app_users where id=$1',[uid(301)])).rows[0];
+  assert.equal(g.name,'Nombre Google');assert.equal(g.kind,'provider');assert.ok(g.activated_at);
+  await db.query('update auth.users set raw_user_meta_data=$1 where id=$2',[{nombre:'Nombre completado',rol:'proveedor'},uid(301)]);
+  assert.equal((await db.query('select name from growth_app_users where id=$1',[uid(301)])).rows[0].name,'Nombre completado');
+  await db.query('update growth_app_users set name=$1 where id=$2',['Nombre manual CRM',uid(301)]);
+  await db.query('update auth.users set raw_user_meta_data=$1 where id=$2',[{nombre:'Otro nombre',rol:'proveedor'},uid(301)]);
+  assert.equal((await db.query('select name from growth_app_users where id=$1',[uid(301)])).rows[0].name,'Nombre manual CRM');
+  await db.query('insert into auth.users values($1,$2,now(),null,$3,$4)',[uid(302),'apple@example.invalid',{}, {provider:'apple'}]);
+  assert.equal((await db.query('select name from growth_app_users where id=$1',[uid(302)])).rows[0].name,null);
+  await db.query('update auth.users set raw_user_meta_data=$1 where id=$2',[{full_name:'Nombre Apple'},uid(302)]);
+  assert.equal((await db.query('select name from growth_app_users where id=$1',[uid(302)])).rows[0].name,'Nombre Apple');
+  await db.query('update auth.users set raw_user_meta_data=$1 where id=$2',[{},uid(302)]);
+  await db.query('update growth_app_users set name=$1 where id=$2',['Nombre confirmado en CRM',uid(302)]);
+  assert.equal((await call({query:'Nombre confirmado en CRM'})).usuarios[0].nombre,'Nombre confirmado en CRM');
+  assert.equal((await call({query:'Nombre confirmado en CRM'})).usuarios[0].tipo,'unknown');
+  assert.equal((await db.query("select has_function_privilege('authenticated','growth_users_private.sync_identity_name()','execute') allowed")).rows[0].allowed,false);
  }finally{await db.exec('rollback');}
 });

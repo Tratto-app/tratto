@@ -88,7 +88,12 @@ export default function AppUsers() {
         {results.loading ? <Loading text="Actualizando personas…"/> : !data.usuarios.length ? <Empty title="No hay personas con estos filtros"><button className="btn" onClick={()=>{setQuery('');setWithoutProfile(false);changeStage('');changeRubro('');}}>Limpiar búsqueda y filtros</button></Empty> : <div className="au-people">{data.usuarios.map(u=><article className="au-person" key={u.user_id}>
           <div className="au-person-head"><div className="au-avatar" aria-hidden="true">{u.nombre.slice(0,1).toUpperCase()}</div><div className="au-person-name"><strong>{u.nombre}</strong><span>{u.email||'Sin email'}</span></div><Badge tone={u.tipo==='provider'?'laton':'verde'}>{u.tipo==='provider'?'Oferente':u.tipo==='customer'?'Cliente':'Sin perfil definido'}</Badge></div>
           <div className="au-person-rubros">{u.rubros.length?u.rubros.join(' · '):'Sin rubro de servicio'}</div>
-          <div className="au-person-stats"><div><span>Notificaciones</span><b className={u.dispositivos?'au-ok':'muted'}>{u.dispositivos?`${u.dispositivos} dispositivo${u.dispositivos>1?'s':''}`:'Sin suscripción'}</b></div>{u.tipo==='provider'?<><div><span>Servicios</span><b>{u.servicios?`${u.servicios} publicado${u.servicios>1?'s':''}`:'Pendiente de publicar'}</b></div><div><span>Trabajos en el perfil</span><b>{u.trabajos}</b></div></>:<div><span>Pedidos publicados</span><b>{u.pedidos}</b></div>}</div>
+          <div className="au-person-stats">
+            <div><span>Notificaciones</span><b className={u.dispositivos?'au-ok':'muted'}>{u.dispositivos?`${u.dispositivos} dispositivo${u.dispositivos>1?'s':''}`:'Sin suscripción'}</b></div>
+            <div><span>Servicios</span><b>{u.servicios?`${u.servicios} publicado${u.servicios>1?'s':''}`:u.tipo==='provider'?'Pendiente de publicar':'0 publicados'}</b></div>
+            <div><span>Trabajos en el perfil</span><b>{u.trabajos}</b></div>
+            <div><span>Pedidos publicados</span><b>{u.pedidos}</b></div>
+          </div>
           <div className="au-person-foot"><span>Alta {accountDate(u.registrado_at)} · Ingreso: {accountLogin(u.metodo_ingreso)}</span>{u.crm_id && <Link to={`/users/${u.crm_id}`}>Ver ficha CRM →</Link>}</div>
         </article>)}</div>}
         <Pager page={page} pageSize={50} total={data.total_filtrado} onPage={setPage}/>
