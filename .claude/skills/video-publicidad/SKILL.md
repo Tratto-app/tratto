@@ -90,8 +90,14 @@ video de ese estilo y lo subas con un rubro totalmente diferente, es decir hoy
 hiciste jardinería, mañana clases de canto, después plomería y así"). El orden
 está en `tools/piezas-redes/reels/rubros-3d.json` (rubro, servicio con precio
 real e idea de partida; se marca "hecho" al publicarlo). Lo hace la rutina
-"Redes · videos del día" y reemplaza a los videos de plantilla. Sale en TikTok
-(20:00), Facebook (19:00) e Instagram (el próximo día libre de la cola), cada
+"Redes · videos del día" y reemplaza a los videos de plantilla. Sale el mismo día en las
+tres redes (fundador, 07/11/2026: el 3D de jardinería tuvo 1.334 vistas en
+Instagram en unas horas): TikTok 20:00, Facebook 19:00 (21:00 si ya hay otro
+video) e Instagram 18:00 (la cola; los carruseles pasan a las 12:00, fin de
+semana 10:00). Los videos que a los 7 días tienen menos de 100 vistas y ningún
+compartido, guardado ni comentario se borran: en Facebook lo hace la rutina; en
+Instagram y TikTok lo hace el fundador desde la app (sus conexiones no dejan
+borrar), con la lista que le pasa la rutina. Cada
 uno con su versión (`video-3d-<tema>-tt/ig/fb.html`, misma escena
 `escena-3d-<tema>.js`).
 

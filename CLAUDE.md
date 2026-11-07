@@ -43,8 +43,9 @@ una está en `.claude/skills/contenido/SKILL.md`, sección "Automático".
   programa: el reel va a la cola (`growth_mkt_items` con `datos.red =
   'instagram'` y `datos.instagram = { estado: 'en_cola', publicar_el,
   video_url, texto, verificado: true }`) y lo publican a la hora las rutinas
-  "Instagram · publicar el reel de la hora" (lunes a viernes 18:00, sábados y
-  domingos 10:00). Antes de ponerlo en la cola, `verificar` con `red:
+  "Instagram · publicar la pieza de la hora" (lunes a viernes 12:00 y 18:00,
+  sábados y domingos 10:00 y 18:00; desde el 07/11/2026 las 18:00 son del video
+  3D del día, que sale el mismo día en TikTok, Instagram y Facebook). Antes de ponerlo en la cola, `verificar` con `red:
   'instagram'`. La historia con sticker de link la sube la persona desde el
   celular (la API no pone stickers).
 - Buffer gratis tiene 3 lugares: TikTok, LinkedIn y X (el que dejó Instagram).
