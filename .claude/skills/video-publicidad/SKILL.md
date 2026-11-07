@@ -186,6 +186,10 @@ Tratto (verde bosque, latón, IBM Plex).
   bajadas** ("El vecino, cansado, te golpea la pared."; "Pedilo gratis en
   Tratto, y te pasan…"): volumen 7,67. Pero cada coma suma pausa y el ritmo
   baja (mínimo 2,8): dos o tres comas en total, no en todas las frases.
+  Si con esas sigue apagada, mirá el ritmo que dio: en el de plomería (07/11)
+  tres comas dieron volumen 7,01 con ritmo 3,03; sumando una coma en el
+  gancho y otra en la frase 4 pasó (7,3, ritmo 2,97). Se cambian solo esas
+  frases: las demás quedan guardadas en `--trabajo` y no se regeneran.
   Si una corrida falla, no regenerar a ciegas: `clonar.py` guarda la toma
   que pasó de cada frase en la carpeta `--trabajo` (se pisa al cambiar el
   texto), así que conviene copiarlas a un banco y probar combinaciones con
