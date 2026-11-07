@@ -153,7 +153,11 @@ def normal(texto):
     t = "".join(c for c in t if unicodedata.category(c) != "Mn")
     t = re.sub(r"(\d)[.,](\d{3})", r"\1\2", t)
     t = re.sub(r"\d+", lambda m: f" {letras(int(m.group()))} ", t)
-    return re.sub(r"[^a-z0-9ñ ]+", " ", t.replace("tratto", "trato")).split()
+    t = re.sub(r"[^a-z0-9ñ ]+", " ", t.replace("tratto", "trato"))
+    # Delante de "mil" se dice "un" y "veintiún" ("sesenta y un mil"): las cifras
+    # que escribe el oído ("61 mil") se pasan igual que como dice el guion.
+    t = re.sub(r"\b(veinti)?uno(?=\s+mil\b)", lambda m: (m.group(1) or "") + "un", t)
+    return t.split()
 
 
 def tono(x, sr=16000):

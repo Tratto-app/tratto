@@ -142,6 +142,29 @@
       u.brazoI.rotation.set(-0.95 + a, 0, 0.18); u.brazoD.rotation.set(-0.95 + b, 0, -0.18);
       u.cuello.rotation.x = 0.18;
     }
+    // las manos en la cabeza (¡no puede ser!)
+    if (o.manosCabeza) {
+      const m = Math.sin(o.manosCabeza * 7) * 0.08;
+      u.brazoI.rotation.set(-0.45, 0, 2.3 + m); u.brazoD.rotation.set(-0.45, 0, -2.3 - m);
+      u.cuello.rotation.z = Math.sin(o.manosCabeza * 3.5) * 0.18;
+    }
+    // envolver algo que tiene adelante (cinta): la mano derecha da vueltas
+    if (o.envolver) {
+      const e = o.envolver * 9;
+      u.brazoD.rotation.set(-1.35 + Math.sin(e) * 0.28, 0, -0.25 + Math.cos(e) * 0.28);
+      u.brazoI.rotation.set(-1.25, 0, 0.32); u.cuello.rotation.x = 0.22;
+    }
+    // ajustar con una llave algo que tiene adelante
+    if (o.llave) {
+      u.brazoD.rotation.set(-1.45, 0, -0.15 + Math.sin(o.llave * 6) * 0.38);
+      u.brazoI.rotation.set(-1.2, 0, 0.3); u.cuello.rotation.x = 0.25;
+    }
+    // acostado en la cama con la almohada en la cara (el cuerpo lo acuesta la escena)
+    if (o.almohada) {
+      const a = Math.sin(o.almohada * 2.4) * 0.12;
+      u.brazoI.rotation.set(-2.55 + a, 0, 0.55); u.brazoD.rotation.set(-2.55 - a, 0, -0.55);
+      u.piernaI.rotation.x = 0.15 + Math.sin(o.almohada * 1.7) * 0.25; u.piernaD.rotation.x = -0.1;
+    }
   }
 
   // Perro de bloques (mira hacia +z). posePerro: caminar, aullar, sentado, cola.
@@ -174,7 +197,7 @@
     u.cuerpo.rotation.set(0, 0, 0); u.cuerpo.position.y = 0.42;
     u.patas.forEach((pt, i) => { pt.rotation.set((i === 0 || i === 3 ? s : -s) * 0.55 * amp, 0, 0); });
     u.cuello.rotation.set(o.cabezaX || 0, o.cabezaY || 0, 0); u.boca.rotation.x = 0;
-    u.cola.rotation.set(-0.75, o.cola ? Math.sin(o.cola * 15) * 0.7 : 0, 0);
+    u.cola.rotation.set(o.colaX ?? u.colaX ?? -0.75, o.cola ? Math.sin(o.cola * (u.colaVel || 15)) * 0.7 : 0, 0);
     if (o.sentado) {
       u.cuerpo.rotation.x = -0.5; u.cuerpo.position.y = 0.38;
       u.patas[0].rotation.x = u.patas[1].rotation.x = 0.5; u.patas[2].rotation.x = u.patas[3].rotation.x = -1.0;
@@ -183,6 +206,112 @@
       u.cuello.rotation.x = -0.95 + Math.sin(o.aullar * 2) * 0.08 + (o.sentado ? 0.4 : 0);
       u.boca.rotation.x = 0.35 + Math.sin(o.aullar * 9) * 0.12;
     }
+  }
+
+  // Gato de bloques (mira hacia +z): las mismas piezas que el perro, así que se
+  // mueve con posePerro (sentado, cola, cabezaX/Y y colaX para la cola caída).
+  function gato(o = {}) {
+    const g = new T.Group(), col = o.color || '#8E9196', osc = o.oscuro || '#5E6166';
+    const cuerpo = new T.Group(); cuerpo.position.y = 0.42; g.add(cuerpo);
+    caja(0.3, 0.27, 0.62, col, 0, 0, 0, cuerpo);
+    caja(0.31, 0.06, 0.1, osc, 0, 0.11, 0.12, cuerpo, false); caja(0.31, 0.06, 0.1, osc, 0, 0.11, -0.12, cuerpo, false);
+    const cuello = new T.Group(); cuello.position.set(0, 0.1, 0.28); cuerpo.add(cuello);
+    caja(0.32, 0.28, 0.28, col, 0, 0.14, 0.06, cuello);
+    caja(0.16, 0.08, 0.06, '#EDE6DA', 0, 0.06, 0.21, cuello, false);
+    caja(0.05, 0.04, 0.03, '#D98A8A', 0, 0.11, 0.215, cuello, false);
+    caja(0.07, 0.09, 0.02, '#C9D84A', -0.075, 0.19, 0.205, cuello, false); caja(0.025, 0.07, 0.025, C.tinta, -0.075, 0.19, 0.212, cuello, false);
+    caja(0.07, 0.09, 0.02, '#C9D84A', 0.075, 0.19, 0.205, cuello, false); caja(0.025, 0.07, 0.025, C.tinta, 0.075, 0.19, 0.212, cuello, false);
+    [-0.1, 0.1].forEach(x => {
+      const oreja = new T.Mesh(new T.ConeGeometry(0.07, 0.14, 4), mat(osc));
+      oreja.position.set(x, 0.33, 0.03); oreja.rotation.y = Math.PI / 4; oreja.castShadow = true; cuello.add(oreja);
+    });
+    [-1, 1].forEach(s => [0.07, 0.1].forEach(y => caja(0.12, 0.008, 0.008, '#F4F2EC', s * 0.13, y, 0.2, cuello, false)));
+    const boca = new T.Group(); boca.position.set(0, 0.02, 0.18); cuello.add(boca);
+    const cola = new T.Group(); cola.position.set(0, 0.08, -0.31); cuerpo.add(cola);
+    caja(0.06, 0.06, 0.46, osc, 0, 0, -0.23, cola);
+    const patas = [[-0.09, 0.21], [0.09, 0.21], [-0.09, -0.21], [0.09, -0.21]].map(([x, z]) => {
+      const p = new T.Group(); p.position.set(x, -0.12, z); cuerpo.add(p);
+      caja(0.08, 0.3, 0.08, col, 0, -0.14, 0, p); return p;
+    });
+    g.userData = { cuerpo, cuello, boca, cola, patas, colaX: 1.15, colaVel: 5 }; // cola parada (colaX negativa: caída)
+    escena.add(g); return g;
+  }
+
+  // Mesada de cocina con bacha y canilla, contra una pared que mira hacia +z.
+  // userData.pico: el punto donde sale el agua (coordenadas del mundo);
+  // userData.manija: la manija, para girarla o hacerla saltar.
+  function mesada(o = {}) {
+    const g = new T.Group(), ancho = o.ancho || 2.6;
+    caja(ancho, 0.86, 0.62, o.mueble || '#E7E1D3', 0, 0.43, 0, g);
+    for (let i = 0; i < 3; i++) caja(ancho / 3 - 0.06, 0.66, 0.02, o.puertas || '#D8CFBC', -ancho / 3 + i * ancho / 3, 0.45, 0.315, g, false);
+    caja(ancho + 0.04, 0.05, 0.66, o.tapa || '#3E4744', 0, 0.885, 0.01, g);
+    caja(0.7, 0.03, 0.44, '#AEB6B8', 0, 0.912, 0.02, g, false);       // bacha
+    caja(0.6, 0.02, 0.36, '#7E878A', 0, 0.918, 0.02, g, false);
+    caja(0.07, 0.36, 0.07, '#C3CBCD', 0, 1.09, -0.24, g);             // canilla
+    caja(0.06, 0.06, 0.3, '#C3CBCD', 0, 1.25, -0.1, g);
+    caja(0.07, 0.07, 0.07, '#C3CBCD', 0, 1.21, 0.04, g, false);
+    const manija = new T.Group(); manija.position.set(0, 1.3, -0.24); g.add(manija);
+    caja(0.07, 0.07, 0.07, '#C3CBCD', 0, 0, 0, manija, false); caja(0.22, 0.04, 0.05, '#C3CBCD', 0, 0.05, 0, manija, false);
+    g.userData = { manija, pico: new T.Vector3(0, 1.17, 0.04) };
+    g.userData.picoMundo = () => { g.updateMatrixWorld(); return g.userData.pico.clone().applyMatrix4(g.matrixWorld); };
+    escena.add(g); return g;
+  }
+
+  // Balde con manija; nivel(0 a 1) sube el agua de adentro
+  function balde(color = '#3D7FB5') {
+    const g = new T.Group();
+    const cuerpo = new T.Mesh(new T.CylinderGeometry(0.2, 0.15, 0.34, 10, 1, true), mat(color));
+    cuerpo.material = cuerpo.material.clone(); cuerpo.material.side = T.DoubleSide;
+    cuerpo.position.y = 0.17; cuerpo.castShadow = true; g.add(cuerpo);
+    const fondo = new T.Mesh(new T.CylinderGeometry(0.15, 0.15, 0.02, 10), mat(color)); fondo.position.y = 0.01; g.add(fondo);
+    const agua = new T.Mesh(new T.CylinderGeometry(0.19, 0.15, 1, 10), mat('#7FC4E8'));
+    agua.position.y = 0.02; agua.scale.y = 0.001; g.add(agua);
+    const asa = new T.Mesh(new T.TorusGeometry(0.2, 0.012, 4, 12, Math.PI), mat('#2A2E2C')); asa.position.y = 0.34; g.add(asa);
+    g.userData.nivel = n => { const h = 0.32 * clamp(n); agua.scale.y = Math.max(0.001, h); agua.position.y = 0.02 + h / 2; };
+    escena.add(g); return g;
+  }
+
+  // Chorro de agua que sale para arriba y cae (una canilla que salta, una fuente).
+  function chorro(n = 180, semilla = 41) {
+    const r = azar(semilla), gs = [];
+    for (let i = 0; i < n; i++) gs.push({ f: r(), u: r(), dx: lerp(-1, 1, r()), dz: lerp(-1, 1, r()), v: lerp(0.8, 1.05, r()) });
+    const malla = new T.InstancedMesh(new T.IcosahedronGeometry(0.045, 0),
+      new T.MeshLambertMaterial({ color: '#9FD6F0', transparent: true, opacity: 0.9 }), n);
+    malla.frustumCulled = false; escena.add(malla);
+    const m = new T.Matrix4(), q = new T.Quaternion(), p = new T.Vector3(), s = new T.Vector3(), G = 9.8;
+    return {
+      animar(t, intensidad, punto, alto = 1.2, abre = 0.35) {
+        for (let i = 0; i < n; i++) {
+          const a = gs[i];
+          if (a.u >= intensidad || !punto) { s.set(0, 0, 0); p.set(0, -9, 0); }
+          else {
+            const v = Math.sqrt(2 * G * alto) * a.v, dur = 2 * v / G, e = ((t + a.f * dur) % dur);
+            const y = punto.y + v * e - G * e * e / 2;
+            if (y < 0.02) { s.set(0, 0, 0); p.set(0, -9, 0); }
+            else { s.set(1, 1.6, 1); p.set(punto.x + a.dx * abre * e / dur * 2, y, punto.z + a.dz * abre * e / dur * 2); }
+          }
+          m.compose(p, q, s); malla.setMatrixAt(i, m);
+        }
+        malla.instanceMatrix.needsUpdate = true;
+      },
+    };
+  }
+
+  // Caja de herramientas (la trae quien ofrece el servicio) y una llave para la mano
+  function herramientas() {
+    const g = new T.Group();
+    caja(0.5, 0.24, 0.24, '#B8432F', 0, 0.12, 0, g);
+    caja(0.52, 0.04, 0.26, '#8F3324', 0, 0.25, 0, g, false);
+    caja(0.05, 0.12, 0.04, '#2A2E2C', -0.12, 0.33, 0, g, false); caja(0.05, 0.12, 0.04, '#2A2E2C', 0.12, 0.33, 0, g, false);
+    caja(0.29, 0.04, 0.04, '#2A2E2C', 0, 0.39, 0, g, false);
+    caja(0.08, 0.04, 0.02, C.laton, 0, 0.18, 0.125, g, false);
+    escena.add(g); return g;
+  }
+  function llaveInglesa(padre) {
+    const g = new T.Group();
+    caja(0.04, 0.3, 0.025, '#9AA3A6', 0, -0.15, 0, g, false);
+    caja(0.1, 0.06, 0.03, '#9AA3A6', 0.02, -0.32, 0, g, false);
+    (padre || escena).add(g); return g;
   }
 
   // Notas musicales que suben (afinadas: suaves; desafinadas: se tambalean)
@@ -534,7 +663,7 @@
 
   // ---------- armar y dibujar ----------
   const kit = { THREE: T, C, escena, camara, sol, cielo, renderer, mat, caja, personaje, pose, patio, pasto, cortadora, recortes,
-    lluvia, clima, humo, etiqueta, perro, posePerro, notas, teclado, celular,
+    lluvia, clima, humo, etiqueta, perro, posePerro, gato, notas, teclado, celular, mesada, balde, chorro, herramientas, llaveInglesa,
     el, tarjeta, mostrar, cierre, etiquetaUrl, lerp, clamp, suave, rebote, azar,
     palabra(txt, n = 1, def = 0) { // segundo en que se dice esa palabra (n-ésima vez)
       const pal = window.PALABRAS || []; let k = 0;
