@@ -1,9 +1,21 @@
 ---
 name: video-publicidad
-description: Hace videos y publicidades de Tratto para TikTok e Instagram (reels, anuncios, promociones de la app, de la calculadora o de una función). Hay cinco formatos que rotan para no repetir (presentación de producto, chat, quiz de precios, lista con cortes secos y notas del celular), ocho músicas propias y la voz del fundador (grabada o clonada, aprobada el 24/10); el formato, la música, el gancho y el largo de cada video los elige `node tools/contenido/cli.mjs variedad` según el historial de la red. Usar SIEMPRE que se pida un video, una publicidad, un anuncio o un reel nuevo.
+description: Hace los videos de Tratto para TikTok, Instagram y Facebook. Desde el 07/11/2026 (fundador) TODOS los videos son en 3D, graciosos y contando una historia (formato "3d", sección de abajo): un video 3D distinto por día, de un rubro con gente registrada, que sale el mismo día en las tres redes con la voz Tratto 3D. Los formatos viejos (producto, chat, quiz, lista, nota y voz) ya no se usan para redes. Usar SIEMPRE que se pida un video, una publicidad, un anuncio o un reel nuevo.
 ---
 
 # Videos de Tratto
+
+## Solo videos 3D, graciosos y que cuenten una historia (fundador, 07/11/2026)
+
+"A partir de ahora no subamos ningún video más como los que subíamos antes.
+Quiero que los hagamos todos así en 3D… gracioso y que cuente una historia."
+El 3D de jardinería tuvo 1.334 vistas en Instagram en unas horas; los de
+plantilla, de 26 a 60. Desde ese día **todo video para redes es del formato
+"3d"** (sección "Formato 3d"): historia en escalera con testigo, carteles
+chistosos y remate. Los formatos de abajo (producto, chat, quiz, lista, nota,
+voz del fundador) quedan solo como referencia: no se hacen para redes. Lo que
+varía de un video a otro es el rubro, el lugar, la cámara, la música y el
+gancho.
 
 ## La voz del fundador en todos los videos (24/10/2026)
 

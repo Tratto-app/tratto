@@ -150,6 +150,12 @@ rutina "Redes · videos del día":
   clientes y quienes ofrecen servicios, y rubros distintos (eventos, clases,
   belleza, autos, mascotas, trámites, hogar). Nunca repitas en una red un
   video que ya salió en esa red.
+- **Solo videos 3D** (fundador, 07/11/2026: "no subamos ningún video más como
+  los que subíamos antes… todos así en 3D, gracioso y que cuente una
+  historia"): todo video nuevo para redes es del formato "3d" de la skill
+  `video-publicidad`, uno distinto por día, de un rubro con gente registrada,
+  el mismo día en TikTok, Instagram y Facebook. Lo de abajo sobre formatos
+  (producto, chat, quiz, lista, nota, voz) queda como historia: ya no se usan.
 - **Ningún video igual al anterior** (fundador, 21/10/2026: "que no sean todas
   iguales, con la misma música y la misma modalidad, para probar qué se pega
   y qué no"). Antes de cada video nuevo, armá el historial de esa red con las

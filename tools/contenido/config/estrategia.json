@@ -110,5 +110,20 @@
     ],
     "no_decidir_solo_por": "vistas",
     "fuente": "Análisis de Codex del 22/10/2026: medir cada pieza a las 24 h, 72 h y 7 días y no elegir qué seguir solo por vistas."
+  },
+  "videos_nota_07_11": "07/11/2026, fundador: \"no subamos ningún video más como los que subíamos antes. Quiero que los hagamos todos así en 3D, gracioso y que cuente una historia\". Un video 3D distinto por día (rutina \"Redes · videos del día\"), de un rubro con gente registrada, el mismo día en las tres redes: Instagram 18:00, Facebook 19:00 y TikTok 20:00. El segundo lugar de TikTok es para carruseles. Los videos de plantilla (producto, chat, quiz, lista, nota) no se hacen más.",
+  "horarios_fijos": {
+    "instagram": [
+      "12:00 carruseles (fin de semana 10:00)",
+      "18:00 video 3D del día"
+    ],
+    "tiktok": [
+      "12:00 carrusel (fin de semana 10:00)",
+      "18:00 carrusel",
+      "20:00 video 3D del día"
+    ],
+    "facebook": [
+      "19:00 video 3D del día (21:00 si ya hay otro)"
+    ]
   }
 }
