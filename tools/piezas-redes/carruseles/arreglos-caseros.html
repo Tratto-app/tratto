@@ -1,0 +1,154 @@
+<!doctype html><html lang="es"><head><meta charset="utf-8">
+<title>Carrusel · Lo arreglaste vos</title>
+<!-- Carrusel guardable (8/11/2026, para el domingo 8/11 18:00 en TikTok y el miércoles 11/11 12:00 en Instagram).
+     Mismo molde que los que más rindieron (una situación, cada cosa con su precio) con el tono de los videos 3D
+     (fundador, 07/11: graciosos y contando una historia): cada placa es un arreglo casero que salió peor.
+     Rubros con gente registrada en la app: Plomería y destapaciones (8), Pintura (6), Reparación y soporte
+     técnico (5) y Carpintería y muebles (4).
+     Precios de precios_referencia (ids 133, 8, 90, 11 y 2) con el ajuste mensual del 2 % de la calculadora y su
+     redondeo, a nov-2026. El mensaje de la placa 7 es un ejemplo, marcado como tal.
+     Exportar: python3 render-carrusel.py arreglos-caseros.html carrusel-arreglos-tt --red tiktok
+               python3 render-carrusel.py arreglos-caseros.html carrusel-arreglos   (Instagram) -->
+<link rel="stylesheet" href="carrusel.css">
+<link rel="stylesheet" href="molde.css">
+<style>
+/* 1 · portada: un tutorial en el celular con la lista de lo que salió mal y un papelito pegado */
+.uno .chico{display:inline-flex;align-items:center;gap:16px;font:600 30px/1.2 'IBM Plex Mono',monospace;letter-spacing:.14em;text-transform:uppercase;
+  color:var(--verde);background:rgba(30,93,73,.1);padding:14px 22px;border-radius:14px}
+.uno h1{font:700 120px/.95 'IBM Plex Sans Condensed',sans-serif;letter-spacing:-.025em;margin:26px 0 46px}
+.uno h1 em{font-style:normal;color:var(--laton-osc)}
+.tuto{position:relative;background:#1B2422;border-radius:34px;padding:22px;box-shadow:0 28px 60px rgba(12,38,32,.2)}
+.tuto .video{display:flex;align-items:center;gap:22px;background:#C8473A;border-radius:18px;padding:22px 28px;color:#FCFBF8;
+  font:700 40px/1.1 'IBM Plex Sans Condensed',sans-serif}
+.tuto .play{flex:none;width:70px;height:70px;border-radius:50%;background:#FCFBF8;display:flex;align-items:center;justify-content:center}
+.tuto .play b{display:block;width:0;height:0;border-left:26px solid #C8473A;border-top:16px solid transparent;border-bottom:16px solid transparent;margin-left:8px}
+.tuto .lista{background:#F4F7F5;border-radius:18px;padding:18px 30px;margin-top:18px}
+.tuto .fila{display:flex;align-items:center;justify-content:space-between;gap:20px;padding:12px 0;border-bottom:3px dashed rgba(30,93,73,.18);
+  font:600 46px/1.1 'IBM Plex Sans',sans-serif;color:var(--tinta)}
+.tuto .fila:last-child{border-bottom:0}
+.tuto .fila span{display:flex;align-items:center;gap:18px}
+.tuto .fila i{color:var(--verde-vivo)}
+.tuto .fila em{font:600 34px/1 'IBM Plex Mono',monospace;font-style:normal;color:#B8432F}
+.papelito{position:absolute;right:-26px;top:-70px;transform:rotate(6deg);background:#F2D27A;color:var(--tinta);padding:20px 28px 24px;border-radius:6px;
+  box-shadow:0 14px 26px rgba(12,38,32,.2);font:700 38px/1.1 'IBM Plex Sans Condensed',sans-serif;text-align:center}
+.papelito small{display:block;font:600 24px/1.3 'IBM Plex Mono',monospace;letter-spacing:.04em;color:var(--laton-osc)}
+/* el intento que salió mal, arriba de cada precio */
+.intento{display:flex;align-items:flex-start;gap:20px;font:600 48px/1.2 'IBM Plex Sans',sans-serif;color:var(--tinta);margin:22px 0 34px}
+.intento i{flex:none;color:#B8432F;margin-top:4px}
+</style></head><body>
+
+<!-- 1 · PORTADA -->
+<section class="placa uno"><div class="cont">
+  <div class="medio">
+    <div class="chico"><i data-ico="llave" data-px="46"></i>Precios de noviembre</div>
+    <h1>Lo arreglaste vos. <em>Quedó peor.</em></h1>
+    <div class="tuto"><div class="papelito"><small>tutorial: 5 minutos</small>Real: 3 horas</div>
+      <div class="video"><div class="play"><b></b></div>Cómo arreglar todo vos mismo</div>
+      <div class="lista">
+        <div class="fila"><span><i data-ico="canilla" data-px="52"></i>La canilla</span><em>sigue</em></div>
+        <div class="fila"><span><i data-ico="rodillo" data-px="52"></i>La pared</span><em>a rayas</em></div>
+        <div class="fila"><span><i data-ico="compu" data-px="52"></i>La compu</span><em>no prende</em></div>
+        <div class="fila"><span><i data-ico="puerta" data-px="52"></i>La puerta</span><em>roza</em></div>
+        <div class="fila"><span><i data-ico="inodoro" data-px="52"></i>La pileta</span><em>tapada</em></div>
+      </div>
+    </div>
+  </div>
+  <div class="pie"><span class="web">trattoapp.com.ar</span><span class="desliza">Guardalo · Deslizá →</span></div>
+</div></section>
+
+<!-- 2 · LA CANILLA -->
+<section class="placa"><div class="cont">
+  <div class="medio">
+    <div class="paso"><div class="ico grande"><i data-ico="canilla" data-px="92"></i></div><h2><span class="num">1.</span>La canilla.</h2></div>
+    <div class="intento"><i data-ico="cruz" data-px="48"></i><span>Le pusiste cinta. Sigue goteando.</span></div>
+    <div class="tarjeta precio"><div class="que">Cambio o arreglo de canilla</div><div class="rango">$36.000 a $61.000</div></div>
+    <div class="consejo"><div class="ico chico"><i data-ico="check" data-px="52"></i></div><p>Contá si gotea por el pico o por la manija: <b>con eso ya te pueden pasar un precio.</b></p></div>
+  </div>
+  <div class="pie"><span class="fuente">Precios de referencia · AMBA · nov-2026</span></div>
+</div></section>
+
+<!-- 3 · LA PARED -->
+<section class="placa"><div class="cont">
+  <div class="medio">
+    <div class="paso"><div class="ico grande"><i data-ico="rodillo" data-px="92"></i></div><h2><span class="num">2.</span>La pared.</h2></div>
+    <div class="intento"><i data-ico="cruz" data-px="48"></i><span>La pintaste vos. Quedó a rayas.</span></div>
+    <div class="tarjeta precio"><div class="que">Pintar una habitación chica (3 x 3 m)</div><div class="rango">$115.000 a $178.000</div></div>
+    <div class="consejo"><div class="ico chico"><i data-ico="check" data-px="52"></i></div><p>Decí los metros y si hay humedad: <b>es lo que más mueve el precio.</b></p></div>
+  </div>
+  <div class="pie"><span class="fuente">Precios de referencia · AMBA · nov-2026</span></div>
+</div></section>
+
+<!-- 4 · LA COMPU -->
+<section class="placa"><div class="cont">
+  <div class="medio">
+    <div class="paso"><div class="ico grande"><i data-ico="compu" data-px="92"></i></div><h2><span class="num">3.</span>La compu.</h2></div>
+    <div class="intento"><i data-ico="cruz" data-px="48"></i><span>Seguiste un tutorial. Ahora no prende.</span></div>
+    <div class="tarjeta precio"><div class="que">Formateo o puesta a punto</div><div class="rango">$34.000 a $79.000</div></div>
+    <div class="consejo"><div class="ico chico"><i data-ico="check" data-px="52"></i></div><p>Avisá si hay fotos o archivos <b>que no querés perder.</b></p></div>
+  </div>
+  <div class="pie"><span class="fuente">Precios de referencia · AMBA · nov-2026</span></div>
+</div></section>
+
+<!-- 5 · LA PUERTA -->
+<section class="placa"><div class="cont">
+  <div class="medio">
+    <div class="paso"><div class="ico grande"><i data-ico="puerta" data-px="92"></i></div><h2><span class="num">4.</span>La puerta.</h2></div>
+    <div class="intento"><i data-ico="cruz" data-px="48"></i><span>Le pusiste un cartón abajo. Se sigue abriendo sola.</span></div>
+    <div class="tarjeta precio"><div class="que">Ajuste o arreglo de puerta o mueble</div><div class="rango">$22.000 a $41.000</div></div>
+    <div class="consejo"><div class="ico chico"><i data-ico="check" data-px="52"></i></div><p>Mandá una foto de las bisagras <b>y de dónde roza.</b></p></div>
+  </div>
+  <div class="pie"><span class="fuente">Precios de referencia · AMBA · nov-2026</span></div>
+</div></section>
+
+<!-- 6 · LA PILETA -->
+<section class="placa"><div class="cont">
+  <div class="medio">
+    <div class="paso"><div class="ico grande"><i data-ico="inodoro" data-px="92"></i></div><h2><span class="num">5.</span>La pileta.</h2></div>
+    <div class="intento"><i data-ico="cruz" data-px="48"></i><span>Le tiraste de todo. Sigue tapada.</span></div>
+    <div class="tarjeta precio"><div class="que">Destapación simple (pileta o inodoro)</div><div class="rango">$37.000 a $53.000</div></div>
+    <div class="consejo"><div class="ico chico"><i data-ico="check" data-px="52"></i></div><p>Decí desde cuándo está tapada y <b>si pasa en otra canilla de la casa.</b></p></div>
+  </div>
+  <div class="pie"><span class="fuente">Precios de referencia · AMBA · nov-2026</span></div>
+</div></section>
+
+<!-- 7 · PEDILO ASÍ -->
+<section class="placa"><div class="cont">
+  <div class="medio">
+    <div class="grande-titulo">Pedilo así.</div>
+    <p class="bajada">Contá también lo que ya probaste.</p>
+    <div style="margin-top:44px"><span class="ejemplo-etq">Ejemplo</span></div>
+    <div class="tarjeta mensaje">La canilla de la cocina <b>gotea por la manija</b> hace una semana. <b>Ya probé con cinta</b> y no funcionó. Estoy en <b>Villa Crespo</b> y puedo <b>cualquier tarde.</b></div>
+  </div>
+  <div class="pie"><span class="web">trattoapp.com.ar</span><span class="desliza">Deslizá →</span></div>
+</div></section>
+
+<!-- 8 · RESUMEN -->
+<section class="placa blanca resumen"><div class="cont">
+  <div class="medio">
+    <h2>Lo que sale hacerlo bien, en una foto</h2>
+    <div class="tabla">
+      <div class="f"><span>Arreglo de canilla</span><b>$36k a $61k</b></div>
+      <div class="f"><span>Pintar una habitación chica</span><b>$115k a $178k</b></div>
+      <div class="f"><span>Puesta a punto de la compu</span><b>$34k a $79k</b></div>
+      <div class="f"><span>Arreglo de puerta o mueble</span><b>$22k a $41k</b></div>
+      <div class="f"><span>Destapación simple</span><b>$37k a $53k</b></div>
+    </div>
+    <p class="manda">Precios de noviembre. Sacale captura o mandáselo a quien tiene un tutorial abierto.</p>
+  </div>
+  <div class="pie"><span class="web">trattoapp.com.ar</span></div>
+</div></section>
+
+<!-- 9 · CIERRE -->
+<section class="placa noche cierre"><div class="cont">
+  <div class="medio">
+    <h2>La segunda vez, que lo haga alguien que sabe.</h2>
+    <p class="bajada">En Tratto contás qué pasó y te llegan presupuestos de gente de tu zona para comparar.</p>
+    <div><span class="url-caja"><span id="logo-url"></span><span data-tiktok="trattoapp.com.ar/r/tt-arreglos">trattoapp.com.ar/r/ig-arreglos</span></span></div>
+    <p class="bio" data-tiktok="(escribilo en el navegador)">Tocá @trattoapp_ · link «Pedí un servicio»</p>
+    <div class="gratis"><span class="sello">Gratis para el que pide</span></div>
+  </div>
+</div></section>
+
+<script src="carrusel.js"></script>
+<script>document.getElementById('logo-url').outerHTML = LOGO(46, 'lu');</script>
+</body></html>
