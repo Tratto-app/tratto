@@ -1,0 +1,112 @@
+[
+ {
+  "efecto": "latigazo",
+  "t": 2.04,
+  "db": -21
+ },
+ {
+  "efecto": "latigazo",
+  "t": 3.8,
+  "db": -19
+ },
+ {
+  "efecto": "pop",
+  "t": 4.7,
+  "db": -15
+ },
+ {
+  "efecto": "lluvia",
+  "t": 5.72,
+  "db": -31
+ },
+ {
+  "efecto": "pop",
+  "t": 6.02,
+  "db": -21
+ },
+ {
+  "efecto": "pop",
+  "t": 6.47,
+  "db": -21
+ },
+ {
+  "efecto": "pop",
+  "t": 6.92,
+  "db": -21
+ },
+ {
+  "efecto": "latigazo",
+  "t": 7.78,
+  "db": -19
+ },
+ {
+  "efecto": "golpe",
+  "t": 8.49,
+  "db": -17
+ },
+ {
+  "efecto": "tic",
+  "t": 9.19,
+  "db": -18
+ },
+ {
+  "efecto": "tic",
+  "t": 9.88,
+  "db": -18
+ },
+ {
+  "efecto": "tic",
+  "t": 10.56,
+  "db": -18
+ },
+ {
+  "efecto": "tic",
+  "t": 11.24,
+  "db": -18
+ },
+ {
+  "efecto": "latigazo",
+  "t": 11.63,
+  "db": -19
+ },
+ {
+  "efecto": "pop",
+  "t": 14.89,
+  "db": -16
+ },
+ {
+  "efecto": "latigazo",
+  "t": 15.73,
+  "db": -19
+ },
+ {
+  "efecto": "pop",
+  "t": 17.97,
+  "db": -16
+ },
+ {
+  "efecto": "campanita",
+  "t": 18.17,
+  "db": -18
+ },
+ {
+  "efecto": "sello",
+  "t": 18.42,
+  "db": -18
+ },
+ {
+  "efecto": "latigazo",
+  "t": 21.16,
+  "db": -19
+ },
+ {
+  "efecto": "pop",
+  "t": 21.61,
+  "db": -16
+ },
+ {
+  "efecto": "golpe",
+  "t": 25.41,
+  "db": -14
+ }
+]
