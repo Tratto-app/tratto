@@ -99,6 +99,7 @@
     u.piernaI.rotation.x = s * 0.6 * amp; u.piernaD.rotation.x = -s * 0.6 * amp;
     u.brazoI.rotation.set(-s * 0.5 * amp, 0, 0.06); u.brazoD.rotation.set(s * 0.5 * amp, 0, -0.06);
     u.cadera.position.y = 0.92 + Math.abs(Math.cos(paso * Math.PI * 2)) * 0.05 * amp + (o.salto || 0);
+    u.cadera.position.z = 0;
     u.cuello.rotation.set(o.cabezaX || 0, o.cabezaY || 0, o.cabezaZ || 0);
     u.torso.rotation.set(0, 0, 0);
     if (o.empujar) { u.brazoI.rotation.set(-1.15, 0, 0.12); u.brazoD.rotation.set(-1.15, 0, -0.12); }
@@ -158,6 +159,14 @@
     if (o.llave) {
       u.brazoD.rotation.set(-1.45, 0, -0.15 + Math.sin(o.llave * 6) * 0.38);
       u.brazoI.rotation.set(-1.2, 0, 0.3); u.cuello.rotation.x = 0.25;
+    }
+    // pintar con rodillo una pared que tiene adelante (rodillo() en la mano derecha): el brazo sube y
+    // baja y el cuerpo se acerca o se aleja un poco para que el rodillo no se separe de la pared
+    if (o.pintar) {
+      const s2 = (Math.sin(o.pintar * (o.vel || 7)) + 1) / 2, a = lerp(-2.3, -1.45, s2);
+      u.brazoD.rotation.set(a, 0, -0.08); u.brazoI.rotation.set(-0.35, 0, 0.22);
+      u.cadera.position.z = 0.85 + 0.96 * Math.sin(a);
+      u.cuello.rotation.x = -0.12 - 0.22 * (1 - s2);
     }
     // acostado en la cama con la almohada en la cara (el cuerpo lo acuesta la escena)
     if (o.almohada) {
@@ -272,11 +281,11 @@
   }
 
   // Chorro de agua que sale para arriba y cae (una canilla que salta, una fuente).
-  function chorro(n = 180, semilla = 41) {
+  function chorro(n = 180, semilla = 41, color = '#9FD6F0') {
     const r = azar(semilla), gs = [];
     for (let i = 0; i < n; i++) gs.push({ f: r(), u: r(), dx: lerp(-1, 1, r()), dz: lerp(-1, 1, r()), v: lerp(0.8, 1.05, r()) });
     const malla = new T.InstancedMesh(new T.IcosahedronGeometry(0.045, 0),
-      new T.MeshLambertMaterial({ color: '#9FD6F0', transparent: true, opacity: 0.9 }), n);
+      new T.MeshLambertMaterial({ color, transparent: true, opacity: 0.9 }), n);
     malla.frustumCulled = false; escena.add(malla);
     const m = new T.Matrix4(), q = new T.Quaternion(), p = new T.Vector3(), s = new T.Vector3(), G = 9.8;
     return {
@@ -312,6 +321,35 @@
     caja(0.04, 0.3, 0.025, '#9AA3A6', 0, -0.15, 0, g, false);
     caja(0.1, 0.06, 0.03, '#9AA3A6', 0.02, -0.32, 0, g, false);
     (padre || escena).add(g); return g;
+  }
+
+  // Pintura: rodillo para la mano (pose pintar), lata con la tapa aparte y bandeja.
+  // rodillo(padre, color): el mango sigue la línea del brazo y el rollo queda
+  // horizontal; userData.rollo es el rollo (su material se puede cambiar de color).
+  function rodillo(padre, color = '#F4F2EC') {
+    const g = new T.Group();
+    caja(0.035, 0.3, 0.035, '#2A2E2C', 0, -0.15, 0, g, false);
+    caja(0.03, 0.03, 0.03, '#9AA3A6', 0, -0.31, 0, g, false);
+    const rollo = new T.Mesh(new T.CylinderGeometry(0.065, 0.065, 0.34, 10), mat(color).clone());
+    rollo.rotation.z = Math.PI / 2; rollo.position.set(0, -0.34, 0); rollo.castShadow = true; g.add(rollo);
+    g.position.set(0, -0.62, 0); g.userData.rollo = rollo;
+    (padre || escena).add(g); return g;
+  }
+  function lata(color = C.verdeVivo) {
+    const g = new T.Group();
+    const cuerpo = new T.Mesh(new T.CylinderGeometry(0.15, 0.15, 0.24, 14), mat('#D9DDDB')); cuerpo.position.y = 0.12; cuerpo.castShadow = true; g.add(cuerpo);
+    const banda = new T.Mesh(new T.CylinderGeometry(0.152, 0.152, 0.11, 14), mat(color)); banda.position.y = 0.12; g.add(banda);
+    const pintura = new T.Mesh(new T.CylinderGeometry(0.135, 0.135, 0.01, 14), mat(color)); pintura.position.y = 0.236; g.add(pintura);
+    const tapa = new T.Mesh(new T.CylinderGeometry(0.155, 0.155, 0.02, 14), mat('#C3CBCD')); tapa.position.y = 0.25; tapa.castShadow = true; g.add(tapa);
+    g.userData = { tapa, pintura };
+    escena.add(g); return g;
+  }
+  function bandejaPintura(color = C.verdeVivo) {
+    const g = new T.Group();
+    caja(0.38, 0.05, 0.48, '#7E878A', 0, 0.025, 0, g);
+    caja(0.32, 0.02, 0.2, color, 0, 0.055, 0.1, g, false);
+    for (let i = 0; i < 4; i++) caja(0.32, 0.012, 0.025, '#9AA3A6', 0, 0.056, -0.06 - i * 0.045, g, false);
+    escena.add(g); return g;
   }
 
   // Notas musicales que suben (afinadas: suaves; desafinadas: se tambalean)
@@ -664,7 +702,7 @@
   // ---------- armar y dibujar ----------
   const kit = { THREE: T, C, escena, camara, sol, cielo, renderer, mat, caja, personaje, pose, patio, pasto, cortadora, recortes,
     lluvia, clima, humo, etiqueta, perro, posePerro, gato, notas, teclado, celular, mesada, balde, chorro, herramientas, llaveInglesa,
-    el, tarjeta, mostrar, cierre, etiquetaUrl, lerp, clamp, suave, rebote, azar,
+    rodillo, lata, bandejaPintura, el, tarjeta, mostrar, cierre, etiquetaUrl, lerp, clamp, suave, rebote, azar,
     palabra(txt, n = 1, def = 0) { // segundo en que se dice esa palabra (n-ésima vez)
       const pal = window.PALABRAS || []; let k = 0;
       for (const w of pal) if (w[2].toLowerCase().replace(/[^a-záéíóúñü0-9]/g, '') === txt.toLowerCase()) { k++; if (k === n) return w[0]; }
