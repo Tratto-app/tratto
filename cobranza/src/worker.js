@@ -32,7 +32,7 @@ export default {
     }
     const r = await manejar(request, entorno(env));
     if (r) return r;
-    if (request.method !== 'GET') return new Response('No existe', { status: 404 });
+    if (!['GET', 'HEAD'].includes(request.method)) return new Response('No existe', { status: 404 });
     return archivo(HTML, 'text/html; charset=utf-8', 'no-cache');
   },
   async scheduled(evento, env, ctx) {

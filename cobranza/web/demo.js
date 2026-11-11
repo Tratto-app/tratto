@@ -35,18 +35,18 @@ async function sembrar() {
   const hoy = ahoraAR(ahora()).fecha;
   const mes = fechaLarga(hoy).split(' de ')[1];
   const dia = (n) => sumarDias(hoy, n);
-  await pedir('POST', '/api/config', { nombre: 'Pilates Sur', color: '#7a3e8f', codigo_area: '11', datos_transferencia: 'Alias: pilates.sur.mp · a nombre de Marina Quiroga' });
+  await pedir('POST', '/api/config', { nombre: 'Pilates Sur', color: '#7a3e8f', codigo_area: '11', datos_transferencia: 'Alias: pilates.sur.demo · a nombre de Pilates Sur (ejemplo)' });
   const cargar = async (nombre, telefono, concepto, monto, vence, extra = {}) => (await pedir('POST', '/api/deudas', {
     concepto, monto, vence, repite: extra.repite || 'unico', cliente: { nombre, telefono, acepta: extra.acepta ?? true },
   })).datos;
-  const carla = await cargar('Carla Benítez', '11 4871-2290', `la cuota de ${mes}`, '38.000', dia(-9), { repite: 'mensual' });
-  await cargar('Martín Sosa', '11 5632-1187', `la cuota de ${mes}`, '38.000', dia(-4), { repite: 'mensual' });
-  await cargar('Lucía Fernández', '11 3344-9021', 'el pack de 8 clases', '52.000', dia(0));
-  await cargar('Diego Ramírez', '11 6120-4455', `la cuota de ${mes}`, '38.000', dia(2), { repite: 'mensual' });
-  await cargar('Sofía Acosta', '11 2987-6610', 'la matrícula anual', '15.000', dia(12));
-  const pablo = await cargar('Pablo Giménez', '11 5540-7732', 'dos clases sueltas', '24.500', dia(-15));
-  const valeria = await cargar('Valeria Ortiz', '11 4409-1853', `la cuota de ${mes}`, '38.000', dia(-3), { repite: 'mensual' });
-  const nicolas = await cargar('Nicolás Paz', '11 3765-2048', `la cuota de ${mes}`, '38.000', dia(-6), { repite: 'mensual' });
+  const carla = await cargar('Carla Benítez', '11 5555-0101', `la cuota de ${mes}`, '38.000', dia(-9), { repite: 'mensual' });
+  await cargar('Martín Sosa', '11 5555-0102', `la cuota de ${mes}`, '38.000', dia(-4), { repite: 'mensual' });
+  await cargar('Lucía Fernández', '11 5555-0103', 'el pack de 8 clases', '52.000', dia(0));
+  await cargar('Diego Ramírez', '11 5555-0104', `la cuota de ${mes}`, '38.000', dia(2), { repite: 'mensual' });
+  await cargar('Sofía Acosta', '11 5555-0105', 'la matrícula anual', '15.000', dia(12));
+  const pablo = await cargar('Pablo Giménez', '11 5555-0106', 'dos clases sueltas', '24.500', dia(-15));
+  const valeria = await cargar('Valeria Ortiz', '11 5555-0107', `la cuota de ${mes}`, '38.000', dia(-3), { repite: 'mensual' });
+  const nicolas = await cargar('Nicolás Paz', '11 5555-0108', `la cuota de ${mes}`, '38.000', dia(-6), { repite: 'mensual' });
   await cargar('Julieta Moreno', '', 'una clase de prueba', '9.500', dia(-1));
   const creado = (dias) => new Date(ahora().getTime() + dias * 864e5).toISOString();
   const mensaje = (deuda, etapa, dias, estado = 'leido') => repo.insertar('mensajes', { cliente_id: deuda.cliente_id, deuda_id: deuda.id, etapa, canal: 'toque', estado, dia: dia(dias), creado: creado(dias) });
@@ -56,7 +56,7 @@ async function sembrar() {
   // Pablo pidió la baja.
   await repo.actualizar('deudas', pablo.id, { av_dia: dia(-15), av_vencido: dia(-12) });
   await mensaje(pablo, 'vencido', -12);
-  await repo.insertar('respuestas', { cliente_id: pablo.cliente_id, telefono: '5491155407732', texto: 'BAJA', wa_id: 'demo', creado: creado(-12) });
+  await repo.insertar('respuestas', { cliente_id: pablo.cliente_id, telefono: '5491155550106', texto: 'BAJA', wa_id: 'demo', creado: creado(-12) });
   await repo.actualizar('clientes', pablo.cliente_id, { baja: 1 });
   // Valeria pagó por el link y Nicolás en efectivo.
   await repo.actualizar('deudas', valeria.id, { estado: 'pagada', pagada_el: dia(-2), medio: 'mercadopago', av_dia: dia(-3) });
