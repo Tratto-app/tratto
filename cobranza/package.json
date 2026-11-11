@@ -1,0 +1,15 @@
+{
+  "name": "cobranza-sin-vueltas",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Micro app de recordatorios de pago para negocios chicos. Corre en la cuenta gratis de Cloudflare de cada negocio.",
+  "scripts": {
+    "armar": "node tools/armar.mjs",
+    "probar": "node --test test/*.test.mjs",
+    "local": "node tools/local.mjs"
+  },
+  "devDependencies": {
+    "esbuild": "^0.25.0"
+  }
+}

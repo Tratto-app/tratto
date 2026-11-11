@@ -1,0 +1,14 @@
+# Solo hace falta si se instala con la herramienta de Cloudflare (wrangler) en
+# vez de pegar dist/worker.js en el panel. Ver docs/MANUAL-INSTALACION.md.
+name = "cobranza"
+main = "dist/worker.js"
+compatibility_date = "2025-09-01"
+workers_dev = true
+
+[triggers]
+crons = ["*/15 * * * *"]
+
+[[d1_databases]]
+binding = "DB"
+database_name = "cobranza"
+database_id = "PEGAR-ACA-EL-ID-DE-LA-BASE"

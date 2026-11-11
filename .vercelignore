@@ -22,3 +22,7 @@ supabase
 # Growth OS: panel interno separado (React + Vite) con su propio despliegue;
 # no se sirve desde el dominio de la app
 growth
+
+# Cobranza sin vueltas: producto aparte que se instala en la cuenta de
+# Cloudflare de cada negocio; no se sirve desde el dominio de Tratto
+cobranza
