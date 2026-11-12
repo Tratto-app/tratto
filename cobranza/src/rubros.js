@@ -8,7 +8,17 @@ export const RUBROS = {
   cobranza: { id: 'cobranza', nombre: 'Cobranza sin vueltas', avisos: 'deuda', inicio: 'deudas', textos: {} },
 
   cuotas: {
-    id: 'cuotas', nombre: 'Cuotas al día', archivo: 'cuotas-al-dia', color: '#1f5fbf',
+    id: 'cuotas', nombre: 'Cuotas al día', archivo: 'cuotas-al-dia', color: '#1f5fbf', precio: 29000,
+    venta: {
+      para: 'Para academias, escuelas de danza y fútbol, y profes', quienes: 'alumnos',
+      titular: 'Sabé quién te debe la cuota y reclamala con un toque',
+      bajada: 'Cargás a tus alumnos una vez. Cada mañana la app te muestra a quién escribirle y te deja el WhatsApp listo para mandar.',
+      puntos: [
+        ['La cuota del mes que viene se crea sola', 'Cargás la cuota una vez y la app la repite todos los meses.'],
+        ['El mensaje nombra al chico', '"Hola Laura, hoy vence la cuota de marzo de Sofi." Le llega a la mamá o al papá.'],
+        ['Sabés cuánto falta cobrar', 'El total, lo vencido y lo que entró en el mes, siempre a la vista.'],
+      ],
+    },
     avisos: 'deuda', inicio: 'deudas', repite: 'mensual', notaEnMensaje: true, agrupa: true,
     concepto: (mes) => `la cuota de ${mes}`,
     textos: {
@@ -24,7 +34,17 @@ export const RUBROS = {
   },
 
   libreta: {
-    id: 'libreta', nombre: 'Libreta', titulo: 'Libreta de fiado', archivo: 'libreta', color: '#a4491b',
+    id: 'libreta', nombre: 'Libreta', titulo: 'Libreta de fiado', archivo: 'libreta', color: '#a4491b', precio: 19000,
+    venta: {
+      para: 'Para almacenes y kioscos', quienes: 'clientes',
+      titular: 'La libreta de fiado, en el celular',
+      bajada: 'Anotás cada fiado en dos toques. La app suma sola, te dice cuánto te deben en total y te arma el mensaje para reclamarlo.',
+      puntos: [
+        ['Se anota en dos toques', 'Cliente y monto. Más rápido que buscar la hoja en el cuaderno.'],
+        ['Entregas a cuenta', 'Si te deja una parte, se descuenta de lo más viejo y queda anotado lo que falta.'],
+        ['Reclamás sin vueltas', 'Desde el día de cobro, la app te propone el mensaje con el saldo de cada uno.'],
+      ],
+    },
     avisos: 'saldo', inicio: 'clientes', sinVencimiento: true,
     concepto: () => 'compra',
     textos: {
@@ -37,7 +57,17 @@ export const RUBROS = {
   },
 
   control: {
-    id: 'control', nombre: 'Control al día', archivo: 'control-al-dia', color: '#0f766e',
+    id: 'control', nombre: 'Control al día', archivo: 'control-al-dia', color: '#0f766e', precio: 59000,
+    venta: {
+      para: 'Para odontólogos y consultorios', quienes: 'pacientes',
+      titular: 'Que tus pacientes vuelvan al control',
+      bajada: 'La app te avisa cada mañana a quién le toca volver y te deja el mensaje de WhatsApp listo. También lleva las cuotas de ortodoncia.',
+      puntos: [
+        ['El sillón no queda vacío', 'A los 6 meses del último control, el paciente aparece en tu lista con el mensaje armado.'],
+        ['Insiste sin molestar', 'Si no responde, te lo vuelve a proponer a los 14 días, hasta tres veces.'],
+        ['Sin historia clínica', 'Guarda solo nombre, celular y fechas. Nada sensible.'],
+      ],
+    },
     avisos: 'deuda', inicio: 'deudas', repite: 'mensual',
     concepto: (mes) => `la cuota de ortodoncia de ${mes}`,
     // "Que vuelvan": cada paciente tiene la fecha de su última visita y cada cuántos meses vuelve.
@@ -56,7 +86,17 @@ export const RUBROS = {
   },
 
   combi: {
-    id: 'combi', nombre: 'Combi al día', archivo: 'combi-al-dia', color: '#b8860b',
+    id: 'combi', nombre: 'Combi al día', archivo: 'combi-al-dia', color: '#b8860b', precio: 29000,
+    venta: {
+      para: 'Para transportes escolares', quienes: 'familias',
+      titular: 'Cobrá la cuota de la combi sin escribir uno por uno',
+      bajada: 'Cargás a cada familia con su cuota mensual. La app te muestra quién se atrasó y te deja el WhatsApp listo.',
+      puntos: [
+        ['Por colegio y turno', 'Las familias quedan ordenadas por recorrido.'],
+        ['El mensaje nombra a los chicos', '"Hola Laura, hoy vence la combi de marzo de Sofi y Tomás."'],
+        ['La cuota se repite sola', 'La del mes siguiente se crea sin que hagas nada.'],
+      ],
+    },
     avisos: 'deuda', inicio: 'deudas', repite: 'mensual', notaEnMensaje: true, agrupa: true,
     concepto: (mes) => `la combi de ${mes}`,
     textos: {

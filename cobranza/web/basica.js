@@ -2,8 +2,9 @@
 // Control al día). La app entera corre en el navegador del dueño: no hay
 // servidor ni cuentas. Los datos se guardan en el almacenamiento del navegador
 // de ese celular y se pueden llevar a un archivo de copia.
-// RUBRO y DEMO los define tools/armar.mjs al armar cada archivo.
-import { iniciar } from './app.js';
+// RUBRO, DEMO y TIENDA los define tools/armar.mjs al armar cada archivo.
+// Con TIENDA, la app pide la licencia que entrega la compra (ver tienda/).
+import { iniciar, h, icono } from './app.js';
 import { sembrar } from './ejemplos.js';
 import { manejar } from '../src/nucleo.js';
 import { repoMemoria } from '../src/datos.js';
@@ -58,4 +59,49 @@ const copia = DEMO ? null : {
 };
 
 if (!DEMO) { try { navigator.storage?.persist?.(); } catch { /* opcional */ } }
-(DEMO ? sembrar(rubro.id, { pedir, repo, ahora: ahoraDemo }) : Promise.resolve()).then(() => iniciar({ pedir, copia }));
+// ── Licencia (solo en la versión que se vende sola) ───────────────────────
+const CLAVE_LICENCIA = `microapp:${rubro.id}:licencia`;
+async function validar(codigo) {
+  const r = await fetch(`/api/verificar?licencia=${encodeURIComponent(codigo)}`);
+  const datos = await r.json();
+  return datos.ok && datos.app === rubro.id;
+}
+async function tieneLicencia() {
+  const url = new URL(location.href);
+  const traida = url.searchParams.get('licencia');
+  if (traida) {
+    try { if (await validar(traida)) localStorage.setItem(CLAVE_LICENCIA, traida); } catch { /* sin conexión: se intenta de nuevo al reabrir el link */ }
+    url.searchParams.delete('licencia');
+    history.replaceState(null, '', url.pathname + url.search + url.hash);
+  }
+  try { return !!localStorage.getItem(CLAVE_LICENCIA); } catch { return false; }
+}
+function pedirCompra() {
+  const raiz = document.documentElement.style;
+  raiz.setProperty('--marca', rubro.color);
+  const aviso = h('p', { class: 'tenue chico', role: 'status' });
+  const codigo = h('input', { id: 'lic-codigo', name: 'codigo', placeholder: 'Pegá el código o el link que te quedó al comprar', autocomplete: 'off' });
+  const activar = async (ev) => {
+    ev.preventDefault();
+    const texto = codigo.value.trim();
+    const limpio = texto.includes('licencia=') ? new URL(texto, location.href).searchParams.get('licencia') : texto;
+    aviso.textContent = 'Revisando…';
+    try {
+      if (limpio && await validar(limpio)) { localStorage.setItem(CLAVE_LICENCIA, limpio); location.reload(); return; }
+      aviso.textContent = 'Ese código no corresponde a esta app.';
+    } catch { aviso.textContent = 'No hay conexión. Probá de nuevo.'; }
+  };
+  document.title = rubro.titulo || rubro.nombre;
+  document.getElementById('app').replaceChildren(h('main', { class: 'cont' }, h('div', { class: 'acceso' }, h('div', { class: 'tarjeta portada' },
+    h('span', { class: 'logo' }, icono(`r-${rubro.id}`)),
+    h('div', null, h('h2', null, rubro.nombre), h('p', { class: 'tenue' }, 'Se paga una sola vez y queda para siempre en tu celular.')),
+    h('a', { class: 'btn pri ancho', href: `/api/comprar?app=${rubro.id}` }, `Comprar por $ ${rubro.precio.toLocaleString('es-AR')}`),
+    h('a', { class: 'btn sec ancho', href: './' }, 'Ver cómo funciona'),
+    h('form', { onsubmit: activar, style: 'display:grid;gap:10px' },
+      h('label', { class: 'campo' }, h('span', null, '¿Ya la compraste?'), codigo),
+      h('button', { class: 'btn sec', type: 'submit' }, 'Activar'), aviso)))));
+}
+
+const arrancar = () => (DEMO ? sembrar(rubro.id, { pedir, repo, ahora: ahoraDemo }) : Promise.resolve()).then(() => iniciar({ pedir, copia }));
+if (TIENDA && !DEMO) tieneLicencia().then((si) => (si ? arrancar() : pedirCompra()));
+else arrancar();

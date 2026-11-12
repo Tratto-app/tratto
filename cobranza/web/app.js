@@ -6,22 +6,28 @@ import { formatearMonto, fechaLarga, fechaCorta, mostrarTelefono, partirTexto, l
 import { RUBROS } from '../src/rubros.js';
 import { leerXlsx } from '../src/xlsx.js';
 
-const ICONOS = {
+export const ICONOS = {
   inicio: '<path d="M3 11.5 12 4l9 7.5"/><path d="M5.5 10v9.5h13V10"/>',
   avisos: '<path d="M6 16v-5a6 6 0 1 1 12 0v5l1.5 2h-15z"/><path d="M10 20.5a2 2 0 0 0 4 0"/>',
   clientes: '<circle cx="9" cy="8.5" r="3.5"/><path d="M2.5 20a6.5 6.5 0 0 1 13 0"/><path d="M16 5.5a3.5 3.5 0 0 1 0 6.5M18 14.5a6 6 0 0 1 3.5 5.5"/>',
   ajustes: '<circle cx="12" cy="12" r="3"/><path d="M12 2.5v3M12 18.5v3M2.5 12h3M18.5 12h3M5.3 5.3l2.1 2.1M16.6 16.6l2.1 2.1M5.3 18.7l2.1-2.1M16.6 7.4l2.1-2.1"/>',
   mas: '<path d="M12 5v14M5 12h14"/>',
   atras: '<path d="M15 5l-7 7 7 7"/>',
+  // Marca de cada app
+  'r-cobranza': '<rect x="3" y="6" width="18" height="13" rx="3"/><path d="M3 10.5h18M15.5 15h2"/>',
+  'r-cuotas': '<rect x="3.5" y="5" width="17" height="15" rx="3"/><path d="M8 3v4M16 3v4M3.5 10h17M9 15l2 2 4-4"/>',
+  'r-libreta': '<rect x="5" y="3.5" width="14" height="17" rx="2.5"/><path d="M9 3.5v17M12.5 8.5h3.5M12.5 12h3.5"/>',
+  'r-combi': '<rect x="3" y="5" width="18" height="11" rx="3"/><path d="M3 11h18M9 5v6M15 5v6"/><circle cx="7.5" cy="18.5" r="1.7"/><circle cx="16.5" cy="18.5" r="1.7"/>',
+  'r-control': '<path d="M8 3.5c-2.5 0-4 1.8-4 4.2 0 3 1.3 4.3 1.8 7.3.4 2.5.8 5.5 2.2 5.5 1.5 0 1.2-4.5 4-4.5s2.500 4.500 4 4.500c1.400 0 1.800-3 2.200-5.500.5-3 1.800-4.300 1.800-7.300 0-2.400-1.500-4.200-4-4.200-1.800 0-2.500 1-4 1s-2.200-1-4-1z"/>',
 };
-function icono(nombre) {
+export function icono(nombre) {
   const s = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
   s.setAttribute('viewBox', '0 0 24 24');
   s.setAttribute('aria-hidden', 'true');
   s.innerHTML = ICONOS[nombre];
   return s;
 }
-function h(etiqueta, props, ...hijos) {
+export function h(etiqueta, props, ...hijos) {
   const el = document.createElement(etiqueta);
   for (const [k, v] of Object.entries(props || {})) {
     if (v == null || v === false) continue;
@@ -32,6 +38,13 @@ function h(etiqueta, props, ...hijos) {
   }
   for (const c of hijos.flat(Infinity)) if (c != null && c !== false) el.append(c instanceof Node ? c : document.createTextNode(String(c)));
   return el;
+}
+// Iniciales con un color propio de cada nombre, para reconocer a la gente en las listas.
+function avatar(nombre) {
+  const partes = String(nombre || '?').trim().split(/\s+/);
+  let tono = 0;
+  for (const letra of String(nombre || '')) tono = (tono * 31 + letra.codePointAt(0)) % 360;
+  return h('span', { class: 'av', style: `--h:${tono}`, 'aria-hidden': 'true' }, ((partes[0]?.[0] || '?') + (partes[1]?.[0] || '')).toUpperCase());
 }
 const plural = (n, uno, muchos) => `${n} ${n === 1 ? uno : muchos}`;
 const hex = (buf) => [...new Uint8Array(buf)].map((b) => b.toString(16).padStart(2, '0')).join('');
@@ -132,9 +145,9 @@ export function iniciar({ pedir, copia = null }) {
     const sub = r && PADRE[r.vista];
     const cab = h('header', { class: 'cab' }, h('div', { class: 'cab-in' },
       sub && h('button', { class: 'btn txt atras', type: 'button', 'aria-label': 'Volver', onclick: () => (history.length > 1 ? history.back() : ir(sub)) }, icono('atras')),
-      !sub && (S.negocio.logo ? h('img', { src: S.negocio.logo, alt: '' }) : h('span', { class: 'inicial', 'aria-hidden': 'true' }, (S.negocio.nombre || 'C')[0].toUpperCase())),
-      h('h1', null, (r && titulo(r.vista)) || S.negocio.nombre || S.rubro.nombre)));
-    const banda = S.demo && h('div', { class: 'banda' }, h('div', { class: 'banda-in' }, 'Demo con datos de ejemplo. Nada de lo que toques acá se manda ni se cobra de verdad.'));
+      !sub && (S.negocio.logo ? h('img', { src: S.negocio.logo, alt: '' }) : h('span', { class: 'inicial', 'aria-hidden': 'true' }, icono(`r-${S.rubro.id}`))),
+      h('h1', null, (r && titulo(r.vista)) || S.negocio.nombre || S.rubro.nombre), S.demo && h('span', { class: 'sello' }, 'DEMO')));
+    const banda = S.demo && h('div', { class: 'banda' }, h('div', { class: 'banda-in' }, 'Datos de ejemplo: nada de lo que toques se manda ni se cobra.'));
     const partes = [cab, banda, h('main', { class: 'cont' }, cuerpo)];
     if (r) {
       partes.push(h('nav', { class: 'nav', 'aria-label': 'Secciones' }, h('div', { class: 'nav-in' },
@@ -195,9 +208,17 @@ export function iniciar({ pedir, copia = null }) {
     if (!S.local || S.demo) return [];
     const partes = [];
     if (S.negocio.nombre === 'Mi negocio') {
-      partes.push(h('div', { class: 'tarjeta' }, h('strong', null, `Bienvenido a ${S.rubro.nombre}`),
-        h('p', { class: 'tenue' }, 'Empezá por poner el nombre de tu negocio y tus datos para transferir. Aparecen en los mensajes.'),
-        h('button', { class: 'btn sec', type: 'button', onclick: () => ir('ajustes') }, 'Ir a Ajustes')));
+      partes.push(h('form', { class: 'tarjeta portada', onsubmit: hacer(async (ev) => {
+        const f = new FormData(ev.target);
+        await api('POST', '/api/config', { nombre: f.get('nombre'), datos_transferencia: f.get('alias') || '' });
+        S.negocio.nombre = String(f.get('nombre')).trim();
+        await pintar();
+      }, 'Listo, ya podés empezar') },
+        h('span', { class: 'logo' }, icono(`r-${S.rubro.id}`)),
+        h('div', null, h('h2', null, `Bienvenido a ${S.rubro.nombre}`), h('p', { class: 'tenue' }, 'Dos datos y arrancás. Aparecen en los mensajes que mandás.')),
+        campo('¿Cómo se llama tu negocio?', h('input', { id: 'bv-nombre', name: 'nombre', required: true, maxlength: 60 })),
+        campo('Alias para que te transfieran (opcional)', h('input', { id: 'bv-alias', name: 'alias', maxlength: 300, placeholder: 'Alias: mi.negocio' })),
+        h('button', { class: 'btn pri ancho', type: 'submit' }, 'Empezar')));
     }
     const dias = p.ultima_copia ? diasEntre(p.ultima_copia, ahoraAR().fecha) : null;
     if (copia && p.clientes >= 3 && (dias === null || dias > 14)) {
@@ -213,7 +234,7 @@ export function iniciar({ pedir, copia = null }) {
     return [
       h('div', { class: 'titulo' }, h('h2', null, v.titulo)),
       p.vuelta.length ? h('div', { class: 'lista' }, p.vuelta.map((x) => h('button', { class: 'fila', type: 'button', onclick: () => ir(`cliente-${x.cliente_id}`) },
-        h('span', { class: 'quien' }, h('strong', null, x.cliente), h('span', null, x.avisos ? `Ya le escribiste ${plural(x.avisos, 'vez', 'veces')}` : 'Todavía no le escribiste')),
+        avatar(x.cliente), h('span', { class: 'quien' }, h('strong', null, x.cliente), h('span', null, x.avisos ? `Ya le escribiste ${plural(x.avisos, 'vez', 'veces')}` : 'Todavía no le escribiste')),
         h('span', { class: 'cuanto' }, h('span', { class: `chip ${x.dias > 30 ? 'mal' : 'ojo'}` }, x.dias ? `hace ${plural(x.dias, 'día', 'días')}` : 'le toca hoy')))))
         : p.clientes > 0 && h('div', { class: 'tarjeta vacio' }, h('strong', null, v.nadie), h('p', null, 'Cuando a alguien le toque volver, aparece acá y en Avisos.')),
     ];
@@ -234,9 +255,9 @@ export function iniciar({ pedir, copia = null }) {
       h('button', { class: `btn ${p.avisos.pendientes && !auto ? 'pri' : 'sec'}`, type: 'button', onclick: () => ir('avisos') }, 'Ver avisos')));
     const lista = p.deudores.length
       ? h('div', { class: 'lista' }, p.deudores.map((d) => h('button', { class: 'fila', type: 'button', onclick: () => ir(`cliente-${d.cliente_id}`) },
-        h('span', { class: 'quien' }, h('strong', null, d.cliente), h('span', null, d.concepto)),
+        avatar(d.cliente), h('span', { class: 'quien' }, h('strong', null, d.cliente), h('span', null, d.concepto)),
         h('span', { class: 'cuanto' }, h('span', { class: 'cifra' }, formatearMonto(d.monto)), chipDias(d.dias, d.vence)))))
-      : h('div', { class: 'tarjeta vacio' }, h('strong', null, t('vacioTitulo')), h('p', null, t('vacioTexto')),
+      : h('div', { class: 'tarjeta vacio' }, h('span', { class: 'logo' }, icono(`r-${S.rubro.id}`)), h('strong', null, t('vacioTitulo')), h('p', null, t('vacioTexto')),
         h('button', { class: 'btn pri', type: 'button', onclick: () => ir('nueva') }, t('vacioBoton')));
     return [
       p.alerta && h('div', { class: 'alerta', role: 'alert' }, p.alerta),
@@ -247,7 +268,7 @@ export function iniciar({ pedir, copia = null }) {
         h('div', { class: 'talon-b' },
           S.rubro.sinVencimiento
             ? h('div', null, h('span', { class: 'eti' }, 'Clientes que deben'), h('span', { class: 'cifra' }, String(p.por_cliente.length)))
-            : h('div', null, h('span', { class: 'eti' }, `Vencido · ${plural(p.resumen.vencidas, 'deuda', 'deudas')}`), h('span', { class: `cifra${p.resumen.vencido ? ' mal' : ''}` }, formatearMonto(p.resumen.vencido))),
+            : h('div', null, h('span', { class: 'eti' }, `Vencido · ${p.resumen.vencidas}`), h('span', { class: `cifra${p.resumen.vencido ? ' mal' : ''}` }, formatearMonto(p.resumen.vencido))),
           h('div', null, h('span', { class: 'eti' }, 'Entró este mes'), h('span', { class: `cifra${p.resumen.entro ? ' bien' : ''}` }, formatearMonto(p.resumen.entro))))),
       avisos,
       ...extraInicio(p),
@@ -255,7 +276,7 @@ export function iniciar({ pedir, copia = null }) {
         p.deudores.length > 0 && h('span', { class: 'tenue chico' }, S.rubro.inicio === 'clientes' ? 'Primero los que más deben' : 'Primero los más atrasados')),
       S.rubro.vuelta && !p.deudores.length ? (p.clientes ? null : lista)
         : S.rubro.inicio === 'clientes' && p.por_cliente.length ? h('div', { class: 'lista' }, p.por_cliente.map((x) => h('button', { class: 'fila', type: 'button', onclick: () => ir(`cliente-${x.cliente_id}`) },
-          h('span', { class: 'quien' }, h('strong', null, x.cliente), h('span', null, `${plural(x.cantidad, 'anotación', 'anotaciones')} · la primera hace ${plural(Math.max(x.dias, 0), 'día', 'días')}`)),
+          avatar(x.cliente), h('span', { class: 'quien' }, h('strong', null, x.cliente), h('span', null, `${plural(x.cantidad, 'anotación', 'anotaciones')} · la primera hace ${plural(Math.max(x.dias, 0), 'día', 'días')}`)),
           h('span', { class: 'cuanto' }, h('span', { class: 'cifra' }, formatearMonto(x.saldo))))))
           : lista,
     ];
@@ -290,13 +311,13 @@ export function iniciar({ pedir, copia = null }) {
       a.enviados.length > 0 && [
         h('div', { class: 'titulo' }, h('h2', null, 'Enviados hoy')),
         h('div', { class: 'lista' }, a.enviados.map((m) => h('button', { class: 'fila', type: 'button', onclick: () => ir(`cliente-${m.cliente_id}`) },
-          h('span', { class: 'quien' }, h('strong', null, m.cliente), h('span', null, `${m.nombre_etapa} · ${m.canal === 'auto' ? 'automático' : 'con un toque'}${m.error ? ` · ${m.error}` : ''}`)),
+          avatar(m.cliente), h('span', { class: 'quien' }, h('strong', null, m.cliente), h('span', null, `${m.nombre_etapa} · ${m.canal === 'auto' ? 'automático' : 'con un toque'}${m.error ? ` · ${m.error}` : ''}`)),
           h('span', { class: `chip ${ESTADO_MSJ[m.estado]?.[1] || ''}` }, ESTADO_MSJ[m.estado]?.[0] || m.estado)))),
       ],
       a.sin_aviso.length > 0 && [
         h('div', { class: 'titulo' }, h('h2', null, 'No reciben avisos')),
         h('div', { class: 'lista' }, a.sin_aviso.map((s) => h('button', { class: 'fila', type: 'button', onclick: () => ir(`cliente-${s.cliente_id}`) },
-          h('span', { class: 'quien' }, h('strong', null, s.cliente), h('span', null, s.motivo))))),
+          avatar(s.cliente), h('span', { class: 'quien' }, h('strong', null, s.cliente), h('span', null, s.motivo))))),
       ],
     ];
   }
@@ -323,7 +344,7 @@ export function iniciar({ pedir, copia = null }) {
       const t = q.toLowerCase().trim();
       const filtrados = clientes.filter((c) => !t || c.nombre.toLowerCase().includes(t) || (c.telefono || '').includes(t.replace(/\D/g, '') || '~'));
       lista.replaceChildren(...(filtrados.length ? conGrupos(filtrados, (c) => h('button', { class: 'fila', type: 'button', onclick: () => ir(`cliente-${c.id}`) },
-        h('span', { class: 'quien' }, h('strong', null, c.nombre), h('span', null, [c.nota, c.telefono ? mostrarTelefono(c.telefono) : 'Sin celular'].filter(Boolean).join(' · '))),
+        avatar(c.nombre), h('span', { class: 'quien' }, h('strong', null, c.nombre), h('span', null, [c.nota, c.telefono ? mostrarTelefono(c.telefono) : 'Sin celular'].filter(Boolean).join(' · '))),
         h('span', { class: 'cuanto' }, c.saldo ? h('span', { class: 'cifra' }, formatearMonto(c.saldo)) : h('span', { class: 'chip bien' }, 'Al día'),
           c.baja ? h('span', { class: 'chip mal' }, 'Pidió la baja') : c.vencidas ? h('span', { class: 'chip mal' }, plural(c.vencidas, 'vencida', 'vencidas')) : null)))
         : [h('div', { class: 'vacio' }, clientes.length ? 'Nadie con ese nombre.' : t('sinClientes'))]));

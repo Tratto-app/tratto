@@ -39,24 +39,54 @@ a sábado de 9 a 20 y nunca más de uno por día a la misma persona; entregas a
 cuenta; carga de una lista pegada o de un Excel; logo, color y nombre del
 negocio; y los datos para transferir al final de cada mensaje de cobro.
 
-## Cómo se entregan
+## Cómo se venden: la tienda
 
-Cada app es un solo archivo, pero **no sirve mandarlo por WhatsApp**: abierto
-como archivo, el celular no guarda los datos. Hay que publicarlo en una
-dirección web (https) y venderle al comprador ese link.
+Las apps se venden solas. No hay que recibir transferencias ni mandar links a
+mano. Todo lo que hay que publicar está en `dist/tienda/`:
 
-1. Subí los cuatro archivos "para vender" a un sitio estático gratis (por
-   ejemplo Cloudflare Pages o Netlify, que aceptan arrastrar una carpeta).
-2. Al comprador le mandás el link de su app.
-3. El comprador la abre en el celular y la agrega a la pantalla de inicio.
+| Dirección | Qué es |
+|---|---|
+| `/` | El catálogo con las cuatro apps |
+| `/cuotas-al-dia/` (y las otras tres) | La página de venta, con la demo viva adentro de un celular |
+| `/cuotas-al-dia/app.html` | La app. Sin licencia no abre: ofrece comprar o activar |
+| `/gracias.html` | A donde vuelve el comprador después de pagar |
+
+**El recorrido del comprador**
+
+1. Entra a la página de venta, prueba la demo y toca **Comprar**.
+2. Paga en Mercado Pago, con tarjeta o con la plata de su cuenta. La plata entra a tu Mercado Pago.
+3. Mercado Pago lo devuelve a la tienda, que confirma el pago y le abre la app.
+4. Le queda un link para volver a entrar o para abrirla en otro celular.
+
+Si cierra la ventana antes de volver, entra a `/gracias.html`, pone el número
+de operación y el mail con el que pagó, y recupera su compra solo.
+
+**Lo que necesita para andar**
+
+La tienda es un sitio estático con tres funciones chicas (`api/comprar`,
+`api/activar` y `api/verificar`), listo para Vercel. Necesita dos claves, que se
+cargan en la configuración del sitio y nunca van al repo:
+
+- `MP_ACCESS_TOKEN`: la credencial de producción de tu aplicación de Mercado Pago.
+- `LICENCIA_SECRETO`: una frase larga cualquiera. Con ella se firman las licencias.
+
+No usa base de datos: la licencia es el número de pago firmado. Por eso una
+licencia no se puede inventar, y si devolvés una compra desde Mercado Pago, esa
+licencia deja de activar celulares nuevos.
 
 **La dirección no se puede cambiar después.** Los datos de cada comprador
-quedan atados a esa dirección en su celular: si la app se muda, tienen que
-guardar una copia en la dirección vieja y recuperarla en la nueva. Elegí bien
-el nombre antes de vender la primera.
+quedan atados a esa dirección en su celular. Elegí bien el nombre antes de
+vender la primera.
 
-Para actualizar una app, se reemplaza el archivo en el mismo lugar. Los datos
-de los compradores no se tocan.
+**Antes de publicar**, completá en `tienda/pagina.mjs` el nombre de la tienda
+(hoy dice "Apps al día") y un contacto de ayuda. Las páginas prometen devolver
+la plata dentro de los 10 días: si no querés ofrecerlo, sacalo de ahí.
+
+Para probar todo sin cobrar nada: `node tools/tienda-local.mjs` levanta la
+tienda con un Mercado Pago simulado.
+
+Los archivos sueltos de `dist/` (`cuotas-al-dia.html` y los demás) son las
+mismas apps sin candado, por si alguna vez querés entregar una a mano.
 
 ## Qué decirle al comprador
 
@@ -72,8 +102,8 @@ de los compradores no se tocan.
 
 ## Lo que hay que saber antes de vender
 
-- **El link se puede compartir.** Quien lo recibe puede usar la app sin pagar.
-  A estos precios importa poco, pero va a pasar.
+- **El link de la compra se puede compartir.** Quien lo recibe puede activar la
+  app sin pagar. A estos precios importa poco, pero va a pasar.
 - **El código está en un repo público.** Cualquiera puede bajarse las apps
   desde GitHub. Si las vas a vender, conviene pasarlas a un repo privado.
 - **No cobran con link de pago ni mandan mensajes solos.** Eso es la versión
@@ -84,15 +114,17 @@ de los compradores no se tocan.
 
 ## Qué está probado
 
-- 67 pruebas automáticas, entre ellas las reglas de cada app: el saldo de la
-  libreta, las entregas a cuenta, "le toca volver" y que los datos se guarden
-  y se recuperen iguales.
+- 72 pruebas automáticas: las reglas de cada app (saldo de la libreta, entregas
+  a cuenta, "le toca volver", guardado en el celular) y los candados de la
+  venta (nadie activa con un pago ajeno, una devolución corta la licencia).
+- Una compra de punta a punta con navegador y Mercado Pago simulado
+  (`node tools/probar-tienda.mjs`).
 - Un recorrido con navegador de celular por las cuatro apps y sus demos
   (`node tools/probar-nichos.mjs`): carga, avisos, entregas, copia de
   seguridad, recuperación y que los datos sigan ahí al recargar.
 
-No está probado en celulares reales (iPhone y Android) ni con compradores de
-verdad. Conviene que uses cada una vos una semana antes de venderla.
+No está probado con Mercado Pago real, en celulares reales (iPhone y Android)
+ni con compradores de verdad. Conviene que uses cada una vos una semana antes de venderla.
 
 ## Para sumar otro rubro
 

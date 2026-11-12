@@ -10,6 +10,7 @@
     "local": "node tools/local.mjs"
   },
   "devDependencies": {
+    "@fontsource-variable/plus-jakarta-sans": "^5.3.0",
     "esbuild": "^0.25.0"
   }
 }

@@ -277,7 +277,7 @@ async function avisos({ e, cfg, url, hoy }) {
         : textoAviso(etapa, paraMensaje, cliente, `${origen}/p/${deuda.token}`);
       return {
         deuda_id: deuda.id, cliente_id: cliente.id, cliente: cliente.nombre, telefono: cliente.telefono,
-        detalle: etapa === 'control' ? `Le toca desde el ${fechaLarga(deuda.vence)}` : etapa === 'saldo' ? `Tiene anotado ${formatearMonto(deuda.monto)}` : `${deuda.concepto} · ${formatearMonto(deuda.monto)}`,
+        detalle: etapa === 'control' ? `Le toca desde el ${fechaLarga(deuda.vence)}` : etapa === 'saldo' ? `Tiene anotado ${formatearMonto(deuda.monto).replace(' ', '\u00a0')}` : `${deuda.concepto} · ${formatearMonto(deuda.monto).replace(' ', '\u00a0')}`,
         etapa, nombre_etapa: NOMBRE_ETAPA[etapa], concepto: deuda.concepto, monto: deuda.monto, vence: deuda.vence,
         texto, wa: `https://wa.me/${cliente.telefono}?text=${encodeURIComponent(texto)}`,
       };

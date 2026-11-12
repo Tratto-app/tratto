@@ -63,7 +63,7 @@ for (const base of BASES) {
     const [aviso] = (await c.pedir('GET', '/api/avisos')).datos.lista;
     assert.equal(aviso.texto, 'Hola Laura, hoy vence tu pago de $ 28.000 por la cuota de marzo de Sofi. Para transferir: Alias: estudio.giro');
     assert.ok(!aviso.texto.includes('/p/'));
-    assert.equal(aviso.detalle, 'la cuota de marzo · $ 28.000');
+    assert.equal(aviso.detalle, 'la cuota de marzo · $\u00a028.000');
     const [cliente] = (await c.pedir('GET', '/api/clientes')).datos.clientes;
     assert.deepEqual([cliente.grupo, cliente.nota], ['Danza jazz', 'Sofi']);
     assert.equal((await c.pedir('POST', '/api/avisos/enviado', { deuda_id: aviso.deuda_id, cliente_id: aviso.cliente_id, etapa: aviso.etapa })).estado, 200);
