@@ -99,7 +99,7 @@
     u.piernaI.rotation.x = s * 0.6 * amp; u.piernaD.rotation.x = -s * 0.6 * amp;
     u.brazoI.rotation.set(-s * 0.5 * amp, 0, 0.06); u.brazoD.rotation.set(s * 0.5 * amp, 0, -0.06);
     u.cadera.position.y = 0.92 + Math.abs(Math.cos(paso * Math.PI * 2)) * 0.05 * amp + (o.salto || 0);
-    u.cadera.position.z = 0;
+    u.cadera.position.z = 0; u.cadera.position.x = 0; u.cadera.rotation.set(0, 0, 0);
     u.cuello.rotation.set(o.cabezaX || 0, o.cabezaY || 0, o.cabezaZ || 0);
     u.torso.rotation.set(0, 0, 0);
     if (o.empujar) { u.brazoI.rotation.set(-1.15, 0, 0.12); u.brazoD.rotation.set(-1.15, 0, -0.12); }
@@ -167,6 +167,13 @@
       u.brazoD.rotation.set(a, 0, -0.08); u.brazoI.rotation.set(-0.35, 0, 0.22);
       u.cadera.position.z = 0.85 + 0.96 * Math.sin(a);
       u.cuello.rotation.x = -0.12 - 0.22 * (1 - s2);
+    }
+    // taladrar una pared que tiene adelante (taladro() en la mano derecha): los dos brazos al frente y
+    // todo el cuerpo vibra; o.trabado (0 a 1) sacude más fuerte; o.alto (radianes) sube o baja los brazos
+    if (o.taladrar) {
+      const f = 0.6 + (o.trabado || 0) * 2.6, v = Math.sin(o.taladrar * 73) * 0.025 * f, a = -1.57 - (o.alto || 0);
+      u.brazoD.rotation.set(a + v, 0, -0.05); u.brazoI.rotation.set(a + 0.15 - v, 0, 0.5);
+      u.cadera.rotation.z = v * 1.4; u.cadera.position.x = v * 0.6; u.cuello.rotation.x = 0.04 + v;
     }
     // acostado en la cama con la almohada en la cara (el cuerpo lo acuesta la escena)
     if (o.almohada) {
@@ -350,6 +357,20 @@
     caja(0.32, 0.02, 0.2, color, 0, 0.055, 0.1, g, false);
     for (let i = 0; i < 4; i++) caja(0.32, 0.012, 0.025, '#9AA3A6', 0, 0.056, -0.06 - i * 0.045, g, false);
     escena.add(g); return g;
+  }
+
+  // Taladro para la mano derecha (pose taladrar). Con el brazo al frente, -y local es
+  // hacia adelante y +z local es hacia arriba; la mecha queda a la altura del hombro.
+  function taladro(padre, color = '#D9822B') {
+    const g = new T.Group();
+    caja(0.1, 0.28, 0.13, color, 0, -0.1, 0.07, g, false);            // cuerpo
+    caja(0.08, 0.1, 0.2, '#2A2E2C', 0, 0.0, -0.06, g, false);          // mango (en la mano)
+    caja(0.11, 0.07, 0.07, '#2A2E2C', 0, 0.05, -0.17, g, false);       // batería
+    caja(0.05, 0.05, 0.05, '#4A4F52', 0, -0.26, 0.07, g, false);       // mandril
+    const mecha = new T.Mesh(new T.CylinderGeometry(0.012, 0.012, 0.2, 6), mat('#B9C0C3'));
+    mecha.position.set(0, -0.38, 0.07); g.add(mecha);                   // la mecha, hacia adelante
+    g.position.set(0, -0.66, 0); g.userData.mecha = mecha;
+    (padre || escena).add(g); return g;
   }
 
   // Notas musicales que suben (afinadas: suaves; desafinadas: se tambalean)
@@ -702,7 +723,7 @@
   // ---------- armar y dibujar ----------
   const kit = { THREE: T, C, escena, camara, sol, cielo, renderer, mat, caja, personaje, pose, patio, pasto, cortadora, recortes,
     lluvia, clima, humo, etiqueta, perro, posePerro, gato, notas, teclado, celular, mesada, balde, chorro, herramientas, llaveInglesa,
-    rodillo, lata, bandejaPintura, el, tarjeta, mostrar, cierre, etiquetaUrl, lerp, clamp, suave, rebote, azar,
+    rodillo, lata, bandejaPintura, taladro, el, tarjeta, mostrar, cierre, etiquetaUrl, lerp, clamp, suave, rebote, azar,
     palabra(txt, n = 1, def = 0) { // segundo en que se dice esa palabra (n-ésima vez)
       const pal = window.PALABRAS || []; let k = 0;
       for (const w of pal) if (w[2].toLowerCase().replace(/[^a-záéíóúñü0-9]/g, '') === txt.toLowerCase()) { k++; if (k === n) return w[0]; }
