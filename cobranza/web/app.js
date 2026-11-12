@@ -245,7 +245,9 @@ export function iniciar({ pedir, copia = null }) {
         h('div', { class: 'talon-a' }, h('span', { class: 'eti' }, t('falta')), h('span', { class: 'cifra' }, formatearMonto(p.resumen.falta))),
         h('div', { class: 'troquel' }),
         h('div', { class: 'talon-b' },
-          h('div', null, h('span', { class: 'eti' }, `Vencido · ${plural(p.resumen.vencidas, 'deuda', 'deudas')}`), h('span', { class: `cifra${p.resumen.vencido ? ' mal' : ''}` }, formatearMonto(p.resumen.vencido))),
+          S.rubro.sinVencimiento
+            ? h('div', null, h('span', { class: 'eti' }, 'Clientes que deben'), h('span', { class: 'cifra' }, String(p.por_cliente.length)))
+            : h('div', null, h('span', { class: 'eti' }, `Vencido · ${plural(p.resumen.vencidas, 'deuda', 'deudas')}`), h('span', { class: `cifra${p.resumen.vencido ? ' mal' : ''}` }, formatearMonto(p.resumen.vencido))),
           h('div', null, h('span', { class: 'eti' }, 'Entró este mes'), h('span', { class: `cifra${p.resumen.entro ? ' bien' : ''}` }, formatearMonto(p.resumen.entro))))),
       avisos,
       ...extraInicio(p),

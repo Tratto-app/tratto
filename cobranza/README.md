@@ -23,18 +23,28 @@ cobranza/
 ├── src/xlsx.js           lector de planillas .xlsx sin librerías
 ├── src/worker.js         entrada en Cloudflare
 ├── web/                  las pantallas (sin librerías)
-├── test/                 52 pruebas
+├── test/                 67 pruebas
 └── tools/                armar, correr en la compu, recorrer las pantallas
 ```
+
+## Las micro apps de nicho
+
+De la misma base salen cuatro apps que corren enteras en el celular del
+comprador, sin servidor: **Cuotas al día**, **Control al día**, **Libreta** y
+**Combi al día**. Cada una tiene su archivo para vender y su demo en `dist/`.
+Qué hace cada una, cómo se entregan y qué decirle al comprador está en
+`docs/MICRO-APPS.md`. Los rubros se definen en `src/rubros.js`, la entrada es
+`web/basica.js` y los datos de las demos están en `web/ejemplos.js`.
 
 ## Comandos
 
 ```bash
 npm install          # una vez (solo trae esbuild, para armar)
-npm run probar       # las 52 pruebas, sobre memoria y sobre SQLite
+npm run probar       # las 67 pruebas, sobre memoria y sobre SQLite
 npm run armar        # genera dist/worker.js y dist/demo.html
 SIMULAR=1 npm run local               # la app en http://localhost:8788 sin cuentas reales
-node tools/probar-pantallas.mjs       # recorrido completo con un navegador de celular
+node tools/probar-pantallas.mjs       # recorrido de la app instalada con un navegador de celular
+node tools/probar-nichos.mjs          # recorrido de las cuatro micro apps y sus demos
 ```
 
 `dist/` está subido a propósito: quien instala no necesita armar nada.
