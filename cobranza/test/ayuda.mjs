@@ -13,7 +13,7 @@ export const BASES = ['memoria', 'd1'];
 export const MARTES_10H = '2026-03-10T13:00:00Z';
 export const enAR = (fecha, hora = '10:00') => new Date(`${fecha}T${hora}:00-03:00`).toISOString();
 
-export function crear(tipo, { demo = true, env = {} } = {}) {
+export function crear(tipo, { demo = true, env = {}, rubro = undefined, local = false } = {}) {
   const d1 = tipo === 'd1' ? d1DeSqlite(new DatabaseSync(':memory:')) : null;
   const repo = d1 ? repoD1(d1) : repoMemoria();
   let ahora = new Date(MARTES_10H);
@@ -40,7 +40,7 @@ export function crear(tipo, { demo = true, env = {} } = {}) {
     throw new Error(`URL inesperada en la prueba: ${url}`);
   };
   const e = {
-    repo, demo, salir, ahora: () => ahora,
+    repo, demo, local, rubro, salir, ahora: () => ahora,
     env: { WA_TOKEN: 't', WA_PHONE_ID: '111', WA_WABA_ID: '222', WA_APP_SECRET: 'secreto-wa', WA_VERIFY_TOKEN: 'verif', MP_ACCESS_TOKEN: 'mp', ...env },
   };
   const pedir = async (metodo, ruta, cuerpo, cabeceras = {}) => {

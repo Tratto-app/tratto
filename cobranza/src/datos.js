@@ -6,7 +6,8 @@
 // implementaciones no pueden comportarse distinto.
 
 export const TABLAS = {
-  clientes: ['id', 'nombre', 'telefono', 'mail', 'acepta', 'pausado', 'baja', 'creado'],
+  clientes: ['id', 'nombre', 'telefono', 'mail', 'grupo', 'nota', 'ultima', 'cada', 'av_control', 'av_control_el',
+    'acepta', 'pausado', 'baja', 'creado'],
   deudas: ['id', 'cliente_id', 'concepto', 'monto', 'vence', 'repite', 'dia_mes', 'estado', 'pagada_el', 'medio',
     'token', 'mp_preferencia', 'mp_link', 'mp_pago', 'av_previo', 'av_dia', 'av_vencido', 'av_ultimo',
     'siguiente_creada', 'creado'],
@@ -19,7 +20,8 @@ export const VERSION_ESQUEMA = 1;
 export const ESQUEMA = [
   `CREATE TABLE IF NOT EXISTS config (clave TEXT PRIMARY KEY, valor TEXT)`,
   `CREATE TABLE IF NOT EXISTS clientes (
-     id INTEGER PRIMARY KEY AUTOINCREMENT, nombre TEXT NOT NULL, telefono TEXT, mail TEXT,
+     id INTEGER PRIMARY KEY AUTOINCREMENT, nombre TEXT NOT NULL, telefono TEXT, mail TEXT, grupo TEXT, nota TEXT,
+     ultima TEXT, cada INTEGER, av_control INTEGER NOT NULL DEFAULT 0, av_control_el TEXT,
      acepta INTEGER NOT NULL DEFAULT 0, pausado INTEGER NOT NULL DEFAULT 0, baja INTEGER NOT NULL DEFAULT 0,
      creado TEXT NOT NULL)`,
   `CREATE INDEX IF NOT EXISTS clientes_telefono ON clientes (telefono)`,
@@ -147,10 +149,12 @@ export function repoD1(db) {
 }
 
 // ── En memoria (demo y pruebas) ────────────────────────────────────────────
-export function repoMemoria() {
-  const tablas = Object.fromEntries(Object.keys(TABLAS).map((t) => [t, []]));
-  const proximo = Object.fromEntries(Object.keys(TABLAS).map((t) => [t, 1]));
-  const cfg = {};
+// `inicial` es lo que devolvió exportar(): así la versión del celular guarda y
+// recupera todo (en el almacenamiento del navegador o en una copia en archivo).
+export function repoMemoria(inicial = null) {
+  const tablas = Object.fromEntries(Object.keys(TABLAS).map((t) => [t, (inicial?.tablas?.[t] || []).map((f) => ({ ...f }))]));
+  const proximo = Object.fromEntries(Object.keys(TABLAS).map((t) => [t, Math.max(Number(inicial?.proximo?.[t]) || 1, ...tablas[t].map((f) => Number(f.id) + 1))]));
+  const cfg = { ...(inicial?.cfg || {}) };
   const cumple = (fila, filtros) => Object.entries(filtros).every(([k, v]) => {
     const x = fila[k] ?? null;
     if (v === null) return x === null;
@@ -163,8 +167,9 @@ export function repoMemoria() {
     return x === v;
   });
   const vacia = (tabla) => Object.fromEntries(columnas(tabla).map((c) => [c, null]));
-  const DEFECTO = { clientes: { acepta: 0, pausado: 0, baja: 0 }, deudas: { repite: 'unico', estado: 'pendiente', siguiente_creada: 0 } };
+  const DEFECTO = { clientes: { acepta: 0, pausado: 0, baja: 0, av_control: 0 }, deudas: { repite: 'unico', estado: 'pendiente', siguiente_creada: 0 } };
   return {
+    exportar() { return JSON.parse(JSON.stringify({ version: 1, tablas, proximo, cfg })); },
     async preparar() {},
     async filas(tabla, filtros = {}, { orden, limite } = {}) {
       revisar(tabla, filtros);

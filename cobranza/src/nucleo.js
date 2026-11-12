@@ -8,7 +8,7 @@
 import {
   ETAPAS, NOMBRE_ETAPA, ahoraAR, sumarDias, diasEntre, inicioMes, inicioMesSiguiente, horario, etapaQueToca,
   puedeRecibir, motivoNoRecibe, avisosDelDia, textoAviso, variablesPlantilla, esBaja, siguienteVencimiento,
-  conceptoSiguiente, normalizarTelefono, parsearMonto, parsearFecha, formatearMonto, fechaLarga, primerNombre,
+  conceptoSiguiente, textoAvisoLocal, avisosDeSaldo, fechaValida, avisosDeVuelta, proximoControl, textoControl, normalizarTelefono, parsearMonto, parsearFecha, formatearMonto, fechaLarga, primerNombre,
 } from './logica.js';
 import {
   sha256, igualSeguro, aleatorio, mpConectado, mpCrearPreferencia, mpPago, mpProbar, mpFirmaValida,
@@ -55,7 +55,7 @@ export async function manejar(request, e) {
 // ── API del dueño ──────────────────────────────────────────────────────────
 async function api(request, url, ruta, e) {
   const metodo = request.method;
-  if (metodo !== 'GET' && !e.demo && request.headers.get('X-Cobranza') !== '1') throw new Fallo(403, 'Pedido no permitido.');
+  if (metodo !== 'GET' && !e.demo && !e.local && request.headers.get('X-Cobranza') !== '1') throw new Fallo(403, 'Pedido no permitido.');
   let cuerpo = {};
   if (metodo !== 'GET') {
     const crudo = await request.text();
@@ -64,11 +64,11 @@ async function api(request, url, ruta, e) {
     if (!cuerpo || typeof cuerpo !== 'object') throw new Fallo(400, 'No se entendió el pedido.');
   }
   const cfg = await e.repo.config();
-  const sesion = e.demo || await haySesion(request, e);
+  const sesion = !!e.demo || !!e.local || await haySesion(request, e);
 
   if (ruta === '/api/estado') {
     return json({
-      instalada: !!cfg.clave_hash || !!e.demo, sesion, demo: !!e.demo, sal: cfg.clave_sal || '',
+      instalada: !!cfg.clave_hash || !!e.demo || !!e.local, sesion, demo: !!e.demo, local: !!e.local, rubro: e.rubro?.id || 'cobranza', sal: cfg.clave_sal || '',
       negocio: { nombre: cfg.nombre || 'Mi negocio', color: cfg.color || '', logo: cfg.logo || '' },
     });
   }
@@ -78,6 +78,8 @@ async function api(request, url, ruta, e) {
   if (!sesion) throw new Fallo(401, 'Tenés que entrar de nuevo.');
 
   const c = { e, cfg, url, cuerpo, hoy: ahoraAR(e.ahora()).fecha };
+  const parcial = ruta.match(/^\/api\/clientes\/(\d+)\/pago$/);
+  if (parcial && metodo === 'POST') return json(await pagoParcial(c, Number(parcial[1])));
   const id = Number((ruta.match(/\/(\d+)$/) || [])[1] || 0);
   const base = id ? ruta.replace(/\/\d+$/, '/:id') : ruta;
   switch (`${metodo} ${base}`) {
@@ -189,17 +191,48 @@ async function pendientes(e) {
   return { deudas, clientes: new Map(clientes.map((x) => [x.id, x])) };
 }
 const suma = (lista) => lista.reduce((t, d) => t + d.monto, 0);
+const mensajesRecientes = (e, hoy) => e.repo.filas('mensajes', { dia: { desde: sumarDias(hoy, -35) } });
+
+// Los avisos de hoy. Por deuda (cuotas con vencimiento) o por saldo (libreta de fiado).
+function listaDeAvisos(e, cfg, hoy, deudas, clientes, recientes) {
+  if (e.rubro?.avisos === 'saldo') return avisosDeSaldo({ deudas, clientes, mensajes: recientes, hoy, dia: Number(cfg.dia_cobro) || 5 });
+  const recibieron = new Set(recientes.filter((m) => m.dia === hoy).map((m) => m.cliente_id));
+  const lista = avisosDelDia({ deudas, clientes, recibieronHoy: recibieron, hoy });
+  if (!e.rubro?.vuelta) return lista;
+  return [...lista, ...avisosDeVuelta({ clientes, hoy, ocupados: new Set([...recibieron, ...lista.map((x) => x.cliente.id)]) })];
+}
+// Pacientes o clientes a los que ya les toca volver, del más atrasado al más reciente.
+function losQueTocan(clientes, hoy) {
+  return [...clientes.values()].map((c) => ({ c, toca: proximoControl(c) })).filter((x) => x.toca && x.toca <= hoy && !x.c.baja)
+    .map((x) => ({ cliente_id: x.c.id, cliente: x.c.nombre, toca: x.toca, dias: diasEntre(x.toca, hoy), avisos: x.c.av_control || 0 }))
+    .sort((a, b) => b.dias - a.dias || a.cliente_id - b.cliente_id);
+}
+// "la cuota de marzo" pasa a "la cuota de marzo de Sofi" cuando el mensaje le llega al adulto.
+function conceptoDe(e, deuda, cliente) {
+  return e.rubro?.notaEnMensaje && cliente.nota && deuda.id ? `${deuda.concepto} de ${cliente.nota}` : deuda.concepto;
+}
+function porCliente(deudas, clientes, hoy) {
+  const cuentas = new Map();
+  for (const d of deudas) {
+    const c = cuentas.get(d.cliente_id) || { cliente_id: d.cliente_id, cliente: clientes.get(d.cliente_id)?.nombre || '(sin nombre)', saldo: 0, cantidad: 0, desde: d.vence };
+    c.saldo += d.monto; c.cantidad += 1;
+    if (d.vence < c.desde) c.desde = d.vence;
+    cuentas.set(d.cliente_id, c);
+  }
+  return [...cuentas.values()].map((c) => ({ ...c, dias: diasEntre(c.desde, hoy) })).sort((a, b) => b.saldo - a.saldo || a.cliente_id - b.cliente_id);
+}
 
 async function panel({ e, cfg, hoy }) {
   await mantenimiento(e, cfg, hoy);
   const { deudas, clientes } = await pendientes(e);
   const rango = { desde: inicioMes(hoy), hasta: inicioMesSiguiente(hoy) };
-  const [pagadas, delMes] = await Promise.all([
+  const [pagadas, recientes] = await Promise.all([
     e.repo.filas('deudas', { estado: 'pagada', pagada_el: rango }),
-    e.repo.filas('mensajes', { dia: rango }),
+    mensajesRecientes(e, hoy),
   ]);
+  const delMes = recientes.filter((m) => m.dia >= rango.desde);
   const deHoy = delMes.filter((m) => m.dia === hoy);
-  const lista = avisosDelDia({ deudas, clientes, recibieronHoy: new Set(deHoy.map((m) => m.cliente_id)), hoy });
+  const lista = listaDeAvisos(e, cfg, hoy, deudas, clientes, recientes);
   const vencidas = deudas.filter((d) => d.vence < hoy);
   return {
     hoy,
@@ -216,13 +249,18 @@ async function panel({ e, cfg, hoy }) {
       id: d.id, cliente_id: d.cliente_id, cliente: clientes.get(d.cliente_id)?.nombre || '(sin nombre)',
       concepto: d.concepto, monto: d.monto, vence: d.vence, dias: diasEntre(d.vence, hoy), repite: d.repite,
     })).sort((a, b) => b.dias - a.dias || a.id - b.id),
+    por_cliente: porCliente(deudas, clientes, hoy),
+    vuelta: e.rubro?.vuelta ? losQueTocan(clientes, hoy) : [],
+    clientes: clientes.size,
+    ultima_copia: cfg.ultima_copia || '',
   };
 }
 
 async function avisos({ e, cfg, url, hoy }) {
   const { deudas, clientes } = await pendientes(e);
-  const deHoy = await e.repo.filas('mensajes', { dia: hoy });
-  const lista = avisosDelDia({ deudas, clientes, recibieronHoy: new Set(deHoy.map((m) => m.cliente_id)), hoy });
+  const recientes = await mensajesRecientes(e, hoy);
+  const deHoy = recientes.filter((m) => m.dia === hoy);
+  const lista = listaDeAvisos(e, cfg, hoy, deudas, clientes, recientes);
   const origen = origenDe(e, url);
   const sinAviso = new Map();
   for (const d of deudas) {
@@ -233,9 +271,13 @@ async function avisos({ e, cfg, url, hoy }) {
     modo: modoDe(cfg, e),
     horario: horario(ahoraAR(e.ahora())),
     lista: lista.map(({ deuda, cliente, etapa }) => {
-      const texto = textoAviso(etapa, deuda, cliente, `${origen}/p/${deuda.token}`);
+      const paraMensaje = { ...deuda, concepto: conceptoDe(e, deuda, cliente) };
+      const texto = etapa === 'control' ? textoControl(cliente, cfg.nombre, cliente.cada, (cliente.av_control || 0) + 1)
+        : e.local ? textoAvisoLocal(etapa, paraMensaje, cliente, cfg.datos_transferencia)
+        : textoAviso(etapa, paraMensaje, cliente, `${origen}/p/${deuda.token}`);
       return {
         deuda_id: deuda.id, cliente_id: cliente.id, cliente: cliente.nombre, telefono: cliente.telefono,
+        detalle: etapa === 'control' ? `Le toca desde el ${fechaLarga(deuda.vence)}` : etapa === 'saldo' ? `Tiene anotado ${formatearMonto(deuda.monto)}` : `${deuda.concepto} · ${formatearMonto(deuda.monto)}`,
         etapa, nombre_etapa: NOMBRE_ETAPA[etapa], concepto: deuda.concepto, monto: deuda.monto, vence: deuda.vence,
         texto, wa: `https://wa.me/${cliente.telefono}?text=${encodeURIComponent(texto)}`,
       };
@@ -249,9 +291,20 @@ async function avisos({ e, cfg, url, hoy }) {
 }
 
 // Modo un toque: el dueño tocó "Enviar" y el mensaje salió por su WhatsApp.
-async function marcarEnviado({ e, cuerpo, hoy }) {
+async function marcarEnviado({ e, cfg, cuerpo, hoy }) {
   const h = horario(ahoraAR(e.ahora()));
   if (!h.abierto) throw new Fallo(409, h.motivo);
+  // Avisos que no son de una deuda puntual: el saldo de la libreta o "te toca volver".
+  const suelto = e.rubro?.avisos === 'saldo' ? 'saldo' : (cuerpo.etapa === 'control' && e.rubro?.vuelta ? 'control' : '');
+  if (suelto) {
+    const { deudas, clientes } = await pendientes(e);
+    const item = listaDeAvisos(e, cfg, hoy, deudas, clientes, await mensajesRecientes(e, hoy))
+      .find((x) => x.etapa === suelto && x.cliente.id === Number(cuerpo.cliente_id));
+    if (!item) throw new Fallo(409, 'Ese aviso ya no corresponde.');
+    if (suelto === 'control') await e.repo.actualizar('clientes', item.cliente.id, { av_control: (item.cliente.av_control || 0) + 1, av_control_el: hoy });
+    await e.repo.insertar('mensajes', { cliente_id: item.cliente.id, deuda_id: null, etapa: suelto, canal: 'toque', estado: 'enviado', dia: hoy, creado: iso(e) });
+    return { ok: true, etapa: suelto };
+  }
   const deuda = await e.repo.fila('deudas', Number(cuerpo.deuda_id));
   if (!deuda) throw new Fallo(404, 'Esa deuda no existe.');
   const cliente = await e.repo.fila('clientes', deuda.cliente_id);
@@ -281,6 +334,13 @@ function datosCliente(cuerpo, cfg, parcial = false) {
     if (d.mail && !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(d.mail)) throw new Fallo(400, 'El mail no parece un mail.');
   }
   for (const k of ['acepta', 'pausado', 'baja']) if (k in cuerpo) d[k] = cuerpo[k] ? 1 : 0;
+  for (const [k, largo] of [['grupo', 60], ['nota', 120]]) if (k in cuerpo) d[k] = String(cuerpo[k] || '').trim().slice(0, largo) || null;
+  if ('ultima' in cuerpo) {
+    d.ultima = cuerpo.ultima ? parsearFecha(cuerpo.ultima) : null;
+    if (cuerpo.ultima && !d.ultima) throw new Fallo(400, 'La fecha de la última visita no se entiende.');
+    Object.assign(d, { av_control: 0, av_control_el: null });   // visita nueva: el aviso de control arranca de cero
+  }
+  if ('cada' in cuerpo) { const n = Number(cuerpo.cada); d.cada = Number.isInteger(n) && n >= 0 && n <= 36 ? n : 0; }
   return d;
 }
 async function crearCliente({ e, cfg }, cuerpo) {
@@ -303,7 +363,7 @@ async function listaClientes({ e, url, hoy }) {
   return {
     clientes: [...clientes.values()]
       .filter((x) => !q || x.nombre.toLowerCase().includes(q) || (x.telefono || '').includes(q.replace(/\D/g, '') || '~'))
-      .map((x) => ({ id: x.id, nombre: x.nombre, telefono: x.telefono, puede: puedeRecibir(x), baja: x.baja, pausado: x.pausado, ...(saldo.get(x.id) || { saldo: 0, vencidas: 0 }) }))
+      .map((x) => ({ id: x.id, nombre: x.nombre, grupo: x.grupo || '', nota: x.nota || '', toca: proximoControl(x), telefono: x.telefono, puede: puedeRecibir(x), baja: x.baja, pausado: x.pausado, ...(saldo.get(x.id) || { saldo: 0, vencidas: 0 }) }))
       .sort((a, b) => a.nombre.localeCompare(b.nombre, 'es')),
   };
 }
@@ -317,7 +377,7 @@ async function ficha({ e, url, hoy }, id) {
   ]);
   const origen = origenDe(e, url);
   return {
-    cliente, puede: puedeRecibir(cliente), motivo: motivoNoRecibe(cliente),
+    cliente, puede: puedeRecibir(cliente), motivo: motivoNoRecibe(cliente), toca: proximoControl(cliente),
     deudas: deudas.map((d) => ({
       id: d.id, concepto: d.concepto, monto: d.monto, vence: d.vence, repite: d.repite, estado: d.estado,
       pagada_el: d.pagada_el, medio: d.medio, dias: diasEntre(d.vence, hoy), link: `${origen}/p/${d.token}`,
@@ -388,6 +448,29 @@ async function cambiarDeuda({ e, cuerpo, hoy }, id) {
   }
   return { ok: true };
 }
+// Entrega a cuenta: paga las deudas más viejas primero. Si no alcanza para una
+// entera, esa queda pendiente por lo que falta y la parte pagada queda anotada.
+async function pagoParcial({ e, cuerpo, hoy }, id) {
+  const monto = parsearMonto(cuerpo.monto);
+  if (!monto) throw new Fallo(400, 'El monto no se entiende.');
+  const deudas = await e.repo.filas('deudas', { cliente_id: id, estado: 'pendiente' }, { orden: 'vence asc' });
+  const saldo = suma(deudas);
+  if (!deudas.length) throw new Fallo(409, 'Ese cliente no debe nada.');
+  if (monto > saldo) throw new Fallo(400, `Debe ${formatearMonto(saldo)}: no puede pagar más que eso.`);
+  const medio = ['efectivo', 'transferencia'].includes(cuerpo.medio) ? cuerpo.medio : 'efectivo';
+  let resto = monto;
+  for (const d of deudas) {
+    if (!resto) break;
+    if (resto >= d.monto) { await pagar(e, d, medio); resto -= d.monto; continue; }
+    await e.repo.actualizar('deudas', d.id, { monto: d.monto - resto, mp_preferencia: null, mp_link: null });
+    await e.repo.insertar('deudas', {
+      cliente_id: id, concepto: `${d.concepto} (entrega)`.slice(0, 120), monto: resto, vence: d.vence, repite: 'unico', estado: 'pagada',
+      pagada_el: hoy, medio, token: aleatorio(12), siguiente_creada: 0, creado: iso(e),
+    });
+    resto = 0;
+  }
+  return { ok: true, saldo: saldo - monto };
+}
 async function importar(c) {
   const filas = Array.isArray(c.cuerpo.filas) ? c.cuerpo.filas : [];
   if (!filas.length || filas.length > MAX_IMPORTAR) throw new Fallo(400, `Se cargan de a ${MAX_IMPORTAR} como máximo por vez.`);
@@ -409,6 +492,7 @@ async function importar(c) {
 function verConfig({ e, cfg, url }) {
   return {
     nombre: cfg.nombre || 'Mi negocio', color: cfg.color || '', logo: cfg.logo || '', usuario: cfg.usuario || '',
+    dia_cobro: Number(cfg.dia_cobro) || 5, ultima_copia: cfg.ultima_copia || '', local: !!e.local,
     datos_transferencia: cfg.datos_transferencia || '', mail_dueno: cfg.mail_dueno || '', codigo_area: cfg.codigo_area || '',
     modo: modoDe(cfg, e), origen: origenDe(e, url),
     conexiones: {
@@ -439,6 +523,12 @@ async function guardarConfig({ e, cuerpo }) {
     if (m && !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(m)) throw new Fallo(400, 'El mail no parece un mail.');
     cambios.mail_dueno = m || null;
   }
+  if ('dia_cobro' in cuerpo) {
+    const dia = Number(cuerpo.dia_cobro);
+    if (!Number.isInteger(dia) || dia < 1 || dia > 28) throw new Fallo(400, 'El día de cobro va del 1 al 28.');
+    cambios.dia_cobro = dia;
+  }
+  if ('ultima_copia' in cuerpo) cambios.ultima_copia = fechaValida(cuerpo.ultima_copia) ? cuerpo.ultima_copia : null;
   if ('codigo_area' in cuerpo) {
     const a = String(cuerpo.codigo_area || '').replace(/\D/g, '').replace(/^0/, '');
     if (a && (a.length < 2 || a.length > 4)) throw new Fallo(400, 'El código de área tiene entre 2 y 4 números (por ejemplo 11).');

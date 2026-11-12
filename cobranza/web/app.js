@@ -2,7 +2,8 @@
 // función chica (h) que siempre escribe los datos como texto, nunca como HTML.
 // `pedir(metodo, ruta, cuerpo)` habla con el servidor; en la demo, el
 // "servidor" corre acá mismo con datos de ejemplo.
-import { formatearMonto, fechaLarga, fechaCorta, mostrarTelefono, partirTexto, leerFilas, ahoraAR } from '../src/logica.js';
+import { formatearMonto, fechaLarga, fechaCorta, mostrarTelefono, partirTexto, leerFilas, leerPacientes, ahoraAR, nombreMes, diasEntre } from '../src/logica.js';
+import { RUBROS } from '../src/rubros.js';
 import { leerXlsx } from '../src/xlsx.js';
 
 const ICONOS = {
@@ -56,9 +57,18 @@ function chipDias(dias, vence) {
 const ESTADO_MSJ = { enviado: ['Enviado', ''], entregado: ['Entregado', 'bien'], leido: ['Leído', 'bien'], fallido: ['No llegó', 'mal'] };
 const MEDIO = { efectivo: 'en efectivo', transferencia: 'por transferencia', mercadopago: 'por Mercado Pago' };
 
-export function iniciar({ pedir }) {
+export function iniciar({ pedir, copia = null }) {
   const raiz = document.getElementById('app');
-  const S = { instalada: true, sesion: false, demo: false, sal: '', pendientes: 0, negocio: { nombre: '', color: '', logo: '' } };
+  const S = { instalada: true, sesion: false, demo: false, local: false, rubro: RUBROS.cobranza, sal: '', pendientes: 0, negocio: { nombre: '', color: '', logo: '' } };
+  // Palabras de cada rubro (alumnos, pacientes, familias). Lo que el rubro no define usa estas.
+  const BASE = {
+    navClientes: 'Clientes', fichaTitulo: 'Ficha del cliente', tituloLista: 'Quién te debe', fab: 'Cargar deuda', falta: 'Falta cobrar',
+    vacioTitulo: 'Nadie te debe nada', vacioTexto: 'Cuando cargues una deuda aparece acá, ordenada por días de atraso.', vacioBoton: 'Cargar la primera deuda',
+    nuevaTitulo: 'Cargar una deuda', campoCliente: 'Cliente', ayudaCliente: 'Si ya existe, elegilo de la lista.', campoConcepto: 'Por qué te debe',
+    ayudaConcepto: 'Así aparece en el mensaje: "tu pago de $ 15.000 por la cuota de marzo".', guardar: 'Guardar la deuda', loQueDebe: 'Lo que debe',
+    cargarle: 'Cargarle una deuda', sinClientes: 'Todavía no hay clientes. Se crean al cargar una deuda.', grupo: '', nota: '', ayudaGrupo: '', ayudaNota: '',
+  };
+  const t = (clave) => S.rubro.textos[clave] ?? BASE[clave];
   let turno = 0;
 
   async function api(metodo, ruta, cuerpo) {
@@ -101,11 +111,12 @@ export function iniciar({ pedir }) {
   // ── Marco: cabecera, contenido y barra de secciones ──────────────────────
   function aplicarMarca() {
     const raizCss = document.documentElement.style;
-    if (/^#[0-9a-f]{6}$/i.test(S.negocio.color || '')) {
-      raizCss.setProperty('--marca', S.negocio.color);
-      raizCss.setProperty('--sobre-marca', contraste(S.negocio.color));
+    const color = S.negocio.color || S.rubro.color || '';
+    if (/^#[0-9a-f]{6}$/i.test(color)) {
+      raizCss.setProperty('--marca', color);
+      raizCss.setProperty('--sobre-marca', contraste(color));
     } else { raizCss.removeProperty('--marca'); raizCss.removeProperty('--sobre-marca'); }
-    document.title = S.negocio.nombre ? `${S.negocio.nombre} · Cobranza` : 'Cobranza sin vueltas';
+    document.title = S.negocio.nombre && S.negocio.nombre !== 'Mi negocio' ? `${S.negocio.nombre} · ${S.rubro.nombre}` : S.rubro.nombre;
   }
   function ruta() {
     const t = location.hash.replace(/^#\/?/, '');
@@ -114,7 +125,7 @@ export function iniciar({ pedir }) {
     return { vista: ['inicio', 'avisos', 'clientes', 'ajustes', 'nueva', 'importar'].includes(t) ? t : 'inicio', id: 0 };
   }
   const ir = (destino) => { if (location.hash.slice(1) === destino) pintar(); else location.hash = destino; };
-  const TITULOS = { avisos: 'Avisos de hoy', clientes: 'Clientes', ajustes: 'Ajustes', nueva: 'Cargar una deuda', importar: 'Cargar muchas de una vez', cliente: 'Ficha del cliente' };
+  const titulo = (v) => ({ avisos: 'Avisos de hoy', clientes: t('navClientes'), ajustes: 'Ajustes', nueva: t('nuevaTitulo'), importar: 'Cargar una lista', cliente: t('fichaTitulo') })[v];
   const PADRE = { nueva: 'inicio', importar: 'nueva', cliente: 'clientes' };
 
   function marco(r, cuerpo) {
@@ -122,15 +133,15 @@ export function iniciar({ pedir }) {
     const cab = h('header', { class: 'cab' }, h('div', { class: 'cab-in' },
       sub && h('button', { class: 'btn txt atras', type: 'button', 'aria-label': 'Volver', onclick: () => (history.length > 1 ? history.back() : ir(sub)) }, icono('atras')),
       !sub && (S.negocio.logo ? h('img', { src: S.negocio.logo, alt: '' }) : h('span', { class: 'inicial', 'aria-hidden': 'true' }, (S.negocio.nombre || 'C')[0].toUpperCase())),
-      h('h1', null, (r && TITULOS[r.vista]) || S.negocio.nombre || 'Cobranza sin vueltas')));
+      h('h1', null, (r && titulo(r.vista)) || S.negocio.nombre || S.rubro.nombre)));
     const banda = S.demo && h('div', { class: 'banda' }, h('div', { class: 'banda-in' }, 'Demo con datos de ejemplo. Nada de lo que toques acá se manda ni se cobra de verdad.'));
     const partes = [cab, banda, h('main', { class: 'cont' }, cuerpo)];
     if (r) {
       partes.push(h('nav', { class: 'nav', 'aria-label': 'Secciones' }, h('div', { class: 'nav-in' },
-        [['inicio', 'Inicio'], ['avisos', 'Avisos'], ['clientes', 'Clientes'], ['ajustes', 'Ajustes']].map(([v, texto]) => h('button', {
+        [['inicio', 'Inicio'], ['avisos', 'Avisos'], ['clientes', t('navClientes')], ['ajustes', 'Ajustes']].map(([v, texto]) => h('button', {
           type: 'button', 'aria-current': (r.vista === v || PADRE[r.vista] === v || (v === 'inicio' && r.vista === 'importar')) ? 'page' : null, onclick: () => ir(v),
         }, icono(v), texto, v === 'avisos' && S.pendientes > 0 && h('span', { class: 'globo', 'aria-label': `${S.pendientes} pendientes` }, S.pendientes))))));
-      if (r.vista === 'inicio' || r.vista === 'clientes') partes.push(h('button', { class: 'fab', type: 'button', onclick: () => ir('nueva') }, icono('mas'), 'Cargar deuda'));
+      if (r.vista === 'inicio' || r.vista === 'clientes') partes.push(h('button', { class: 'fab', type: 'button', onclick: () => ir('nueva') }, icono('mas'), t('fab')));
     }
     return partes.filter(Boolean);
   }
@@ -179,6 +190,35 @@ export function iniciar({ pedir }) {
   }
 
   // ── Inicio ───────────────────────────────────────────────────────────────
+  // Solo en la versión del celular: bienvenida y recordatorio de guardar una copia.
+  function avisosLocales(p) {
+    if (!S.local || S.demo) return [];
+    const partes = [];
+    if (S.negocio.nombre === 'Mi negocio') {
+      partes.push(h('div', { class: 'tarjeta' }, h('strong', null, `Bienvenido a ${S.rubro.nombre}`),
+        h('p', { class: 'tenue' }, 'Empezá por poner el nombre de tu negocio y tus datos para transferir. Aparecen en los mensajes.'),
+        h('button', { class: 'btn sec', type: 'button', onclick: () => ir('ajustes') }, 'Ir a Ajustes')));
+    }
+    const dias = p.ultima_copia ? diasEntre(p.ultima_copia, ahoraAR().fecha) : null;
+    if (copia && p.clientes >= 3 && (dias === null || dias > 14)) {
+      partes.push(h('div', { class: 'nota' }, dias === null ? 'Tus datos están solo en este celular y todavía no guardaste una copia. ' : `Hace ${dias} días que no guardás una copia de tus datos. `,
+        h('button', { class: 'btn txt', type: 'button', onclick: () => ir('ajustes') }, 'Guardar una copia')));
+    }
+    return partes;
+  }
+  // Rubros con "que vuelvan": la lista de a quién le toca volver.
+  function extraInicio(p) {
+    const v = S.rubro.vuelta;
+    if (!v) return [];
+    return [
+      h('div', { class: 'titulo' }, h('h2', null, v.titulo)),
+      p.vuelta.length ? h('div', { class: 'lista' }, p.vuelta.map((x) => h('button', { class: 'fila', type: 'button', onclick: () => ir(`cliente-${x.cliente_id}`) },
+        h('span', { class: 'quien' }, h('strong', null, x.cliente), h('span', null, x.avisos ? `Ya le escribiste ${plural(x.avisos, 'vez', 'veces')}` : 'Todavía no le escribiste')),
+        h('span', { class: 'cuanto' }, h('span', { class: `chip ${x.dias > 30 ? 'mal' : 'ojo'}` }, x.dias ? `hace ${plural(x.dias, 'día', 'días')}` : 'le toca hoy')))))
+        : p.clientes > 0 && h('div', { class: 'tarjeta vacio' }, h('strong', null, v.nadie), h('p', null, 'Cuando a alguien le toque volver, aparece acá y en Avisos.')),
+    ];
+  }
+
   async function vistaInicio() {
     const p = await api('GET', '/api/panel');
     S.pendientes = p.avisos.pendientes;
@@ -196,19 +236,26 @@ export function iniciar({ pedir }) {
       ? h('div', { class: 'lista' }, p.deudores.map((d) => h('button', { class: 'fila', type: 'button', onclick: () => ir(`cliente-${d.cliente_id}`) },
         h('span', { class: 'quien' }, h('strong', null, d.cliente), h('span', null, d.concepto)),
         h('span', { class: 'cuanto' }, h('span', { class: 'cifra' }, formatearMonto(d.monto)), chipDias(d.dias, d.vence)))))
-      : h('div', { class: 'tarjeta vacio' }, h('strong', null, 'Nadie te debe nada'), h('p', null, 'Cuando cargues una deuda aparece acá, ordenada por días de atraso.'),
-        h('button', { class: 'btn pri', type: 'button', onclick: () => ir('nueva') }, 'Cargar la primera deuda'));
+      : h('div', { class: 'tarjeta vacio' }, h('strong', null, t('vacioTitulo')), h('p', null, t('vacioTexto')),
+        h('button', { class: 'btn pri', type: 'button', onclick: () => ir('nueva') }, t('vacioBoton')));
     return [
       p.alerta && h('div', { class: 'alerta', role: 'alert' }, p.alerta),
+      ...avisosLocales(p),
       h('section', { class: 'talon', 'aria-label': 'Resumen' },
-        h('div', { class: 'talon-a' }, h('span', { class: 'eti' }, 'Falta cobrar'), h('span', { class: 'cifra' }, formatearMonto(p.resumen.falta))),
+        h('div', { class: 'talon-a' }, h('span', { class: 'eti' }, t('falta')), h('span', { class: 'cifra' }, formatearMonto(p.resumen.falta))),
         h('div', { class: 'troquel' }),
         h('div', { class: 'talon-b' },
           h('div', null, h('span', { class: 'eti' }, `Vencido · ${plural(p.resumen.vencidas, 'deuda', 'deudas')}`), h('span', { class: `cifra${p.resumen.vencido ? ' mal' : ''}` }, formatearMonto(p.resumen.vencido))),
           h('div', null, h('span', { class: 'eti' }, 'Entró este mes'), h('span', { class: `cifra${p.resumen.entro ? ' bien' : ''}` }, formatearMonto(p.resumen.entro))))),
       avisos,
-      h('div', { class: 'titulo' }, h('h2', null, 'Quién te debe'), p.deudores.length > 0 && h('span', { class: 'tenue chico' }, 'Primero los más atrasados')),
-      lista,
+      ...extraInicio(p),
+      (!S.rubro.vuelta || p.deudores.length > 0) && h('div', { class: 'titulo' }, h('h2', null, t('tituloLista')),
+        p.deudores.length > 0 && h('span', { class: 'tenue chico' }, S.rubro.inicio === 'clientes' ? 'Primero los que más deben' : 'Primero los más atrasados')),
+      S.rubro.vuelta && !p.deudores.length ? (p.clientes ? null : lista)
+        : S.rubro.inicio === 'clientes' && p.por_cliente.length ? h('div', { class: 'lista' }, p.por_cliente.map((x) => h('button', { class: 'fila', type: 'button', onclick: () => ir(`cliente-${x.cliente_id}`) },
+          h('span', { class: 'quien' }, h('strong', null, x.cliente), h('span', null, `${plural(x.cantidad, 'anotación', 'anotaciones')} · la primera hace ${plural(Math.max(x.dias, 0), 'día', 'días')}`)),
+          h('span', { class: 'cuanto' }, h('span', { class: 'cifra' }, formatearMonto(x.saldo))))))
+          : lista,
     ];
   }
 
@@ -217,7 +264,7 @@ export function iniciar({ pedir }) {
     const a = await api('GET', '/api/avisos');
     S.pendientes = a.lista.length;
     const auto = a.modo === 'auto';
-    const marcar = async (it) => { await api('POST', '/api/avisos/enviado', { deuda_id: it.deuda_id }); await pintar(); };
+    const marcar = async (it) => { await api('POST', '/api/avisos/enviado', { deuda_id: it.deuda_id, cliente_id: it.cliente_id, etapa: it.etapa }); await pintar(); };
     const boton = (it) => {
       if (!a.horario.abierto) return h('button', { class: 'btn wa ancho', type: 'button', disabled: true }, 'Enviar por WhatsApp');
       if (S.demo) {
@@ -228,7 +275,7 @@ export function iniciar({ pedir }) {
       return h('a', { class: 'btn wa ancho', href: it.wa, target: '_blank', rel: 'noopener', onclick: () => setTimeout(hacer(() => marcar(it), 'Marcado como enviado'), 600) }, 'Enviar por WhatsApp');
     };
     const pendientes = a.lista.map((it) => h('div', { class: 'tarjeta' },
-      h('div', { class: 'estado' }, h('div', null, h('strong', null, it.cliente), h('p', { class: 'tenue chico' }, `${it.concepto} · ${formatearMonto(it.monto)}`)), h('span', { class: `chip ${it.etapa === 'previo' || it.etapa === 'dia' ? 'ojo' : 'mal'}` }, it.nombre_etapa)),
+      h('div', { class: 'estado' }, h('div', null, h('strong', null, it.cliente), h('p', { class: 'tenue chico' }, it.detalle)), h('span', { class: `chip ${['previo', 'dia', 'saldo', 'control'].includes(it.etapa) ? 'ojo' : 'mal'}` }, it.nombre_etapa)),
       h('div', { class: 'burbuja' }, it.texto),
       !auto && boton(it)));
     return [
@@ -237,7 +284,7 @@ export function iniciar({ pedir }) {
         h('div', null, h('strong', null, 'Modo automático'), h('p', { class: 'tenue chico' }, 'Salen solos por WhatsApp, de a tandas cada 15 minutos, de lunes a sábado de 9 a 20.')),
         h('button', { class: 'btn sec', type: 'button', disabled: !a.lista.length || !a.horario.abierto, onclick: hacer(async () => { const r = await api('POST', '/api/avisos/correr', {}); await pintar(); return r; }, (r) => r.motivo || `Salieron ${plural(r.enviados, 'aviso', 'avisos')}${r.fallidos ? ` y ${r.fallidos} no llegaron` : ''}.`) }, 'Mandar ahora'))),
       h('div', { class: 'titulo' }, h('h2', null, auto ? 'Por salir' : 'Para mandar'), h('span', { class: 'tenue chico' }, 'Uno por cliente por día')),
-      pendientes.length ? pendientes : h('div', { class: 'tarjeta vacio' }, h('strong', null, 'No queda nada por mandar hoy'), h('p', null, 'Los avisos aparecen 3 días antes del vencimiento, el día, y a los 3 y 7 días de atraso.')),
+      pendientes.length ? pendientes : h('div', { class: 'tarjeta vacio' }, h('strong', null, 'No queda nada por mandar hoy'), h('p', null, S.rubro.avisos === 'saldo' ? 'Aparecen desde el día de cobro, una vez por semana y hasta tres veces por mes.' : 'Los avisos aparecen 3 días antes del vencimiento, el día, y a los 3 y 7 días de atraso.')),
       a.enviados.length > 0 && [
         h('div', { class: 'titulo' }, h('h2', null, 'Enviados hoy')),
         h('div', { class: 'lista' }, a.enviados.map((m) => h('button', { class: 'fila', type: 'button', onclick: () => ir(`cliente-${m.cliente_id}`) },
@@ -253,17 +300,31 @@ export function iniciar({ pedir }) {
   }
 
   // ── Clientes y ficha ─────────────────────────────────────────────────────
+  // Con grupos (clase, colegio y turno), la lista sale separada por grupo.
+  const conGrupos = (items, fila) => {
+    if (!S.rubro.agrupa || !items.some((x) => x.grupo)) return items.map(fila);
+    const orden = [...items].sort((a, b) => (a.grupo || '~').localeCompare(b.grupo || '~', 'es') || a.nombre.localeCompare(b.nombre, 'es'));
+    const salida = [];
+    let actual = null;
+    for (const x of orden) {
+      const g = x.grupo || 'Sin grupo';
+      if (g !== actual) { salida.push(h('div', { class: 'grupo' }, g)); actual = g; }
+      salida.push(fila(x));
+    }
+    return salida;
+  };
+
   async function vistaClientes() {
     const { clientes } = await api('GET', '/api/clientes');
     const lista = h('div', { class: 'lista' });
     const mostrar = (q) => {
       const t = q.toLowerCase().trim();
       const filtrados = clientes.filter((c) => !t || c.nombre.toLowerCase().includes(t) || (c.telefono || '').includes(t.replace(/\D/g, '') || '~'));
-      lista.replaceChildren(...(filtrados.length ? filtrados.map((c) => h('button', { class: 'fila', type: 'button', onclick: () => ir(`cliente-${c.id}`) },
-        h('span', { class: 'quien' }, h('strong', null, c.nombre), h('span', null, c.telefono ? mostrarTelefono(c.telefono) : 'Sin celular')),
+      lista.replaceChildren(...(filtrados.length ? conGrupos(filtrados, (c) => h('button', { class: 'fila', type: 'button', onclick: () => ir(`cliente-${c.id}`) },
+        h('span', { class: 'quien' }, h('strong', null, c.nombre), h('span', null, [c.nota, c.telefono ? mostrarTelefono(c.telefono) : 'Sin celular'].filter(Boolean).join(' · '))),
         h('span', { class: 'cuanto' }, c.saldo ? h('span', { class: 'cifra' }, formatearMonto(c.saldo)) : h('span', { class: 'chip bien' }, 'Al día'),
           c.baja ? h('span', { class: 'chip mal' }, 'Pidió la baja') : c.vencidas ? h('span', { class: 'chip mal' }, plural(c.vencidas, 'vencida', 'vencidas')) : null)))
-        : [h('div', { class: 'vacio' }, clientes.length ? 'Nadie con ese nombre.' : 'Todavía no hay clientes. Se crean al cargar una deuda.')]));
+        : [h('div', { class: 'vacio' }, clientes.length ? 'Nadie con ese nombre.' : t('sinClientes'))]));
     };
     mostrar('');
     return [campo('Buscar', h('input', { id: 'buscar', type: 'search', placeholder: 'Nombre o celular', oninput: (ev) => mostrar(ev.target.value) })), lista];
@@ -294,15 +355,54 @@ export function iniciar({ pedir }) {
       const nombre = h('input', { id: 'cl-nombre', value: c.nombre, maxlength: 80 });
       const tel = h('input', { id: 'cl-tel', value: c.telefono ? mostrarTelefono(c.telefono).replace('+54 9 ', '') : '', inputmode: 'tel' });
       const mail = h('input', { id: 'cl-mail', value: c.mail || '', type: 'email' });
-      modal('Datos del cliente', h('div', { class: 'tarjeta', style: 'box-shadow:none;padding:0' }, campo('Nombre', nombre), campo('Celular', tel, 'Con código de área, sin 0 ni 15.'), campo('Mail (opcional)', mail)),
-        [{ texto: 'Guardar', clase: 'pri', al: cambiar({ nombre: nombre.value, telefono: tel.value, mail: mail.value }, 'Datos guardados') }]);
+      const nota = h('input', { id: 'cl-nota', value: c.nota || '', maxlength: 120 });
+      const grupo = h('input', { id: 'cl-grupo', value: c.grupo || '', maxlength: 60 });
+      modal('Datos', h('div', { class: 'tarjeta', style: 'box-shadow:none;padding:0' }, campo('Nombre', nombre), campo('Celular', tel, 'Con código de área, sin 0 ni 15.'),
+        t('nota') && campo(t('nota'), nota, t('ayudaNota')), t('grupo') && campo(t('grupo'), grupo, t('ayudaGrupo')), campo('Mail (opcional)', mail)),
+        [{ texto: 'Guardar', clase: 'pri', al: hacer(async () => {
+          await api('PATCH', `/api/clientes/${id}`, { nombre: nombre.value, telefono: tel.value, mail: mail.value, ...(t('nota') ? { nota: nota.value } : {}), ...(t('grupo') ? { grupo: grupo.value } : {}) });
+          await pintar();
+        }, 'Datos guardados') }]);
     };
     const pendientes = f.deudas.filter((d) => d.estado === 'pendiente');
+    const saldo = pendientes.reduce((total, d) => total + d.monto, 0);
+    const entrega = (todo) => {
+      const monto = h('input', { id: 'en-monto', inputmode: 'decimal', placeholder: '5.000' });
+      const pagar = (medio) => hacer(async () => {
+        await api('POST', `/api/clientes/${id}/pago`, { monto: todo ? formatearMonto(saldo).replace('$ ', '') : monto.value, medio });
+        await pintar();
+      }, 'Pago registrado');
+      modal(todo ? `¿Pagó los ${formatearMonto(saldo)}?` : 'Entrega a cuenta',
+        todo ? h('p', { class: 'tenue' }, 'Queda como pagado todo lo que debe.') : campo('Cuánto entregó', monto, `Debe ${formatearMonto(saldo)}. Se descuenta de lo más viejo.`),
+        [{ texto: 'En efectivo', clase: 'pri', al: pagar('efectivo') }, { texto: 'Por transferencia', clase: 'pri', al: pagar('transferencia') }]);
+    };
+    const filaAnotada = (d) => h('div', { class: 'fila' },
+      h('span', { class: 'quien' }, h('strong', null, d.concepto), h('span', null, fechaCorta(d.vence))),
+      h('span', { class: 'cuanto' }, h('span', { class: 'cifra' }, formatearMonto(d.monto)),
+        h('button', { class: 'btn txt chico', type: 'button', onclick: accionDeuda(d, { accion: 'anular' }, 'Anotación borrada') }, 'Borrar')));
+    const tarjetaControl = () => {
+      const v = S.rubro.vuelta, hoy = ahoraAR().fecha;
+      const meses = (m) => (m === 12 ? '1 año' : `${m} meses`);
+      const cambiarFecha = () => {
+        const ultima = h('input', { id: 'ct-ultima', type: 'date', value: c.ultima || hoy });
+        const cada = h('select', { id: 'ct-cada' }, [3, 4, 6, 12].map((m) => h('option', { value: m, selected: m === (c.cada ?? v.cada) }, meses(m))), h('option', { value: 0, selected: c.cada === 0 }, 'No avisarle'));
+        modal(v.campoUltima, h('div', { class: 'tarjeta', style: 'box-shadow:none;padding:0' }, campo('Fecha de la última visita', ultima, 'Si ya tiene turno, poné la fecha del turno.'), campo('Vuelve cada', cada)),
+          [{ texto: 'Guardar', clase: 'pri', al: hacer(async () => { await api('PATCH', `/api/clientes/${id}`, { ultima: ultima.value, cada: Number(cada.value) }); await pintar(); }, 'Guardado') }]);
+      };
+      return h('div', { class: 'tarjeta' },
+        h('div', { class: 'estado' },
+          h('div', null, h('strong', null, v.campoUltima), h('p', { class: 'tenue chico' }, c.ultima ? `${fechaCorta(c.ultima)} · ${c.cada ? `vuelve cada ${meses(c.cada)}` : 'sin aviso'}` : 'Sin fecha cargada')),
+          f.toca && h('span', { class: `chip ${f.toca <= hoy ? 'mal' : ''}` }, f.toca <= hoy ? 'Le toca volver' : `Le toca el ${fechaCorta(f.toca)}`)),
+        h('div', { class: 'acciones' },
+          h('button', { class: 'btn pri chico crece', type: 'button', onclick: hacer(async () => { await api('PATCH', `/api/clientes/${id}`, { ultima: hoy, cada: c.cada ?? v.cada }); await pintar(); }, 'Anotado: vino hoy') }, 'Vino hoy'),
+          h('button', { class: 'btn sec chico crece', type: 'button', onclick: cambiarFecha }, 'Cambiar fecha')));
+    };
     const resto = f.deudas.filter((d) => d.estado !== 'pendiente');
     return [
       h('div', { class: 'tarjeta' },
         h('div', { class: 'estado' },
-          h('div', null, h('h2', null, c.nombre), h('p', { class: 'tenue' }, c.telefono ? mostrarTelefono(c.telefono) : 'Sin celular', c.mail ? ` · ${c.mail}` : '')),
+          h('div', null, h('h2', null, c.nombre), h('p', { class: 'tenue' }, c.telefono ? mostrarTelefono(c.telefono) : 'Sin celular', c.mail ? ` · ${c.mail}` : ''),
+            (c.nota || c.grupo) && h('p', { class: 'tenue chico' }, [c.nota, c.grupo].filter(Boolean).join(' · '))),
           h('button', { class: 'btn sec chico', type: 'button', onclick: datos }, 'Editar')),
         c.telefono && !S.demo && h('a', { class: 'btn wa', href: `https://wa.me/${c.telefono}`, target: '_blank', rel: 'noopener' }, 'Escribirle por WhatsApp'),
         c.baja ? h('div', { class: 'alerta' }, 'Pidió no recibir más avisos. ',
@@ -310,18 +410,25 @@ export function iniciar({ pedir }) {
           : [tilde('cl-acepta', 'Aceptó recibir recordatorios de pago por WhatsApp', c.acepta, (ev) => cambiar({ acepta: ev.target.checked }, 'Guardado')()),
             tilde('cl-pausa', 'Pausar los avisos a este cliente', c.pausado, (ev) => cambiar({ pausado: ev.target.checked }, ev.target.checked ? 'Avisos en pausa' : 'Avisos activos')())],
         !f.puede && !c.baja && f.motivo && h('p', { class: 'nota' }, f.motivo)),
-      h('div', { class: 'titulo' }, h('h2', null, 'Lo que debe'), h('button', { class: 'btn sec chico', type: 'button', onclick: () => ir(`nueva-${id}`) }, 'Cargarle una deuda')),
-      pendientes.length ? pendientes.map((d) => h('div', { class: 'tarjeta' },
+      S.rubro.vuelta && tarjetaControl(),
+      pendientes.length > 0 && (S.rubro.sinVencimiento || pendientes.length > 1) && h('div', { class: 'tarjeta' },
+        h('div', null, h('span', { class: 'eti' }, 'Debe en total'), h('p', { class: 'cifra', style: 'font-size:1.6rem;font-weight:700' }, formatearMonto(saldo))),
+        h('div', { class: 'acciones' },
+          h('button', { class: 'btn pri chico crece', type: 'button', onclick: () => entrega(true) }, 'Pagó todo'),
+          h('button', { class: 'btn sec chico crece', type: 'button', onclick: () => entrega(false) }, 'Entregó una parte'))),
+      h('div', { class: 'titulo' }, h('h2', null, t('loQueDebe')), h('button', { class: 'btn sec chico', type: 'button', onclick: () => ir(`nueva-${id}`) }, t('cargarle'))),
+      pendientes.length ? (S.rubro.sinVencimiento ? h('div', { class: 'lista' }, pendientes.map(filaAnotada)) : pendientes.map((d) => h('div', { class: 'tarjeta' },
         h('div', { class: 'estado' },
           h('div', null, h('strong', null, d.concepto), h('p', { class: 'tenue chico' }, `Vence el ${fechaLarga(d.vence)}${d.repite !== 'unico' ? ` · se repite cada ${d.repite === 'mensual' ? 'mes' : 'semana'}` : ''}`)),
           h('div', { class: 'cuanto' }, h('strong', { class: 'cifra' }, formatearMonto(d.monto)), ' ', chipDias(d.dias, d.vence))),
         h('div', { class: 'acciones' },
           h('button', { class: 'btn pri chico crece', type: 'button', onclick: () => cobrar(d) }, 'Ya me pagó'),
-          h('button', { class: 'btn sec chico crece', type: 'button', onclick: () => copiar(d.link) }, 'Copiar link de pago')),
+          !S.local && h('button', { class: 'btn sec chico crece', type: 'button', onclick: () => copiar(d.link) }, 'Copiar link de pago'),
+          S.local && h('button', { class: 'btn sec chico crece', type: 'button', onclick: () => entrega(false) }, 'Entregó una parte')),
         h('div', { class: 'acciones' },
           h('button', { class: 'btn txt chico', type: 'button', onclick: () => editar(d) }, 'Corregir'),
           d.repite !== 'unico' && h('button', { class: 'btn txt chico', type: 'button', onclick: accionDeuda(d, { accion: 'no_repetir' }, 'No se repite más') }, 'No repetir más'),
-          h('button', { class: 'btn txt chico', type: 'button', onclick: () => modal('¿Anular esta deuda?', h('p', { class: 'tenue' }, 'Deja de contarse y su link de pago deja de funcionar.'), [{ texto: 'Anular', clase: 'peligro', al: accionDeuda(d, { accion: 'anular' }, 'Deuda anulada') }]) }, 'Anular'))))
+          h('button', { class: 'btn txt chico', type: 'button', onclick: () => modal('¿Anular esta deuda?', h('p', { class: 'tenue' }, 'Deja de contarse y su link de pago deja de funcionar.'), [{ texto: 'Anular', clase: 'peligro', al: accionDeuda(d, { accion: 'anular' }, 'Deuda anulada') }]) }, 'Anular')))))
         : h('div', { class: 'tarjeta vacio' }, h('strong', null, 'Está al día')),
       resto.length > 0 && [
         h('div', { class: 'titulo' }, h('h2', null, 'Historial')),
@@ -346,35 +453,60 @@ export function iniciar({ pedir }) {
   // ── Cargar una deuda ─────────────────────────────────────────────────────
   async function vistaNueva(idCliente) {
     const hoy = ahoraAR().fecha;
+    const R = S.rubro;
     let fijo = null, clientes = [];
     if (idCliente) fijo = (await api('GET', `/api/clientes/${idCliente}`)).cliente;
     else clientes = (await api('GET', '/api/clientes')).clientes;
+    const conceptoDefecto = R.concepto ? R.concepto(nombreMes(hoy)) : '';
+    const grupos = [...new Set(clientes.map((x) => x.grupo).filter(Boolean))];
     const nombre = h('input', { id: 'n-nombre', name: 'nombre', required: true, maxlength: 80, list: 'n-clientes', autocomplete: 'off' });
     const nuevo = h('div', { class: 'tarjeta', style: 'box-shadow:none;padding:0' },
       campo('Celular', h('input', { id: 'n-tel', name: 'telefono', inputmode: 'tel', placeholder: '11 5555-4444' }), 'Con código de área, sin 0 ni 15. Sin celular no recibe avisos.'),
-      tilde('n-acepta', 'Aceptó recibir recordatorios de pago por WhatsApp', false));
+      t('nota') && campo(t('nota'), h('input', { id: 'n-nota', name: 'nota', maxlength: 120 }), t('ayudaNota')),
+      t('grupo') && campo(t('grupo'), h('input', { id: 'n-grupo', name: 'grupo', maxlength: 60, list: 'n-grupos' }), t('ayudaGrupo')),
+      t('grupo') && h('datalist', { id: 'n-grupos' }, grupos.map((g) => h('option', { value: g }))),
+      R.vuelta && h('div', { class: 'dos' },
+        campo(R.vuelta.campoUltima, h('input', { id: 'n-ultima', name: 'ultima', type: 'date', value: hoy })),
+        campo('Vuelve cada', h('select', { id: 'n-cada', name: 'cada' },
+          [3, 4, 6, 12].map((m) => h('option', { value: m, selected: m === R.vuelta.cada }, m === 12 ? '1 año' : `${m} meses`)), h('option', { value: 0 }, 'No avisarle')))),
+      tilde('n-acepta', R.vuelta ? 'Aceptó que le escriban por WhatsApp' : 'Aceptó recibir recordatorios de pago por WhatsApp', false));
     const elegido = () => clientes.find((x) => x.nombre.toLowerCase() === nombre.value.trim().toLowerCase());
     nombre.addEventListener('input', () => { nuevo.hidden = !!elegido(); });
+    const campoConcepto = campo(t('campoConcepto'), h('input', { id: 'n-concepto', name: 'concepto', maxlength: 120, value: R.sinVencimiento ? '' : conceptoDefecto, placeholder: R.sinVencimiento ? 'pan, leche y fiambre' : 'la cuota de marzo' }), t('ayudaConcepto'));
+    // En los rubros con "que vuelvan" lo principal es la persona: la cuota es opcional.
+    const cuota = h('div', { class: 'tarjeta', style: 'box-shadow:none;padding:0', hidden: !!R.vuelta && !fijo },
+      !R.sinVencimiento && campoConcepto,
+      h('div', { class: R.sinVencimiento ? '' : 'dos' },
+        campo('Monto', h('input', { id: 'n-monto', name: 'monto', inputmode: 'decimal', placeholder: '15.000' })),
+        !R.sinVencimiento && campo('Vence', h('input', { id: 'n-vence', name: 'vence', type: 'date', value: hoy }))),
+      R.sinVencimiento && campoConcepto,
+      !R.sinVencimiento && campo('Se repite', h('select', { id: 'n-repite', name: 'repite' },
+        h('option', { value: 'unico' }, 'No, es un pago único'), h('option', { value: 'mensual', selected: R.repite === 'mensual' }, 'Todos los meses'), h('option', { value: 'semanal' }, 'Todas las semanas'))));
     const guardar = hacer(async (ev) => {
       const f = new FormData(ev.target);
-      const deuda = { concepto: f.get('concepto'), monto: f.get('monto'), vence: f.get('vence'), repite: f.get('repite') };
       const ya = fijo || elegido();
-      const r = await api('POST', '/api/deudas', ya ? { ...deuda, cliente_id: ya.id }
-        : { ...deuda, cliente: { nombre: f.get('nombre'), telefono: f.get('telefono'), acepta: document.getElementById('n-acepta').checked } });
+      const cliente = {
+        nombre: f.get('nombre'), telefono: f.get('telefono'), nota: f.get('nota') || '', grupo: f.get('grupo') || '', acepta: !!document.getElementById('n-acepta')?.checked,
+        ...(R.vuelta ? { ultima: f.get('ultima'), cada: Number(f.get('cada')) } : {}),
+      };
+      if (cuota.hidden) {
+        const r = ya ? { id: ya.id } : await api('POST', '/api/clientes', cliente);
+        ir(`cliente-${r.id}`);
+        return;
+      }
+      if (!String(f.get('monto') || '').trim()) throw new Error('Falta el monto.');
+      const deuda = { concepto: f.get('concepto') || conceptoDefecto, monto: f.get('monto'), vence: f.get('vence') || hoy, repite: f.get('repite') || 'unico' };
+      const r = await api('POST', '/api/deudas', ya ? { ...deuda, cliente_id: ya.id } : { ...deuda, cliente });
       ir(`cliente-${r.cliente_id}`);
-    }, 'Deuda cargada');
+    }, 'Guardado');
     return [
       h('form', { class: 'tarjeta', onsubmit: guardar },
         fijo ? h('p', null, 'Para ', h('strong', null, fijo.nombre))
-          : [campo('Cliente', nombre, 'Si ya existe, elegilo de la lista.'), h('datalist', { id: 'n-clientes' }, clientes.map((x) => h('option', { value: x.nombre }))), nuevo],
-        campo('Por qué te debe', h('input', { id: 'n-concepto', name: 'concepto', required: true, maxlength: 120, placeholder: 'la cuota de marzo' }), 'Así aparece en el mensaje: "tu pago de $ 15.000 por la cuota de marzo".'),
-        h('div', { class: 'dos' },
-          campo('Monto', h('input', { id: 'n-monto', name: 'monto', required: true, inputmode: 'decimal', placeholder: '15.000' })),
-          campo('Vence', h('input', { id: 'n-vence', name: 'vence', type: 'date', required: true, value: hoy }))),
-        campo('Se repite', h('select', { id: 'n-repite', name: 'repite' },
-          h('option', { value: 'unico' }, 'No, es un pago único'), h('option', { value: 'mensual' }, 'Todos los meses'), h('option', { value: 'semanal' }, 'Todas las semanas'))),
-        h('button', { class: 'btn pri ancho', type: 'submit' }, 'Guardar la deuda')),
-      !fijo && h('button', { class: 'btn sec', type: 'button', onclick: () => ir('importar') }, 'Tengo una lista: cargar muchas de una vez'),
+          : [campo(t('campoCliente'), nombre, t('ayudaCliente')), h('datalist', { id: 'n-clientes' }, clientes.map((x) => h('option', { value: x.nombre }))), nuevo],
+        R.vuelta && !fijo && tilde('n-concuota', R.vuelta.conCuota, false, (ev) => { cuota.hidden = !ev.target.checked; }),
+        cuota,
+        h('button', { class: 'btn pri ancho', type: 'submit' }, R.vuelta && !fijo ? R.vuelta.guardar : t('guardar'))),
+      !fijo && h('button', { class: 'btn sec', type: 'button', onclick: () => ir('importar') }, 'Tengo una lista: cargarla de una vez'),
     ];
   }
 
@@ -384,7 +516,7 @@ export function iniciar({ pedir }) {
     const salida = h('div', { class: 'tarjeta', hidden: true });
     let leidas = [];
     const revisar = (filas) => {
-      leidas = leerFilas(filas, { hoy: ahoraAR().fecha, area: cfg.codigo_area });
+      leidas = leerFilas(filas, { hoy: ahoraAR().fecha, area: cfg.codigo_area, venceDefecto: S.rubro.sinVencimiento ? ahoraAR().fecha : '', conceptoDefecto: S.rubro.sinVencimiento ? 'saldo anterior' : '' });
       const buenas = leidas.filter((f) => !f.errores.length);
       const acepta = tilde('imp-acepta', 'Todos estos clientes aceptaron recibir recordatorios por WhatsApp', false);
       const progreso = h('p', { class: 'tenue chico' });
@@ -436,6 +568,53 @@ export function iniciar({ pedir }) {
   }
 
   // ── Ajustes ──────────────────────────────────────────────────────────────
+  // Rubros con "que vuelvan": se carga la lista de personas con su última visita.
+  async function vistaImportarPacientes() {
+    const cfg = await api('GET', '/api/config');
+    const texto = h('textarea', { id: 'imp-texto', placeholder: 'Ana Gómez; 11 5555-4444; 10/05/2026' });
+    const salida = h('div', { class: 'tarjeta', hidden: true });
+    const revisar = (filas) => {
+      const leidas = leerPacientes(filas, { hoy: ahoraAR().fecha, area: cfg.codigo_area });
+      const buenas = leidas.filter((f) => !f.errores.length);
+      const cargar = hacer(async () => {
+        const acepta = document.getElementById('imp-acepta').checked;
+        for (const f of buenas) {
+          await api('POST', '/api/clientes', { nombre: f.datos.nombre, telefono: f.datos.telefono, acepta, ...(f.datos.ultima ? { ultima: f.datos.ultima, cada: S.rubro.vuelta.cada } : {}) });
+        }
+        ir('clientes');
+        return buenas.length;
+      }, (n) => `Se cargaron ${n}`);
+      salida.hidden = false;
+      salida.replaceChildren(...[
+        h('strong', null, `${buenas.length} para cargar${leidas.length - buenas.length ? ` · ${plural(leidas.length - buenas.length, 'fila con error', 'filas con error')}` : ''}`),
+        h('div', { class: 'tabla' }, h('table', null,
+          h('thead', null, h('tr', null, ['Fila', 'Nombre', 'Celular', S.rubro.vuelta.campoUltima, 'Notas'].map((x) => h('th', null, x)))),
+          h('tbody', null, leidas.map((f) => h('tr', { class: f.errores.length ? 'error' : null },
+            h('td', null, f.linea), h('td', null, f.datos.nombre), h('td', null, f.datos.telefono ? mostrarTelefono(f.datos.telefono) : '—'),
+            h('td', null, f.datos.ultima ? fechaCorta(f.datos.ultima) : '—'), h('td', null, [...f.errores, ...f.avisos].join('. '))))))),
+        buenas.length > 0 && [tilde('imp-acepta', 'Todos aceptaron que les escriban por WhatsApp', false),
+          h('button', { class: 'btn pri ancho', type: 'button', onclick: cargar }, `Cargar ${buenas.length}`)],
+      ].flat().filter(Boolean));
+      salida.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    };
+    const archivo = hacer(async (ev) => {
+      const f = ev.target.files[0];
+      if (!f) return;
+      if (/\.xls$/i.test(f.name)) throw new Error('Ese es un Excel viejo (.xls). Guardalo como .xlsx o como CSV y probá de nuevo.');
+      revisar(/\.xlsx$/i.test(f.name) ? await leerXlsx(await f.arrayBuffer()) : partirTexto(await f.text()));
+    });
+    return [
+      h('div', { class: 'tarjeta' },
+        h('p', null, 'Pegá tu lista o subí una planilla. Una persona por renglón, en este orden:'),
+        h('p', { class: 'chico' }, h('strong', null, `nombre, celular y fecha de ${S.rubro.vuelta.campoUltima.toLowerCase()}`)),
+        campo('Pegar la lista', texto),
+        h('div', { class: 'acciones' },
+          h('button', { class: 'btn pri crece', type: 'button', onclick: hacer(() => { if (!texto.value.trim()) throw new Error('Pegá la lista primero.'); revisar(partirTexto(texto.value)); }) }, 'Revisar la lista'),
+          h('label', { class: 'btn sec crece' }, 'Subir Excel o CSV', h('input', { id: 'imp-archivo', type: 'file', accept: '.xlsx,.csv,.txt', hidden: true, onchange: archivo })))),
+      salida,
+    ];
+  }
+
   async function vistaAjustes() {
     const cfg = await api('GET', '/api/config');
     const guardar = (leer, exito = 'Guardado') => hacer(async (ev) => {
@@ -514,15 +693,43 @@ export function iniciar({ pedir }) {
       campo('Contraseña nueva', h('input', { id: 'aj-nueva', name: 'nueva', type: 'password', required: true, minlength: 10, autocomplete: 'new-password' })),
       h('div', { class: 'acciones' }, h('button', { class: 'btn pri crece', type: 'submit' }, 'Cambiar contraseña'),
         h('button', { class: 'btn sec crece', type: 'button', onclick: hacer(async () => { await api('POST', '/api/salir', {}); S.sesion = false; await pintar(); }) }, 'Salir')));
-    return [negocio, cobros, avisos, cuenta];
+    // Versión del celular: sin cuentas que conectar; datos para transferir y copia de seguridad.
+    const val = (idCampo) => document.getElementById(idCampo).value;
+    const cobrosLocal = S.local && h('form', { class: 'tarjeta', onsubmit: guardar(() => ({
+      datos_transferencia: val('ajl-transf'), codigo_area: val('ajl-area'), ...(S.rubro.avisos === 'saldo' ? { dia_cobro: Number(val('ajl-dia')) } : {}),
+    }), 'Guardado') },
+      h('h2', null, 'Cobros y avisos'),
+      campo('Datos para transferir', h('input', { id: 'ajl-transf', value: cfg.datos_transferencia, maxlength: 300, placeholder: 'Alias: mi.negocio · a nombre de…' }), 'Van al final de cada mensaje de cobro.'),
+      S.rubro.avisos === 'saldo' && campo('Día de cobro', h('input', { id: 'ajl-dia', type: 'number', min: 1, max: 28, value: cfg.dia_cobro }), 'Desde ese día del mes, la app te propone recordarle el saldo a cada cliente.'),
+      campo('Código de área de tus clientes', h('input', { id: 'ajl-area', value: cfg.codigo_area, inputmode: 'numeric', maxlength: 5, placeholder: '11' }), 'Para los celulares que te pasan sin código de área.'),
+      h('button', { class: 'btn pri', type: 'submit' }, 'Guardar'));
+    const copiaSeg = S.local && copia && h('div', { class: 'tarjeta' },
+      h('h2', null, 'Copia de seguridad'),
+      h('p', { class: 'tenue' }, 'Tus datos están guardados solo en este celular. Guardá una copia cada tanto: si cambiás de celular o se borra el navegador, los recuperás con ese archivo.'),
+      h('p', { class: 'chico' }, cfg.ultima_copia ? `Última copia: ${fechaCorta(cfg.ultima_copia)}` : 'Todavía no guardaste ninguna copia.'),
+      h('div', { class: 'acciones' },
+        h('button', { class: 'btn pri crece', type: 'button', onclick: hacer(async () => {
+          await api('POST', '/api/config', { ultima_copia: ahoraAR().fecha });
+          const enlace = h('a', { href: URL.createObjectURL(new Blob([copia.exportar()], { type: 'application/json' })), download: `copia-${S.rubro.archivo || 'app'}-${ahoraAR().fecha}.json` });
+          document.body.append(enlace); enlace.click(); enlace.remove();
+          await pintar();
+        }, 'Copia guardada en tus descargas') }, 'Guardar una copia'),
+        h('label', { class: 'btn sec crece' }, 'Recuperar una copia', h('input', { id: 'cp-archivo', type: 'file', accept: '.json,application/json', hidden: true, onchange: hacer(async (ev) => {
+          const f = ev.target.files[0];
+          if (!f) return;
+          const contenido = await f.text();
+          modal('¿Recuperar esta copia?', h('p', { class: 'tenue' }, 'Reemplaza todo lo que hay ahora en la app por lo que tiene la copia.'),
+            [{ texto: 'Recuperar', clase: 'peligro', al: hacer(() => copia.importar(contenido)) }]);
+        }) }))));
+    return S.local ? [negocio, cobrosLocal, copiaSeg] : [negocio, cobros, avisos, cuenta];
   }
 
-  const VISTAS = { inicio: vistaInicio, avisos: vistaAvisos, clientes: vistaClientes, cliente: vistaCliente, nueva: vistaNueva, importar: vistaImportar, ajustes: vistaAjustes };
+  const VISTAS = { inicio: vistaInicio, avisos: vistaAvisos, clientes: vistaClientes, cliente: vistaCliente, nueva: vistaNueva, importar: () => (S.rubro.vuelta ? vistaImportarPacientes() : vistaImportar()), ajustes: vistaAjustes };
 
   async function arrancar() {
     try {
       const e = await api('GET', '/api/estado');
-      Object.assign(S, { instalada: e.instalada, sesion: e.sesion, demo: e.demo, sal: e.sal, negocio: e.negocio });
+      Object.assign(S, { instalada: e.instalada, sesion: e.sesion, demo: e.demo, local: !!e.local, rubro: RUBROS[e.rubro] || RUBROS.cobranza, sal: e.sal, negocio: e.negocio });
     } catch (err) { raiz.replaceChildren(h('main', { class: 'cont' }, h('div', { class: 'alerta' }, err.message))); return; }
     await pintar({ arriba: true });
   }

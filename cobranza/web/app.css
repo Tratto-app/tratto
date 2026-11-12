@@ -93,6 +93,8 @@ a { color: inherit; }
 .fila .cuanto { flex: none; display: grid; gap: 3px; justify-items: end; text-align: right; }
 .fila .cuanto .cifra { font-weight: 650; }
 div.fila { cursor: default; } div.fila:hover { background: none; }
+.grupo { padding: 9px 16px 6px; font-size: .74rem; letter-spacing: .06em; text-transform: uppercase; color: var(--tenue); font-weight: 600; background: color-mix(in srgb, var(--papel) 60%, var(--hoja)); }
+.fila + .grupo, .grupo + .fila { border-top: 1px solid var(--linea); }
 
 .chip { display: inline-block; font-size: .76rem; font-weight: 600; padding: 2px 8px; border-radius: 999px; background: var(--papel); color: var(--tenue); white-space: nowrap; }
 .chip.mal { background: var(--mal-f); color: var(--mal); }

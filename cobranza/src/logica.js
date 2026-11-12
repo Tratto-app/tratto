@@ -9,6 +9,8 @@ export const NOMBRE_ETAPA = {
   dia: 'Día del vencimiento',
   vencido: 'Pago vencido',
   ultimo: 'Último aviso',
+  saldo: 'Saldo de la cuenta',
+  control: 'Le toca volver',
 };
 export const PLANTILLA = {
   previo: 'recordatorio_previo',
@@ -290,7 +292,7 @@ const ORDEN_POR_DEFECTO = ['nombre', 'telefono', 'concepto', 'monto', 'vence', '
 // Convierte las filas en deudas listas para revisar. Si la primera fila tiene
 // títulos, los usa; si no, espera: nombre, celular, concepto, monto,
 // vencimiento, repite, mail.
-export function leerFilas(filas, { hoy, area = '' } = {}) {
+export function leerFilas(filas, { hoy, area = '', venceDefecto = '', conceptoDefecto = '' } = {}) {
   if (!filas.length) return [];
   let orden = ORDEN_POR_DEFECTO, desde = 0;
   const titulos = filas[0].map(sinAcentos);
@@ -302,9 +304,9 @@ export function leerFilas(filas, { hoy, area = '' } = {}) {
     const datos = {
       nombre: (crudo.nombre || '').slice(0, 80),
       telefono: normalizarTelefono(crudo.telefono, area),
-      concepto: (crudo.concepto || '').slice(0, 120),
+      concepto: (crudo.concepto || conceptoDefecto || '').slice(0, 120),
       monto: parsearMonto(crudo.monto),
-      vence: parsearFecha(crudo.vence, hoy),
+      vence: parsearFecha(crudo.vence, hoy) || venceDefecto || null,
       repite: parsearRepite(crudo.repite),
       mail: /^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(crudo.mail || '') ? crudo.mail : '',
     };
@@ -316,6 +318,114 @@ export function leerFilas(filas, { hoy, area = '' } = {}) {
     const avisos = [];
     if (crudo.telefono && !datos.telefono) avisos.push(`Celular que no se entiende: "${crudo.telefono}"`);
     if (!crudo.telefono) avisos.push('Sin celular: no va a recibir avisos');
+    return { linea: desde + i + 1, datos, errores, avisos };
+  });
+}
+
+// ── Versión que corre sola en el celular (sin servidor) ────────────────────
+export function nombreMes(fecha) { return MESES[Number(fecha.slice(5, 7)) - 1]; }
+
+// El mismo mensaje sin link de pago: no hay página que abrir, así que lleva
+// los datos para transferir (si el negocio los cargó).
+export function textoAvisoLocal(etapa, deuda, cliente, datosPago = '') {
+  const nombre = limpiarVariable(primerNombre(cliente.nombre));
+  const concepto = limpiarVariable(deuda.concepto);
+  const monto = formatearMonto(deuda.monto);
+  const fecha = fechaLarga(deuda.vence);
+  const datos = String(datosPago || '').replace(/\s+/g, ' ').trim();
+  const pago = datos ? ` Para transferir: ${datos}` : '';
+  if (etapa === 'saldo') return `Hola ${nombre}, ¿cómo va? Te paso lo que tenés anotado: ${monto}. Cuando puedas, pasá a arreglarlo.${pago}`;
+  if (etapa === 'previo') return `Hola ${nombre}, te recordamos que el ${fecha} vence tu pago de ${monto} por ${concepto}.${pago}`;
+  if (etapa === 'dia') return `Hola ${nombre}, hoy vence tu pago de ${monto} por ${concepto}.${pago}`;
+  if (etapa === 'vencido') return `Hola ${nombre}, nos figura pendiente el pago de ${monto} por ${concepto}, que venció el ${fecha}. Si ya lo pagaste, avisanos y lo corregimos.${pago}`;
+  return `Hola ${nombre}, seguimos con pendiente el pago de ${monto} por ${concepto}. Si necesitás arreglarlo de otra forma, respondé este mensaje y lo vemos.`;
+}
+
+// Libreta de fiado: no se reclama compra por compra sino el saldo, una vez por
+// mes a partir del día de cobro. El ciclo arranca ese día.
+export function inicioDeCiclo(hoy, dia) {
+  let [a, m] = hoy.split('-').map(Number);
+  if (Number(hoy.slice(8)) < dia) { m -= 1; if (m < 1) { m = 12; a -= 1; } }
+  const ultimo = new Date(Date.UTC(a, m, 0)).getUTCDate();
+  return `${a}-${dos(m)}-${dos(Math.min(dia, ultimo))}`;
+}
+// A quién recordarle el saldo hoy: debe algo anotado antes del día de cobro,
+// no recibió nada hoy, pasaron 7 días del último aviso y van menos de 3 en el
+// ciclo. Después del tercero no se insiste hasta el mes siguiente.
+export function avisosDeSaldo({ deudas, clientes, mensajes, hoy, dia }) {
+  const ciclo = inicioDeCiclo(hoy, dia);
+  const cuentas = new Map();
+  for (const d of deudas) {
+    const c = cuentas.get(d.cliente_id) || { saldo: 0, desde: d.vence };
+    c.saldo += d.monto;
+    if (d.vence < c.desde) c.desde = d.vence;
+    cuentas.set(d.cliente_id, c);
+  }
+  const enviados = new Map();
+  for (const m of mensajes) {
+    if (m.dia >= ciclo) enviados.set(m.cliente_id, [...(enviados.get(m.cliente_id) || []), m.dia]);
+  }
+  const lista = [];
+  for (const [id, cuenta] of cuentas) {
+    const cliente = clientes.get(id);
+    if (!puedeRecibir(cliente) || cuenta.saldo <= 0 || cuenta.desde >= ciclo) continue;
+    const dias = (enviados.get(id) || []).sort();
+    if (dias.length >= 3 || dias.includes(hoy)) continue;
+    if (dias.length && diasEntre(dias.at(-1), hoy) < 7) continue;
+    lista.push({ cliente, etapa: 'saldo', deuda: { id: 0, cliente_id: id, concepto: 'lo anotado en la cuenta', monto: cuenta.saldo, vence: cuenta.desde, token: '' } });
+  }
+  return lista.sort((a, b) => b.deuda.monto - a.deuda.monto);
+}
+
+// ── "Que vuelvan": avisar a quien le toca volver (control, vacuna, service) ──
+export function sumarMeses(fecha, n) {
+  let [a, m, d] = fecha.split('-').map(Number);
+  m += n;
+  a += Math.floor((m - 1) / 12);
+  m = (((m - 1) % 12) + 12) % 12 + 1;
+  const ultimo = new Date(Date.UTC(a, m, 0)).getUTCDate();
+  return `${a}-${dos(m)}-${dos(Math.min(d, ultimo))}`;
+}
+// Fecha en que le toca volver: última visita + cada cuántos meses. null si no se le avisa.
+export function proximoControl(c) {
+  return c && fechaValida(c.ultima) && Number(c.cada) > 0 ? sumarMeses(c.ultima, Number(c.cada)) : null;
+}
+// A quién escribirle hoy para que vuelva: ya le toca, van menos de 3 avisos por
+// este control, pasaron 14 días del último y hoy no recibe otro mensaje.
+export function avisosDeVuelta({ clientes, hoy, ocupados }) {
+  const lista = [];
+  for (const c of clientes.values()) {
+    const toca = proximoControl(c);
+    if (!toca || toca > hoy || !puedeRecibir(c) || ocupados.has(c.id)) continue;
+    if ((c.av_control || 0) >= 3) continue;
+    if (c.av_control_el && diasEntre(c.av_control_el, hoy) < 14) continue;
+    lista.push({ cliente: c, etapa: 'control', deuda: { id: 0, cliente_id: c.id, concepto: 'el control', monto: 0, vence: toca, token: '' } });
+  }
+  return lista.sort((a, b) => (a.deuda.vence < b.deuda.vence ? -1 : a.deuda.vence > b.deuda.vence ? 1 : a.cliente.id - b.cliente.id));
+}
+export function textoControl(cliente, negocio, meses, intento) {
+  const nombre = limpiarVariable(primerNombre(cliente.nombre));
+  const de = negocio && negocio !== 'Mi negocio' ? ` de ${limpiarVariable(negocio)}` : '';
+  const hace = Number(meses) === 12 ? 'un año' : `${Number(meses)} meses`;
+  if (intento > 1) return `Hola ${nombre}, te escribimos de nuevo${de} por el control que te toca. Si querés, decinos qué día te queda cómodo y te pasamos los horarios.`;
+  return `Hola ${nombre}, te escribimos${de}. Ya pasaron ${hace} de tu último control y te toca el próximo. ¿Querés que te reservemos un turno?`;
+}
+// Lista pegada de pacientes: nombre, celular y fecha de la última visita.
+export function leerPacientes(filas, { hoy, area = '' } = {}) {
+  if (!filas.length) return [];
+  let orden = ['nombre', 'telefono', 'ultima'], desde = 0;
+  const campos = [['nombre', /nombre|paciente|cliente/], ['telefono', /tel|cel|whats|wsp|numero/], ['ultima', /ultim|control|visita|fecha/]];
+  const hallados = filas[0].map(sinAcentos).map((t) => (campos.find(([, re]) => t && re.test(t) && !/\d{3}/.test(t)) || [])[0]);
+  if (hallados.includes('nombre') && hallados.filter(Boolean).length >= 2) { orden = hallados; desde = 1; }
+  return filas.slice(desde).map((fila, i) => {
+    const crudo = {};
+    orden.forEach((campo, col) => { if (campo && crudo[campo] === undefined) crudo[campo] = fila[col] ?? ''; });
+    const datos = { nombre: (crudo.nombre || '').slice(0, 80), telefono: normalizarTelefono(crudo.telefono, area), ultima: parsearFecha(crudo.ultima, hoy) };
+    const errores = datos.nombre ? [] : ['Falta el nombre'];
+    const avisos = [];
+    if (crudo.telefono && !datos.telefono) avisos.push(`Celular que no se entiende: "${crudo.telefono}"`);
+    if (!crudo.telefono) avisos.push('Sin celular: no va a recibir avisos');
+    if (!datos.ultima) avisos.push('Sin fecha de última visita: no se le avisa hasta que la cargues');
     return { linea: desde + i + 1, datos, errores, avisos };
   });
 }
