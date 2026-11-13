@@ -181,12 +181,9 @@ window.ESCENA3D = (function () {
     const cam = k.camara, V = (x, y, z) => new k.THREE.Vector3(x, y, z);
     let pos, mira;
     const z1 = (a, b, x0, x1) => k.lerp(a, b, k.suave((t - x0) / Math.max(0.3, x1 - x0)));
-    if (t < P.c1b) {                              // 1a. la cocina, 38 grados: vos en la silla, abanicándote
-      const z = z1(1, 0.9, 0, P.c1b);
+    if (t < P.f2) {                               // 1. la cocina, 38 grados: vos en la silla, abanicándote, y el split en la caja
+      const z = z1(1, 0.88, 0, P.f2);
       mira = V(-0.3, 1.0, -0.35); pos = mira.clone().add(V(2.2 * z, 1.15 * z, 7.3 * z));
-    } else if (t < P.f2) {                        // 1b. el split, todavía en la caja
-      const z = z1(1, 0.9, P.c1b, P.f2);
-      mira = V(CAJA.x - 0.1, 0.4, CAJA.z); pos = mira.clone().add(V(0.3 * z, 1.55 * z, 2.15 * z));
     } else if (t < P.f3) {                        // 2. el ventilador al máximo: aire caliente en la cara
       const z = z1(1, 0.86, P.f2, P.f3);
       mira = V(0.15, 1.5, -0.55); pos = mira.clone().add(V(-1.9 * z, 0.4 * z, 5.2 * z));
@@ -207,7 +204,7 @@ window.ESCENA3D = (function () {
       mira = V(0.45, 1.45, -0.9); pos = mira.clone().add(V(-1.1 * z, 0.45 * z, 5.6 * z));
     } else {                                      // 7. remate: el gato, sólido otra vez
       const z = z1(1, 0.85, P.rem, P.cierre);
-      mira = V(GATO.x, 0.5, GATO.z); pos = mira.clone().add(V(-0.5 * z, 1.35 * z, 3.2 * z));
+      mira = V(GATO.x, 0.3, GATO.z + 0.1); pos = mira.clone().add(V(-0.6 * z, 1.7 * z, 3.9 * z));
     }
     cam.position.copy(pos); cam.lookAt(mira); cam.updateProjectionMatrix(); cam.updateMatrixWorld();
   }
@@ -234,7 +231,7 @@ window.ESCENA3D = (function () {
     get efectos() {
       const r = x => +x.toFixed(2);
       return [
-        { efecto: 'latigazo', t: r(P.c1b - 0.2), db: -21 },
+        { efecto: 'pop', t: r(P.c1b - 0.4), db: -22 },
         { efecto: 'latigazo', t: r(P.f2 - 0.2), db: -19 },
         { efecto: 'motor', t: r(P.maximo - 0.1), db: -27 },
         { efecto: 'falla', t: r(P.calor), db: -18 },
@@ -464,12 +461,12 @@ window.ESCENA3D = (function () {
 
       camara(t);
       // ---- carteles y textos ----
-      etqTermo.animar(t, 0.3, P.c1b + 0.05, termo, 60, -170);
-      etqCaja.animar(t, P.c1b + 0.1, P.f2 + 0.05, { x: CAJA.x - 0.3, y: 0.55, z: CAJA.z }, 20, -330);
+      etqTermo.animar(t, 0.3, P.c1b - 0.5, termo, 60, -170);
+      etqCaja.animar(t, P.c1b - 0.4, P.f2 + 0.05, { x: CAJA.x, y: 0.5, z: CAJA.z }, -20, -260);
       const hc = new T.Vector3(); U.cabeza.getWorldPosition(hc);
       etqVent.animar(t, P.maximo + 0.1, P.f3 + 0.05, { x: VENT.x, y: 2.0, z: VENT.z }, -60, -260);
       etqGato.animar(t, P.derrite + 0.4, P.f5 + 0.05, { x: GATO.x, y: 0.12, z: GATO.z }, 40, -420);
-      etqSolido.animar(t, P.reforma + 0.35, P.cierre + 0.15, { x: GATO.x - 0.2, y: 0.75, z: GATO.z }, 20, -330);
+      etqSolido.animar(t, P.reforma + 0.35, P.cierre + 0.15, { x: GATO.x - 0.2, y: 0.75, z: GATO.z }, 20, -110);
       k.mostrar(card, t, P.precio - 0.15, P.f6 - 0.05);
       k.mostrar(chip, t, P.f6 + 0.25, P.cierre + 0.2);
       url.style.opacity = t < P.cierre ? 1 : 0;
