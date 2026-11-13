@@ -83,7 +83,9 @@ día se pasa al plan Pro.
 Necesita dos claves, que se cargan en la configuración del sitio y nunca van al
 repo:
 
-- `MP_ACCESS_TOKEN`: la credencial de producción de tu aplicación de Mercado Pago.
+- `MP_ACCESS_TOKEN`: la credencial de producción de una aplicación de Mercado Pago.
+  Hoy es la de Tratto (aplicación 2631534334320257): lo que se vende entra a la
+  cuenta de Mercado Pago de Tratto.
 - `LICENCIA_SECRETO`: una frase larga cualquiera. Con ella se firman las licencias.
 
 En Cloudflare están en Workers & Pages → apps-al-dia → Settings → Variables and
@@ -143,7 +145,11 @@ mismas apps sin candado, por si alguna vez querés entregar una a mano.
   (`node tools/probar-nichos.mjs`): carga, avisos, entregas, copia de
   seguridad, recuperación y que los datos sigan ahí al recargar.
 
-No está probado con Mercado Pago real, en celulares reales (iPhone y Android)
+- Con Mercado Pago real (13/11/2026): el botón Comprar de las cuatro apps abre
+  el cobro con el nombre y el precio correctos, sin efectivo (Rapipago y Pago
+  Fácil tardan días y la app se promete al instante). No se hizo ningún pago.
+
+No está probado un pago real de punta a punta, en celulares reales (iPhone y Android)
 ni con compradores de verdad. Conviene que uses cada una vos una semana antes de venderla.
 
 ## Para sumar otro rubro

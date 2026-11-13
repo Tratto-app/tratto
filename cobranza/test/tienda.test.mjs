@@ -37,6 +37,7 @@ test('comprar arma el cobro con el precio de la app y vuelve a la página de gra
   assert.equal(r.cabeceras.get('location'), 'https://mp.test/pagar/9001');
   const c = t.cobros[0];
   assert.deepEqual([c.items[0].unit_price, c.items[0].currency_id, c.auto_return, c.binary_mode], [29000, 'ARS', 'approved', true]);
+  assert.deepEqual(c.payment_methods.excluded_payment_types.map((t) => t.id), ['ticket', 'atm'], 'sin efectivo: tarda días en acreditarse');
   assert.equal(c.back_urls.success, 'https://tienda.test/gracias.html?app=cuotas');
   assert.match(c.external_reference, /^cuotas:[0-9a-f]{20}$/);
   await t.pedir('/api/comprar?app=control');

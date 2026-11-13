@@ -61,6 +61,8 @@ export async function manejarTienda(request, e) {
           back_urls: { success: `${url.origin}/gracias.html?app=${rubro.id}`, pending: `${url.origin}/gracias.html?app=${rubro.id}`, failure: `${url.origin}/${rubro.archivo}/?pago=no` },
           auto_return: 'approved',
           binary_mode: true,          // se aprueba o se rechaza en el momento: la app se entrega al instante
+          // Sin efectivo (Rapipago, Pago Fácil): tarda días en acreditarse y la app se promete al instante.
+          payment_methods: { excluded_payment_types: [{ id: 'ticket' }, { id: 'atm' }] },
         }),
       });
       if (!ok || !datos.init_point) return new Response('Mercado Pago no pudo armar el cobro. Probá de nuevo en un rato.', { status: 502 });
