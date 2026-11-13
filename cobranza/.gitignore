@@ -3,3 +3,4 @@ src/_web.js
 *.sqlite
 .dev.vars
 .wrangler/
+dist-cloudflare/

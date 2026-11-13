@@ -50,6 +50,7 @@ node tools/probar-pantallas.mjs       # recorrido de la app instalada con un nav
 node tools/probar-nichos.mjs          # recorrido de las cuatro micro apps y sus demos
 node tools/probar-tienda.mjs          # una compra completa en la tienda, con Mercado Pago simulado
 node tools/tienda-local.mjs           # la tienda en http://localhost:8793 para verla
+node tools/tienda-cloudflare.mjs      # la tienda lista para Cloudflare Pages en dist-cloudflare/
 ```
 
 `dist/` está subido a propósito: quien instala no necesita armar nada.

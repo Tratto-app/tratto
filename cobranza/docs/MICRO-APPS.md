@@ -64,8 +64,19 @@ de operación y el mail con el que pagó, y recupera su compra solo.
 **Lo que necesita para andar**
 
 La tienda es un sitio estático con tres funciones chicas (`api/comprar`,
-`api/activar` y `api/verificar`), listo para Vercel. Necesita dos claves, que se
-cargan en la configuración del sitio y nunca van al repo:
+`api/activar` y `api/verificar`). Se puede publicar en dos lugares:
+
+- **Cloudflare Pages, gratis.** Sus condiciones permiten vender. Se arma con
+  `node tools/tienda-cloudflare.mjs` (sale de `dist/tienda`, queda en
+  `dist-cloudflare/`, que no se sube) y se publica con
+  `npx wrangler pages deploy dist-cloudflare --project-name apps-al-dia --branch main`.
+- **Vercel.** `dist/tienda` está lista como proyecto aparte (raíz
+  `cobranza/dist/tienda`). Ojo: el plan gratis de Vercel (Hobby) es solo para
+  uso personal o no comercial según sus condiciones, y Vercel puede bajar un
+  proyecto sin aviso. Para vender ahí hace falta el plan Pro (USD 20 por mes).
+
+Necesita dos claves, que se cargan en la configuración del sitio y nunca van al
+repo:
 
 - `MP_ACCESS_TOKEN`: la credencial de producción de tu aplicación de Mercado Pago.
 - `LICENCIA_SECRETO`: una frase larga cualquiera. Con ella se firman las licencias.
