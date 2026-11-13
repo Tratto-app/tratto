@@ -63,23 +63,33 @@ de operación y el mail con el que pagó, y recupera su compra solo.
 
 **Lo que necesita para andar**
 
-La tienda es un sitio estático con tres funciones chicas (`api/comprar`,
-`api/activar` y `api/verificar`). Se puede publicar en dos lugares:
+La tienda está publicada en **https://apps-al-dia.pages.dev** (Cloudflare Pages,
+plan gratis, cuenta de Cloudflare del dueño). Cloudflare permite vender en el
+plan gratis; Vercel no (su plan Hobby es solo para uso personal o no comercial).
+La dirección vieja, apps-al-dia.vercel.app, solo manda a la nueva.
 
-- **Cloudflare Pages, gratis.** Sus condiciones permiten vender. Se arma con
-  `node tools/tienda-cloudflare.mjs` (sale de `dist/tienda`, queda en
-  `dist-cloudflare/`, que no se sube) y se publica con
-  `npx wrangler pages deploy dist-cloudflare --project-name apps-al-dia --branch main`.
-- **Vercel.** `dist/tienda` está lista como proyecto aparte (raíz
-  `cobranza/dist/tienda`). Ojo: el plan gratis de Vercel (Hobby) es solo para
-  uso personal o no comercial según sus condiciones, y Vercel puede bajar un
-  proyecto sin aviso. Para vender ahí hace falta el plan Pro (USD 20 por mes).
+Toda la tienda va adentro de un solo `_worker.js`: las páginas y las tres
+funciones (`api/comprar`, `api/activar` y `api/verificar`). Para publicar un
+cambio:
+
+```bash
+npm run armar
+CLOUDFLARE_API_TOKEN=… CLOUDFLARE_ACCOUNT_ID=… node tools/tienda-cloudflare.mjs --publicar
+```
+
+`dist/tienda` sigue lista para Vercel (raíz `cobranza/dist/tienda`) por si algún
+día se pasa al plan Pro.
 
 Necesita dos claves, que se cargan en la configuración del sitio y nunca van al
 repo:
 
 - `MP_ACCESS_TOKEN`: la credencial de producción de tu aplicación de Mercado Pago.
 - `LICENCIA_SECRETO`: una frase larga cualquiera. Con ella se firman las licencias.
+
+En Cloudflare están en Workers & Pages → apps-al-dia → Settings → Variables and
+Secrets (Production), como "Secret". Después de cambiar una hay que volver a
+publicar para que la tome. `LICENCIA_SECRETO` ya está cargada: si se cambia,
+las licencias vendidas dejan de valer.
 
 No usa base de datos: la licencia es el número de pago firmado. Por eso una
 licencia no se puede inventar, y si devolvés una compra desde Mercado Pago, esa
