@@ -107,7 +107,7 @@ try {
     assert.equal(await p.locator('.ficha').count(), 4);
     await foto('catalogo');
     await p.click('text=Control al día');
-    await ver('Que tus pacientes vuelvan al control');
+    await ver('Tus pacientes vuelven al control');
     await p.frameLocator('.telefono iframe').getByText('Consultorio Dra. Acosta').first().waitFor({ timeout: 10000 });
     await foto('venta-escritorio', false);
     await contexto.close();

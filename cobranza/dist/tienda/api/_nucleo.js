@@ -93,12 +93,55 @@ var RUBROS = {
     venta: {
       para: "Para odont\xF3logos y consultorios",
       quienes: "pacientes",
-      titular: "Que tus pacientes vuelvan al control",
-      bajada: "La app te avisa cada ma\xF1ana a qui\xE9n le toca volver y te deja el mensaje de WhatsApp listo. Tambi\xE9n lleva las cuotas de ortodoncia.",
+      titular: "Tus pacientes vuelven al control. Vos solo toc\xE1s enviar",
+      bajada: "Cada ma\xF1ana la app te muestra a qui\xE9n le toca el control y te deja el WhatsApp escrito con su nombre. Lo mand\xE1s desde tu celular con un toque. Tambi\xE9n lleva las cuotas de ortodoncia e implantes.",
+      sellos: ["Pago \xFAnico", "Se abre al instante", "Sin historia cl\xEDnica"],
       puntos: [
         ["El sill\xF3n no queda vac\xEDo", "A los 6 meses del \xFAltimo control, el paciente aparece en tu lista con el mensaje armado."],
         ["Insiste sin molestar", "Si no responde, te lo vuelve a proponer a los 14 d\xEDas, hasta tres veces."],
         ["Sin historia cl\xEDnica", "Guarda solo nombre, celular y fechas. Nada sensible."]
+      ],
+      // Lo que recibe el paciente: el texto sale de textoControl (src/logica.js), el mismo que arma la app.
+      chat: {
+        titulo: "Esto es lo que le llega a tu paciente",
+        bajada: "Sale de tu WhatsApp, con tu n\xFAmero. El paciente sabe que sos vos y te contesta a vos.",
+        negocio: "Consultorio Dra. Acosta",
+        paciente: "Marta G\xF3mez",
+        meses: 6,
+        respuesta: "\xA1S\xED! \xBFTen\xE9s algo el jueves a la tarde?"
+      },
+      manana: {
+        titulo: "As\xED es tu ma\xF1ana con Control al d\xEDa",
+        pasos: [
+          ["8:50", "Abr\xEDs la app", "Te muestra los pacientes a los que hoy les toca el control."],
+          ["8:52", "Toc\xE1s enviar", "El mensaje ya est\xE1 escrito con el nombre de cada uno. Sale de tu WhatsApp."],
+          ["14 d\xEDas despu\xE9s", "La app insiste por vos", 'Si alguno no respondi\xF3, te lo vuelve a mostrar, hasta tres veces. Cuando viene, toc\xE1s "Vino hoy" y el plazo vuelve a empezar.']
+        ]
+      },
+      calculo: {
+        titulo: "\xBFCu\xE1nto vale un paciente que vuelve?",
+        bajada: "Pon\xE9 tus n\xFAmeros. Es una cuenta, no una promesa.",
+        cantidad: "Pacientes por mes que vuelven gracias al aviso",
+        cantidadInicial: 4,
+        cantidadMax: 20,
+        precio: "Lo que cobr\xE1s un control",
+        precioInicial: 4e4,
+        resultado: "por mes en turnos que hoy se te escapan"
+      },
+      extras: {
+        titulo: "Pensada para un consultorio",
+        items: [
+          ["Tu lista de pacientes, de una", "Peg\xE1s la lista o sub\xEDs el Excel que ya ten\xE9s: nombre, celular y fecha del \xFAltimo control."],
+          ["Cuotas de ortodoncia e implantes", "Te avisa qui\xE9n tiene la cuota vencida y le arma el recordatorio."],
+          ["Nada de historia cl\xEDnica", "Solo nombre, celular y fechas. Nada sensible."],
+          ["Tus datos, en tu celular", "No los ve nadie m\xE1s. La app te recuerda guardar una copia por si cambi\xE1s de celular."],
+          ["iPhone y Android", "Se abre en el navegador y queda como \xEDcono en la pantalla de inicio. No hay que bajar nada."],
+          ["Sin cuota mensual", "La pag\xE1s una vez y es tuya."]
+        ]
+      },
+      preguntas: [
+        ["\xBFPuedo cargar los pacientes que ya tengo?", "S\xED. Peg\xE1s la lista o sub\xEDs un Excel con nombre, celular y fecha del \xFAltimo control, y la app los carga todos juntos."],
+        ["\xBFCada cu\xE1nto avisa?", "A los 6 meses del \xFAltimo control, o cada cu\xE1nto le pongas a cada paciente."]
       ]
     },
     avisos: "deuda",

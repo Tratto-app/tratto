@@ -60,12 +60,50 @@ export const RUBROS = {
     id: 'control', nombre: 'Control al día', archivo: 'control-al-dia', color: '#0f766e', precio: 59000,
     venta: {
       para: 'Para odontólogos y consultorios', quienes: 'pacientes',
-      titular: 'Que tus pacientes vuelvan al control',
-      bajada: 'La app te avisa cada mañana a quién le toca volver y te deja el mensaje de WhatsApp listo. También lleva las cuotas de ortodoncia.',
+      titular: 'Tus pacientes vuelven al control. Vos solo tocás enviar',
+      bajada: 'Cada mañana la app te muestra a quién le toca el control y te deja el WhatsApp escrito con su nombre. Lo mandás desde tu celular con un toque. También lleva las cuotas de ortodoncia e implantes.',
+      sellos: ['Pago único', 'Se abre al instante', 'Sin historia clínica'],
       puntos: [
         ['El sillón no queda vacío', 'A los 6 meses del último control, el paciente aparece en tu lista con el mensaje armado.'],
         ['Insiste sin molestar', 'Si no responde, te lo vuelve a proponer a los 14 días, hasta tres veces.'],
         ['Sin historia clínica', 'Guarda solo nombre, celular y fechas. Nada sensible.'],
+      ],
+      // Lo que recibe el paciente: el texto sale de textoControl (src/logica.js), el mismo que arma la app.
+      chat: {
+        titulo: 'Esto es lo que le llega a tu paciente',
+        bajada: 'Sale de tu WhatsApp, con tu número. El paciente sabe que sos vos y te contesta a vos.',
+        negocio: 'Consultorio Dra. Acosta', paciente: 'Marta Gómez', meses: 6,
+        respuesta: '¡Sí! ¿Tenés algo el jueves a la tarde?',
+      },
+      manana: {
+        titulo: 'Así es tu mañana con Control al día',
+        pasos: [
+          ['8:50', 'Abrís la app', 'Te muestra los pacientes a los que hoy les toca el control.'],
+          ['8:52', 'Tocás enviar', 'El mensaje ya está escrito con el nombre de cada uno. Sale de tu WhatsApp.'],
+          ['14 días después', 'La app insiste por vos', 'Si alguno no respondió, te lo vuelve a mostrar, hasta tres veces. Cuando viene, tocás "Vino hoy" y el plazo vuelve a empezar.'],
+        ],
+      },
+      calculo: {
+        titulo: '¿Cuánto vale un paciente que vuelve?',
+        bajada: 'Poné tus números. Es una cuenta, no una promesa.',
+        cantidad: 'Pacientes por mes que vuelven gracias al aviso', cantidadInicial: 4, cantidadMax: 20,
+        precio: 'Lo que cobrás un control', precioInicial: 40000,
+        resultado: 'por mes en turnos que hoy se te escapan',
+      },
+      extras: {
+        titulo: 'Pensada para un consultorio',
+        items: [
+          ['Tu lista de pacientes, de una', 'Pegás la lista o subís el Excel que ya tenés: nombre, celular y fecha del último control.'],
+          ['Cuotas de ortodoncia e implantes', 'Te avisa quién tiene la cuota vencida y le arma el recordatorio.'],
+          ['Nada de historia clínica', 'Solo nombre, celular y fechas. Nada sensible.'],
+          ['Tus datos, en tu celular', 'No los ve nadie más. La app te recuerda guardar una copia por si cambiás de celular.'],
+          ['iPhone y Android', 'Se abre en el navegador y queda como ícono en la pantalla de inicio. No hay que bajar nada.'],
+          ['Sin cuota mensual', 'La pagás una vez y es tuya.'],
+        ],
+      },
+      preguntas: [
+        ['¿Puedo cargar los pacientes que ya tengo?', 'Sí. Pegás la lista o subís un Excel con nombre, celular y fecha del último control, y la app los carga todos juntos.'],
+        ['¿Cada cuánto avisa?', 'A los 6 meses del último control, o cada cuánto le pongas a cada paciente.'],
       ],
     },
     avisos: 'deuda', inicio: 'deudas', repite: 'mensual',

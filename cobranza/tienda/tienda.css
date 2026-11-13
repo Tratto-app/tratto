@@ -78,6 +78,58 @@ section + section { border-top: 1px solid var(--linea); }
 .cierre .btn { background: var(--sobre-marca); color: var(--marca); box-shadow: 0 16px 34px -14px rgba(0, 0, 0, .45); }
 footer .ancho { padding-block: 28px 40px; font-size: .88rem; color: var(--tenue); display: flex; flex-wrap: wrap; gap: 8px 24px; justify-content: space-between; }
 
+/* Dos columnas: texto a un lado, la pieza visual al otro */
+.dos { display: grid !important; grid-template-columns: minmax(0, .9fr) minmax(0, 1.1fr); gap: 48px !important; align-items: center; }
+.dos-texto { display: grid; gap: 16px; align-content: start; }
+
+/* El mensaje como se ve en WhatsApp, con el color de la app y nada más */
+.wa { margin: 0; justify-self: center; width: min(100%, 440px); background: var(--hoja); border: 1px solid var(--linea); border-radius: 28px; overflow: hidden; box-shadow: 0 30px 60px -36px color-mix(in srgb, var(--marca) 60%, transparent); }
+.wa-cab { display: flex; align-items: center; gap: 12px; padding: 14px 18px; border-bottom: 1px solid var(--linea); }
+.wa-cab div { display: grid; line-height: 1.25; }
+.wa-cab strong { font-weight: 750; }
+.wa-cab span { font-size: .8rem; color: var(--tenue); }
+.wa-av { flex: none; width: 40px; height: 40px; border-radius: 50%; display: grid; place-items: center; font-weight: 800; font-size: .9rem; background: color-mix(in srgb, var(--marca) 16%, var(--hoja)); color: var(--marca); }
+.wa-cuerpo { display: grid; gap: 10px; padding: 20px 16px 22px; background: color-mix(in srgb, var(--marca) 5%, var(--papel)); }
+.wa-msg { position: relative; max-width: 86%; padding: 10px 14px 22px; border-radius: 18px; font-size: .98rem; line-height: 1.45; }
+.wa-msg.sale { justify-self: end; background: color-mix(in srgb, var(--marca) 16%, var(--hoja)); border-bottom-right-radius: 6px; }
+.wa-msg.entra { justify-self: start; background: var(--hoja); border: 1px solid var(--linea); border-bottom-left-radius: 6px; }
+.wa-hora { position: absolute; right: 12px; bottom: 5px; font-size: .72rem; color: var(--tenue); white-space: nowrap; }
+.wa figcaption { padding: 12px 18px 16px; font-size: .82rem; color: var(--tenue); border-top: 1px solid var(--linea); }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .wa-av { color: color-mix(in srgb, var(--marca) 55%, #ffffff); } }
+:root[data-theme="dark"] .wa-av { color: color-mix(in srgb, var(--marca) 55%, #ffffff); }
+
+/* La mañana: tres momentos con su hora */
+.tiempo { list-style: none; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; }
+.tiempo li { background: var(--hoja); border: 1px solid var(--linea); border-radius: 22px; padding: 22px; display: grid; gap: 8px; align-content: start; }
+.tiempo .hora { justify-self: start; font-size: .8rem; font-weight: 800; letter-spacing: .02em; padding: 5px 11px; border-radius: 999px; background: color-mix(in srgb, var(--marca) 12%, transparent); color: var(--marca); font-variant-numeric: tabular-nums; }
+.tiempo strong { font-size: 1.12rem; font-weight: 750; }
+.tiempo li > span:last-child { color: var(--tenue); font-size: .98rem; }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .tiempo .hora { color: color-mix(in srgb, var(--marca) 55%, #ffffff); } }
+:root[data-theme="dark"] .tiempo .hora { color: color-mix(in srgb, var(--marca) 55%, #ffffff); }
+
+/* La cuenta */
+.calc { background: var(--hoja); border: 1px solid var(--linea); border-radius: 28px; padding: 26px; display: grid; gap: 22px; }
+.calc-campo { display: grid; gap: 10px; font-weight: 700; font-size: .96rem; }
+.calc-campo > span:first-child { display: flex; justify-content: space-between; gap: 12px; }
+.calc-campo output { font-weight: 800; font-size: 1.2rem; color: var(--marca); font-variant-numeric: tabular-nums; }
+.calc input[type="range"] { width: 100%; accent-color: var(--marca); height: 28px; }
+.calc-pesos { display: flex; align-items: center; gap: 8px; min-height: 54px; padding: 0 16px; border-radius: 16px; border: 1.5px solid var(--linea); background: var(--papel); font-size: 1.1rem; }
+.calc-pesos:focus-within { border-color: var(--marca); }
+.calc-pesos input { flex: 1; min-width: 0; border: 0; background: transparent; color: inherit; font: inherit; font-weight: 750; outline: none; font-variant-numeric: tabular-nums; }
+.calc-res { display: grid; gap: 4px; padding: 20px; border-radius: 20px; background: color-mix(in srgb, var(--marca) 9%, transparent); }
+.calc-num { font-size: clamp(2.1rem, 7vw, 2.8rem); font-weight: 800; letter-spacing: -.03em; line-height: 1.05; font-variant-numeric: tabular-nums; }
+.calc-res > span:last-child { color: var(--tenue); font-weight: 600; }
+.calc-nota { font-weight: 700; }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .calc-campo output { color: color-mix(in srgb, var(--marca) 55%, #ffffff); } }
+:root[data-theme="dark"] .calc-campo output { color: color-mix(in srgb, var(--marca) 55%, #ffffff); }
+
+/* Lo que trae: seis tarjetas */
+.extras { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; }
+.extras > div { background: var(--hoja); border: 1px solid var(--linea); border-radius: 22px; padding: 22px; display: grid; gap: 8px; align-content: start; }
+.extras > div::before { content: ""; width: 30px; height: 5px; border-radius: 999px; background: var(--marca); margin-bottom: 6px; }
+.extras h3 { font-size: 1.08rem; font-weight: 750; }
+.extras p { color: var(--tenue); font-size: .98rem; }
+
 /* Catálogo */
 .catalogo { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
 .ficha { --marca: #1f5fbf; background: var(--hoja); border: 1px solid var(--linea); border-radius: 24px; padding: 24px; display: grid; gap: 14px; align-content: start; text-decoration: none; transition: transform .15s, box-shadow .15s; }
@@ -95,7 +147,8 @@ footer .ancho { padding-block: 28px 40px; font-size: .88rem; color: var(--tenue)
 
 @media (max-width: 860px) {
   .hero .ancho { grid-template-columns: minmax(0, 1fr); gap: 36px; padding-block: 24px 56px; }
-  .puntos, .pasos, .catalogo { grid-template-columns: minmax(0, 1fr); }
+  .puntos, .pasos, .catalogo, .tiempo, .extras { grid-template-columns: minmax(0, 1fr); }
+  .dos { grid-template-columns: minmax(0, 1fr); gap: 28px !important; }
   .bloque .ancho, .cierre .ancho { padding-block: 48px; }
   .btn.grande { width: 100%; }
 }
