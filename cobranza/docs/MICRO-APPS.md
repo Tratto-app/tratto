@@ -78,9 +78,8 @@ licencia deja de activar celulares nuevos.
 quedan atados a esa dirección en su celular. Elegí bien el nombre antes de
 vender la primera.
 
-**Antes de publicar**, completá en `tienda/pagina.mjs` el nombre de la tienda
-(hoy dice "Apps al día") y un contacto de ayuda. Las páginas prometen devolver
-la plata dentro de los 10 días: si no querés ofrecerlo, sacalo de ahí.
+El nombre de la tienda ("Apps al día") y el contacto de ayuda que muestran las
+páginas se cambian en `tienda/pagina.mjs`.
 
 Para probar todo sin cobrar nada: `node tools/tienda-local.mjs` levanta la
 tienda con un Mercado Pago simulado.

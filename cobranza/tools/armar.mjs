@@ -80,6 +80,11 @@ await writeFile(en('dist/tienda/vercel.json'), `${JSON.stringify({
     { source: '/gracias.html', headers: [{ key: 'X-Robots-Tag', value: 'noindex' }, { key: 'Cache-Control', value: 'no-store' }] },
   ],
 }, null, 2)}\n`);
+// La tienda es un proyecto aparte en Vercel con esta carpeta como raíz: lleva su
+// propio package.json (para que las funciones usen import) y su propio
+// .vercelignore (el de la raíz del repo excluye cobranza del sitio de Tratto).
+await writeFile(en('dist/tienda/package.json'), `${JSON.stringify({ name: 'apps-al-dia', private: true, type: 'module' }, null, 2)}\n`);
+await writeFile(en('dist/tienda/.vercelignore'), '# Esta carpeta se publica entera.\n');
 console.log(`micro apps: ${nichos.map((r) => r.archivo).join(' · ')} (sueltas, demos y tienda)`);
 
 const kb = (t) => `${(Buffer.byteLength(t) / 1024).toFixed(0)} KB`;

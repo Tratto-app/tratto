@@ -3,7 +3,7 @@
 import { ICONOS } from '../web/app.js';
 
 // Nombre de la tienda y contacto de ayuda: cambiarlos acá antes de publicar.
-export const TIENDA = { nombre: 'Apps al día', contacto: '' };
+export const TIENDA = { nombre: 'Apps al día', contacto: 'ommelenicki@gmail.com' };
 
 const esc = (t) => String(t ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 const pesos = (n) => `$\u00a0${Number(n).toLocaleString('es-AR')}`;   // con espacio que no corta: "$" y el número van juntos
@@ -47,7 +47,7 @@ export function paginaApp(rubro, css, fragmento = false) {
     ['¿Los mensajes salen solos?', 'No. La app arma el mensaje y vos lo mandás desde tu WhatsApp con un toque. Sale de tu número y no te cuesta nada.'],
     ['¿Dónde quedan mis datos?', 'En tu celular. No los ve nadie más. La app te recuerda guardar una copia para no perderlos si cambiás de celular.'],
     ['¿Anda en iPhone y en Android?', 'Sí. Se abre en el navegador y se deja como ícono en la pantalla de inicio. No hay que bajar nada.'],
-    ['¿Y si no me sirve?', `Escribinos dentro de los 10 días de la compra y te devolvemos la plata.${TIENDA.contacto ? ` ${TIENDA.contacto}.` : ''}`],
+    ['¿Y si necesito ayuda?', `Escribinos a ${TIENDA.contacto} y te damos una mano.`],
   ];
   const cuerpo = `<header class="barra"><div class="ancho">
   <a class="marca" href="/">${logo(rubro)}<span>${esc(nombre)}</span></a>
@@ -85,7 +85,7 @@ export function paginaApp(rubro, css, fragmento = false) {
 </div></section>
 <section class="cierre"><div class="ancho">
   <h2>${esc(nombre)}, por ${pesos(rubro.precio)} una sola vez</h2>
-  <p>Sin cuota mensual. Si no te sirve, te devolvemos la plata dentro de los 10 días.</p>
+  <p>Sin cuota mensual. La pagás hoy y queda en tu celular.</p>
   <a class="btn grande" href="${comprar}">Comprar ahora</a>
 </div></section>
 </main>
