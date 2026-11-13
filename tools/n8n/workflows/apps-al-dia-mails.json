@@ -1,0 +1,516 @@
+{
+  "name": "Apps al día · mails (Gmail appsaldia1)",
+  "nodes": [
+    {
+      "id": "f0014ab8-64f3-4f37-a7d1-86c8db9aa6b5",
+      "name": "Lunes a viernes de 9 a 17:30, cada media hora",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        0,
+        0
+      ],
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "cronExpression",
+              "expression": "0,30 9-17 * * 1-5"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "035860b1-c33a-4902-9582-fc1a52cc5615",
+      "name": "Configuracion",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        220,
+        0
+      ],
+      "parameters": {
+        "jsCode": "return [{ json: { supabaseUrl: 'https://qglsonbcsncgekzbfafk.supabase.co' } }];"
+      }
+    },
+    {
+      "id": "5fb962f2-d2e1-46e0-be08-2867b1a18def",
+      "name": "Buscar avisos y bajas",
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "alwaysOutputData": true,
+      "position": [
+        440,
+        0
+      ],
+      "parameters": {
+        "operation": "getAll",
+        "limit": 50,
+        "filters": {
+          "q": "newer_than:2d -from:me -in:sent"
+        }
+      },
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "aitECTyJnI1VaYXo",
+          "name": "Apps al día · Gmail appsaldia1"
+        }
+      },
+      "webhookId": "b58b7046-26b8-4288-9489-4dc93969f05b"
+    },
+    {
+      "id": "885911c6-c28f-47cc-80c6-ef401761e2fe",
+      "name": "Clasificar avisos",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        660,
+        0
+      ],
+      "parameters": {
+        "jsCode": "// Lo que llegó a appsaldia1 en los últimos 2 días. Bloqueo de Google (5.7.1,\n// límite de envío): la base pone la pausa de 3 días. Rebote: esa dirección no\n// recibe más. Respuesta que pide la baja: tampoco. Las demoras no cuentan.\nconst avisos = [];\nconst deQuien = (m) => {\n  const f = m.From || m.from?.text || m.from?.value?.[0]?.address || (m.payload?.headers || []).find((h) => /^from$/i.test(h.name))?.value || '';\n  return String(f);\n};\nconst mailDe = (t) => ((String(t).match(/[\\w.+-]+@[\\w-]+(?:\\.[\\w-]+)+/g) || []).filter((e) => !/appsaldia1|googlemail|google\\.com/i.test(e)))[0] || '';\nfor (const it of $input.all()) {\n  const m = it.json || {};\n  if (!m.id) continue;\n  const t = String(m.snippet || '');\n  const de = deQuien(m);\n  let tipo = null;\n  let para = '';\n  if (/mailer-daemon|postmaster/i.test(de)) {\n    if (/retras|demor|delay|todav[ií]a no se/i.test(t)) tipo = null;\n    else if (/5\\.7\\.1|message rejected|se bloque[oó]|l[ií]mite|5\\.4\\.5|rate limit|sending limit/i.test(t)) tipo = 'bloqueo';\n    else if (/no se entreg|no se encontr|no encontramos|no se encuentra|5\\.1\\.1|5\\.5\\.0|no est[aá] configurado|no pudo entregarse|address not found|does not exist/i.test(t)) tipo = 'rebote';\n    para = mailDe(t);\n  } else if (/\\bbaja\\b|no me interes|no quiero recibir|no me escrib|dej(?:a|en) de escrib|unsubscribe/i.test(t + ' ' + (m.Subject || m.subject || ''))) {\n    tipo = 'baja';\n    para = mailDe(de);\n  }\n  if (!tipo) continue;\n  avisos.push({ dsn_id: m.id, tipo, para, texto: t.slice(0, 500) });\n}\nreturn [{ json: { p_items: avisos } }];"
+      }
+    },
+    {
+      "id": "64fca4fe-006c-453c-b8e1-c1207824f025",
+      "name": "Registrar avisos",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        880,
+        0
+      ],
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $('Configuracion').first().json.supabaseUrl }}/rest/v1/rpc/apps_mail_avisos",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "supabaseApi",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ p_items: $json.p_items }) }}",
+        "options": {}
+      },
+      "credentials": {
+        "supabaseApi": {
+          "id": "xVc2ROmkhPTCf2XK",
+          "name": "Tratto · Supabase (service role)"
+        }
+      }
+    },
+    {
+      "id": "94f7b5ef-1427-40b6-b2b2-5f774606ed85",
+      "name": "¿Google frenó?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [
+        1100,
+        0
+      ],
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose"
+          },
+          "conditions": [
+            {
+              "id": "f6ea4330-f196-4719-a70d-97128ca22993",
+              "leftValue": "={{ $json.bloqueo }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      }
+    },
+    {
+      "id": "f8fbabe5-6c26-45a3-88b6-4f1ecda3f01e",
+      "name": "Frenado: pausa de 3 días",
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        1320,
+        -160
+      ],
+      "parameters": {}
+    },
+    {
+      "id": "1a45dcbe-7d9a-412a-a260-05dfc44d19be",
+      "name": "Siguiente mail",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "alwaysOutputData": true,
+      "position": [
+        1320,
+        40
+      ],
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $('Configuracion').first().json.supabaseUrl }}/rest/v1/rpc/apps_mail_siguiente",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "supabaseApi",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({}) }}",
+        "options": {}
+      },
+      "credentials": {
+        "supabaseApi": {
+          "id": "xVc2ROmkhPTCf2XK",
+          "name": "Tratto · Supabase (service role)"
+        }
+      }
+    },
+    {
+      "id": "ec4a6017-583d-48e3-a3fd-7469b4fc8647",
+      "name": "¿Hay mail?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [
+        1540,
+        40
+      ],
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose"
+          },
+          "conditions": [
+            {
+              "id": "cfc73a85-600e-4aca-94cd-0ae2a15f7c42",
+              "leftValue": "={{ $json.id }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "notEmpty",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      }
+    },
+    {
+      "id": "e1ad138a-19a5-4693-a8c4-ad9c6771100d",
+      "name": "Armar mail",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1760,
+        20
+      ],
+      "parameters": {
+        "mode": "runOnceForEachItem",
+        "jsCode": "// Arma el mail con texto y HTML y lo codifica para la API de Gmail.\nconst m = $json;\nconst b64 = (s) => Buffer.from(String(s), 'utf8').toString('base64').replace(/.{76}(?=.)/g, '$&\\r\\n');\nconst enc = (s) => `=?UTF-8?B?${Buffer.from(String(s), 'utf8').toString('base64')}?=`;\nconst frontera = 'apps_' + Math.random().toString(36).slice(2);\nconst mime = [\n  `From: ${enc('Agustín · Apps al día')} <appsaldia1@gmail.com>`,\n  `To: ${m.para}`,\n  `Subject: ${enc(m.asunto)}`,\n  'List-Unsubscribe: <mailto:appsaldia1@gmail.com?subject=baja>',\n  'MIME-Version: 1.0',\n  `Content-Type: multipart/alternative; boundary=\"${frontera}\"`,\n  '',\n  `--${frontera}`,\n  'Content-Type: text/plain; charset=\"UTF-8\"',\n  'Content-Transfer-Encoding: base64',\n  '',\n  b64(m.texto),\n  `--${frontera}`,\n  'Content-Type: text/html; charset=\"UTF-8\"',\n  'Content-Transfer-Encoding: base64',\n  '',\n  b64(m.html),\n  `--${frontera}--`,\n  '',\n].join('\\r\\n');\nreturn { json: { id: m.id, para: m.para, raw: Buffer.from(mime, 'utf8').toString('base64url') } };"
+      }
+    },
+    {
+      "id": "ffffe325-b4de-4790-8f6a-d8ba0dc6890e",
+      "name": "Mandar por Gmail",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "onError": "continueErrorOutput",
+      "position": [
+        1980,
+        20
+      ],
+      "parameters": {
+        "method": "POST",
+        "url": "https://gmail.googleapis.com/gmail/v1/users/me/messages/send",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "gmailOAuth2",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ raw: $json.raw }) }}",
+        "options": {}
+      },
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "aitECTyJnI1VaYXo",
+          "name": "Apps al día · Gmail appsaldia1"
+        }
+      }
+    },
+    {
+      "id": "da0fd45e-2bd2-481e-84cc-291146716517",
+      "name": "Marcar enviado",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        2200,
+        -60
+      ],
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $('Configuracion').first().json.supabaseUrl }}/rest/v1/rpc/apps_mail_marcar",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "supabaseApi",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ p_id: $('Armar mail').item.json.id, p_ok: true, p_message_id: $json.id, p_thread_id: $json.threadId }) }}",
+        "options": {
+          "response": {
+            "response": {
+              "responseFormat": "text"
+            }
+          }
+        }
+      },
+      "credentials": {
+        "supabaseApi": {
+          "id": "xVc2ROmkhPTCf2XK",
+          "name": "Tratto · Supabase (service role)"
+        }
+      }
+    },
+    {
+      "id": "e184d662-5c3a-4c43-b930-cc07d724db15",
+      "name": "Marcar error",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        2200,
+        140
+      ],
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $('Configuracion').first().json.supabaseUrl }}/rest/v1/rpc/apps_mail_marcar",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "supabaseApi",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ p_id: $('Armar mail').item.json.id, p_ok: false, p_error: JSON.stringify($json.error || $json).slice(0, 1500) }) }}",
+        "options": {
+          "response": {
+            "response": {
+              "responseFormat": "text"
+            }
+          }
+        }
+      },
+      "credentials": {
+        "supabaseApi": {
+          "id": "xVc2ROmkhPTCf2XK",
+          "name": "Tratto · Supabase (service role)"
+        }
+      }
+    },
+    {
+      "id": "34a4c99b-84e7-426f-9ebc-f7f03d67450a",
+      "name": "Esperar unos 4 minutos",
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        2420,
+        -60
+      ],
+      "parameters": {
+        "amount": "={{ 225 + Math.floor(Math.random() * 31) }}",
+        "unit": "seconds"
+      }
+    }
+  ],
+  "connections": {
+    "Configuracion": {
+      "main": [
+        [
+          {
+            "node": "Buscar avisos y bajas",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Buscar avisos y bajas": {
+      "main": [
+        [
+          {
+            "node": "Clasificar avisos",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Clasificar avisos": {
+      "main": [
+        [
+          {
+            "node": "Registrar avisos",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Registrar avisos": {
+      "main": [
+        [
+          {
+            "node": "¿Google frenó?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "¿Google frenó?": {
+      "main": [
+        [
+          {
+            "node": "Frenado: pausa de 3 días",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Siguiente mail",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Siguiente mail": {
+      "main": [
+        [
+          {
+            "node": "¿Hay mail?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "¿Hay mail?": {
+      "main": [
+        [
+          {
+            "node": "Armar mail",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        []
+      ]
+    },
+    "Armar mail": {
+      "main": [
+        [
+          {
+            "node": "Mandar por Gmail",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Mandar por Gmail": {
+      "main": [
+        [
+          {
+            "node": "Marcar enviado",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Marcar error",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Marcar enviado": {
+      "main": [
+        [
+          {
+            "node": "Esperar unos 4 minutos",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Esperar unos 4 minutos": {
+      "main": [
+        [
+          {
+            "node": "Buscar avisos y bajas",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Lunes a viernes de 9 a 17:30, cada media hora": {
+      "main": [
+        [
+          {
+            "node": "Configuracion",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "saveDataSuccessExecution": "all",
+    "errorWorkflow": "LcYeloX0BIWbs3vN",
+    "timezone": "America/Argentina/Buenos_Aires",
+    "executionOrder": "v1"
+  }
+}

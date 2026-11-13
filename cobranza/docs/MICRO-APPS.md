@@ -110,6 +110,23 @@ tienda con un Mercado Pago simulado.
 Los archivos sueltos de `dist/` (`cuotas-al-dia.html` y los demás) son las
 mismas apps sin candado, por si alguna vez querés entregar una a mano.
 
+## Cómo se promocionan
+
+Una app por semana para ver cuál vende más: Control al día desde el 16/11/2026,
+después Cuotas al día y Libreta. Combi al día conviene en febrero, cuando
+arranca el año escolar.
+
+- **Contactos:** de Google Maps (Firecrawl, unos 10 créditos cada 20 negocios)
+  y los mails de sus páginas. Las listas no se suben al repo (es público): van
+  a una planilla en el Drive del fundador.
+- **WhatsApp:** a mano desde la planilla, unos 20 por día, con el link que abre
+  el mensaje escrito. No se automatiza: WhatsApp bloquea los envíos masivos.
+- **Mails:** desde appsaldia1@gmail.com con el workflow de n8n "Apps al día ·
+  mails" (`tools/n8n/README.md`) y la cola `apps_mail_cola` de la base de
+  Tratto, separada de la de Tratto. Rampa de casilla nueva: 20 por día, 40 la
+  segunda semana y 70 desde la tercera (`apps_mail_ajustes`). Cada mail lleva
+  la línea de baja; quien responde BAJA o rebota no recibe nada más.
+
 ## Qué decirle al comprador
 
 - Los datos están **solo en su celular**. Nadie más los ve, ni vos.
