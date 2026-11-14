@@ -364,7 +364,7 @@ window.ESCENA3D = (function () {
 
       camara(t);
       // ---- carteles y textos ----
-      etqBisagra.animar(t, 0.5, P.f2 + 0.05, { x: BIS.x, y: 1.75, z: BIS.z }, -30, -250);
+      etqBisagra.animar(t, 0.5, P.f2 + 0.05, { x: BIS.x, y: 1.75, z: BIS.z }, -30, -110);
       etqCinta.animar(t, P.cinta + 0.5, P.f3 + 0.05, { x: BIS.x, y: 1.1, z: BIS.z + 0.03 }, -10, -330);
       const ha = new T.Vector3(); UA.cabeza.getWorldPosition(ha);
       etqAbuela.animar(t, P.abuela + 0.3, P.f5 + 0.05, { x: ha.x, y: ha.y - 0.5, z: ha.z }, -100, 90);
