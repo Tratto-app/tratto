@@ -1,7 +1,7 @@
 // Arma las páginas de la tienda: el catálogo, la página de venta de cada app
 // y la de "gracias", que al volver de Mercado Pago confirma el pago y abre la app.
 import { ICONOS } from '../web/app.js';
-import { textoControl } from '../src/logica.js';
+import { textoControl, textoAvisoLocal } from '../src/logica.js';
 
 // Nombre de la tienda y contacto de ayuda: cambiarlos acá antes de publicar.
 export const TIENDA = { nombre: 'Apps al día', contacto: 'ommelenicki@gmail.com' };
@@ -42,7 +42,9 @@ const pie = () => `<footer><div class="ancho"><span>${esc(TIENDA.nombre)} · App
 function seccionChat(rubro) {
   const c = rubro.venta.chat;
   if (!c) return '';
-  const mensaje = textoControl({ nombre: c.paciente }, c.negocio, c.meses, 1);
+  const mensaje = c.etapa
+    ? textoAvisoLocal(c.etapa, { monto: c.monto, concepto: '', vence: '' }, { nombre: c.paciente }, c.datosPago)
+    : textoControl({ nombre: c.paciente }, c.negocio, c.meses, 1);
   const iniciales = c.paciente.split(/\s+/).map((p) => p[0]).join('').slice(0, 2).toUpperCase();
   return `<section class="bloque"><div class="ancho dos">
   <div class="dos-texto"><p class="eti">El mensaje</p><h2>${esc(c.titulo)}</h2><p class="bajada">${esc(c.bajada)}</p></div>
@@ -52,7 +54,7 @@ function seccionChat(rubro) {
       <p class="wa-msg sale">${esc(mensaje)}<span class="wa-hora">9:02 <span aria-label="leído">✓✓</span></span></p>
       <p class="wa-msg entra">${esc(c.respuesta)}<span class="wa-hora">9:14</span></p>
     </div>
-    <figcaption>Ejemplo. El nombre del consultorio y el del paciente salen de lo que cargás.</figcaption>
+    <figcaption>${esc(c.aclaracion || 'Ejemplo. El nombre del consultorio y el del paciente salen de lo que cargás.')}</figcaption>
   </figure>
 </div></section>`;
 }
@@ -71,13 +73,13 @@ function seccionCalculo(rubro) {
   const paga = Math.max(1, Math.ceil(rubro.precio / c.precioInicial));
   return `<section class="bloque"><div class="ancho dos">
   <div class="dos-texto"><p class="eti">La cuenta</p><h2>${esc(c.titulo)}</h2><p class="bajada">${esc(c.bajada)}</p></div>
-  <div class="calc" id="calc" data-precio-app="${rubro.precio}">
+  <div class="calc" id="calc" data-precio-app="${rubro.precio}" data-uno="${esc((c.unidad || [])[0] || '')}" data-varios="${esc((c.unidad || [])[1] || '')}">
     <label class="calc-campo"><span>${esc(c.cantidad)} <output id="calc-n">${c.cantidadInicial}</output></span>
       <input type="range" id="calc-cant" min="1" max="${c.cantidadMax}" value="${c.cantidadInicial}"></label>
     <label class="calc-campo"><span>${esc(c.precio)}</span>
       <span class="calc-pesos"><span aria-hidden="true">$</span><input id="calc-precio" inputmode="numeric" autocomplete="off" value="${Number(c.precioInicial).toLocaleString('es-AR')}"></span></label>
     <div class="calc-res"><span class="calc-num" id="calc-mes">${pesos(mes)}</span><span>${esc(c.resultado)}</span></div>
-    <p class="calc-nota" id="calc-nota">${notaCalculo(paga)}</p>
+    <p class="calc-nota" id="calc-nota">${notaCalculo(paga, c.unidad)}</p>
   </div>
 </div></section>
 <script>
@@ -90,14 +92,14 @@ function seccionCalculo(rubro) {
     document.getElementById('calc-n').textContent = n;
     document.getElementById('calc-mes').textContent = pesos(n * p);
     const paga = p > 0 ? Math.max(1, Math.ceil(app / p)) : 0;
-    document.getElementById('calc-nota').textContent = paga ? (paga === 1 ? 'La app se paga con el primer paciente que vuelve.' : 'La app se paga con los primeros ' + paga + ' pacientes que vuelven.') : '';
+    document.getElementById('calc-nota').textContent = paga ? (paga === 1 ? 'La app se paga con el primer ' + caja.dataset.uno + '.' : 'La app se paga con los primeros ' + paga + ' ' + caja.dataset.varios + '.') : '';
   }
   cant.addEventListener('input', cuenta);
   precio.addEventListener('input', () => { const d = precio.value.replace(/\\D/g, '').slice(0, 9); precio.value = d ? Number(d).toLocaleString('es-AR') : ''; cuenta(); });
 })();
 </script>`;
 }
-const notaCalculo = (paga) => (paga === 1 ? 'La app se paga con el primer paciente que vuelve.' : `La app se paga con los primeros ${paga} pacientes que vuelven.`);
+const notaCalculo = (paga, [uno, varios] = ['paciente que vuelve', 'pacientes que vuelven']) => (paga === 1 ? `La app se paga con el primer ${uno}.` : `La app se paga con los primeros ${paga} ${varios}.`);
 function seccionPuntos(rubro) {
   const v = rubro.venta;
   if (v.extras) {

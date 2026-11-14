@@ -56,12 +56,57 @@ var RUBROS = {
     venta: {
       para: "Para almacenes y kioscos",
       quienes: "clientes",
-      titular: "La libreta de fiado, en el celular",
-      bajada: "Anot\xE1s cada fiado en dos toques. La app suma sola, te dice cu\xE1nto te deben en total y te arma el mensaje para reclamarlo.",
       puntos: [
         ["Se anota en dos toques", "Cliente y monto. M\xE1s r\xE1pido que buscar la hoja en el cuaderno."],
         ["Entregas a cuenta", "Si te deja una parte, se descuenta de lo m\xE1s viejo y queda anotado lo que falta."],
         ["Reclam\xE1s sin vueltas", "Desde el d\xEDa de cobro, la app te propone el mensaje con el saldo de cada uno."]
+      ],
+      titular: "El fiado anotado y cobrado, sin cuaderno",
+      bajada: "Anot\xE1s cada fiado en dos toques y la app suma sola. El d\xEDa de cobro te muestra qui\xE9n debe y te deja el WhatsApp escrito con su saldo. Lo mand\xE1s con un toque desde tu celular.",
+      sellos: ["Pago \xFAnico", "Se abre al instante", "Sin cuota mensual"],
+      chat: {
+        titulo: "Esto es lo que le llega a tu cliente",
+        bajada: "Sale de tu WhatsApp, con tu n\xFAmero y tu alias para transferir. Sin vueltas y sin que tengas que dec\xEDrselo en la cara.",
+        etapa: "saldo",
+        paciente: "Norma Paz",
+        monto: 1845e3,
+        datosPago: "alias almacen.donluis",
+        respuesta: "Gracias por avisar, ah\xED te transfiero.",
+        aclaracion: "Ejemplo. El nombre, el saldo y tu alias salen de lo que carg\xE1s."
+      },
+      manana: {
+        titulo: "As\xED funciona en tu almac\xE9n",
+        pasos: [
+          ["Cuando f\xEDa", "Anot\xE1s en dos toques", "Eleg\xEDs al cliente y pon\xE9s el monto. La app suma sola y te dice cu\xE1nto te deben en total."],
+          ["D\xEDa de cobro", "Te muestra qui\xE9n debe", "Cada cliente con su saldo y el mensaje de WhatsApp escrito. Toc\xE1s enviar."],
+          ["Una semana despu\xE9s", "Insiste por vos", "Si no pag\xF3, te lo vuelve a proponer una vez por semana, hasta tres veces en el mes. Si te deja una parte, la descont\xE1s."]
+        ]
+      },
+      calculo: {
+        titulo: "\xBFCu\xE1nta plata ten\xE9s en la calle?",
+        bajada: "Pon\xE9 tus n\xFAmeros. Es una cuenta, no una promesa.",
+        cantidad: "Clientes que te deben",
+        cantidadInicial: 15,
+        cantidadMax: 60,
+        precio: "Lo que te debe cada uno, m\xE1s o menos",
+        precioInicial: 15e3,
+        resultado: "de fiado anotado en la libreta",
+        unidad: ["cliente que te paga", "clientes que te pagan"]
+      },
+      extras: {
+        titulo: "Pensada para un almac\xE9n o un kiosco",
+        items: [
+          ["Una cuenta por cliente", "Ves cu\xE1nto debe cada uno y desde cu\xE1ndo, sin buscar hojas."],
+          ["Entregas a cuenta", "Si te deja una parte, se descuenta de lo m\xE1s viejo y queda anotado lo que falta."],
+          ["Tu alias en cada mensaje", "Al final del recordatorio van tus datos para transferir."],
+          ["Tus datos, en tu celular", "No los ve nadie m\xE1s. La app te recuerda guardar una copia por si cambi\xE1s de celular."],
+          ["iPhone y Android", "Se abre en el navegador y queda como \xEDcono en la pantalla de inicio. No hay que bajar nada."],
+          ["Sin cuota mensual", "La pag\xE1s una vez y es tuya."]
+        ]
+      },
+      preguntas: [
+        ["\xBFTengo que pasar todo el cuaderno?", "No hace falta. Pod\xE9s empezar anotando lo que te deben hoy. Si ya ten\xE9s la lista en el celular o en un Excel, la peg\xE1s o la sub\xEDs."],
+        ["\xBFCada cu\xE1nto avisa?", "Desde el d\xEDa de cobro que elijas, una vez por semana y hasta tres veces en el mes, solo a los que deben."]
       ]
     },
     avisos: "saldo",
@@ -126,7 +171,8 @@ var RUBROS = {
         cantidadMax: 20,
         precio: "Lo que cobr\xE1s un control",
         precioInicial: 4e4,
-        resultado: "por mes en turnos que hoy se te escapan"
+        resultado: "por mes en turnos que hoy se te escapan",
+        unidad: ["paciente que vuelve", "pacientes que vuelven"]
       },
       extras: {
         titulo: "Pensada para un consultorio",

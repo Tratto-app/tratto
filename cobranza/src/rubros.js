@@ -37,12 +37,51 @@ export const RUBROS = {
     id: 'libreta', nombre: 'Libreta', titulo: 'Libreta de fiado', archivo: 'libreta', color: '#a4491b', precio: 19000,
     venta: {
       para: 'Para almacenes y kioscos', quienes: 'clientes',
-      titular: 'La libreta de fiado, en el celular',
-      bajada: 'Anotás cada fiado en dos toques. La app suma sola, te dice cuánto te deben en total y te arma el mensaje para reclamarlo.',
       puntos: [
         ['Se anota en dos toques', 'Cliente y monto. Más rápido que buscar la hoja en el cuaderno.'],
         ['Entregas a cuenta', 'Si te deja una parte, se descuenta de lo más viejo y queda anotado lo que falta.'],
         ['Reclamás sin vueltas', 'Desde el día de cobro, la app te propone el mensaje con el saldo de cada uno.'],
+      ],
+      titular: 'El fiado anotado y cobrado, sin cuaderno',
+      bajada: 'Anotás cada fiado en dos toques y la app suma sola. El día de cobro te muestra quién debe y te deja el WhatsApp escrito con su saldo. Lo mandás con un toque desde tu celular.',
+      sellos: ['Pago único', 'Se abre al instante', 'Sin cuota mensual'],
+      chat: {
+        titulo: 'Esto es lo que le llega a tu cliente',
+        bajada: 'Sale de tu WhatsApp, con tu número y tu alias para transferir. Sin vueltas y sin que tengas que decírselo en la cara.',
+        etapa: 'saldo', paciente: 'Norma Paz', monto: 1845000, datosPago: 'alias almacen.donluis',
+        respuesta: 'Gracias por avisar, ahí te transfiero.',
+        aclaracion: 'Ejemplo. El nombre, el saldo y tu alias salen de lo que cargás.',
+      },
+      manana: {
+        titulo: 'Así funciona en tu almacén',
+        pasos: [
+          ['Cuando fía', 'Anotás en dos toques', 'Elegís al cliente y ponés el monto. La app suma sola y te dice cuánto te deben en total.'],
+          ['Día de cobro', 'Te muestra quién debe', 'Cada cliente con su saldo y el mensaje de WhatsApp escrito. Tocás enviar.'],
+          ['Una semana después', 'Insiste por vos', 'Si no pagó, te lo vuelve a proponer una vez por semana, hasta tres veces en el mes. Si te deja una parte, la descontás.'],
+        ],
+      },
+      calculo: {
+        titulo: '¿Cuánta plata tenés en la calle?',
+        bajada: 'Poné tus números. Es una cuenta, no una promesa.',
+        cantidad: 'Clientes que te deben', cantidadInicial: 15, cantidadMax: 60,
+        precio: 'Lo que te debe cada uno, más o menos', precioInicial: 15000,
+        resultado: 'de fiado anotado en la libreta',
+        unidad: ['cliente que te paga', 'clientes que te pagan'],
+      },
+      extras: {
+        titulo: 'Pensada para un almacén o un kiosco',
+        items: [
+          ['Una cuenta por cliente', 'Ves cuánto debe cada uno y desde cuándo, sin buscar hojas.'],
+          ['Entregas a cuenta', 'Si te deja una parte, se descuenta de lo más viejo y queda anotado lo que falta.'],
+          ['Tu alias en cada mensaje', 'Al final del recordatorio van tus datos para transferir.'],
+          ['Tus datos, en tu celular', 'No los ve nadie más. La app te recuerda guardar una copia por si cambiás de celular.'],
+          ['iPhone y Android', 'Se abre en el navegador y queda como ícono en la pantalla de inicio. No hay que bajar nada.'],
+          ['Sin cuota mensual', 'La pagás una vez y es tuya.'],
+        ],
+      },
+      preguntas: [
+        ['¿Tengo que pasar todo el cuaderno?', 'No hace falta. Podés empezar anotando lo que te deben hoy. Si ya tenés la lista en el celular o en un Excel, la pegás o la subís.'],
+        ['¿Cada cuánto avisa?', 'Desde el día de cobro que elijas, una vez por semana y hasta tres veces en el mes, solo a los que deben.'],
       ],
     },
     avisos: 'saldo', inicio: 'clientes', sinVencimiento: true,
@@ -89,6 +128,7 @@ export const RUBROS = {
         cantidad: 'Pacientes por mes que vuelven gracias al aviso', cantidadInicial: 4, cantidadMax: 20,
         precio: 'Lo que cobrás un control', precioInicial: 40000,
         resultado: 'por mes en turnos que hoy se te escapan',
+        unidad: ['paciente que vuelve', 'pacientes que vuelven'],
       },
       extras: {
         titulo: 'Pensada para un consultorio',
