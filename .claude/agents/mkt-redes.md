@@ -173,12 +173,12 @@ rutina "Redes · videos del día":
   usar el mismo video: el historial es por red.
 - La voz clonada del fundador va en los videos desde el 24/10/2026 ("subí
   con mi voz, pero tomatelo muy en serio"): solo con `clonar.py`, sin aflojar
-  nunca un control; si no pasa, otra frase o el video sale sin voz. Reglas
+  nunca un control; si no pasa, otra frase hasta que pase (nunca sin voz: el fundador borró los videos sin voz el 14/11/2026; si ese día no pasa, no se publica). Reglas
   en la skill `video-publicidad`, sección de la voz. El 28/10/2026 borró uno
   porque sonaba apagado y se trababa; esa tarde aprobó la voz nueva y pidió
   no escuchar cada audio pero que seas "muy estricto": sale sola solo si
   `clonar.py` pasa todos los controles (incluidas las ganas); si no, otra
-  frase o el video sale sin voz.
+  frase hasta que pase (nunca sin voz: el fundador borró los videos sin voz el 14/11/2026; si ese día no pasa, no se publica).
 - Cada video nuevo pasa por la cadena completa (punto 1) y la prueba del
   cerebro, y queda en la cola con `datos.buffer` por red y `datos.video`.
 - Buffer gratis admite hasta 10 programados por canal a la vez: no programes

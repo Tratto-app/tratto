@@ -37,7 +37,9 @@ los controles de abajo, el fundador lo puntuó 8 de 10: "para los videos que
 apliques, hacelo así. Subí con mi voz. Pero concentrate siempre en que salga
 bien la voz. Tomatelo muy en serio, porque se van a cagar de risa si subo un
 video y tiene la voz en cualquier cosa". Los videos salen con su voz sin
-esperar su aprobación; si la voz no pasa los controles, el video sale sin voz.
+esperar su aprobación; si la voz no pasa los controles, se cambia el guion y
+se prueba de nuevo. Nunca un video sin voz (fundador, 14/11/2026: borró los
+que salieron solo con música); si ese día no pasa, no se publica.
 
 **Lo que pidió el fundador al aprobarla:** "que quede prolija la voz, que no
 se trabe al hablar ni cambie el formato de la voz, que se escuche prolijo y
@@ -86,8 +88,8 @@ parejo". Ninguna toma con fallas sale publicada.
   entre tramos, al mismo volumen, compresión suave y -14 LUFS con pico real
   de -1,5 dBTP, y se escucha entera otra vez.
 - **Antes de programar**, mirá el informe (lo que se oye en cada tramo y
-  entera): tiene que decir el guion, palabra por palabra. Ante la duda, sin
-  voz: un video sin voz no da vergüenza; uno con la voz rara, sí.
+  entera): tiene que decir el guion, palabra por palabra. Ante la duda, no se
+  publica: ni con la voz rara ni sin voz.
 - **En los videos:** `hacer-video.py --voz-gancho "…"` pone su voz en el
   gancho, con la música más baja mientras habla (`--voz-cierre` solo si la
   frase entra en el cierre, que dura unos 2,5 s). Para un reel narrado entero

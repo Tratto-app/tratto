@@ -11,8 +11,10 @@ Uso (desde tools/piezas-redes/reels):
 3. La voz encima: la música baja sola cuando habla (sidechaincompress).
 4. Efectos (sonido.py) y mezcla a -14 LUFS.
 5. Video final (render-reel.py con --palabras y --audio).
-La voz sale de clonar.py --palabras (con todos sus controles). Sin --voz, el
-video sale con música y subtítulos, sin voz (si la voz no pasó los controles).
+La voz sale de clonar.py --palabras (con todos sus controles). Sin --voz no
+arma nada: el 14/11/2026 el fundador borró los videos que salieron solo con
+música ("salió sin sonido"). Si la voz no pasa, se cambia el guion y se prueba
+de nuevo; nunca un video sin voz.
 Imprime en JSON lo que va en datos.video del item.
 """
 import argparse, json, os, subprocess, sys
@@ -31,7 +33,7 @@ def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("html")
     ap.add_argument("--palabras", required=True, help="tiempos de cada palabra (clonar.py --palabras)")
-    ap.add_argument("--voz", help="la voz que pasó los controles de clonar.py")
+    ap.add_argument("--voz", required=True, help="la voz que pasó los controles de clonar.py (obligatoria: nunca un video sin voz)")
     ap.add_argument("--musica", default="acustico")
     ap.add_argument("--voz-nombre", default="tratto-3d", help="qué voz es, para datos.video.voz (tratto-3d, clonada, grabada)")
     ap.add_argument("--previa")

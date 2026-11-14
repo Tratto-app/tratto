@@ -30,7 +30,7 @@ gancho.
 > - `clonar.py` controla las **ganas** (`GANAS`: tono, rango, volumen y
 >   ritmo, lo mínimo de sus grabaciones reales) y elige la toma más viva.
 > - Pasar los controles no alcanza: se le manda el audio y espera su sí. Sin
->   su sí, el video sale sin voz o con una grabación suya.
+>   su sí, va una grabación suya (desde el 14/11/2026 nunca sin voz).
 > - Guion para la voz: frases afirmativas; las listas con "Primero,
 >   segundo…" (nunca ítems que empiezan con "Qué" o "Dónde", que lee como
 >   pregunta); sin citas entre comillas; el gancho, una pregunta directa.
@@ -51,7 +51,19 @@ gancho.
 > de tono contra sus frases cortas reales). Con la misma frase y la misma
 > muestra la voz sale idéntica (el gancho de "Cómo se cobra" se regeneró de
 > cero y dio el mismo audio). Nunca se afloja un control; si no pasa, otra
-> frase o el video sale sin voz.
+> frase hasta que pase (desde el 14/11/2026 nunca sin voz).
+>
+> **Nunca un video sin voz (fundador, 14/11/2026):** "estás sacando todos
+> los videos sin sonido, el que subiste recién lo borré porque salió sin sonido
+> y el de ayer también". Los 3D de aire (13/11) y carpintería (14/11) salieron
+> solo con música porque la voz no pasó los controles, y los borró. Desde ese
+> día no existe la salida "sin voz": si la voz falla, se reescribe el guion y
+> se vuelve a generar hasta que pase todo, sin aflojar ningún control. Lo que
+> más falla es `GANAS` (voz plana: la de carpintería dio tono 3,42 contra 3,6).
+> Para levantarla, en este orden: una o dos comas más donde lo pida la frase,
+> remates con "¡…!", un "Tranqui:" antes del precio, otra forma de decir la
+> frase más plana. Si falla un tramo, se cambia esa frase.
+> Si ese día no hay voz que pase, el video no se publica y se avisa en una línea.
 
 El fundador mandó un reel sobre clonar la voz gratis y pidió: "implementemos
 eso para todos los videos que hagamos". Su voz clonada sale de
@@ -71,11 +83,11 @@ controles y reglas en `tools/voz-en-off/README.md`).
   - Siempre con `clonar.py` tal como está. **Nunca se afloja un control** (ni
     `CONTROL`, ni `TOMAS`/`RONDAS` para menos) para que algo pase. Si la voz
     no pasa, se cambia la frase (más corta, más simple, sin citas raras) y se
-    prueba otra vez; si tampoco, el video sale sin voz y se le avisa.
+    prueba otra vez, las veces que haga falta. **Nunca sin voz** (14/11/2026,
+    abajo): si ese día no pasa, el video no se publica y se avisa.
   - Antes de programar, mirá el informe de `clonar.py` (lo que se oye en
     cada tramo y entera): tiene que decir el guion, palabra por palabra.
-    Ante la duda, sin voz: un video sin voz no da vergüenza; uno con la voz
-    rara, sí.
+    Ante la duda, no se publica: ni con la voz rara ni sin voz.
   - Al avisarle lo programado, decí que lleva su voz clonada.
 - La condición de cuando aprobó la muestra sigue igual: "que quede prolija la
   voz, que no se trabe al hablar ni cambie el formato de la voz, que se
@@ -86,7 +98,7 @@ controles y reglas en `tools/voz-en-off/README.md`).
   (`hacer-video.py --voz-gancho "…"`). La frase del cierre (`--voz-cierre`)
   solo si entra: el cierre de `formatos.js` dura unos 2,5 s. Números en
   letras y frases completas. Si la voz no pasa los controles, `hacer-video.py`
-  frena: cambiá la frase; si tampoco, el video sale sin voz y se avisa.
+  frena: cambiá la frase y probá de nuevo; nunca sin voz.
 - Si hay una grabación nueva suya, va esa y no la clonada. Nunca otra voz.
 - Avisar que es IA: en TikTok, `metadata.tiktok.isAiGenerated: true` en Buffer;
   en Instagram y Facebook, la línea "Voz hecha con IA a partir de la voz de
@@ -295,7 +307,7 @@ Copiá su estructura; no arranques de cero.
   levemente girado.
 - **Cierre**: una cortina oscura (noche) se abre en círculo, aparece el ícono,
   el texto de cierre y la URL en mono verde claro.
-- **Sin voz.** Música propia (el estilo que diga `variedad`) + efectos (pop en
+- **Música y efectos** (debajo de la voz, nunca solos). Música propia (el estilo que diga `variedad`) + efectos (pop en
   lo que aparece, latigazo en los cambios de escena, campanita para precios,
   sello para sellos).
 - Duración: 20 a 25 segundos, 1080×1920, 30 fps.
