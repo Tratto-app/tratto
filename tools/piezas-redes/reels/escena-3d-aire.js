@@ -464,7 +464,7 @@ window.ESCENA3D = (function () {
       etqTermo.animar(t, 0.3, P.c1b - 0.5, termo, 60, -170);
       etqCaja.animar(t, P.c1b - 0.4, P.f2 + 0.05, { x: CAJA.x, y: 0.5, z: CAJA.z }, -20, -260);
       const hc = new T.Vector3(); U.cabeza.getWorldPosition(hc);
-      etqVent.animar(t, P.maximo + 0.1, P.f3 + 0.05, { x: VENT.x, y: 2.0, z: VENT.z }, -60, -260);
+      etqVent.animar(t, P.maximo + 0.1, P.f3 + 0.05, { x: VENT.x, y: 2.0, z: VENT.z }, -60, -170);
       etqGato.animar(t, P.derrite + 0.4, P.f5 + 0.05, { x: GATO.x, y: 0.12, z: GATO.z }, 40, -420);
       etqSolido.animar(t, P.reforma + 0.35, P.cierre + 0.15, { x: GATO.x - 0.2, y: 0.75, z: GATO.z }, 20, -110);
       k.mostrar(card, t, P.precio - 0.15, P.f6 - 0.05);
