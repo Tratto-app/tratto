@@ -1,0 +1,23 @@
+---
+import Base from '../layouts/Base.astro';
+import Hero from '../components/Hero.astro';
+import Obsesion from '../components/Obsesion.astro';
+import Carta from '../components/Carta.astro';
+import { negocio, obsesion } from '../lib/contenido';
+
+// Menú de arriba (en la etapa 3 se suman Experiencia, Talleres, Fidelidad y Visitanos)
+const menu = [
+  { texto: 'Inicio', ancla: 'inicio' },
+  ...(obsesion.mostrar ? [{ texto: 'Obsesión del mes', ancla: 'obsesion' }] : []),
+  { texto: 'Carta', ancla: 'carta' },
+];
+---
+<Base
+  titulo={`${negocio.nombre} · Café de especialidad en ${negocio.barrio}`}
+  descripcion={`Café de especialidad, desayunos, almuerzos y meriendas en ${negocio.barrio}. Estamos en ${negocio.direccion}. Mirá la carta y vení a hacer una pausa.`}
+  menu={menu}
+>
+  <Hero />
+  <Obsesion />
+  <Carta />
+</Base>

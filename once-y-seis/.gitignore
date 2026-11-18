@@ -1,0 +1,7 @@
+node_modules/
+dist/
+.astro/
+.vercel/
+
+# Archivo de muestra para mandar al cliente (se arma con tools/archivo-unico.py)
+once-y-seis-muestra.html

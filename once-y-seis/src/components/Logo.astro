@@ -1,0 +1,27 @@
+---
+// Logo PROVISORIO: "Once y seis" en letra manuscrita sobre círculo verde salvia.
+// Cuando tengamos el archivo original, se reemplaza este componente por la imagen.
+interface Props {
+  tamano?: number;      // diámetro en píxeles
+  clase?: string;
+}
+const { tamano = 120, clase = '' } = Astro.props;
+---
+<span class={`logo ${clase}`} style={`--t:${tamano}px`} role="img" aria-label="Once y Seis, café de especialidad">
+  <span class="logo-nombre script" aria-hidden="true">Once y seis</span>
+  <span class="logo-bajada" aria-hidden="true">Café de especialidad</span>
+</span>
+<style>
+  .logo {
+    width: var(--t); height: var(--t); flex: none;
+    display: grid; place-content: center; text-align: center; gap: calc(var(--t) * .03);
+    border-radius: 50%;
+    background: var(--color-salvia); color: var(--color-blanco);
+    box-shadow: inset 0 0 0 calc(var(--t) * .04) var(--color-salvia), inset 0 0 0 calc(var(--t) * .052) rgb(250 246 238 / .55);
+  }
+  .logo-nombre { font-size: calc(var(--t) * .215); white-space: nowrap; }
+  .logo-bajada {
+    font-family: var(--font-sans); font-weight: 600; text-transform: uppercase;
+    font-size: calc(var(--t) * .056); letter-spacing: .2em; padding-left: .2em;
+  }
+</style>

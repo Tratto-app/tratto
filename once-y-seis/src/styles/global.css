@@ -1,0 +1,174 @@
+@import "tailwindcss";
+
+/* ── Tipografías (guardadas en la web, sin depender de Google) ─────────── */
+@font-face {
+  font-family: "Playfair Display";
+  src: url("/fuentes/playfair-display.woff2") format("woff2");
+  font-weight: 400 900; font-style: normal; font-display: swap;
+}
+@font-face {
+  font-family: "Playfair Display";
+  src: url("/fuentes/playfair-display-italica.woff2") format("woff2");
+  font-weight: 400 900; font-style: italic; font-display: swap;
+}
+@font-face {
+  font-family: "Montserrat";
+  src: url("/fuentes/montserrat.woff2") format("woff2");
+  font-weight: 100 900; font-style: normal; font-display: swap;
+}
+@font-face {
+  font-family: "Oooh Baby";
+  src: url("/fuentes/oooh-baby.woff2") format("woff2");
+  font-weight: 400; font-style: normal; font-display: swap;
+}
+
+/* ── Paleta (sale del menú del café) y tipografías ─────────────────────── */
+@theme {
+  --color-crema: #EFE6D6;           /* fondo general */
+  --color-trigo: #E8E2C6;           /* fondo alternativo: el papel del menú */
+  --color-blanco: #FAF6EE;          /* tarjetas */
+  --color-salvia: #8A9A7B;          /* color de marca: logo, dibujos, rayas */
+  --color-salvia-profunda: #55644A; /* botones y links (5,9:1 con blanco roto) */
+  --color-salvia-oscura: #46533D;   /* botones al pasar el mouse */
+  --color-salvia-clara: #C9CFB8;    /* cajas suaves */
+  --color-cafe: #3B2A22;            /* títulos y textos (11:1 sobre crema) */
+  --color-cafe-suave: #6B574B;      /* textos secundarios (5,5:1 sobre crema) */
+  --color-terracota: #9A4330;       /* acento chiquito: etiquetas y manuscrita */
+  --color-whatsapp: #1F7A4D;
+  --color-linea: rgb(59 42 34 / .14);
+
+  --font-titulo: "Playfair Display", Georgia, "Times New Roman", serif;
+  --font-script: "Oooh Baby", "Segoe Script", "Brush Script MT", cursive;
+  --font-sans: "Montserrat", ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+
+  --ease-suave: cubic-bezier(.2, .7, .2, 1);
+}
+
+/* ── Base ──────────────────────────────────────────────────────────────── */
+@layer base {
+  html {
+    scroll-behavior: smooth;
+    scroll-padding-top: 5.5rem;
+    -webkit-text-size-adjust: 100%;
+    background: var(--color-crema);
+  }
+  body {
+    @apply bg-crema text-cafe font-sans antialiased;
+    font-size: 1rem;
+    line-height: 1.65;
+  }
+  h1, h2, h3 { text-wrap: balance; }
+  p { text-wrap: pretty; }
+  :focus-visible {
+    outline: 3px solid var(--color-terracota);
+    outline-offset: 3px;
+    border-radius: 6px;
+  }
+  ::selection { background: var(--color-salvia-clara); color: var(--color-cafe); }
+}
+
+/* ── Piezas que se repiten ─────────────────────────────────────────────── */
+@layer components {
+  .contenedor {
+    width: 100%;
+    max-width: 74rem;
+    margin-inline: auto;
+    padding-left: max(1.25rem, env(safe-area-inset-left, 0px));
+    padding-right: max(1.25rem, env(safe-area-inset-right, 0px));
+  }
+  @media (min-width: 768px) {
+    .contenedor { padding-left: max(2.5rem, env(safe-area-inset-left, 0px)); padding-right: max(2.5rem, env(safe-area-inset-right, 0px)); }
+  }
+
+  /* Bajada: mayúsculas espaciadas, como "UN CAFÉ CERCA DE CASA" */
+  .bajada {
+    font-family: var(--font-sans);
+    font-size: .74rem;
+    font-weight: 600;
+    letter-spacing: .22em;
+    text-transform: uppercase;
+    color: var(--color-salvia-profunda);
+  }
+  .titulo {
+    font-family: var(--font-titulo);
+    font-weight: 600;
+    line-height: 1.06;
+    letter-spacing: -.012em;
+  }
+  .titulo-seccion {
+    font-family: var(--font-titulo);
+    font-weight: 600;
+    font-size: clamp(2.2rem, 1.4rem + 3.6vw, 3.6rem);
+    line-height: 1.04;
+    letter-spacing: -.015em;
+  }
+  /* La manuscrita va siempre grande: es para palabras sueltas */
+  .script {
+    font-family: var(--font-script);
+    font-weight: 400;
+    line-height: 1;
+  }
+
+  .boton {
+    display: inline-flex; align-items: center; justify-content: center; gap: .55rem;
+    min-height: 3.1rem; padding: .8rem 1.45rem;
+    border-radius: 999px; border: 1.5px solid transparent;
+    font-family: var(--font-sans); font-weight: 600; font-size: .95rem; line-height: 1.15; text-align: center;
+    transition: background-color .2s, color .2s, border-color .2s, transform .25s var(--ease-suave), box-shadow .25s;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .boton:active { transform: scale(.98); }
+  .boton-principal { background: var(--color-salvia-profunda); color: var(--color-blanco); }
+  .boton-principal:hover { background: var(--color-salvia-oscura); transform: translateY(-1px); box-shadow: 0 10px 20px -12px rgb(59 42 34 / .7); }
+  .boton-borde { border-color: var(--color-cafe); color: var(--color-cafe); }
+  .boton-borde:hover { background: var(--color-cafe); color: var(--color-crema); }
+  .boton-whatsapp { background: var(--color-whatsapp); color: var(--color-blanco); }
+  .boton-whatsapp:hover { background: #18663F; }
+
+  /* Etiqueta tipo sticker, levemente torcida, como pegada a mano */
+  .etiqueta {
+    display: inline-block;
+    font-family: var(--font-sans); font-weight: 600;
+    font-size: .64rem; letter-spacing: .14em; text-transform: uppercase;
+    line-height: 1.2;
+    padding: .38rem .62rem; border-radius: 4px;
+    background: var(--color-terracota); color: var(--color-blanco);
+    rotate: -3deg;
+    box-shadow: 0 4px 10px -6px rgb(59 42 34 / .6);
+  }
+  .etiqueta-crema { background: var(--color-blanco); color: var(--color-cafe); }
+  /* Cinta de papel (washi tape) */
+  .cinta {
+    display: inline-block;
+    font-family: var(--font-sans); font-weight: 600;
+    font-size: .64rem; letter-spacing: .14em; text-transform: uppercase; line-height: 1.2;
+    padding: .42rem .95rem;
+    background: rgb(201 207 184 / .95); color: var(--color-cafe);
+    rotate: 2deg;
+    clip-path: polygon(0 8%, 4% 0, 8% 9%, 12% 0, 88% 0, 92% 9%, 96% 0, 100% 8%, 100% 92%, 96% 100%, 92% 91%, 88% 100%, 12% 100%, 8% 91%, 4% 100%, 0 92%);
+  }
+
+  /* Dibujos a mano: trazos SVG que se "dibujan" al aparecer */
+  .trazo { fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+}
+
+/* ── Movimiento (solo si la persona no pidió reducirlo) ────────────────── */
+@media (prefers-reduced-motion: no-preference) {
+  .js [data-revelar] {
+    transition: opacity .8s var(--ease-suave), transform .8s var(--ease-suave);
+    transition-delay: var(--demora, 0ms);
+  }
+  .js [data-revelar]:not(.visible) { opacity: 0; transform: translateY(1.25rem); }
+
+  .dibujar .trazo { stroke-dasharray: 1 2; stroke-dashoffset: 0; }
+  .js .dibujar.oculto .trazo { stroke-dashoffset: 1.05; }
+  .js .dibujar.anima .trazo {
+    animation: dibujar 1.3s cubic-bezier(.55, .1, .3, 1) both;
+    animation-delay: calc(var(--i, 0) * 140ms + var(--demora, 0ms));
+  }
+  @keyframes dibujar { from { stroke-dashoffset: 1.05; } to { stroke-dashoffset: 0; } }
+}
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  *, *::before, *::after { transition-duration: .01ms !important; animation-duration: .01ms !important; }
+}

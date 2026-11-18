@@ -1,0 +1,187 @@
+---
+import { Image } from 'astro:assets';
+import Icono from './Icono.astro';
+import Doodle from './Doodle.astro';
+import { inicio, negocio, horarios } from '../lib/contenido';
+---
+<section id="inicio" class="relative overflow-hidden">
+  <Doodle tipo="rama" clase="pointer-events-none absolute -right-10 top-2 hidden w-56 text-salvia opacity-60 lg:block" demora={900} />
+
+  <div class="contenedor grid gap-12 pb-16 pt-6 sm:pt-10 lg:grid-cols-12 lg:items-center lg:gap-10 lg:pb-24 lg:pt-8">
+    <div class="lg:col-span-7">
+      <p class="bajada flex items-center gap-2">
+        <Icono nombre="pin" tamano={15} />
+        <span>{negocio.direccion} · {negocio.barrio}</span>
+      </p>
+
+      <h1 class="titulo relative mt-10 text-[clamp(2.85rem,1.5rem+4.4vw,4.35rem)] leading-[1.04] sm:mt-8">
+        <Doodle tipo="brillos" clase="absolute -left-2 -top-8 w-11 text-terracota sm:-left-5 sm:-top-9 sm:w-14" demora={500} />
+        {inicio.titulo}{inicio.titulo_destacado && (
+          <>{' '}<span class="destacado">{inicio.titulo_destacado}<Doodle tipo="subrayado" clase="subrayado text-salvia" grosor={3} demora={250} /></span></>
+        )}
+      </h1>
+
+      <p class="mt-6 font-titulo text-[1.3rem] italic leading-snug text-cafe sm:text-[1.45rem]">{inicio.subtitulo}</p>
+      <p class="mt-3 max-w-[33rem] text-[1.02rem] text-cafe-suave">{inicio.bajada}</p>
+
+      <div class="mt-7 grid justify-items-start gap-2">
+        <p class="estado" id="estado" hidden data-horario={JSON.stringify(horarios.paraNavegador)}>
+          <span class="estado-punto" aria-hidden="true"></span>
+          <span id="estado-texto"></span>
+        </p>
+        <p class="flex items-center gap-2 text-[.86rem] text-cafe-suave">
+          <Icono nombre="reloj" tamano={16} />
+          {horarios.resumen}
+        </p>
+      </div>
+
+      <div class="mt-7 flex flex-col gap-3 sm:flex-row sm:flex-wrap">
+        <a class="boton boton-principal" href="#carta">
+          <Icono nombre="carta" tamano={19} />
+          {inicio.boton_principal}
+        </a>
+        <a class="boton boton-borde" href={negocio.comoLlegar} target="_blank" rel="noopener">
+          <Icono nombre="pin" tamano={19} />
+          {inicio.boton_secundario}
+        </a>
+      </div>
+    </div>
+
+    <div class="relative mx-auto w-full max-w-[30rem] lg:col-span-5 lg:max-w-none">
+      <Doodle tipo="vapor" clase="pointer-events-none absolute left-1/2 -top-7 z-10 w-24 -translate-x-1/2 text-salvia-profunda sm:-top-9" demora={700} />
+      <figure class="arco">
+        <Image
+          src={inicio.imagen}
+          alt={inicio.foto_descripcion}
+          widths={[480, 720, 960, 1280]}
+          sizes="(min-width: 1280px) 440px, (min-width: 1024px) 36vw, (min-width: 520px) 480px, 92vw"
+          format="webp"
+          quality={78}
+          loading="eager"
+          fetchpriority="high"
+          class="block h-full w-full object-cover"
+        />
+      </figure>
+
+      {inicio.sticker && (
+        <p class="sticker" aria-hidden="true"><span class="script">{inicio.sticker}</span></p>
+      )}
+
+      {inicio.imagenChica && (
+        <figure class="polaroid">
+          <Image
+            src={inicio.imagenChica}
+            alt={inicio.foto_chica_descripcion}
+            widths={[240, 360, 480]}
+            sizes="(min-width: 1024px) 200px, 38vw"
+            format="webp"
+            quality={74}
+            class="block aspect-square w-full object-cover"
+          />
+          <figcaption class="script">{negocio.barrio}</figcaption>
+        </figure>
+      )}
+      <Doodle tipo="corazones" clase="pointer-events-none absolute -bottom-6 right-2 w-20 text-terracota sm:right-6" demora={1100} />
+    </div>
+  </div>
+</section>
+
+<style>
+  .destacado { position: relative; white-space: nowrap; display: inline-block; }
+  .destacado :global(.subrayado) { position: absolute; left: -2%; bottom: -.12em; width: 104%; height: .34em; }
+
+  .estado {
+    display: inline-flex; align-items: center; gap: .6rem;
+    background: var(--color-blanco); border: 1px solid var(--color-linea);
+    border-radius: 999px; padding: .5rem 1rem .5rem .8rem;
+    font-weight: 600; font-size: .93rem; line-height: 1.2;
+  }
+  .estado-punto { position: relative; width: .62rem; height: .62rem; border-radius: 50%; background: var(--color-salvia-profunda); flex: none; }
+  .estado[data-abierto="false"] .estado-punto { background: var(--color-terracota); }
+  @media (prefers-reduced-motion: no-preference) {
+    .estado[data-abierto="true"] .estado-punto::after {
+      content: ""; position: absolute; inset: -4px; border-radius: 50%;
+      border: 2px solid var(--color-salvia-profunda); animation: latido 2.2s ease-out infinite;
+    }
+    @keyframes latido { from { opacity: .7; transform: scale(.6); } to { opacity: 0; transform: scale(1.6); } }
+  }
+
+  /* La foto con forma de arco, como una ventana del local */
+  .arco {
+    margin: 0;
+    aspect-ratio: 4 / 5;
+    border-radius: 999px 999px 1.75rem 1.75rem;
+    overflow: hidden;
+    background: var(--color-salvia-clara);
+    box-shadow: 0 30px 60px -32px rgb(59 42 34 / .55);
+  }
+  .sticker {
+    position: absolute; top: 14%; right: -.25rem;
+    width: 7.4rem; aspect-ratio: 1; border-radius: 50%;
+    display: grid; place-content: center; text-align: center; padding: .9rem;
+    background: var(--color-blanco); color: var(--color-terracota);
+    rotate: 9deg;
+    box-shadow: 0 10px 24px -12px rgb(59 42 34 / .55);
+  }
+  .sticker .script { font-size: 1.55rem; line-height: 1.02; }
+  @media (min-width: 1024px) { .sticker { right: -1.5rem; width: 8.4rem; } .sticker .script { font-size: 1.8rem; } }
+
+  .polaroid {
+    position: absolute; left: -.5rem; bottom: -2.25rem;
+    width: 38%; max-width: 12.5rem;
+    margin: 0; padding: .45rem .45rem 0;
+    background: var(--color-blanco);
+    rotate: -5deg;
+    box-shadow: 0 16px 30px -16px rgb(59 42 34 / .6);
+  }
+  .polaroid figcaption { text-align: center; font-size: 1.35rem; padding: .3rem 0 .45rem; color: var(--color-cafe); }
+  @media (min-width: 1024px) { .polaroid { left: -1rem; } }
+</style>
+
+<script>
+  // Cartel "Abierto ahora / Cerrado": se calcula con la hora de Buenos Aires,
+  // sin importar desde dónde mire la persona.
+  const estado = document.getElementById('estado');
+  const texto = document.getElementById('estado-texto');
+  const DIAS = ['domingo', 'lunes', 'martes', 'miércoles', 'jueves', 'viernes', 'sábado'];
+  const MAP: Record<string, number> = { Sun: 0, Mon: 1, Tue: 2, Wed: 3, Thu: 4, Fri: 5, Sat: 6 };
+
+  function hora(m: number) { return `${Math.floor(m / 60)}:${String(m % 60).padStart(2, '0')}`; }
+
+  function pintar() {
+    if (!estado || !texto) return;
+    const datos = JSON.parse(estado.dataset.horario || '{}') as { semana: ([number, number] | null)[]; cerrados: string[] };
+    const p: Record<string, string> = {};
+    new Intl.DateTimeFormat('en-US', {
+      timeZone: 'America/Argentina/Buenos_Aires', weekday: 'short', year: 'numeric', month: '2-digit',
+      day: '2-digit', hour: '2-digit', minute: '2-digit', hourCycle: 'h23',
+    }).formatToParts(new Date()).forEach((x) => { p[x.type] = x.value; });
+    const dia = MAP[p.weekday];
+    const min = (Number(p.hour) % 24) * 60 + Number(p.minute);
+    const fecha = (dias: number) => new Date(Date.UTC(Number(p.year), Number(p.month) - 1, Number(p.day) + dias)).toISOString().slice(0, 10);
+    const abre = (dias: number) => (datos.cerrados.includes(fecha(dias)) ? null : datos.semana[(dia + dias) % 7]);
+
+    const hoy = abre(0);
+    let abierto = false, mensaje = '';
+    if (hoy && min >= hoy[0] && min < hoy[1]) {
+      abierto = true;
+      mensaje = `${hoy[1] - min <= 30 ? 'Cierra pronto' : 'Abierto ahora'} · hasta las ${hora(hoy[1])}`;
+    } else if (hoy && min < hoy[0]) {
+      mensaje = `Cerrado · abrimos hoy a las ${hora(hoy[0])}`;
+    } else {
+      for (let i = 1; i <= 7; i++) {
+        const f = abre(i);
+        if (f) {
+          const cuando = i === 1 ? 'mañana' : `el ${DIAS[(dia + i) % 7]}`;
+          mensaje = `${hoy ? 'Cerrado' : 'Hoy cerrado'} · abrimos ${cuando} a las ${hora(f[0])}`;
+          break;
+        }
+      }
+    }
+    if (!mensaje) return;
+    estado.dataset.abierto = String(abierto);
+    texto.textContent = mensaje;
+    estado.hidden = false;
+  }
+  try { pintar(); setInterval(pintar, 60_000); } catch { /* si falla, queda la línea de horarios */ }
+</script>

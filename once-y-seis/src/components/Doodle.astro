@@ -1,0 +1,66 @@
+---
+// Dibujos a mano en SVG. Se "dibujan" solos cuando aparecen en pantalla
+// (ver el script de Base.astro). Sin JavaScript o con movimiento reducido,
+// aparecen ya dibujados.
+interface Props {
+  tipo: 'brillos' | 'subrayado' | 'corazon' | 'corazones' | 'rama' | 'flecha' | 'vapor' | 'destello';
+  clase?: string;
+  demora?: number; // en milisegundos
+  grosor?: number;
+}
+const { tipo, clase = '', demora = 0, grosor } = Astro.props;
+const cajas = {
+  brillos: '0 0 80 60', subrayado: '0 0 160 20', corazon: '0 0 50 50', corazones: '0 0 120 80',
+  rama: '0 0 120 80', flecha: '0 0 120 80', vapor: '0 0 120 80', destello: '0 0 120 80',
+};
+const estilo = `--demora:${demora}ms;${grosor ? `--grosor:${grosor};` : ''}`;
+---
+<svg
+  class={`dibujar ${clase}`}
+  viewBox={cajas[tipo]}
+  aria-hidden="true"
+  focusable="false"
+  preserveAspectRatio={tipo === 'subrayado' ? 'none' : 'xMidYMid meet'}
+  style={estilo}
+>
+  {tipo === 'brillos' && (<>
+    <path class="trazo" pathLength="1" d="M44 50 30 40" />
+    <path class="trazo" pathLength="1" style="--i:1" d="M50 38 44 20" />
+    <path class="trazo" pathLength="1" style="--i:2" d="M62 34 66 16" />
+  </>)}
+  {tipo === 'subrayado' && (
+    <path class="trazo" pathLength="1" d="M4 12C40 5 92 4 156 9C118 10 72 13 40 17" />
+  )}
+  {tipo === 'corazon' && (
+    <path class="trazo" pathLength="1" d="M25 42C14 35 7 28 7 20C7 15 11 11 15 11C19 11 22 13 25 17C28 13 31 11 35 11C39 11 43 15 43 20C43 28 36 35 25 42Z" />
+  )}
+  {tipo === 'corazones' && (<>
+    <path class="trazo" pathLength="1" d="M42 66C27 57 17 47 17 36C17 29 22 24 28 24C33 24 37 27 40 32C43 27 47 24 52 24C58 24 63 29 63 36C63 47 54 57 42 66Z" />
+    <path class="trazo" pathLength="1" style="--i:2" d="M90 48C83 43.5 78 39 78 33.5C78 30 80.5 27.5 83.5 27.5C86 27.5 88 29 89.5 31.5C91 29 93 27.5 95.5 27.5C98.5 27.5 101 30 101 33.5C101 39 96 43.5 90 48Z" />
+  </>)}
+  {tipo === 'rama' && (<>
+    <path class="trazo" pathLength="1" d="M10 72C40 62 70 42 112 12" />
+    <path class="trazo" pathLength="1" style="--i:1" d="M34 63C28 52 30 44 38 40C42 48 40 57 34 63Z" />
+    <path class="trazo" pathLength="1" style="--i:2" d="M42 59C52 65 60 65 66 59C58 54 49 54 42 59Z" />
+    <path class="trazo" pathLength="1" style="--i:3" d="M60 48C56 37 59 29 67 26C70 34 67 43 60 48Z" />
+    <path class="trazo" pathLength="1" style="--i:4" d="M68 44C78 49 86 48 91 41C83 37 74 38 68 44Z" />
+    <path class="trazo" pathLength="1" style="--i:5" d="M88 30C86 21 90 15 97 13C99 20 95 27 88 30Z" />
+  </>)}
+  {tipo === 'flecha' && (<>
+    <path class="trazo" pathLength="1" d="M14 62C30 32 70 22 102 36" />
+    <path class="trazo" pathLength="1" style="--i:2" d="M88 26 103 36 88 44" />
+  </>)}
+  {tipo === 'vapor' && (<>
+    <path class="trazo" pathLength="1" d="M42 74C32 62 52 54 42 42C32 30 52 22 42 8" />
+    <path class="trazo" pathLength="1" style="--i:1" d="M62 74C52 62 72 54 62 42C52 30 72 22 62 8" />
+    <path class="trazo" pathLength="1" style="--i:2" d="M82 70C74 60 90 52 82 42" />
+  </>)}
+  {tipo === 'destello' && (<>
+    <path class="trazo" pathLength="1" d="M60 8C62 30 66 34 86 38C66 42 62 46 60 70C58 46 54 42 34 38C54 34 58 30 60 8Z" />
+    <path class="trazo" pathLength="1" style="--i:2" d="M94 12C95 20 96 21 102 22C96 23 95 24 94 32C93 24 92 23 86 22C92 21 93 20 94 12Z" />
+  </>)}
+</svg>
+<style>
+  svg { overflow: visible; }
+  svg :global(.trazo) { stroke-width: var(--grosor, 2); }
+</style>

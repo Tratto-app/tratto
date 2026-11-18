@@ -1,0 +1,637 @@
+# ════════════════════════════════════════════════════════════════════════
+#  CONTENIDO DE LA WEB DE ONCE Y SEIS
+#  Todo lo que se ve en la página sale de este archivo.
+#
+#  Cómo editarlo sin romper nada:
+#   • Cambiá solo lo que está DESPUÉS de los dos puntos ( : ).
+#   • Respetá los espacios del principio de cada línea (la sangría).
+#   • Si un texto lleva dos puntos ( : ) o empieza con ¿ o ¡, ponelo
+#     entre comillas "así: como acá".
+#   • Las líneas que empiezan con # son notas como esta: no se ven en la web.
+#   • Para prender o apagar algo se escribe  si  o  no.
+#   • Si algo queda mal escrito, la web NO se publica y sigue online la
+#     versión anterior. Vercel muestra en qué línea está el error.
+#
+#  Fotos: se suben a la carpeta src/assets/fotos/ y acá se escribe la ruta
+#  desde esa carpeta, por ejemplo  carta/croissant.jpg
+#  Sirven JPG, PNG o WebP. La web las achica y las pasa a WebP sola.
+#  Las fotos actuales son de muestra (Unsplash, uso libre): para cambiarlas
+#  por las reales alcanza con subir una foto con el mismo nombre.
+# ════════════════════════════════════════════════════════════════════════
+
+
+# ── DATOS DEL CAFÉ ──────────────────────────────────────────────────────
+negocio:
+  nombre: Once y Seis
+  bajada: Café de especialidad
+  lema: Un descanso en el ritmo urbano
+  direccion: Vicente López 3126
+  barrio: Villa Ballester
+  partido: San Martín
+  provincia: Buenos Aires
+
+  # WhatsApp: solo números, con 54 9 y la característica sin 0 ni 15.
+  whatsapp: "5491138209852"
+  whatsapp_visible: "+54 11 3820-9852"   # Cómo se muestra escrito
+  mensaje_whatsapp: "Hola Once y Seis! Quería consultar…"
+
+  instagram: cafeonceyseis   # Solo el usuario, sin @
+
+  # Links que se usan en distintos botones
+  menu_pdf: https://drive.google.com/file/d/1UqTd4GK-m9R0-ZwrvzkitINjffRueoKg/view
+  resena_google: https://g.page/r/Cd4tMNZhyNM2EBM/review
+
+
+# ── HORARIOS ────────────────────────────────────────────────────────────
+# Formato: "7:30 a 20:00". Si un día no abren, escribí  cerrado
+# Con esto la web calcula sola el cartel "Abierto ahora" o "Cerrado".
+horarios:
+  lunes: "7:30 a 20:00"
+  martes: "7:30 a 20:00"
+  miercoles: "7:30 a 20:00"
+  jueves: "7:30 a 20:00"
+  viernes: "7:30 a 20:00"
+  sabado: "9:00 a 20:00"
+  domingo: "9:00 a 20:00"
+
+  # Feriados o días especiales en que el local está cerrado.
+  # Formato año-mes-día, por ejemplo:  ["2026-12-25", "2027-01-01"]
+  cerrado_los_dias: []
+
+
+# ── PORTADA (lo primero que se ve) ──────────────────────────────────────
+inicio:
+  titulo: Un descanso en el
+  titulo_destacado: ritmo urbano          # Va subrayado con un trazo a mano
+  subtitulo: Café de especialidad en Villa Ballester
+  bajada: Desayunos, almuerzos y meriendas a la vuelta de casa. Pasá a hacer una pausa, que el café lo hacemos nosotros.
+  boton_principal: Ver la carta
+  boton_secundario: Cómo llegar
+  sticker: Un café cerca de casa           # Va escrito a mano sobre la foto
+  foto: inicio/hero-latte-art.jpg
+  foto_descripcion: Café con leche con un corazón dibujado en la espuma, visto desde arriba
+  foto_chica: inicio/local-mesas-y-plantas.jpg
+  foto_chica_descripcion: Mesas de madera y plantas en un salón luminoso
+
+
+# ── OBSESIÓN DEL MES ────────────────────────────────────────────────────
+# El producto destacado del momento. Para esconder el bloque: mostrar: no
+obsesion:
+  mostrar: si
+  etiqueta: Obsesión del mes
+  frase: "¿Lo probaste?"
+  titulo: Este mes no paramos de pedir café de autor
+  texto: Cada mes elegimos algo de la carta que nos tiene obsesionados. Ahora que las tardes ya piden verano, le toca al café con tónica.
+  nombre: Café con tónica
+  descripcion: Agua tónica bien fría, hielo y un doble shot de espresso arriba. Amargo justo, fresco y con burbujas.
+  precio: ""               # Vacío = "a completar". Ej: 8000
+  precio_menu_pdf: 8000    # Precio del menú en PDF (se usa si abajo, en la carta, mostrar_precios_del_pdf: si)
+  foto: obsesion/cafe-con-tonica.jpg
+  foto_descripcion: Vaso de café con tónica con hielo, con el espresso flotando sobre la tónica
+  boton: Verlo en la carta
+  categoria_en_la_carta: Bebidas frías     # A qué pestaña de la carta lleva el botón
+
+
+# ── LA CARTA ────────────────────────────────────────────────────────────
+# Cómo está armada:  categorías (las pestañas) → grupos → productos.
+#
+# Cada producto tiene:
+#   nombre:       obligatorio
+#   descripcion:  corta, opcional
+#   medida:       opcional, ej: 270 ml
+#   precio:       el precio que se muestra. Solo el número, sin $ ni puntos: 9500
+#                 Si queda vacío ("") dice "a completar".
+#   pdf:          el precio que figura en el menú en PDF (solo como referencia)
+#   foto:         opcional, ej: carta/latte.jpg
+#   etiquetas:    opcional, ej: [De la casa] o [Sin TACC, Nuevo]
+#   oculto:       si  → lo esconde sin borrarlo
+#
+# Para agregar un producto, copiá un bloque entero (desde el guion "-")
+# y cambiale los datos. Para sacarlo, borralo o poné  oculto: si
+carta:
+  frase: "¿Siempre pedís lo mismo?"
+  titulo: La carta
+  bajada: Tu próximo pedido puede estar acá.
+
+  # Atajo: con  si  la web muestra en todos lados el precio del menú en PDF
+  # (el número de "pdf") cuando "precio" está vacío. Con  no  dice "a completar".
+  mostrar_precios_del_pdf: no
+
+  temperatura: Nuestros cafés se sirven entre 65° y 70°. Si lo preferís más caliente, pedilo.
+  boton_pdf: Ver el menú en PDF
+
+  categorias:
+
+    # ── CAFÉS ──────────────────────────────────────────────
+    - nombre: Cafés
+      bajada: Espresso, con leche y especiales. Las medidas son las de nuestras tazas.
+      grupos:
+        - titulo: Café solo
+          productos:
+            - nombre: Espresso
+              descripcion: Un shot de café.
+              medida: 140 ml
+              precio: ""
+              pdf: 4800
+              foto: carta/espresso.jpg
+            - nombre: Espresso doble
+              descripcion: Doble shot de café.
+              medida: 140 ml
+              precio: ""
+              pdf: 5300
+            - nombre: Lungo
+              descripcion: Base de agua y un shot de café.
+              medida: 140 ml
+              precio: ""
+              pdf: 4800
+            - nombre: Americano
+              descripcion: Base de agua y doble shot de café.
+              medida: 170 ml
+              precio: ""
+              pdf: 5300
+            - nombre: Café de método
+              descripcion: V60 o prensa francesa, para una o dos personas.
+              precio: ""
+              pdf: 8900
+
+        - titulo: Café con leche
+          productos:
+            - nombre: Capuccino
+              descripcion: Un shot de espresso y leche emulsionada bien cremosa.
+              medida: 170 ml
+              precio: ""
+              pdf: 5800
+              foto: carta/capuccino.jpg
+            - nombre: Magic
+              descripcion: Doble shot de ristretto y leche emulsionada.
+              medida: 140 ml
+              precio: ""
+              pdf: 6000
+            - nombre: Latte
+              descripcion: Un shot de espresso y leche emulsionada.
+              medida: 270 ml
+              precio: ""
+              pdf: 6500
+              foto: carta/latte.jpg
+            - nombre: Flat white
+              descripcion: Doble shot de espresso y leche emulsionada.
+              medida: 170 ml
+              precio: ""
+              pdf: 6300
+            - nombre: Macchiato
+              descripcion: Doble shot de espresso y espuma de leche.
+              medida: 140 ml
+              precio: ""
+              pdf: 6300
+            - nombre: Latte doble
+              descripcion: Doble shot de espresso y leche emulsionada.
+              medida: 270 ml
+              precio: ""
+              pdf: 8000
+
+        - titulo: Especiales
+          productos:
+            - nombre: Mokka
+              descripcion: Base de chocolate, un shot de café y leche emulsionada.
+              medida: 270 ml
+              precio: ""
+              pdf: 7700
+            - nombre: Cappuccino italiano
+              descripcion: Shot de café, canela, cacao y crema chantilly.
+              medida: 270 ml
+              precio: ""
+              pdf: 8000
+            - nombre: Matcha latte
+              descripcion: Té japonés y leche emulsionada.
+              medida: 270 ml
+              precio: ""
+              pdf: 8000
+              foto: carta/matcha-latte.jpg
+
+        - titulo: Extras
+          productos:
+            - nombre: Extra leche vegetal (almendra)
+              precio: ""
+              pdf: 1300
+            - nombre: Extra shot o extra syrup
+              precio: ""
+              pdf: 2000
+            - nombre: Extra leche deslactosada
+              precio: ""
+              pdf: 1000
+
+        - titulo: Café para llevar a casa
+          productos:
+            - nombre: Café Colombia 125 gramos
+              precio: ""
+              pdf: 13000
+            - nombre: Café Colombia 250 gramos
+              precio: ""
+              pdf: 25000
+
+    # ── CAFÉ DE AUTOR ──────────────────────────────────────
+    - nombre: Café de autor
+      bajada: Los cafés de la casa. Si venís siempre por el mismo, este es el lugar para animarte.
+      grupos:
+        - titulo: Cafés de la casa
+          productos:
+            - nombre: Americano Once y seis
+              descripcion: Base de agua, leche condensada, dos shots de espresso y crema chantilly.
+              precio: ""
+              pdf: 9500
+              etiquetas: [De la casa]
+            - nombre: Iced Flat by Lima
+              descripcion: Doble shot de espresso, leche emulsionada, hielo, leche condensada, crema y lima.
+              precio: ""
+              pdf: 9500
+            - nombre: El alba
+              descripcion: Leche texturizada, licor de chocolate blanco y dos shots de espresso.
+              precio: ""
+              pdf: 9500
+            - nombre: Pistacho latte
+              descripcion: Un shot de espresso, leche emulsionada y salsa de pistacho.
+              precio: ""
+              pdf: 9500
+            - nombre: Golden latte
+              descripcion: Un shot de espresso, leche texturizada, jengibre, canela y cúrcuma.
+              precio: ""
+              pdf: 9500
+            - nombre: Pink latte
+              descripcion: Un shot de espresso, leche emulsionada, hielo y pulpa de frutilla.
+              precio: ""
+              pdf: 9500
+
+    # ── DESAYUNOS Y MERIENDAS ──────────────────────────────
+    - nombre: Desayunos y meriendas
+      bajada: Combos para hacer una pausa como corresponde, solo o en compañía.
+      grupos:
+        - titulo: Un momento para vos
+          descripcion: "Incluyen café solo o con leche (no valen especiales, fríos ni latte doble), té en hebras, Inti Zen o submarino, y jugo natural. Podés cambiar la infusión por un licuado con un adicional."
+          productos:
+            - nombre: Pausita
+              descripcion: Dos medialunas o un croissant.
+              precio: ""
+              pdf: 11500
+              foto: carta/medialunas-y-cafe.jpg
+            - nombre: Pausa natural
+              descripcion: Yogur griego con frutas frescas de estación, granola y miel.
+              precio: ""
+              pdf: 15800
+            - nombre: Pausa de la casa
+              descripcion: Dos tostadas con queso y mermelada casera.
+              precio: ""
+              pdf: 14500
+            - nombre: Pausa clásica
+              descripcion: Avocado toast o tostado de jamón y queso.
+              precio: ""
+              pdf: 19800
+
+        - titulo: Para compartir
+          descripcion: "Incluyen dos cafés solos o con leche (no valen especiales, fríos ni latte doble), té en hebras, Inti Zen o submarino, y jugo natural."
+          productos:
+            - nombre: Pausa doble entre dos
+              descripcion: Cookie y roll a elección.
+              precio: ""
+              pdf: 27500
+              etiquetas: [Para compartir]
+            - nombre: Pausa dulce entre dos
+              descripcion: Alfajor de coco y budín a elección.
+              precio: ""
+              pdf: 25500
+              etiquetas: [Para compartir]
+
+        - titulo: Date un gusto
+          productos:
+            - nombre: Pausa del alma
+              descripcion: Licuado de frutas de estación y alfajor de coco.
+              precio: ""
+              pdf: 15000
+            - nombre: Clásico de budín
+              descripcion: Café o infusión a elección y budín de chocolate o de limón y amapolas.
+              precio: ""
+              pdf: 13000
+
+        - titulo: Liviano y natural
+          productos:
+            - nombre: Yogur griego
+              descripcion: Con frutas frescas de estación, granola y miel.
+              precio: ""
+              pdf: 11000
+            - nombre: Bowl de frutas de estación
+              descripcion: Frutas frescas con un toque de miel.
+              precio: ""
+              pdf: 10000
+
+        - titulo: Té, mate cocido y chocolate
+          productos:
+            - nombre: Té en hebras
+              descripcion: Tealosophy. Preguntanos qué variedades hay.
+              medida: 325 ml
+              precio: ""
+              pdf: 6500
+            - nombre: Té Inti Zen
+              descripcion: Preguntanos qué variedades hay.
+              medida: 275 ml
+              precio: ""
+              pdf: 4000
+            - nombre: Mate cocido
+              descripcion: Infusión tradicional de yerba mate.
+              medida: 275 ml
+              precio: ""
+              pdf: 3500
+            - nombre: Submarino
+              descripcion: Leche caliente con una barra de chocolate semiamargo.
+              medida: 275 ml
+              precio: ""
+              pdf: 6500
+            - nombre: Chocolatada caliente
+              descripcion: Leche emulsionada con cacao amargo.
+              medida: 500 ml
+              precio: ""
+              pdf: 4500
+
+    # ── PASTELERÍA Y COOKIES ───────────────────────────────
+    - nombre: Pastelería y cookies
+      bajada: Lo dulce, para acompañar el café o para llevar.
+      grupos:
+        - titulo: Dulce
+          productos:
+            - nombre: Cookies rellenas
+              descripcion: Triple chocolate, red velvet, Nutella o lemon pie.
+              precio: ""
+              pdf: 9000
+              foto: carta/cookies.jpg
+            - nombre: Cookies veganas
+              descripcion: Brownie y dulce de leche.
+              precio: ""
+              pdf: 8500
+              foto: carta/cookie-chocolate.jpg
+              etiquetas: [Vegana]
+            - nombre: Roll dulce de canela
+              descripcion: "Con topping a elección: pistacho, Nutella o crumble de manzana."
+              precio: ""
+              pdf: 8000
+              foto: carta/roll-de-canela.jpg
+            - nombre: Medialuna de manteca
+              precio: ""
+              pdf: 2500
+            - nombre: Medialuna rellena
+              descripcion: Nutella, pastelera, pistacho o dulce de leche.
+              precio: ""
+              pdf: 3800
+            - nombre: Croissant
+              precio: ""
+              pdf: 5800
+              foto: carta/croissant.jpg
+            - nombre: Croissant relleno
+              descripcion: Nutella, pastelera, pistacho o dulce de leche.
+              precio: ""
+              pdf: 9000
+            - nombre: Pan de chocolate
+              descripcion: Masa hojaldrada rellena de chocolate semiamargo.
+              precio: ""
+              pdf: 5300
+            - nombre: Budín
+              descripcion: Chocolate o limón y amapolas.
+              precio: ""
+              pdf: 7500
+            - nombre: Alfajor de coco
+              precio: ""
+              pdf: 7500
+            - nombre: Tostadas francesas
+              descripcion: Con frutas de estación y miel, Nutella, pistacho o dulce de leche.
+              precio: ""
+              pdf: 8500
+            - nombre: Minicakes
+              descripcion: Key lime, lemon pie, mousse de chocolate, cheesecake de frutos rojos o maracuyá.
+              precio: ""
+              pdf: 10000
+
+        - titulo: Sin TACC
+          productos:
+            - nombre: Cuadrado de ricota
+              precio: ""
+              pdf: 9000
+              etiquetas: [Sin TACC]
+            - nombre: Brownie
+              precio: ""
+              pdf: 9000
+              etiquetas: [Sin TACC]
+
+        - titulo: Para sumar
+          productos:
+            - nombre: Dip de dulce de leche
+              precio: ""
+              pdf: 1500
+            - nombre: Dip de crema chantilly
+              precio: ""
+              pdf: 1500
+            - nombre: Dip de queso crema
+              precio: ""
+              pdf: 1500
+
+    # ── ALMUERZOS ──────────────────────────────────────────
+    - nombre: Almuerzos
+      bajada: Brunch, huevos y ensaladas para el mediodía.
+      grupos:
+        - titulo: Brunch y almuerzo
+          productos:
+            - nombre: Avocado toast
+              descripcion: Pan de masa madre, queso crema, palta, dos huevos, tomates cherry y frutos secos.
+              precio: ""
+              pdf: 14500
+              foto: carta/avocado-toast.jpg
+            - nombre: Omelette de espinaca
+              descripcion: Huevos, espinaca, jamón y queso.
+              precio: ""
+              pdf: 10500
+            - nombre: Huevos revueltos
+              descripcion: Tres huevos revueltos cremosos, tomate cherry y albahaca.
+              precio: ""
+              pdf: 6000
+            - nombre: Tostada con huevo
+              descripcion: Tres huevos revueltos, tomate cherry, albahaca fresca y dos tostadas.
+              precio: ""
+              pdf: 9000
+              foto: carta/tostada-con-huevo.jpg
+            - nombre: Sándwich de pollo
+              descripcion: Pollo en pan parmesano con rúcula, cherry confitados, muzzarella y salsa de mostaza y miel.
+              precio: ""
+              pdf: 13000
+
+        - titulo: Ensaladas
+          productos:
+            - nombre: Ensalada de atún
+              descripcion: Atún, hojas verdes, tomate y huevo.
+              precio: ""
+              pdf: 14000
+            - nombre: Ensalada Caesar
+              descripcion: Mix de verdes, tiritas de pollo grillado, queso parmesano, crutones y salsa caesar.
+              precio: ""
+              pdf: 15000
+            - nombre: Ensalada blue cheese
+              descripcion: Mix de verdes, queso azul, nueces caramelizadas y peras glaseadas.
+              precio: ""
+              pdf: 14000
+
+    # ── SALADOS ────────────────────────────────────────────
+    - nombre: Salados
+      bajada: Chipá prensado, tostados y los clásicos de siempre.
+      grupos:
+        - titulo: Clásicos
+          productos:
+            - nombre: Chipá prensado
+              descripcion: Jamón y queso, queso y tomate, o crudo, queso y rúcula.
+              precio: ""
+              pdf: 11500
+            - nombre: Chipá
+              precio: ""
+              pdf: 2800
+            - nombre: Tostado de miga
+              descripcion: Cuatro triángulos de jamón y queso.
+              precio: ""
+              pdf: 12000
+            - nombre: Medio tostado de miga
+              descripcion: Dos triángulos de jamón y queso.
+              precio: ""
+              pdf: 7000
+            - nombre: Sándwich de jamón y queso
+              descripcion: En pan parmesano.
+              precio: ""
+              pdf: 11500
+            - nombre: Tostada caprese
+              descripcion: Pan de masa madre, queso, tomate cherry, albahaca fresca y aceite de oliva extra virgen.
+              precio: ""
+              pdf: 10500
+            - nombre: Tostadas
+              descripcion: Con queso y mermelada casera. Pan a elección.
+              precio: ""
+              pdf: 9000
+            - nombre: Medialuna rellena tradicional
+              descripcion: Jamón y queso.
+              precio: ""
+              pdf: 5000
+            - nombre: Extra huevo
+              precio: ""
+              pdf: 3000
+
+        - titulo: Croissants rellenos
+          productos:
+            - nombre: Jamón y queso
+              descripcion: Con queso tybo o cheddar.
+              precio: ""
+              pdf: 9000
+            - nombre: Tomate y queso
+              descripcion: Con queso tybo o cheddar.
+              precio: ""
+              pdf: 9000
+            - nombre: Jamón crudo, rúcula y queso
+              descripcion: Con queso tybo o cheddar.
+              precio: ""
+              pdf: 10000
+
+        - titulo: Medialuna rellena XXL
+          productos:
+            - nombre: Jamón y queso
+              descripcion: Con queso tybo o cheddar.
+              precio: ""
+              pdf: 12000
+            - nombre: Tomate y queso
+              descripcion: Con queso tybo o cheddar.
+              precio: ""
+              pdf: 12000
+            - nombre: Jamón crudo, rúcula y queso
+              descripcion: Con queso tybo o cheddar.
+              precio: ""
+              pdf: 13000
+
+        - titulo: Sin TACC
+          productos:
+            - nombre: Chipá relleno
+              descripcion: Jamón y queso.
+              precio: ""
+              pdf: 12000
+              etiquetas: [Sin TACC]
+
+    # ── BEBIDAS FRÍAS ──────────────────────────────────────
+    - nombre: Bebidas frías
+      bajada: Cafés con hielo, licuados y limonadas para cuando aprieta el calor.
+      grupos:
+        - titulo: Café frío
+          productos:
+            - nombre: Espresso tonic
+              descripcion: Agua tónica y doble shot de espresso.
+              precio: ""
+              pdf: 8000
+              foto: obsesion/cafe-con-tonica.jpg
+              etiquetas: [Obsesión del mes]
+            - nombre: Iced latte
+              descripcion: Leche y un shot de espresso.
+              precio: ""
+              pdf: 6800
+              foto: carta/iced-latte.jpg
+            - nombre: Aerocano
+              descripcion: Base de agua y doble shot de espresso.
+              precio: ""
+              pdf: 6800
+            - nombre: Iced latte saborizado
+              descripcion: Leche, un shot de espresso y el syrup que elijas.
+              precio: ""
+              pdf: 8000
+            - nombre: Iced flat white
+              descripcion: Leche y doble shot de espresso.
+              precio: ""
+              pdf: 8000
+            - nombre: Frapuccino
+              descripcion: Un shot de café, leche, hielo, topping a elección y crema chantilly.
+              precio: ""
+              pdf: 8800
+
+        - titulo: Jugos, licuados y limonadas
+          productos:
+            - nombre: Licuado
+              descripcion: Con leche o agua. Naranja, durazno, multifruta, banana, frutos rojos, frutilla, mango o maracuyá.
+              medida: 600 ml
+              precio: ""
+              pdf: 8200
+            - nombre: Limonada
+              descripcion: Con menta y almíbar de jengibre.
+              medida: 500 ml
+              precio: ""
+              pdf: 7300
+            - nombre: Limonada de frutos rojos
+              descripcion: Con menta y almíbar de frutos rojos.
+              medida: 500 ml
+              precio: ""
+              pdf: 7300
+            - nombre: Pomelada
+              descripcion: Jugo exprimido de pomelo y naranja, hielo y pulpa de maracuyá.
+              medida: 500 ml
+              precio: ""
+              pdf: 7300
+            - nombre: Exprimido de naranja
+              descripcion: Jugo natural de naranja.
+              medida: 500 ml
+              precio: ""
+              pdf: 6000
+            - nombre: Chocolatada fría
+              descripcion: Hielo y leche emulsionada con cacao amargo.
+              medida: 500 ml
+              precio: ""
+              pdf: 4500
+
+        - titulo: Aguas y gaseosas
+          productos:
+            - nombre: Agua con o sin gas
+              medida: 500 ml
+              precio: ""
+              pdf: 3500
+            - nombre: Agua saborizada
+              medida: 500 ml
+              precio: ""
+              pdf: 3800
+            - nombre: Gaseosas
+              descripcion: Línea Coca-Cola.
+              medida: 600 ml
+              precio: ""
+              pdf: 4200

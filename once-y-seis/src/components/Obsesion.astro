@@ -1,0 +1,98 @@
+---
+import { Image } from 'astro:assets';
+import Icono from './Icono.astro';
+import Doodle from './Doodle.astro';
+import { obsesion, negocio } from '../lib/contenido';
+---
+{obsesion.mostrar && (
+  <section id="obsesion" class="relative overflow-hidden bg-trigo py-20 lg:py-28" aria-labelledby="titulo-obsesion">
+    <div class="contenedor grid items-center gap-14 lg:grid-cols-12 lg:gap-10">
+
+      <div class="lg:order-2 lg:col-span-6 lg:col-start-7" data-revelar>
+        <p class="bajada">{obsesion.etiqueta}</p>
+        <h2 id="titulo-obsesion" class="titulo-seccion mt-4">{obsesion.titulo}</h2>
+        {obsesion.texto && <p class="mt-5 max-w-[32rem] text-[1.05rem] text-cafe-suave">{obsesion.texto}</p>}
+        <div class="mt-8 flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-center">
+          <a class="boton boton-principal" href={`#${obsesion.ancla}`} data-ir-a-carta>
+            {obsesion.boton}
+            <Icono nombre="flecha" tamano={18} />
+          </a>
+          {negocio.instagramLink && (
+            <a class="boton text-cafe underline decoration-salvia decoration-2 underline-offset-4 hover:text-salvia-profunda" href={negocio.instagramLink} target="_blank" rel="noopener">
+              <Icono nombre="instagram" tamano={19} />
+              Contanos si lo probaste
+            </a>
+          )}
+        </div>
+        <span class="flecha" aria-hidden="true"><Doodle tipo="flecha" clase="w-36 text-salvia-profunda" /></span>
+      </div>
+
+      <div class="relative mx-auto w-full max-w-[25rem] lg:order-1 lg:col-span-5 lg:col-start-1 lg:max-w-[27rem]" data-revelar style="--demora:120ms">
+        <div class="fondo-tarjeta" aria-hidden="true"></div>
+        <article class="posteo" aria-label={`${obsesion.etiqueta}: ${obsesion.nombre}`}>
+          <header class="flex items-center gap-2.5 px-4 py-3">
+            <span class="avatar script" aria-hidden="true">o6</span>
+            <span class="leading-tight">
+              <span class="block text-[.86rem] font-semibold">{negocio.instagram || negocio.nombre}</span>
+              <span class="block text-[.74rem] text-cafe-suave">{negocio.barrio}</span>
+            </span>
+            <Icono nombre="mas" tamano={20} clase="ml-auto text-cafe-suave" />
+          </header>
+          <div class="relative">
+            <Image
+              src={obsesion.imagen}
+              alt={obsesion.foto_descripcion}
+              widths={[400, 600, 800]}
+              sizes="(min-width: 1024px) 432px, (min-width: 440px) 400px, 92vw"
+              format="webp"
+              quality={76}
+              class="block aspect-[4/5] w-full object-cover"
+            />
+            <span class="etiqueta absolute left-4 top-4">{obsesion.etiqueta}</span>
+          </div>
+          <div class="flex items-center gap-3.5 px-4 pt-3 text-cafe" aria-hidden="true">
+            <Icono nombre="corazon" tamano={24} />
+            <Icono nombre="guardar" tamano={22} clase="ml-auto" />
+          </div>
+          <div class="px-5 pb-6 pt-2">
+            {obsesion.frase && <p class="script text-[2.55rem] text-terracota">{obsesion.frase}</p>}
+            <h3 class="titulo mt-1 text-[1.95rem]">{obsesion.nombre}</h3>
+            <p class="mt-2 text-[.96rem] text-cafe-suave">{obsesion.descripcion}</p>
+            <p class="mt-3">
+              {obsesion.precioTexto
+                ? <span class="text-[1.05rem] font-semibold tabular-nums">{obsesion.precioTexto}</span>
+                : <span class="precio-falta">Precio a completar</span>}
+            </p>
+          </div>
+        </article>
+        <Doodle tipo="destello" clase="pointer-events-none absolute -right-6 -top-8 w-20 text-terracota" demora={300} />
+      </div>
+    </div>
+  </section>
+)}
+
+<style>
+  .fondo-tarjeta {
+    position: absolute; inset: 1.5rem -0.75rem -1rem 1.25rem;
+    background: var(--color-salvia-clara); border-radius: 1.6rem; rotate: 4deg;
+  }
+  .posteo {
+    position: relative; overflow: hidden;
+    background: var(--color-blanco); border-radius: 1.4rem;
+    box-shadow: 0 1px 2px rgb(59 42 34 / .08), 0 28px 50px -28px rgb(59 42 34 / .6);
+    transition: transform .5s var(--ease-suave);
+  }
+  @media (hover: hover) { .posteo:hover { transform: translateY(-4px) rotate(-.6deg); } }
+  .avatar {
+    width: 2.2rem; height: 2.2rem; border-radius: 50%; flex: none;
+    display: grid; place-content: center;
+    background: var(--color-salvia); color: var(--color-blanco); font-size: 1.25rem;
+    box-shadow: 0 0 0 2px var(--color-blanco), 0 0 0 3.5px var(--color-salvia);
+  }
+  .precio-falta {
+    font-style: italic; font-weight: 500; color: var(--color-cafe-suave);
+    border-bottom: 1.5px dashed rgb(154 67 48 / .55);
+  }
+  .flecha { display: none; }
+  @media (min-width: 1024px) { .flecha { display: block; width: 9rem; margin-top: 1.5rem; transform: scaleX(-1) rotate(-12deg); } }
+</style>

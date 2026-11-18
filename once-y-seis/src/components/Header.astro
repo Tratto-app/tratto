@@ -1,0 +1,123 @@
+---
+import Icono from './Icono.astro';
+import { negocio } from '../lib/contenido';
+
+interface Props {
+  menu: { texto: string; ancla: string }[];
+}
+const { menu } = Astro.props;
+---
+<header id="cabecera" class="cabecera sticky z-40" style="top: env(safe-area-inset-top, 0px)">
+  <div class="contenedor flex h-16 items-center gap-3 lg:h-[4.75rem] lg:gap-8">
+    <a href="#inicio" class="marca mr-auto flex flex-col leading-none" aria-label={`${negocio.nombre}, ir al inicio`}>
+      <span class="script text-[1.95rem] text-cafe lg:text-[2.2rem]">Once y seis</span>
+      <span class="mt-[.55rem] pl-1 text-[.52rem] font-semibold uppercase tracking-[.24em] text-salvia-profunda lg:text-[.56rem]">Café de especialidad</span>
+    </a>
+
+    <nav class="hidden lg:block" aria-label="Secciones">
+      <ul class="flex items-center gap-7 text-[.9rem] font-medium">
+        {menu.map((item) => (
+          <li><a class="enlace-menu" href={`#${item.ancla}`}>{item.texto}</a></li>
+        ))}
+      </ul>
+    </nav>
+
+    <div class="hidden items-center gap-2.5 lg:flex">
+      <a href={negocio.comoLlegar} target="_blank" rel="noopener" class="boton boton-borde min-h-0 px-4 py-2.5 text-[.86rem]">
+        <Icono nombre="pin" tamano={17} />
+        Cómo llegar
+      </a>
+      <a href={negocio.whatsappLink} target="_blank" rel="noopener" class="boton boton-principal min-h-0 px-4 py-2.5 text-[.86rem]">
+        <Icono nombre="whatsapp" tamano={17} />
+        WhatsApp
+      </a>
+    </div>
+
+    <a href={negocio.comoLlegar} target="_blank" rel="noopener" class="grid size-11 place-items-center rounded-full border border-cafe/25 lg:hidden" aria-label="Cómo llegar (abre Google Maps)">
+      <Icono nombre="pin" tamano={21} />
+    </a>
+    <button
+      id="boton-menu"
+      type="button"
+      class="-mr-2 grid size-11 place-items-center lg:hidden"
+      aria-expanded="false"
+      aria-controls="menu-movil"
+      aria-label="Abrir menú"
+    >
+      <Icono nombre="menu" tamano={26} clase="icono-abrir" />
+      <Icono nombre="cerrar" tamano={26} clase="icono-cerrar hidden" />
+    </button>
+  </div>
+
+  <div id="menu-movil" class="menu-movil lg:hidden" hidden>
+    <nav class="contenedor pb-8 pt-2" aria-label="Secciones">
+      <ul class="divide-y divide-linea border-y border-linea">
+        {menu.map((item) => (
+          <li>
+            <a class="flex items-center justify-between py-4 font-titulo text-[1.75rem] font-semibold leading-tight" href={`#${item.ancla}`}>
+              {item.texto}
+              <Icono nombre="flecha" tamano={20} clase="text-cafe-suave" />
+            </a>
+          </li>
+        ))}
+      </ul>
+      <div class="mt-6 grid gap-3">
+        <a href={negocio.whatsappLink} class="boton boton-principal w-full" target="_blank" rel="noopener">
+          <Icono nombre="whatsapp" tamano={20} />
+          Escribinos por WhatsApp
+        </a>
+        <a href={negocio.comoLlegar} class="boton boton-borde w-full" target="_blank" rel="noopener">
+          <Icono nombre="pin" tamano={20} />
+          Cómo llegar
+        </a>
+      </div>
+    </nav>
+  </div>
+</header>
+
+<style>
+  .cabecera {
+    background: transparent;
+    border-bottom: 1px solid transparent;
+    transition: background-color .3s, border-color .3s, box-shadow .3s;
+  }
+  /* Al hacer scroll se pone sólida */
+  .cabecera.solida, .cabecera:has(.menu-movil:not([hidden])) {
+    background: rgb(239 230 214 / .96);
+    border-bottom-color: var(--color-linea);
+    box-shadow: 0 10px 24px -22px rgb(59 42 34 / .8);
+  }
+  @supports (backdrop-filter: blur(8px)) {
+    .cabecera.solida { background: rgb(239 230 214 / .88); backdrop-filter: saturate(1.2) blur(10px); }
+  }
+  .enlace-menu { position: relative; padding-block: .35rem; }
+  .enlace-menu::after {
+    content: ""; position: absolute; left: 0; right: 0; bottom: 0; height: 2px; border-radius: 2px;
+    background: var(--color-salvia); transform: scaleX(0); transform-origin: left;
+    transition: transform .3s var(--ease-suave);
+  }
+  .enlace-menu:hover::after { transform: scaleX(1); }
+  .menu-movil { max-height: calc(100dvh - 4rem); overflow-y: auto; }
+</style>
+
+<script>
+  const cabecera = document.getElementById('cabecera');
+  const boton = document.getElementById('boton-menu');
+  const menu = document.getElementById('menu-movil');
+
+  const marcar = () => cabecera?.classList.toggle('solida', window.scrollY > 12);
+  marcar();
+  window.addEventListener('scroll', marcar, { passive: true });
+
+  function abrir(abierto: boolean) {
+    if (!boton || !menu) return;
+    menu.hidden = !abierto;
+    boton.setAttribute('aria-expanded', String(abierto));
+    boton.setAttribute('aria-label', abierto ? 'Cerrar menú' : 'Abrir menú');
+    boton.querySelector('.icono-abrir')?.classList.toggle('hidden', abierto);
+    boton.querySelector('.icono-cerrar')?.classList.toggle('hidden', !abierto);
+  }
+  boton?.addEventListener('click', () => abrir(menu?.hidden ?? false));
+  menu?.querySelectorAll('a').forEach((a) => a.addEventListener('click', () => abrir(false)));
+  document.addEventListener('keydown', (e) => { if (e.key === 'Escape') abrir(false); });
+</script>
