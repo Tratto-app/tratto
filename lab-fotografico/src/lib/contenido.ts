@@ -95,11 +95,54 @@ const esquema = z.object({
     cierre_texto: texto,
     cierre_boton: texto,
   }),
+  calculadora: z.object({
+    etiqueta: texto,
+    titulo: texto,
+    bajada: texto,
+    ejemplo_ancho: z.number().int().positive(),
+    ejemplo_alto: z.number().int().positive(),
+    tamanos: z.array(z.string().regex(/^\d+(?:[.,]\d+)?x\d+(?:[.,]\d+)?$/, 'cada tamaño va como 10x15 (ancho x alto en cm)')).min(1),
+    nota: opcional,
+  }),
+  galeria_titulo: texto,
+  galeria_bajada: opcional,
+  galeria_categorias: z.array(texto).min(1),
+  galeria: z.array(z.object({
+    foto: texto,
+    categoria: texto,
+    descripcion: texto,
+    oculto: z.boolean().default(false),
+  })),
+  proceso: z.object({
+    etiqueta: texto,
+    titulo: texto,
+    pasos: z.array(z.object({ titulo: texto, texto: texto })).min(1),
+  }),
+  como_enviar: z.object({
+    etiqueta: texto,
+    titulo: texto,
+    bajada: opcional,
+    consejos: z.array(z.object({ titulo: texto, texto: texto })),
+    metodos: z.array(z.object({ titulo: texto, pasos: z.array(texto).min(1) })),
+  }),
+  preguntas_titulo: texto,
+  preguntas: z.array(z.object({ pregunta: texto, respuesta: texto })),
   contacto: z.object({
     titulo: texto,
     texto: texto,
     boton: texto,
+    mapa: opcional,
   }),
+}).superRefine((d, ctx) => {
+  d.galeria.forEach((g, i) => {
+    if (!d.galeria_categorias.includes(g.categoria)) {
+      ctx.addIssue({
+        code: 'custom',
+        path: ['galeria', i, 'categoria'],
+        message: `"${g.categoria}" no está en galeria_categorias (${d.galeria_categorias.join(', ')})`,
+      });
+    }
+  });
 });
 
 function leerYaml(): unknown {
@@ -195,4 +238,32 @@ export const pantallaVsPapel = {
   })),
 };
 
-export const contacto = datos.contacto;
+export const calculadora = {
+  ...datos.calculadora,
+  tamanos: datos.calculadora.tamanos.map((t) => {
+    const [a, b] = t.split('x').map((n) => Number(n.replace(',', '.')));
+    return { nombre: t, corto: Math.min(a, b), largo: Math.max(a, b) };
+  }),
+};
+
+export const galeria = {
+  titulo: datos.galeria_titulo,
+  bajada: datos.galeria_bajada,
+  categorias: datos.galeria_categorias,
+  lista: datos.galeria
+    .filter((g) => !g.oculto)
+    .map((g, i) => ({ ...g, imagen: foto(g.foto, `galería, foto ${i + 1}`) })),
+};
+
+export const proceso = datos.proceso;
+export const comoEnviar = datos.como_enviar;
+export const preguntas = { titulo: datos.preguntas_titulo, lista: datos.preguntas };
+
+const lugar = [datos.negocio.direccion, datos.negocio.ciudad, 'Buenos Aires, Argentina'].filter(Boolean).join(', ');
+const consultaMapa = datos.contacto.mapa || lugar;
+export const contacto = {
+  ...datos.contacto,
+  mapaEmbed: `https://www.google.com/maps?q=${encodeURIComponent(consultaMapa)}&output=embed`,
+  mapaLink: `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(consultaMapa)}`,
+  hayDireccion: Boolean(datos.negocio.direccion),
+};

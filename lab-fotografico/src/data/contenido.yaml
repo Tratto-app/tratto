@@ -225,8 +225,144 @@ pantalla_vs_papel:
   cierre_boton: Mandanos tu foto y la revisamos
 
 
-# ── CIERRE DE LA PÁGINA ─────────────────────────────────────────────────
+# ── CALCULADORA DE TAMAÑOS ──────────────────────────────────────────────
+calculadora:
+  etiqueta: Calculadora
+  titulo: ¿Hasta qué tamaño puedo imprimir *mi foto?*
+  bajada: Elegí una foto de tu celular o tu compu, o escribí sus medidas en píxeles. La foto no se sube a ningún lado, se lee solo en tu navegador.
+  # Medidas de ejemplo con las que arranca (una foto común de celular)
+  ejemplo_ancho: 4000
+  ejemplo_alto: 3000
+  # Tamaños que se calculan, en centímetros (ancho x alto)
+  tamanos: [10x15, 13x18, 15x21, 20x30, 30x40, 40x60, 50x70]
+  nota: Es una guía. Antes de imprimir revisamos cada archivo y te avisamos si conviene otro tamaño.
+
+
+# ── GALERÍA DE TRABAJOS ─────────────────────────────────────────────────
+# Para sumar un trabajo: subí la foto a src/assets/fotos/galeria/ y copiá un bloque.
+# "categoria" tiene que ser una de la lista de categorías.
+galeria_titulo: Trabajos
+galeria_bajada: Algunas de las fotos que pasaron por el laboratorio. Tocá cualquiera para verla grande.
+galeria_categorias: [Copias, Canvas, Polaroid, Álbumes, Restauración]
+
+galeria:
+  - foto: galeria/copias-coloridas.jpg
+    categoria: Copias
+    descripcion: Copias a color de un viaje, recién impresas
+  - foto: galeria/cuadro-en-living.jpg
+    categoria: Canvas
+    descripcion: Cuadros colgados en un living
+  - foto: galeria/polaroids-colgadas.jpg
+    categoria: Polaroid
+    descripcion: Polaroids colgadas con broches en una pared
+  - foto: galeria/album-familiar.jpg
+    categoria: Álbumes
+    descripcion: Álbum familiar abierto en el piso
+  - foto: galeria/restauracion-retrato-antiguo.jpg
+    categoria: Restauración
+    descripcion: Retrato antiguo en blanco y negro
+  - foto: galeria/copias-mesa-de-madera.jpg
+    categoria: Copias
+    descripcion: Copias de flores sobre una mesa de madera
+  - foto: servicios/cuadro-canvas.jpg
+    categoria: Canvas
+    descripcion: Canvas de un paisaje de montaña
+  - foto: galeria/polaroids-sobre-mesa.jpg
+    categoria: Polaroid
+    descripcion: Polaroids de paisajes sobre una mesa
+  - foto: servicios/fotolibros.jpg
+    categoria: Álbumes
+    descripcion: Fotolibro con fotos de paisajes
+  - foto: galeria/restauracion-fotos-antiguas.jpg
+    categoria: Restauración
+    descripcion: Fotos antiguas para restaurar y digitalizar
+  - foto: galeria/copias-paisajes.jpg
+    categoria: Copias
+    descripcion: Copias de paisajes desparramadas
+  - foto: servicios/cuadro-bastidor-madera.jpg
+    categoria: Canvas
+    descripcion: Rincón con cuadros en bastidor de madera
+  - foto: galeria/polaroid-y-sobres.jpg
+    categoria: Polaroid
+    descripcion: Polaroid sobre sobres de colores
+  - foto: servicios/promo-100-fotos-10x15-album.jpg
+    categoria: Álbumes
+    descripcion: Álbum con fotos de vacaciones en la playa
+  - foto: galeria/restauracion-canasta-de-fotos.jpg
+    categoria: Restauración
+    descripcion: Canasta con fotos familiares antiguas
+  - foto: galeria/copias-y-postales.jpg
+    categoria: Copias
+    descripcion: Pila de copias y postales
+
+
+# ── CÓMO TRABAJAMOS ─────────────────────────────────────────────────────
+proceso:
+  etiqueta: Cómo trabajamos
+  titulo: Del archivo *al papel*
+  pasos:
+    - titulo: Enviás tus archivos
+      texto: Por WhatsApp como documento, por mail o con un link de Drive. Nos contás qué querés imprimir y en qué tamaño.
+    - titulo: Revisamos y te asesoramos
+      texto: Miramos la resolución, el color y el encuadre de cada foto. Si algo no va a salir bien, te avisamos antes.
+    - titulo: Imprimimos con control de calidad
+      texto: Ajustamos cada archivo para papel y controlamos cada copia antes de entregarla.
+    - titulo: Retirás o te lo enviamos
+      texto: Pasás a buscar tu pedido o coordinamos el envío a tu casa.
+
+
+# ── CÓMO ENVIAR TUS FOTOS ───────────────────────────────────────────────
+como_enviar:
+  etiqueta: Cómo enviar tus fotos
+  titulo: Mandalas *enteras*
+  bajada: Si la foto llega comprimida, se pierde calidad que después no se recupera. Con estos pasos llega tal cual la sacaste.
+  consejos:
+    - titulo: Formato
+      texto: JPG en la máxima calidad, PNG o TIFF. Si sacás en RAW, consultanos.
+    - titulo: Resolución
+      texto: Lo ideal son 300 DPI al tamaño de impresión. Una foto de celular actual alcanza para copias de hasta 20x30.
+    - titulo: El original
+      texto: Mandá la foto como salió de la cámara o del celular, no una captura de pantalla ni una bajada de redes.
+  metodos:
+    - titulo: WhatsApp como documento
+      pasos:
+        - "En Android: tocá el clip, elegí Documento y buscá la foto."
+        - "En iPhone: tocá el +, elegí Documento y después Elegir fotos."
+        - "La opción HD ayuda, pero igual comprime: mejor como documento."
+    - titulo: Por mail
+      pasos:
+        - Adjuntá las fotos sin achicarlas (si el celular pregunta el tamaño, elegí Real o Grande).
+        - Si son muchas, mejor usá un link de Drive.
+    - titulo: Drive o WeTransfer
+      pasos:
+        - Subí las fotos a una carpeta y compartinos el link.
+        - Ideal para pedidos grandes, álbumes y fotolibros.
+
+
+# ── PREGUNTAS FRECUENTES ────────────────────────────────────────────────
+# ⚠ Revisar con Vane: tiempos, envíos y formas de pago son generales.
+preguntas_titulo: Preguntas frecuentes
+preguntas:
+  - pregunta: ¿Cuánto tardan en estar las fotos?
+    respuesta: Depende del trabajo y de la cantidad. Las copias suelen estar en pocos días; cuadros, fotolibros y restauraciones llevan más tiempo. Cuando nos pasás el pedido te confirmamos la fecha de entrega.
+  - pregunta: ¿Qué formatos de archivo aceptan?
+    respuesta: JPG, PNG, TIFF y PDF. Si trabajás en RAW o con otro formato, consultanos y lo vemos.
+  - pregunta: ¿Puedo imprimir fotos sacadas con el celular?
+    respuesta: Sí. Los celulares actuales sacan fotos con muy buena resolución. Lo importante es mandarlas como documento para que no se compriman. Con la calculadora de esta página podés ver hasta qué tamaño rinde tu foto.
+  - pregunta: ¿Hacen envíos?
+    respuesta: Sí. Podés retirar tu pedido o coordinamos el envío. El costo depende de la zona; te lo pasamos junto con el presupuesto.
+  - pregunta: ¿Cómo se paga?
+    respuesta: Te pasamos las formas de pago junto con el presupuesto por WhatsApp.
+  - pregunta: Mi foto es vieja o está dañada, ¿se puede recuperar?
+    respuesta: En muchos casos sí. Escaneamos la foto, la restauramos (manchas, roturas, color) y te entregamos el archivo digital y, si querés, una copia nueva impresa.
+  - pregunta: ¿Por qué la foto impresa se ve distinta que en el celular?
+    respuesta: Porque la pantalla tiene luz propia y el papel no. Por eso revisamos y ajustamos cada archivo antes de imprimir. Lo explicamos mejor en la sección Pantalla vs papel.
+
+
+# ── CONTACTO ────────────────────────────────────────────────────────────
 contacto:
   titulo: ¿Tenés fotos para imprimir?
   texto: Escribinos por WhatsApp y te pasamos el presupuesto. Si no sabés qué tamaño o papel elegir, te ayudamos.
   boton: Escribir por WhatsApp
+  # Lo que se busca en el mapa. Si queda vacío, usa la dirección y la ciudad.
+  mapa: ""

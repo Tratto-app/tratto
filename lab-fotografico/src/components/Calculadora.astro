@@ -1,0 +1,188 @@
+---
+import Icono from './Icono.astro';
+import { calculadora as calc } from '../lib/contenido';
+import { calcular, TEXTO_NIVEL } from '../lib/dpi';
+import { destacar } from '../lib/formato';
+
+// Resultado inicial con la foto de ejemplo (así la sección nunca se ve vacía)
+const inicial = calcular(calc.ejemplo_ancho, calc.ejemplo_alto, calc.tamanos);
+const tamanosJson = JSON.stringify(calc.tamanos);
+---
+<section id="calculadora" class="bg-papel" aria-labelledby="titulo-calculadora">
+  <div class="contenedor grid gap-12 py-16 lg:grid-cols-12 lg:gap-14 lg:py-28">
+    <div class="lg:col-span-5" data-revelar>
+      <p class="etiqueta">{calc.etiqueta}</p>
+      <h2 id="titulo-calculadora" class="titulo-calc mt-3 font-display" set:html={destacar(calc.titulo)} />
+      <p class="mt-5 text-[1.04rem] leading-relaxed text-gris">{calc.bajada}</p>
+
+      <div class="mt-8 grid gap-5" data-calculadora data-tamanos={tamanosJson}>
+        <label class="zona" for="calc-archivo">
+          <input id="calc-archivo" type="file" accept="image/*" class="sr-only" />
+          <span class="grid size-11 shrink-0 place-items-center rounded-full bg-mesa">
+            <Icono nombre="pixeles" tamano={22} />
+          </span>
+          <span class="min-w-0">
+            <span class="block font-semibold">Elegir una foto</span>
+            <span class="calc-archivo-texto block truncate text-[.9rem] text-gris">o arrastrala hasta acá</span>
+          </span>
+        </label>
+
+        <div class="flex items-center gap-3 text-[.8rem] text-gris">
+          <span class="h-px flex-1 bg-linea"></span>o escribí las medidas<span class="h-px flex-1 bg-linea"></span>
+        </div>
+
+        <div class="grid grid-cols-[1fr_auto_1fr] items-end gap-3">
+          <label class="grid gap-1.5 text-[.82rem] font-medium text-grafito" for="calc-ancho">
+            Ancho (px)
+            <input id="calc-ancho" class="campo" type="number" inputmode="numeric" min="1" step="1" value={calc.ejemplo_ancho} />
+          </label>
+          <span class="pb-3.5 font-mono text-gris" aria-hidden="true">×</span>
+          <label class="grid gap-1.5 text-[.82rem] font-medium text-grafito" for="calc-alto">
+            Alto (px)
+            <input id="calc-alto" class="campo" type="number" inputmode="numeric" min="1" step="1" value={calc.ejemplo_alto} />
+          </label>
+        </div>
+        <p class="calc-estado min-h-[1.5em] text-[.88rem] text-gris" aria-live="polite">
+          Ejemplo: una foto de celular de {calc.ejemplo_ancho} × {calc.ejemplo_alto} px.
+        </p>
+      </div>
+    </div>
+
+    <div class="lg:col-span-7" data-revelar style="--demora:100ms">
+      <div class="resultados" aria-live="polite" aria-label="Resultado por tamaño">
+        <div class="cabecera-tabla" aria-hidden="true">
+          <span>Tamaño</span><span>Calidad</span><span class="text-right">Resolución</span>
+        </div>
+        <ul role="list" class="calc-lista">
+          {inicial.map((r) => (
+            <li class="fila" data-nivel={r.nivel}>
+              <span class="font-display text-[1.7rem] leading-none tabular-nums sm:text-[2rem]">{r.nombre}<span class="ml-1 font-sans text-[.75rem] text-gris">cm</span></span>
+              <span class="flex min-w-0 flex-col gap-1.5">
+                <span class="nivel">{TEXTO_NIVEL[r.nivel]}</span>
+                <span class="medidor" aria-hidden="true"><i style={`width:${Math.min(100, (r.dpi / 300) * 100)}%`}></i></span>
+              </span>
+              <span class="text-right font-mono text-[.8rem] tabular-nums">
+                <span class="dpi block text-[.95rem] text-tinta">{r.dpi} DPI</span>
+                <span class="necesarios hidden text-gris sm:block">300 DPI: {r.necesarios}</span>
+              </span>
+            </li>
+          ))}
+        </ul>
+        <div class="leyenda">
+          <span><i class="bg-[#0E7A3E]"></i>Óptima: 300 DPI o más</span>
+          <span><i class="bg-[#C98A00]"></i>Buena: 200 a 299 DPI</span>
+          <span><i class="bg-[#B42318]"></i>No recomendada: menos de 200</span>
+        </div>
+        <p class="calc-recorte mt-3 text-[.86rem] text-gris" hidden>
+          Tu foto tiene otra proporción que algunos papeles: para llenarlos sin bordes se recorta un poco.
+        </p>
+        {calc.nota && <p class="mt-3 text-[.86rem] text-gris">{calc.nota}</p>}
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .titulo-calc { font-size: clamp(2.3rem, 5.4vw, 4rem); line-height: 1; letter-spacing: -.015em; }
+  .titulo-calc :global(em) { font-style: italic; color: var(--color-magenta); }
+
+  .zona {
+    display: flex; align-items: center; gap: 1rem; cursor: pointer;
+    padding: 1.1rem 1.25rem; border: 1.5px dashed #C9C9D0; border-radius: 6px;
+    transition: border-color .2s, background-color .2s;
+  }
+  .zona:hover, .zona.arrastrando { border-color: var(--color-magenta); background: #FFF5FA; }
+  .zona:has(input:focus-visible) { outline: 2px solid var(--color-magenta); outline-offset: 3px; }
+
+  .campo {
+    width: 100%; min-width: 0; height: 3rem; padding: 0 .9rem;
+    border: 1.5px solid var(--color-linea); border-radius: 6px; background: #fff;
+    font-family: var(--font-mono); font-size: 1rem; color: var(--color-tinta);
+    font-variant-numeric: tabular-nums;
+  }
+  .campo:focus { outline: none; border-color: var(--color-tinta); }
+
+  .resultados { border-top: 2px solid var(--color-tinta); }
+  .cabecera-tabla, .fila { display: grid; grid-template-columns: 5.6rem minmax(0, 1fr) auto; gap: .9rem; align-items: center; }
+  @media (min-width: 640px) { .cabecera-tabla, .fila { grid-template-columns: 7.5rem minmax(0, 1fr) auto; gap: 1.5rem; } .necesarios { white-space: nowrap; } }
+  .cabecera-tabla { padding: .75rem 0; font-family: var(--font-mono); font-size: .68rem; letter-spacing: .1em; text-transform: uppercase; color: var(--color-gris); border-bottom: 1px solid var(--color-linea); }
+  .fila { padding: 1rem 0; border-bottom: 1px solid var(--color-linea); }
+
+  .nivel { align-self: flex-start; font-size: .78rem; font-weight: 600; padding: .2rem .55rem; border-radius: 999px; }
+  .fila[data-nivel="optima"] .nivel { background: #E3F4EA; color: #0E7A3E; }
+  .fila[data-nivel="buena"] .nivel { background: #FFF3C4; color: #7A5200; }
+  .fila[data-nivel="baja"] .nivel { background: #FDECEA; color: #B42318; }
+  .medidor { display: block; height: 4px; background: var(--color-mesa); border-radius: 4px; overflow: hidden; max-width: 14rem; }
+  .medidor i { display: block; height: 100%; border-radius: 4px; transition: width .5s var(--ease-revelado); }
+  .fila[data-nivel="optima"] .medidor i { background: #0E7A3E; }
+  .fila[data-nivel="buena"] .medidor i { background: #C98A00; }
+  .fila[data-nivel="baja"] .medidor i { background: #B42318; }
+  .fila[data-nivel="baja"] .dpi { color: #B42318; }
+
+  .leyenda { display: flex; flex-wrap: wrap; gap: .5rem 1.25rem; margin-top: 1rem; font-size: .8rem; color: var(--color-gris); }
+  .leyenda span { display: inline-flex; align-items: center; gap: .45rem; }
+  .leyenda i { width: .6rem; height: .6rem; border-radius: 999px; display: block; }
+</style>
+
+<script>
+  import { calcular, TEXTO_NIVEL, type Tamano } from '../lib/dpi';
+
+  const raiz = document.querySelector<HTMLElement>('[data-calculadora]');
+  if (raiz) {
+    const tamanos: Tamano[] = JSON.parse(raiz.dataset.tamanos || '[]');
+    const ancho = document.getElementById('calc-ancho') as HTMLInputElement;
+    const alto = document.getElementById('calc-alto') as HTMLInputElement;
+    const archivo = document.getElementById('calc-archivo') as HTMLInputElement;
+    const zona = raiz.querySelector<HTMLElement>('.zona');
+    const textoArchivo = raiz.querySelector<HTMLElement>('.calc-archivo-texto');
+    const estado = raiz.querySelector<HTMLElement>('.calc-estado');
+    const filas = [...document.querySelectorAll<HTMLElement>('#calculadora .fila')];
+    const avisoRecorte = document.querySelector<HTMLElement>('#calculadora .calc-recorte');
+
+    const pintar = () => {
+      const w = Number(ancho.value), h = Number(alto.value);
+      if (!(w > 0 && h > 0)) return;
+      const res = calcular(w, h, tamanos);
+      res.forEach((r, i) => {
+        const fila = filas[i];
+        if (!fila) return;
+        fila.dataset.nivel = r.nivel;
+        fila.querySelector('.nivel')!.textContent = TEXTO_NIVEL[r.nivel];
+        fila.querySelector('.dpi')!.textContent = `${r.dpi} DPI`;
+        fila.querySelector('.necesarios')!.textContent = `300 DPI: ${r.necesarios}`;
+        (fila.querySelector('.medidor i') as HTMLElement).style.width = `${Math.min(100, (r.dpi / 300) * 100)}%`;
+      });
+      if (avisoRecorte) avisoRecorte.hidden = !res.some((r) => r.recorte);
+    };
+
+    const usarArchivo = (f: File | undefined) => {
+      if (!f) return;
+      const url = URL.createObjectURL(f);
+      const img = new Image();
+      img.onload = () => {
+        ancho.value = String(img.naturalWidth);
+        alto.value = String(img.naturalHeight);
+        if (textoArchivo) textoArchivo.textContent = f.name;
+        if (estado) estado.textContent = `Tu foto: ${img.naturalWidth} × ${img.naturalHeight} px (${(img.naturalWidth * img.naturalHeight / 1e6).toFixed(1)} megapíxeles).`;
+        URL.revokeObjectURL(url);
+        pintar();
+      };
+      img.onerror = () => {
+        URL.revokeObjectURL(url);
+        if (estado) estado.textContent = 'No pudimos leer esta foto en tu navegador. Escribí las medidas a mano: las ves en los detalles o la información de la foto.';
+      };
+      img.src = url;
+    };
+
+    ancho.addEventListener('input', () => { if (estado) estado.textContent = ''; pintar(); });
+    alto.addEventListener('input', () => { if (estado) estado.textContent = ''; pintar(); });
+    archivo.addEventListener('change', () => usarArchivo(archivo.files?.[0]));
+    zona?.addEventListener('dragover', (e) => { e.preventDefault(); zona.classList.add('arrastrando'); });
+    zona?.addEventListener('dragleave', () => zona.classList.remove('arrastrando'));
+    zona?.addEventListener('drop', (e) => {
+      e.preventDefault(); zona.classList.remove('arrastrando');
+      usarArchivo(e.dataTransfer?.files?.[0]);
+    });
+    pintar();
+  }
+</script>

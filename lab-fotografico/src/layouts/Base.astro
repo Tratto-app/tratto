@@ -1,8 +1,9 @@
 ---
 import '../styles/global.css';
+import { getImage } from 'astro:assets';
 import Header from '../components/Header.astro';
 import Icono from '../components/Icono.astro';
-import { negocio } from '../lib/contenido';
+import { negocio, inicio, servicios, promos, preguntas } from '../lib/contenido';
 
 interface Props {
   titulo: string;
@@ -10,6 +11,53 @@ interface Props {
   menu: { texto: string; ancla: string }[];
 }
 const { titulo, descripcion, menu } = Astro.props;
+
+const sitio = Astro.site ?? new URL(Astro.url.origin);
+const canonica = new URL(Astro.url.pathname, sitio).href;
+
+// Imagen para cuando se comparte el link (WhatsApp, Instagram, Facebook): 1200 × 630 en JPG
+const og = await getImage({ src: inicio.imagen, width: 1200, height: 630, fit: 'cover', format: 'jpg', quality: 80 });
+const ogUrl = new URL(og.src, sitio).href;
+
+// Datos para Google (schema.org): negocio local, servicios y preguntas frecuentes
+const negocioLd = {
+  '@context': 'https://schema.org',
+  '@type': 'LocalBusiness',
+  '@id': `${sitio.href}#negocio`,
+  name: negocio.nombre,
+  description: negocio.descripcion,
+  url: sitio.href,
+  image: ogUrl,
+  telephone: `+${negocio.whatsapp}`,
+  address: {
+    '@type': 'PostalAddress',
+    ...(negocio.direccion ? { streetAddress: negocio.direccion } : {}),
+    addressLocality: negocio.ciudad,
+    addressRegion: 'Buenos Aires',
+    addressCountry: 'AR',
+  },
+  areaServed: negocio.ciudad,
+  ...(negocio.horarios ? { openingHours: negocio.horarios } : {}),
+  sameAs: [negocio.instagram, negocio.facebook].filter(Boolean),
+  hasOfferCatalog: {
+    '@type': 'OfferCatalog',
+    name: 'Servicios de impresión fotográfica',
+    itemListElement: [...promos.lista, ...servicios.lista].map((s) => ({
+      '@type': 'Offer',
+      itemOffered: { '@type': 'Service', name: s.nombre, description: s.descripcion },
+    })),
+  },
+};
+const preguntasLd = {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  mainEntity: preguntas.lista.map((p) => ({
+    '@type': 'Question',
+    name: p.pregunta,
+    acceptedAnswer: { '@type': 'Answer', text: p.respuesta },
+  })),
+};
+const ld = (o: object) => JSON.stringify(o).replace(/</g, '\\u003c');
 ---
 <!doctype html>
 <html lang="es-AR">
@@ -18,10 +66,34 @@ const { titulo, descripcion, menu } = Astro.props;
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
     <title>{titulo}</title>
     <meta name="description" content={descripcion} />
+    <link rel="canonical" href={canonica} />
     <meta name="theme-color" content="#FFFFFF" />
+    <meta name="format-detection" content="telephone=no" />
+
+    <meta property="og:type" content="website" />
+    <meta property="og:locale" content="es_AR" />
+    <meta property="og:site_name" content={negocio.nombre} />
+    <meta property="og:title" content={titulo} />
+    <meta property="og:description" content={descripcion} />
+    <meta property="og:url" content={canonica} />
+    <meta property="og:image" content={ogUrl} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content={inicio.foto_descripcion} />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={titulo} />
+    <meta name="twitter:description" content={descripcion} />
+    <meta name="twitter:image" content={ogUrl} />
+
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="icon" href="/favicon-32.png" type="image/png" sizes="32x32" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="sitemap" href="/sitemap.xml" />
     <link rel="preload" href="/fuentes/instrument-serif.woff2" as="font" type="font/woff2" crossorigin />
     <link rel="preload" href="/fuentes/instrument-sans.woff2" as="font" type="font/woff2" crossorigin />
+
+    <script type="application/ld+json" set:html={ld(negocioLd)} />
+    <script type="application/ld+json" set:html={ld(preguntasLd)} />
     <script is:inline>document.documentElement.classList.add('js');</script>
   </head>
   <body>

@@ -10,7 +10,7 @@ const tiendaExterna = negocio.tienda.startsWith('http');
 ---
 <header id="cabecera" class="cabecera sticky z-40 bg-papel/92 backdrop-blur-md transition-[border-color,box-shadow] duration-300" style="top: env(safe-area-inset-top, 0px)">
   <div class="contenedor flex h-16 items-center gap-4 lg:h-20 lg:gap-8">
-    <a href="#inicio" class="logo mr-auto flex items-center gap-2.5 lg:mr-2" aria-label={`${negocio.nombre}, ir al inicio`}>
+    <a href="#inicio" class="logo mr-auto flex items-center gap-2.5 xl:mr-2" aria-label={`${negocio.nombre}, ir al inicio`}>
       <span class="flex gap-[3px]" aria-hidden="true">
         <i class="block size-2 rounded-full bg-cian"></i>
         <i class="block size-2 rounded-full bg-magenta"></i>
@@ -19,8 +19,8 @@ const tiendaExterna = negocio.tienda.startsWith('http');
       <span class="max-w-[8.5rem] font-display text-[1.25rem] leading-[.95] tracking-[-.01em] sm:max-w-none sm:text-[1.5rem] sm:leading-none lg:text-[1.65rem]">{negocio.nombre}</span>
     </a>
 
-    <nav class="hidden lg:block lg:mr-auto" aria-label="Secciones">
-      <ul class="flex items-center gap-7 text-[.94rem]">
+    <nav class="hidden xl:block xl:mr-auto" aria-label="Secciones">
+      <ul class="flex items-center gap-6 text-[.92rem]">
         {menu.map((item) => (
           <li><a class="enlace-menu" href={`#${item.ancla}`}>{item.texto}</a></li>
         ))}
@@ -29,7 +29,7 @@ const tiendaExterna = negocio.tienda.startsWith('http');
 
     <a
       href={negocio.whatsappGeneral}
-      class="hidden items-center gap-2 text-[.94rem] font-semibold lg:flex hover:text-magenta transition-colors"
+      class="hidden items-center gap-2 text-[.92rem] font-semibold xl:flex hover:text-magenta transition-colors"
       target="_blank" rel="noopener"
     >
       <Icono nombre="whatsapp" tamano={18} clase="text-whatsapp" />
@@ -47,7 +47,7 @@ const tiendaExterna = negocio.tienda.startsWith('http');
     <button
       id="boton-menu"
       type="button"
-      class="-mr-2 grid size-11 place-items-center lg:hidden"
+      class="-mr-2 grid size-11 place-items-center xl:hidden"
       aria-expanded="false"
       aria-controls="menu-movil"
       aria-label="Abrir menú"
@@ -57,7 +57,7 @@ const tiendaExterna = negocio.tienda.startsWith('http');
     </button>
   </div>
 
-  <div id="menu-movil" class="menu-movil lg:hidden" hidden>
+  <div id="menu-movil" class="menu-movil xl:hidden" hidden>
     <nav class="contenedor pb-8 pt-2" aria-label="Secciones">
       <ul class="divide-y divide-linea border-y border-linea">
         {menu.map((item) => (

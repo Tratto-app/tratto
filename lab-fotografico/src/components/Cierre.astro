@@ -7,50 +7,119 @@ const anio = new Date().getFullYear();
 ---
 <section id="contacto" class="bg-tinta text-papel" aria-labelledby="titulo-contacto">
   <div class="barra-color" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
-  <div class="contenedor grid gap-10 py-16 lg:grid-cols-12 lg:items-end lg:py-24">
-    <div class="lg:col-span-7" data-revelar>
+  <div class="contenedor grid gap-12 py-16 lg:grid-cols-12 lg:gap-14 lg:py-24">
+    <div class="lg:col-span-6" data-revelar>
       <p class="etiqueta !text-gris-claro">Contacto</p>
       <h2 id="titulo-contacto" class="titulo-seccion mt-3">{contacto.titulo}</h2>
       <p class="mt-5 max-w-xl text-[1.06rem] leading-relaxed text-gris-claro">{contacto.texto}</p>
-    </div>
-    <div class="lg:col-span-5" data-revelar style="--demora:120ms">
-      <a href={negocio.whatsappGeneral} target="_blank" rel="noopener" class="boton boton-principal w-full !min-h-[3.75rem] text-[1.08rem]">
+
+      <a href={negocio.whatsappGeneral} target="_blank" rel="noopener" class="boton boton-principal mt-8 w-full !min-h-[3.75rem] text-[1.08rem] sm:w-auto sm:px-8">
         <Icono nombre="whatsapp" tamano={22} />
         {contacto.boton}
       </a>
-      <p class="mt-4 text-center font-mono text-[.9rem] tabular-nums tracking-wide text-gris-claro lg:text-left">
-        <span class="select-all">{negocio.whatsapp_visible}</span>
+      <p class="mt-4 font-mono text-[.95rem] tabular-nums tracking-wide text-gris-claro">
+        WhatsApp <span class="select-all text-papel">{negocio.whatsapp_visible}</span>
       </p>
-      {(negocio.direccion || negocio.horarios) && (
-        <dl class="mt-8 grid gap-4 border-t border-grafito pt-6 text-[.95rem]">
-          {negocio.direccion && (<div><dt class="etiqueta !text-gris-claro">Dirección</dt><dd class="mt-1">{negocio.direccion}</dd></div>)}
-          {negocio.horarios && (<div><dt class="etiqueta !text-gris-claro">Horarios</dt><dd class="mt-1">{negocio.horarios}</dd></div>)}
-        </dl>
+
+      <ul class="mt-10 grid gap-6 border-t border-grafito pt-8 text-[.98rem] sm:grid-cols-2" role="list">
+        <li class="flex gap-3">
+          <Icono nombre="pin" tamano={20} clase="mt-0.5 shrink-0 text-gris-claro" />
+          <div>
+            <p class="etiqueta !text-gris-claro">Dónde estamos</p>
+            <p class="mt-1.5">{negocio.direccion ? `${negocio.direccion}, ${negocio.ciudad}` : `${negocio.ciudad}. Escribinos y te pasamos la dirección.`}</p>
+          </div>
+        </li>
+        <li class="flex gap-3">
+          <Icono nombre="reloj" tamano={20} clase="mt-0.5 shrink-0 text-gris-claro" />
+          <div>
+            <p class="etiqueta !text-gris-claro">Horarios</p>
+            <p class="mt-1.5 whitespace-pre-line">{negocio.horarios || 'Consultanos por WhatsApp.'}</p>
+          </div>
+        </li>
+      </ul>
+
+      {(negocio.instagram || negocio.facebook) && (
+        <ul class="mt-8 flex gap-3" role="list">
+          {negocio.instagram && <li><a class="red" href={negocio.instagram} target="_blank" rel="noopener" aria-label="Instagram"><Icono nombre="instagram" tamano={20} /></a></li>}
+          {negocio.facebook && <li><a class="red" href={negocio.facebook} target="_blank" rel="noopener" aria-label="Facebook"><Icono nombre="facebook" tamano={20} /></a></li>}
+        </ul>
       )}
+    </div>
+
+    <div class="lg:col-span-6" data-revelar style="--demora:120ms">
+      <div class="mapa" data-mapa={contacto.mapaEmbed}>
+        <div class="mapa-tapa">
+          <span class="grid size-14 place-items-center rounded-full bg-magenta text-papel"><Icono nombre="pin" tamano={26} /></span>
+          <p class="mt-4 font-display text-[1.8rem] leading-tight text-tinta">{negocio.direccion || negocio.ciudad}</p>
+          <p class="mt-1 text-[.92rem] text-gris">{negocio.direccion ? negocio.ciudad : 'Buenos Aires, Argentina'}</p>
+          <div class="mt-6 flex flex-wrap justify-center gap-3">
+            <button type="button" class="boton boton-secundario min-h-0 px-5 py-2.5 text-[.92rem]" data-ver-mapa>Ver el mapa</button>
+            <a class="boton min-h-0 px-5 py-2.5 text-[.92rem] text-tinta underline-offset-4 hover:underline" href={contacto.mapaLink} target="_blank" rel="noopener">Abrir en Google Maps</a>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 
   <footer class="border-t border-grafito">
-    <div class="contenedor flex flex-col gap-6 py-8 text-[.9rem] text-gris-claro sm:flex-row sm:items-center sm:justify-between">
-      <p>
-        <span class="font-display text-[1.25rem] text-papel">{negocio.nombre}</span>
-        <span class="mx-2" aria-hidden="true">·</span>{negocio.ciudad}
-      </p>
-      <ul class="flex flex-wrap items-center gap-x-6 gap-y-3" role="list">
-        <li>
-          <a class="hover:text-papel transition-colors" href={negocio.tienda} {...(tiendaExterna ? { target: '_blank', rel: 'noopener' } : {})}>Tienda online</a>
-        </li>
-        {negocio.catalogo_whatsapp && (
-          <li><a class="hover:text-papel transition-colors" href={negocio.catalogo_whatsapp} target="_blank" rel="noopener">Catálogo de WhatsApp</a></li>
-        )}
-        {negocio.instagram && (
-          <li><a class="grid size-10 place-items-center rounded-full border border-grafito hover:border-papel hover:text-papel transition-colors" href={negocio.instagram} target="_blank" rel="noopener" aria-label="Instagram"><Icono nombre="instagram" tamano={18} /></a></li>
-        )}
-        {negocio.facebook && (
-          <li><a class="grid size-10 place-items-center rounded-full border border-grafito hover:border-papel hover:text-papel transition-colors" href={negocio.facebook} target="_blank" rel="noopener" aria-label="Facebook"><Icono nombre="facebook" tamano={18} /></a></li>
-        )}
-      </ul>
-      <p class="text-[.8rem]">© {anio} {negocio.nombre}</p>
+    <div class="contenedor grid gap-8 py-10 text-[.92rem] text-gris-claro md:grid-cols-12 md:items-start">
+      <div class="md:col-span-5">
+        <p class="flex items-center gap-2.5 text-papel">
+          <span class="flex gap-[3px]" aria-hidden="true"><i class="block size-2 rounded-full bg-cian"></i><i class="block size-2 rounded-full bg-magenta"></i><i class="block size-2 rounded-full bg-amarillo"></i></span>
+          <span class="font-display text-[1.45rem] leading-none">{negocio.nombre}</span>
+        </p>
+        <p class="mt-3 max-w-sm leading-relaxed">{negocio.descripcion}</p>
+      </div>
+      <nav class="md:col-span-4" aria-label="Enlaces del pie">
+        <ul class="grid gap-2.5" role="list">
+          <li><a class="hover:text-papel transition-colors" href={negocio.tienda} {...(tiendaExterna ? { target: '_blank', rel: 'noopener' } : {})}>Tienda online</a></li>
+          {negocio.catalogo_whatsapp && <li><a class="hover:text-papel transition-colors" href={negocio.catalogo_whatsapp} target="_blank" rel="noopener">Catálogo de WhatsApp</a></li>}
+          <li><a class="hover:text-papel transition-colors" href="#calculadora">Calculadora de tamaños</a></li>
+          <li><a class="hover:text-papel transition-colors" href="#como-enviar">Cómo enviar tus fotos</a></li>
+          {negocio.instagram && <li><a class="hover:text-papel transition-colors" href={negocio.instagram} target="_blank" rel="noopener">Instagram</a></li>}
+          {negocio.facebook && <li><a class="hover:text-papel transition-colors" href={negocio.facebook} target="_blank" rel="noopener">Facebook</a></li>}
+        </ul>
+      </nav>
+      <div class="md:col-span-3 md:text-right">
+        <p class="font-mono text-[.85rem] tabular-nums text-papel">{negocio.whatsapp_visible}</p>
+        <p class="mt-1">{negocio.ciudad}</p>
+        <p class="mt-6 text-[.8rem]">© {anio} {negocio.nombre}</p>
+      </div>
     </div>
   </footer>
 </section>
+
+<style>
+  .red { display: grid; place-items: center; width: 2.75rem; height: 2.75rem; border-radius: 999px; border: 1px solid #3A3A40; transition: border-color .2s, color .2s; }
+  .red:hover { border-color: var(--color-papel); }
+  .mapa {
+    position: relative; aspect-ratio: 4 / 3.2; overflow: hidden; border-radius: 4px;
+    background-color: #EDEDF0;
+    background-image:
+      linear-gradient(#DADADF 1px, transparent 1px),
+      linear-gradient(90deg, #DADADF 1px, transparent 1px),
+      linear-gradient(35deg, transparent 47%, #fff 47%, #fff 53%, transparent 53%),
+      linear-gradient(-55deg, transparent 47.5%, #fff 47.5%, #fff 52.5%, transparent 52.5%);
+    background-size: 2.25rem 2.25rem, 2.25rem 2.25rem, 100% 100%, 100% 100%;
+  }
+  @media (max-width: 639px) { .mapa { aspect-ratio: 1 / 1; } }
+  .mapa-tapa { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 1.5rem; }
+  .mapa iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; }
+</style>
+
+<script>
+  // El mapa de Google se carga recién cuando la persona lo pide (así la página carga más rápido)
+  document.querySelectorAll<HTMLElement>('[data-mapa]').forEach((caja) => {
+    caja.querySelector('[data-ver-mapa]')?.addEventListener('click', () => {
+      const iframe = document.createElement('iframe');
+      iframe.src = caja.dataset.mapa || '';
+      iframe.title = 'Mapa de ubicación';
+      iframe.loading = 'lazy';
+      iframe.referrerPolicy = 'no-referrer-when-downgrade';
+      iframe.allowFullscreen = true;
+      caja.querySelector('.mapa-tapa')?.remove();
+      caja.appendChild(iframe);
+      iframe.focus();
+    });
+  });
+</script>

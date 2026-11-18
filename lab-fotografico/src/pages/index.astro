@@ -4,25 +4,37 @@ import Hero from '../components/Hero.astro';
 import Promos from '../components/Promos.astro';
 import Servicios from '../components/Servicios.astro';
 import PantallaVsPapel from '../components/PantallaVsPapel.astro';
+import Calculadora from '../components/Calculadora.astro';
+import Galeria from '../components/Galeria.astro';
+import Proceso from '../components/Proceso.astro';
+import ComoEnviar from '../components/ComoEnviar.astro';
+import Preguntas from '../components/Preguntas.astro';
 import Cierre from '../components/Cierre.astro';
 import { negocio } from '../lib/contenido';
 
-// Menú de arriba. En la etapa 3 se suman Galería y Cómo enviar tus fotos.
+// Menú de arriba
 const menu = [
   { texto: 'Inicio', ancla: 'inicio' },
   { texto: 'Servicios', ancla: 'servicios' },
   { texto: 'Pantalla vs papel', ancla: 'pantalla-vs-papel' },
+  { texto: 'Galería', ancla: 'galeria' },
+  { texto: 'Cómo enviar tus fotos', ancla: 'como-enviar' },
   { texto: 'Contacto', ancla: 'contacto' },
 ];
 ---
 <Base
   titulo={`${negocio.nombre} en ${negocio.ciudad} | Copias, Fine Art, cuadros y fotolibros`}
-  descripcion={negocio.descripcion}
+  descripcion={`Copias y ampliaciones, Fine Art, cuadros en canvas, fotolibros, revelado de rollos y restauración en ${negocio.ciudad}. Revisamos cada archivo antes de imprimir.`}
   menu={menu}
 >
   <Hero />
   <Promos />
   <Servicios />
   <PantallaVsPapel />
+  <Calculadora />
+  <Galeria />
+  <Proceso />
+  <ComoEnviar />
+  <Preguntas />
   <Cierre />
 </Base>

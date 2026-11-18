@@ -1,0 +1,162 @@
+---
+import { Image, getImage } from 'astro:assets';
+import Icono from './Icono.astro';
+import { galeria } from '../lib/contenido';
+
+// Versión grande de cada foto para el visor (se carga recién al abrirla)
+const grandes = await Promise.all(
+  galeria.lista.map((g) => getImage({ src: g.imagen, width: Math.min(1600, g.imagen.width), format: 'webp', quality: 80 })),
+);
+---
+<section id="galeria" class="bg-tinta text-papel" aria-labelledby="titulo-galeria">
+  <div class="contenedor py-16 lg:py-28">
+    <div class="grid gap-5 lg:grid-cols-12 lg:items-end" data-revelar>
+      <div class="lg:col-span-7">
+        <p class="etiqueta !text-gris-claro">Galería</p>
+        <h2 id="titulo-galeria" class="titulo-seccion mt-3">{galeria.titulo}</h2>
+      </div>
+      {galeria.bajada && <p class="text-gris-claro lg:col-span-5 lg:pb-2">{galeria.bajada}</p>}
+    </div>
+
+    <div class="filtros mt-9" role="group" aria-label="Filtrar trabajos por categoría">
+      <button type="button" aria-pressed="true" data-filtro="">Todos</button>
+      {galeria.categorias.map((c) => <button type="button" aria-pressed="false" data-filtro={c}>{c}</button>)}
+    </div>
+
+    <ul class="mosaico mt-8 lg:mt-10" role="list">
+      {galeria.lista.map((g, i) => (
+        <li class="pieza" data-categoria={g.categoria}>
+          <button
+            type="button"
+            class="group block w-full overflow-hidden bg-grafito text-left"
+            data-grande={grandes[i].src}
+            data-descripcion={g.descripcion}
+            data-categoria={g.categoria}
+            aria-label={`Ver grande: ${g.descripcion}`}
+          >
+            <Image
+              src={g.imagen}
+              alt={g.descripcion}
+              widths={[320, 480, 720]}
+              sizes="(min-width: 1280px) 290px, (min-width: 1024px) 23vw, (min-width: 768px) 31vw, 46vw"
+              format="webp"
+              quality={74}
+              class="block h-auto w-full transition-transform duration-700 ease-[var(--ease-revelado)] group-hover:scale-[1.035]"
+            />
+          </button>
+        </li>
+      ))}
+    </ul>
+  </div>
+
+  <dialog id="visor" class="visor" aria-label="Foto ampliada">
+    <div class="visor-caja">
+      <figure class="m-0 flex min-h-0 flex-1 flex-col items-center justify-center gap-4">
+        <img class="visor-img" alt="" />
+        <figcaption class="flex w-full items-center justify-between gap-4 text-[.92rem] text-gris-claro">
+          <span class="visor-texto"></span>
+          <span class="visor-cuenta shrink-0 whitespace-nowrap font-mono text-[.78rem] tabular-nums"></span>
+        </figcaption>
+      </figure>
+      <button type="button" class="visor-boton visor-cerrar" aria-label="Cerrar"><Icono nombre="cerrar" tamano={24} /></button>
+      <button type="button" class="visor-boton visor-anterior" aria-label="Foto anterior"><Icono nombre="flecha" tamano={22} clase="rotate-180" /></button>
+      <button type="button" class="visor-boton visor-siguiente" aria-label="Foto siguiente"><Icono nombre="flecha" tamano={22} /></button>
+    </div>
+  </dialog>
+</section>
+
+<style>
+  .filtros { display: flex; gap: .5rem; overflow-x: auto; scrollbar-width: none; margin-inline: -1.25rem; padding-inline: 1.25rem; }
+  .filtros::-webkit-scrollbar { display: none; }
+  @media (min-width: 640px) { .filtros { flex-wrap: wrap; margin-inline: 0; padding-inline: 0; } }
+  .filtros button {
+    flex: none; padding: .55rem 1.05rem; border-radius: 999px; font-size: .92rem;
+    border: 1px solid #3A3A40; color: var(--color-gris-claro); cursor: pointer;
+    transition: background-color .2s, color .2s, border-color .2s;
+  }
+  .filtros button:hover { border-color: var(--color-papel); color: var(--color-papel); }
+  .filtros button[aria-pressed="true"] { background: var(--color-papel); border-color: var(--color-papel); color: var(--color-tinta); }
+
+  /* Mosaico tipo "masonry": columnas que se llenan de arriba hacia abajo */
+  .mosaico { columns: 2; column-gap: .75rem; }
+  .pieza { break-inside: avoid; margin-bottom: .75rem; }
+  @media (min-width: 768px) { .mosaico { columns: 3; column-gap: 1.25rem; } .pieza { margin-bottom: 1.25rem; } }
+  @media (min-width: 1024px) { .mosaico { columns: 4; } }
+
+  .visor { width: 100vw; height: 100dvh; max-width: none; max-height: none; margin: 0; padding: 0; border: 0; background: rgb(10 10 10 / .96); color: var(--color-papel); }
+  .visor::backdrop { background: rgb(0 0 0 / .6); }
+  .visor-caja { position: relative; display: flex; height: 100%; padding: max(4.5rem, env(safe-area-inset-top)) max(1rem, env(safe-area-inset-right)) max(1.5rem, env(safe-area-inset-bottom)) max(1rem, env(safe-area-inset-left)); }
+  @media (min-width: 768px) { .visor-caja { padding: 4.5rem 6rem 2rem; } }
+  .visor-img { max-width: 100%; max-height: calc(100dvh - 9rem); object-fit: contain; touch-action: pan-y; user-select: none; }
+  .visor-boton { position: absolute; display: grid; place-items: center; width: 3rem; height: 3rem; border-radius: 999px; background: rgb(255 255 255 / .1); color: #fff; transition: background-color .2s; cursor: pointer; }
+  .visor-boton:hover { background: rgb(255 255 255 / .22); }
+  .visor-cerrar { top: max(1rem, env(safe-area-inset-top)); right: max(1rem, env(safe-area-inset-right)); }
+  .visor-anterior, .visor-siguiente { top: 50%; translate: 0 -50%; }
+  .visor-anterior { left: max(1rem, env(safe-area-inset-left)); }
+  .visor-siguiente { right: max(1rem, env(safe-area-inset-right)); }
+  @media (max-width: 767px) { .visor-anterior, .visor-siguiente { top: auto; bottom: max(1.25rem, env(safe-area-inset-bottom)); translate: none; } .visor-caja { padding-bottom: 5.5rem; } }
+</style>
+
+<script>
+  const seccion = document.getElementById('galeria');
+  const visor = document.getElementById('visor') as HTMLDialogElement | null;
+  if (seccion && visor) {
+    const filtros = [...seccion.querySelectorAll<HTMLButtonElement>('[data-filtro]')];
+    const piezas = [...seccion.querySelectorAll<HTMLElement>('.pieza')];
+    const img = visor.querySelector<HTMLImageElement>('.visor-img')!;
+    const texto = visor.querySelector<HTMLElement>('.visor-texto')!;
+    const cuenta = visor.querySelector<HTMLElement>('.visor-cuenta')!;
+    let visibles: HTMLButtonElement[] = [];
+    let actual = 0;
+    let origen: HTMLElement | null = null;
+
+    const actualizarVisibles = () => {
+      visibles = piezas.filter((p) => !p.hidden).map((p) => p.querySelector('button')!) as HTMLButtonElement[];
+    };
+    actualizarVisibles();
+
+    filtros.forEach((f) => f.addEventListener('click', () => {
+      const cat = f.dataset.filtro;
+      filtros.forEach((o) => o.setAttribute('aria-pressed', String(o === f)));
+      piezas.forEach((p) => { p.hidden = Boolean(cat) && p.dataset.categoria !== cat; });
+      actualizarVisibles();
+    }));
+
+    const mostrar = (i: number) => {
+      actual = (i + visibles.length) % visibles.length;
+      const b = visibles[actual];
+      img.src = b.dataset.grande || '';
+      img.alt = b.dataset.descripcion || '';
+      texto.textContent = `${b.dataset.descripcion} · ${b.dataset.categoria}`;
+      cuenta.textContent = `${actual + 1} / ${visibles.length}`;
+    };
+
+    seccion.querySelectorAll<HTMLButtonElement>('.pieza button').forEach((b) => b.addEventListener('click', () => {
+      origen = b;
+      mostrar(visibles.indexOf(b));
+      visor.showModal();
+      document.documentElement.style.overflow = 'hidden';
+    }));
+    visor.addEventListener('close', () => { document.documentElement.style.overflow = ''; origen?.focus(); });
+    visor.querySelector('.visor-cerrar')!.addEventListener('click', () => visor.close());
+    visor.querySelector('.visor-anterior')!.addEventListener('click', () => mostrar(actual - 1));
+    visor.querySelector('.visor-siguiente')!.addEventListener('click', () => mostrar(actual + 1));
+    visor.addEventListener('keydown', (e) => {
+      if (e.key === 'ArrowLeft') mostrar(actual - 1);
+      if (e.key === 'ArrowRight') mostrar(actual + 1);
+    });
+    // Tocar el fondo (fuera de la foto y los botones) cierra
+    visor.addEventListener('click', (e) => {
+      const t = e.target as HTMLElement;
+      if (t === visor || t.classList.contains('visor-caja')) visor.close();
+    });
+    // Deslizar con el dedo para pasar de foto
+    let x0: number | null = null;
+    img.addEventListener('pointerdown', (e) => { x0 = e.clientX; });
+    img.addEventListener('pointerup', (e) => {
+      if (x0 === null) return;
+      const dx = e.clientX - x0; x0 = null;
+      if (Math.abs(dx) > 45) mostrar(actual + (dx < 0 ? 1 : -1));
+    });
+  }
+</script>

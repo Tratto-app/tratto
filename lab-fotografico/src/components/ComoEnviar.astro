@@ -1,0 +1,58 @@
+---
+import Icono from './Icono.astro';
+import { comoEnviar as ce, negocio } from '../lib/contenido';
+import { destacar } from '../lib/formato';
+---
+<section id="como-enviar" class="bg-mesa" aria-labelledby="titulo-enviar">
+  <div class="contenedor grid gap-12 py-16 lg:grid-cols-12 lg:gap-14 lg:py-28">
+    <div class="lg:col-span-5" data-revelar>
+      <p class="etiqueta">{ce.etiqueta}</p>
+      <h2 id="titulo-enviar" class="titulo-seccion destacable mt-3" set:html={destacar(ce.titulo)} />
+      {ce.bajada && <p class="mt-5 text-[1.04rem] leading-relaxed text-gris">{ce.bajada}</p>}
+      <dl class="mt-9 grid gap-6">
+        {ce.consejos.map((c) => (
+          <div class="border-l-2 border-tinta pl-4">
+            <dt class="font-semibold">{c.titulo}</dt>
+            <dd class="mt-1 text-[.95rem] leading-relaxed text-gris">{c.texto}</dd>
+          </div>
+        ))}
+      </dl>
+    </div>
+
+    <div class="grid content-start gap-4 lg:col-span-7">
+      {ce.metodos.map((m, i) => (
+        <article class:list={['metodo', i === 0 && 'recomendado']} data-revelar style={`--demora:${i * 90}ms`}>
+          <div class="flex items-center justify-between gap-4">
+            <h3 class="text-[1.15rem] font-semibold">{m.titulo}</h3>
+            {i === 0 && <span class="badge-promo">Recomendado</span>}
+          </div>
+          <ol class="mt-4 grid gap-2.5" role="list">
+            {m.pasos.map((p, j) => (
+              <li class="flex gap-3 text-[.96rem] leading-relaxed">
+                <span class="paso-num" aria-hidden="true">{j + 1}</span>
+                <span>{p}</span>
+              </li>
+            ))}
+          </ol>
+          {i === 0 && (
+            <a href={negocio.whatsappGeneral} target="_blank" rel="noopener" class="boton boton-principal mt-6 w-full sm:w-auto">
+              <Icono nombre="whatsapp" tamano={20} />
+              Abrir WhatsApp
+            </a>
+          )}
+        </article>
+      ))}
+    </div>
+  </div>
+</section>
+
+<style>
+  .destacable :global(em) { font-style: italic; color: var(--color-magenta); }
+  .metodo { background: var(--color-papel); padding: 1.5rem; border-radius: 4px; }
+  @media (min-width: 640px) { .metodo { padding: 1.75rem 2rem; } }
+  .recomendado { box-shadow: inset 0 3px 0 var(--color-magenta); }
+  .paso-num {
+    flex: none; display: grid; place-items: center; width: 1.6rem; height: 1.6rem; margin-top: .05rem;
+    border-radius: 999px; background: var(--color-mesa); font-family: var(--font-mono); font-size: .75rem;
+  }
+</style>
