@@ -1,0 +1,112 @@
+[
+ {
+  "efecto": "tic",
+  "t": 0.3,
+  "db": -18
+ },
+ {
+  "efecto": "pop",
+  "t": 2.67,
+  "db": -17
+ },
+ {
+  "efecto": "latigazo",
+  "t": 3.15,
+  "db": -19
+ },
+ {
+  "efecto": "tic",
+  "t": 3.45,
+  "db": -18
+ },
+ {
+  "efecto": "falla",
+  "t": 5.34,
+  "db": -22
+ },
+ {
+  "efecto": "latigazo",
+  "t": 6.87,
+  "db": -19
+ },
+ {
+  "efecto": "lluvia",
+  "t": 7.91,
+  "db": -24
+ },
+ {
+  "efecto": "pop",
+  "t": 9.39,
+  "db": -15
+ },
+ {
+  "efecto": "latigazo",
+  "t": 10.1,
+  "db": -19
+ },
+ {
+  "efecto": "tic",
+  "t": 10.9,
+  "db": -18
+ },
+ {
+  "efecto": "motor",
+  "t": 12.28,
+  "db": -24
+ },
+ {
+  "efecto": "latigazo",
+  "t": 14.19,
+  "db": -19
+ },
+ {
+  "efecto": "tecleo",
+  "t": 14.59,
+  "db": -22
+ },
+ {
+  "efecto": "pop",
+  "t": 16.58,
+  "db": -16
+ },
+ {
+  "efecto": "campanita",
+  "t": 16.78,
+  "db": -18
+ },
+ {
+  "efecto": "sello",
+  "t": 17.03,
+  "db": -18
+ },
+ {
+  "efecto": "latigazo",
+  "t": 19.58,
+  "db": -19
+ },
+ {
+  "efecto": "acierto",
+  "t": 16.14,
+  "db": -17
+ },
+ {
+  "efecto": "latigazo",
+  "t": 21.08,
+  "db": -19
+ },
+ {
+  "efecto": "lluvia",
+  "t": 21.58,
+  "db": -24
+ },
+ {
+  "efecto": "pop",
+  "t": 22.13,
+  "db": -14
+ },
+ {
+  "efecto": "golpe",
+  "t": 24.05,
+  "db": -14
+ }
+]
