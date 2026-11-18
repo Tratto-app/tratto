@@ -16,7 +16,9 @@ import argparse, asyncio, json, os, subprocess, sys
 from playwright.async_api import async_playwright
 
 D = os.path.dirname(os.path.abspath(__file__))
-CHROME = "/opt/pw-browsers/chromium-1194/chrome-linux/chrome"
+# El Chromium de la máquina cambia de versión cuando se arma de nuevo: el primero que exista.
+CHROME = next((c for c in ("/opt/pw-browsers/chromium", "/opt/pw-browsers/chromium-1194/chrome-linux/chrome")
+               if os.path.exists(c)), "/opt/pw-browsers/chromium")
 
 
 async def main():
