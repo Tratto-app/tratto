@@ -128,7 +128,7 @@ window.ESCENA3D = (function () {
       mira = V(MON.x + 0.05, 1.12, MON.z); pos = mira.clone().add(V(1.4 * z, 0.7 * z, 3.2 * z));
     } else if (t < P.f4) {                        // 3. el polvo y el perro
       const z = z1(1, 0.9, P.f3, P.f4);
-      mira = V(1.0, 0.85, -1.15); pos = mira.clone().add(V(-1.8 * z, 1.4 * z, 4.4 * z));
+      mira = V(1.12, 0.85, -1.1); pos = mira.clone().add(V(-1.8 * z, 1.4 * z, 4.4 * z));
     } else if (t < P.f5) {                        // 4. la pestaña y el ventilador que despega
       const z = z1(1, 0.92, P.f4, P.f5);
       mira = V(0.25, 1.7, -1.1); pos = mira.clone().add(V(1.2 * z, -0.6 * z, 5.6 * z));
@@ -269,7 +269,7 @@ window.ESCENA3D = (function () {
         if (t < P.gris + 0.1) {
           k.pose(yo, { cabezaX: 0.45 }); U.cadera.rotation.x = 0.32;
           U.brazoI.rotation.set(-1.2, 0, 0.2); U.brazoD.rotation.set(-1.2, 0, -0.2);
-        } else { k.pose(yo, { manosCabeza: t }); yo.rotation.y = Math.PI / 2 + 0.6; }
+        } else { yo.position.set(0.55, 0, -0.8); k.pose(yo, { manosCabeza: t }); yo.rotation.y = Math.PI / 2 + 0.6; }
         silla.position.set(SILLA.x - 0.3, 0, SILLA.z + 0.25); silla.rotation.y = 0.5;
       } else if (t < P.f5) {                     // sentado de nuevo; con el dron te agachás
         yo.position.set(SILLA.x, 0, SILLA.z - 0.05); yo.rotation.y = Math.PI;
@@ -329,8 +329,8 @@ window.ESCENA3D = (function () {
       camara(t);
       // ---- carteles y textos ----
       const hb = new T.Vector3(); barba.getWorldPosition(hb);
-      etqArranque.animar(t, 0.9, P.f2 + 0.05, { x: hb.x + 0.12, y: hb.y - 0.05, z: hb.z }, 110, 40);
-      etqUpd.animar(t, P.actualizar + 0.25, P.f3 + 0.05, { x: MON.x - 0.15, y: MON.y - 0.1, z: MON.z + 0.02 }, -60, -150);
+      etqArranque.animar(t, 0.9, P.f2 + 0.05, { x: hb.x, y: hb.y - 0.05, z: hb.z }, -40, 70);
+      etqUpd.animar(t, P.actualizar + 0.25, P.f3 + 0.05, { x: MON.x - 0.15, y: MON.y - 0.1, z: MON.z + 0.02 }, 70, 160);
       etqPolvo.animar(t, P.polvo + 0.35, P.f4 + 0.05, { x: TORRE.x, y: TORRE.y + 0.2, z: TORRE.z + 0.25 }, 60, -180);
       const hv = new T.Vector3(); U.cabeza.getWorldPosition(hv);
       etqDevuelto.animar(t, P.sucio + 0.2, P.cierre + 0.15, { x: hv.x, y: hv.y + 0.1, z: hv.z }, 90, 60);
