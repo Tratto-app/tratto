@@ -2,7 +2,8 @@
   "permissions": {
     "allow": [
       "mcp__Buffer__create_post",
-      "mcp__Buffer__edit_post"
+      "mcp__Buffer__edit_post",
+      "mcp__Supabase__execute_sql"
     ]
   },
   "extraKnownMarketplaces": {
