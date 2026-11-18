@@ -1,0 +1,150 @@
+<!doctype html><html lang="es"><head><meta charset="utf-8">
+<title>Carrusel · Antes de salir a la ruta en el verano</title>
+<!-- Carrusel guardable (6/11/2026, para el domingo 8/11 10:00 en TikTok). Mismo molde que la mudanza y las
+     vacaciones del perro (los que más rindieron: una situación, cada cosa con su precio), ahora para quien sale
+     a la ruta en el verano: rubros Mecánica del automotor, Lavado de autos y Gomería y auxilio. Portada nueva:
+     asfalto con la línea del medio y un cartel de ruta (ninguno de los anteriores la usó). Precios de
+     precios_referencia (ids 53, 52, 54, 55, 61, 57 y 59) con el ajuste mensual del 2 % de la calculadora y su
+     redondeo, a nov-2026. El mensaje de la placa 8 es un ejemplo, marcado como tal.
+     Exportar: python3 render-carrusel.py ruta-verano.html carrusel-ruta-tt --red tiktok
+               python3 render-carrusel.py ruta-verano.html carrusel-ruta   (Instagram) -->
+<link rel="stylesheet" href="carrusel.css">
+<link rel="stylesheet" href="molde.css">
+<style>
+/* 1 · portada: asfalto con la línea del medio y un cartel verde de ruta */
+.placa.noche.asfalto{background:#3B413E;overflow:hidden}
+.placa.asfalto .pano,.placa.asfalto .fondo-noche{display:none}
+.placa.asfalto .linea{position:absolute;left:50%;top:-40px;bottom:-40px;width:22px;margin-left:-11px;z-index:0;-webkit-mask-image:linear-gradient(180deg,#000 0 19%,transparent 23% 80%,#000 84%);
+  background:repeating-linear-gradient(180deg,#E3C35A 0 110px,transparent 110px 200px);opacity:.9}
+.placa.asfalto .sombra{position:absolute;inset:0;z-index:0;background:radial-gradient(ellipse at 50% 120%,rgba(0,0,0,.35),transparent 60%)}
+.uno .cont{position:relative;z-index:1}
+.uno .chico{display:inline-flex;align-items:center;gap:16px;font:600 30px/1.2 'IBM Plex Mono',monospace;letter-spacing:.14em;text-transform:uppercase;
+  color:#FCFBF8;background:#232927;padding:14px 22px;border-radius:14px}
+.uno h1{font:700 118px/.95 'IBM Plex Sans Condensed',sans-serif;letter-spacing:-.025em;color:#FCFBF8;margin:28px 0 44px;text-shadow:0 6px 0 rgba(14,24,21,.35)}
+.uno h1 em{font-style:normal;color:#E3C35A}
+.cartel{background:var(--verde);border-radius:30px;padding:34px 40px;box-shadow:inset 0 0 0 8px #FCFBF8,0 26px 0 rgba(14,24,21,.35);color:#FCFBF8}
+.cartel .fila{display:flex;align-items:center;justify-content:space-between;gap:24px;padding:14px 8px;border-bottom:3px solid rgba(252,251,248,.35)}
+.cartel .fila:last-child{border-bottom:0}
+.cartel .d{font:700 58px/1 'IBM Plex Sans Condensed',sans-serif}
+.cartel .km{font:600 40px/1 'IBM Plex Mono',monospace;color:#E3C35A}
+.cartel .flecha{font:700 64px/1 'IBM Plex Sans',sans-serif}
+.uno .pie .web,.uno .pie .desliza{color:#FCFBF8}
+</style></head><body>
+
+<!-- 1 · PORTADA -->
+<section class="placa noche asfalto uno"><div class="linea"></div><div class="sombra"></div><div class="cont">
+  <div class="medio">
+    <div class="chico"><i data-ico="volante" data-px="46"></i>Verano · precios de noviembre</div>
+    <h1>Antes de salir a la ruta, <em>revisá esto.</em></h1>
+    <div class="cartel">
+      <div class="fila"><span class="d">Vacaciones</span><span class="flecha">↑</span></div>
+      <div class="fila"><span class="d">Taller antes</span><span class="km">6 cosas</span></div>
+      <div class="fila"><span class="d">La más barata</span><span class="km">$23.000</span></div>
+    </div>
+  </div>
+  <div class="pie"><span class="web">trattoapp.com.ar</span><span class="desliza">Guardalo · Deslizá →</span></div>
+</div></section>
+
+<!-- 2 · SERVICE -->
+<section class="placa"><div class="cont">
+  <div class="medio">
+    <div class="paso"><div class="ico grande"><i data-ico="llave" data-px="92"></i></div><h2><span class="num">1.</span>El service.</h2></div>
+    <div class="tarjeta precio"><div class="que">Service completo</div><div class="rango">$119.000 a $224.000</div></div>
+    <div class="consejo"><div class="ico chico"><i data-ico="check" data-px="52"></i></div><p>Hacelo <b>dos o tres semanas antes</b> de salir: si aparece algo, hay tiempo de arreglarlo.</p></div>
+  </div>
+  <div class="pie"><span class="fuente">Precios de referencia · AMBA · nov-2026</span></div>
+</div></section>
+
+<!-- 3 · ACEITE -->
+<section class="placa"><div class="cont">
+  <div class="medio">
+    <div class="paso"><div class="ico grande"><i data-ico="gota" data-px="92"></i></div><h2><span class="num">2.</span>Aceite y filtro.</h2></div>
+    <div class="tarjeta precio"><div class="que">Cambio de aceite y filtro</div><div class="rango">$67.000 a $119.000</div></div>
+    <div class="consejo"><div class="ico chico"><i data-ico="check" data-px="52"></i></div><p>Si no te toca el service, por lo menos esto. Preguntá <b>qué aceite usan y si el filtro está incluido.</b></p></div>
+  </div>
+  <div class="pie"><span class="fuente">Precios de referencia · AMBA · nov-2026</span></div>
+</div></section>
+
+<!-- 4 · FRENOS -->
+<section class="placa"><div class="cont">
+  <div class="medio">
+    <div class="paso"><div class="ico grande"><i data-ico="reloj" data-px="92"></i></div><h2><span class="num">3.</span>Los frenos.</h2></div>
+    <div class="tarjeta precio"><div class="que">Cambio de pastillas de freno</div><div class="rango">$52.000 a $105.000</div></div>
+    <div class="consejo"><div class="ico chico"><i data-ico="check" data-px="52"></i></div><p>Si <b>chillan o el pedal se hunde</b>, no lo dejes para la vuelta.</p></div>
+  </div>
+  <div class="pie"><span class="fuente">Precios de referencia · AMBA · nov-2026</span></div>
+</div></section>
+
+<!-- 5 · ALINEACIÓN -->
+<section class="placa"><div class="cont">
+  <div class="medio">
+    <div class="paso"><div class="ico grande"><i data-ico="volante" data-px="92"></i></div><h2 style="font-size:92px"><span class="num">4.</span>Alineación y balanceo.</h2></div>
+    <div class="tarjeta precio"><div class="que">Alineación y balanceo</div><div class="rango">$37.000 a $67.000</div></div>
+    <div class="consejo"><div class="ico chico"><i data-ico="check" data-px="52"></i></div><p>Si <b>el volante vibra</b> en la autopista o el auto <b>tira para un lado.</b></p></div>
+  </div>
+  <div class="pie"><span class="fuente">Precios de referencia · AMBA · nov-2026</span></div>
+</div></section>
+
+<!-- 6 · LAVADO -->
+<section class="placa"><div class="cont">
+  <div class="medio">
+    <div class="paso"><div class="ico grande"><i data-ico="escoba" data-px="92"></i></div><h2><span class="num">5.</span>El lavado.</h2></div>
+    <div class="tarjeta precio"><div class="que">Lavado completo (interior y exterior)</div><div class="rango">$23.000 a $52.000</div></div>
+    <div class="consejo"><div class="ico chico"><i data-ico="check" data-px="52"></i></div><p>Adentro también: <b>vas a pasar muchas horas</b> en el auto.</p></div>
+  </div>
+  <div class="pie"><span class="fuente">Precios de referencia · AMBA · nov-2026</span></div>
+</div></section>
+
+<!-- 7 · AUXILIO -->
+<section class="placa"><div class="cont">
+  <div class="medio">
+    <div class="paso"><div class="ico grande"><i data-ico="camion" data-px="92"></i></div><h2 style="font-size:96px"><span class="num">6.</span>Por las dudas.</h2></div>
+    <div class="tarjeta precio chica"><div class="que">Auxilio para cambio de rueda</div><div class="rango">$23.000 a $37.000</div></div>
+    <div class="tarjeta precio chica"><div class="que">Grúa, traslado de hasta 10 km</div><div class="rango">$67.000 a $103.000</div></div>
+    <div class="consejo"><div class="ico chico"><i data-ico="check" data-px="52"></i></div><p>Agendá un número de auxilio <b>antes de salir</b>. En la banquina no es momento de buscar.</p></div>
+  </div>
+  <div class="pie"><span class="fuente">Precios de referencia · AMBA · nov-2026</span></div>
+</div></section>
+
+<!-- 8 · PEDILO ASÍ -->
+<section class="placa"><div class="cont">
+  <div class="medio">
+    <div class="grande-titulo">Pedilo así.</div>
+    <p class="bajada">Copialo y cambiá los datos.</p>
+    <div style="margin-top:44px"><span class="ejemplo-etq">Ejemplo</span></div>
+    <div class="tarjeta mensaje">Tengo un <b>Gol Trend 2015</b> con <b>98.000 km</b> y salgo de vacaciones <b>el 2 de enero</b>. Quiero un <b>service completo</b> y que revisen los frenos, que <b>chillan al frenar</b>. Estoy en <b>Ramos Mejía</b>.</div>
+  </div>
+  <div class="pie"><span class="web">trattoapp.com.ar</span><span class="desliza">Deslizá →</span></div>
+</div></section>
+
+<!-- 9 · RESUMEN -->
+<section class="placa blanca resumen"><div class="cont">
+  <div class="medio">
+    <h2>El auto listo para la ruta, en una foto</h2>
+    <div class="tabla">
+      <div class="f"><span>Service completo</span><b>$119k a $224k</b></div>
+      <div class="f"><span>Aceite y filtro</span><b>$67k a $119k</b></div>
+      <div class="f"><span>Pastillas de freno</span><b>$52k a $105k</b></div>
+      <div class="f"><span>Alineación y balanceo</span><b>$37k a $67k</b></div>
+      <div class="f"><span>Lavado completo</span><b>$23k a $52k</b></div>
+      <div class="f"><span>Auxilio, cambio de rueda</span><b>$23k a $37k</b></div>
+    </div>
+    <p class="manda">Precios de noviembre. Sacale captura o mandáselo a quien maneja en las vacaciones.</p>
+  </div>
+  <div class="pie"><span class="web">trattoapp.com.ar</span></div>
+</div></section>
+
+<!-- 10 · CIERRE -->
+<section class="placa noche cierre"><div class="cont">
+  <div class="medio">
+    <h2>Pedí el turno antes de que se llenen los talleres.</h2>
+    <p class="bajada">En Tratto contás qué auto tenés y qué le querés hacer, y te llegan presupuestos de gente de tu zona para comparar.</p>
+    <div><span class="url-caja"><span id="logo-url"></span><span data-tiktok="trattoapp.com.ar/r/tt-ruta">trattoapp.com.ar/r/ig-ruta</span></span></div>
+    <p class="bio" data-tiktok="(escribilo en el navegador)">Tocá @trattoapp_ · link «Pedí un servicio»</p>
+    <div class="gratis"><span class="sello">Gratis para el que pide</span></div>
+  </div>
+</div></section>
+
+<script src="carrusel.js"></script>
+<script>document.getElementById('logo-url').outerHTML = LOGO(46, 'lu');</script>
+</body></html>

@@ -64,6 +64,7 @@
     cierre: '<path d="M32 6v52"/><path d="M26 12h12M26 20h12M26 28h12"/><rect x="25" y="34" width="14" height="12" rx="3"/>',
     pincel: '<path d="M44 8l12 12-22 22-12-12z"/><path d="M22 30c-7 0-11 5-11 11 0 5-3 9-5 11 9 0 20-2 24-9"/>',
     celular: '<rect x="18" y="6" width="28" height="52" rx="6"/><path d="M28 50h8"/>',
+    compu: '<rect x="12" y="12" width="40" height="28" rx="3"/><path d="M6 50h52l-4-6H10z"/>',
     megafono: '<path d="M10 26v12h10l20 12V14L20 26z"/><path d="M48 24c3 2 5 5 5 8s-2 6-5 8"/>',
     lapiz: '<path d="M14 50l4-14 26-26 10 10-26 26z"/><path d="M38 16l10 10"/>',
     hoja: '<path d="M12 52C12 26 28 12 54 10c-2 26-16 42-42 42z"/><path d="M12 52L36 28"/>',

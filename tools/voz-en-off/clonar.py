@@ -153,7 +153,11 @@ def normal(texto):
     t = "".join(c for c in t if unicodedata.category(c) != "Mn")
     t = re.sub(r"(\d)[.,](\d{3})", r"\1\2", t)
     t = re.sub(r"\d+", lambda m: f" {letras(int(m.group()))} ", t)
-    return re.sub(r"[^a-z0-9ñ ]+", " ", t.replace("tratto", "trato")).split()
+    t = re.sub(r"[^a-z0-9ñ ]+", " ", t.replace("tratto", "trato"))
+    # Delante de "mil" se dice "un" y "veintiún" ("sesenta y un mil"): las cifras
+    # que escribe el oído ("61 mil") se pasan igual que como dice el guion.
+    t = re.sub(r"\b(veinti)?uno(?=\s+mil\b)", lambda m: (m.group(1) or "") + "un", t)
+    return t.split()
 
 
 def tono(x, sr=16000):
@@ -273,7 +277,12 @@ def revisar(x16, palabras, oidas, voz, f0_muestra):
                                + " ".join(f"{w[2].strip()} {w[3]:.0%}" for w in oidas[i:i + 3]) + "»")
             break
     for (ini, fin, w, p) in oidas:
-        if fin - ini > CONTROL["palabra_larga"]:
+        # Una cifra que escribe el oido ("178") son varias palabras dichas
+        # ("ciento setenta y ocho"): se mide con el tiempo de esas palabras
+        # (0,35 s por cada una de mas), no como si fuera una sola. Con
+        # "178" (1,06 s, 0,27 s por palabra) marcaba estirada una frase normal.
+        dichas = len(normal(w)) if re.search(r"\d", w) else 1
+        if fin - ini > CONTROL["palabra_larga"] + 0.35 * (dichas - 1):
             r["fallas"].append(f"palabra estirada: {w.strip()}")
     # Pausas: los silencios de verdad (el oido a veces estira las palabras y
     # tapa la pausa), cada uno con la palabra que termina mas cerca.
@@ -532,7 +541,11 @@ def main():
     # Ganas: tiene que moverse y avanzar como el fundador de verdad.
     medida = vida(leer(final, 16000))
     habla = oidas[-1][1] - oidas[0][0]
-    medida["ritmo"] = len(oidas) / max(habla, 0.3)
+    # Palabras dichas, no fichas del oido: "178" son cuatro ("ciento setenta y
+    # ocho"). Contandola como una, la frase de un precio bajaba el ritmo de toda
+    # la voz (el 3D de pintura daba 2,68 hablando a 2,84 palabras por segundo).
+    dichas = sum(len(normal(w[2])) if re.search(r"\d", w[2]) else 1 for w in oidas)
+    medida["ritmo"] = dichas / max(habla, 0.3)
     minimos = {**GANAS, **(GANAS_CORTA if habla < CORTA_SEG else {})}
     flojas = [f"{k} {medida[k]:.2f} (mínimo {v})" for k, v in minimos.items() if medida[k] < v]
     if flojas:

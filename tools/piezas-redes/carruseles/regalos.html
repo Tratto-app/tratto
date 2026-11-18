@@ -1,0 +1,141 @@
+<!doctype html><html lang="es"><head><meta charset="utf-8">
+<title>Carrusel · Regalos que no ocupan lugar</title>
+<!-- Carrusel guardable (13/11/2026, TikTok viernes 13/11 12:00 e Instagram en la cola del primer mediodía libre).
+     Temporada: fin de año. Regalos que son un servicio, solo de rubros con gente registrada el 13/11/2026:
+     Masajes (3), Clases de música (1), Clases de manejo (1), Catering y pastelería (1), Servicios de limpieza (1).
+     Precios de precios_referencia con el ajuste mensual del 2 % de la calculadora y su redondeo, a nov-2026:
+       id 97  masaje descontracturante (1 hora), 35.000 a 60.000, jul-2026 → $38.000 a $65.000
+       id 118 clase de canto (1 hora), 15.000 a 28.000, abr-2026 → $17.000 a $32.000
+       id 120 clase práctica de manejo (1 hora), 32.000 a 45.000, jul-2026 → $35.000 a $49.000
+       id 101 torta artesanal (por kilo), 20.000 a 45.000, jul-2026 → $22.000 a $49.000
+       id 49  limpieza a domicilio, media jornada (4 horas), 31.200 a 45.500, abr-2026 → $36.000 a $52.000
+     Exportar: python3 render-carrusel.py regalos.html carrusel-regalos-tt --red tiktok
+               python3 render-carrusel.py regalos.html carrusel-regalos   (Instagram) -->
+<link rel="stylesheet" href="carrusel.css">
+<link rel="stylesheet" href="molde.css">
+<style>
+/* 1 · portada: una tarjeta de regalo con moño y la lista de lo que se puede regalar */
+.uno .chico{display:inline-flex;align-items:center;gap:16px;font:600 30px/1.2 'IBM Plex Mono',monospace;letter-spacing:.14em;text-transform:uppercase;
+  color:var(--verde);background:rgba(30,93,73,.1);padding:14px 22px;border-radius:14px}
+.uno h1{font:700 118px/.95 'IBM Plex Sans Condensed',sans-serif;letter-spacing:-.025em;margin:26px 0 90px}
+.uno h1 em{font-style:normal;color:var(--laton-osc)}
+.regalo{position:relative;background:#FCFBF8;border-radius:24px;padding:40px 40px 26px;box-shadow:0 28px 60px rgba(12,38,32,.2);overflow:visible}
+.regalo:before{content:'';position:absolute;left:0;right:0;top:0;height:22px;background:var(--verde);border-radius:24px 24px 0 0}
+.regalo .cinta{position:absolute;top:-58px;left:50%;transform:translateX(-50%);display:flex;gap:6px}
+.regalo .cinta span{width:74px;height:58px;border:12px solid var(--laton);border-radius:50% 50% 8px 50%}
+.regalo .cinta span:last-child{border-radius:50% 50% 50% 8px}
+.regalo .para{font:600 28px/1.3 'IBM Plex Mono',monospace;letter-spacing:.06em;color:var(--gris);margin-top:14px}
+.regalo .fila{display:flex;align-items:center;justify-content:space-between;gap:20px;padding:16px 0;border-bottom:3px dashed rgba(30,93,73,.18);
+  font:600 44px/1.1 'IBM Plex Sans',sans-serif;color:var(--tinta)}
+.regalo .fila:last-child{border-bottom:0}
+.regalo .fila span{display:flex;align-items:center;gap:18px}
+.regalo .fila i{color:var(--verde-vivo)}
+.regalo .fila em{font:600 30px/1 'IBM Plex Mono',monospace;font-style:normal;color:var(--laton-osc)}
+.para-quien{margin-top:34px;font:600 46px/1.25 'IBM Plex Sans',sans-serif;color:var(--tinta)}
+.para-quien b{color:var(--verde)}
+.como{margin-top:30px;font:600 38px/1.3 'IBM Plex Sans',sans-serif;color:var(--tinta)}
+</style></head><body>
+
+<!-- 1 · PORTADA -->
+<section class="placa uno"><div class="cont">
+  <div class="medio">
+    <div class="chico"><i data-ico="caja" data-px="46"></i>Para las fiestas</div>
+    <h1>Regalos que no <em>ocupan lugar.</em></h1>
+    <div class="regalo"><div class="cinta"><span></span><span></span></div>
+      <div class="para">PARA: QUIEN YA TIENE TODO</div>
+      <div class="fila"><span><i data-ico="estrella" data-px="46"></i>Un masaje</span><em>desde $38k</em></div>
+      <div class="fila"><span><i data-ico="nota" data-px="46"></i>Una clase de canto</span><em>desde $17k</em></div>
+      <div class="fila"><span><i data-ico="volante" data-px="46"></i>Una clase de manejo</span><em>desde $35k</em></div>
+      <div class="fila"><span><i data-ico="torta" data-px="46"></i>Una torta</span><em>desde $22k</em></div>
+      <div class="fila"><span><i data-ico="escoba" data-px="46"></i>Una limpieza</span><em>desde $36k</em></div>
+    </div>
+  </div>
+  <div class="pie"><span class="web">trattoapp.com.ar</span><span class="desliza">Guardalo · Deslizá →</span></div>
+</div></section>
+
+<!-- 2 · UN MASAJE. -->
+<section class="placa"><div class="cont">
+  <div class="medio">
+    <div class="paso"><div class="ico grande"><i data-ico="estrella" data-px="92"></i></div><h2><span class="num">1.</span>Un masaje.</h2></div>
+    <div class="tarjeta precio"><div class="que">Masaje descontracturante (1 hora)</div><div class="rango">$38.000 a $65.000</div></div>
+    <p class="para-quien">Para quien termina el año con la espalda <b>hecha un nudo.</b></p>
+    <div class="consejo"><div class="ico chico"><i data-ico="check" data-px="52"></i></div><p>Preguntá si va a domicilio: <b>se regala con día y hora.</b></p></div>
+  </div>
+  <div class="pie"><span class="fuente">Precios de referencia · AMBA · nov-2026</span></div>
+</div></section>
+
+<!-- 3 · UNA CLASE DE CANTO. -->
+<section class="placa"><div class="cont">
+  <div class="medio">
+    <div class="paso"><div class="ico grande"><i data-ico="nota" data-px="92"></i></div><h2><span class="num">2.</span>Una clase de canto.</h2></div>
+    <div class="tarjeta precio"><div class="que">Clase de canto (1 hora)</div><div class="rango">$17.000 a $32.000</div></div>
+    <p class="para-quien">Para quien canta en la ducha <b>y tiene público.</b></p>
+    <div class="consejo"><div class="ico chico"><i data-ico="check" data-px="52"></i></div><p>Regalá una sola clase: <b>si le gusta, sigue por su cuenta.</b></p></div>
+  </div>
+  <div class="pie"><span class="fuente">Precios de referencia · AMBA · nov-2026</span></div>
+</div></section>
+
+<!-- 4 · UNA CLASE DE MANEJO. -->
+<section class="placa"><div class="cont">
+  <div class="medio">
+    <div class="paso"><div class="ico grande"><i data-ico="volante" data-px="92"></i></div><h2><span class="num">3.</span>Una clase de manejo.</h2></div>
+    <div class="tarjeta precio"><div class="que">Clase práctica de manejo (1 hora)</div><div class="rango">$35.000 a $49.000</div></div>
+    <p class="para-quien">Para quien cumple 18 o tiene el registro <b>guardado en un cajón.</b></p>
+    <div class="consejo"><div class="ico chico"><i data-ico="check" data-px="52"></i></div><p>Preguntá si el auto tiene <b>doble comando:</b> para arrancar, conviene.</p></div>
+  </div>
+  <div class="pie"><span class="fuente">Precios de referencia · AMBA · nov-2026</span></div>
+</div></section>
+
+<!-- 5 · UNA TORTA. -->
+<section class="placa"><div class="cont">
+  <div class="medio">
+    <div class="paso"><div class="ico grande"><i data-ico="torta" data-px="92"></i></div><h2><span class="num">4.</span>Una torta.</h2></div>
+    <div class="tarjeta precio"><div class="que">Torta artesanal (por kilo)</div><div class="rango">$22.000 a $49.000</div></div>
+    <p class="para-quien">Para el cumple que cae en diciembre y <b>siempre queda tapado por las fiestas.</b></p>
+    <div class="consejo"><div class="ico chico"><i data-ico="check" data-px="52"></i></div><p>Encargala con una semana: <b>en diciembre las agendas se llenan.</b></p></div>
+  </div>
+  <div class="pie"><span class="fuente">Precios de referencia · AMBA · nov-2026</span></div>
+</div></section>
+
+<!-- 6 · UNA LIMPIEZA. -->
+<section class="placa"><div class="cont">
+  <div class="medio">
+    <div class="paso"><div class="ico grande"><i data-ico="escoba" data-px="92"></i></div><h2><span class="num">5.</span>Una limpieza.</h2></div>
+    <div class="tarjeta precio"><div class="que">Limpieza a domicilio, media jornada (4 horas)</div><div class="rango">$36.000 a $52.000</div></div>
+    <p class="para-quien">Para quien recibe a <b>toda la familia</b> el 24.</p>
+    <div class="consejo"><div class="ico chico"><i data-ico="check" data-px="52"></i></div><p>Regalala para el 23 o para el 26: <b>antes del lío o después.</b></p></div>
+  </div>
+  <div class="pie"><span class="fuente">Precios de referencia · AMBA · nov-2026</span></div>
+</div></section>
+
+<!-- 7 · RESUMEN -->
+<section class="placa blanca resumen"><div class="cont">
+  <div class="medio">
+    <h2>Los regalos, en una foto</h2>
+    <div class="tabla">
+      <div class="f"><span>Masaje (1 hora)</span><b>$38k a $65k</b></div>
+      <div class="f"><span>Clase de canto (1 hora)</span><b>$17k a $32k</b></div>
+      <div class="f"><span>Clase de manejo (1 hora)</span><b>$35k a $49k</b></div>
+      <div class="f"><span>Torta artesanal (kilo)</span><b>$22k a $49k</b></div>
+      <div class="f"><span>Limpieza (4 horas)</span><b>$36k a $52k</b></div>
+    </div>
+    <p class="como">Al pedirlo, contá qué querés regalar, <b>para qué fecha</b> y en qué barrio.</p>
+    <p class="manda">Precios de noviembre. Sacale captura o mandáselo a quien todavía no sabe qué regalar.</p>
+  </div>
+  <div class="pie"><span class="web">trattoapp.com.ar</span></div>
+</div></section>
+
+<!-- 8 · CIERRE -->
+<section class="placa noche cierre"><div class="cont">
+  <div class="medio">
+    <h2>Regalá algo que se usa.</h2>
+    <p class="bajada">En Tratto contás qué querés regalar y para cuándo, y te llegan presupuestos de gente de tu zona para comparar.</p>
+    <div><span class="url-caja"><span id="logo-url"></span><span data-tiktok="trattoapp.com.ar/r/tt-regalos">trattoapp.com.ar/r/ig-regalos</span></span></div>
+    <p class="bio" data-tiktok="(escribilo en el navegador)">Tocá @trattoapp_ · link «Pedí un servicio»</p>
+    <div class="gratis"><span class="sello">Gratis para el que pide</span></div>
+  </div>
+</div></section>
+
+<script src="carrusel.js"></script>
+<script>document.getElementById('logo-url').outerHTML = LOGO(46, 'lu');</script>
+</body></html>

@@ -16,6 +16,15 @@ del paquete (ícono, nombre, colores, permisos).
 tiene el dueño (archivo `tratto-upload.keystore` + contraseña). Con Play App
 Signing, si se pierde se puede pedir un reseteo a Google, pero lleva días.
 
+El 04/11/2026 se perdió la primera (la de `clave-android.zip`) y se armó una
+nueva (`clave-android-nueva.zip`, alias `tratto`, huella SHA-256
+`2E:B7:25:C4:D2:67:1E:1D:3D:A4:16:25:08:5E:D3:53:8B:85:84:A5:D9:07:5D:26:E4:5A:F6:83:AB:7D:53:54`).
+Se le pidió a Google el restablecimiento de la clave de subida con su
+certificado (`certificado-subida.pem`): hasta que Google la habilita (unas
+48 horas), Play rechaza los paquetes firmados con ella. La clave de firma de
+Play (la que ven los teléfonos) no cambia, así que `assetlinks.json` sigue
+igual.
+
 `.well-known/assetlinks.json` tiene que listar la huella SHA-256 de esta clave
 **y** la de la clave de firma de Play (Play Console → Configuración → Integridad
 de la app). Sin eso la app muestra la barra del navegador arriba.

@@ -150,6 +150,12 @@ rutina "Redes · videos del día":
   clientes y quienes ofrecen servicios, y rubros distintos (eventos, clases,
   belleza, autos, mascotas, trámites, hogar). Nunca repitas en una red un
   video que ya salió en esa red.
+- **Solo videos 3D** (fundador, 07/11/2026: "no subamos ningún video más como
+  los que subíamos antes… todos así en 3D, gracioso y que cuente una
+  historia"): todo video nuevo para redes es del formato "3d" de la skill
+  `video-publicidad`, uno distinto por día, de un rubro con gente registrada,
+  el mismo día en TikTok, Instagram y Facebook. Lo de abajo sobre formatos
+  (producto, chat, quiz, lista, nota, voz) queda como historia: ya no se usan.
 - **Ningún video igual al anterior** (fundador, 21/10/2026: "que no sean todas
   iguales, con la misma música y la misma modalidad, para probar qué se pega
   y qué no"). Antes de cada video nuevo, armá el historial de esa red con las
@@ -167,12 +173,12 @@ rutina "Redes · videos del día":
   usar el mismo video: el historial es por red.
 - La voz clonada del fundador va en los videos desde el 24/10/2026 ("subí
   con mi voz, pero tomatelo muy en serio"): solo con `clonar.py`, sin aflojar
-  nunca un control; si no pasa, otra frase o el video sale sin voz. Reglas
+  nunca un control; si no pasa, otra frase hasta que pase (nunca sin voz: el fundador borró los videos sin voz el 14/11/2026; si ese día no pasa, no se publica). Reglas
   en la skill `video-publicidad`, sección de la voz. El 28/10/2026 borró uno
   porque sonaba apagado y se trababa; esa tarde aprobó la voz nueva y pidió
   no escuchar cada audio pero que seas "muy estricto": sale sola solo si
   `clonar.py` pasa todos los controles (incluidas las ganas); si no, otra
-  frase o el video sale sin voz.
+  frase hasta que pase (nunca sin voz: el fundador borró los videos sin voz el 14/11/2026; si ese día no pasa, no se publica).
 - Cada video nuevo pasa por la cadena completa (punto 1) y la prueba del
   cerebro, y queda en la cola con `datos.buffer` por red y `datos.video`.
 - Buffer gratis admite hasta 10 programados por canal a la vez: no programes

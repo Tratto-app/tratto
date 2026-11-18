@@ -43,15 +43,19 @@ una está en `.claude/skills/contenido/SKILL.md`, sección "Automático".
   programa: el reel va a la cola (`growth_mkt_items` con `datos.red =
   'instagram'` y `datos.instagram = { estado: 'en_cola', publicar_el,
   video_url, texto, verificado: true }`) y lo publican a la hora las rutinas
-  "Instagram · publicar el reel de la hora" (lunes a viernes 18:00, sábados y
-  domingos 10:00). Antes de ponerlo en la cola, `verificar` con `red:
+  "Instagram · publicar la pieza de la hora" (lunes a viernes 12:00 y 18:00,
+  sábados y domingos 10:00 y 18:00; desde el 07/11/2026 las 18:00 son del video
+  3D del día, que sale el mismo día en TikTok, Instagram y Facebook). Antes de ponerlo en la cola, `verificar` con `red:
   'instagram'`. La historia con sticker de link la sube la persona desde el
   celular (la API no pone stickers).
 - Buffer gratis tiene 3 lugares: TikTok, LinkedIn y X (el que dejó Instagram).
   Así las cinco redes salen solas sin pagar.
-- Cada video nuevo cambia de formato y de música respecto de los últimos de
-  esa red (fundador, 21/10/2026): `node tools/contenido/cli.mjs variedad`
-  antes de hacerlo y `datos.video` en el item (skill `video-publicidad`).
+- Todos los videos son en 3D, graciosos y contando una historia (fundador,
+  07/11/2026: "no subamos ningún video más como los que subíamos antes"):
+  formato "3d" de la skill `video-publicidad`, uno distinto por día, de un
+  rubro con gente registrada, el mismo día en TikTok, Instagram y Facebook.
+  Cada uno cambia de rubro, lugar, cámara y música respecto del anterior;
+  `datos.video` en el item.
 - Al entregar, decí en una línea qué piezas se aplicaron.
 
 Dos controles en código lo sostienen: `node tools/contenido/cli.mjs verificar`

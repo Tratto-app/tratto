@@ -1,0 +1,107 @@
+[
+ {
+  "efecto": "pop",
+  "t": 2.61,
+  "db": -22
+ },
+ {
+  "efecto": "latigazo",
+  "t": 3.61,
+  "db": -19
+ },
+ {
+  "efecto": "motor",
+  "t": 4.98,
+  "db": -27
+ },
+ {
+  "efecto": "falla",
+  "t": 6.52,
+  "db": -18
+ },
+ {
+  "efecto": "latigazo",
+  "t": 7.89,
+  "db": -19
+ },
+ {
+  "efecto": "lluvia",
+  "t": 9.98,
+  "db": -26
+ },
+ {
+  "efecto": "pop",
+  "t": 10.38,
+  "db": -17
+ },
+ {
+  "efecto": "latigazo",
+  "t": 11.2,
+  "db": -19
+ },
+ {
+  "efecto": "golpe",
+  "t": 12.34,
+  "db": -21
+ },
+ {
+  "efecto": "latigazo",
+  "t": 13.06,
+  "db": -19
+ },
+ {
+  "efecto": "falla",
+  "t": 13.99,
+  "db": -17
+ },
+ {
+  "efecto": "latigazo",
+  "t": 15.06,
+  "db": -19
+ },
+ {
+  "efecto": "pop",
+  "t": 16.2,
+  "db": -15
+ },
+ {
+  "efecto": "pop",
+  "t": 17.13,
+  "db": -16
+ },
+ {
+  "efecto": "campanita",
+  "t": 17.33,
+  "db": -18
+ },
+ {
+  "efecto": "sello",
+  "t": 17.58,
+  "db": -18
+ },
+ {
+  "efecto": "latigazo",
+  "t": 20.8,
+  "db": -19
+ },
+ {
+  "efecto": "latigazo",
+  "t": 22.4,
+  "db": -19
+ },
+ {
+  "efecto": "pop",
+  "t": 22.95,
+  "db": -15
+ },
+ {
+  "efecto": "acierto",
+  "t": 23.2,
+  "db": -17
+ },
+ {
+  "efecto": "golpe",
+  "t": 25.27,
+  "db": -14
+ }
+]

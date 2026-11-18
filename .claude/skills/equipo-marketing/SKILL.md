@@ -46,7 +46,9 @@ Mirá lo que te pidieron (o el argumento de `/equipo-marketing`):
 4. **Encargos.** Delegá a cada departamento lo que toca esta semana. Por
    defecto (ajustá con datos):
    - Redes: radar viral y después el plan semanal de
-     `tools/contenido/config/estrategia.json` (3 reels + 2 carruseles), cada
+     `tools/contenido/config/estrategia.json` (los videos son siempre el 3D
+     del día que hace la rutina "Redes · videos del día", gracioso y con
+     historia, desde el 07/11/2026; acá se planifican los carruseles), cada
      pieza con link con nombre, por la cadena completa del sistema de
      contenido y con su versión para la otra red. El primer lunes del mes,
      también la revisión del perfil.
