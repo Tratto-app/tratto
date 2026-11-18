@@ -1,0 +1,76 @@
+---
+import '../styles/global.css';
+import Header from '../components/Header.astro';
+import Icono from '../components/Icono.astro';
+import { negocio } from '../lib/contenido';
+
+interface Props {
+  titulo: string;
+  descripcion: string;
+  menu: { texto: string; ancla: string }[];
+}
+const { titulo, descripcion, menu } = Astro.props;
+---
+<!doctype html>
+<html lang="es-AR">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <title>{titulo}</title>
+    <meta name="description" content={descripcion} />
+    <meta name="theme-color" content="#FFFFFF" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="preload" href="/fuentes/instrument-serif.woff2" as="font" type="font/woff2" crossorigin />
+    <link rel="preload" href="/fuentes/instrument-sans.woff2" as="font" type="font/woff2" crossorigin />
+    <script is:inline>document.documentElement.classList.add('js');</script>
+  </head>
+  <body>
+    <a href="#contenido" class="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-50 focus:bg-papel focus:px-4 focus:py-3">Saltar al contenido</a>
+    <Header menu={menu} />
+    <main id="contenido">
+      <slot />
+    </main>
+
+    <a
+      href={negocio.whatsappGeneral}
+      target="_blank"
+      rel="noopener"
+      class="whatsapp-flotante"
+      aria-label="Escribir por WhatsApp"
+    >
+      <Icono nombre="whatsapp" tamano={28} />
+    </a>
+
+    <style>
+      .whatsapp-flotante {
+        position: fixed; z-index: 30;
+        right: calc(1rem + env(safe-area-inset-right, 0px));
+        bottom: calc(1rem + env(safe-area-inset-bottom, 0px));
+        display: grid; place-items: center;
+        width: 3.6rem; height: 3.6rem; border-radius: 999px;
+        background: var(--color-whatsapp); color: #fff;
+        box-shadow: 0 10px 24px -6px rgb(0 0 0 / .4);
+        transition: transform .25s var(--ease-revelado), background-color .2s;
+      }
+      .whatsapp-flotante:hover { transform: scale(1.06); background: #14833D; }
+      @media (min-width: 1024px) {
+        .whatsapp-flotante { right: calc(1.75rem + env(safe-area-inset-right, 0px)); bottom: calc(1.75rem + env(safe-area-inset-bottom, 0px)); }
+      }
+    </style>
+
+    <script>
+      // Aparición suave de las secciones al hacer scroll
+      const elementos = document.querySelectorAll('[data-revelar]');
+      if ('IntersectionObserver' in window) {
+        const io = new IntersectionObserver((entradas) => {
+          for (const e of entradas) {
+            if (e.isIntersecting) { e.target.classList.add('visible'); io.unobserve(e.target); }
+          }
+        }, { rootMargin: '0px 0px -8% 0px', threshold: .08 });
+        elementos.forEach((el) => io.observe(el));
+      } else {
+        elementos.forEach((el) => el.classList.add('visible'));
+      }
+    </script>
+  </body>
+</html>

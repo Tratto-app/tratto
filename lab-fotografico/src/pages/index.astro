@@ -1,0 +1,28 @@
+---
+import Base from '../layouts/Base.astro';
+import Hero from '../components/Hero.astro';
+import Promos from '../components/Promos.astro';
+import Servicios from '../components/Servicios.astro';
+import PantallaVsPapel from '../components/PantallaVsPapel.astro';
+import Cierre from '../components/Cierre.astro';
+import { negocio } from '../lib/contenido';
+
+// Menú de arriba. En la etapa 3 se suman Galería y Cómo enviar tus fotos.
+const menu = [
+  { texto: 'Inicio', ancla: 'inicio' },
+  { texto: 'Servicios', ancla: 'servicios' },
+  { texto: 'Pantalla vs papel', ancla: 'pantalla-vs-papel' },
+  { texto: 'Contacto', ancla: 'contacto' },
+];
+---
+<Base
+  titulo={`${negocio.nombre} en ${negocio.ciudad} | Copias, Fine Art, cuadros y fotolibros`}
+  descripcion={negocio.descripcion}
+  menu={menu}
+>
+  <Hero />
+  <Promos />
+  <Servicios />
+  <PantallaVsPapel />
+  <Cierre />
+</Base>

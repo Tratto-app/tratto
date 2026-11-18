@@ -22,3 +22,7 @@ supabase
 # Growth OS: panel interno separado (React + Vite) con su propio despliegue;
 # no se sirve desde el dominio de la app
 growth
+
+# Sitio del laboratorio fotográfico (cliente aparte): tiene su propio proyecto
+# en Vercel con Root Directory lab-fotografico. No se sirve en el dominio de Tratto.
+/lab-fotografico

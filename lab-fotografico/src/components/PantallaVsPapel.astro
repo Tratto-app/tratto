@@ -1,0 +1,207 @@
+---
+import { Image } from 'astro:assets';
+import Icono from './Icono.astro';
+import { pantallaVsPapel as pvp, negocio } from '../lib/contenido';
+import { destacar } from '../lib/formato';
+
+const anchos = [480, 720, 960, 1280, 1600];
+const tamanos = '(min-width: 1280px) 1180px, (min-width: 640px) 94vw, 150vw';
+---
+<section id="pantalla-vs-papel" class="bg-mesa" aria-labelledby="titulo-pvp">
+  <div class="contenedor py-16 lg:py-28">
+    <div class="grid gap-6 lg:grid-cols-12 lg:items-end" data-revelar>
+      <div class="lg:col-span-8">
+        <p class="etiqueta">{pvp.etiqueta}</p>
+        <h2 id="titulo-pvp" class="titulo-pvp mt-3 font-display" set:html={destacar(pvp.titulo)} />
+      </div>
+      <p class="text-[1.04rem] leading-relaxed text-gris lg:col-span-4 lg:pb-3">{pvp.bajada}</p>
+    </div>
+
+    <!-- Comparador: se arrastra la línea (o se usan las flechas del teclado) -->
+    <div class="mt-10 lg:mt-14" data-comparador style="--pos: 50%" data-revelar>
+      {pvp.comparador.length > 1 && (
+        <div class="pestanas" role="tablist" aria-label="Qué querés comparar">
+          {pvp.comparador.map((c, i) => (
+            <button
+              type="button" role="tab" id={`pestana-${i}`}
+              aria-selected={i === 0 ? 'true' : 'false'} aria-controls="vista-comparador"
+              tabindex={i === 0 ? 0 : -1} data-modo={i}
+            >{c.pestana}</button>
+          ))}
+        </div>
+      )}
+
+      <div class="marco mt-4">
+        <div id="vista-comparador" class="vista" role="tabpanel" aria-labelledby="pestana-0">
+          {pvp.comparador.map((c, i) => (
+            <div class="modo" data-modo={i} hidden={i !== 0}>
+              <Image src={c.imagenDerecha} alt={`${pvp.foto_descripcion}: ${c.derecha.toLowerCase()}`}
+                widths={anchos} sizes={tamanos} format="webp" quality={84} loading="lazy" class="capa" />
+              <div class="recorte" aria-hidden="true">
+                <Image src={c.imagenIzquierda} alt=""
+                  widths={anchos} sizes={tamanos} format="webp" quality={84} loading="lazy"
+                  class:list={['capa', c.efecto_pantalla && 'efecto-pantalla']} />
+              </div>
+              <span class="rotulo left-3 sm:left-4">{c.izquierda}</span>
+              <span class="rotulo right-3 sm:right-4">{c.derecha}</span>
+            </div>
+          ))}
+          <input type="range" min="0" max="100" value="50" step="1" class="deslizador"
+            aria-label="Mover la línea para comparar las dos versiones de la foto" />
+          <div class="linea" aria-hidden="true"><span class="perilla"><Icono nombre="deslizar" tamano={18} /></span></div>
+        </div>
+      </div>
+
+      {pvp.comparador.map((c, i) => (
+        <p class="nota mt-4 max-w-3xl text-[.95rem] text-gris" data-nota={i} hidden={i !== 0}>{c.nota}</p>
+      ))}
+    </div>
+
+    <ul class="bloques mt-16 lg:mt-24" role="list">
+      {pvp.bloques.map((b, i) => (
+        <li class="bloque" data-revelar style={`--demora:${i * 80}ms`}>
+          <span class="grid size-12 place-items-center rounded-full bg-papel text-tinta">
+            <Icono nombre={b.icono} tamano={24} />
+          </span>
+          <h3 class="mt-5 text-[1.15rem] font-semibold leading-snug">{b.titulo}</h3>
+          <p class="mt-2 text-[.95rem] leading-relaxed text-gris">{b.texto}</p>
+          {b.dato && <p class="mt-4 inline-block bg-papel px-2.5 py-1.5 font-mono text-[.74rem] tabular-nums text-grafito">{b.dato}</p>}
+        </li>
+      ))}
+    </ul>
+
+    <div class="cierre mt-16 lg:mt-24" data-revelar>
+      <div class="barra-color" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+      <div class="grid gap-6 bg-papel px-6 py-9 sm:px-10 sm:py-12 lg:grid-cols-12 lg:items-center lg:gap-10">
+        <p class="font-display text-[clamp(1.9rem,4.2vw,3.1rem)] leading-[1.04] tracking-[-.01em] lg:col-span-7" set:html={destacar(pvp.cierre_titulo)} />
+        <div class="lg:col-span-5">
+          <p class="text-[1.04rem] leading-relaxed text-grafito">{pvp.cierre_texto}</p>
+          <a href={negocio.whatsappRevisar} target="_blank" rel="noopener" class="boton boton-principal mt-6 w-full sm:w-auto">
+            <Icono nombre="whatsapp" tamano={20} />
+            {pvp.cierre_boton}
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .titulo-pvp { font-size: clamp(2.4rem, 6vw, 4.6rem); line-height: 1; letter-spacing: -.015em; max-width: 17ch; }
+  .titulo-pvp :global(em), .cierre :global(em) { font-style: italic; color: var(--color-magenta); }
+
+  .pestanas { display: grid; grid-auto-flow: column; grid-auto-columns: 1fr; gap: .25rem; padding: .25rem; border-radius: 999px; background: var(--color-papel); border: 1px solid var(--color-linea); }
+  .pestanas button { padding: .6rem .9rem; border-radius: 999px; font-size: .86rem; white-space: nowrap; font-weight: 500; color: var(--color-grafito); transition: background-color .2s, color .2s; cursor: pointer; }
+  @media (min-width: 640px) { .pestanas { display: inline-grid; } .pestanas button { padding: .55rem 1.1rem; font-size: .92rem; } }
+  .pestanas button:hover { background: var(--color-mesa); }
+  .pestanas button[aria-selected="true"] { background: var(--color-tinta); color: var(--color-papel); }
+
+  /* La comparación va dentro de una "copia" con borde blanco */
+  .marco { background: #fff; padding: clamp(.4rem, 1.2vw, .8rem); box-shadow: 0 1px 2px rgb(0 0 0 / .06), 0 28px 50px -24px rgb(0 0 0 / .35); }
+  .vista { position: relative; aspect-ratio: 4 / 5; overflow: hidden; touch-action: pan-y; cursor: ew-resize; user-select: none; -webkit-user-select: none; background: var(--color-mesa); }
+  @media (min-width: 640px) { .vista { aspect-ratio: 3 / 2; } }
+  .modo { position: absolute; inset: 0; }
+  .vista :global(.capa) { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; pointer-events: none; }
+  .recorte { position: absolute; inset: 0; clip-path: inset(0 calc(100% - var(--pos)) 0 0); }
+  .vista :global(.efecto-pantalla) { filter: brightness(1.14) saturate(1.45) contrast(1.06); }
+
+  .rotulo {
+    position: absolute; top: .75rem; z-index: 2;
+    font-family: var(--font-mono); font-size: .62rem; line-height: 1.35; letter-spacing: .08em; text-transform: uppercase;
+    background: rgb(255 255 255 / .9); color: var(--color-tinta);
+    padding: .35rem .55rem; border-radius: 2px; pointer-events: none;
+    max-width: 44%;
+  }
+  @media (min-width: 640px) { .rotulo { top: 1rem; font-size: .74rem; } }
+
+  .linea { position: absolute; top: 0; bottom: 0; left: var(--pos); width: 2px; margin-left: -1px; background: #fff; box-shadow: 0 0 0 .5px rgb(0 0 0 / .15); z-index: 3; pointer-events: none; }
+  .perilla {
+    position: absolute; top: 50%; left: 50%; translate: -50% -50%;
+    display: grid; place-items: center; width: 2.9rem; height: 2.9rem; border-radius: 999px;
+    background: #fff; color: var(--color-tinta); box-shadow: 0 4px 14px rgb(0 0 0 / .28);
+  }
+  .deslizador { position: absolute; width: 1px; height: 1px; opacity: 0; pointer-events: none; }
+  .deslizador:focus-visible ~ .linea .perilla { outline: 3px solid var(--color-magenta); outline-offset: 3px; }
+
+  .bloques { display: grid; gap: 2.5rem; }
+  .bloque { border-top: 1px solid #D6D6DB; padding-top: 1.5rem; min-width: 0; }
+  @media (min-width: 640px) { .bloques { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 3rem 2rem; } }
+  @media (min-width: 1024px) { .bloques { grid-template-columns: repeat(4, minmax(0, 1fr)); } }
+</style>
+
+<script>
+  document.querySelectorAll<HTMLElement>('[data-comparador]').forEach((raiz) => {
+    const vista = raiz.querySelector<HTMLElement>('.vista');
+    const rango = raiz.querySelector<HTMLInputElement>('.deslizador');
+    if (!vista || !rango) return;
+    let tocado = false;
+
+    const poner = (valor: number) => {
+      const v = Math.max(0, Math.min(100, valor));
+      raiz.style.setProperty('--pos', `${v}%`);
+      rango.value = String(Math.round(v));
+      rango.setAttribute('aria-valuetext', `${Math.round(v)} por ciento`);
+    };
+
+    // Arrastre con dedo o mouse (sin bloquear el scroll vertical del celular)
+    let arrastrando = false;
+    const desde = (e: PointerEvent) => {
+      const r = vista.getBoundingClientRect();
+      poner(((e.clientX - r.left) / r.width) * 100);
+    };
+    vista.addEventListener('pointerdown', (e) => {
+      arrastrando = true; tocado = true;
+      vista.setPointerCapture(e.pointerId);
+      desde(e);
+    });
+    vista.addEventListener('pointermove', (e) => { if (arrastrando) desde(e); });
+    for (const t of ['pointerup', 'pointercancel', 'lostpointercapture']) {
+      vista.addEventListener(t, () => { arrastrando = false; });
+    }
+    rango.addEventListener('input', () => { tocado = true; poner(Number(rango.value)); });
+    vista.addEventListener('click', () => rango.focus({ preventScroll: true }));
+
+    // Pestañas: cambian qué se compara
+    const pestanas = [...raiz.querySelectorAll<HTMLButtonElement>('[role="tab"]')];
+    const activar = (i: number) => {
+      pestanas.forEach((p, j) => {
+        p.setAttribute('aria-selected', String(i === j));
+        p.tabIndex = i === j ? 0 : -1;
+      });
+      raiz.querySelectorAll<HTMLElement>('.modo').forEach((m) => { m.hidden = m.dataset.modo !== String(i); });
+      raiz.querySelectorAll<HTMLElement>('[data-nota]').forEach((n) => { n.hidden = n.dataset.nota !== String(i); });
+      vista.setAttribute('aria-labelledby', `pestana-${i}`);
+    };
+    pestanas.forEach((p, i) => {
+      p.addEventListener('click', () => activar(i));
+      p.addEventListener('keydown', (e) => {
+        if (e.key !== 'ArrowRight' && e.key !== 'ArrowLeft') return;
+        const sig = (i + (e.key === 'ArrowRight' ? 1 : -1) + pestanas.length) % pestanas.length;
+        activar(sig); pestanas[sig].focus();
+      });
+    });
+
+    // La primera vez que aparece, la línea se mueve sola un poco para mostrar que se puede arrastrar
+    if (matchMedia('(prefers-reduced-motion: no-preference)').matches && 'IntersectionObserver' in window) {
+      const io = new IntersectionObserver((entradas) => {
+        if (!entradas.some((e) => e.isIntersecting)) return;
+        io.disconnect();
+        const pasos = [50, 30, 66, 50];
+        const dur = 2200;
+        let inicio: number | null = null;
+        const animar = (t: number) => {
+          if (tocado) return;
+          inicio ??= t;
+          const p = Math.min(1, (t - inicio) / dur);
+          const tramo = Math.min(pasos.length - 2, Math.floor(p * (pasos.length - 1)));
+          const local = p * (pasos.length - 1) - tramo;
+          const suave = local < .5 ? 2 * local * local : 1 - (-2 * local + 2) ** 2 / 2;
+          poner(pasos[tramo] + (pasos[tramo + 1] - pasos[tramo]) * suave);
+          if (p < 1) requestAnimationFrame(animar);
+        };
+        setTimeout(() => requestAnimationFrame(animar), 500);
+      }, { threshold: .6 });
+      io.observe(vista);
+    }
+  });
+</script>

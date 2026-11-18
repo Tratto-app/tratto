@@ -1,0 +1,113 @@
+---
+import Icono from './Icono.astro';
+import { negocio } from '../lib/contenido';
+
+interface Props {
+  menu: { texto: string; ancla: string }[];
+}
+const { menu } = Astro.props;
+const tiendaExterna = negocio.tienda.startsWith('http');
+---
+<header id="cabecera" class="cabecera sticky z-40 bg-papel/92 backdrop-blur-md transition-[border-color,box-shadow] duration-300" style="top: env(safe-area-inset-top, 0px)">
+  <div class="contenedor flex h-16 items-center gap-4 lg:h-20 lg:gap-8">
+    <a href="#inicio" class="logo mr-auto flex items-center gap-2.5 lg:mr-2" aria-label={`${negocio.nombre}, ir al inicio`}>
+      <span class="flex gap-[3px]" aria-hidden="true">
+        <i class="block size-2 rounded-full bg-cian"></i>
+        <i class="block size-2 rounded-full bg-magenta"></i>
+        <i class="block size-2 rounded-full bg-amarillo"></i>
+      </span>
+      <span class="max-w-[8.5rem] font-display text-[1.25rem] leading-[.95] tracking-[-.01em] sm:max-w-none sm:text-[1.5rem] sm:leading-none lg:text-[1.65rem]">{negocio.nombre}</span>
+    </a>
+
+    <nav class="hidden lg:block lg:mr-auto" aria-label="Secciones">
+      <ul class="flex items-center gap-7 text-[.94rem]">
+        {menu.map((item) => (
+          <li><a class="enlace-menu" href={`#${item.ancla}`}>{item.texto}</a></li>
+        ))}
+      </ul>
+    </nav>
+
+    <a
+      href={negocio.whatsappGeneral}
+      class="hidden items-center gap-2 text-[.94rem] font-semibold lg:flex hover:text-magenta transition-colors"
+      target="_blank" rel="noopener"
+    >
+      <Icono nombre="whatsapp" tamano={18} clase="text-whatsapp" />
+      WhatsApp
+    </a>
+    <a
+      href={negocio.tienda}
+      class="boton min-h-0 bg-tinta px-4 py-2.5 text-[.88rem] text-papel hover:bg-magenta lg:px-5 lg:py-3 lg:text-[.94rem]"
+      {...(tiendaExterna ? { target: '_blank', rel: 'noopener' } : {})}
+    >
+      <Icono nombre="bolsa" tamano={17} />
+      <span class="sm:hidden">Tienda</span><span class="hidden sm:inline">Tienda online</span>
+    </a>
+
+    <button
+      id="boton-menu"
+      type="button"
+      class="-mr-2 grid size-11 place-items-center lg:hidden"
+      aria-expanded="false"
+      aria-controls="menu-movil"
+      aria-label="Abrir menú"
+    >
+      <Icono nombre="menu" tamano={26} clase="icono-abrir" />
+      <Icono nombre="cerrar" tamano={26} clase="icono-cerrar hidden" />
+    </button>
+  </div>
+
+  <div id="menu-movil" class="menu-movil lg:hidden" hidden>
+    <nav class="contenedor pb-8 pt-2" aria-label="Secciones">
+      <ul class="divide-y divide-linea border-y border-linea">
+        {menu.map((item) => (
+          <li>
+            <a class="flex items-center justify-between py-4 font-display text-[1.9rem] leading-tight" href={`#${item.ancla}`}>
+              {item.texto}
+              <Icono nombre="flecha" tamano={20} clase="text-gris" />
+            </a>
+          </li>
+        ))}
+      </ul>
+      <a href={negocio.whatsappGeneral} class="boton boton-principal mt-6 w-full" target="_blank" rel="noopener">
+        <Icono nombre="whatsapp" tamano={20} />
+        Escribir por WhatsApp
+      </a>
+    </nav>
+  </div>
+</header>
+
+<style>
+  .cabecera { border-bottom: 1px solid transparent; }
+  .cabecera.con-borde { border-bottom-color: var(--color-linea); }
+  .enlace-menu { position: relative; padding-block: .35rem; }
+  .enlace-menu::after {
+    content: ""; position: absolute; left: 0; right: 0; bottom: 0; height: 1.5px;
+    background: var(--color-magenta); transform: scaleX(0); transform-origin: left;
+    transition: transform .3s var(--ease-revelado);
+  }
+  .enlace-menu:hover::after { transform: scaleX(1); }
+  .menu-movil { max-height: calc(100dvh - 4rem); overflow-y: auto; }
+</style>
+
+<script>
+  const cabecera = document.getElementById('cabecera');
+  const boton = document.getElementById('boton-menu');
+  const menu = document.getElementById('menu-movil');
+
+  const marcarBorde = () => cabecera?.classList.toggle('con-borde', window.scrollY > 8);
+  marcarBorde();
+  window.addEventListener('scroll', marcarBorde, { passive: true });
+
+  function abrir(abierto: boolean) {
+    if (!boton || !menu) return;
+    menu.hidden = !abierto;
+    boton.setAttribute('aria-expanded', String(abierto));
+    boton.setAttribute('aria-label', abierto ? 'Cerrar menú' : 'Abrir menú');
+    boton.querySelector('.icono-abrir')?.classList.toggle('hidden', abierto);
+    boton.querySelector('.icono-cerrar')?.classList.toggle('hidden', !abierto);
+  }
+  boton?.addEventListener('click', () => abrir(menu?.hidden ?? false));
+  menu?.querySelectorAll('a').forEach((a) => a.addEventListener('click', () => abrir(false)));
+  document.addEventListener('keydown', (e) => { if (e.key === 'Escape') abrir(false); });
+</script>
