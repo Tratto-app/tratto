@@ -15,7 +15,7 @@
       ]
     },
     {
-      "source": "/(revision|redes|crm|baja)/(.*)",
+      "source": "/(revision|redes|crm|baja|lab-fotografico)/(.*)",
       "headers": [
         { "key": "X-Robots-Tag", "value": "noindex, nofollow" }
       ]
