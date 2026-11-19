@@ -1,0 +1,117 @@
+[
+ {
+  "efecto": "tic",
+  "t": 0.3,
+  "db": -18
+ },
+ {
+  "efecto": "crujido",
+  "t": 2.89,
+  "db": -19
+ },
+ {
+  "efecto": "crujido",
+  "t": 3.31,
+  "db": -19
+ },
+ {
+  "efecto": "crujido",
+  "t": 3.73,
+  "db": -19
+ },
+ {
+  "efecto": "latigazo",
+  "t": 4.44,
+  "db": -19
+ },
+ {
+  "efecto": "maullido",
+  "t": 8.21,
+  "db": -17
+ },
+ {
+  "efecto": "latigazo",
+  "t": 8.72,
+  "db": -19
+ },
+ {
+  "efecto": "pop",
+  "t": 11.25,
+  "db": -15
+ },
+ {
+  "efecto": "vidrio",
+  "t": 12.26,
+  "db": -14
+ },
+ {
+  "efecto": "latigazo",
+  "t": 12.96,
+  "db": -19
+ },
+ {
+  "efecto": "maullido",
+  "t": 14.17,
+  "db": -20
+ },
+ {
+  "efecto": "golpe",
+  "t": 15.77,
+  "db": -17
+ },
+ {
+  "efecto": "latigazo",
+  "t": 16.73,
+  "db": -19
+ },
+ {
+  "efecto": "pop",
+  "t": 19.28,
+  "db": -16
+ },
+ {
+  "efecto": "campanita",
+  "t": 19.48,
+  "db": -18
+ },
+ {
+  "efecto": "sello",
+  "t": 19.73,
+  "db": -18
+ },
+ {
+  "efecto": "latigazo",
+  "t": 22.08,
+  "db": -19
+ },
+ {
+  "efecto": "acierto",
+  "t": 22.38,
+  "db": -17
+ },
+ {
+  "efecto": "latigazo",
+  "t": 23.58,
+  "db": -19
+ },
+ {
+  "efecto": "crujido",
+  "t": 24.08,
+  "db": -16
+ },
+ {
+  "efecto": "maullido",
+  "t": 24.63,
+  "db": -15
+ },
+ {
+  "efecto": "golpe",
+  "t": 24.98,
+  "db": -15
+ },
+ {
+  "efecto": "golpe",
+  "t": 26.55,
+  "db": -14
+ }
+]

@@ -30,6 +30,10 @@ EFECTOS = {
     "lluvia": "anoisesrc=color=pink:d=3.4:a=0.6,highpass=f=500,lowpass=f=7000,afade=t=in:d=0.4,afade=t=out:st=2.8:d=0.6",
     "motor": "aevalsrc='0.35*sin(2*PI*55*t)+0.25*sin(2*PI*110*t+sin(2*PI*7*t))+0.1*(random(0)*2-1)':d=10,lowpass=f=900,afade=t=in:d=0.5,afade=t=out:st=9:d=1",
     "falla": "aevalsrc='0.8*sin(2*PI*(70+30*sin(2*PI*13*t))*t)*exp(-3*t)*(0.6+0.4*sin(2*PI*18*t))':d=0.9,lowpass=f=1200",
+    # Video 3D de masajes (19/11/2026): el cuello que cruje, el gato y el florero que se rompe
+    "crujido": "aevalsrc='0.7*(random(0)*2-1)*(exp(-140*t)+0.8*exp(-140*(t-0.07))*gte(t,0.07)+0.6*exp(-140*(t-0.16))*gte(t,0.16))':d=0.3,bandpass=f=1600:width_type=h:w=1800",
+    "maullido": "aevalsrc='0.5*sin(2*PI*(620+260*sin(PI*t/0.6))*t)*sin(PI*t/0.6)*(1+0.25*sin(2*PI*28*t))':d=0.6,lowpass=f=3200",
+    "vidrio": "aevalsrc='0.7*(random(0)*2-1)*exp(-16*t)+0.3*sin(2*PI*3300*t)*exp(-9*t)+0.25*sin(2*PI*4700*(t-0.06))*exp(-10*(t-0.06))*gte(t,0.06)+0.2*sin(2*PI*2650*(t-0.14))*exp(-12*(t-0.14))*gte(t,0.14)':d=0.9,highpass=f=1100",
     "acierto":"aevalsrc='0.4*sin(2*PI*1046.5*t)*exp(-4*t)+0.4*sin(2*PI*1318.5*(t-0.09))*exp(-4*(t-0.09))*gte(t,0.09)+0.45*sin(2*PI*1568*(t-0.18))*exp(-3*(t-0.18))*gte(t,0.18)':d=1.3",
 }
 
