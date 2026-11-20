@@ -4,6 +4,7 @@ import Hero from '../components/Hero.astro';
 import MasPedido from '../components/MasPedido.astro';
 import Servicios from '../components/Servicios.astro';
 import FotosCarnet from '../components/FotosCarnet.astro';
+import Fotolibros from '../components/Fotolibros.astro';
 import PantallaVsPapel from '../components/PantallaVsPapel.astro';
 import Calculadora from '../components/Calculadora.astro';
 import Galeria from '../components/Galeria.astro';
@@ -19,10 +20,11 @@ const menu = [
   { texto: 'Inicio', ancla: 'inicio', soloCelular: true },
   { texto: 'Servicios', ancla: 'servicios' },
   { texto: 'Fotos carnet', ancla: 'fotos-carnet' },
+  { texto: 'Fotolibros', ancla: 'fotolibros' },
   { texto: 'Pantalla vs papel', ancla: 'pantalla-vs-papel' },
   { texto: 'Galería', ancla: 'galeria' },
   { texto: 'Nosotros', ancla: 'nosotros' },
-  { texto: 'Cómo enviar tus fotos', ancla: 'como-enviar' },
+  { texto: 'Cómo enviar tus fotos', corto: 'Cómo enviar', ancla: 'como-enviar' },
   { texto: 'Contacto', ancla: 'contacto' },
 ];
 ---
@@ -35,6 +37,7 @@ const menu = [
   <MasPedido />
   <Servicios />
   <FotosCarnet />
+  <Fotolibros />
   <PantallaVsPapel />
   <Calculadora />
   <Galeria />

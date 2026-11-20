@@ -52,6 +52,8 @@ mensajes_whatsapp:
   servicio: "Hola! Quiero consultar por: {servicio}"
   revisar_foto: Hola! Les quiero mandar una foto para que la revisen antes de imprimir.
   carnet: Hola! Quiero consultar por fotos carnet / biométricas.
+  fotolibro: "Hola! Quiero un fotolibro. Medida: ___ · Cantidad de hojas: ___"
+  penbox: Hola! Quiero consultar por una caja o estuche fotográfico personalizado (penbox).
 
 
 # ── PORTADA (lo primero que se ve) ──────────────────────────────────────
@@ -134,13 +136,17 @@ servicios:
       - "En papel fotográfico: calidad de laboratorio, colores vibrantes y máxima durabilidad"
       - "En impresión digital offset: ideales para portfolios, tesis, proyectos académicos, anuarios y presentaciones"
       - Tapa blanda o rígida, anillado o encuadernado personalizado
-    nota: Consultá por medidas y formatos disponibles.
+      - "Medidas: 15×21, 20×20, 20×30 y 30×30"
+    ancla: fotolibros          # Lleva a la sección con todos los detalles
+    ancla_texto: Medidas, entrega y penbox
     foto: servicios/fotolibros-papel-fotografico.jpg
     foto_descripcion: Fotolibro abierto con fotos familiares
 
   - nombre: Fotos carnet y biométricas
     descripcion: Para DNI, pasaportes, visas y trámites internacionales, respetando los requisitos de cada país. Te las sacamos en el momento.
     detalle: Listas en 10 minutos
+    ancla: fotos-carnet
+    ancla_texto: Ver qué incluye
     foto: servicios/fotos-carnet-biometricas.jpg
     foto_descripcion: Hoja con seis fotos carnet y retrato biométrico
 
@@ -213,6 +219,40 @@ carnet:
   garantia: Fotografías precisas y aprobadas para trámites. Cumplen estándares oficiales y salen nítidas, correctas y listas para presentar sin inconvenientes.
   foto: servicios/fotos-carnet-biometricas.jpg
   foto_descripcion: Hoja con seis fotos carnet y retrato biométrico
+
+
+# ── FOTOLIBROS Y PENBOX ─────────────────────────────────────────────────
+fotolibros:
+  etiqueta: Fotolibros
+  titulo: Un fotolibro es un pedacito de vida que queda *para siempre*
+  texto: Si lo diseñamos nosotros, el trabajo es 100% personalizado. Colores, tipografías y detalles a tu gusto, sin plantillas. Cada fotolibro es único.
+  medidas: [15×21, 20×20, 20×30 vertical u horizontal, 30×30]
+  datos:
+    - titulo: Entrega
+      texto: 15 a 20 días hábiles con diseño nuestro. Incluye 3 correcciones; las adicionales tienen costo extra.
+    - titulo: Fotos por carilla
+      texto: Hasta 12 fotos por carilla (24 por paño). Cuantas más fotos, más chica queda cada imagen.
+    - titulo: Cantidad de hojas
+      texto: El máximo recomendado es 20 hojas (40 carillas), para asegurar la durabilidad del lomo.
+    - titulo: Precio
+      texto: Depende de la medida y la cantidad de hojas. Decinos cuál querés y te pasamos el valor.
+  boton: Pedir presupuesto de fotolibro
+  foto: servicios/fotolibros-papel-fotografico.jpg
+  foto_descripcion: Fotolibro abierto con fotos familiares
+
+  penbox_titulo: Caja o estuche fotográfico personalizado
+  penbox_subtitulo: Penbox
+  penbox_texto: Una presentación elegante para entregar el pendrive con las fotos de quince años, bodas, bautismos, sesiones familiares o producciones fotográficas. Se cierra con una cinta o lazo de raso y convierte la entrega del trabajo en una experiencia especial.
+  penbox_detalles:
+    - Cartón rígido laminado o entelado, de excelente durabilidad
+    - Personalizada con fotografía, nombres, fechas o logotipo
+    - Impresión de alta calidad, grabado o bajorrelieve
+  penbox_fotos:
+    - foto: servicios/penbox-caja-personalizada.jpg
+      descripcion: Penbox cerrado con cinta, con foto de atardecer y nombre grabado
+    - foto: galeria/penbox-diseno-abierto.jpg
+      descripcion: Diseño interior de un penbox personalizado
+  penbox_boton: Consultar por penbox
 
 
 # ── PANTALLA VS PAPEL ───────────────────────────────────────────────────
@@ -326,6 +366,9 @@ galeria:
   - foto: galeria/copias-paisajes.jpg
     categoria: Copias
     descripcion: Copias de paisajes desparramadas
+  - foto: servicios/penbox-caja-personalizada.jpg
+    categoria: Fotolibros
+    descripcion: Penbox personalizado con cinta de raso
   - foto: galeria/album-familiar.jpg
     categoria: Fotolibros
     descripcion: Álbum familiar abierto en el piso
@@ -435,6 +478,8 @@ preguntas:
     respuesta: Solo en JPG, en la máxima calidad. Mandalas como documento por WhatsApp o por mail a fotodigital9901@gmail.com para que no se compriman.
   - pregunta: ¿Qué tamaños imprimen?
     respuesta: Copias desde 9×13 hasta 60×90 cm. Las medidas estándar son 9×13, 10×15, 13×18, 15×21 y 20×30; también hacemos 30×40, 30×45 y panorámicas de 30×60 y 30×90.
+  - pregunta: ¿Cuánto tarda un fotolibro?
+    respuesta: Si lo diseñamos nosotros, entre 15 y 20 días hábiles. Incluye 3 correcciones; las adicionales tienen costo extra. El precio depende de la medida y la cantidad de hojas.
   - pregunta: ¿Cuánto tardan en estar las fotos?
     respuesta: Depende del trabajo y de la cantidad. Cuando nos pasás el pedido te confirmamos la fecha de entrega.
   - pregunta: ¿Puedo imprimir fotos sacadas con el celular?

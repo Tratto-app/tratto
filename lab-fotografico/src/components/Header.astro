@@ -4,7 +4,7 @@ import Icono from './Icono.astro';
 import { negocio } from '../lib/contenido';
 
 interface Props {
-  menu: { texto: string; ancla: string; soloCelular?: boolean }[];
+  menu: { texto: string; ancla: string; corto?: string; soloCelular?: boolean }[];
 }
 const { menu } = Astro.props;
 const tiendaExterna = negocio.tienda.startsWith('http');
@@ -29,24 +29,24 @@ const tiendaExterna = negocio.tienda.startsWith('http');
     </a>
 
     <nav class="hidden xl:block xl:mr-auto" aria-label="Secciones">
-      <ul class="flex items-center gap-6 text-[.9rem] text-[#D6D6DC]">
+      <ul class="flex items-center gap-5 text-[.88rem] text-[#D6D6DC] 2xl:gap-6 2xl:text-[.92rem]">
         {menu.filter((i) => !i.soloCelular).map((item) => (
-          <li><a class="enlace-menu hover:text-papel" href={`#${item.ancla}`}>{item.texto}</a></li>
+          <li><a class="enlace-menu whitespace-nowrap hover:text-papel" href={`#${item.ancla}`}>{item.corto ?? item.texto}</a></li>
         ))}
       </ul>
     </nav>
 
     <a
       href={negocio.whatsappGeneral}
-      class="hidden items-center gap-2 text-[.9rem] font-semibold xl:flex hover:text-amarillo transition-colors"
-      target="_blank" rel="noopener"
+      class="hidden items-center gap-2 whitespace-nowrap text-[.9rem] font-semibold xl:flex hover:text-amarillo transition-colors"
+      target="_blank" rel="noopener" aria-label="Escribir por WhatsApp"
     >
-      <Icono nombre="whatsapp" tamano={18} clase="text-[#3DDC84]" />
-      WhatsApp
+      <Icono nombre="whatsapp" tamano={20} clase="text-[#3DDC84]" />
+      <span class="hidden 2xl:inline">WhatsApp</span>
     </a>
     <a
       href={negocio.tienda}
-      class="boton min-h-0 bg-papel px-4 py-2.5 text-[.86rem] text-tinta hover:bg-amarillo lg:px-5 lg:py-3 lg:text-[.92rem]"
+      class="boton min-h-0 shrink-0 whitespace-nowrap bg-papel px-4 py-2.5 text-[.86rem] text-tinta hover:bg-amarillo lg:px-5 lg:py-3 lg:text-[.92rem]"
       {...(tiendaExterna ? { target: '_blank', rel: 'noopener' } : {})}
     >
       <Icono nombre="bolsa" tamano={17} />

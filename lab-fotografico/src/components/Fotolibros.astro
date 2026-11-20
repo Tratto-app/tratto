@@ -1,0 +1,116 @@
+---
+import { Image } from 'astro:assets';
+import Icono from './Icono.astro';
+import { fotolibros as fl } from '../lib/contenido';
+import { destacar } from '../lib/formato';
+---
+<section id="fotolibros" class="bg-papel" aria-labelledby="titulo-fotolibros">
+  <div class="contenedor py-16 lg:py-28">
+    <div class="grid gap-12 lg:grid-cols-12 lg:items-center lg:gap-14">
+      <div class="lg:col-span-5" data-revelar>
+        <figure class="libro m-0">
+          <Image
+            src={fl.imagen}
+            alt={fl.foto_descripcion}
+            widths={[480, fl.imagen.width].filter((w, i, a) => w <= fl.imagen.width && a.indexOf(w) === i)}
+            sizes="(min-width: 1024px) 34vw, 92vw"
+            format="webp"
+            quality={82}
+            class="block h-auto w-full"
+          />
+        </figure>
+      </div>
+
+      <div class="lg:col-span-7" data-revelar style="--demora:100ms">
+        <p class="etiqueta">{fl.etiqueta}</p>
+        <h2 id="titulo-fotolibros" class="titulo-libros destacable mt-3 font-display" set:html={destacar(fl.titulo)} />
+        <p class="mt-5 max-w-2xl text-[1.06rem] leading-relaxed text-grafito">{fl.texto}</p>
+
+        {fl.medidas.length > 0 && (
+          <div class="mt-7">
+            <p class="etiqueta">Medidas disponibles</p>
+            <ul class="mt-3 flex flex-wrap gap-2" role="list">
+              {fl.medidas.map((m) => <li class="medida">{m}</li>)}
+            </ul>
+          </div>
+        )}
+
+        {fl.datos.length > 0 && (
+          <dl class="datos mt-8">
+            {fl.datos.map((d) => (
+              <div>
+                <dt>{d.titulo}</dt>
+                <dd>{d.texto}</dd>
+              </div>
+            ))}
+          </dl>
+        )}
+
+        <a href={fl.whatsapp} target="_blank" rel="noopener" class="boton boton-principal mt-8 w-full sm:w-auto">
+          <Icono nombre="whatsapp" tamano={20} /> {fl.boton}
+        </a>
+      </div>
+    </div>
+
+    {fl.penbox_titulo && (
+      <article class="penbox mt-16 lg:mt-24" aria-labelledby="titulo-penbox" data-revelar>
+        <div class="penbox-fotos">
+          {fl.penboxFotos.map((f, i) => (
+            <Image
+              src={f.imagen}
+              alt={f.descripcion}
+              widths={[480, 800, f.imagen.width].filter((w, j, a) => w <= f.imagen.width && a.indexOf(w) === j)}
+              sizes={i === 0 ? '(min-width: 1024px) 32vw, 92vw' : '(min-width: 1024px) 26vw, 92vw'}
+              format="webp"
+              quality={82}
+              class:list={['block h-auto w-full', i === 0 ? 'principal' : 'secundaria']}
+            />
+          ))}
+        </div>
+        <div class="penbox-texto">
+          {fl.penbox_subtitulo && <p class="etiqueta !text-gris-claro">{fl.penbox_subtitulo}</p>}
+          <h3 id="titulo-penbox" class="mt-3 font-display text-[clamp(1.9rem,3.6vw,2.7rem)] leading-[1.04]">{fl.penbox_titulo}</h3>
+          <p class="mt-4 text-[1rem] leading-relaxed text-[#D9D9DE]">{fl.penbox_texto}</p>
+          {fl.penbox_detalles.length > 0 && (
+            <ul class="mt-5 grid gap-2.5 text-[.96rem]" role="list">
+              {fl.penbox_detalles.map((d) => (
+                <li class="flex items-start gap-2"><Icono nombre="check" tamano={18} clase="mt-[3px] shrink-0 text-amarillo" />{d}</li>
+              ))}
+            </ul>
+          )}
+          {fl.penbox_boton && (
+            <a href={fl.whatsappPenbox} target="_blank" rel="noopener" class="boton boton-claro mt-7 w-full sm:w-auto">
+              <Icono nombre="whatsapp" tamano={20} /> {fl.penbox_boton}
+            </a>
+          )}
+        </div>
+      </article>
+    )}
+  </div>
+</section>
+
+<style>
+  .destacable :global(em) { font-style: italic; color: var(--color-magenta); }
+  .titulo-libros { font-size: clamp(2.3rem, 5.2vw, 3.9rem); line-height: 1.02; letter-spacing: -.015em; max-width: 18ch; }
+  .libro { background: #fff; padding: clamp(.6rem, 1.6vw, 1rem); box-shadow: 0 1px 2px rgb(0 0 0 / .06), 0 28px 50px -24px rgb(0 0 0 / .35); rotate: 1.5deg; }
+  .medida { font-family: var(--font-mono); font-size: .85rem; padding: .45rem .8rem; border: 1.5px solid var(--color-tinta); border-radius: 999px; font-variant-numeric: tabular-nums; }
+  .datos { display: grid; gap: 1px; background: var(--color-linea); border: 1px solid var(--color-linea); }
+  @media (min-width: 640px) { .datos { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+  .datos > div { background: #fff; padding: 1.1rem 1.25rem; }
+  .datos dt { font-weight: 600; }
+  .datos dt::before { content: ""; display: inline-block; width: .5rem; height: .5rem; margin-right: .55rem; border-radius: 999px; background: var(--color-magenta); vertical-align: .1em; }
+  .datos > div:nth-child(2) dt::before { background: var(--color-cian); }
+  .datos > div:nth-child(3) dt::before { background: var(--color-amarillo); }
+  .datos > div:nth-child(4) dt::before { background: var(--color-tinta); }
+  .datos dd { margin: .35rem 0 0; font-size: .95rem; line-height: 1.55; color: var(--color-gris); }
+
+  .penbox { display: grid; background: var(--color-tinta); color: var(--color-papel); border-radius: 4px; overflow: hidden; }
+  @media (min-width: 1024px) { .penbox { grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr); } }
+  .penbox-fotos { display: grid; gap: 1rem; padding: 1.25rem; background: #000; align-content: center; }
+  @media (min-width: 640px) { .penbox-fotos { padding: 2rem; } }
+  .penbox-fotos .principal { border-radius: 2px; }
+  .penbox-fotos .secundaria { border-radius: 2px; width: 82%; justify-self: end; margin-top: -2.5rem; box-shadow: 0 18px 40px -16px rgb(0 0 0 / .9); position: relative; }
+  .penbox-texto { padding: 2rem 1.5rem 2.25rem; }
+  @media (min-width: 640px) { .penbox-texto { padding: 2.75rem 2.5rem; } }
+  @media (min-width: 1024px) { .penbox-texto { align-self: center; } }
+</style>

@@ -31,6 +31,8 @@ const item = z.object({
   nota: opcional,
   precio,
   cifra: opcional,
+  ancla: opcional,
+  ancla_texto: opcional,
   foto: opcional,
   foto_descripcion: texto,
   oculto: z.boolean().default(false),
@@ -62,6 +64,8 @@ const esquema = z.object({
     servicio: texto,
     revisar_foto: texto,
     carnet: texto,
+    fotolibro: texto,
+    penbox: texto,
   }),
   inicio: z.object({
     etiqueta: texto,
@@ -90,6 +94,22 @@ const esquema = z.object({
     garantia: opcional,
     foto: texto,
     foto_descripcion: texto,
+  }),
+  fotolibros: z.object({
+    etiqueta: texto,
+    titulo: texto,
+    texto: texto,
+    medidas: z.array(texto).default([]),
+    datos: z.array(z.object({ titulo: texto, texto: texto })).default([]),
+    boton: texto,
+    foto: texto,
+    foto_descripcion: texto,
+    penbox_titulo: opcional,
+    penbox_subtitulo: opcional,
+    penbox_texto: opcional,
+    penbox_detalles: z.array(texto).default([]),
+    penbox_fotos: z.array(z.object({ foto: texto, descripcion: texto })).default([]),
+    penbox_boton: opcional,
   }),
   pantalla_vs_papel: z.object({
     etiqueta: texto,
@@ -273,6 +293,14 @@ export const servicios = {
 };
 
 export const carnet = { ...datos.carnet, imagen: foto(datos.carnet.foto, 'fotos carnet') };
+
+export const fotolibros = {
+  ...datos.fotolibros,
+  imagen: foto(datos.fotolibros.foto, 'fotolibros'),
+  whatsapp: linkWhatsApp(datos.mensajes_whatsapp.fotolibro),
+  whatsappPenbox: linkWhatsApp(datos.mensajes_whatsapp.penbox),
+  penboxFotos: datos.fotolibros.penbox_fotos.map((f, i) => ({ ...f, imagen: foto(f.foto, `penbox, foto ${i + 1}`) })),
+};
 
 const pvp = datos.pantalla_vs_papel;
 export const pantallaVsPapel = {
