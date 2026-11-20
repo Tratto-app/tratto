@@ -3,7 +3,7 @@
    El estacionamiento del súper: el auto celeste, el poste amarillo, la fila de
    carritos y el perro del estacionamiento (el testigo). Historia en escalera,
    graciosa: le das al poste y te queda un bollo en la puerta; le pegás una
-   calcomanía de carita feliz y el bollo la deja triste; lo tapás con una maceta
+   calcomanía de carita feliz y se pone a llorar; lo tapás con una maceta
    y el perro se come la planta; probás con un imán gigante y se te pegan todos
    los carritos del súper (el perro sale corriendo). Con el precio llega el
    chapista y pinta la puerta. Remate (cámara en el perro): la puerta queda
@@ -32,8 +32,8 @@ window.ESCENA3D = (function () {
     P.f6 = k.frase(6, 22.6);
     P.choque = 0.85;
     P.pegas = k.palabra('pegás', 1, P.f2 + 0.2);
-    P.deja = k.palabra('deja', 1, P.f3 - 1.0);
-    P.triste = k.palabra('triste', 1, P.f3 - 0.6);
+    P.deja = k.palabra('pone', 1, P.f3 - 1.0);
+    P.triste = k.palabra('llorar', 1, P.f3 - 0.6);
     P.perro = k.palabra('perro', 1, P.f3 + 1.6);
     P.come = k.palabra('come', 1, P.perro + 0.4);
     P.iman = k.palabra('imán', 1, P.f4 + 1.0);
