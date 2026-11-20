@@ -52,7 +52,9 @@ Instrument Sans (textos) e IBM Plex Mono (medidas y etiquetas).
 ## Publicación (Vercel, plan gratis)
 
 - Proyecto de Vercel: **lab-fotografico** (carpeta raíz `lab-fotografico` del repo Tratto-app/tratto).
-- Link actual: https://fotografiadigital-lp.vercel.app (también responde lab-fotografico.vercel.app)
+- Dominio: https://fotografiadigitallp.com (www redirige al dominio sin www).
+- También responden fotografiadigital-lp.vercel.app y lab-fotografico.vercel.app.
+- DNS en Donweb (Zona DNS): A @ → 216.198.79.1 y 64.29.17.1 · CNAME www → 40168f8c31cf8864.vercel-dns-017.com
 - Si un cambio en `contenido.yaml` está mal escrito, la publicación falla y queda online la anterior.
 
 ## Conectar el dominio de Donweb

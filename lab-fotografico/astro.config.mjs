@@ -4,8 +4,8 @@ import { defineConfig } from 'astro/config';
 import tailwindcss from '@tailwindcss/vite';
 
 export default defineConfig({
-  // Cuando tengamos el dominio de Donweb, va acá (lo usa Google y el sitemap).
-  site: 'https://fotografiadigital-lp.vercel.app',
+  // Dominio propio (comprado en Donweb). Lo usan Google, el sitemap y las vistas previas.
+  site: 'https://fotografiadigitallp.com',
   trailingSlash: 'ignore',
   build: { inlineStylesheets: 'auto' },
   image: {
