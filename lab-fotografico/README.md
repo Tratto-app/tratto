@@ -52,7 +52,7 @@ Instrument Sans (textos) e IBM Plex Mono (medidas y etiquetas).
 ## Publicación (Vercel, plan gratis)
 
 - Proyecto de Vercel: **lab-fotografico** (carpeta raíz `lab-fotografico` del repo Tratto-app/tratto).
-- Link actual: https://lab-fotografico.vercel.app
+- Link actual: https://fotografiadigital-lp.vercel.app (también responde lab-fotografico.vercel.app)
 - Si un cambio en `contenido.yaml` está mal escrito, la publicación falla y queda online la anterior.
 
 ## Conectar el dominio de Donweb

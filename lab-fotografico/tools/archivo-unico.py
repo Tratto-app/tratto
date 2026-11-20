@@ -1,4 +1,4 @@
-# Uso: npm run build && python3 tools/archivo-unico.py dist laboratorio-fotografico-muestra.html
+# Uso: npm run build && python3 tools/archivo-unico.py dist fotografia-digital-lp-muestra.html
 # Arma un solo archivo HTML con todo adentro (estilos, tipografías y fotos)
 # para mandarle la muestra al cliente por WhatsApp o mail.
 import base64, re, sys, pathlib, mimetypes
@@ -18,14 +18,16 @@ def css_inline(m):
 html = re.sub(r'<link rel="stylesheet" href="([^"]+)">', css_inline, html)
 html = re.sub(r'<link rel="preload"[^>]*>', '', html)
 html = re.sub(r'<link rel="(?:icon|apple-touch-icon|sitemap|canonical)"[^>]*>', '', html)
-html = html.replace('<head>', f'<head><link rel="icon" href="{data_uri("/favicon.svg")}">', 1)
+html = html.replace('<head>', f'<head><link rel="icon" href="{data_uri("/favicon-32.png")}">', 1)
 
 # Fotos: de cada srcset se elige una sola medida, suficiente para celular y compu
 def elegir(srcset, objetivo):
     opciones = []
     for parte in srcset.split(','):
-        url, ancho = parte.strip().rsplit(' ', 1)
-        opciones.append((int(ancho.rstrip('w')), url))
+        url, desc = parte.strip().rsplit(' ', 1)
+        # "800w" (ancho) o "2x" (densidad, como en el logo)
+        valor = int(desc[:-1]) * 10000 if desc.endswith('x') else int(float(desc.rstrip('w')))
+        opciones.append((valor, url))
     opciones.sort()
     for ancho, url in opciones:
         if ancho >= objetivo: return url
@@ -52,6 +54,6 @@ def grande_chica(ruta):
     return 'data:image/webp;base64,' + base64.b64encode(buf.getvalue()).decode()
 html = re.sub(r'data-grande="(/_astro/[^"]+)"', lambda m: f'data-grande="{grande_chica(m.group(1))}"', html)
 
-assert '/_astro/' not in html.replace('https://lab-fotografico.vercel.app/_astro/', ''), 'quedó algún archivo sin incluir'
+assert '"/_astro/' not in html and ' /_astro/' not in html, 'quedó algún archivo sin incluir'
 salida.write_text(html, encoding='utf-8')
 print(f'{salida.name}: {salida.stat().st_size/1e6:.1f} MB')

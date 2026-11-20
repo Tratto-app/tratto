@@ -5,7 +5,7 @@ import tailwindcss from '@tailwindcss/vite';
 
 export default defineConfig({
   // Cuando tengamos el dominio de Donweb, va acá (lo usa Google y el sitemap).
-  site: 'https://lab-fotografico.vercel.app',
+  site: 'https://fotografiadigital-lp.vercel.app',
   trailingSlash: 'ignore',
   build: { inlineStylesheets: 'auto' },
   image: {
