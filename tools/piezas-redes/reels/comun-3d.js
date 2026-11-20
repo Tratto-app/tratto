@@ -427,6 +427,80 @@
     escena.add(g); return g;
   }
 
+  // Auto (un hatchback) que mira hacia +x; el lado del acompañante da a +z.
+  // userData.puerta: la puerta delantera de ese lado, un grupo con la bisagra
+  // adelante (se abre girando en y; lo que se le pega va adentro, en x negativa);
+  // userData.lado: z de la chapa de ese lado; userData.ruedas, para girarlas.
+  function auto(o = {}) {
+    const g = new T.Group(), col = o.color || '#5B8DB8', vid = o.vidrio || '#2F3E46', gris = '#3A3F42';
+    const L = 3.6, A = 1.6, lado = A / 2;
+    caja(L, 0.55, A, col, 0, 0.62, 0, g);                                   // carrocería
+    caja(L + 0.08, 0.16, A + 0.04, gris, 0, 0.37, 0, g);                    // paragolpes y zócalo
+    caja(1.86, 0.46, A - 0.2, vid, -0.36, 1.13, 0, g);                      // los vidrios
+    caja(1.95, 0.08, A - 0.14, col, -0.36, 1.39, 0, g);                     // techo
+    [0.57, -0.33, -1.29].forEach(x => caja(0.08, 0.48, A - 0.14, col, x, 1.13, 0, g));   // parantes
+    caja(0.05, 0.13, 0.36, '#F6E7A8', L / 2 + 0.01, 0.74, 0.5, g, false);   // faros
+    caja(0.05, 0.13, 0.36, '#F6E7A8', L / 2 + 0.01, 0.74, -0.5, g, false);
+    caja(0.05, 0.12, 0.3, '#8E1F1A', -L / 2 - 0.01, 0.76, 0.55, g, false);  // luces de atrás
+    caja(0.05, 0.12, 0.3, '#8E1F1A', -L / 2 - 0.01, 0.76, -0.55, g, false);
+    caja(0.12, 0.09, 0.12, col, 0.5, 1.0, lado + 0.08, g);                  // espejo
+    const ruedas = [[1.15, 1], [-1.15, 1], [1.15, -1], [-1.15, -1]].map(([x, s]) => {
+      const r = new T.Group(); r.position.set(x, 0.32, s * (lado - 0.06)); g.add(r);
+      const goma = new T.Mesh(new T.CylinderGeometry(0.32, 0.32, 0.24, 10), mat('#1E2224'));
+      goma.rotation.x = Math.PI / 2; goma.castShadow = true; r.add(goma);
+      const taza = new T.Mesh(new T.CylinderGeometry(0.17, 0.17, 0.25, 8), mat('#B9BEC2'));
+      taza.rotation.x = Math.PI / 2; r.add(taza);
+      return r;
+    });
+    // la puerta delantera de +z: chapa, vidrio, manija y la juntura
+    const puerta = new T.Group(); puerta.position.set(0.55, 0, lado); g.add(puerta);
+    caja(0.86, 0.56, 0.05, col, -0.45, 0.63, 0.025, puerta);
+    caja(0.8, 0.42, 0.03, vid, -0.45, 1.12, 0.012, puerta, false);
+    caja(0.15, 0.04, 0.04, gris, -0.72, 0.8, 0.06, puerta, false);
+    caja(0.012, 0.56, 0.012, '#26302F', -0.885, 0.63, 0.05, puerta, false);
+    g.userData = { puerta, lado, ruedas, L, A };
+    escena.add(g); return g;
+  }
+
+  // Carrito del súper (canasto de alambre), con el frente hacia +x y la manija atrás.
+  function carrito(o = {}) {
+    const g = new T.Group(), met = o.color || '#AEB4B8', asa = o.asa || '#C8473A';
+    const L = 0.8, A = 0.52, y0 = 0.42, h = 0.42;
+    caja(L, 0.03, A, met, 0, y0, 0, g, false);                               // piso del canasto
+    for (let i = 0; i <= 5; i++) {                                          // barras de los costados
+      const x = -L / 2 + i * L / 5;
+      caja(0.022, h, 0.022, met, x, y0 + h / 2, A / 2, g, false); caja(0.022, h, 0.022, met, x, y0 + h / 2, -A / 2, g, false);
+    }
+    for (let i = 1; i < 3; i++) {                                           // y de adelante y atrás
+      const z = -A / 2 + i * A / 3;
+      caja(0.022, h, 0.022, met, L / 2, y0 + h / 2, z, g, false); caja(0.022, h, 0.022, met, -L / 2, y0 + h / 2, z, g, false);
+    }
+    [y0 + h, y0 + h * 0.5].forEach((y, i) => {                              // bordes
+      caja(L, 0.03, 0.03, met, 0, y, A / 2, g, i === 0); caja(L, 0.03, 0.03, met, 0, y, -A / 2, g, i === 0);
+      caja(0.03, 0.03, A, met, L / 2, y, 0, g, false); caja(0.03, 0.03, A, met, -L / 2, y, 0, g, false);
+    });
+    caja(0.03, 0.26, 0.03, met, -L / 2 - 0.06, y0 + h + 0.1, A / 2 - 0.04, g, false);
+    caja(0.03, 0.26, 0.03, met, -L / 2 - 0.06, y0 + h + 0.1, -A / 2 + 0.04, g, false);
+    caja(0.07, 0.07, A + 0.02, asa, -L / 2 - 0.09, y0 + h + 0.23, 0, g);      // la manija
+    [[L / 2 - 0.08, A / 2 - 0.05], [L / 2 - 0.08, -A / 2 + 0.05], [-L / 2 + 0.06, A / 2 - 0.05], [-L / 2 + 0.06, -A / 2 + 0.05]].forEach(([x, z]) => {
+      caja(0.03, y0 - 0.08, 0.03, met, x, (y0 + 0.08) / 2, z, g, false);
+      caja(0.1, 0.1, 0.05, '#2A2E2C', x, 0.05, z, g);
+    });
+    escena.add(g); return g;
+  }
+
+  // Poste de estacionamiento, amarillo con franjas negras
+  function poste(o = {}) {
+    const g = new T.Group(), alto = o.alto || 0.9, r = o.radio || 0.11, n = 5;
+    for (let i = 0; i < n; i++) {
+      const m = new T.Mesh(new T.CylinderGeometry(r, r, alto / n, 10), mat(i % 2 ? '#1E2224' : '#E3B23C'));
+      m.position.y = alto / n * (i + 0.5); m.castShadow = true; m.receiveShadow = true; g.add(m);
+    }
+    const tapa = new T.Mesh(new T.SphereGeometry(r, 10, 5, 0, Math.PI * 2, 0, Math.PI / 2), mat('#E3B23C'));
+    tapa.position.y = alto; tapa.castShadow = true; g.add(tapa);
+    escena.add(g); return g;
+  }
+
   // Patio de una casa: pared con ventana y puerta, medianera de ladrillo,
   // reja al frente con portón abierto, vereda y calle.
   function patio(o = {}) {
@@ -598,8 +672,8 @@
     cielo.intensity = lerp(1.25, 0.6, nublado); sol.intensity = lerp(2.1, 0.15, nublado);
   }
   // Humo: bocanadas grises que suben (un motor que no arranca)
-  function humo(n = 16, color = '#8E9490') { // también vapor de la ducha (color claro) o una tos
-    const malla = new T.InstancedMesh(new T.IcosahedronGeometry(0.14, 0), mat(color), n);
+  function humo(n = 16, color = '#8E9490', radio = 0.14) { // también vapor de la ducha (color claro), una tos o pintura en aerosol (radio chico)
+    const malla = new T.InstancedMesh(new T.IcosahedronGeometry(radio, 0), mat(color), n);
     const r = azar(57), ps = []; for (let i = 0; i < n; i++) ps.push({ u: r(), dx: lerp(-0.4, 0.4, r()), dz: lerp(-0.3, 0.3, r()) });
     malla.frustumCulled = false; // las gotas se mueven: que three.js no las saltee
     escena.add(malla);
@@ -723,7 +797,7 @@
   // ---------- armar y dibujar ----------
   const kit = { THREE: T, C, escena, camara, sol, cielo, renderer, mat, caja, personaje, pose, patio, pasto, cortadora, recortes,
     lluvia, clima, humo, etiqueta, perro, posePerro, gato, notas, teclado, celular, mesada, balde, chorro, herramientas, llaveInglesa,
-    rodillo, lata, bandejaPintura, taladro, el, tarjeta, mostrar, cierre, etiquetaUrl, lerp, clamp, suave, rebote, azar,
+    rodillo, lata, bandejaPintura, taladro, auto, carrito, poste, el, tarjeta, mostrar, cierre, etiquetaUrl, lerp, clamp, suave, rebote, azar,
     palabra(txt, n = 1, def = 0) { // segundo en que se dice esa palabra (n-ésima vez)
       const pal = window.PALABRAS || []; let k = 0;
       for (const w of pal) if (w[2].toLowerCase().replace(/[^a-záéíóúñü0-9]/g, '') === txt.toLowerCase()) { k++; if (k === n) return w[0]; }

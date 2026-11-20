@@ -34,6 +34,10 @@ EFECTOS = {
     "crujido": "aevalsrc='0.7*(random(0)*2-1)*(exp(-140*t)+0.8*exp(-140*(t-0.07))*gte(t,0.07)+0.6*exp(-140*(t-0.16))*gte(t,0.16))':d=0.3,bandpass=f=1600:width_type=h:w=1800",
     "maullido": "aevalsrc='0.5*sin(2*PI*(620+260*sin(PI*t/0.6))*t)*sin(PI*t/0.6)*(1+0.25*sin(2*PI*28*t))':d=0.6,lowpass=f=3200",
     "vidrio": "aevalsrc='0.7*(random(0)*2-1)*exp(-16*t)+0.3*sin(2*PI*3300*t)*exp(-9*t)+0.25*sin(2*PI*4700*(t-0.06))*exp(-10*(t-0.06))*gte(t,0.06)+0.2*sin(2*PI*2650*(t-0.14))*exp(-12*(t-0.14))*gte(t,0.14)':d=0.9,highpass=f=1100",
+    # Video 3D de chapa y pintura (20/11/2026): la frenada, los carritos que chocan contra la chapa y el perro
+    "frenada": "aevalsrc='0.45*sin(2*PI*(1700+260*sin(2*PI*11*t))*t)*exp(-2.6*t)+0.3*(random(0)*2-1)*exp(-3.2*t)':d=0.8,bandpass=f=1900:width_type=h:w=2400,afade=t=out:st=0.6:d=0.2",
+    "chapa": "aevalsrc='0.6*sin(2*PI*620*t)*exp(-16*t)+0.45*sin(2*PI*1430*t)*exp(-21*t)+0.3*sin(2*PI*2610*t)*exp(-28*t)+0.45*(random(0)*2-1)*exp(-55*t)':d=0.45",
+    "ladrido": "aevalsrc='0.75*sin(2*PI*(420+260*exp(-14*t))*t)*exp(-10*t)*(1+0.45*sin(2*PI*52*t))+0.15*(random(0)*2-1)*exp(-30*t)':d=0.24,lowpass=f=2600",
     "acierto":"aevalsrc='0.4*sin(2*PI*1046.5*t)*exp(-4*t)+0.4*sin(2*PI*1318.5*(t-0.09))*exp(-4*(t-0.09))*gte(t,0.09)+0.45*sin(2*PI*1568*(t-0.18))*exp(-3*(t-0.18))*gte(t,0.18)':d=1.3",
 }
 
