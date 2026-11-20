@@ -6,10 +6,9 @@ import { inicio, negocio } from '../lib/contenido';
 <section id="inicio" class="relative">
   <div class="contenedor grid gap-12 pb-14 pt-8 sm:pt-12 lg:grid-cols-12 lg:items-center lg:gap-12 lg:pb-24 lg:pt-14">
     <div class="lg:col-span-6">
-      <p class="etiqueta flex flex-wrap items-center gap-x-3 gap-y-1">
-        <span>{inicio.etiqueta}</span>
-        <span aria-hidden="true" class="text-linea">/</span>
-        <span>{negocio.ciudad}</span>
+      <p class="etiqueta grid gap-1.5">
+        <span class="text-tinta">{inicio.etiqueta}</span>
+        <span>{negocio.direccion ? `${negocio.direccion} · ${negocio.ciudad}` : negocio.ciudad}</span>
       </p>
       <h1 class="mt-5 font-display text-[clamp(3.1rem,10.5vw,6.9rem)] leading-[.92] tracking-[-.022em]">
         {inicio.titulo}{inicio.titulo_destacado && <>{' '}<em class="text-magenta">{inicio.titulo_destacado}</em></>}
@@ -23,10 +22,10 @@ import { inicio, negocio } from '../lib/contenido';
         <a class="boton boton-secundario" href="#servicios">{inicio.boton_secundario}</a>
       </div>
       {inicio.garantias.length > 0 && (
-        <ul class="mt-9 flex flex-wrap gap-x-6 gap-y-2.5 text-[.93rem] text-grafito">
+        <ul class="mt-9 grid gap-x-6 gap-y-2.5 text-[.93rem] text-grafito sm:grid-cols-2">
           {inicio.garantias.map((g) => (
-            <li class="flex items-center gap-2">
-              <Icono nombre="check" tamano={17} clase="text-cian-texto" />
+            <li class="flex items-start gap-2">
+              <Icono nombre="check" tamano={17} clase="mt-[3px] shrink-0 text-cian-texto" />
               {g}
             </li>
           ))}
@@ -35,6 +34,12 @@ import { inicio, negocio } from '../lib/contenido';
     </div>
 
     <div class="mesa relative -mx-5 sm:mx-0 lg:col-span-6">
+      {negocio.anios && (
+        <p class="sello">
+          <span class="font-display text-[2.8rem] leading-none tabular-nums">+{negocio.anios}</span>
+          <span class="mt-1 block text-[.72rem] font-semibold uppercase leading-tight tracking-[.14em]">años</span>
+        </p>
+      )}
       <figure class="copia">
         <Image
           src={inicio.imagen}
@@ -87,6 +92,15 @@ import { inicio, negocio } from '../lib/contenido';
   }
   @media (min-width: 1024px) { .copia { rotate: -2deg; } }
 
+  .sello {
+    position: absolute; z-index: 3; top: .9rem; right: .9rem;
+    display: grid; place-items: center; align-content: center; text-align: center;
+    width: 6.6rem; height: 6.6rem; border-radius: 999px; padding: .75rem;
+    background: var(--color-tinta); color: var(--color-papel);
+    box-shadow: 0 0 0 4px var(--color-amarillo), 0 14px 30px -12px rgb(0 0 0 / .5);
+    rotate: 8deg;
+  }
+  @media (min-width: 1024px) { .sello { top: 1.5rem; right: -1.5rem; width: 7.6rem; height: 7.6rem; } }
   .ticket {
     position: relative;
     margin: -1.75rem 0 0 auto;

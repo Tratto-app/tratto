@@ -1,0 +1,94 @@
+---
+import { Image } from 'astro:assets';
+import Icono from './Icono.astro';
+import { masPedido } from '../lib/contenido';
+---
+{masPedido.lista.length > 0 && (
+  <section id="mas-pedido" class="bg-tinta text-papel" aria-labelledby="titulo-mas-pedido">
+    <div class="contenedor py-16 lg:py-24">
+      <div class="flex flex-wrap items-end justify-between gap-x-10 gap-y-4" data-revelar>
+        <div>
+          <p class="etiqueta !text-gris-claro">Favoritos del local</p>
+          <h2 id="titulo-mas-pedido" class="titulo-seccion mt-3">{masPedido.titulo}</h2>
+        </div>
+        {masPedido.bajada && <p class="max-w-md text-gris-claro">{masPedido.bajada}</p>}
+      </div>
+
+      <ul class="carril mt-10 lg:mt-14" role="list">
+        {masPedido.lista.map((p, i) => (
+          <li class="tarjeta-pedido group" data-revelar style={`--demora:${i * 70}ms`}>
+            <div class="relative aspect-[4/3] overflow-hidden bg-grafito">
+              {p.imagen ? (
+                <Image
+                  src={p.imagen}
+                  alt={p.foto_descripcion}
+                  widths={[320, 480, 640, 800].filter((w) => w <= p.imagen!.width)}
+                  sizes="(min-width: 1280px) 290px, (min-width: 1024px) 22vw, (min-width: 640px) 45vw, 78vw"
+                  format="webp"
+                  quality={78}
+                  class="h-full w-full object-cover transition-transform duration-700 ease-[var(--ease-revelado)] group-hover:scale-[1.04]"
+                />
+              ) : (
+                <div class="cifra" role="img" aria-label={p.foto_descripcion}>
+                  <span class="font-display">{p.cifra}</span>
+                  <i aria-hidden="true"></i><i aria-hidden="true"></i><i aria-hidden="true"></i>
+                </div>
+              )}
+              {p.etiqueta && <span class="badge-promo absolute left-3 top-3">{p.etiqueta}</span>}
+            </div>
+            <div class="flex flex-1 flex-col pt-5">
+              <h3 class="text-[1.2rem] font-semibold leading-snug">{p.nombre}</h3>
+              <p class="mt-2 text-[.95rem] text-gris-claro">{p.descripcion}</p>
+              <div class="mt-auto flex items-center justify-between gap-4 pt-5">
+                <p class="font-display text-[1.75rem] leading-none tabular-nums">
+                  {p.precio ? p.precio : <span class="whitespace-nowrap font-sans text-[.86rem] text-gris-claro">Consultá el precio</span>}
+                </p>
+                <a href={p.whatsapp} target="_blank" rel="noopener" class="boton boton-claro min-h-0 px-4 py-2.5 text-[.9rem]" aria-label={`Consultar por ${p.nombre} por WhatsApp`}>
+                  <Icono nombre="whatsapp" tamano={16} />
+                  Consultar
+                </a>
+              </div>
+            </div>
+          </li>
+        ))}
+      </ul>
+      <p class="mt-6 flex items-center gap-2 font-mono text-[.72rem] uppercase tracking-[.1em] text-gris-claro sm:hidden" aria-hidden="true">
+        <Icono nombre="deslizar" tamano={16} /> Deslizá para ver más
+      </p>
+    </div>
+  </section>
+)}
+
+<style>
+  /* En el celular se deslizan de costado; en pantallas grandes van en grilla */
+  .carril {
+    display: grid;
+    grid-auto-flow: column;
+    grid-auto-columns: 78%;
+    gap: 1rem;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    scroll-padding-inline: 1.25rem;
+    margin-inline: -1.25rem;
+    padding-inline: 1.25rem;
+    padding-bottom: .25rem;
+    scrollbar-width: none;
+  }
+  .carril::-webkit-scrollbar { display: none; }
+  .carril > li { scroll-snap-align: start; }
+  @media (min-width: 640px) {
+    .carril { grid-auto-flow: row; grid-template-columns: repeat(2, minmax(0, 1fr)); grid-auto-columns: auto; overflow: visible; margin-inline: 0; padding-inline: 0; gap: 2.5rem 1.5rem; }
+  }
+  @media (min-width: 1024px) {
+    .carril { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+  }
+  .tarjeta-pedido { display: flex; flex-direction: column; min-width: 0; }
+
+  /* Cuando no hay foto: la cifra grande sobre las tintas de impresión */
+  .cifra { position: relative; display: grid; place-items: center; height: 100%; background: var(--color-magenta); overflow: hidden; }
+  .cifra span { position: relative; z-index: 1; font-size: clamp(4.5rem, 9vw, 6.5rem); line-height: 1; color: #fff; letter-spacing: -.03em; }
+  .cifra i { position: absolute; display: block; width: 70%; aspect-ratio: 1.75; border-radius: 6px; box-shadow: 0 18px 30px -16px rgb(0 0 0 / .45); }
+  .cifra i:nth-of-type(1) { background: var(--color-cian); rotate: -14deg; left: -18%; bottom: -22%; }
+  .cifra i:nth-of-type(2) { background: var(--color-amarillo); rotate: 10deg; right: -24%; top: -20%; }
+  .cifra i:nth-of-type(3) { background: #fff; rotate: -4deg; right: -30%; bottom: -26%; opacity: .9; }
+</style>

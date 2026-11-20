@@ -20,13 +20,18 @@ for (const [ruta, imagen] of Object.entries(archivosDeFotos)) {
 
 const texto = z.string().trim().min(1, 'no puede quedar vacío');
 const opcional = z.string().trim().default('');
+const precio = z.union([z.string(), z.number()]).transform((v) => String(v).trim()).default('');
 
 const item = z.object({
   nombre: texto,
   descripcion: texto,
   detalle: opcional,
-  precio: z.union([z.string(), z.number()]).transform((v) => String(v).trim()).default(''),
-  foto: texto,
+  etiqueta: opcional,
+  opciones: z.array(texto).default([]),
+  nota: opcional,
+  precio,
+  cifra: opcional,
+  foto: opcional,
   foto_descripcion: texto,
   oculto: z.boolean().default(false),
 });
@@ -34,23 +39,29 @@ const item = z.object({
 const esquema = z.object({
   negocio: z.object({
     nombre: texto,
+    logo: opcional,
+    rubro: texto,
     ciudad: texto,
     descripcion: texto,
     whatsapp: z.union([z.string(), z.number()])
       .transform((v) => String(v).replace(/\D/g, ''))
       .refine((v) => v.length >= 10, 'tiene que tener el número completo, ej: 5492213999289'),
     whatsapp_visible: texto,
+    email: opcional,
     instagram: opcional,
     facebook: opcional,
     tienda_online: opcional,
     catalogo_whatsapp: opcional,
     direccion: opcional,
     horarios: opcional,
+    horarios_google: z.array(z.string()).default([]),
+    anios: z.number().int().positive().optional(),
   }),
   mensajes_whatsapp: z.object({
     general: texto,
     servicio: texto,
     revisar_foto: texto,
+    carnet: texto,
   }),
   inicio: z.object({
     etiqueta: texto,
@@ -63,12 +74,23 @@ const esquema = z.object({
     foto_descripcion: texto,
     garantias: z.array(texto).default([]),
   }),
-  promos_titulo: texto,
-  promos_bajada: opcional,
-  promos: z.array(item).default([]),
+  mas_pedido_titulo: texto,
+  mas_pedido_bajada: opcional,
+  mas_pedido: z.array(item).default([]),
   servicios_titulo: texto,
   servicios_bajada: opcional,
   servicios: z.array(item).min(1, 'tiene que haber al menos un servicio'),
+  carnet: z.object({
+    etiqueta: texto,
+    titulo: texto,
+    texto: texto,
+    horario: opcional,
+    precios: z.array(z.object({ nombre: texto, precio })).default([]),
+    incluye: z.array(texto).default([]),
+    garantia: opcional,
+    foto: texto,
+    foto_descripcion: texto,
+  }),
   pantalla_vs_papel: z.object({
     etiqueta: texto,
     titulo: texto,
@@ -113,6 +135,17 @@ const esquema = z.object({
     descripcion: texto,
     oculto: z.boolean().default(false),
   })),
+  nosotros: z.object({
+    etiqueta: texto,
+    titulo: texto,
+    texto: z.array(texto).default([]),
+    mision_titulo: texto,
+    mision: texto,
+    frase: opcional,
+    equipos_titulo: opcional,
+    equipos_bajada: opcional,
+    equipos: z.array(z.object({ nombre: texto, tipo: texto, texto: texto, foto: opcional })).default([]),
+  }),
   proceso: z.object({
     etiqueta: texto,
     titulo: texto,
@@ -124,6 +157,10 @@ const esquema = z.object({
     bajada: opcional,
     consejos: z.array(z.object({ titulo: texto, texto: texto })),
     metodos: z.array(z.object({ titulo: texto, pasos: z.array(texto).min(1) })),
+    carpetas_titulo: opcional,
+    carpetas_bajada: opcional,
+    carpetas: z.array(z.object({ medida: texto, subcarpetas: z.array(texto) })).default([]),
+    carpetas_importante: z.array(texto).default([]),
   }),
   preguntas_titulo: texto,
   preguntas: z.array(z.object({ pregunta: texto, respuesta: texto })),
@@ -201,25 +238,32 @@ function conFoto<T extends z.infer<typeof item>>(lista: T[], seccion: string) {
     .filter((s) => !s.oculto)
     .map((s) => ({
       ...s,
-      imagen: foto(s.foto, `${seccion}: ${s.nombre}`),
+      imagen: s.foto ? foto(s.foto, `${seccion}: ${s.nombre}`) : null,
       whatsapp: linkWhatsApp(mensajeServicio(s.nombre)),
     }));
 }
 
+const lugar = [datos.negocio.direccion, datos.negocio.ciudad, 'Buenos Aires, Argentina'].filter(Boolean).join(', ');
+const consultaMapa = datos.contacto.mapa || lugar;
+const mapaLink = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(consultaMapa)}`;
+
 export const negocio = {
   ...datos.negocio,
+  logoImagen: datos.negocio.logo ? foto(datos.negocio.logo, 'logo del negocio') : null,
   whatsappGeneral: linkWhatsApp(datos.mensajes_whatsapp.general),
   whatsappRevisar: linkWhatsApp(datos.mensajes_whatsapp.revisar_foto),
+  whatsappCarnet: linkWhatsApp(datos.mensajes_whatsapp.carnet),
+  mapaLink,
   // Si no hay tienda online todavía, el botón lleva al catálogo de WhatsApp.
   tienda: datos.negocio.tienda_online || datos.negocio.catalogo_whatsapp || linkWhatsApp(datos.mensajes_whatsapp.general),
 };
 
 export const inicio = { ...datos.inicio, imagen: foto(datos.inicio.foto, 'portada') };
 
-export const promos = {
-  titulo: datos.promos_titulo,
-  bajada: datos.promos_bajada,
-  lista: conFoto(datos.promos, 'promos'),
+export const masPedido = {
+  titulo: datos.mas_pedido_titulo,
+  bajada: datos.mas_pedido_bajada,
+  lista: conFoto(datos.mas_pedido, 'lo más pedido'),
 };
 
 export const servicios = {
@@ -227,6 +271,8 @@ export const servicios = {
   bajada: datos.servicios_bajada,
   lista: conFoto(datos.servicios, 'servicios'),
 };
+
+export const carnet = { ...datos.carnet, imagen: foto(datos.carnet.foto, 'fotos carnet') };
 
 const pvp = datos.pantalla_vs_papel;
 export const pantallaVsPapel = {
@@ -242,7 +288,7 @@ export const calculadora = {
   ...datos.calculadora,
   tamanos: datos.calculadora.tamanos.map((t) => {
     const [a, b] = t.split('x').map((n) => Number(n.replace(',', '.')));
-    return { nombre: t, corto: Math.min(a, b), largo: Math.max(a, b) };
+    return { nombre: t.replace('x', '×'), corto: Math.min(a, b), largo: Math.max(a, b) };
   }),
 };
 
@@ -255,15 +301,18 @@ export const galeria = {
     .map((g, i) => ({ ...g, imagen: foto(g.foto, `galería, foto ${i + 1}`) })),
 };
 
+export const nosotros = {
+  ...datos.nosotros,
+  equipos: datos.nosotros.equipos.map((e) => ({ ...e, imagen: e.foto ? foto(e.foto, `equipo ${e.nombre}`) : null })),
+};
+
 export const proceso = datos.proceso;
 export const comoEnviar = datos.como_enviar;
 export const preguntas = { titulo: datos.preguntas_titulo, lista: datos.preguntas };
 
-const lugar = [datos.negocio.direccion, datos.negocio.ciudad, 'Buenos Aires, Argentina'].filter(Boolean).join(', ');
-const consultaMapa = datos.contacto.mapa || lugar;
 export const contacto = {
   ...datos.contacto,
   mapaEmbed: `https://www.google.com/maps?q=${encodeURIComponent(consultaMapa)}&output=embed`,
-  mapaLink: `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(consultaMapa)}`,
+  mapaLink,
   hayDireccion: Boolean(datos.negocio.direccion),
 };

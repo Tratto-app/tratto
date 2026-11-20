@@ -1,34 +1,34 @@
 ---
 import '../styles/global.css';
-import { getImage } from 'astro:assets';
 import Header from '../components/Header.astro';
 import Icono from '../components/Icono.astro';
-import { negocio, inicio, servicios, promos, preguntas } from '../lib/contenido';
+import { negocio, inicio, servicios, masPedido, preguntas } from '../lib/contenido';
 
 interface Props {
   titulo: string;
   descripcion: string;
-  menu: { texto: string; ancla: string }[];
+  menu: { texto: string; ancla: string; soloCelular?: boolean }[];
 }
 const { titulo, descripcion, menu } = Astro.props;
 
 const sitio = Astro.site ?? new URL(Astro.url.origin);
 const canonica = new URL(Astro.url.pathname, sitio).href;
 
-// Imagen para cuando se comparte el link (WhatsApp, Instagram, Facebook): 1200 × 630 en JPG
-const og = await getImage({ src: inicio.imagen, width: 1200, height: 630, fit: 'cover', format: 'jpg', quality: 80 });
-const ogUrl = new URL(og.src, sitio).href;
+// Imagen para cuando se comparte el link (WhatsApp, Instagram, Facebook): 1200 × 630
+const ogUrl = new URL('/og-fotografia-digital-lp.jpg', sitio).href;
 
 // Datos para Google (schema.org): negocio local, servicios y preguntas frecuentes
 const negocioLd = {
   '@context': 'https://schema.org',
-  '@type': 'LocalBusiness',
+  '@type': ['LocalBusiness', 'ProfessionalService'],
   '@id': `${sitio.href}#negocio`,
   name: negocio.nombre,
   description: negocio.descripcion,
   url: sitio.href,
   image: ogUrl,
   telephone: `+${negocio.whatsapp}`,
+  ...(negocio.email ? { email: negocio.email } : {}),
+  logo: new URL('/icono-512.png', sitio).href,
   address: {
     '@type': 'PostalAddress',
     ...(negocio.direccion ? { streetAddress: negocio.direccion } : {}),
@@ -37,12 +37,14 @@ const negocioLd = {
     addressCountry: 'AR',
   },
   areaServed: negocio.ciudad,
-  ...(negocio.horarios ? { openingHours: negocio.horarios } : {}),
+  ...(negocio.horarios_google.length ? { openingHours: negocio.horarios_google } : {}),
+  hasMap: negocio.mapaLink,
+  knowsAbout: ['fotos carnet', 'fotos biométricas', 'copias fotográficas', 'impresiones', 'fotolibros', 'revelado de rollos', 'restauración fotográfica', 'impresión en gran formato'],
   sameAs: [negocio.instagram, negocio.facebook].filter(Boolean),
   hasOfferCatalog: {
     '@type': 'OfferCatalog',
     name: 'Servicios de impresión fotográfica',
-    itemListElement: [...promos.lista, ...servicios.lista].map((s) => ({
+    itemListElement: [...masPedido.lista, ...servicios.lista].map((s) => ({
       '@type': 'Offer',
       itemOffered: { '@type': 'Service', name: s.nombre, description: s.descripcion },
     })),
@@ -67,7 +69,7 @@ const ld = (o: object) => JSON.stringify(o).replace(/</g, '\\u003c');
     <title>{titulo}</title>
     <meta name="description" content={descripcion} />
     <link rel="canonical" href={canonica} />
-    <meta name="theme-color" content="#FFFFFF" />
+    <meta name="theme-color" content="#000000" />
     <meta name="format-detection" content="telephone=no" />
 
     <meta property="og:type" content="website" />
@@ -79,13 +81,12 @@ const ld = (o: object) => JSON.stringify(o).replace(/</g, '\\u003c');
     <meta property="og:image" content={ogUrl} />
     <meta property="og:image:width" content="1200" />
     <meta property="og:image:height" content="630" />
-    <meta property="og:image:alt" content={inicio.foto_descripcion} />
+    <meta property="og:image:alt" content={`${negocio.nombre}, ${negocio.rubro.toLowerCase()} en ${negocio.ciudad}`} />
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content={titulo} />
     <meta name="twitter:description" content={descripcion} />
     <meta name="twitter:image" content={ogUrl} />
 
-    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
     <link rel="icon" href="/favicon-32.png" type="image/png" sizes="32x32" />
     <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
     <link rel="sitemap" href="/sitemap.xml" />

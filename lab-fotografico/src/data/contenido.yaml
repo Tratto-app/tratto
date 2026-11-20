@@ -1,5 +1,5 @@
 # ════════════════════════════════════════════════════════════════════════
-#  CONTENIDO DEL SITIO
+#  CONTENIDO DEL SITIO · Fotografía Digital LP
 #  Todo lo que se ve en la página sale de este archivo.
 #
 #  Cómo editarlo sin romper nada:
@@ -7,180 +7,218 @@
 #   • Respetá los espacios del principio de cada línea (la sangría).
 #   • Si un texto lleva dos puntos ( : ), ponelo entre comillas "así: como acá".
 #   • Las líneas que empiezan con # son notas como esta: no se ven en el sitio.
+#   • Lo que va entre *asteriscos* en un título sale en cursiva y en color.
 #   • Si algo queda mal escrito, el sitio NO se publica y sigue online la
 #     versión anterior. Vercel muestra en qué línea está el error.
 #
 #  Fotos: se suben a la carpeta src/assets/fotos/ y acá se escribe la ruta
-#  desde esa carpeta, por ejemplo  servicios/fine-art.jpg
+#  desde esa carpeta, por ejemplo  servicios/fotos-carnet-biometricas.jpg
 #  Sirven JPG, PNG o WebP. El sitio las achica y las pasa a WebP solo.
 # ════════════════════════════════════════════════════════════════════════
 
 
 # ── DATOS DEL NEGOCIO ───────────────────────────────────────────────────
 negocio:
-  nombre: Laboratorio Fotográfico        # Aparece arriba a la izquierda y en Google
+  nombre: Fotografía Digital LP
+  logo: marca/logo-fotografia-digital-lp.png
+  rubro: Laboratorio fotográfico e impresión profesional
   ciudad: La Plata
-  descripcion: Impresiones fotográficas de alta calidad para fotógrafos, emprendedores y público en general.
+  descripcion: Laboratorio fotográfico e impresión profesional en La Plata. Más de 30 años cuidando tus recuerdos.
 
   # WhatsApp: solo números, con 54 9 y la característica sin 0 ni 15.
   whatsapp: "5492213999289"
-  whatsapp_visible: "+54 9 221 399-9289"   # Cómo se muestra escrito en la página
+  whatsapp_visible: "+54 9 221 399-9289"
+  email: fotodigital9901@gmail.com
 
   # Redes: link completo. Si queda vacío (""), el ícono no aparece.
-  instagram: ""
+  instagram: "https://www.instagram.com/fotografiadigital.lp/"
   facebook: ""
 
   # Botón "Tienda online". Si queda vacío, lleva al catálogo de WhatsApp.
   tienda_online: ""
   catalogo_whatsapp: "https://wa.me/c/5492213999289"
 
-  # Para la etapa 3 (contacto y mapa). Si quedan vacíos, no se muestran.
-  direccion: ""
-  horarios: ""
+  direccion: Diagonal 79 Nº 1002
+  horarios: "Lunes a viernes de 9 a 18 h\nSábados de 9 a 13 h"
+  # Para Google (formato fijo: días en inglés abreviados y hora de 24 h)
+  horarios_google: ["Mo-Fr 09:00-18:00", "Sa 09:00-13:00"]
+  anios: 30   # "Más de 30 años"
 
 
 # ── MENSAJES QUE SE ABREN EN WHATSAPP ───────────────────────────────────
 # {servicio} se reemplaza solo por el nombre del servicio que tocaron.
 mensajes_whatsapp:
-  general: Hola! Quiero pedir un presupuesto.
+  general: Hola! Quiero hacer una consulta.
   servicio: "Hola! Quiero consultar por: {servicio}"
   revisar_foto: Hola! Les quiero mandar una foto para que la revisen antes de imprimir.
+  carnet: Hola! Quiero consultar por fotos carnet / biométricas.
 
 
 # ── PORTADA (lo primero que se ve) ──────────────────────────────────────
 inicio:
-  etiqueta: Laboratorio fotográfico
+  etiqueta: Laboratorio fotográfico e impresión profesional
   titulo: Tus fotos merecen verse mejor
   titulo_destacado: en papel              # Va en cursiva y en color
-  bajada: Copias y ampliaciones, Fine Art, cuadros, fotolibros, revelado de rollos y restauración. Revisamos cada archivo antes de imprimir para que tu foto salga como la imaginaste.
+  bajada: Copias de 9×13 a 60×90, fotos carnet en el momento, fotolibros, revelado de rollos, restauración e impresión en gran formato. Antes de imprimir, revisamos cada archivo para que tus imágenes se vean tal como las imaginaste.
   boton_principal: Pedir presupuesto por WhatsApp
   boton_secundario: Ver servicios
   foto: inicio/copias-sobre-mesa.jpg
   foto_descripcion: Copias fotográficas recién impresas sobre una mesa
   garantias:
-    - Revisamos cada archivo
-    - Te asesoramos antes de imprimir
-    - Retiro en el local o envío
+    - Revisión personalizada de cada archivo
+    - Atención y asesoramiento profesional
+    - Calidad de laboratorio fotográfico
+    - Colores fieles y máxima definición
 
 
-# ── PROMOS ──────────────────────────────────────────────────────────────
-# Para agregar una promo, copiá un bloque entero (desde el guion "-") y
-# cambiale los textos. Para sacarla, borrá el bloque o poné  oculto: true
-# Si "precio" queda vacío, en el sitio dice "Consultá el precio".
-promos_titulo: Promos
-promos_bajada: Precios especiales para imprimir de a muchas.
+# ── LO MÁS PEDIDO ───────────────────────────────────────────────────────
+# Para agregar uno, copiá un bloque entero (desde el guion "-").
+# Para sacarlo, borrá el bloque o poné  oculto: true
+# "precio" vacío = dice "Consultá el precio".
+# "etiqueta" es el cartelito amarillo arriba de la foto.
+# Si no hay foto, se muestra la "cifra" grande en su lugar.
+mas_pedido_titulo: Lo más pedido
+mas_pedido_bajada: Lo que más nos piden en el local. Consultá la escala de descuentos por cantidad.
 
-promos:
-  - nombre: Promo 100 fotos 10x15 + álbum
-    descripcion: Cien copias en papel fotográfico y un álbum para guardarlas.
-    detalle: 100 copias · 10x15 cm · álbum incluido
-    precio: ""
-    foto: servicios/promo-100-fotos-10x15-album.jpg
+mas_pedido:
+  - nombre: Pack 72 fotos + álbum
+    descripcion: 72 fotos 10×15 cm en papel fotográfico y un álbum para guardarlas.
+    etiqueta: 72 fotos 10×15
+    precio: "$ 50.500"
+    foto: mas-pedido/pack-72-fotos-album.jpg
     foto_descripcion: Álbum abierto con fotos de vacaciones
 
-  - nombre: Promo 100 fotos 13x18 + álbum
-    descripcion: Un tamaño más grande para que tus fotos luzcan en el álbum.
-    detalle: 100 copias · 13x18 cm · álbum incluido
+  - nombre: Promo Polaroid
+    descripcion: 24 copias estilo Polaroid de tus fotos favoritas, con su clásico borde blanco.
+    etiqueta: 24 copias
     precio: ""
-    foto: servicios/promo-100-fotos-13x18-album.jpg
-    foto_descripcion: Álbum de fotos decorado sobre una mesa con flores
+    foto: mas-pedido/promo-polaroid.jpg
+    foto_descripcion: Copias estilo Polaroid sobre una mesa
 
-  - nombre: Promo 100 fotos 15x22 + álbum
-    descripcion: Copias grandes para los recuerdos que merecen más espacio.
-    detalle: 100 copias · 15x22 cm · álbum incluido
+  - nombre: Carpetas escolares
+    descripcion: Carpetas y fotos escolares para colegios, jardines e instituciones.
+    etiqueta: Desde 1.000 copias
     precio: ""
-    foto: servicios/promo-100-fotos-15x22-album.jpg
-    foto_descripcion: Álbum con una foto de paisaje
+    foto: mas-pedido/carpetas-escolares.jpg
+    foto_descripcion: Carpeta escolar con fotos de una alumna
 
-  - nombre: Promo 20 Polaroid
-    descripcion: Veinte copias estilo Polaroid de tus fotos favoritas.
-    detalle: 20 copias · borde blanco clásico
+  - nombre: Tarjetas personales
+    descripcion: Tarjetas personales impresas en alta calidad, listas para repartir.
+    etiqueta: 600 unidades
     precio: ""
-    foto: servicios/promo-20-polaroid.jpg
-    foto_descripcion: Copias estilo Polaroid desparramadas sobre una mesa
+    foto: ""
+    cifra: "600"
+    foto_descripcion: Tarjetas personales
 
 
 # ── SERVICIOS ───────────────────────────────────────────────────────────
-# Igual que las promos: copiá un bloque para agregar, borralo para sacar.
-servicios_titulo: Qué imprimimos
+# Los dos primeros salen más grandes. "opciones" es una lista opcional.
+servicios_titulo: Nuestros servicios
 servicios_bajada: Tocá «Consultar» en cualquier servicio y se abre WhatsApp con tu consulta lista para mandar.
 
 servicios:
   - nombre: Copias fotográficas y ampliaciones
-    descripcion: Del 10x15 al 50x70 en papel fotográfico brillante o mate.
-    detalle: 10x15 a 50x70 cm
-    precio: ""
+    descripcion: Impresiones fotográficas de excelente calidad, con colores vibrantes, gran definición y acabado profesional.
+    detalle: Desde 9×13 hasta 60×90 cm
+    opciones:
+      - Papel fotográfico tradicional
+      - "Medidas estándar: 9×13, 10×15, 13×18, 15×21 y 20×30"
+      - "Ampliaciones: 30×40, 30×45, panorámicas 30×60 y 30×90, y hasta 60×90"
     foto: servicios/copias-y-ampliaciones.jpg
     foto_descripcion: Copias fotográficas sobre una mesa
 
-  - nombre: Impresión Fine Art
-    descripcion: Papeles de algodón con textura y colores pensados para durar. Para obra, exposiciones y portfolios.
-    detalle: Papeles de algodón
-    precio: ""
-    foto: servicios/fine-art.jpg
-    foto_descripcion: Persona sosteniendo una lámina Fine Art de un paisaje marino
+  - nombre: Fotolibros
+    descripcion: Convertí tus recuerdos, proyectos o trabajos en un libro único para conservar y compartir.
+    detalle: Diseño completamente personalizado
+    opciones:
+      - "En papel fotográfico: calidad de laboratorio, colores vibrantes y máxima durabilidad"
+      - "En impresión digital offset: ideales para portfolios, tesis, proyectos académicos, anuarios y presentaciones"
+      - Tapa blanda o rígida, anillado o encuadernado personalizado
+    nota: Consultá por medidas y formatos disponibles.
+    foto: servicios/fotolibros-papel-fotografico.jpg
+    foto_descripcion: Fotolibro abierto con fotos familiares
 
-  - nombre: Cuadros en canvas
-    descripcion: Tu foto impresa sobre tela y montada en bastidor, lista para colgar. Sin vidrio ni reflejos.
-    detalle: Listo para colgar
-    precio: ""
-    foto: servicios/cuadro-canvas.jpg
-    foto_descripcion: Cuadro en canvas con un paisaje colgado en la pared
+  - nombre: Fotos carnet y biométricas
+    descripcion: Para DNI, pasaportes, visas y trámites internacionales, respetando los requisitos de cada país. Te las sacamos en el momento.
+    detalle: Listas en 10 minutos
+    foto: servicios/fotos-carnet-biometricas.jpg
+    foto_descripcion: Hoja con seis fotos carnet y retrato biométrico
 
-  - nombre: Cuadros en bastidor de madera
-    descripcion: Tu foto montada sobre bastidor de madera. Elegís la medida y la terminación.
-    detalle: Medida a elección
-    precio: ""
-    foto: servicios/cuadro-bastidor-madera.jpg
-    foto_descripcion: Rincón de una casa con cuadros de fotos en la pared
+  - nombre: Fotos sobre MDF
+    descripcion: Fotografías montadas sobre MDF de 3 mm. Ideales para muestras fotográficas, exposiciones, decoración y regalos personalizados.
+    detalle: MDF de 3 mm
+    foto: servicios/fotos-sobre-mdf-muestra.jpg
+    foto_descripcion: Muestra fotográfica con fotos montadas en MDF colgadas en una pared
 
-  - nombre: Polaroid
-    descripcion: Copias estilo instantánea con su clásico borde blanco. Para regalar, decorar o armar un mural.
-    detalle: Borde blanco clásico
-    precio: ""
-    foto: servicios/polaroid.jpg
-    foto_descripcion: Mano sosteniendo tres copias estilo Polaroid
+  - nombre: Canvas enmarcados
+    descripcion: Tu foto impresa en tela y montada en bastidor, lista para colgar.
+    detalle: Listos para colgar
+    foto: servicios/canvas-enmarcados.jpg
+    foto_descripcion: Varios cuadros en canvas con retratos apoyados sobre una mesa
 
-  - nombre: Fotolibros y montajes personalizados
-    descripcion: Armamos tu fotolibro con las fotos de un viaje, un casamiento o el año de tus hijos.
-    detalle: Diseño a medida
-    precio: ""
-    foto: servicios/fotolibros.jpg
-    foto_descripcion: Fotolibro abierto con fotos de paisajes
-
-  - nombre: Revelado de rollos + scan
-    descripcion: Revelamos tus rollos y te entregamos las fotos escaneadas, listas para compartir o imprimir.
-    detalle: Revelado y escaneo
-    precio: ""
+  - nombre: Revelado y digitalización de rollos
+    descripcion: Revelado de negativos color (C41) y escaneo de negativos y diapositivas para conservar tus recuerdos en formato digital.
+    detalle: Negativos y diapositivas
     foto: servicios/revelado-rollos.jpg
     foto_descripcion: Tres rollos de película fotográfica
 
-  - nombre: Digitalización de video
-    descripcion: Pasamos tus VHS y otros formatos a digital para que esos recuerdos no se pierdan.
-    detalle: VHS y otros formatos
-    precio: ""
-    foto: servicios/digitalizacion-video.jpg
-    foto_descripcion: Casete de video VHS
-
-  - nombre: Restauración, escaneo y digitalización
-    descripcion: Recuperamos fotos viejas, rotas o manchadas, y las escaneamos para que las tengas siempre.
+  - nombre: Restauración fotográfica
+    descripcion: Recuperamos fotografías antiguas o deterioradas, mejorando colores, contraste y detalles.
     detalle: Fotos antiguas
-    precio: ""
     foto: servicios/restauracion.jpg
     foto_descripcion: Fotos antiguas en blanco y negro junto a un portarretratos
 
-  - nombre: Trabajos académicos, portfolios y material gráfico
-    descripcion: Portfolios, láminas, tesis y material gráfico impresos con el cuidado de un laboratorio.
+  - nombre: Portfolios, tesis y material académico
+    descripcion: Impresión profesional de portfolios, tesis, láminas, presentaciones y material gráfico.
     detalle: Portfolios y láminas
-    precio: ""
     foto: servicios/trabajos-academicos-portfolios.jpg
     foto_descripcion: Mesa con láminas y fotos de un portfolio
+
+  - nombre: Impresión en gran formato
+    descripcion: Lona vinílica, vinilo adhesivo y microperforado, banners y porta banners, cartelería promocional, láminas para arquitectura y diseño y material para exposiciones.
+    detalle: Lona de hasta 160 cm de ancho
+    foto: equipos/epson-surecolor-p7570.jpg
+    foto_descripcion: Plotter imprimiendo una ampliación fotográfica de gran formato
+
+  - nombre: Polaroid y fotos imán
+    descripcion: Polaroid mini 6×9 y 9×13, souvenirs para eventos, Polaroid con código de Spotify y fotos imán.
+    detalle: Mini, clásicas y souvenirs
+    foto: servicios/polaroid.jpg
+    foto_descripcion: Mano sosteniendo tres copias estilo Polaroid
+
+  - nombre: Imprenta y eventos
+    descripcion: Tarjetas personales, tarjetas de saludo e invitaciones, calendarios, carpetas escolares y numerales para cumpleaños y XV.
+    detalle: Para cumpleaños, XV y empresas
+    foto: servicios/imprenta-numerales-xv.jpg
+    foto_descripcion: Numerales de mesa para un cumpleaños de XV
+
+
+# ── FOTOS CARNET ────────────────────────────────────────────────────────
+# Precios: si quedan vacíos, dice "Consultá".
+carnet:
+  etiqueta: Fotos carnet y biométricas
+  titulo: Tu foto carnet *en 10 minutos*
+  texto: Para DNI, pasaportes, visas y trámites internacionales, respetando los requisitos de cada país. Pasá por el local y te las sacamos en el momento.
+  horario: Hasta las 17:30 h lo resolvemos sin problema.
+  precios:
+    - nombre: Carnet 4×4
+      precio: ""
+    - nombre: Biométrica
+      precio: ""
+  incluye:
+    - Toma profesional
+    - Edición
+    - Impresión en el acto
+    - Pack de 6 fotos + archivo digital
+  garantia: Fotografías precisas y aprobadas para trámites. Cumplen estándares oficiales y salen nítidas, correctas y listas para presentar sin inconvenientes.
+  foto: servicios/fotos-carnet-biometricas.jpg
+  foto_descripcion: Hoja con seis fotos carnet y retrato biométrico
 
 
 # ── PANTALLA VS PAPEL ───────────────────────────────────────────────────
 pantalla_vs_papel:
   etiqueta: Pantalla vs papel
-  titulo: Lo que ves en pantalla no siempre es lo que sale *en papel*   # Lo que va entre *asteriscos* sale en cursiva y color
+  titulo: Lo que ves en pantalla no siempre es lo que sale *en papel*
   bajada: Antes de llegar al papel, una foto pasa por la cámara o el celular, por las apps y por la forma en que nos la mandás. Cada paso puede cambiar el resultado.
 
   # El comparador que se desliza. Las dos fotos tienen que tener la misma medida.
@@ -206,10 +244,10 @@ pantalla_vs_papel:
     - icono: pixeles
       titulo: Píxeles y resolución
       texto: Cada foto tiene una cantidad fija de píxeles. Para una copia nítida se necesitan unos 300 por cada pulgada de papel (eso es el DPI). Si la foto es chica y la imprimís grande, sale borrosa.
-      dato: "Una 10x15 nítida: 1181 × 1772 px"
+      dato: "Una 10×15 nítida: 1181 × 1772 px"
     - icono: compresion
       titulo: WhatsApp e Instagram comprimen
-      texto: Al enviarla o subirla, achican la foto para que pese menos y se pierde detalle. Mandala como documento, por mail o por Drive y llega entera.
+      texto: Al enviarla o subirla, achican la foto para que pese menos y se pierde detalle. Mandala como documento o por mail y llega entera.
       dato: Enviala como documento
     - icono: pantalla
       titulo: La pantalla no es papel
@@ -220,8 +258,8 @@ pantalla_vs_papel:
       texto: Cada filtro, edición o captura de pantalla le saca calidad a la foto. Siempre conviene el archivo original de la cámara o del celular.
       dato: Mejor el archivo original
 
-  cierre_titulo: Detrás de cada foto hay *revisión, ajuste y control.*
-  cierre_texto: Revisamos cada archivo y te asesoramos para lograr el mejor resultado posible.
+  cierre_titulo: Calidad en *cada impresión.*
+  cierre_texto: Antes de imprimir revisamos cada archivo para garantizar el mejor resultado posible y lograr que tus imágenes se vean tal como las imaginaste.
   cierre_boton: Mandanos tu foto y la revisamos
 
 
@@ -234,7 +272,7 @@ calculadora:
   ejemplo_ancho: 4000
   ejemplo_alto: 3000
   # Tamaños que se calculan, en centímetros (ancho x alto)
-  tamanos: [10x15, 13x18, 15x21, 20x30, 30x40, 40x60, 50x70]
+  tamanos: [9x13, 10x15, 13x18, 15x21, 20x30, 30x40, 30x45, 40x60, 30x90, 60x90]
   nota: Es una guía. Antes de imprimir revisamos cada archivo y te avisamos si conviene otro tamaño.
 
 
@@ -242,52 +280,58 @@ calculadora:
 # Para sumar un trabajo: subí la foto a src/assets/fotos/galeria/ y copiá un bloque.
 # "categoria" tiene que ser una de la lista de categorías.
 galeria_titulo: Trabajos
-galeria_bajada: Algunas de las fotos que pasaron por el laboratorio. Tocá cualquiera para verla grande.
-galeria_categorias: [Copias, Canvas, Polaroid, Álbumes, Restauración]
+galeria_bajada: Trabajos del laboratorio e ideas de lo que podés imprimir. Tocá cualquiera para verla grande.
+galeria_categorias: [Copias, Fotolibros, Cuadros y MDF, Polaroid, Restauración, Imprenta]
 
 galeria:
+  - foto: servicios/fotos-sobre-mdf-muestra.jpg
+    categoria: Cuadros y MDF
+    descripcion: Muestra fotográfica con fotos montadas en MDF
   - foto: galeria/copias-coloridas.jpg
     categoria: Copias
     descripcion: Copias a color de un viaje, recién impresas
-  - foto: galeria/cuadro-en-living.jpg
-    categoria: Canvas
-    descripcion: Cuadros colgados en un living
+  - foto: servicios/fotolibros-papel-fotografico.jpg
+    categoria: Fotolibros
+    descripcion: Fotolibro en papel fotográfico
   - foto: galeria/polaroids-colgadas.jpg
     categoria: Polaroid
     descripcion: Polaroids colgadas con broches en una pared
-  - foto: galeria/album-familiar.jpg
-    categoria: Álbumes
-    descripcion: Álbum familiar abierto en el piso
   - foto: galeria/restauracion-retrato-antiguo.jpg
     categoria: Restauración
     descripcion: Retrato antiguo en blanco y negro
+  - foto: servicios/imprenta-numerales-xv.jpg
+    categoria: Imprenta
+    descripcion: Numerales de mesa para cumpleaños y XV
+  - foto: servicios/canvas-enmarcados.jpg
+    categoria: Cuadros y MDF
+    descripcion: Canvas enmarcados con retratos
   - foto: galeria/copias-mesa-de-madera.jpg
     categoria: Copias
     descripcion: Copias de flores sobre una mesa de madera
-  - foto: servicios/cuadro-canvas.jpg
-    categoria: Canvas
-    descripcion: Canvas de un paisaje de montaña
+  - foto: galeria/fotolibro-impresion-offset.jpg
+    categoria: Fotolibros
+    descripcion: Fotolibro en impresión digital offset
   - foto: galeria/polaroids-sobre-mesa.jpg
     categoria: Polaroid
     descripcion: Polaroids de paisajes sobre una mesa
-  - foto: servicios/fotolibros.jpg
-    categoria: Álbumes
-    descripcion: Fotolibro con fotos de paisajes
   - foto: galeria/restauracion-fotos-antiguas.jpg
     categoria: Restauración
     descripcion: Fotos antiguas para restaurar y digitalizar
+  - foto: mas-pedido/carpetas-escolares.jpg
+    categoria: Imprenta
+    descripcion: Carpeta escolar con fotos
+  - foto: galeria/cuadro-en-living.jpg
+    categoria: Cuadros y MDF
+    descripcion: Cuadros colgados en un living
   - foto: galeria/copias-paisajes.jpg
     categoria: Copias
     descripcion: Copias de paisajes desparramadas
-  - foto: servicios/cuadro-bastidor-madera.jpg
-    categoria: Canvas
-    descripcion: Rincón con cuadros en bastidor de madera
+  - foto: galeria/album-familiar.jpg
+    categoria: Fotolibros
+    descripcion: Álbum familiar abierto en el piso
   - foto: galeria/polaroid-y-sobres.jpg
     categoria: Polaroid
     descripcion: Polaroid sobre sobres de colores
-  - foto: servicios/promo-100-fotos-10x15-album.jpg
-    categoria: Álbumes
-    descripcion: Álbum con fotos de vacaciones en la playa
   - foto: galeria/restauracion-canasta-de-fotos.jpg
     categoria: Restauración
     descripcion: Canasta con fotos familiares antiguas
@@ -296,19 +340,50 @@ galeria:
     descripcion: Pila de copias y postales
 
 
+# ── NOSOTROS ────────────────────────────────────────────────────────────
+nosotros:
+  etiqueta: Nosotros
+  titulo: años cuidando *tus recuerdos*   # Va al lado del número grande de "anios"
+  texto:
+    - Cada fotografía guarda una historia única. Por eso trabajamos con la misma dedicación en una foto familiar, un portfolio profesional, una tesis o una muestra fotográfica.
+    - Calidad, experiencia y atención personalizada para que cada impresión esté a la altura de tus recuerdos y proyectos.
+  mision_titulo: Nuestra misión
+  mision: Preservar los momentos más especiales de tu vida para que puedas mirarlos y revivirlos una y otra vez. Porque una fotografía no es solo una imagen. Es una emoción, una historia y un recuerdo irrepetible.
+  frase: Una fotografía es un instante de vida capturado para la eternidad.
+  equipos_titulo: Nuestros equipos
+  equipos_bajada: Cada trabajo sale de la máquina indicada para ese material.
+  equipos:
+    - nombre: Noritsu QSS-3704HD
+      tipo: Papel fotográfico tradicional
+      texto: Copias de 9×13 a 30×90, fotos carnet y Polaroid, todo en papel fotográfico.
+      foto: equipos/noritsu-qss-3704hd.jpg
+    - nombre: Epson SureColor P7570
+      tipo: Plotter fotográfico · Nuevo 2026
+      texto: Impresora de 24" con tintas UltraChrome PRO12. Gama de color amplia, negros profundos y detalles finos en ampliaciones.
+      foto: equipos/epson-surecolor-p7570.jpg
+    - nombre: Epson SureColor
+      tipo: Cartelería y gran formato
+      texto: Lona front de hasta 160 cm de ancho y vinilo adhesivo para cartelería y exposiciones.
+      foto: equipos/epson-surecolor-carteleria.jpg
+    - nombre: Konica Minolta bizhub PRESS C71hc
+      tipo: Impresión digital de producción
+      texto: 1200 × 1200 dpi con tecnología High Chroma. Fotolibros en offset digital, tarjetas y material gráfico.
+      foto: equipos/konica-minolta-c71hc.jpg
+
+
 # ── CÓMO TRABAJAMOS ─────────────────────────────────────────────────────
 proceso:
   etiqueta: Cómo trabajamos
   titulo: Del archivo *al papel*
   pasos:
     - titulo: Enviás tus archivos
-      texto: Por WhatsApp como documento, por mail o con un link de Drive. Nos contás qué querés imprimir y en qué tamaño.
+      texto: En JPG, por WhatsApp como documento o por mail. Nos contás qué querés imprimir y en qué tamaño.
     - titulo: Revisamos y te asesoramos
       texto: Miramos la resolución, el color y el encuadre de cada foto. Si algo no va a salir bien, te avisamos antes.
     - titulo: Imprimimos con control de calidad
       texto: Ajustamos cada archivo para papel y controlamos cada copia antes de entregarla.
     - titulo: Retirás o te lo enviamos
-      texto: Pasás a buscar tu pedido o coordinamos el envío a tu casa.
+      texto: Pasás a buscar tu pedido por Diagonal 79 Nº 1002 o coordinamos el envío.
 
 
 # ── CÓMO ENVIAR TUS FOTOS ───────────────────────────────────────────────
@@ -317,10 +392,10 @@ como_enviar:
   titulo: Mandalas *enteras*
   bajada: Si la foto llega comprimida, se pierde calidad que después no se recupera. Con estos pasos llega tal cual la sacaste.
   consejos:
-    - titulo: Formato
-      texto: JPG en la máxima calidad, PNG o TIFF. Si sacás en RAW, consultanos.
+    - titulo: Solo JPG
+      texto: Recibimos los archivos únicamente en formato JPG, en la máxima calidad y listos para imprimir.
     - titulo: Resolución
-      texto: Lo ideal son 300 DPI al tamaño de impresión. Una foto de celular actual alcanza para copias de hasta 20x30.
+      texto: Lo ideal son 300 DPI al tamaño de impresión. Una foto de celular actual alcanza para copias de hasta 20×30.
     - titulo: El original
       texto: Mandá la foto como salió de la cámara o del celular, no una captura de pantalla ni una bajada de redes.
   metodos:
@@ -331,30 +406,45 @@ como_enviar:
         - "La opción HD ayuda, pero igual comprime: mejor como documento."
     - titulo: Por mail
       pasos:
-        - Adjuntá las fotos sin achicarlas (si el celular pregunta el tamaño, elegí Real o Grande).
-        - Si son muchas, mejor usá un link de Drive.
-    - titulo: Drive o WeTransfer
-      pasos:
-        - Subí las fotos a una carpeta y compartinos el link.
-        - Ideal para pedidos grandes, álbumes y fotolibros.
+        - "Mandalas a fotodigital9901@gmail.com"
+        - Adjuntalas sin achicarlas (si el celular pregunta el tamaño, elegí Real o Grande).
+        - Si son muchas, compartinos un link de Drive o WeTransfer.
+
+  # Ejemplo de cómo ordenar un pedido grande en carpetas
+  carpetas_titulo: Organizá tu pedido en carpetas
+  carpetas_bajada: Así procesamos tu pedido más rápido y sin errores.
+  carpetas:
+    - medida: 15×21 sin borde
+      subcarpetas: [2 copias, 3 copias, 4 copias, 5 copias]
+    - medida: 15×21 con borde
+      subcarpetas: [2 copias, 3 copias, 4 copias, 5 copias]
+  carpetas_importante:
+    - Enviá las carpetas con las medidas correctas.
+    - Indicá claramente si es con borde o sin borde.
+    - Separá por cantidad de copias.
+    - Enviá los archivos en JPG, listos para imprimir.
 
 
 # ── PREGUNTAS FRECUENTES ────────────────────────────────────────────────
-# ⚠ Revisar con Vane: tiempos, envíos y formas de pago son generales.
+# ⚠ Revisar con Vane: tiempos de entrega, envíos y formas de pago son generales.
 preguntas_titulo: Preguntas frecuentes
 preguntas:
+  - pregunta: ¿Hacen fotos carnet y biométricas en el momento?
+    respuesta: Sí. Pasá por Diagonal 79 Nº 1002 y te las sacamos en el momento; el proceso tarda unos 10 minutos. Incluye toma profesional, edición, impresión en el acto y un pack de 6 fotos con el archivo digital. Hasta las 17:30 h lo resolvemos sin problema.
+  - pregunta: ¿En qué formato tengo que mandar las fotos?
+    respuesta: Solo en JPG, en la máxima calidad. Mandalas como documento por WhatsApp o por mail a fotodigital9901@gmail.com para que no se compriman.
+  - pregunta: ¿Qué tamaños imprimen?
+    respuesta: Copias desde 9×13 hasta 60×90 cm. Las medidas estándar son 9×13, 10×15, 13×18, 15×21 y 20×30; también hacemos 30×40, 30×45 y panorámicas de 30×60 y 30×90.
   - pregunta: ¿Cuánto tardan en estar las fotos?
-    respuesta: Depende del trabajo y de la cantidad. Las copias suelen estar en pocos días; cuadros, fotolibros y restauraciones llevan más tiempo. Cuando nos pasás el pedido te confirmamos la fecha de entrega.
-  - pregunta: ¿Qué formatos de archivo aceptan?
-    respuesta: JPG, PNG, TIFF y PDF. Si trabajás en RAW o con otro formato, consultanos y lo vemos.
+    respuesta: Depende del trabajo y de la cantidad. Cuando nos pasás el pedido te confirmamos la fecha de entrega.
   - pregunta: ¿Puedo imprimir fotos sacadas con el celular?
     respuesta: Sí. Los celulares actuales sacan fotos con muy buena resolución. Lo importante es mandarlas como documento para que no se compriman. Con la calculadora de esta página podés ver hasta qué tamaño rinde tu foto.
   - pregunta: ¿Hacen envíos?
-    respuesta: Sí. Podés retirar tu pedido o coordinamos el envío. El costo depende de la zona; te lo pasamos junto con el presupuesto.
+    respuesta: Podés retirar tu pedido en el local o coordinamos el envío. Consultanos por WhatsApp.
   - pregunta: ¿Cómo se paga?
     respuesta: Te pasamos las formas de pago junto con el presupuesto por WhatsApp.
   - pregunta: Mi foto es vieja o está dañada, ¿se puede recuperar?
-    respuesta: En muchos casos sí. Escaneamos la foto, la restauramos (manchas, roturas, color) y te entregamos el archivo digital y, si querés, una copia nueva impresa.
+    respuesta: En muchos casos sí. Restauramos fotografías antiguas o deterioradas, mejorando colores, contraste y detalles, y te entregamos el archivo digital y, si querés, una copia nueva impresa.
   - pregunta: ¿Por qué la foto impresa se ve distinta que en el celular?
     respuesta: Porque la pantalla tiene luz propia y el papel no. Por eso revisamos y ajustamos cada archivo antes de imprimir. Lo explicamos mejor en la sección Pantalla vs papel.
 
@@ -362,7 +452,7 @@ preguntas:
 # ── CONTACTO ────────────────────────────────────────────────────────────
 contacto:
   titulo: ¿Tenés fotos para imprimir?
-  texto: Escribinos por WhatsApp y te pasamos el presupuesto. Si no sabés qué tamaño o papel elegir, te ayudamos.
+  texto: Escribinos por WhatsApp y te pasamos el presupuesto, o pasá por el local. Si no sabés qué tamaño o papel elegir, te ayudamos.
   boton: Escribir por WhatsApp
   # Lo que se busca en el mapa. Si queda vacío, usa la dirección y la ciudad.
   mapa: ""

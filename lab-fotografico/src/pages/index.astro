@@ -1,38 +1,44 @@
 ---
 import Base from '../layouts/Base.astro';
 import Hero from '../components/Hero.astro';
-import Promos from '../components/Promos.astro';
+import MasPedido from '../components/MasPedido.astro';
 import Servicios from '../components/Servicios.astro';
+import FotosCarnet from '../components/FotosCarnet.astro';
 import PantallaVsPapel from '../components/PantallaVsPapel.astro';
 import Calculadora from '../components/Calculadora.astro';
 import Galeria from '../components/Galeria.astro';
+import Nosotros from '../components/Nosotros.astro';
 import Proceso from '../components/Proceso.astro';
 import ComoEnviar from '../components/ComoEnviar.astro';
 import Preguntas from '../components/Preguntas.astro';
 import Cierre from '../components/Cierre.astro';
 import { negocio } from '../lib/contenido';
 
-// Menú de arriba
+// Menú de arriba ("soloCelular" aparece solo en el menú desplegable del celular)
 const menu = [
-  { texto: 'Inicio', ancla: 'inicio' },
+  { texto: 'Inicio', ancla: 'inicio', soloCelular: true },
   { texto: 'Servicios', ancla: 'servicios' },
+  { texto: 'Fotos carnet', ancla: 'fotos-carnet' },
   { texto: 'Pantalla vs papel', ancla: 'pantalla-vs-papel' },
   { texto: 'Galería', ancla: 'galeria' },
+  { texto: 'Nosotros', ancla: 'nosotros' },
   { texto: 'Cómo enviar tus fotos', ancla: 'como-enviar' },
   { texto: 'Contacto', ancla: 'contacto' },
 ];
 ---
 <Base
-  titulo={`${negocio.nombre} en ${negocio.ciudad} | Copias, Fine Art, cuadros y fotolibros`}
-  descripcion={`Copias y ampliaciones, Fine Art, cuadros en canvas, fotolibros, revelado de rollos y restauración en ${negocio.ciudad}. Revisamos cada archivo antes de imprimir.`}
+  titulo={`${negocio.nombre} | Fotos carnet, impresiones y laboratorio fotográfico en ${negocio.ciudad}`}
+  descripcion={`Copias de 9×13 a 60×90, fotos carnet y biométricas en el momento, fotolibros, revelado de rollos y gran formato. ${negocio.direccion}, ${negocio.ciudad}.`}
   menu={menu}
 >
   <Hero />
-  <Promos />
+  <MasPedido />
   <Servicios />
+  <FotosCarnet />
   <PantallaVsPapel />
   <Calculadora />
   <Galeria />
+  <Nosotros />
   <Proceso />
   <ComoEnviar />
   <Preguntas />

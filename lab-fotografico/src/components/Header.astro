@@ -1,43 +1,52 @@
 ---
+import { Image } from 'astro:assets';
 import Icono from './Icono.astro';
 import { negocio } from '../lib/contenido';
 
 interface Props {
-  menu: { texto: string; ancla: string }[];
+  menu: { texto: string; ancla: string; soloCelular?: boolean }[];
 }
 const { menu } = Astro.props;
 const tiendaExterna = negocio.tienda.startsWith('http');
 ---
-<header id="cabecera" class="cabecera sticky z-40 bg-papel/92 backdrop-blur-md transition-[border-color,box-shadow] duration-300" style="top: env(safe-area-inset-top, 0px)">
-  <div class="contenedor flex h-16 items-center gap-4 lg:h-20 lg:gap-8">
-    <a href="#inicio" class="logo mr-auto flex items-center gap-2.5 xl:mr-2" aria-label={`${negocio.nombre}, ir al inicio`}>
-      <span class="flex gap-[3px]" aria-hidden="true">
-        <i class="block size-2 rounded-full bg-cian"></i>
-        <i class="block size-2 rounded-full bg-magenta"></i>
-        <i class="block size-2 rounded-full bg-amarillo"></i>
-      </span>
-      <span class="max-w-[8.5rem] font-display text-[1.25rem] leading-[.95] tracking-[-.01em] sm:max-w-none sm:text-[1.5rem] sm:leading-none lg:text-[1.65rem]">{negocio.nombre}</span>
+<header id="cabecera" class="cabecera sticky z-40 bg-black text-papel" style="top: env(safe-area-inset-top, 0px)">
+  <div class="contenedor flex h-16 items-center gap-4 lg:h-[4.75rem] xl:gap-7">
+    <a href="#inicio" class="mr-auto block shrink-0 xl:mr-1" aria-label={`${negocio.nombre}, ir al inicio`}>
+      {negocio.logoImagen ? (
+        <Image
+          src={negocio.logoImagen}
+          alt={negocio.nombre}
+          height={104}
+          densities={[1, 2]}
+          format="webp"
+          quality={88}
+          loading="eager"
+          class="block h-11 w-auto lg:h-[3.25rem]"
+        />
+      ) : (
+        <span class="font-display text-[1.5rem] leading-none">{negocio.nombre}</span>
+      )}
     </a>
 
     <nav class="hidden xl:block xl:mr-auto" aria-label="Secciones">
-      <ul class="flex items-center gap-6 text-[.92rem]">
-        {menu.map((item) => (
-          <li><a class="enlace-menu" href={`#${item.ancla}`}>{item.texto}</a></li>
+      <ul class="flex items-center gap-6 text-[.9rem] text-[#D6D6DC]">
+        {menu.filter((i) => !i.soloCelular).map((item) => (
+          <li><a class="enlace-menu hover:text-papel" href={`#${item.ancla}`}>{item.texto}</a></li>
         ))}
       </ul>
     </nav>
 
     <a
       href={negocio.whatsappGeneral}
-      class="hidden items-center gap-2 text-[.92rem] font-semibold xl:flex hover:text-magenta transition-colors"
+      class="hidden items-center gap-2 text-[.9rem] font-semibold xl:flex hover:text-amarillo transition-colors"
       target="_blank" rel="noopener"
     >
-      <Icono nombre="whatsapp" tamano={18} clase="text-whatsapp" />
+      <Icono nombre="whatsapp" tamano={18} clase="text-[#3DDC84]" />
       WhatsApp
     </a>
     <a
       href={negocio.tienda}
-      class="boton min-h-0 bg-tinta px-4 py-2.5 text-[.88rem] text-papel hover:bg-magenta lg:px-5 lg:py-3 lg:text-[.94rem]"
+      class="boton min-h-0 bg-papel px-4 py-2.5 text-[.86rem] text-tinta hover:bg-amarillo lg:px-5 lg:py-3 lg:text-[.92rem]"
       {...(tiendaExterna ? { target: '_blank', rel: 'noopener' } : {})}
     >
       <Icono nombre="bolsa" tamano={17} />
@@ -56,15 +65,16 @@ const tiendaExterna = negocio.tienda.startsWith('http');
       <Icono nombre="cerrar" tamano={26} clase="icono-cerrar hidden" />
     </button>
   </div>
+  <div class="barra-color !h-[3px]" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
 
-  <div id="menu-movil" class="menu-movil xl:hidden" hidden>
+  <div id="menu-movil" class="menu-movil bg-black xl:hidden" hidden>
     <nav class="contenedor pb-8 pt-2" aria-label="Secciones">
-      <ul class="divide-y divide-linea border-y border-linea">
+      <ul class="divide-y divide-[#2A2A2E] border-b border-[#2A2A2E]">
         {menu.map((item) => (
           <li>
-            <a class="flex items-center justify-between py-4 font-display text-[1.9rem] leading-tight" href={`#${item.ancla}`}>
+            <a class="flex items-center justify-between py-4 font-display text-[1.85rem] leading-tight" href={`#${item.ancla}`}>
               {item.texto}
-              <Icono nombre="flecha" tamano={20} clase="text-gris" />
+              <Icono nombre="flecha" tamano={20} clase="text-gris-claro" />
             </a>
           </li>
         ))}
@@ -78,9 +88,7 @@ const tiendaExterna = negocio.tienda.startsWith('http');
 </header>
 
 <style>
-  .cabecera { border-bottom: 1px solid transparent; }
-  .cabecera.con-borde { border-bottom-color: var(--color-linea); }
-  .enlace-menu { position: relative; padding-block: .35rem; }
+  .enlace-menu { position: relative; padding-block: .35rem; transition: color .2s; }
   .enlace-menu::after {
     content: ""; position: absolute; left: 0; right: 0; bottom: 0; height: 1.5px;
     background: var(--color-magenta); transform: scaleX(0); transform-origin: left;
@@ -91,13 +99,8 @@ const tiendaExterna = negocio.tienda.startsWith('http');
 </style>
 
 <script>
-  const cabecera = document.getElementById('cabecera');
   const boton = document.getElementById('boton-menu');
   const menu = document.getElementById('menu-movil');
-
-  const marcarBorde = () => cabecera?.classList.toggle('con-borde', window.scrollY > 8);
-  marcarBorde();
-  window.addEventListener('scroll', marcarBorde, { passive: true });
 
   function abrir(abierto: boolean) {
     if (!boton || !menu) return;
