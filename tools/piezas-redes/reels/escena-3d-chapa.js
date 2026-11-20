@@ -172,7 +172,7 @@ window.ESCENA3D = (function () {
     get efectos() {
       const r = x => +x.toFixed(2);
       const carritos = PEGADOS.map((_, i) => ({ efecto: 'chapa', t: r(P.llegada(i)), db: -15 + (i % 3) }));
-      const hojasE = [0, 2, 4].map(i => ({ efecto: 'tic', t: r(P.come + 0.15 + i * 0.18), db: -19 }));
+      const hojasE = [0, 2, 4].map(i => ({ efecto: 'tic', t: r(P.come + 0.05 + i * 0.12), db: -19 }));
       return [
         { efecto: 'frenada', t: r(0.2), db: -18 },
         { efecto: 'crujido', t: r(P.choque), db: -13 },
@@ -270,8 +270,8 @@ window.ESCENA3D = (function () {
       // ---- la maceta: el perro se come la planta ----
       maceta.visible = t >= P.f3 + 0.25 && t < P.f4;
       maceta.scale.setScalar(k.rebote((t - P.f3 - 0.25) / 0.3));
-      hojas.forEach((h, i) => { h.visible = t < P.come + 0.15 + i * 0.18; });
-      const ultimaHoja = P.come + 0.15 + 5 * 0.18;
+      hojas.forEach((h, i) => { h.visible = t < P.come + 0.05 + i * 0.12; });
+      const ultimaHoja = P.come + 0.05 + 5 * 0.12;
 
       // ---- el imán ----
       iman.visible = t >= P.f4 && t < P.f5;
@@ -351,7 +351,7 @@ window.ESCENA3D = (function () {
         if (t >= P.choque && t < P.choque + 0.5) perro.position.y = 0.25 * Math.sin((t - P.choque) / 0.5 * Math.PI);
         if (t >= P.f2) UP.cuello.rotation.z = t > P.deja ? -0.5 * k.suave((t - P.deja) / 0.4) : 0.35 * k.suave((t - P.pegas - 0.5) / 0.4);
       } else if (t < P.f4) {                                // va a la maceta y se come la planta
-        const ini = Math.max(P.f3 + 0.3, P.perro - 0.5), u = k.clamp((t - ini) / Math.max(0.4, P.come - ini));
+        const ini = Math.max(P.f3 + 0.3, P.perro - 1.0), u = k.clamp((t - ini) / Math.max(0.4, P.come - 0.2 - ini));
         if (u < 1) {
           ubicar(perro, k.lerp(PERRO1.x, PERRO_PLANTA.x, u), k.lerp(PERRO1.z, PERRO_PLANTA.z, u), Math.PI / 2);
           k.posePerro(perro, { caminar: 1, paso: (t - ini) * 2.2, cola: t });
