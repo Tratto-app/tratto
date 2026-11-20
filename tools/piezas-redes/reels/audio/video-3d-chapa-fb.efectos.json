@@ -1,0 +1,162 @@
+[
+ {
+  "efecto": "frenada",
+  "t": 0.2,
+  "db": -18
+ },
+ {
+  "efecto": "crujido",
+  "t": 0.85,
+  "db": -13
+ },
+ {
+  "efecto": "chapa",
+  "t": 0.87,
+  "db": -16
+ },
+ {
+  "efecto": "latigazo",
+  "t": 3.88,
+  "db": -19
+ },
+ {
+  "efecto": "pop",
+  "t": 4.71,
+  "db": -15
+ },
+ {
+  "efecto": "tic",
+  "t": 6.78,
+  "db": -17
+ },
+ {
+  "efecto": "latigazo",
+  "t": 7.71,
+  "db": -19
+ },
+ {
+  "efecto": "pop",
+  "t": 8.16,
+  "db": -16
+ },
+ {
+  "efecto": "tic",
+  "t": 10.5,
+  "db": -19
+ },
+ {
+  "efecto": "tic",
+  "t": 10.74,
+  "db": -19
+ },
+ {
+  "efecto": "tic",
+  "t": 10.98,
+  "db": -19
+ },
+ {
+  "efecto": "latigazo",
+  "t": 11.46,
+  "db": -19
+ },
+ {
+  "efecto": "sello",
+  "t": 12.6,
+  "db": -14
+ },
+ {
+  "efecto": "chapa",
+  "t": 13.69,
+  "db": -15
+ },
+ {
+  "efecto": "chapa",
+  "t": 13.89,
+  "db": -14
+ },
+ {
+  "efecto": "chapa",
+  "t": 14.09,
+  "db": -13
+ },
+ {
+  "efecto": "chapa",
+  "t": 14.29,
+  "db": -15
+ },
+ {
+  "efecto": "chapa",
+  "t": 14.49,
+  "db": -14
+ },
+ {
+  "efecto": "chapa",
+  "t": 14.69,
+  "db": -13
+ },
+ {
+  "efecto": "chapa",
+  "t": 14.89,
+  "db": -15
+ },
+ {
+  "efecto": "ladrido",
+  "t": 13.84,
+  "db": -14
+ },
+ {
+  "efecto": "ladrido",
+  "t": 14.14,
+  "db": -16
+ },
+ {
+  "efecto": "latigazo",
+  "t": 15.61,
+  "db": -19
+ },
+ {
+  "efecto": "pop",
+  "t": 18.02,
+  "db": -16
+ },
+ {
+  "efecto": "campanita",
+  "t": 18.22,
+  "db": -18
+ },
+ {
+  "efecto": "sello",
+  "t": 18.47,
+  "db": -18
+ },
+ {
+  "efecto": "latigazo",
+  "t": 21.44,
+  "db": -19
+ },
+ {
+  "efecto": "acierto",
+  "t": 21.74,
+  "db": -17
+ },
+ {
+  "efecto": "latigazo",
+  "t": 22.94,
+  "db": -19
+ },
+ {
+  "efecto": "chapa",
+  "t": 24.34,
+  "db": -12
+ },
+ {
+  "efecto": "golpe",
+  "t": 24.74,
+  "db": -16
+ },
+ {
+  "efecto": "golpe",
+  "t": 25.75,
+  "db": -14
+ }
+]
