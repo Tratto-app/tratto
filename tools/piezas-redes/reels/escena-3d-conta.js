@@ -4,7 +4,7 @@
    facturas, la calculadora y el gato gris (el testigo). Historia en escalera,
    graciosa: te llega la recategorización del monotributo; desparramás las
    facturas en la mesa y el gato se acuesta arriba de todas; hacés las cuentas
-   con la calculadora y empieza a largar humo; le preguntás a tu tía por
+   con la calculadora y le sale humo; le preguntás a tu tía por
    WhatsApp y te manda un audio de veinte minutos (el gato se duerme). Con el
    precio llega el contador y ordena todo en una carpeta. Remate (cámara en el
    gato): ya solos, el gato empuja la carpeta de la mesa y las facturas vuelan
@@ -256,7 +256,7 @@ window.ESCENA3D = (function () {
       pantalla.material = k.mat(t >= P.largar && t < P.f5 ? (Math.sin(t * 22) > 0 ? '#C8473A' : '#3A3F42') : '#B9C8A2');
       calcu.position.y = MESA.y + (t >= P.largar && t < P.f4 ? 0.015 * Math.abs(Math.sin(t * 40)) : 0);
       calcu.visible = t < P.f5;
-      humoCalc.animar(t, P.largar, P.f4 + 0.6, { x: CALC.x, y: MESA.y + 0.05, z: CALC.z });
+      humoCalc.animar(t, P.largar, P.f4 - 0.4, { x: CALC.x, y: MESA.y + 0.05, z: CALC.z });
 
       // ---- la carpeta ----
       carpeta.visible = t >= P.f5 + 0.6;
@@ -349,7 +349,7 @@ window.ESCENA3D = (function () {
       etqCalcu.animar(t, P.humo - 0.1, P.f4 + 0.05, { x: CALC.x, y: MESA.y + 0.1, z: CALC.z }, 70, -280);
       const hg = new k.THREE.Vector3(); UG.cuello.getWorldPosition(hg);
       etqSiesta.animar(t, P.audio + 0.6, P.f5 + 0.05, { x: hg.x, y: hg.y + 0.1, z: hg.z }, -60, -230);
-      etqOtraVez.animar(t, P.cae + 0.25, P.cierre + 0.2, { x: carpeta.position.x + 0.3, y: 0.05, z: carpeta.position.z + 0.3 }, -40, -320);
+      etqOtraVez.animar(t, P.cae + 0.25, P.cierre + 0.2, { x: carpeta.position.x + 0.1, y: MESA.y, z: 0.35 }, -40, -330);
       k.mostrar(burbuja, t, P.audio - 0.25, P.f5 - 0.05);
       k.mostrar(card, t, P.precio - 0.15, P.f6 - 0.05);
       k.mostrar(chip, t, P.f6 + 0.25, P.rem + 0.4);
