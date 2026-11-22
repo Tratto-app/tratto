@@ -27,16 +27,16 @@ window.ESCENA3D = (function () {
     P.f4 = k.frase(4, 11.0);
     P.f5 = k.frase(5, 14.4);
     P.f6 = k.frase(6, 20.6);
-    P.pincha = k.palabra('pinchás', 1, P.f2 + 1.5);
+    P.pincha = k.palabra('esquina', 1, P.f2 + 2.4);   // «¡en la esquina!»: se pincha la goma
     P.para = k.palabra('batería', 1, P.f3 + 1.9);   // el monopatín se apaga
     P.espera = k.palabra('esperar', 1, P.f4 + 1.4);
     P.llueve = k.palabra('llover', 1, P.f4 + 2.2);
     P.moto = k.palabra('moto', 1, P.f5 + 1.6);
     P.precio = k.palabra('dieciséis', 1, P.f5 + 3.6);
     P.fin = k.finVoz(24.5);
-    P.cierre = P.fin + 0.35;
-    P.rem = Math.min(P.f6 + 1.6, P.cierre - 2.5);   // remate: la vecina se levanta
-    P.portazo = P.rem + 1.05;                       // la ráfaga le cierra la puerta
+    P.rem = P.f6 + 1.6;                             // remate: la vecina se levanta
+    P.portazo = P.rem + 1.0;                        // la ráfaga le cierra la puerta
+    P.cierre = Math.max(P.fin + 0.35, P.portazo + 2.2);
   }
 
   // una casa de frente (mira hacia +z) con un hueco para la puerta, que va en un grupo con la bisagra a la izquierda
@@ -193,7 +193,7 @@ window.ESCENA3D = (function () {
         { efecto: 'acierto', t: r(P.f6 + 0.8), db: -17 },
         { efecto: 'latigazo', t: r(P.rem - 0.2), db: -19 },
         { efecto: 'golpe', t: r(P.portazo), db: -11 },
-        { efecto: 'tic', t: r(P.portazo + 0.55), db: -15 }, { efecto: 'tic', t: r(P.portazo + 0.75), db: -16 },
+        { efecto: 'tic', t: r(P.portazo + 0.45), db: -15 }, { efecto: 'tic', t: r(P.portazo + 0.65), db: -16 },
         { efecto: 'golpe', t: r(P.cierre + 0.1), db: -14 },
       ];
     },
@@ -280,11 +280,11 @@ window.ESCENA3D = (function () {
       }
 
       // ---- la moto ----
-      const llega = P.moto + 0.35, sale = P.f6 + 1.0;
-      moto.visible = t >= P.f5 - 0.2 && t < P.rem + 1.0;
+      const llega = P.moto + 0.35, sale = P.f6 + 0.45;
+      moto.visible = t >= P.f5 - 0.2 && t < P.rem;
       let mx = MOTO_F.x;
       if (t < llega) { const u = k.clamp((t - (P.f5 - 0.2)) / (llega - P.f5 + 0.2)); mx = k.lerp(-8.5, MOTO_F.x, 1 - Math.pow(1 - u, 3)); }
-      else if (t > sale) mx = MOTO_F.x + Math.pow(t - sale, 2) * 3.2;
+      else if (t > sale) mx = MOTO_F.x + Math.pow(t - sale, 2) * 8;
       moto.position.set(mx, 0, MOTO_F.z); moto.rotation.set(0, 0, t > llega && t < llega + 0.35 ? 0.05 * Math.sin((t - llega) * 18) : 0);
       moto.userData.ruedas.forEach(r => { r.rotation.z = -mx * 3.3; });
 
@@ -297,7 +297,7 @@ window.ESCENA3D = (function () {
       UC.brazoI.rotation.set(-0.95, 0, 0.1); UC.brazoD.rotation.set(-0.95, 0, -0.1);
       const da = k.suave((t - llega - 0.15) / 0.35) * (1 - k.suave((t - (P.precio + 0.2)) / 0.3));
       if (da > 0) { UC.brazoD.rotation.set(k.lerp(-0.95, -0.2, da), 0, k.lerp(-0.1, -1.35, da)); UC.cuello.rotation.y = -0.7 * da; }
-      if (t > P.f6 + 0.2) { UC.brazoD.rotation.set(0, 0, -2.6 + Math.sin(t * 12) * 0.35); UC.cuello.rotation.y = -0.5; }   // saluda al irse
+      if (t > P.f6 + 0.05) { UC.brazoD.rotation.set(0, 0, -2.6 + Math.sin(t * 12) * 0.35); UC.cuello.rotation.y = -0.5; }   // saluda al irse
 
       // ---- vos ----
       yo.visible = true;
@@ -406,9 +406,9 @@ window.ESCENA3D = (function () {
         ubicar(vecina, px, pz, u >= 1 ? Math.PI : u > 0 ? mirar({ x: SILLA.x, z: SILLA.z }, PUERTA_V.x, PUERTA_V.z) : k.lerp(-0.45, 0.6, sube));
         if (t < P.rem + 0.35) { k.pose(vecina, {}); sentar(vecina, k.lerp(0.5, 0.92, sube), k.lerp(-1.0, 0, sube)); }
         else if (u < 1) k.pose(vecina, { caminar: 0.8, paso: t * 1.8 });
-        else if (t < P.portazo + 0.45) { k.pose(vecina, { cabezaX: -0.1 }); UV.cadera.position.z = -0.06 * Math.exp(-(t - P.portazo) * 5); }   // ¡pum!
-        else if (t < P.portazo + 1.0) { k.pose(vecina, { empujar: true }); UV.brazoD.rotation.x = -1.15 + 0.1 * Math.sin(t * 40); }
-        else if (t < P.portazo + 1.7) { vecina.rotation.y = 0.15; k.pose(vecina, {}); bolsillos(vecina, t); }
+        else if (t < P.portazo + 0.35) { k.pose(vecina, { cabezaX: -0.1 }); UV.cadera.position.z = -0.06 * Math.exp(-(t - P.portazo) * 5); }   // ¡pum!
+        else if (t < P.portazo + 0.85) { k.pose(vecina, { empujar: true }); UV.brazoD.rotation.x = -1.15 + 0.1 * Math.sin(t * 40); }
+        else if (t < P.portazo + 1.35) { vecina.rotation.y = 0.15; k.pose(vecina, {}); bolsillos(vecina, t); }
         else { vecina.rotation.y = 0.25; k.pose(vecina, { manosCabeza: t }); }
       }
       silla.rotation.y = -0.45;
@@ -442,7 +442,7 @@ window.ESCENA3D = (function () {
       etqRueda.animar(t, P.pincha + 0.2, P.f3 + 0.05, { x: r0.x, y: r0.y, z: r0.z }, -90, -300);
       etqBat.animar(t, P.para + 0.15, P.f4 + 0.05, { x: mono.position.x + 0.31, y: 0.95 + VY, z: mono.position.z }, 60, -300);
       etqLluvia.animar(t, P.llueve + 0.1, P.f5 + 0.05, { x: nube.position.x + 0.3, y: nube.position.y + 0.2, z: nube.position.z }, 30, -170);
-      etqVecina.animar(t, P.portazo + 1.0, P.cierre + 0.2, { x: PUERTA_V.x + 0.35, y: VY + 1.1, z: PUERTA_V.z + 0.05 }, -120, -330);
+      etqVecina.animar(t, P.portazo + 0.6, P.cierre + 0.2, { x: PUERTA_V.x + 0.35, y: VY + 1.1, z: PUERTA_V.z + 0.05 }, -120, -330);
       k.mostrar(card, t, P.precio - 0.15, P.f6 - 0.05);
       k.mostrar(chip, t, P.f6 + 0.6, P.rem + 0.4);
       url.style.opacity = t < P.cierre ? 1 : 0;
