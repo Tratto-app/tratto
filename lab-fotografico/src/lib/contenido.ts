@@ -30,6 +30,7 @@ const item = z.object({
   opciones: z.array(texto).default([]),
   nota: opcional,
   precio,
+  precio_texto: opcional,
   cifra: opcional,
   ancla: opcional,
   ancla_texto: opcional,
@@ -164,7 +165,7 @@ const esquema = z.object({
     frase: opcional,
     equipos_titulo: opcional,
     equipos_bajada: opcional,
-    equipos: z.array(z.object({ nombre: texto, tipo: texto, texto: texto, foto: opcional })).default([]),
+    equipos: z.array(z.object({ nombre: texto, tipo: texto, texto: texto, foto: opcional, video: opcional })).default([]),
   }),
   proceso: z.object({
     etiqueta: texto,

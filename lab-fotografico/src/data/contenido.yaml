@@ -76,41 +76,42 @@ inicio:
 # ── LO MÁS PEDIDO ───────────────────────────────────────────────────────
 # Para agregar uno, copiá un bloque entero (desde el guion "-").
 # Para sacarlo, borrá el bloque o poné  oculto: true
-# "precio" vacío = dice "Consultá el precio".
+# "precio" vacío = dice "Consultá el precio" (o lo que pongas en "precio_texto").
 # "etiqueta" es el cartelito amarillo arriba de la foto.
 # Si no hay foto, se muestra la "cifra" grande en su lugar.
 mas_pedido_titulo: Lo más pedido
 mas_pedido_bajada: Lo que más nos piden en el local. Consultá la escala de descuentos por cantidad.
 
 mas_pedido:
-  - nombre: Pack 72 fotos + álbum
-    descripcion: 72 fotos 10×15 cm en papel fotográfico y un álbum para guardarlas.
-    etiqueta: 72 fotos 10×15
-    precio: "$ 50.500"
-    foto: mas-pedido/pack-72-fotos-album.jpg
-    foto_descripcion: Álbum abierto con fotos de vacaciones
+  - nombre: Pack 100 fotos + álbum
+    descripcion: 100 fotos 10×15 cm en papel fotográfico y un álbum para guardarlas.
+    etiqueta: 100 fotos 10×15
+    precio: ""
+    foto: mas-pedido/pack-100-fotos-album.jpg
+    foto_descripcion: Copias fotográficas y álbumes sobre una mesa
 
   - nombre: Promo Polaroid
     descripcion: 24 copias estilo Polaroid de tus fotos favoritas, con su clásico borde blanco.
     etiqueta: 24 copias
     precio: ""
     foto: mas-pedido/promo-polaroid.jpg
-    foto_descripcion: Copias estilo Polaroid sobre una mesa
+    foto_descripcion: Mano sosteniendo dos copias estilo Polaroid
 
   - nombre: Carpetas escolares
     descripcion: Carpetas y fotos escolares para colegios, jardines e instituciones.
-    etiqueta: Desde 1.000 copias
+    etiqueta: De 1 a 1.000 copias
     precio: ""
+    precio_texto: Descuentos especiales por cantidad
     foto: mas-pedido/carpetas-escolares.jpg
     foto_descripcion: Carpeta escolar con fotos de una alumna
 
   - nombre: Tarjetas personales
     descripcion: Tarjetas personales impresas en alta calidad, listas para repartir.
-    etiqueta: 600 unidades
+    etiqueta: 300 unidades
     precio: ""
-    foto: ""
-    cifra: "600"
-    foto_descripcion: Tarjetas personales
+    foto: mas-pedido/tarjetas-personales.jpg
+    cifra: "300"
+    foto_descripcion: Tarjetas personales con logo y datos de contacto
 
 
 # ── SERVICIOS ───────────────────────────────────────────────────────────
@@ -124,10 +125,10 @@ servicios:
     detalle: Desde 9×13 hasta 60×90 cm
     opciones:
       - Papel fotográfico tradicional
-      - "Medidas estándar: 9×13, 10×15, 13×18, 15×21 y 20×30"
-      - "Ampliaciones: 30×40, 30×45, panorámicas 30×60 y 30×90, y hasta 60×90"
+      - "Medidas estándar: 9×13, 10×15, 13×18, 15×21, 20×30, 30×40, 30×45 y panorámicas 30×60 y 30×90"
+      - "Ampliaciones: 40×50, 40×60, 50×60, 50×75 y 60×90"
     foto: servicios/copias-y-ampliaciones.jpg
-    foto_descripcion: Copias fotográficas sobre una mesa
+    foto_descripcion: Copias fotográficas de paisajes sobre papel
 
   - nombre: Fotolibros
     descripcion: Convertí tus recuerdos, proyectos o trabajos en un libro único para conservar y compartir.
@@ -153,14 +154,14 @@ servicios:
   - nombre: Fotos sobre MDF
     descripcion: Fotografías montadas sobre MDF de 3 mm. Ideales para muestras fotográficas, exposiciones, decoración y regalos personalizados.
     detalle: MDF de 3 mm
-    foto: servicios/fotos-sobre-mdf-muestra.jpg
-    foto_descripcion: Muestra fotográfica con fotos montadas en MDF colgadas en una pared
+    foto: servicios/fotos-sobre-mdf.jpg
+    foto_descripcion: Retrato montado sobre MDF de 3 mm en un atril
 
   - nombre: Canvas enmarcados
     descripcion: Tu foto impresa en tela y montada en bastidor, lista para colgar.
     detalle: Listos para colgar
     foto: servicios/canvas-enmarcados.jpg
-    foto_descripcion: Varios cuadros en canvas con retratos apoyados sobre una mesa
+    foto_descripcion: Canvas enmarcados con retratos y fotos familiares
 
   - nombre: Revelado y digitalización de rollos
     descripcion: Revelado de negativos color (C41) y escaneo de negativos y diapositivas para conservar tus recuerdos en formato digital.
@@ -183,20 +184,20 @@ servicios:
   - nombre: Impresión en gran formato
     descripcion: Lona vinílica, vinilo adhesivo y microperforado, banners y porta banners, cartelería promocional, láminas para arquitectura y diseño y material para exposiciones.
     detalle: Lona de hasta 160 cm de ancho
-    foto: equipos/epson-surecolor-p7570.jpg
-    foto_descripcion: Plotter imprimiendo una ampliación fotográfica de gran formato
+    foto: servicios/gran-formato-plotter.jpg
+    foto_descripcion: Plotter imprimiendo un pliego grande con fotos
 
   - nombre: Polaroid y fotos imán
     descripcion: Polaroid mini 6×9 y 9×13, souvenirs para eventos, Polaroid con código de Spotify y fotos imán.
     detalle: Mini, clásicas y souvenirs
     foto: servicios/polaroid.jpg
-    foto_descripcion: Mano sosteniendo tres copias estilo Polaroid
+    foto_descripcion: Mano sosteniendo una Polaroid contra el cielo
 
   - nombre: Imprenta y eventos
     descripcion: Tarjetas personales, tarjetas de saludo e invitaciones, calendarios, carpetas escolares y numerales para cumpleaños y XV.
     detalle: Para cumpleaños, XV y empresas
-    foto: servicios/imprenta-numerales-xv.jpg
-    foto_descripcion: Numerales de mesa para un cumpleaños de XV
+    foto: servicios/imprenta-mis-xv.jpg
+    foto_descripcion: Exhibidores de mesa para unos XV años
 
 
 # ── FOTOS CARNET ────────────────────────────────────────────────────────
@@ -237,8 +238,8 @@ fotolibros:
     - titulo: Precio
       texto: Depende de la medida y la cantidad de hojas. Decinos cuál querés y te pasamos el valor.
   boton: Pedir presupuesto de fotolibro
-  foto: servicios/fotolibros-papel-fotografico.jpg
-  foto_descripcion: Fotolibro abierto con fotos familiares
+  foto: servicios/fotolibros-medidas.jpg
+  foto_descripcion: Fotolibros en todas las medidas, de 15×21 a 30×30
 
   penbox_titulo: Caja o estuche fotográfico personalizado
   penbox_subtitulo: Penbox
@@ -250,8 +251,8 @@ fotolibros:
   penbox_fotos:
     - foto: servicios/penbox-caja-personalizada.jpg
       descripcion: Penbox cerrado con cinta, con foto de atardecer y nombre grabado
-    - foto: galeria/penbox-diseno-abierto.jpg
-      descripcion: Diseño interior de un penbox personalizado
+    - foto: galeria/penbox-sobre-mesa.jpg
+      descripcion: Penbox personalizado sobre una mesa de madera
   penbox_boton: Consultar por penbox
 
 
@@ -312,7 +313,7 @@ calculadora:
   ejemplo_ancho: 4000
   ejemplo_alto: 3000
   # Tamaños que se calculan, en centímetros (ancho x alto)
-  tamanos: [9x13, 10x15, 13x18, 15x21, 20x30, 30x40, 30x45, 40x60, 30x90, 60x90]
+  tamanos: [9x13, 10x15, 13x18, 15x21, 20x30, 30x40, 30x45, 40x50, 40x60, 50x75, 60x90, 30x90]
   nota: Es una guía. Antes de imprimir revisamos cada archivo y te avisamos si conviene otro tamaño.
 
 
@@ -321,66 +322,78 @@ calculadora:
 # "categoria" tiene que ser una de la lista de categorías.
 galeria_titulo: Trabajos
 galeria_bajada: Trabajos del laboratorio e ideas de lo que podés imprimir. Tocá cualquiera para verla grande.
-galeria_categorias: [Copias, Fotolibros, Cuadros y MDF, Polaroid, Restauración, Imprenta]
+galeria_categorias: [Copias, Fotolibros, Cuadros y MDF, Polaroid e imanes, Restauración, Imprenta]
 
 galeria:
-  - foto: servicios/fotos-sobre-mdf-muestra.jpg
+  - foto: galeria/muestra-fotos-en-mdf.jpg
     categoria: Cuadros y MDF
     descripcion: Muestra fotográfica con fotos montadas en MDF
-  - foto: galeria/copias-coloridas.jpg
+  - foto: galeria/copias-urbanas-sobre-madera.jpg
     categoria: Copias
-    descripcion: Copias a color de un viaje, recién impresas
+    descripcion: Copias fotográficas de viaje sobre una mesa de madera
   - foto: servicios/fotolibros-papel-fotografico.jpg
     categoria: Fotolibros
     descripcion: Fotolibro en papel fotográfico
-  - foto: galeria/polaroids-colgadas.jpg
-    categoria: Polaroid
-    descripcion: Polaroids colgadas con broches en una pared
+  - foto: mas-pedido/promo-polaroid.jpg
+    categoria: Polaroid e imanes
+    descripcion: Polaroids con foto de playa y código de Spotify
   - foto: galeria/restauracion-retrato-antiguo.jpg
     categoria: Restauración
     descripcion: Retrato antiguo en blanco y negro
-  - foto: servicios/imprenta-numerales-xv.jpg
+  - foto: servicios/imprenta-mis-xv.jpg
     categoria: Imprenta
-    descripcion: Numerales de mesa para cumpleaños y XV
+    descripcion: Exhibidores de mesa para unos XV años
   - foto: servicios/canvas-enmarcados.jpg
     categoria: Cuadros y MDF
-    descripcion: Canvas enmarcados con retratos
-  - foto: galeria/copias-mesa-de-madera.jpg
-    categoria: Copias
-    descripcion: Copias de flores sobre una mesa de madera
-  - foto: galeria/fotolibro-impresion-offset.jpg
-    categoria: Fotolibros
-    descripcion: Fotolibro en impresión digital offset
-  - foto: galeria/polaroids-sobre-mesa.jpg
-    categoria: Polaroid
-    descripcion: Polaroids de paisajes sobre una mesa
-  - foto: galeria/restauracion-fotos-antiguas.jpg
-    categoria: Restauración
-    descripcion: Fotos antiguas para restaurar y digitalizar
-  - foto: mas-pedido/carpetas-escolares.jpg
-    categoria: Imprenta
-    descripcion: Carpeta escolar con fotos
-  - foto: galeria/cuadro-en-living.jpg
-    categoria: Cuadros y MDF
-    descripcion: Cuadros colgados en un living
+    descripcion: Canvas enmarcados con retratos y fotos familiares
   - foto: galeria/copias-paisajes.jpg
     categoria: Copias
     descripcion: Copias de paisajes desparramadas
   - foto: servicios/penbox-caja-personalizada.jpg
     categoria: Fotolibros
     descripcion: Penbox personalizado con cinta de raso
-  - foto: galeria/album-familiar.jpg
+  - foto: galeria/fotos-iman.jpg
+    categoria: Polaroid e imanes
+    descripcion: Fotos imán impresas en papel fotográfico
+  - foto: galeria/restauracion-fotos-antiguas.jpg
+    categoria: Restauración
+    descripcion: Fotos antiguas para restaurar y digitalizar
+  - foto: galeria/calendarios-personalizados.jpg
+    categoria: Imprenta
+    descripcion: Calendarios personalizados de escritorio
+  - foto: servicios/fotos-sobre-mdf.jpg
+    categoria: Cuadros y MDF
+    descripcion: Retrato montado sobre MDF de 3 mm
+  - foto: galeria/abanico-de-copias.jpg
+    categoria: Copias
+    descripcion: Abanico de copias fotográficas familiares
+  - foto: servicios/fotolibros-medidas.jpg
     categoria: Fotolibros
-    descripcion: Álbum familiar abierto en el piso
-  - foto: galeria/polaroid-y-sobres.jpg
-    categoria: Polaroid
-    descripcion: Polaroid sobre sobres de colores
+    descripcion: Fotolibros en todas las medidas
+  - foto: servicios/polaroid.jpg
+    categoria: Polaroid e imanes
+    descripcion: Polaroid contra el cielo
   - foto: galeria/restauracion-canasta-de-fotos.jpg
     categoria: Restauración
     descripcion: Canasta con fotos familiares antiguas
-  - foto: galeria/copias-y-postales.jpg
+  - foto: mas-pedido/carpetas-escolares.jpg
+    categoria: Imprenta
+    descripcion: Carpetas escolares personalizadas
+  - foto: galeria/muestra-fotografica-pared.jpg
+    categoria: Cuadros y MDF
+    descripcion: Muestra fotográfica montada en una pared de ladrillo
+  - foto: mas-pedido/pack-100-fotos-album.jpg
     categoria: Copias
-    descripcion: Pila de copias y postales
+    descripcion: Copias y álbumes de recuerdos
+  - foto: galeria/penbox-sobre-mesa.jpg
+    categoria: Fotolibros
+    descripcion: Penbox sobre una mesa de madera
+  - foto: galeria/cuadro-gran-formato-familia.jpg
+    categoria: Cuadros y MDF
+    descripcion: Cuadro grande en blanco y negro con foto familiar
+  - foto: mas-pedido/tarjetas-personales.jpg
+    categoria: Imprenta
+    descripcion: Tarjetas personales con logo
 
 
 # ── NOSOTROS ────────────────────────────────────────────────────────────
@@ -408,6 +421,7 @@ nosotros:
       tipo: Cartelería y gran formato
       texto: Lona front de hasta 160 cm de ancho y vinilo adhesivo para cartelería y exposiciones.
       foto: equipos/epson-surecolor-carteleria.jpg
+      video: /videos/plotter-epson-carteleria.mp4   # Video del plotter del local (va en public/videos)
     - nombre: Konica Minolta bizhub PRESS C71hc
       tipo: Impresión digital de producción
       texto: 1200 × 1200 dpi con tecnología High Chroma. Fotolibros en offset digital, tarjetas y material gráfico.
@@ -477,7 +491,7 @@ preguntas:
   - pregunta: ¿En qué formato tengo que mandar las fotos?
     respuesta: Solo en JPG, en la máxima calidad. Mandalas como documento por WhatsApp o por mail a fotodigital9901@gmail.com para que no se compriman.
   - pregunta: ¿Qué tamaños imprimen?
-    respuesta: Copias desde 9×13 hasta 60×90 cm. Las medidas estándar son 9×13, 10×15, 13×18, 15×21 y 20×30; también hacemos 30×40, 30×45 y panorámicas de 30×60 y 30×90.
+    respuesta: Copias desde 9×13 hasta 60×90 cm. Medidas estándar 9×13, 10×15, 13×18, 15×21, 20×30, 30×40, 30×45 y panorámicas 30×60 y 30×90. Ampliaciones 40×50, 40×60, 50×60, 50×75 y 60×90.
   - pregunta: ¿Cuánto tarda un fotolibro?
     respuesta: Si lo diseñamos nosotros, entre 15 y 20 días hábiles. Incluye 3 correcciones; las adicionales tienen costo extra. El precio depende de la medida y la cantidad de hojas.
   - pregunta: ¿Cuánto tardan en estar las fotos?

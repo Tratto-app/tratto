@@ -41,7 +41,11 @@ import { masPedido } from '../lib/contenido';
               <p class="mt-2 text-[.95rem] text-gris-claro">{p.descripcion}</p>
               <div class="mt-auto flex items-center justify-between gap-4 pt-5">
                 <p class="font-display text-[1.75rem] leading-none tabular-nums">
-                  {p.precio ? p.precio : <span class="whitespace-nowrap font-sans text-[.86rem] text-gris-claro">Consultá el precio</span>}
+                  {p.precio ? p.precio : (
+                    p.precio_texto
+                      ? <span class="block max-w-[11rem] font-sans text-[.86rem] font-semibold leading-snug text-amarillo">{p.precio_texto}</span>
+                      : <span class="whitespace-nowrap font-sans text-[.86rem] text-gris-claro">Consultá el precio</span>
+                  )}
                 </p>
                 <a href={p.whatsapp} target="_blank" rel="noopener" class="boton boton-claro min-h-0 px-4 py-2.5 text-[.9rem]" aria-label={`Consultar por ${p.nombre} por WhatsApp`}>
                   <Icono nombre="whatsapp" tamano={16} />

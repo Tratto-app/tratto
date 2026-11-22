@@ -1,7 +1,12 @@
 ---
-import { Image } from 'astro:assets';
+import { Image, getImage } from 'astro:assets';
 import { nosotros, negocio } from '../lib/contenido';
 import { destacar } from '../lib/formato';
+
+// Imagen de portada de los videos (se ve antes de que arranque)
+const portadas = await Promise.all(
+  nosotros.equipos.map((e) => (e.video && e.imagen ? getImage({ src: e.imagen, width: 800, format: 'webp', quality: 80 }) : null)),
+);
 ---
 <section id="nosotros" class="bg-papel" aria-labelledby="titulo-nosotros">
   <div class="contenedor py-16 lg:py-28">
@@ -39,7 +44,18 @@ import { destacar } from '../lib/formato';
         <ul class="equipos mt-8" role="list">
           {nosotros.equipos.map((e, i) => (
             <li class="equipo" data-revelar style={`--demora:${i * 80}ms`}>
-              {e.imagen && (
+              {e.video ? (
+                <div class="equipo-foto equipo-video">
+                  <video
+                    muted loop playsinline preload="none"
+                    poster={portadas[i]?.src}
+                    data-video={e.video}
+                    aria-label={`Video del equipo ${e.nombre} imprimiendo`}
+                    class="h-full w-full object-cover"
+                  ></video>
+                  <span class="en-vivo" aria-hidden="true">En el local</span>
+                </div>
+              ) : e.imagen && (
                 <div class="equipo-foto">
                   <Image
                     src={e.imagen}
@@ -80,4 +96,27 @@ import { destacar } from '../lib/formato';
   @media (min-width: 1024px) { .equipos { grid-template-columns: repeat(4, minmax(0, 1fr)); } }
   .equipo { min-width: 0; }
   .equipo-foto { aspect-ratio: 4 / 3; background: #fff; border: 1px solid var(--color-linea); border-radius: 4px; padding: 1rem; display: grid; place-items: center; overflow: hidden; }
+  .equipo-video { position: relative; padding: 0; background: #000; border-color: #000; }
+  .en-vivo { position: absolute; left: .6rem; top: .6rem; font-family: var(--font-mono); font-size: .62rem; letter-spacing: .1em; text-transform: uppercase; background: rgb(0 0 0 / .65); color: #fff; padding: .25rem .5rem; border-radius: 2px; }
+  .en-vivo::before { content: ""; display: inline-block; width: .45rem; height: .45rem; border-radius: 999px; background: var(--color-magenta); margin-right: .4rem; vertical-align: .05em; }
 </style>
+
+<script>
+  // El video del plotter se carga y reproduce recién cuando aparece en pantalla
+  const videos = document.querySelectorAll<HTMLVideoElement>('video[data-video]');
+  const reducir = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if ('IntersectionObserver' in window) {
+    const io = new IntersectionObserver((entradas) => {
+      for (const e of entradas) {
+        const v = e.target as HTMLVideoElement;
+        if (e.isIntersecting) {
+          if (!v.src) v.src = v.dataset.video || '';
+          if (!reducir) v.play().catch(() => {});
+        } else {
+          v.pause();
+        }
+      }
+    }, { threshold: .35 });
+    videos.forEach((v) => io.observe(v));
+  }
+</script>
