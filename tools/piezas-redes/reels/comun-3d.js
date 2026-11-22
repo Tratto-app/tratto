@@ -501,6 +501,74 @@
     escena.add(g); return g;
   }
 
+  // Barra entre dos puntos del plano xy (cuadros de bici y de moto)
+  function barra(padre, x0, y0, x1, y1, grosor, color, z = 0) {
+    const m = caja(Math.hypot(x1 - x0, y1 - y0), grosor, grosor, color, (x0 + x1) / 2, (y0 + y1) / 2, z, padre);
+    m.rotation.z = Math.atan2(y1 - y0, x1 - x0); return m;
+  }
+  function ruedaRayos(r, tubo, color, rayos = '#B9BEC2') {
+    const g = new T.Group();
+    const goma = new T.Mesh(new T.TorusGeometry(r, tubo, 6, 18), mat(color)); goma.castShadow = true; g.add(goma);
+    for (let i = 0; i < 3; i++) { const ry = caja(r * 2 - tubo, 0.018, 0.018, rayos, 0, 0, 0, g, false); ry.rotation.z = i * Math.PI / 3; }
+    caja(0.07, 0.07, 0.07, '#5E6264', 0, 0, 0, g, false);
+    g.userData.goma = goma; return g;
+  }
+  // Bicicleta que mira hacia +x. userData.ruedaD / ruedaT (giran en z), userData.gomaD
+  // (la goma de adelante: para desinflarla, achicala en y), asiento y manubrio (puntos locales).
+  function bici(o = {}) {
+    const g = new T.Group(), col = o.color || '#2B7E62', R = 0.33;
+    const ruedaT = ruedaRayos(R, 0.035, '#1E2224'); ruedaT.position.set(-0.52, R, 0); g.add(ruedaT);
+    const ruedaD = ruedaRayos(R, 0.035, '#1E2224'); ruedaD.position.set(0.52, R, 0); g.add(ruedaD);
+    const pedal = [0, 0.36];
+    barra(g, -0.52, R, pedal[0], pedal[1], 0.05, col);           // vainas
+    barra(g, -0.52, R, -0.14, 0.86, 0.05, col);                 // tirantes
+    barra(g, pedal[0], pedal[1], -0.16, 0.9, 0.06, col);        // tubo del asiento
+    barra(g, -0.14, 0.82, 0.4, 0.86, 0.06, col);                // tubo de arriba
+    barra(g, pedal[0], pedal[1], 0.4, 0.84, 0.06, col);         // tubo de abajo
+    barra(g, 0.52, R, 0.38, 1.02, 0.05, '#2A2E2C');             // horquilla
+    caja(0.04, 0.04, 0.5, '#2A2E2C', 0.36, 1.04, 0, g);         // manubrio
+    caja(0.07, 0.06, 0.08, '#1E2224', 0.36, 1.04, 0.24, g, false); caja(0.07, 0.06, 0.08, '#1E2224', 0.36, 1.04, -0.24, g, false);
+    caja(0.26, 0.06, 0.13, '#1E2224', -0.18, 0.94, 0, g);       // asiento
+    caja(0.16, 0.04, 0.04, '#5E6264', pedal[0], pedal[1], 0.12, g, false); caja(0.16, 0.04, 0.04, '#5E6264', pedal[0], pedal[1], -0.12, g, false);
+    g.userData = { ruedaD, ruedaT, gomaD: ruedaD.userData.goma, asiento: { x: -0.18, y: 0.97 }, manubrio: { x: 0.36, y: 1.04 }, R };
+    escena.add(g); return g;
+  }
+  // Monopatín eléctrico que mira hacia +x. userData.luz: la luz de la batería
+  // (cambiale el material: verde a rojo); userData.ruedas.
+  function monopatin(o = {}) {
+    const g = new T.Group(), col = o.color || '#2A2E2C';
+    caja(0.78, 0.06, 0.17, col, 0, 0.14, 0, g);
+    caja(0.7, 0.012, 0.15, '#5E6264', 0, 0.176, 0, g, false);
+    const ruedas = [-0.36, 0.36].map(x => {
+      const r = new T.Mesh(new T.CylinderGeometry(0.1, 0.1, 0.06, 12), mat('#1E2224'));
+      r.rotation.x = Math.PI / 2; r.position.set(x, 0.1, 0); r.castShadow = true; g.add(r); return r;
+    });
+    barra(g, 0.36, 0.14, 0.33, 1.08, 0.05, col);                // la columna
+    caja(0.04, 0.04, 0.5, col, 0.33, 1.08, 0, g);                // manubrio
+    caja(0.07, 0.06, 0.08, '#C8473A', 0.33, 1.08, 0.24, g, false); caja(0.07, 0.06, 0.08, '#C8473A', 0.33, 1.08, -0.24, g, false);
+    const luz = caja(0.05, 0.05, 0.08, '#5BD46A', 0.31, 0.95, 0, g, false);
+    g.userData = { ruedas, luz };
+    escena.add(g); return g;
+  }
+  // Moto chica de mandados que mira hacia +x, con su caja atrás. userData.ruedas (giran en z);
+  // asiento y manubrio (puntos locales) para subir al personaje.
+  function moto(o = {}) {
+    const g = new T.Group(), col = o.color || '#C8473A', R = 0.3;
+    const ruedas = [-0.6, 0.62].map(x => { const r = ruedaRayos(R, 0.075, '#1E2224', '#8E9490'); r.position.set(x, R, 0); g.add(r); return r; });
+    caja(0.5, 0.3, 0.26, '#3A3F42', -0.02, 0.48, 0, g);           // motor
+    caja(0.42, 0.24, 0.3, col, 0.2, 0.78, 0, g);                  // tanque
+    caja(0.6, 0.1, 0.28, '#1E2224', -0.3, 0.84, 0, g);            // asiento
+    caja(0.6, 0.16, 0.24, col, -0.4, 0.7, 0, g);                  // cola
+    barra(g, 0.62, R, 0.48, 1.06, 0.06, '#8E9490', 0.1); barra(g, 0.62, R, 0.48, 1.06, 0.06, '#8E9490', -0.1);
+    caja(0.05, 0.05, 0.62, '#2A2E2C', 0.47, 1.08, 0, g);          // manubrio
+    caja(0.12, 0.14, 0.2, '#F6E7A8', 0.58, 0.96, 0, g, false);    // faro
+    barra(g, -0.6, R, -0.1, 0.42, 0.05, '#8E9490', 0.12);        // basculante
+    const cajaAtras = caja(0.46, 0.44, 0.44, o.caja || '#2A2E2C', -0.66, 1.05, 0, g);
+    caja(0.48, 0.05, 0.46, '#5E6264', -0.66, 1.29, 0, g, false);
+    g.userData = { ruedas, asiento: { x: -0.3, y: 0.89 }, manubrio: { x: 0.47, y: 1.08 }, caja: cajaAtras, R };
+    escena.add(g); return g;
+  }
+
   // Patio de una casa: pared con ventana y puerta, medianera de ladrillo,
   // reja al frente con portón abierto, vereda y calle.
   function patio(o = {}) {
@@ -797,7 +865,7 @@
   // ---------- armar y dibujar ----------
   const kit = { THREE: T, C, escena, camara, sol, cielo, renderer, mat, caja, personaje, pose, patio, pasto, cortadora, recortes,
     lluvia, clima, humo, etiqueta, perro, posePerro, gato, notas, teclado, celular, mesada, balde, chorro, herramientas, llaveInglesa,
-    rodillo, lata, bandejaPintura, taladro, auto, carrito, poste, el, tarjeta, mostrar, cierre, etiquetaUrl, lerp, clamp, suave, rebote, azar,
+    rodillo, lata, bandejaPintura, taladro, auto, carrito, poste, barra, bici, monopatin, moto, el, tarjeta, mostrar, cierre, etiquetaUrl, lerp, clamp, suave, rebote, azar,
     palabra(txt, n = 1, def = 0) { // segundo en que se dice esa palabra (n-ésima vez)
       const pal = window.PALABRAS || []; let k = 0;
       for (const w of pal) if (w[2].toLowerCase().replace(/[^a-záéíóúñü0-9]/g, '') === txt.toLowerCase()) { k++; if (k === n) return w[0]; }
