@@ -25,7 +25,7 @@ window.ESCENA3D = (function () {
     P.f5 = k.frase(5, 15.6);
     P.f6 = k.frase(6, 21.8);
     P.payaso = k.palabra('payaso', 1, P.f2 + 1.1);
-    P.nariz = k.palabra('nariz', 1, P.f2 + 2.6);
+    P.nariz = k.palabra('tomate', 1, P.f2 + 2.5);          // aparece el tomate; «¡de nariz!» es el ta-ráan
     P.globos = k.palabra('globos', 1, P.f3 + 0.7);
     P.explotan = k.palabra('explotan', 1, P.f3 + 1.5);
     P.pop = i => P.explotan + 0.05 + i * 0.42;            // los cuatro globos que explotan
@@ -139,8 +139,8 @@ window.ESCENA3D = (function () {
       mira = V(0.5, 1.45, -0.4); pos = mira.clone().add(V(-2.4 * z, 1.9 * z, 9.6 * z));
     } else {                                      // 7. remate: vos y el perro, de cerca
       const g = k.suave((t - P.rem) / 0.7);
-      mira = V(k.lerp(0.4, 0.15, g), k.lerp(1.45, 1.3, g), k.lerp(-0.3, 0.45, g));
-      pos = mira.clone().add(V(k.lerp(-2.0, 3.4, g), k.lerp(1.9, 0.9, g), k.lerp(9.0, 5.6, g)));
+      mira = V(k.lerp(0.4, 0.4, g), k.lerp(1.45, 1.3, g), k.lerp(-0.3, 0.4, g));
+      pos = mira.clone().add(V(k.lerp(-2.0, 0.5, g), k.lerp(1.9, 0.5, g), k.lerp(9.0, 5.4, g)));
     }
     cam.position.copy(pos); cam.lookAt(mira); cam.updateProjectionMatrix(); cam.updateMatrixWorld();
   }
@@ -331,7 +331,7 @@ window.ESCENA3D = (function () {
       }
 
       // ---- el perro (el testigo) ----
-      perro.rotation.set(0, 0, 0); UP.cuerpo.position.y = 0.42;
+      perro.rotation.order = 'YXZ'; perro.rotation.set(0, 0, 0); UP.cuerpo.position.y = 0.42;   // YXZ: la inclinación es del perro, no del mundo
       const debajo = { x: MESA.x - 0.2, z: MESA.z + 0.1 };
       if (t < P.f3) {                                       // sentado, mira el lío y al payaso
         ubicar(perro, PERRO1.x, PERRO1.z, mirar(PERRO1, YO.x, YO.z));
@@ -348,13 +348,13 @@ window.ESCENA3D = (function () {
         ubicar(perro, k.lerp(debajo.x, tr.x, llegar), k.lerp(debajo.z, tr.z, llegar), tr.rot);
         k.posePerro(perro, { caminar: 1, paso: t * 2.6, cola: t });
       } else {                                              // remate: vuelve, salta y se come tu nariz
-        const p0 = tren(7, P.rem), dest = { x: YO.x + 0.05, z: YO.z + 0.62 }, u = k.suave((t - P.rem) / 0.85);
-        ubicar(perro, k.lerp(p0.x, dest.x, u), k.lerp(p0.z, dest.z, u), u < 1 ? mirar(p0, dest.x, dest.z) : Math.PI);
+        const p0 = tren(7, P.rem), dest = { x: YO.x + 0.85, z: YO.z + 0.32 }, u = k.suave((t - P.rem) / 0.85);
+        ubicar(perro, k.lerp(p0.x, dest.x, u), k.lerp(p0.z, dest.z, u), u < 1 ? mirar(p0, dest.x, dest.z) : mirar(dest, YO.x, YO.z));
         if (u < 1) k.posePerro(perro, { caminar: 1, paso: t * 2.6, cola: t });
         else if (t < P.salto - 0.2) k.posePerro(perro, { sentado: true, cabezaX: -0.5, cola: t });   // mira la nariz
         else if (t < P.salto + 0.4) {                       // ¡salto!
           const s = k.clamp((t - (P.salto - 0.2)) / 0.6); k.posePerro(perro, { cabezaX: -0.6 });
-          perro.position.y = 1.0 * Math.sin(Math.PI * s); perro.rotation.x = -0.6 * Math.sin(Math.PI * s); perro.position.z = dest.z - 0.25 * Math.sin(Math.PI * s);
+          perro.position.y = 1.05 * Math.sin(Math.PI * s); perro.rotation.x = -0.65 * Math.sin(Math.PI * s); perro.position.x = dest.x - 0.3 * Math.sin(Math.PI * s);
         } else { k.posePerro(perro, { sentado: true, cola: t, cabezaX: 0.1 }); UP.boca.rotation.x = 0.15 + 0.15 * Math.sin(t * 22); UP.cuello.rotation.y = 0.9 * k.suave((t - P.salto - 0.5) / 0.3); }
       }
 
@@ -363,8 +363,8 @@ window.ESCENA3D = (function () {
       // ---- carteles y textos ----
       const c0 = new V3(); chicos[1].getWorldPosition(c0);
       etqChicos.animar(t, 1.2, P.f2 + 0.05, { x: c0.x, y: 1.25, z: c0.z }, 90, -300);
-      etqRisas.animar(t, P.nariz + 0.9, P.f3 + 0.05, { x: YO.x + 0.6, y: 0.9, z: YO.z + 1.3 }, 90, -320);
-      etqSerp.animar(t, P.atado + 0.25, P.f5 + 0.05, { x: YO.x + 0.4, y: 1.0, z: YO.z }, 110, -260);
+      etqRisas.animar(t, P.nariz + 0.9, P.f3 + 0.05, { x: YO.x - 0.4, y: 0.9, z: YO.z + 1.3 }, -60, -330);
+      etqSerp.animar(t, P.atado + 0.25, P.f5 + 0.05, { x: YO.x + 0.25, y: 0.7, z: YO.z + 0.35 }, -30, -170);
       const nz = new V3(); nariz.getWorldPosition(nz);
       etqNariz.animar(t, P.salto + 0.45, P.cierre + 0.2, { x: YO.x + 0.15, y: 1.75, z: YO.z + 0.3 }, 90, -260);
       k.mostrar(card, t, P.precio - 0.15, P.f6 - 0.05);
