@@ -5,7 +5,7 @@ import { galeria } from '../lib/contenido';
 
 // Versión grande de cada foto para el visor (se carga recién al abrirla)
 const grandes = await Promise.all(
-  galeria.lista.map((g) => getImage({ src: g.imagen, width: Math.min(1600, g.imagen.width), format: 'webp', quality: 80 })),
+  galeria.lista.map((g) => getImage({ src: g.imagen, width: Math.min(1600, g.imagen.width), format: 'webp', quality: 86 })),
 );
 ---
 <section id="galeria" class="bg-tinta text-papel" aria-labelledby="titulo-galeria">
@@ -40,7 +40,7 @@ const grandes = await Promise.all(
               widths={[320, 480, 720]}
               sizes="(min-width: 1280px) 290px, (min-width: 1024px) 23vw, (min-width: 768px) 31vw, 46vw"
               format="webp"
-              quality={74}
+              quality={82}
               class="block h-auto w-full transition-transform duration-700 ease-[var(--ease-revelado)] group-hover:scale-[1.035]"
             />
           </button>

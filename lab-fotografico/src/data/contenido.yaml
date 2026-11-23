@@ -184,8 +184,8 @@ servicios:
   - nombre: Impresión en gran formato
     descripcion: Lona vinílica, vinilo adhesivo y microperforado, banners y porta banners, cartelería promocional, láminas para arquitectura y diseño y material para exposiciones.
     detalle: Lona de hasta 160 cm de ancho
-    foto: servicios/gran-formato-plotter.jpg
-    foto_descripcion: Plotter imprimiendo un pliego grande con fotos
+    foto: servicios/gran-formato-plotter-epson.jpg
+    foto_descripcion: Plotter Epson SureColor de gran formato imprimiendo una lona
 
   - nombre: Polaroid y fotos imán
     descripcion: Polaroid mini 6×9 y 9×13, souvenirs para eventos, Polaroid con código de Spotify y fotos imán.
@@ -337,9 +337,6 @@ galeria:
   - foto: mas-pedido/promo-polaroid.jpg
     categoria: Polaroid e imanes
     descripcion: Polaroids con foto de playa y código de Spotify
-  - foto: galeria/restauracion-retrato-antiguo.jpg
-    categoria: Restauración
-    descripcion: Retrato antiguo en blanco y negro
   - foto: servicios/imprenta-mis-xv.jpg
     categoria: Imprenta
     descripcion: Exhibidores de mesa para unos XV años
@@ -367,6 +364,9 @@ galeria:
   - foto: galeria/abanico-de-copias.jpg
     categoria: Copias
     descripcion: Abanico de copias fotográficas familiares
+  - foto: galeria/plotter-pliego-de-fotos.jpg
+    categoria: Copias
+    descripcion: Pliego de fotos saliendo del plotter del laboratorio
   - foto: servicios/fotolibros-medidas.jpg
     categoria: Fotolibros
     descripcion: Fotolibros en todas las medidas
@@ -394,6 +394,9 @@ galeria:
   - foto: mas-pedido/tarjetas-personales.jpg
     categoria: Imprenta
     descripcion: Tarjetas personales con logo
+  - foto: galeria/restauracion-retrato-antiguo.jpg
+    categoria: Restauración
+    descripcion: Retrato antiguo en blanco y negro
 
 
 # ── NOSOTROS ────────────────────────────────────────────────────────────

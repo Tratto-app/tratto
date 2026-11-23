@@ -15,7 +15,7 @@ import { destacar } from '../lib/formato';
             widths={[480, fl.imagen.width].filter((w, i, a) => w <= fl.imagen.width && a.indexOf(w) === i)}
             sizes="(min-width: 1024px) 34vw, 92vw"
             format="webp"
-            quality={82}
+            quality={85}
             class="block h-auto w-full"
           />
         </figure>
@@ -62,7 +62,7 @@ import { destacar } from '../lib/formato';
               widths={[480, 800, f.imagen.width].filter((w, j, a) => w <= f.imagen.width && a.indexOf(w) === j)}
               sizes={i === 0 ? '(min-width: 1024px) 32vw, 92vw' : '(min-width: 1024px) 26vw, 92vw'}
               format="webp"
-              quality={82}
+              quality={85}
               class:list={['block h-auto w-full', i === 0 ? 'principal' : 'secundaria']}
             />
           ))}
