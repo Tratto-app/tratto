@@ -1,0 +1,126 @@
+<!doctype html><html lang="es"><head><meta charset="utf-8">
+<title>Carrusel · El cuello duro (3D)</title>
+<!-- Carrusel "historia 3D en viñetas" (23/11/2026, Instagram viernes 27/11 12:00; TikTok cuando vuelva Buffer).
+     Por qué este formato: los carruseles de Instagram de texto e íconos llegaron a unas 10 cuentas cada
+     uno (8 medidos, mediana 46 vistas, 0 guardados); el video 3D de masajes llegó a 1.066 cuentas
+     (1.241 vistas). Se cuenta la historia del 3D en viñetas, con el precio real y una lista para guardar.
+     Rubro con gente registrada: Masajes (3 personas el 23/11/2026). Masaje descontracturante, sin
+     promesas de salud: la placa 6 dice que ante un golpe o un dolor que no se va, primero un médico.
+     Cuadros: escena-3d-masajes.js (video-3d-masajes-ig.html) a los 3, 6,75, 12,75, 16,5, 18,75 y 24,75 s.
+     Precio: precios_referencia id 97 (masaje descontracturante de 1 hora, 35.000 a 60.000, relevado
+     jul-2026) con el ajuste de la calculadora (2 % por mes, 4 meses, redondeo a 1.000): $38.000 a $65.000.
+     Exportar: python3 render-carrusel.py cuello-3d.html carrusel-cuello            (Instagram)
+               python3 render-carrusel.py cuello-3d.html carrusel-cuello-tt --red tiktok -->
+<link rel="stylesheet" href="carrusel.css">
+<link rel="stylesheet" href="molde.css">
+<link rel="stylesheet" href="vineta.css">
+</head><body>
+
+<!-- 1 · PORTADA -->
+<section class="placa tapa"><div class="cont">
+  <div class="medio">
+    <div class="chico"><i data-ico="reloj" data-px="40"></i>Historia de un cuello duro</div>
+    <h1>La pelotita de tenis no es masajista. <em>Tu gato tampoco.</em></h1>
+    <p class="promesa">Y lo que sale un masaje de verdad, en noviembre.</p>
+    <div class="vineta portada" data-y0="360"><img src="img/3d-masajes-03.00.jpg" alt="">
+      <b class="cartel" data-x="360" data-y="640" data-lx="440" data-ly="470">Cuello: 2° de giro</b></div>
+  </div>
+  <div class="pie"><span class="web">trattoapp.com.ar</span><span class="desliza">Guardalo · Deslizá →</span></div>
+</div></section>
+
+<!-- 2 · INTENTO 1 -->
+<section class="placa"><div class="cont">
+  <div class="vineta" data-y0="350" style="margin-top:26px"><img src="img/3d-masajes-06.75.jpg" alt="">
+    <b class="cartel" data-x="740" data-y="1080" data-lx="560" data-ly="880">Gato: ¿es un oso?</b></div>
+  <div class="debajo">
+    <span class="sello intento">Intento 1</span>
+    <h2>Frotarte contra el marco.</h2>
+    <p>El gato te mira como a un oso.</p>
+  </div>
+</div></section>
+
+<!-- 3 · INTENTO 2 -->
+<section class="placa"><div class="cont">
+  <div class="vineta" data-y0="360" style="margin-top:26px"><img src="img/3d-masajes-12.75.jpg" alt="">
+    <b class="cartel" data-x="160" data-y="1060" data-lx="60" data-ly="640">Florero: 0</b>
+    <b class="cartel" data-x="255" data-y="1300" data-lx="300" data-ly="1300">Pelotita: 140 km/h</b></div>
+  <div class="debajo">
+    <span class="sello intento">Intento 2</span>
+    <h2>La pelotita de tenis.</h2>
+    <p>Rebotó en la pared y se llevó el florero.</p>
+  </div>
+</div></section>
+
+<!-- 4 · INTENTO 3 -->
+<section class="placa"><div class="cont">
+  <div class="vineta" data-y0="230" style="margin-top:26px"><img src="img/3d-masajes-16.50.jpg" alt="">
+    <b class="cartel" data-x="455" data-y="830" data-lx="560" data-ly="760">Uñas: 18</b></div>
+  <div class="debajo">
+    <span class="sello intento">Intento 3</span>
+    <h2>Que el gato te camine la espalda.</h2>
+    <p>Te clavó las uñas. Las dieciocho.</p>
+  </div>
+</div></section>
+
+<!-- 5 · EL PRECIO -->
+<section class="placa precio-3d"><div class="cont">
+  <div class="medio">
+    <div class="vineta baja" data-y0="230"><img src="img/3d-masajes-18.75.jpg" alt=""></div>
+    <div class="tarjeta precio"><div class="que">Masaje descontracturante de 1 hora</div><div class="rango">$38.000 a $65.000</div></div>
+    <p class="nota">Decí si lo querés <b>en tu casa</b> o si vas vos.</p>
+  </div>
+  <div class="pie"><span class="fuente">Precios de referencia · AMBA · nov-2026</span></div>
+</div></section>
+
+<!-- 6 · PARA GUARDAR -->
+<section class="placa blanca resumen guardar"><div class="cont">
+  <div class="medio">
+    <h2>Para pedirlo, contá:</h2>
+    <div class="lista-check">
+      <div><i data-ico="pin" data-px="56"></i><span>Dónde está la contractura: cuello, hombros o espalda.</span></div>
+      <div><i data-ico="casa" data-px="56"></i><span>Si es en tu casa o vas vos.</span></div>
+      <div><i data-ico="calendario" data-px="56"></i><span>Qué días y horarios podés.</span></div>
+      <div><i data-ico="check" data-px="56"></i><span>Tu barrio.</span></div>
+    </div>
+    <p class="aviso">Si el dolor viene de un golpe o no se va, primero, un médico.</p>
+  </div>
+  <div class="pie"><span class="web">trattoapp.com.ar</span><span class="desliza">Deslizá →</span></div>
+</div></section>
+
+<!-- 7 · PEDILO ASÍ (un ejemplo, marcado como tal) -->
+<section class="placa"><div class="cont">
+  <div class="medio">
+    <div class="grande-titulo">Pedilo así.</div>
+    <p class="bajada">Todo en un solo mensaje.</p>
+    <div style="margin-top:44px"><span class="ejemplo-etq">Ejemplo</span></div>
+    <div class="tarjeta mensaje">Tengo una contractura en el <b>cuello y el hombro derecho</b>. Busco un masaje descontracturante de <b>una hora, en mi casa</b>. Estoy en <b>Caballito</b> y puedo <b>martes o jueves después de las 19.</b></div>
+  </div>
+  <div class="pie"><span class="web">trattoapp.com.ar</span><span class="desliza">Deslizá →</span></div>
+</div></section>
+
+<!-- 8 · EL REMATE -->
+<section class="placa"><div class="cont">
+  <div class="vineta" data-y0="330" style="margin-top:26px"><img src="img/3d-masajes-24.75.jpg" alt="">
+    <b class="cartel" data-x="720" data-y="560" data-lx="90" data-ly="400">Giro: 360°</b></div>
+  <div class="debajo">
+    <span class="sello intento">Al final</span>
+    <h2>Ya suelto, girás la cabeza.</h2>
+    <p>Dio la vuelta entera. El gato no lo puede creer.</p>
+  </div>
+</div></section>
+
+<!-- 9 · CIERRE -->
+<section class="placa noche cierre"><div class="cont">
+  <div class="medio">
+    <h2>Que te lo haga alguien que sabe.</h2>
+    <p class="bajada">En Tratto contás qué necesitás y te llegan presupuestos de gente de tu zona para comparar.</p>
+    <div><span class="url-caja"><span id="logo-url"></span><span data-tiktok="trattoapp.com.ar/r/tt-cuello">trattoapp.com.ar/r/ig-cuello</span></span></div>
+    <p class="bio" data-tiktok="(escribilo en el navegador)">Tocá @trattoapp_ · link «Pedí un servicio»</p>
+    <div class="gratis"><span class="sello">Gratis para el que pide</span></div>
+  </div>
+</div></section>
+
+<script src="carrusel.js"></script>
+<script>document.getElementById('logo-url').outerHTML = LOGO(46, 'lu');</script>
+<script src="vineta.js"></script>
+</body></html>

@@ -1,0 +1,125 @@
+<!doctype html><html lang="es"><head><meta charset="utf-8">
+<title>Carrusel · El bollo del súper (3D)</title>
+<!-- Carrusel "historia 3D en viñetas" (23/11/2026, Instagram jueves 26/11 12:00; TikTok cuando vuelva Buffer).
+     Por qué este formato: los carruseles de Instagram de texto e íconos llegaron a unas 10 cuentas cada
+     uno (8 medidos, mediana 46 vistas, 0 guardados); el video 3D de chapa y pintura llegó a 1.145 cuentas
+     (1.316 vistas). Se cuenta la misma historia del 3D en viñetas, con el precio real y una lista para guardar.
+     Rubro con gente registrada: Chapa y pintura (2 personas el 23/11/2026).
+     Cuadros: escena-3d-chapa.js (video-3d-chapa-ig.html) a los 3, 7,5, 11,25, 15, 18 y 25,5 s, sin subtítulos.
+     Precio: precios_referencia id 56 (pintura de un paño, 160.000 a 460.000, relevado jul-2026) con el
+     ajuste de la calculadora (2 % por mes, 4 meses, redondeo a 1.000): $173.000 a $498.000, nov-2026.
+     Exportar: python3 render-carrusel.py bollo-3d.html carrusel-bollo            (Instagram)
+               python3 render-carrusel.py bollo-3d.html carrusel-bollo-tt --red tiktok -->
+<link rel="stylesheet" href="carrusel.css">
+<link rel="stylesheet" href="molde.css">
+<link rel="stylesheet" href="vineta.css">
+</head><body>
+
+<!-- 1 · PORTADA -->
+<section class="placa tapa"><div class="cont">
+  <div class="medio">
+    <div class="chico"><i data-ico="volante" data-px="40"></i>Historia de un estacionamiento</div>
+    <h1>Calcomanía, maceta o imán: <em>cómo no tapar un bollo.</em></h1>
+    <p class="promesa">Y lo que sale arreglarlo de verdad, en noviembre.</p>
+    <div class="vineta portada" data-y0="350"><img src="img/3d-chapa-03.00.jpg" alt="">
+      <b class="cartel" data-x="625" data-y="1015" data-lx="690" data-ly="790">Bollos: 1</b></div>
+  </div>
+  <div class="pie"><span class="web">trattoapp.com.ar</span><span class="desliza">Guardalo · Deslizá →</span></div>
+</div></section>
+
+<!-- 2 · INTENTO 1 -->
+<section class="placa"><div class="cont">
+  <div class="vineta" data-y0="330" style="margin-top:26px"><img src="img/3d-chapa-07.50.jpg" alt="">
+    <b class="cartel" data-x="650" data-y="1015" data-lx="610" data-ly="760">Tristeza: 100 %</b></div>
+  <div class="debajo">
+    <span class="sello intento">Intento 1</span>
+    <h2>La calcomanía de carita feliz.</h2>
+    <p>Iba a disimular el bollo. Ahora la carita llora.</p>
+  </div>
+</div></section>
+
+<!-- 3 · INTENTO 2 -->
+<section class="placa"><div class="cont">
+  <div class="vineta" data-y0="380" style="margin-top:26px"><img src="img/3d-chapa-11.25.jpg" alt="">
+    <b class="cartel" data-x="705" data-y="930" data-lx="740" data-ly="690">Hojas: 0</b></div>
+  <div class="debajo">
+    <span class="sello intento">Intento 2</span>
+    <h2>Una maceta delante.</h2>
+    <p>El perro del súper se comió la planta.</p>
+  </div>
+</div></section>
+
+<!-- 4 · INTENTO 3 -->
+<section class="placa"><div class="cont">
+  <div class="vineta" data-y0="360" style="margin-top:26px"><img src="img/3d-chapa-15.00.jpg" alt="">
+    <b class="cartel" data-x="700" data-y="680" data-lx="560" data-ly="520">Carritos: 7</b></div>
+  <div class="debajo">
+    <span class="sello intento">Intento 3</span>
+    <h2>Un imán gigante.</h2>
+    <p>Se te pegaron siete carritos. El perro se fue.</p>
+  </div>
+</div></section>
+
+<!-- 5 · EL PRECIO -->
+<section class="placa precio-3d"><div class="cont">
+  <div class="medio">
+    <div class="vineta baja" data-y0="300"><img src="img/3d-chapa-18.00.jpg" alt=""></div>
+    <div class="tarjeta precio"><div class="que">Pintura de un paño (puerta o guardabarros)</div><div class="rango">$173.000 a $498.000</div></div>
+    <p class="nota">Cambia según <b>el tamaño del bollo</b>, si hay que enderezar la chapa y el color del auto.</p>
+  </div>
+  <div class="pie"><span class="fuente">Precios de referencia · AMBA · nov-2026</span></div>
+</div></section>
+
+<!-- 6 · PARA GUARDAR -->
+<section class="placa blanca resumen guardar"><div class="cont">
+  <div class="medio">
+    <h2>Antes de pedir presupuesto, mandá:</h2>
+    <div class="lista-check">
+      <div><i data-ico="camara" data-px="56"></i><span>Una foto de frente y otra de costado, con luz.</span></div>
+      <div><i data-ico="volante" data-px="56"></i><span>Qué paño es: puerta, guardabarros o capó.</span></div>
+      <div><i data-ico="check" data-px="56"></i><span>Marca, modelo, año y color.</span></div>
+      <div><i data-ico="pin" data-px="56"></i><span>Tu barrio y cuándo podés dejarlo.</span></div>
+    </div>
+    <p class="manda">Sacale captura para cuando te toque.</p>
+  </div>
+  <div class="pie"><span class="web">trattoapp.com.ar</span><span class="desliza">Deslizá →</span></div>
+</div></section>
+
+<!-- 7 · PEDILO ASÍ (un ejemplo, marcado como tal) -->
+<section class="placa"><div class="cont">
+  <div class="medio">
+    <div class="grande-titulo">Pedilo así.</div>
+    <p class="bajada">Todo en un solo mensaje, con las fotos.</p>
+    <div style="margin-top:44px"><span class="ejemplo-etq">Ejemplo</span></div>
+    <div class="tarjeta mensaje">Le hice un bollo a la <b>puerta del acompañante</b>, del tamaño de una mano. Auto chico, <b>2015, gris plata metalizado</b>. Estoy en <b>Ramos Mejía</b> y puedo dejarlo <b>de mañana.</b></div>
+  </div>
+  <div class="pie"><span class="web">trattoapp.com.ar</span><span class="desliza">Deslizá →</span></div>
+</div></section>
+
+<!-- 8 · EL REMATE -->
+<section class="placa"><div class="cont">
+  <div class="vineta" data-y0="420" style="margin-top:26px"><img src="img/3d-chapa-25.50.jpg" alt="">
+    <b class="cartel" data-x="930" data-y="900" data-lx="470" data-ly="560">Bollos: 2</b>
+    <b class="cartel" data-x="150" data-y="1150" data-lx="300" data-ly="1330">Perro: no mira</b></div>
+  <div class="debajo">
+    <span class="sello intento">Al final</span>
+    <h2>La puerta quedó como nueva.</h2>
+    <p>Duró hasta que pasó el próximo carrito.</p>
+  </div>
+</div></section>
+
+<!-- 9 · CIERRE -->
+<section class="placa noche cierre"><div class="cont">
+  <div class="medio">
+    <h2>Que la arregle alguien que sabe.</h2>
+    <p class="bajada">En Tratto contás qué paño es y te llegan presupuestos de gente de tu zona para comparar.</p>
+    <div><span class="url-caja"><span id="logo-url"></span><span data-tiktok="trattoapp.com.ar/r/tt-bollo">trattoapp.com.ar/r/ig-bollo</span></span></div>
+    <p class="bio" data-tiktok="(escribilo en el navegador)">Tocá @trattoapp_ · link «Pedí un servicio»</p>
+    <div class="gratis"><span class="sello">Gratis para el que pide</span></div>
+  </div>
+</div></section>
+
+<script src="carrusel.js"></script>
+<script>document.getElementById('logo-url').outerHTML = LOGO(46, 'lu');</script>
+<script src="vineta.js"></script>
+</body></html>

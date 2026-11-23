@@ -1,0 +1,48 @@
+/* Molde "historia 3D en viñetas" (23/11/2026). Carga después de carrusel.css y molde.css.
+   Los carruseles de Instagram de texto e íconos llegaban a unas 10 cuentas cada uno; los videos 3D
+   graciosos, a 1.000 o más cuando pegan. Este molde cuenta la misma escalera de desastres del 3D en
+   viñetas (cuadros de la escena, sin subtítulos), con carteles de latón, el precio real y una lista
+   para guardar. Las imágenes son cuadros de 1080x1920 de la escena (img/3d-<tema>-<segundo>.jpg);
+   cada viñeta muestra una ventana de esa altura (data-y0 = desde qué píxel del cuadro). */
+
+/* La viñeta: ventana al cuadro 3D con filo de latón */
+.vineta{position:relative;width:896px;height:838px;border-radius:34px;overflow:hidden;flex:none;
+  border:6px solid var(--laton);box-shadow:0 26px 60px rgba(12,38,32,.18);background:#cfd8d4}
+.vineta img{position:absolute;left:0;width:100%;height:auto;display:block}
+.vineta.baja{height:600px}
+.vineta.portada{height:660px}
+
+/* Cartel que señala algo de la escena (igual que k.etiqueta del 3D, más grande para leer en el celu) */
+.cartel{position:absolute;z-index:2;padding:12px 22px;border-radius:16px;background:var(--laton);color:var(--tinta);
+  white-space:nowrap;font:600 34px/1 'IBM Plex Mono',monospace;letter-spacing:1px;text-transform:uppercase;
+  box-shadow:0 7px 0 rgba(14,24,21,.3)}
+.cartel-linea{position:absolute;z-index:1;height:5px;background:var(--laton);transform-origin:0 50%;box-shadow:0 3px 0 rgba(14,24,21,.25)}
+.cartel-linea::before{content:'';position:absolute;left:-10px;top:-8px;width:20px;height:20px;border-radius:50%;background:var(--laton)}
+
+/* Texto debajo de la viñeta */
+.debajo{margin-top:30px}
+.sello.intento{font-size:28px;padding:9px 22px;border-width:4px}
+.debajo h2{font:700 66px/1.02 'IBM Plex Sans Condensed',sans-serif;letter-spacing:-.015em;margin-top:18px}
+.debajo p{font:500 40px/1.25 'IBM Plex Sans',sans-serif;color:var(--tinta-2);margin-top:12px}
+.debajo p b{font-weight:600;color:var(--verde-vivo)}
+
+/* Portada: el gancho arriba y la viñeta abajo */
+.tapa .chico{display:inline-flex;align-items:center;gap:14px;font:600 28px/1.2 'IBM Plex Mono',monospace;letter-spacing:.14em;
+  text-transform:uppercase;color:var(--verde);background:rgba(30,93,73,.1);padding:12px 20px;border-radius:14px;align-self:flex-start}
+.tapa h1{font:700 86px/.98 'IBM Plex Sans Condensed',sans-serif;letter-spacing:-.025em;margin:20px 0 30px}
+.tapa h1 em{font-style:normal;color:var(--laton-osc)}
+.tapa .promesa{font:500 38px/1.25 'IBM Plex Sans',sans-serif;color:var(--tinta-2);margin:-12px 0 26px}
+.tapa .medio{justify-content:flex-start;padding-top:28px}
+
+/* Precio con la viñeta chica */
+.precio-3d .tarjeta.precio{margin-top:26px;padding:30px 38px}
+.precio-3d .precio .que{font-size:38px}
+.precio-3d .precio .rango{font-size:68px}
+.precio-3d .nota{font:500 36px/1.3 'IBM Plex Sans',sans-serif;color:var(--tinta);margin-top:22px}
+.precio-3d .nota b{font-weight:600;color:var(--verde-vivo)}
+.precio-3d .medio{justify-content:flex-start;padding-top:24px}
+
+/* Lista para guardar (placa blanca) */
+.guardar .lista-check div{font-size:44px}
+.guardar .aviso{font:500 32px/1.35 'IBM Plex Sans',sans-serif;color:var(--tinta-2);margin-top:30px;padding:20px 26px;
+  border-left:6px solid var(--laton);background:var(--laton-claro);border-radius:0 18px 18px 0}

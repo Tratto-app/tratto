@@ -14,6 +14,9 @@ from PIL import Image
 
 D = os.path.dirname(os.path.abspath(__file__))
 REDES = os.path.normpath(os.path.join(D, '..', '..', '..', 'redes'))
+# El Chromium de la máquina cambia de versión cuando se arma de nuevo: el primero que exista (igual que render-reel.py).
+CHROME = next((c for c in ("/opt/pw-browsers/chromium", "/opt/pw-browsers/chromium-1194/chrome-linux/chrome")
+               if os.path.exists(c)), "/opt/pw-browsers/chromium")
 
 
 async def main():
@@ -29,7 +32,7 @@ async def main():
     solo = {int(x) for x in a.solo.split(',') if x.strip()}
     os.makedirs(a.salida, exist_ok=True)
     async with async_playwright() as p:
-        b = await p.chromium.launch(executable_path="/opt/pw-browsers/chromium-1194/chrome-linux/chrome",
+        b = await p.chromium.launch(executable_path=CHROME,
                                     proxy={"server": os.environ["HTTPS_PROXY"]} if os.environ.get("HTTPS_PROXY") else None,
                                     args=["--disable-background-networking"])
         ctx = await b.new_context(viewport={"width": 1200, "height": 1500}, device_scale_factor=1, ignore_https_errors=True)
