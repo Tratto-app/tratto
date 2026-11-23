@@ -76,7 +76,8 @@ inicio:
 # ── LO MÁS PEDIDO ───────────────────────────────────────────────────────
 # Para agregar uno, copiá un bloque entero (desde el guion "-").
 # Para sacarlo, borrá el bloque o poné  oculto: true
-# "precio" vacío = dice "Consultá el precio" (o lo que pongas en "precio_texto").
+# La clienta prefiere no mostrar precios (cambian con el dólar): dejá "precio" vacío
+# y no aparece nada. "precio_texto" es una nota opcional (por ejemplo, descuentos).
 # "etiqueta" es el cartelito amarillo arriba de la foto.
 # Si no hay foto, se muestra la "cifra" grande en su lugar.
 mas_pedido_titulo: Lo más pedido
@@ -201,17 +202,12 @@ servicios:
 
 
 # ── FOTOS CARNET ────────────────────────────────────────────────────────
-# Precios: si quedan vacíos, dice "Consultá".
+# Sin precios a pedido de la clienta (cambian seguido): se consulta por WhatsApp.
 carnet:
   etiqueta: Fotos carnet y biométricas
   titulo: Tu foto carnet *en 10 minutos*
   texto: Para DNI, pasaportes, visas y trámites internacionales, respetando los requisitos de cada país. Pasá por el local y te las sacamos en el momento.
   horario: Hasta las 17:30 h lo resolvemos sin problema.
-  precios:
-    - nombre: Carnet 4×4
-      precio: ""
-    - nombre: Biométrica
-      precio: ""
   incluye:
     - Toma profesional
     - Edición
@@ -235,8 +231,8 @@ fotolibros:
       texto: Hasta 12 fotos por carilla (24 por paño). Cuantas más fotos, más chica queda cada imagen.
     - titulo: Cantidad de hojas
       texto: El máximo recomendado es 20 hojas (40 carillas), para asegurar la durabilidad del lomo.
-    - titulo: Precio
-      texto: Depende de la medida y la cantidad de hojas. Decinos cuál querés y te pasamos el valor.
+    - titulo: Papel y tapas
+      texto: Papel fotográfico u offset digital, tapa blanda o rígida, anillado o encuadernado.
   boton: Pedir presupuesto de fotolibro
   foto: servicios/fotolibros-medidas.jpg
   foto_descripcion: Fotolibros en todas las medidas, de 15×21 a 30×30
@@ -496,7 +492,7 @@ preguntas:
   - pregunta: ¿Qué tamaños imprimen?
     respuesta: Copias desde 9×13 hasta 60×90 cm. Medidas estándar 9×13, 10×15, 13×18, 15×21, 20×30, 30×40, 30×45 y panorámicas 30×60 y 30×90. Ampliaciones 40×50, 40×60, 50×60, 50×75 y 60×90.
   - pregunta: ¿Cuánto tarda un fotolibro?
-    respuesta: Si lo diseñamos nosotros, entre 15 y 20 días hábiles. Incluye 3 correcciones; las adicionales tienen costo extra. El precio depende de la medida y la cantidad de hojas.
+    respuesta: Si lo diseñamos nosotros, entre 15 y 20 días hábiles. Incluye 3 correcciones; las adicionales tienen costo extra.
   - pregunta: ¿Cuánto tardan en estar las fotos?
     respuesta: Depende del trabajo y de la cantidad. Cuando nos pasás el pedido te confirmamos la fecha de entrega.
   - pregunta: ¿Puedo imprimir fotos sacadas con el celular?
