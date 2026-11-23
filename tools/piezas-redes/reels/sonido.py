@@ -38,7 +38,9 @@ EFECTOS = {
     # Video 3D de mandados (22/11/2026): la goma que se pincha, el monopatín que se apaga y la bocina de la moto
     "pinchazo": "anoisesrc=color=white:d=1.0:a=0.7,highpass=f=2600,lowpass=f=9000,afade=t=in:d=0.02,afade=t=out:st=0.15:d=0.85",
     "apagado": "aevalsrc='0.5*sin(2*PI*(260+640*exp(-3*t))*t)*exp(-1.8*t)':d=0.9,lowpass=f=2400",
-    "bocina": "aevalsrc='0.3*(sin(2*PI*415*t)+sin(2*PI*523*t)+0.4*sin(2*PI*830*t))*(lt(t,0.16)+gte(t,0.24)*lt(t,0.46))':d=0.5,lowpass=f=2600",
+    # Video 3D del cumple (23/11/2026): la corneta de cumpleaños
+    "corneta": "aevalsrc='0.35*sin(2*PI*(520+380*t)*t)*(1+0.35*sin(2*PI*31*t))*lt(t,0.55)':d=0.6,lowpass=f=3000,afade=t=out:st=0.45:d=0.15",
+    "bocina":"aevalsrc='0.3*(sin(2*PI*415*t)+sin(2*PI*523*t)+0.4*sin(2*PI*830*t))*(lt(t,0.16)+gte(t,0.24)*lt(t,0.46))':d=0.5,lowpass=f=2600",
     "frenada": "aevalsrc='0.45*sin(2*PI*(1700+260*sin(2*PI*11*t))*t)*exp(-2.6*t)+0.3*(random(0)*2-1)*exp(-3.2*t)':d=0.8,bandpass=f=1900:width_type=h:w=2400,afade=t=out:st=0.6:d=0.2",
     "chapa": "aevalsrc='0.6*sin(2*PI*620*t)*exp(-16*t)+0.45*sin(2*PI*1430*t)*exp(-21*t)+0.3*sin(2*PI*2610*t)*exp(-28*t)+0.45*(random(0)*2-1)*exp(-55*t)':d=0.45",
     "ladrido": "aevalsrc='0.75*sin(2*PI*(420+260*exp(-14*t))*t)*exp(-10*t)*(1+0.45*sin(2*PI*52*t))+0.15*(random(0)*2-1)*exp(-30*t)':d=0.24,lowpass=f=2600",

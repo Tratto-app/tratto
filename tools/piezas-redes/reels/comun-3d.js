@@ -501,6 +501,23 @@
     escena.add(g); return g;
   }
 
+  // Globo con su hilo (el nudo en el origen y el globo arriba); para inflarlo, escalalo
+  function globo(color = '#E0443A', o = {}) {
+    const g = new T.Group(), r = o.radio || 0.24;
+    const b = new T.Mesh(new T.IcosahedronGeometry(r, 1), mat(color)); b.scale.set(1, 1.18, 1); b.position.y = r * 1.18; b.castShadow = true; g.add(b);
+    caja(0.05, 0.05, 0.05, color, 0, 0, 0, g, false);
+    if (o.hilo !== false) caja(0.008, o.hilo || 0.7, 0.008, '#F4F2EC', 0, -(o.hilo || 0.7) / 2, 0, g, false);
+    g.userData.bola = b;
+    escena.add(g); return g;
+  }
+  // Gorrito de cumpleaños (cono con pompón) para poner sobre una cabeza
+  function gorrito(color = '#3D6E9E', padre = escena) {
+    const g = new T.Group();
+    const c = new T.Mesh(new T.ConeGeometry(0.15, 0.34, 8), mat(color)); c.position.y = 0.17; c.castShadow = true; g.add(c);
+    const p = new T.Mesh(new T.IcosahedronGeometry(0.05, 0), mat('#F2CF3B')); p.position.y = 0.36; g.add(p);
+    padre.add(g); return g;
+  }
+
   // Barra entre dos puntos del plano xy (cuadros de bici y de moto)
   function barra(padre, x0, y0, x1, y1, grosor, color, z = 0) {
     const m = caja(Math.hypot(x1 - x0, y1 - y0), grosor, grosor, color, (x0 + x1) / 2, (y0 + y1) / 2, z, padre);
@@ -865,7 +882,7 @@
   // ---------- armar y dibujar ----------
   const kit = { THREE: T, C, escena, camara, sol, cielo, renderer, mat, caja, personaje, pose, patio, pasto, cortadora, recortes,
     lluvia, clima, humo, etiqueta, perro, posePerro, gato, notas, teclado, celular, mesada, balde, chorro, herramientas, llaveInglesa,
-    rodillo, lata, bandejaPintura, taladro, auto, carrito, poste, barra, bici, monopatin, moto, el, tarjeta, mostrar, cierre, etiquetaUrl, lerp, clamp, suave, rebote, azar,
+    rodillo, lata, bandejaPintura, taladro, auto, carrito, poste, barra, bici, monopatin, moto, globo, gorrito, el, tarjeta, mostrar, cierre, etiquetaUrl, lerp, clamp, suave, rebote, azar,
     palabra(txt, n = 1, def = 0) { // segundo en que se dice esa palabra (n-ésima vez)
       const pal = window.PALABRAS || []; let k = 0;
       for (const w of pal) if (w[2].toLowerCase().replace(/[^a-záéíóúñü0-9]/g, '') === txt.toLowerCase()) { k++; if (k === n) return w[0]; }
