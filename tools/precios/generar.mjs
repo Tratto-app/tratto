@@ -11,7 +11,8 @@
 //
 // Lee tools/precios/datos.json (copia de public.precios_referencia) y escribe
 // precios/<rubro>/index.html, el índice precios/index.html y el sitemap. No
-// toca las páginas hechas a mano (pintura y clases de inglés).
+// toca las páginas hechas a mano (pintura, reparación y soporte técnico,
+// clases de inglés y cumpleaños infantil).
 import { readFileSync, writeFileSync, mkdirSync } from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -19,7 +20,11 @@ import { fileURLToPath } from 'node:url';
 const raiz = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../..');
 const { filas, exportado } = JSON.parse(readFileSync(path.join(raiz, 'tools/precios/datos.json'), 'utf8'));
 const css = readFileSync(path.join(raiz, 'precios/pintura/index.html'), 'utf8').match(/<style>[\s\S]*?<\/style>/)[0];
-const A_MANO = { Pintura: 'pintura' };
+const A_MANO = { Pintura: 'pintura', 'Reparación y soporte técnico': 'reparacion-y-soporte-tecnico' };
+// Guías hechas a mano que juntan trabajos de varios rubros: se enlazan desde la
+// página de cada rubro que aportan filas y desde el índice.
+const GUIA_CUMPLE = '<p>Si estás armando un cumple de chicos, mirá <a href="/precios/cumpleanos-infantil/">cuánto sale un cumpleaños infantil</a>: animación, decoración, mesa dulce y torta en una sola página.</p>';
+const GUIAS = { 'Animación y organización de eventos': GUIA_CUMPLE, 'Catering y pastelería': GUIA_CUMPLE };
 const ZONAS = ['CABA', 'GBA Norte', 'GBA Oeste', 'GBA Sur', 'Buenos Aires (interior)'];
 const MESES = ['enero', 'febrero', 'marzo', 'abril', 'mayo', 'junio', 'julio', 'agosto', 'septiembre', 'octubre', 'noviembre', 'diciembre'];
 
@@ -180,7 +185,7 @@ ${filasHTML}
         ${viejo ? '<p>Los datos de hace unos meses pueden haber quedado atrás: si te pasan un número algo más alto, no quiere decir que te estén cobrando de más.</p>' : ''}
         <p>Tocá «Pedir» en el trabajo que necesitás: se abre el pedido ya escrito para que lo revises y lo publiques. Lo ven quienes trabajan en tu zona y te mandan presupuestos.</p>
         <p>La calculadora parte de estos mismos datos y les suma un ajuste mensual estimado por inflación desde la fecha de cada uno, así que ahí puede que veas números algo más altos.</p>
-      </div>
+${GUIAS[rubro] ? `        ${GUIAS[rubro]}\n` : ''}      </div>
     </section>
 
     <section aria-labelledby="t-preguntar">
@@ -253,6 +258,7 @@ function paginaIndice(rubros) {
       <ul class="rubros">
 ${lista}
           <li><a href="/precios/clases-de-ingles/">Clases de inglés (guía aparte)</a></li>
+          <li><a href="/precios/cumpleanos-infantil/">Cumpleaños infantil (guía aparte)</a></li>
       </ul>
       <p style="margin-top:18px">¿Sos periodista? <a href="/precios/indice/">Acá está el índice del mes</a>, con todos los rubros en una tabla, cómo citarlo y la planilla para bajar.</p>
     </section>
