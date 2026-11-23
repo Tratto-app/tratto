@@ -1,0 +1,157 @@
+[
+ {
+  "efecto": "corneta",
+  "t": 0.3,
+  "db": -16
+ },
+ {
+  "efecto": "corneta",
+  "t": 1.9,
+  "db": -18
+ },
+ {
+  "efecto": "latigazo",
+  "t": 3.48,
+  "db": -19
+ },
+ {
+  "efecto": "pop",
+  "t": 4.87,
+  "db": -15
+ },
+ {
+  "efecto": "pop",
+  "t": 6.23,
+  "db": -14
+ },
+ {
+  "efecto": "tic",
+  "t": 6.93,
+  "db": -18
+ },
+ {
+  "efecto": "latigazo",
+  "t": 7.87,
+  "db": -19
+ },
+ {
+  "efecto": "golpe",
+  "t": 9.82,
+  "db": -13
+ },
+ {
+  "efecto": "golpe",
+  "t": 10.24,
+  "db": -14
+ },
+ {
+  "efecto": "golpe",
+  "t": 10.66,
+  "db": -15
+ },
+ {
+  "efecto": "golpe",
+  "t": 11.08,
+  "db": -16
+ },
+ {
+  "efecto": "pop",
+  "t": 9.82,
+  "db": -11
+ },
+ {
+  "efecto": "pop",
+  "t": 10.24,
+  "db": -11
+ },
+ {
+  "efecto": "pop",
+  "t": 10.66,
+  "db": -11
+ },
+ {
+  "efecto": "pop",
+  "t": 11.08,
+  "db": -11
+ },
+ {
+  "efecto": "ladrido",
+  "t": 10.02,
+  "db": -15
+ },
+ {
+  "efecto": "latigazo",
+  "t": 11.8,
+  "db": -19
+ },
+ {
+  "efecto": "corneta",
+  "t": 12.89,
+  "db": -17
+ },
+ {
+  "efecto": "latigazo",
+  "t": 15.33,
+  "db": -19
+ },
+ {
+  "efecto": "corneta",
+  "t": 16.67,
+  "db": -15
+ },
+ {
+  "efecto": "pop",
+  "t": 18.62,
+  "db": -16
+ },
+ {
+  "efecto": "campanita",
+  "t": 18.82,
+  "db": -18
+ },
+ {
+  "efecto": "sello",
+  "t": 19.07,
+  "db": -18
+ },
+ {
+  "efecto": "latigazo",
+  "t": 21.41,
+  "db": -19
+ },
+ {
+  "efecto": "acierto",
+  "t": 22.21,
+  "db": -17
+ },
+ {
+  "efecto": "latigazo",
+  "t": 22.91,
+  "db": -19
+ },
+ {
+  "efecto": "ladrido",
+  "t": 23.91,
+  "db": -15
+ },
+ {
+  "efecto": "pop",
+  "t": 24.38,
+  "db": -13
+ },
+ {
+  "efecto": "tic",
+  "t": 24.76,
+  "db": -18
+ },
+ {
+  "efecto": "tic",
+  "t": 24.96,
+  "db": -18
+ },
+ {
+  "efecto": "golpe",
+  "t": 26.36,
+  "db": -14
+ }
+]
