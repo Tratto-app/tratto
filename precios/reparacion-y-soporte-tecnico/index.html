@@ -3,16 +3,16 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>Precios de reparación y soporte técnico en el AMBA | Tratto</title>
-<meta name="description" content="Cuánto sale reparación y soporte técnico en CABA y el Gran Buenos Aires: técnico de computadoras, formateo o puesta a punto de computadora. Rangos de referencia con fecha y fuente, y pedí presupuestos gratis en tu zona.">
+<title>Cuánto cobra un técnico de computadoras en el AMBA | Tratto</title>
+<meta name="description" content="Cuánto sale la hora de un técnico de PC y un formateo en CABA y el Gran Buenos Aires, a noviembre de 2026. Qué cambia el precio y qué preguntar.">
 <link rel="canonical" href="https://www.trattoapp.com.ar/precios/reparacion-y-soporte-tecnico/">
 <meta name="theme-color" content="#0C2620">
 <meta name="format-detection" content="telephone=no">
 <meta property="og:type" content="website">
 <meta property="og:locale" content="es_AR">
 <meta property="og:site_name" content="Tratto">
-<meta property="og:title" content="Precios de reparación y soporte técnico en el AMBA">
-<meta property="og:description" content="Cuánto sale reparación y soporte técnico en CABA y el Gran Buenos Aires: técnico de computadoras, formateo o puesta a punto de computadora. Rangos de referencia con fecha y fuente, y pedí presupuestos gratis en tu zona.">
+<meta property="og:title" content="¿Cuánto cobra un técnico de computadoras? Precios de referencia en el AMBA">
+<meta property="og:description" content="Cuánto sale la hora de un técnico de PC y un formateo en CABA y el Gran Buenos Aires, a noviembre de 2026. Qué cambia el precio y qué preguntar.">
 <meta property="og:url" content="https://www.trattoapp.com.ar/precios/reparacion-y-soporte-tecnico/">
 <meta property="og:image" content="https://www.trattoapp.com.ar/og-image.png?v=2">
 <meta name="twitter:card" content="summary_large_image">
@@ -35,8 +35,12 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@500;600&family=IBM+Plex+Sans+Condensed:wght@600;700&family=IBM+Plex+Sans:wght@400;600&display=swap" rel="stylesheet">
-<!-- Generada por tools/precios/generar.mjs con tools/precios/datos.json (precios_referencia).
-     No editar a mano: cambiar los datos o el generador y volver a correrlo. -->
+<!-- Página de precios hecha a mano (SEO local, semana del 23/11/2026). Item de growth_mkt_items: ver el PR.
+     Cada fila sale de precios_referencia (data-ref-id = id de la tabla; copia en tools/precios/datos.json).
+     El rango grande está ajustado a noviembre de 2026 igual que public.calculadora_comparar:
+     1,02 por cada mes calendario desde "relevado", redondeado a 500 (menos de 20.000) o a 1.000.
+     Debajo de la fecha va el dato original sin ajustar. Al cambiar de mes, rehacer los números o
+     volver a mostrar solo el dato original. tools/precios/generar.mjs no la pisa. -->
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
@@ -44,18 +48,34 @@
   "mainEntity": [
     {
       "@type": "Question",
-      "name": "¿Cuánto sale técnico de computadoras?",
+      "name": "¿Cuánto cobra por hora un técnico de PC?",
       "acceptedAnswer": {
         "@type": "Answer",
-        "text": "Como referencia en el AMBA, entre $20.000 y $35.000 por hora (Ellaburante (may 2026), referencia CPITLP, mayo 2026). El precio final lo arma quien hace el trabajo, según tu caso."
+        "text": "Como referencia, entre $23.000 y $39.000 la hora, a noviembre de 2026. Es el dato de Ellaburante de mayo de 2026, con el ajuste que usa la calculadora. A domicilio puede sumarse el traslado."
       }
     },
     {
       "@type": "Question",
-      "name": "¿Cuánto sale formateo o puesta a punto de computadora?",
+      "name": "¿Cuánto sale formatear una computadora?",
       "acceptedAnswer": {
         "@type": "Answer",
-        "text": "Como referencia en el AMBA, entre $30.000 y $70.000 por trabajo (Estimado: 1,5 a 2 horas de técnico, mayo 2026). El precio final lo arma quien hace el trabajo, según tu caso."
+        "text": "Entre $34.000 y $79.000 por trabajo, a noviembre de 2026. Es un estimado de 1,5 a 2 horas de técnico, de mayo de 2026, con el ajuste de la calculadora. Preguntá si incluye copiar tus archivos e instalar programas."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "¿Los repuestos están incluidos?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "No. Los rangos son de mano de obra: un disco, una memoria o una batería se cobran aparte. Pedí el precio antes de que los compren."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "¿Cómo sé si me están cobrando de más?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Cargá el precio en la calculadora de Tratto. Lo compara con el rango de referencia y te dice si es caro, un precio justo o un buen precio. Es gratis."
       }
     }
   ]
@@ -225,15 +245,19 @@
   .zona-elegir select{font:inherit;font-size:15px;padding:9px 12px;border-radius:8px;border:1px solid #CFC9BA;background:#FCFBF8}
   td.pedir-fila a{display:inline-block;font-weight:600;font-size:14px;white-space:nowrap;padding:7px 14px;border-radius:99px;
     background:#1E5D49;color:#fff;text-decoration:none}
+  /* Dato original debajo del sello de fecha: de dónde sale el rango ajustado */
+  .precios .original{display:block;margin-top:7px;font:500 .74rem/1.3 var(--f-mono);color:var(--gris);white-space:nowrap}
+  .precios .de-fuente{display:block;margin-top:4px;font-size:.86rem;line-height:1.35;color:var(--gris)}
+  .precios .de-rubro{display:block;margin-top:3px;font:500 .72rem/1.3 var(--f-mono);letter-spacing:.04em;color:var(--gris);font-weight:500}
+  .aviso{margin-top:14px;background:#fff;border:1.5px solid rgba(201,162,39,.55);border-radius:14px;padding:13px 16px;font-size:.93rem;color:var(--tinta-2)}
+  .aviso strong{color:var(--laton-osc);font:600 .72rem/1 var(--f-mono);letter-spacing:.12em;text-transform:uppercase;display:block;margin-bottom:6px}
   @media (max-width:640px){
-    .precios .dato{grid-column:1/-1;grid-row:3;text-align:left}
-    .precios .fuente{grid-column:1/-1;grid-row:4;white-space:normal;margin-top:0}
-    .precios .fuente::after{display:none}
-    .precios td.pedir-fila{grid-column:1/-1;grid-row:5;margin-top:8px}
+    .precios .dato{grid-column:1/-1;grid-row:3;text-align:left;display:flex;flex-wrap:wrap;align-items:center;gap:6px 8px}
+    .precios .original{display:inline;margin-top:0}
+    .precios .de-fuente{flex-basis:100%;margin-top:0;font:500 .74rem/1.3 var(--f-mono)}
+    .precios .de-fuente::before{content:"Fuente: "}
+    .precios td.pedir-fila{grid-column:1/-1;grid-row:4;margin-top:8px}
   }
-  .rubros{columns:2;column-gap:28px;padding-left:18px}
-  .rubros li{margin:0 0 8px;break-inside:avoid}
-  @media (max-width:560px){.rubros{columns:1}}
 </style>
 </head>
 <body>
@@ -243,9 +267,9 @@
   <nav class="migas" aria-label="Estás en">
     <ol><li><a href="/?utm_source=google&amp;utm_medium=organico&amp;utm_campaign=precios-reparacion-y-soporte-tecnico&amp;utm_content=migas">Inicio</a></li><li><a href="/precios/">Precios</a></li><li aria-current="page">Reparación y soporte técnico</li></ol>
   </nav>
-  <p class="ceja">Precios de referencia · AMBA</p>
-  <h1>¿Cuánto sale reparación y soporte técnico?<span class="bajo">Precios de referencia en el AMBA</span></h1>
-  <p class="sub">Son los rangos que usa la calculadora de Tratto, cada uno con su fecha y su fuente. Sirven para saber si un presupuesto está en un número razonable. El precio final lo arma quien hace el trabajo, según tu caso.</p>
+  <p class="ceja">Precios de referencia · AMBA · noviembre 2026</p>
+  <h1>¿Cuánto cobra un técnico de computadoras?<span class="bajo">Reparación y soporte técnico: precios de referencia en el AMBA</span></h1>
+  <p class="sub">Son los mismos rangos que usa este mes la calculadora de Tratto, con el dato original, su fecha y su fuente. Sirven para saber si un presupuesto está en un número razonable. El precio final lo arma quien hace el trabajo, según tu equipo y lo que tenga.</p>
   <div class="botones">
     <a class="boton laton" href="/calculadora/?utm_source=google&amp;utm_medium=organico&amp;utm_campaign=precios-reparacion-y-soporte-tecnico&amp;utm_content=boton-calculadora">¿Ya te pasaron un precio? Fijate si está en rango</a>
     <a class="boton borde" href="/?rubro=Reparaci%C3%B3n+y+soporte+t%C3%A9cnico&amp;utm_source=google&amp;utm_medium=organico&amp;utm_campaign=precios-reparacion-y-soporte-tecnico&amp;utm_content=boton-pedir" data-pedir>Pedir presupuestos gratis</a>
@@ -262,28 +286,43 @@
         <select id="zona"><option value="">Elegí tu zona</option><option>CABA</option><option>GBA Norte</option><option>GBA Oeste</option><option>GBA Sur</option><option>Buenos Aires (interior)</option></select>
       </div>
 <table class="precios">
-  <caption class="sr">Precios de referencia de reparación y soporte técnico en el AMBA, con fecha y fuente</caption>
-  <thead><tr><th scope="col">Trabajo</th><th scope="col">Rango</th><th scope="col">Unidad</th><th scope="col">Dato de</th><th scope="col">Fuente</th><th scope="col"><span class="sr">Pedir</span></th></tr></thead>
+  <caption class="sr">Precios de referencia de reparación y soporte técnico en el AMBA, a noviembre de 2026, con el dato original, su fecha y su fuente</caption>
+  <thead><tr><th scope="col">Trabajo</th><th scope="col">Rango a noviembre 2026</th><th scope="col">Unidad</th><th scope="col">Dato original y fuente</th><th scope="col"><span class="sr">Pedir</span></th></tr></thead>
   <tbody>
-    <tr><th scope="row" class="trabajo">Técnico de computadoras</th><td class="rango">$20.000 a $35.000</td><td class="unidad">por hora</td><td class="dato"><span class="sello"><time datetime="2026-05">mayo 2026</time></span></td><td class="fuente">Ellaburante (may 2026), referencia CPITLP</td><td class="pedir-fila"><a data-pedir href="/?pedir=T%C3%A9cnico+de+computadoras&amp;rubro=Reparaci%C3%B3n+y+soporte+t%C3%A9cnico&amp;utm_source=google&amp;utm_medium=organico&amp;utm_campaign=precios-reparacion-y-soporte-tecnico&amp;utm_content=pedir-fila">Pedir</a></td></tr>
-    <tr><th scope="row" class="trabajo">Formateo o puesta a punto de computadora</th><td class="rango">$30.000 a $70.000</td><td class="unidad">por trabajo</td><td class="dato"><span class="sello"><time datetime="2026-05">mayo 2026</time></span></td><td class="fuente">Estimado: 1,5 a 2 horas de técnico</td><td class="pedir-fila"><a data-pedir href="/?pedir=Formateo+o+puesta+a+punto+de+computadora&amp;rubro=Reparaci%C3%B3n+y+soporte+t%C3%A9cnico&amp;utm_source=google&amp;utm_medium=organico&amp;utm_campaign=precios-reparacion-y-soporte-tecnico&amp;utm_content=pedir-fila">Pedir</a></td></tr>
+    <tr data-ref-id="89"><th scope="row" class="trabajo">Técnico de computadoras</th><td class="rango">$23.000 a $39.000</td><td class="unidad">por hora</td><td class="dato"><span class="sello"><time datetime="2026-05">mayo 2026</time></span><span class="original">dato: $20.000 a $35.000</span><span class="de-fuente">Ellaburante (may 2026), referencia CPITLP</span></td><td class="pedir-fila"><a data-pedir href="/?pedir=Necesito+un+t%C3%A9cnico+de+computadoras&amp;rubro=Reparaci%C3%B3n+y+soporte+t%C3%A9cnico&amp;utm_source=google&amp;utm_medium=organico&amp;utm_campaign=precios-reparacion-y-soporte-tecnico&amp;utm_content=pedir-fila">Pedir</a></td></tr>
+    <tr data-ref-id="90"><th scope="row" class="trabajo">Formateo o puesta a punto de computadora</th><td class="rango">$34.000 a $79.000</td><td class="unidad">por trabajo</td><td class="dato"><span class="sello"><time datetime="2026-05">mayo 2026</time></span><span class="original">dato: $30.000 a $70.000</span><span class="de-fuente">Estimado: 1,5 a 2 horas de técnico</span></td><td class="pedir-fila"><a data-pedir href="/?pedir=Formatear+o+poner+a+punto+mi+computadora&amp;rubro=Reparaci%C3%B3n+y+soporte+t%C3%A9cnico&amp;utm_source=google&amp;utm_medium=organico&amp;utm_campaign=precios-reparacion-y-soporte-tecnico&amp;utm_content=pedir-fila">Pedir</a></td></tr>
   </tbody>
 </table>
       <div class="nota">
-        <p>Los datos de hace unos meses pueden haber quedado atrás: si te pasan un número algo más alto, no quiere decir que te estén cobrando de más.</p>
+        <p>Los rangos están llevados a noviembre de 2026 igual que en la calculadora: al dato original le sumamos un 2 % por cada mes desde que se relevó y lo redondeamos. En cada fila está el dato original, su fecha y de dónde sale. Son precios de mano de obra: los repuestos van aparte.</p>
         <p>Tocá «Pedir» en el trabajo que necesitás: se abre el pedido ya escrito para que lo revises y lo publiques. Lo ven quienes trabajan en tu zona y te mandan presupuestos.</p>
-        <p>La calculadora parte de estos mismos datos y les suma un ajuste mensual estimado por inflación desde la fecha de cada uno, así que ahí puede que veas números algo más altos.</p>
       </div>
+      <div class="aviso"><strong>Un cuidado</strong>No pases tus contraseñas por mensaje. Si hace falta dárselas a quien arregla la computadora, cambialas cuando te la devuelve.</div>
+    </section>
+
+    <section aria-labelledby="t-cambia">
+      <h2 id="t-cambia">Qué cambia el precio</h2>
+      <ul class="factores">
+        <li><strong>A domicilio o en el taller.</strong>Si va a tu casa o a tu oficina, puede sumarse el traslado. Si la llevás vos, preguntá cuántos días la tienen.</li>
+        <li><strong>La revisión.</strong>Hay quien cobra el diagnóstico aparte, aunque después no se haga el arreglo.</li>
+        <li><strong>Los repuestos.</strong>Un disco, una memoria, una batería o una pantalla se cobran aparte de la mano de obra.</li>
+        <li><strong>Tus archivos.</strong>Copiar fotos y documentos antes de formatear lleva tiempo. Preguntá si está incluido.</li>
+        <li><strong>Programas y licencias.</strong>Instalar el sistema y los programas que usás puede ir aparte, y las licencias se pagan por separado.</li>
+        <li><strong>Notebook o PC de escritorio.</strong>Abrir una notebook para limpiarla o cambiarle una pieza puede llevar más trabajo.</li>
+        <li><strong>Si es urgente.</strong>Si la necesitás para hoy, preguntá si hay recargo.</li>
+      </ul>
     </section>
 
     <section aria-labelledby="t-preguntar">
       <h2 id="t-preguntar">Qué preguntar antes de contratar</h2>
       <div class="preguntar">
         <ol>
-          <li><span>¿Qué incluye el precio y qué queda afuera? (materiales, traslado, visita)</span></li>
-          <li><span>¿Cobrás por hora, por unidad o por trabajo cerrado?</span></li>
-          <li><span>¿Cuándo podés empezar y cuánto tarda?</span></li>
-          <li><span>¿Cómo se paga: todo al final o con una seña?</span></li>
+          <li><span>¿Cobrás la revisión? ¿Se descuenta si hacés el arreglo?</span></li>
+          <li><span>¿Venís a casa o la llevo? ¿El traslado se cobra?</span></li>
+          <li><span>¿Hacés una copia de mis archivos antes de formatear?</span></li>
+          <li><span>¿Los repuestos van aparte? ¿Me pasás el precio antes de comprarlos?</span></li>
+          <li><span>¿Qué programas dejás instalados y con qué licencias?</span></li>
+          <li><span>¿El trabajo tiene garantía? ¿Por cuánto tiempo?</span></li>
           <li><span>¿Me lo pasás por escrito, con todo lo que incluye?</span></li>
         </ol>
       </div>
@@ -292,15 +331,16 @@
     <section class="pedir" aria-labelledby="t-pedir">
       <h2 id="t-pedir">Cómo pedirlo en Tratto</h2>
       <div class="firma" aria-hidden="true"><span class="hilo"></span><span class="sello">Gratis para quien pide</span></div>
-      <p>Contás qué necesitás o le sacás una foto. Lo ven quienes trabajan en reparación y soporte técnico en tu zona y te mandan presupuestos. Los comparás, ves las calificaciones de otros clientes y arreglan por el chat de la app, sin pasar tu número.</p>
+      <p>Contás qué le pasa a la computadora (no prende, anda lenta, querés formatearla) o le sacás una foto a la pantalla con el error. Lo ven quienes hacen reparación y soporte técnico en tu zona y te mandan presupuestos. Los comparás, ves las calificaciones de otros clientes y arreglan por el chat de la app, sin pasar tu número. Pedir es gratis.</p>
       <a class="boton laton" href="/?rubro=Reparaci%C3%B3n+y+soporte+t%C3%A9cnico&amp;utm_source=google&amp;utm_medium=organico&amp;utm_campaign=precios-reparacion-y-soporte-tecnico&amp;utm_content=boton-pedir" data-pedir>Pedir presupuestos gratis</a>
     </section>
 
     <section aria-labelledby="t-faq">
       <h2 id="t-faq">Preguntas frecuentes</h2>
       <div class="faq">
-      <div class="q"><h3>¿Cuánto sale técnico de computadoras?</h3><p>Como referencia en el AMBA, entre $20.000 y $35.000 por hora (Ellaburante (may 2026), referencia CPITLP, mayo 2026). El precio final lo arma quien hace el trabajo, según tu caso.</p></div>
-      <div class="q"><h3>¿Cuánto sale formateo o puesta a punto de computadora?</h3><p>Como referencia en el AMBA, entre $30.000 y $70.000 por trabajo (Estimado: 1,5 a 2 horas de técnico, mayo 2026). El precio final lo arma quien hace el trabajo, según tu caso.</p></div>
+      <div class="q"><h3>¿Cuánto cobra por hora un técnico de PC?</h3><p>Como referencia, entre $23.000 y $39.000 la hora, a noviembre de 2026. Es el dato de Ellaburante de mayo de 2026, con el ajuste que usa la calculadora. A domicilio puede sumarse el traslado.</p></div>
+      <div class="q"><h3>¿Cuánto sale formatear una computadora?</h3><p>Entre $34.000 y $79.000 por trabajo, a noviembre de 2026. Es un estimado de 1,5 a 2 horas de técnico, de mayo de 2026, con el ajuste de la calculadora. Preguntá si incluye copiar tus archivos e instalar programas.</p></div>
+      <div class="q"><h3>¿Los repuestos están incluidos?</h3><p>No. Los rangos son de mano de obra: un disco, una memoria o una batería se cobran aparte. Pedí el precio antes de que los compren.</p></div>
       <div class="q"><h3>¿Cómo sé si me están cobrando de más?</h3><p>Cargá el precio en <a href="/calculadora/?utm_source=google&amp;utm_medium=organico&amp;utm_campaign=precios-reparacion-y-soporte-tecnico&amp;utm_content=faq">la calculadora de Tratto</a>. Lo compara con el rango de referencia y te dice si es caro, un precio justo o un buen precio. Es gratis.</p></div>
       </div>
     </section>
@@ -311,13 +351,13 @@
 <section class="franja" aria-label="Más servicios en Tratto">
   <div class="ancho">
     <p class="grande">Tratto tiene más de 40 rubros.</p>
-    <p>Mirá <a href="/precios/" style="color:inherit">los precios de todos los rubros</a> o probá la calculadora con el presupuesto que te pasaron.</p>
+    <p>Además de soporte técnico podés pedir <a href="/precios/computacion-y-capacitacion/" style="color:inherit">clases de computación</a>, <a href="/precios/diseno-grafico/" style="color:inherit">diseño gráfico</a>, <a href="/precios/fletes-y-mudanzas/" style="color:inherit">un flete</a>, ayuda con <a href="/precios/gestoria-y-tramites/" style="color:inherit">un trámite</a> o <a href="/precios/musica-y-sonido-dj/" style="color:inherit">un DJ</a>.</p>
     <a class="boton laton" href="/calculadora/?utm_source=google&amp;utm_medium=organico&amp;utm_campaign=precios-reparacion-y-soporte-tecnico&amp;utm_content=cierre">Ver la calculadora</a>
   </div>
 </section>
 
 <footer class="pie ancho">
-  <p>Precios de referencia, no son precios fijos: quien hace el trabajo arma su presupuesto. Fuentes: Ellaburante (may 2026), referencia CPITLP; Estimado: 1,5 a 2 horas de técnico.</p>
+  <p>Precios de referencia, no son precios fijos: quien hace el trabajo arma su presupuesto. Fuentes: Ellaburante (mayo 2026, con referencia CPITLP) y un estimado de 1,5 a 2 horas de técnico, cargados en la tabla de referencia de Tratto, con el ajuste mensual de la calculadora.</p>
   <p><a href="/privacidad.html">Privacidad</a> · <a href="/terminos.html">Términos</a> · <a href="/arrepentimiento.html">Botón de arrepentimiento</a></p>
 </footer>
 <script>

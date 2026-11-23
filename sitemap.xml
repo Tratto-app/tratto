@@ -4,21 +4,23 @@
   <url><loc>https://www.trattoapp.com.ar/calculadora/</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
   <url><loc>https://www.trattoapp.com.ar/precios/pintura/</loc><lastmod>2026-10-08</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
   <url><loc>https://www.trattoapp.com.ar/precios/clases-de-ingles/</loc><lastmod>2026-10-08</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://www.trattoapp.com.ar/precios/cumpleanos-infantil/</loc><lastmod>2026-11-23</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://www.trattoapp.com.ar/precios/reparacion-y-soporte-tecnico/</loc><lastmod>2026-11-23</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
   <url><loc>https://www.trattoapp.com.ar/guias/que-incluir-en-un-presupuesto/</loc><lastmod>2026-10-08</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
   <url><loc>https://www.trattoapp.com.ar/guias/como-armar-un-presupuesto/</loc><lastmod>2026-10-28</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
   <url><loc>https://www.trattoapp.com.ar/terminos.html</loc><changefreq>monthly</changefreq><priority>0.3</priority></url>
   <url><loc>https://www.trattoapp.com.ar/terminos-cliente.html</loc><changefreq>monthly</changefreq><priority>0.3</priority></url>
   <url><loc>https://www.trattoapp.com.ar/terminos-proveedor.html</loc><changefreq>monthly</changefreq><priority>0.3</priority></url>
   <url><loc>https://www.trattoapp.com.ar/privacidad.html</loc><changefreq>monthly</changefreq><priority>0.3</priority></url>
-  <url><loc>https://www.trattoapp.com.ar/precios/</loc><lastmod>2026-10-29</lastmod><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://www.trattoapp.com.ar/precios/</loc><lastmod>2026-11-23</lastmod><changefreq>monthly</changefreq><priority>0.6</priority></url>
   <url><loc>https://www.trattoapp.com.ar/precios/aire-acondicionado/</loc><lastmod>2026-10-29</lastmod><changefreq>monthly</changefreq><priority>0.6</priority></url>
   <url><loc>https://www.trattoapp.com.ar/precios/albanileria-y-refacciones/</loc><lastmod>2026-10-29</lastmod><changefreq>monthly</changefreq><priority>0.6</priority></url>
-  <url><loc>https://www.trattoapp.com.ar/precios/animacion-y-organizacion-de-eventos/</loc><lastmod>2026-10-29</lastmod><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://www.trattoapp.com.ar/precios/animacion-y-organizacion-de-eventos/</loc><lastmod>2026-11-23</lastmod><changefreq>monthly</changefreq><priority>0.6</priority></url>
   <url><loc>https://www.trattoapp.com.ar/precios/apoyo-escolar-y-universitario/</loc><lastmod>2026-10-29</lastmod><changefreq>monthly</changefreq><priority>0.6</priority></url>
   <url><loc>https://www.trattoapp.com.ar/precios/arreglos-generales/</loc><lastmod>2026-10-29</lastmod><changefreq>monthly</changefreq><priority>0.6</priority></url>
   <url><loc>https://www.trattoapp.com.ar/precios/asistente-administrativo/</loc><lastmod>2026-10-29</lastmod><changefreq>monthly</changefreq><priority>0.6</priority></url>
   <url><loc>https://www.trattoapp.com.ar/precios/carpinteria-y-muebles/</loc><lastmod>2026-10-29</lastmod><changefreq>monthly</changefreq><priority>0.6</priority></url>
-  <url><loc>https://www.trattoapp.com.ar/precios/catering-y-pasteleria/</loc><lastmod>2026-10-29</lastmod><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://www.trattoapp.com.ar/precios/catering-y-pasteleria/</loc><lastmod>2026-11-23</lastmod><changefreq>monthly</changefreq><priority>0.6</priority></url>
   <url><loc>https://www.trattoapp.com.ar/precios/cerrajeria/</loc><lastmod>2026-10-29</lastmod><changefreq>monthly</changefreq><priority>0.6</priority></url>
   <url><loc>https://www.trattoapp.com.ar/precios/chapa-y-pintura/</loc><lastmod>2026-10-29</lastmod><changefreq>monthly</changefreq><priority>0.6</priority></url>
   <url><loc>https://www.trattoapp.com.ar/precios/clases-de-manejo/</loc><lastmod>2026-10-29</lastmod><changefreq>monthly</changefreq><priority>0.6</priority></url>
@@ -50,7 +52,6 @@
   <url><loc>https://www.trattoapp.com.ar/precios/pisos-y-revestimientos/</loc><lastmod>2026-10-29</lastmod><changefreq>monthly</changefreq><priority>0.6</priority></url>
   <url><loc>https://www.trattoapp.com.ar/precios/plomeria-y-destapaciones/</loc><lastmod>2026-10-29</lastmod><changefreq>monthly</changefreq><priority>0.6</priority></url>
   <url><loc>https://www.trattoapp.com.ar/precios/programacion-y-desarrollo/</loc><lastmod>2026-10-29</lastmod><changefreq>monthly</changefreq><priority>0.6</priority></url>
-  <url><loc>https://www.trattoapp.com.ar/precios/reparacion-y-soporte-tecnico/</loc><lastmod>2026-10-29</lastmod><changefreq>monthly</changefreq><priority>0.6</priority></url>
   <url><loc>https://www.trattoapp.com.ar/precios/service-de-electrodomesticos/</loc><lastmod>2026-10-29</lastmod><changefreq>monthly</changefreq><priority>0.6</priority></url>
   <url><loc>https://www.trattoapp.com.ar/precios/servicios-de-limpieza/</loc><lastmod>2026-10-29</lastmod><changefreq>monthly</changefreq><priority>0.6</priority></url>
   <url><loc>https://www.trattoapp.com.ar/precios/tapiceria-y-restauracion/</loc><lastmod>2026-10-29</lastmod><changefreq>monthly</changefreq><priority>0.6</priority></url>
