@@ -1,0 +1,137 @@
+[
+ {
+  "efecto": "tic",
+  "t": 0.9,
+  "db": -18
+ },
+ {
+  "efecto": "tic",
+  "t": 2.1,
+  "db": -18
+ },
+ {
+  "efecto": "latigazo",
+  "t": 3.75,
+  "db": -19
+ },
+ {
+  "efecto": "pop",
+  "t": 5.96,
+  "db": -12
+ },
+ {
+  "efecto": "falla",
+  "t": 6.01,
+  "db": -14
+ },
+ {
+  "efecto": "obturador",
+  "t": 6.51,
+  "db": -16
+ },
+ {
+  "efecto": "latigazo",
+  "t": 7.95,
+  "db": -19
+ },
+ {
+  "efecto": "tic",
+  "t": 8.65,
+  "db": -14
+ },
+ {
+  "efecto": "tic",
+  "t": 8.95,
+  "db": -14
+ },
+ {
+  "efecto": "tic",
+  "t": 9.25,
+  "db": -14
+ },
+ {
+  "efecto": "crujido",
+  "t": 9.75,
+  "db": -12
+ },
+ {
+  "efecto": "golpe",
+  "t": 10.15,
+  "db": -12
+ },
+ {
+  "efecto": "latigazo",
+  "t": 11.96,
+  "db": -19
+ },
+ {
+  "efecto": "crujido",
+  "t": 14.88,
+  "db": -13
+ },
+ {
+  "efecto": "chapa",
+  "t": 15.03,
+  "db": -17
+ },
+ {
+  "efecto": "latigazo",
+  "t": 15.64,
+  "db": -19
+ },
+ {
+  "efecto": "sello",
+  "t": 18.12,
+  "db": -16
+ },
+ {
+  "efecto": "sello",
+  "t": 19.12,
+  "db": -16
+ },
+ {
+  "efecto": "sello",
+  "t": 20.12,
+  "db": -16
+ },
+ {
+  "efecto": "pop",
+  "t": 19.65,
+  "db": -16
+ },
+ {
+  "efecto": "campanita",
+  "t": 19.85,
+  "db": -18
+ },
+ {
+  "efecto": "latigazo",
+  "t": 22.42,
+  "db": -19
+ },
+ {
+  "efecto": "acierto",
+  "t": 23.02,
+  "db": -17
+ },
+ {
+  "efecto": "latigazo",
+  "t": 23.92,
+  "db": -19
+ },
+ {
+  "efecto": "recibido",
+  "t": 25.12,
+  "db": -14
+ },
+ {
+  "efecto": "recibido",
+  "t": 25.62,
+  "db": -16
+ },
+ {
+  "efecto": "golpe",
+  "t": 27.22,
+  "db": -14
+ }
+]
