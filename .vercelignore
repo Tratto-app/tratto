@@ -10,6 +10,10 @@ tools
 # que la sesion de Tratto (comparten localStorage al estar bajo el mismo dominio)
 lapeluquerie
 
+# Página de muestra para un cliente (DN Fragancias): va con su propio dominio y no
+# tiene que compartir origen ni localStorage con la sesión de Tratto
+dnfragancias
+
 # Configuración de la compilación en la nube de la app de iPhone
 codemagic.yaml
 
