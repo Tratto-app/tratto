@@ -1,0 +1,1873 @@
+<!DOCTYPE html>
+<html lang="es-AR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Don Gato | Veterinaria y Pet Shop en Berazategui · Envío sin cargo</title>
+<meta name="description" content="Veterinaria y pet shop en Berazategui (Calle 12 N° 4842). Alimento, juguetes y accesorios con envío a domicilio sin cargo. Pedí por WhatsApp o sacá turno.">
+<meta name="theme-color" content="#78489A">
+<meta name="color-scheme" content="light">
+<meta name="format-detection" content="telephone=no">
+
+<!-- [COMPLETAR] Cuando tengan dominio, reemplazar [DOMINIO] en todo el archivo
+     (por ejemplo dongato.com.ar). Sin esto, la vista previa al compartir el link
+     por WhatsApp no muestra la imagen. -->
+<link rel="canonical" href="https://[DOMINIO]/">
+<meta property="og:type" content="website">
+<meta property="og:locale" content="es_AR">
+<meta property="og:site_name" content="Don Gato Veterinaria & Pet Shop">
+<meta property="og:title" content="Don Gato · Veterinaria y Pet Shop en Berazategui">
+<meta property="og:description" content="Todo para tu mascota en Calle 12 N° 4842. Pedí por WhatsApp y te lo llevamos sin cargo. Turnos para la veterinaria en 30 segundos.">
+<meta property="og:url" content="https://[DOMINIO]/">
+<meta property="og:image" content="https://[DOMINIO]/og.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Logo de Don Gato, veterinaria y pet shop en Berazategui">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Don Gato · Veterinaria y Pet Shop en Berazategui">
+<meta name="twitter:description" content="Pedí por WhatsApp y te lo llevamos sin cargo.">
+<meta name="twitter:image" content="https://[DOMINIO]/og.jpg">
+
+<link rel="icon" href="favicon.png" sizes="48x48" type="image/png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Luckiest+Guy&family=Nunito:wght@400;600;700;800;900&display=swap">
+
+<!-- Datos para Google (negocio local). Si cambian dirección, teléfono u horarios,
+     actualizarlos también acá: Google lee este bloque, no el CONFIG de abajo. -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": ["VeterinaryCare", "PetStore"],
+  "name": "Don Gato Veterinaria & Pet Shop",
+  "alternateName": "Don Gato",
+  "description": "Veterinaria y pet shop en Berazategui. Alimento, snacks, juguetes y accesorios con envío a domicilio sin cargo. Pedidos y turnos por WhatsApp.",
+  "url": "https://[DOMINIO]/",
+  "image": "https://[DOMINIO]/og.jpg",
+  "logo": "https://[DOMINIO]/logo.png",
+  "telephone": "+54 9 11 4216-5130",
+  "currenciesAccepted": "ARS",
+  "address": {
+    "@type": "PostalAddress",
+    "streetAddress": "Calle 12 4842",
+    "addressLocality": "Berazategui",
+    "addressRegion": "Buenos Aires",
+    "addressCountry": "AR"
+  },
+  "areaServed": { "@type": "City", "name": "Berazategui" },
+  "hasMap": "https://www.google.com/maps/search/?api=1&query=Don+Gato+Veterinaria+Pet+Shop,+Calle+12+4842,+Berazategui",
+  "openingHoursSpecification": [
+    { "@type": "OpeningHoursSpecification", "dayOfWeek": ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"], "opens": "09:00", "closes": "13:00" },
+    { "@type": "OpeningHoursSpecification", "dayOfWeek": ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"], "opens": "16:00", "closes": "19:00" },
+    { "@type": "OpeningHoursSpecification", "dayOfWeek": "Saturday", "opens": "09:00", "closes": "13:00" }
+  ],
+  "sameAs": ["https://www.instagram.com/dongatobegui"]
+}
+</script>
+
+<script>
+/* =====================================================================
+   1) DATOS DEL NEGOCIO: todo lo que se cambia seguido está acá arriba.
+   Lo marcado [COMPLETAR] falta confirmarlo con Don Gato. Mientras esté
+   en null, la página no lo muestra (no inventa nada).
+   ===================================================================== */
+const CONFIG = {
+  nombre: 'Don Gato Veterinaria & Pet Shop',
+  nombreCorto: 'Don Gato',
+  frase: 'En Don Gato encontrás todo lo que necesitás para tus mascotas.',
+  whatsapp: '5491142165130',               // sin +, sin espacios (para wa.me)
+  whatsappVisible: '+54 9 11 4216-5130',
+  direccion: 'Calle 12 N° 4842',
+  localidad: 'Berazategui, Buenos Aires',
+  codigoPostal: null, // [CONFIRMAR] su ficha de WhatsApp dice B1866 y Google Maps B1880/B1884
+  // Búsqueda para el mapa y "Cómo llegar": con el nombre, Google marca justo el local (sin el nombre marca también una calle 12 de La Plata).
+  direccionMapa: 'Don Gato Veterinaria Pet Shop, Calle 12 4842, Berazategui',
+  instagram: 'dongatobegui',
+  instagramUrl: 'https://www.instagram.com/dongatobegui',
+  zonaHoraria: 'America/Argentina/Buenos_Aires',
+
+  // Horario de atención. 0 = domingo, 1 = lunes … 6 = sábado.
+  // Sale de su historia destacada "Nuestros horarios" (Instagram, 5/11).
+  horarios: {
+    0: [],
+    1: [['09:00', '13:00'], ['16:00', '19:00']],
+    2: [['09:00', '13:00'], ['16:00', '19:00']],
+    3: [['09:00', '13:00'], ['16:00', '19:00']],
+    4: [['09:00', '13:00'], ['16:00', '19:00']],
+    5: [['09:00', '13:00'], ['16:00', '19:00']],
+    6: [['09:00', '13:00']]
+  },
+
+  envio: {
+    sinCargo: true,
+    zona: null,     // [COMPLETAR] por ejemplo 'Berazategui y alrededores'
+    minimo: null,   // [COMPLETAR] monto mínimo para el envío gratis (número, por ejemplo 15000). En null no se muestra nada.
+    demora: 'Te lo entregamos en el día.' // De su historia "¿Sabías que podés hacer tu pedido por WhatsApp?". [CONFIRMAR] hasta qué hora se toman pedidos para el mismo día.
+  },
+
+  // [COMPLETAR] formas de pago, por ejemplo ['Efectivo', 'Transferencia', 'Mercado Pago', 'Tarjeta de débito'].
+  // Mientras sea null, el formulario del pedido ofrece efectivo, transferencia u otro.
+  pagos: null,
+
+  // [COMPLETAR] si atienden urgencias y con qué número. Ejemplo: { texto: 'Urgencias las 24 h', telefono: '+54 9 11 ...' }
+  urgencias: null,
+
+  // Promo del mes (sale de su publicación "Promo del mes" de Royal Canin). Para sacarla: activa: false.
+  promo: {
+    activa: true,
+    titulo: 'Comedero de acero de regalo',
+    texto: 'Llevate un comedero de acero Royal Canin de regalo con la compra de alimentos seleccionados.',
+    detalle: [
+      'Línea perros Mini, de 3 kg en adelante',
+      'Línea Veterinaria perros Small',
+      'Línea gatos, de 1,5 kg en adelante',
+      'Línea Veterinaria gatos'
+    ],
+    letraChica: 'Hasta agotar stock.', // [COMPLETAR] vigencia exacta (por ejemplo "Válida durante noviembre").
+    buscar: 'Royal Canin',            // qué muestra el catálogo al tocar "Ver alimentos de la promo"
+    mensaje: 'Hola Don Gato! Quería consultar por la promo del comedero de acero de regalo.'
+  },
+
+  // Servicios de la veterinaria. Solo se muestran los que tienen confirmado: true.
+  servicios: [
+    { nombre: 'Consultas', icono: '🩺', texto: 'Para perros y gatos, y también aves, conejos, hámsters y otros compañeros.', confirmado: true },
+    { nombre: 'Vacunación', icono: '💉', texto: 'Traé su libreta y la dejamos al día.', confirmado: true },
+    { nombre: 'Desparasitación', icono: '💊', texto: 'Te decimos cada cuánto le toca según su edad y su peso.', confirmado: true },
+    // [COMPLETAR] Confirmar cuáles hacen. Al confirmar, pasar confirmado a true y revisar el texto.
+    { nombre: 'Cirugías', icono: '🏥', texto: '', confirmado: false },          // En Instagram tienen una destacada "Cirugía" con productos posquirúrgicos.
+    { nombre: 'Castraciones', icono: '✂️', texto: '', confirmado: false },
+    { nombre: 'Peluquería', icono: '✂️', texto: '', confirmado: false },
+    { nombre: 'Baño', icono: '🛁', texto: '', confirmado: false },
+    { nombre: 'Análisis', icono: '🧪', texto: '', confirmado: false },
+    { nombre: 'Urgencias', icono: '🚑', texto: '', confirmado: false },
+    { nombre: 'Visitas a domicilio', icono: '🏠', texto: '', confirmado: false }
+  ],
+
+  dominio: null // [COMPLETAR] ver comentario en el <head>
+};
+
+const ESPECIES = [
+  { id: 'perro', nombre: 'Perros', emoji: '🐕' },
+  { id: 'gato', nombre: 'Gatos', emoji: '🐈' },
+  { id: 'aves', nombre: 'Aves', emoji: '🦜' },
+  { id: 'roedores', nombre: 'Roedores', emoji: '🐹' },
+  { id: 'peces', nombre: 'Peces', emoji: '🐠' },
+  { id: 'otros', nombre: 'Otros', emoji: '🦔' }
+];
+
+const CATEGORIAS = [
+  { id: 'alimento', nombre: 'Alimento', icono: '🥣', buscar: 'comida balanceado' },
+  { id: 'snacks', nombre: 'Snacks y premios', icono: '🦴', buscar: 'premio golosina' },
+  { id: 'juguetes', nombre: 'Juguetes', icono: '🧸', buscar: 'juego jugar' },
+  { id: 'rascadores', nombre: 'Rascadores', icono: '🐾', buscar: 'rascador' },
+  { id: 'camas', nombre: 'Camas y transportadoras', icono: '🛏️', buscar: 'cucha transportadora' },
+  { id: 'paseo', nombre: 'Paseo', icono: '🦮', buscar: 'pasear' },
+  { id: 'higiene', nombre: 'Higiene', icono: '🧼', buscar: 'limpieza' },
+  { id: 'ropa', nombre: 'Ropa', icono: '👕', buscar: 'abrigo remera' },
+  { id: 'comederos', nombre: 'Comederos y bebederos', icono: '💧', buscar: 'plato' },
+  // [COMPLETAR] Confirmar qué venden de farmacia. Por Instagram se sabe que tienen pipetas Spotmax y artículos posquirúrgicos.
+  { id: 'farmacia', nombre: 'Farmacia y recuperación', icono: '💊', buscar: 'remedio medicamento cirugia' },
+  { id: 'habitat', nombre: 'Jaulas y peceras', icono: '🏠', buscar: 'jaula pecera acuario' }
+];
+
+/* =====================================================================
+   2) PRODUCTOS
+   Campos: id (único, sin espacios), nombre, marca, especie ('perro', 'gato',
+   'aves', 'roedores', 'peces', 'otros', o una lista: ['perro','gato']),
+   categoria (id de CATEGORIAS), presentacion, precio (número sin puntos,
+   por ejemplo 18500), precioAnterior (opcional: muestra la oferta), foto,
+   etiqueta ('Promo del mes', 'Nuevo', 'Más vendido' o ''), destacado.
+   Opcionales: ejemplo (true = producto de muestra), buscar (palabras extra).
+
+   [COMPLETAR] precio: está en null en todos hasta tener la lista de precios.
+   Con precio null la tarjeta dice "Precio a confirmar" y el pedido igual se
+   puede mandar.
+
+   Fotos: las de los productos reales salen de sus historias destacadas de
+   Instagram. Las de los productos EJEMPLO son de Pexels (uso libre):
+   reemplazarlas por fotos propias. foto: '' muestra un recuadro con ícono.
+   ===================================================================== */
+const PRODUCTOS = [
+  // ---------- Alimento ----------
+  { id: 'rc-mini', nombre: 'Alimento seco línea Mini', marca: 'Royal Canin', especie: 'perro', categoria: 'alimento', presentacion: 'Bolsas de 3 kg en adelante', precio: null, precioAnterior: null, foto: '', etiqueta: 'Promo del mes', destacado: true },
+  { id: 'rc-gatos', nombre: 'Alimento seco para gatos', marca: 'Royal Canin', especie: 'gato', categoria: 'alimento', presentacion: 'Bolsas de 1,5 kg en adelante', precio: null, precioAnterior: null, foto: '', etiqueta: 'Promo del mes', destacado: true },
+  { id: 'rc-sobres', nombre: 'Alimento húmedo en sobre', marca: 'Royal Canin', especie: 'perro', categoria: 'alimento', presentacion: 'Puppy Mini, Mini Adult, Medium Adult y Maxi Adult', precio: null, precioAnterior: null, foto: 'fotos/rc-sobres.webp', etiqueta: '', destacado: false },
+  { id: 'eukanuba-lata', nombre: 'Alimento húmedo Adult 1+ con pollo', marca: 'Eukanuba', especie: 'perro', categoria: 'alimento', presentacion: 'Lata', precio: null, precioAnterior: null, foto: 'fotos/eukanuba-lata.webp', etiqueta: '', destacado: false },
+  { id: 'optimum-sobres', nombre: 'Alimento húmedo en sobre', marca: 'Optimum', especie: 'perro', categoria: 'alimento', presentacion: 'Cachorros, adultos y razas pequeñas, sabor pollo', precio: null, precioAnterior: null, foto: 'fotos/optimum-sobres.webp', etiqueta: '', destacado: false },
+  { id: 'vitalcan-premium', nombre: 'Premium en sobre', marca: 'Vitalcan', especie: 'perro', categoria: 'alimento', presentacion: 'Cachorro carne en salsa o adulto pollo en salsa', precio: null, precioAnterior: null, foto: 'fotos/vitalcan-premium.webp', etiqueta: '', destacado: false },
+  { id: 'pedigree-sobres', nombre: 'Alimento húmedo en sobre', marca: 'Pedigree', especie: 'perro', categoria: 'alimento', presentacion: 'Adulto pollo en salsa o senior carne en salsa', precio: null, precioAnterior: null, foto: 'fotos/pedigree-sobres.webp', etiqueta: '', destacado: false },
+  { id: 'balanced-lata', nombre: 'Balanced soufflé de carne', marca: 'Vitalcan', especie: 'perro', categoria: 'alimento', presentacion: 'Lata 340 g', precio: null, precioAnterior: null, foto: 'fotos/balanced-lata.webp', etiqueta: '', destacado: false },
+  { id: 'balanced-natural', nombre: 'Balanced Natural Recipe grain free', marca: 'Vitalcan', especie: 'perro', categoria: 'alimento', presentacion: 'Puppy y Adult Dog', precio: null, precioAnterior: null, foto: 'fotos/balanced-natural.webp', etiqueta: '', destacado: false },
+
+  // ---------- Snacks y premios ----------
+  { id: 'monami-cat-bites', nombre: 'Cat Bites', marca: 'Mon Ami', especie: 'gato', categoria: 'snacks', presentacion: '50 g · pollo o carne', precio: null, precioAnterior: null, foto: 'fotos/monami-cat-bites.webp', etiqueta: 'Nuevo', destacado: true },
+  { id: 'golocan-higado', nombre: 'Hígado crunchy vacuno', marca: 'Golocan', especie: 'gato', categoria: 'snacks', presentacion: 'Snack natural · 40 g', precio: null, precioAnterior: null, foto: 'fotos/golocan-higado.webp', etiqueta: '', destacado: false },
+  { id: 'monami-pollo', nombre: 'Dog Treat sabor pollo grillé', marca: 'Mon Ami', especie: 'perro', categoria: 'snacks', presentacion: '75 g', precio: null, precioAnterior: null, foto: 'fotos/monami-pollo.webp', etiqueta: '', destacado: false },
+  { id: 'monami-churrasquito', nombre: 'Dog Treat sabor churrasquito', marca: 'Mon Ami', especie: 'perro', categoria: 'snacks', presentacion: '75 g', precio: null, precioAnterior: null, foto: 'fotos/monami-churrasquito.webp', etiqueta: '', destacado: false },
+  { id: 'monami-dental', nombre: 'Dental Milky', marca: 'Mon Ami', especie: 'perro', categoria: 'snacks', presentacion: 'Palitos dentales · 75 g · sabor leche', precio: null, precioAnterior: null, foto: 'fotos/monami-dental.webp', etiqueta: '', destacado: false },
+  { id: 'golocan-traquea', nombre: 'Tráquea vacuna', marca: 'Golocan', especie: 'perro', categoria: 'snacks', presentacion: 'Snack natural · 4 unidades', precio: null, precioAnterior: null, foto: 'fotos/golocan-traquea.webp', etiqueta: '', destacado: false },
+  { id: 'eukanuba-treats', nombre: 'Treats Reward Bones', marca: 'Eukanuba', especie: 'perro', categoria: 'snacks', presentacion: 'Bolsa 100 g', precio: null, precioAnterior: null, foto: 'fotos/eukanuba-treats.webp', etiqueta: '', destacado: false },
+  { id: 'pedigree-tasty-bites', nombre: 'Tasty Bites', marca: 'Pedigree', especie: 'perro', categoria: 'snacks', presentacion: '80 g · carne, pollo o salmón', precio: null, precioAnterior: null, foto: 'fotos/pedigree-tasty-bites.webp', etiqueta: '', destacado: false },
+
+  // ---------- Juguetes ----------
+  { id: 'varitas-gato', nombre: 'Varitas con plumas y pompones', marca: '', especie: 'gato', categoria: 'juguetes', presentacion: 'Un montón de modelos', precio: null, precioAnterior: null, foto: 'fotos/varitas-gato.webp', etiqueta: 'Nuevo', destacado: true },
+  { id: 'mordedores', nombre: 'Mordedores de goma', marca: '', especie: 'perro', categoria: 'juguetes', presentacion: 'Varios modelos y colores', precio: null, precioAnterior: null, foto: 'fotos/mordedores.webp', etiqueta: 'Nuevo', destacado: false },
+  { id: 'juguete-soga', nombre: 'Juguetes de soga', marca: '', especie: 'perro', categoria: 'juguetes', presentacion: 'Para morder y tironear · varios modelos', precio: null, precioAnterior: null, foto: 'fotos/juguete-soga.webp', etiqueta: '', destacado: false },
+  { id: 'pelota-soga', nombre: 'Pelota de soga trenzada', marca: '', especie: 'perro', categoria: 'juguetes', presentacion: 'Cuerda reforzada', precio: null, precioAnterior: null, foto: 'fotos/pelota-soga.webp', etiqueta: '', destacado: false },
+  { id: 'pelota-dental', nombre: 'Pelota dental', marca: '', especie: 'perro', categoria: 'juguetes', presentacion: 'Masajea las encías mientras juega', precio: null, precioAnterior: null, foto: 'fotos/pelota-dental.webp', etiqueta: '', destacado: false },
+  { id: 'peluches', nombre: 'Peluches para perros', marca: '', especie: 'perro', categoria: 'juguetes', presentacion: 'Pez, jirafa, zorro y más modelos', precio: null, precioAnterior: null, foto: 'fotos/peluches.webp', etiqueta: '', destacado: false },
+  { id: 'lanza-pelotas', nombre: 'Lanza pelotas', marca: '', especie: 'perro', categoria: 'juguetes', presentacion: 'Llega súper lejos', precio: null, precioAnterior: null, foto: 'fotos/lanza-pelotas.webp', etiqueta: '', destacado: false },
+  { id: 'lanzador-automatico', nombre: 'Lanzador automático de pelotas', marca: '', especie: 'perro', categoria: 'juguetes', presentacion: 'Incluye 2 pelotas de tenis', precio: null, precioAnterior: null, foto: 'fotos/lanzador-automatico.webp', etiqueta: '', destacado: false },
+
+  // ---------- Rascadores ----------
+  { id: 'rascador-doble-uso', nombre: 'Rascador doble uso 2 en 1', marca: '', especie: 'gato', categoria: 'rascadores', presentacion: 'Cama + cucha, se usan juntos o separados', precio: null, precioAnterior: null, foto: 'fotos/rascador-doble-uso.webp', etiqueta: '', destacado: true },
+  { id: 'rascador-palmera', nombre: 'Rascador palmera', marca: '', especie: 'gato', categoria: 'rascadores', presentacion: 'Con pompón colgante', precio: null, precioAnterior: null, foto: 'fotos/rascador-palmera.webp', etiqueta: '', destacado: false },
+  { id: 'rascador-circuito', nombre: 'Rascador con circuito de pelotitas', marca: '', especie: 'gato', categoria: 'rascadores', presentacion: 'Rascador + juego, todo en uno', precio: null, precioAnterior: null, foto: 'fotos/rascador-circuito.webp', etiqueta: '', destacado: false },
+  { id: 'rascador-carton', nombre: 'Rascador de cartón', marca: '', especie: 'gato', categoria: 'rascadores', presentacion: 'Con pelotita adentro', precio: null, precioAnterior: null, foto: 'fotos/rascador-carton.webp', etiqueta: '', destacado: false },
+
+  // ---------- Camas y transportadoras ----------
+  { id: 'cama-cueva', nombre: 'Cama cueva', marca: '', especie: 'gato', categoria: 'camas', presentacion: 'Plush y corderito · desmontable y lavable', precio: null, precioAnterior: null, foto: 'fotos/cama-cueva.webp', etiqueta: '', destacado: false },
+  { id: 'camas-moises', nombre: 'Camas moisés', marca: 'Coco', especie: 'perro', categoria: 'camas', presentacion: 'Para perros chicos, medianos y grandes', precio: null, precioAnterior: null, foto: 'fotos/camas-moises.webp', etiqueta: '', destacado: false },
+  { id: 'colchoneta', nombre: 'Colchoneta', marca: 'Coco', especie: 'perro', categoria: 'camas', presentacion: 'Fácil de limpiar · ideal para perros grandes', precio: null, precioAnterior: null, foto: 'fotos/colchoneta.webp', etiqueta: '', destacado: false },
+  { id: 'bolso-extensible', nombre: 'Bolso transportador extensible', marca: '', especie: 'gato', categoria: 'camas', presentacion: 'Se extiende para que viaje más cómodo', precio: null, precioAnterior: null, foto: 'fotos/bolso-extensible.webp', etiqueta: '', destacado: false },
+  { id: 'bolso-ventilado', nombre: 'Bolso transportador compacto', marca: '', especie: 'gato', categoria: 'camas', presentacion: 'Con aberturas de ventilación', precio: null, precioAnterior: null, foto: 'fotos/bolso-ventilado.webp', etiqueta: '', destacado: false },
+
+  // ---------- Paseo ----------
+  { id: 'collares-hund', nombre: 'Collares', marca: 'Hund', especie: 'perro', categoria: 'paseo', presentacion: 'Lisos, coloridos y estampados', precio: null, precioAnterior: null, foto: 'fotos/collares-hund.webp', etiqueta: 'Nuevo', destacado: true },
+  { id: 'pretales', nombre: 'Pretales', marca: '', especie: 'perro', categoria: 'paseo', presentacion: 'Talles chicos, medianos y grandes · varios colores', precio: null, precioAnterior: null, foto: 'fotos/pretales.webp', etiqueta: '', destacado: true, buscar: 'arnes' },
+  { id: 'pretal-acolchado', nombre: 'Pretal acolchado', marca: '', especie: 'perro', categoria: 'paseo', presentacion: 'Con manija para sostenerlo', precio: null, precioAnterior: null, foto: 'fotos/pretal-acolchado.webp', etiqueta: '', destacado: false, buscar: 'arnes' },
+  { id: 'correa-airtag', nombre: 'Correa con lugar para AirTag', marca: '', especie: 'perro', categoria: 'paseo', presentacion: 'Para pasear más tranquilo', precio: null, precioAnterior: null, foto: 'fotos/correa-airtag.webp', etiqueta: '', destacado: false },
+  { id: 'funda-airtag', nombre: 'Funda porta AirTag para collar', marca: '', especie: ['perro', 'gato'], categoria: 'paseo', presentacion: 'Rosa, celeste o violeta', precio: null, precioAnterior: null, foto: 'fotos/funda-airtag.webp', etiqueta: '', destacado: false },
+  { id: 'bozal', nombre: 'Bozal canasto', marca: '', especie: 'perro', categoria: 'paseo', presentacion: 'Resistente y firme', precio: null, precioAnterior: null, foto: 'fotos/bozal.webp', etiqueta: '', destacado: false },
+
+  // ---------- Higiene ----------
+  { id: 'pano-pet', nombre: 'Paños sanitarios', marca: 'Paño Pet', especie: 'perro', categoria: 'higiene', presentacion: 'Mini 45 × 55 cm o Max 60 × 90 cm', precio: null, precioAnterior: null, foto: 'fotos/pano-pet.webp', etiqueta: '', destacado: true, buscar: 'pis pañal alfombra' },
+  { id: 'toallitas', nombre: 'Toallitas húmedas', marca: 'Paño Pet', especie: ['perro', 'gato'], categoria: 'higiene', presentacion: 'Con aloe vera · pH neutro', precio: null, precioAnterior: null, foto: 'fotos/toallitas.webp', etiqueta: '', destacado: false },
+  { id: 'litera-bandeja', nombre: 'Litera', marca: '', especie: 'gato', categoria: 'higiene', presentacion: 'Bandeja sanitaria con pala', precio: null, precioAnterior: null, foto: 'fotos/litera-bandeja.webp', etiqueta: '', destacado: false, buscar: 'piedras arena bandeja sanitaria' },
+  { id: 'litera-bordes-altos', nombre: 'Litera con bordes altos', marca: '', especie: 'gato', categoria: 'higiene', presentacion: 'Evita que salgan las piedras', precio: null, precioAnterior: null, foto: 'fotos/litera-bordes-altos.webp', etiqueta: '', destacado: false, buscar: 'piedras arena bandeja sanitaria' },
+  { id: 'bano-cerrado', nombre: 'Baño sanitario cerrado', marca: '', especie: 'gato', categoria: 'higiene', presentacion: 'Con puerta · reduce olores', precio: null, precioAnterior: null, foto: 'fotos/bano-cerrado.webp', etiqueta: '', destacado: false, buscar: 'piedras arena litera' },
+  { id: 'alfombra-arena', nombre: 'Alfombra atrapa arena', marca: '', especie: 'gato', categoria: 'higiene', presentacion: 'Se vacía en segundos', precio: null, precioAnterior: null, foto: 'fotos/alfombra-arena.webp', etiqueta: '', destacado: false, buscar: 'piedras litera' },
+  { id: 'recogedor', nombre: 'Pala recogedora', marca: '', especie: 'perro', categoria: 'higiene', presentacion: 'Para juntar en el patio sin agacharte', precio: null, precioAnterior: null, foto: 'fotos/recogedor.webp', etiqueta: '', destacado: false, buscar: 'caca patio' },
+  { id: 'osspret', nombre: 'Shampoos', marca: 'Osspret', especie: 'perro', categoria: 'higiene', presentacion: 'Con clorhexidina, perfumados, para pelaje negro y más', precio: null, precioAnterior: null, foto: 'fotos/osspret.webp', etiqueta: '', destacado: false, buscar: 'baño' },
+  { id: 'dermosedan', nombre: 'Shampoos dermatológicos', marca: 'DermoSedan', especie: ['perro', 'gato'], categoria: 'higiene', presentacion: 'Uso frecuente, piel sensible y cuidados específicos', precio: null, precioAnterior: null, foto: 'fotos/dermosedan.webp', etiqueta: '', destacado: false, buscar: 'baño piel' },
+  { id: 'limpieza-seco', nombre: 'Espumas de limpieza en seco', marca: '', especie: ['perro', 'gato'], categoria: 'higiene', presentacion: 'Fauna Quick Foam, Silatox dip o Espuma Seca Pauldip', precio: null, precioAnterior: null, foto: 'fotos/limpieza-seco.webp', etiqueta: '', destacado: false, buscar: 'shampoo seco baño' },
+  { id: 'bio-clin', nombre: 'Bio Clin enjuague bucal', marca: 'Holliday', especie: ['perro', 'gato'], categoria: 'higiene', presentacion: '250 ml · para el mal aliento', precio: null, precioAnterior: null, foto: 'fotos/bio-clin.webp', etiqueta: '', destacado: false },
+  { id: 'cepillos', nombre: 'Cepillos de goma', marca: '', especie: 'perro', categoria: 'higiene', presentacion: 'Dos modelos · suaves y masajeadores', precio: null, precioAnterior: null, foto: 'fotos/cepillos.webp', etiqueta: '', destacado: false },
+  { id: 'guante', nombre: 'Guante de cepillado', marca: '', especie: ['perro', 'gato'], categoria: 'higiene', presentacion: 'Saca el pelo suelto mientras lo acariciás', precio: null, precioAnterior: null, foto: 'fotos/guante.webp', etiqueta: '', destacado: false },
+  { id: 'a-otra-parte', nombre: 'Modificador de conducta', marca: 'A Otra Parte', especie: ['perro', 'gato'], categoria: 'higiene', presentacion: 'Concentrado, listo para usar o granulado', precio: null, precioAnterior: null, foto: 'fotos/a-otra-parte.webp', etiqueta: '', destacado: false, buscar: 'repelente' },
+  { id: 'dog-out', nombre: 'Repelente para perros y gatos', marca: 'Dog Out', especie: ['perro', 'gato'], categoria: 'higiene', presentacion: 'Aerosol o concentrado', precio: null, precioAnterior: null, foto: 'fotos/dog-out.webp', etiqueta: '', destacado: false },
+
+  // ---------- Ropa ----------
+  { id: 'remera-playa', nombre: 'Remera con filtro UV', marca: '', especie: 'perro', categoria: 'ropa', presentacion: 'Para los días de playa', precio: null, precioAnterior: null, foto: 'fotos/remera-playa.webp', etiqueta: '', destacado: false },
+  { id: 'camiseta-seleccion', nombre: 'Camiseta de la Selección', marca: '', especie: 'perro', categoria: 'ropa', presentacion: 'Para alentar juntos', precio: null, precioAnterior: null, foto: 'fotos/camiseta-seleccion.webp', etiqueta: '', destacado: false },
+  { id: 'medias', nombre: 'Medias antideslizantes', marca: '', especie: 'perro', categoria: 'ropa', presentacion: 'Suaves y con agarre', precio: null, precioAnterior: null, foto: 'fotos/medias.webp', etiqueta: '', destacado: false },
+  { id: 'crocs', nombre: 'Crocs para perros', marca: '', especie: 'perro', categoria: 'ropa', presentacion: 'Protegen las patitas del frío y del calor', precio: null, precioAnterior: null, foto: 'fotos/crocs.webp', etiqueta: '', destacado: false },
+
+  // ---------- Comederos y bebederos ----------
+  { id: 'fuente-agua', nombre: 'Fuente de agua', marca: '', especie: 'gato', categoria: 'comederos', presentacion: 'Silenciosa · mantiene el agua en movimiento', precio: null, precioAnterior: null, foto: 'fotos/fuente-agua.webp', etiqueta: '', destacado: true },
+  { id: 'comedero-acero', nombre: 'Comedero de acero', marca: '', especie: ['perro', 'gato'], categoria: 'comederos', presentacion: 'Acero inoxidable', precio: null, precioAnterior: null, foto: '', etiqueta: '', destacado: false }, // [COMPLETAR] foto y tamaños
+
+  // ---------- Farmacia y recuperación ----------
+  { id: 'spotmax', nombre: 'Pipeta antiparasitaria', marca: 'Spotmax', especie: 'perro', categoria: 'farmacia', presentacion: 'De 10 a 20, de 20 a 40 o de 40 a 60 kg', precio: null, precioAnterior: null, foto: 'fotos/spotmax.webp', etiqueta: '', destacado: false, buscar: 'pulgas garrapatas' },
+  { id: 'malla-posquirurgica', nombre: 'Malla posquirúrgica Ag+', marca: 'Elastikan', especie: ['perro', 'gato'], categoria: 'farmacia', presentacion: 'Evita que se lama o se toque la zona', precio: null, precioAnterior: null, foto: 'fotos/malla-posquirurgica.webp', etiqueta: '', destacado: false },
+  { id: 'body-posquirurgico', nombre: 'Body posquirúrgico', marca: 'Rascals', especie: 'perro', categoria: 'farmacia', presentacion: 'Más comodidad durante la recuperación', precio: null, precioAnterior: null, foto: 'fotos/body-posquirurgico.webp', etiqueta: '', destacado: false },
+  { id: 'cuello-inflable', nombre: 'Cuello inflable', marca: '', especie: ['perro', 'gato'], categoria: 'farmacia', presentacion: 'Liviano, no le tapa la vista', precio: null, precioAnterior: null, foto: '', etiqueta: '', destacado: false, buscar: 'isabelino' }, // [COMPLETAR] foto
+
+  // ---------- EJEMPLOS (aves, roedores y peces): reemplazar por productos reales ----------
+  { id: 'ej-alpiste', nombre: 'Alpiste y mezcla de semillas', marca: '', especie: 'aves', categoria: 'alimento', presentacion: 'Por kilo', precio: null, precioAnterior: null, foto: 'fotos/ej-alpiste.webp', etiqueta: '', destacado: false, ejemplo: true },
+  { id: 'ej-periquito', nombre: 'Mezcla para periquitos', marca: '', especie: 'aves', categoria: 'alimento', presentacion: 'Bolsa', precio: null, precioAnterior: null, foto: 'fotos/ej-periquito.webp', etiqueta: '', destacado: false, ejemplo: true },
+  { id: 'ej-jaula', nombre: 'Jaula para canarios y periquitos', marca: '', especie: 'aves', categoria: 'habitat', presentacion: 'Con comederos', precio: null, precioAnterior: null, foto: 'fotos/ej-jaula.webp', etiqueta: '', destacado: false, ejemplo: true },
+  { id: 'ej-viruta', nombre: 'Viruta para jaulas', marca: '', especie: 'roedores', categoria: 'higiene', presentacion: 'Bolsa', precio: null, precioAnterior: null, foto: 'fotos/ej-viruta.webp', etiqueta: '', destacado: false, ejemplo: true },
+  { id: 'ej-conejo', nombre: 'Alimento para conejos', marca: '', especie: 'roedores', categoria: 'alimento', presentacion: 'Bolsa', precio: null, precioAnterior: null, foto: 'fotos/ej-conejo.webp', etiqueta: '', destacado: false, ejemplo: true },
+  { id: 'ej-hamster', nombre: 'Mezcla de semillas para hámsters', marca: '', especie: 'roedores', categoria: 'alimento', presentacion: 'Bolsa', precio: null, precioAnterior: null, foto: 'fotos/ej-hamster.webp', etiqueta: '', destacado: false, ejemplo: true },
+  { id: 'ej-escamas', nombre: 'Alimento en escamas', marca: '', especie: 'peces', categoria: 'alimento', presentacion: 'Frasco', precio: null, precioAnterior: null, foto: 'fotos/ej-peces-escamas.webp', etiqueta: '', destacado: false, ejemplo: true },
+  { id: 'ej-pecera', nombre: 'Pecera de vidrio', marca: '', especie: 'peces', categoria: 'habitat', presentacion: 'Varios tamaños', precio: null, precioAnterior: null, foto: 'fotos/ej-pecera.webp', etiqueta: '', destacado: false, ejemplo: true }
+];
+</script>
+
+<style>
+/* ===================== Identidad (sacada del logo) ===================== */
+:root {
+  --violeta: #78489A;
+  --violeta-osc: #5B3279;
+  --violeta-prof: #3B1D52;
+  --violeta-claro: #F4EEF9;
+  --violeta-medio: #E4D6F0;
+  --amarillo: #FFE11A;
+  --amarillo-suave: #FFF4A8;
+  --negro: #17121C;
+  --texto: #231C2A;
+  --texto-suave: #5C5466;
+  --blanco: #FFFFFF;
+  --verde: #2FD06F;
+  --rojo: #FF7B7B;
+  --radio: 18px;
+  --radio-chico: 12px;
+  --sombra: 0 6px 20px rgba(59, 29, 82, .12);
+  --sombra-alta: 0 14px 40px rgba(59, 29, 82, .22);
+  --fuente-titulo: 'Luckiest Guy', 'Arial Black', system-ui, sans-serif;
+  --fuente: 'Nunito', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  --alto-cabecera: 124px;
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; scroll-behavior: smooth; }
+html.bloqueado { overflow: hidden; }
+body {
+  margin: 0;
+  background: var(--blanco);
+  color: var(--texto);
+  font: 400 16px/1.5 var(--fuente);
+  -webkit-font-smoothing: antialiased;
+  padding-bottom: 96px; /* espacio para los botones flotantes */
+}
+img { max-width: 100%; display: block; }
+a { color: var(--violeta-osc); }
+button, input, select, textarea { font: inherit; color: inherit; }
+button { cursor: pointer; }
+h1, h2, h3, p, ul, ol, figure { margin: 0; }
+ul, ol { padding: 0; list-style: none; }
+[hidden] { display: none !important; }
+
+.sr-only {
+  position: absolute !important; width: 1px; height: 1px; padding: 0; margin: -1px;
+  overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0;
+}
+.saltar {
+  position: absolute; left: 12px; top: -60px; z-index: 100;
+  background: var(--amarillo); color: var(--negro); font-weight: 800;
+  padding: 12px 16px; border-radius: 12px; border: 2px solid var(--negro);
+}
+.saltar:focus { top: 12px; }
+
+:focus-visible { outline: 3px solid var(--negro); outline-offset: 3px; }
+.sobre-oscuro :focus-visible { outline-color: var(--amarillo); }
+
+.contenedor { width: 100%; max-width: 1160px; margin: 0 auto; padding: 0 16px; }
+section[id], [id].ancla { scroll-margin-top: calc(var(--alto-cabecera) + 8px); }
+
+/* ===================== Títulos estilo historieta ===================== */
+.titulo {
+  font-family: var(--fuente-titulo);
+  font-weight: 400;
+  line-height: 1.08;
+  letter-spacing: .01em;
+  color: var(--negro);
+  font-size: clamp(1.75rem, 7vw, 2.6rem);
+  text-transform: uppercase;
+}
+.titulo--marca {
+  color: var(--amarillo);
+  text-shadow:
+    2px 0 0 var(--negro), -2px 0 0 var(--negro), 0 2px 0 var(--negro), 0 -2px 0 var(--negro),
+    2px 2px 0 var(--negro), -2px 2px 0 var(--negro), 2px -2px 0 var(--negro), -2px -2px 0 var(--negro),
+    4px 5px 0 var(--negro);
+}
+.subrayado { position: relative; display: inline-block; z-index: 0; }
+.subrayado::after {
+  content: ''; position: absolute; left: -4px; right: -4px; bottom: .08em; height: .38em;
+  background: var(--amarillo); border-radius: 6px; z-index: -1; transform: rotate(-1deg);
+}
+.seccion { padding: 48px 0; }
+.seccion--clara { background: var(--violeta-claro); }
+.seccion__cabeza { margin-bottom: 20px; }
+.seccion__bajada { margin-top: 8px; color: var(--texto-suave); font-size: 1.05rem; max-width: 62ch; }
+.huellita { font-size: .8em; }
+
+/* ===================== Botones ===================== */
+.btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+  min-height: 48px; padding: 12px 22px;
+  border-radius: 999px; border: 2px solid var(--negro);
+  font: 800 1rem/1.15 var(--fuente); text-decoration: none; text-align: center;
+  transition: transform .12s ease, box-shadow .12s ease, background-color .12s ease;
+  -webkit-tap-highlight-color: transparent;
+}
+.btn svg { width: 20px; height: 20px; flex: none; }
+.btn--amarillo { background: var(--amarillo); color: var(--negro); box-shadow: 3px 3px 0 var(--negro); }
+.btn--amarillo:hover { background: #FFE83F; }
+.btn--amarillo:active, .btn--violeta:active { transform: translate(2px, 2px); box-shadow: 1px 1px 0 var(--negro); }
+.btn--violeta { background: var(--violeta-osc); color: var(--blanco); border-color: var(--amarillo); box-shadow: 3px 3px 0 var(--negro); }
+.btn--violeta:hover { background: var(--violeta-prof); }
+.btn--borde { background: var(--blanco); color: var(--violeta-osc); border-color: var(--violeta); }
+.btn--borde:hover { background: var(--violeta-claro); }
+.btn--grande { min-height: 56px; font-size: 1.08rem; padding: 14px 24px; }
+.btn--chico { min-height: 44px; padding: 8px 14px; font-size: .92rem; box-shadow: 2px 2px 0 var(--negro); }
+.btn--ancho { width: 100%; }
+.btn[disabled] { opacity: .55; cursor: not-allowed; }
+
+/* ===================== Cabecera fija ===================== */
+.cabecera {
+  position: sticky; top: 0; z-index: 40;
+  background: var(--violeta);
+  border-bottom: 3px solid var(--negro);
+  box-shadow: 0 4px 14px rgba(0, 0, 0, .12);
+}
+.cabecera__fila {
+  display: grid;
+  grid-template-columns: auto 1fr auto auto;
+  grid-template-areas: "logo . turno carrito" "buscador buscador buscador buscador";
+  align-items: center;
+  gap: 8px 10px;
+  padding-top: 8px; padding-bottom: 10px;
+}
+.logo { grid-area: logo; display: flex; align-items: center; gap: 8px; text-decoration: none; min-height: 48px; border-radius: 999px; }
+.logo img { width: 52px; height: 52px; border-radius: 50%; border: 2px solid var(--negro); background: var(--violeta); }
+.logo-texto {
+  font-family: var(--fuente-titulo); font-size: 1.55rem; line-height: 1; color: var(--amarillo); letter-spacing: .02em;
+  text-shadow: 2px 0 0 var(--negro), -2px 0 0 var(--negro), 0 2px 0 var(--negro), 0 -2px 0 var(--negro), 2px 3px 0 var(--negro);
+  white-space: nowrap;
+}
+.cabecera .btn--chico { grid-area: turno; }
+.buscador { grid-area: buscador; position: relative; }
+.buscador input {
+  width: 100%; height: 46px; padding: 0 14px 0 44px;
+  border-radius: 999px; border: 2px solid var(--negro); background: var(--blanco);
+  font-size: 16px; color: var(--texto);
+}
+.buscador input::placeholder { color: #7A7186; }
+.buscador svg { position: absolute; left: 14px; top: 50%; width: 20px; height: 20px; transform: translateY(-50%); color: var(--violeta); pointer-events: none; }
+.btn-carrito {
+  grid-area: carrito; position: relative;
+  width: 48px; height: 48px; border-radius: 50%;
+  display: grid; place-items: center;
+  background: var(--blanco); color: var(--violeta-osc); border: 2px solid var(--negro);
+}
+.btn-carrito svg { width: 24px; height: 24px; }
+.burbuja {
+  position: absolute; top: -6px; right: -6px; min-width: 24px; height: 24px; padding: 0 6px;
+  border-radius: 999px; background: var(--amarillo); color: var(--negro);
+  border: 2px solid var(--negro); font: 900 .8rem/20px var(--fuente); text-align: center;
+}
+.burbuja.salta { animation: salto .35s ease; }
+@keyframes salto { 40% { transform: scale(1.35); } }
+
+@media (min-width: 760px) {
+  .cabecera__fila { grid-template-columns: auto 1fr auto auto; grid-template-areas: "logo buscador turno carrito"; gap: 14px; padding-top: 10px; }
+  .buscador { max-width: 520px; width: 100%; justify-self: center; }
+}
+
+/* ===================== Portada ===================== */
+.portada {
+  position: relative; overflow: hidden;
+  background-color: var(--violeta);
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120' viewBox='0 0 120 120'%3E%3Cg fill='%23ffffff' fill-opacity='.07'%3E%3Cellipse cx='30' cy='36' rx='9' ry='7'/%3E%3Ccircle cx='19' cy='26' r='4'/%3E%3Ccircle cx='27' cy='21' r='4'/%3E%3Ccircle cx='35' cy='21' r='4'/%3E%3Ccircle cx='42' cy='27' r='4'/%3E%3Cellipse cx='90' cy='96' rx='9' ry='7'/%3E%3Ccircle cx='79' cy='86' r='4'/%3E%3Ccircle cx='87' cy='81' r='4'/%3E%3Ccircle cx='95' cy='81' r='4'/%3E%3Ccircle cx='102' cy='87' r='4'/%3E%3C/g%3E%3C/svg%3E");
+  color: var(--blanco);
+  padding: 28px 0 36px;
+}
+.portada__grid { display: grid; gap: 24px; align-items: center; }
+.estado {
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 6px 14px 6px 10px; border-radius: 999px;
+  background: rgba(23, 18, 28, .35); border: 1.5px solid rgba(255, 255, 255, .35);
+  font-weight: 800; font-size: .95rem; margin-bottom: 16px;
+}
+.estado__punto { width: 12px; height: 12px; border-radius: 50%; background: var(--rojo); box-shadow: 0 0 0 3px rgba(255, 123, 123, .3); flex: none; }
+.estado.abierto .estado__punto { background: var(--verde); box-shadow: 0 0 0 3px rgba(47, 208, 111, .3); }
+.portada h1 { font-size: clamp(2.3rem, 10.5vw, 3.9rem); }
+.portada__sub { margin-top: 14px; font-size: 1.15rem; font-weight: 600; max-width: 34ch; }
+.portada__botones { display: grid; gap: 14px; margin-top: 24px; }
+.portada__foto { position: relative; }
+.portada__foto img {
+  width: 100%; height: auto; aspect-ratio: 900 / 538; object-fit: cover;
+  border-radius: 24px; border: 3px solid var(--negro); box-shadow: 6px 6px 0 var(--negro);
+}
+.portada__globo {
+  position: absolute; left: 12px; bottom: -14px;
+  background: var(--amarillo); color: var(--negro);
+  border: 2px solid var(--negro); border-radius: 16px; box-shadow: 3px 3px 0 var(--negro);
+  padding: 8px 12px; font-weight: 900; font-size: .95rem; transform: rotate(-2deg);
+}
+@media (min-width: 560px) { .portada__botones { grid-template-columns: max-content max-content; } }
+@media (min-width: 900px) {
+  .portada { padding: 48px 0 64px; }
+  .portada__grid { grid-template-columns: 1.1fr .9fr; gap: 48px; }
+}
+
+/* ===================== Franja de 3 datos ===================== */
+.franja { background: var(--amarillo); border-bottom: 3px solid var(--negro); }
+.franja ul { display: grid; gap: 10px; padding: 16px 0; }
+.franja li { display: flex; align-items: center; gap: 12px; font-weight: 800; color: var(--negro); }
+.franja__icono {
+  width: 44px; height: 44px; flex: none; border-radius: 50%;
+  display: grid; place-items: center; background: var(--blanco); border: 2px solid var(--negro); font-size: 1.3rem;
+}
+@media (min-width: 700px) { .franja ul { grid-template-columns: repeat(3, 1fr); padding: 18px 0; } }
+
+/* ===================== ¿Para quién comprás? ===================== */
+.especies { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; }
+.especie {
+  display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px;
+  min-height: 104px; padding: 12px 6px;
+  background: var(--blanco); border: 2px solid var(--negro); border-radius: var(--radio);
+  box-shadow: 3px 3px 0 var(--negro);
+  font-weight: 900; font-size: 1rem; color: var(--texto);
+  transition: transform .12s ease, box-shadow .12s ease, background-color .12s ease;
+}
+.especie__emoji { font-size: 2.3rem; line-height: 1; }
+.especie:hover { background: var(--amarillo-suave); }
+.especie:active { transform: translate(2px, 2px); box-shadow: 1px 1px 0 var(--negro); }
+.especie[aria-pressed="true"] { background: var(--amarillo); }
+@media (min-width: 760px) { .especies { grid-template-columns: repeat(6, minmax(0, 1fr)); } }
+
+/* ===================== Promo del mes ===================== */
+.promo__tarjeta {
+  position: relative;
+  background: var(--violeta); color: var(--blanco);
+  border: 3px solid var(--negro); border-radius: 24px; box-shadow: 6px 6px 0 var(--negro);
+  padding: 30px 20px 22px;
+  display: grid; gap: 14px;
+}
+.promo__cinta {
+  position: absolute; top: -16px; left: 16px;
+  background: var(--amarillo); color: var(--negro);
+  font-family: var(--fuente-titulo); font-size: 1.1rem; letter-spacing: .03em; text-transform: uppercase;
+  padding: 6px 14px 4px; border: 2px solid var(--negro); border-radius: 10px; transform: rotate(-2deg);
+}
+.promo__cabeza { display: flex; gap: 14px; align-items: center; }
+.promo__icono {
+  width: 72px; height: 72px; flex: none; border-radius: 50%;
+  display: grid; place-items: center; font-size: 2.4rem;
+  background: var(--amarillo); border: 3px solid var(--negro);
+}
+.promo h2 { font-size: clamp(1.6rem, 6.5vw, 2.3rem); }
+.promo__texto { font-size: 1.08rem; font-weight: 600; }
+.promo__lista { display: grid; gap: 6px; }
+.promo__lista li { display: flex; gap: 8px; align-items: flex-start; font-weight: 700; }
+.promo__lista li::before { content: '✓'; color: var(--amarillo); font-weight: 900; }
+.promo__letra { font-size: .88rem; opacity: .9; }
+.promo__botones { display: grid; gap: 12px; }
+@media (min-width: 700px) {
+  .promo__tarjeta { grid-template-columns: 1fr auto; align-items: end; padding: 36px 32px 28px; }
+  .promo__botones { grid-column: 2; grid-row: 1 / span 4; align-self: center; }
+}
+
+/* ===================== Catálogo ===================== */
+.repetir {
+  display: flex; align-items: center; gap: 12px; flex-wrap: wrap;
+  background: var(--amarillo-suave); border: 2px solid var(--negro); border-radius: var(--radio);
+  padding: 12px 14px; margin-bottom: 18px;
+}
+.repetir p { flex: 1 1 180px; font-weight: 700; }
+.filtros__label { font-weight: 900; font-size: .85rem; letter-spacing: .06em; text-transform: uppercase; color: var(--violeta-osc); margin: 4px 0 6px; }
+.chips {
+  display: flex; gap: 8px; overflow-x: auto; overscroll-behavior-x: contain;
+  margin: 0 -16px; padding: 4px 16px 12px;
+  scrollbar-width: none; -webkit-overflow-scrolling: touch;
+}
+.chips::-webkit-scrollbar { display: none; }
+.chip {
+  flex: none; min-height: 44px; padding: 8px 16px;
+  border-radius: 999px; border: 2px solid var(--violeta-medio); background: var(--blanco);
+  font-weight: 800; font-size: .95rem; color: var(--texto); white-space: nowrap;
+}
+.chip:hover { border-color: var(--violeta); }
+.chip[aria-pressed="true"] { background: var(--violeta); border-color: var(--negro); color: var(--blanco); }
+.chip__n { font-weight: 700; opacity: .75; margin-left: 2px; }
+@media (min-width: 900px) { .chips { flex-wrap: wrap; overflow: visible; margin: 0; padding: 4px 0 12px; } }
+
+.tienda__barra { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin: 6px 0 14px; min-height: 44px; }
+.tienda__conteo { color: var(--texto-suave); font-weight: 700; font-size: .95rem; }
+.link-boton {
+  background: none; border: 0; padding: 10px 4px; min-height: 44px;
+  color: var(--violeta-osc); font-weight: 800; text-decoration: underline; text-underline-offset: 3px; white-space: nowrap;
+}
+
+.grilla { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+@media (min-width: 640px) { .grilla { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; } }
+@media (min-width: 1000px) { .grilla { grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 20px; } }
+
+.card {
+  display: flex; flex-direction: column; min-width: 0;
+  background: var(--blanco); border-radius: var(--radio); overflow: hidden;
+  border: 1.5px solid var(--violeta-medio); box-shadow: var(--sombra);
+}
+.card__foto { position: relative; aspect-ratio: 1 / 1; background: var(--violeta-claro); }
+.card__foto img { width: 100%; height: 100%; object-fit: cover; }
+.card__ph {
+  height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px;
+  background: radial-gradient(circle at 30% 25%, #fff 0, var(--violeta-claro) 55%, var(--violeta-medio) 100%);
+  text-align: center; padding: 10px;
+}
+.card__ph-emoji { font-size: 3rem; line-height: 1; }
+.card__ph-marca { font-family: var(--fuente-titulo); color: var(--violeta-osc); font-size: 1.05rem; line-height: 1.1; text-transform: uppercase; }
+.card__badges { position: absolute; top: 8px; left: 8px; right: 8px; display: flex; flex-wrap: wrap; gap: 4px; }
+.badge {
+  font: 900 .68rem/1 var(--fuente); letter-spacing: .04em; text-transform: uppercase;
+  padding: 5px 8px; border-radius: 999px;
+  background: var(--violeta); color: var(--blanco); border: 1.5px solid var(--negro);
+}
+.badge--oferta, .badge--promo { background: var(--amarillo); color: var(--negro); }
+.badge--ejemplo { background: var(--blanco); color: var(--negro); border-style: dashed; }
+.card__info { padding: 10px 12px 6px; flex: 1; display: flex; flex-direction: column; gap: 2px; }
+.card__marca { font-size: .72rem; font-weight: 900; letter-spacing: .07em; text-transform: uppercase; color: var(--violeta); }
+.card__nombre { font-size: 1rem; font-weight: 800; line-height: 1.22; color: var(--texto); overflow-wrap: anywhere; }
+.card__pres { font-size: .84rem; line-height: 1.3; color: var(--texto-suave); overflow-wrap: anywhere; }
+.card__precio { margin-top: auto; padding-top: 8px; display: flex; align-items: baseline; flex-wrap: wrap; gap: 4px 8px; }
+.precio {
+  display: inline-block; background: var(--amarillo); color: var(--negro);
+  font-weight: 900; font-size: 1.3rem; line-height: 1.2;
+  padding: 2px 10px; border: 2px solid var(--negro); border-radius: 10px; transform: rotate(-1.5deg);
+}
+.precio-anterior { color: var(--texto-suave); font-size: .88rem; font-weight: 700; text-decoration: line-through; }
+.sin-precio { display: inline-block; font-size: .82rem; font-weight: 800; color: var(--violeta-osc); background: var(--violeta-claro); padding: 5px 10px; border-radius: 999px; }
+.card__acciones { padding: 6px 12px 12px; display: grid; gap: 8px; }
+.card__acciones .btn { width: 100%; padding-left: 10px; padding-right: 10px; }
+.btn-consultar {
+  display: inline-flex; align-items: center; justify-content: center; gap: 6px;
+  min-height: 44px; border-radius: 999px; border: 1.5px solid var(--violeta-medio);
+  font-weight: 800; font-size: .86rem; color: var(--violeta-osc); text-decoration: none; background: var(--blanco);
+}
+.btn-consultar:hover { background: var(--violeta-claro); }
+.btn-consultar svg { width: 16px; height: 16px; }
+
+.stepper { display: grid; grid-template-columns: 44px 1fr 44px; align-items: center; height: 48px; border: 2px solid var(--negro); border-radius: 999px; background: var(--amarillo); overflow: hidden; }
+.stepper button { height: 100%; border: 0; background: transparent; font-size: 1.5rem; font-weight: 900; line-height: 1; color: var(--negro); display: grid; place-items: center; }
+.stepper button:hover { background: rgba(0, 0, 0, .06); }
+.stepper button svg { width: 18px; height: 18px; }
+.stepper output { text-align: center; font-weight: 900; font-size: 1.05rem; }
+.stepper--chico { height: 44px; grid-template-columns: 44px 32px 44px; background: var(--blanco); border-width: 1.5px; }
+
+.vacio { text-align: center; padding: 28px 18px; background: var(--violeta-claro); border-radius: var(--radio); border: 2px dashed var(--violeta); display: grid; gap: 12px; justify-items: center; }
+.vacio__emoji { font-size: 2.6rem; }
+.ver-mas { display: flex; justify-content: center; margin-top: 22px; }
+
+/* ===================== Veterinaria ===================== */
+.servicios { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 14px; margin-bottom: 28px; }
+.servicio {
+  display: flex; gap: 14px; align-items: flex-start;
+  background: var(--blanco); border-radius: var(--radio); padding: 16px;
+  border: 1.5px solid var(--violeta-medio); box-shadow: var(--sombra);
+}
+.servicio__icono { width: 52px; height: 52px; flex: none; border-radius: 50%; display: grid; place-items: center; font-size: 1.6rem; background: var(--amarillo); border: 2px solid var(--negro); }
+.servicio h3 { font-size: 1.12rem; font-weight: 900; }
+.servicio p { color: var(--texto-suave); font-size: .95rem; margin-top: 2px; }
+
+.turno {
+  background: var(--blanco); border-radius: 24px; border: 3px solid var(--negro); box-shadow: 6px 6px 0 var(--violeta);
+  padding: 22px 18px; max-width: 720px;
+}
+.turno h3 { font-family: var(--fuente-titulo); font-weight: 400; font-size: clamp(1.5rem, 6vw, 2rem); line-height: 1.1; text-transform: uppercase; }
+.turno__bajada { color: var(--texto-suave); margin: 6px 0 16px; }
+.campos { display: grid; gap: 16px; }
+@media (min-width: 640px) { .campos--2 { grid-template-columns: 1fr 1fr; } }
+.campo { display: grid; gap: 6px; min-width: 0; }
+.campo > label, .campo > .campo__label { font-weight: 800; font-size: .97rem; }
+.opcional { font-weight: 600; color: var(--texto-suave); font-size: .9em; }
+.campo input, .campo select, .campo textarea {
+  width: 100%; min-height: 48px; padding: 10px 14px;
+  border: 2px solid #CFC2DC; border-radius: 14px; background: var(--blanco);
+  font-size: 16px; color: var(--texto);
+}
+.campo textarea { min-height: 84px; resize: vertical; }
+.campo input:focus, .campo select:focus, .campo textarea:focus { border-color: var(--violeta); outline: 3px solid rgba(120, 72, 154, .25); outline-offset: 0; }
+.campo [aria-invalid="true"] { border-color: #C2264B; background: #FFF6F8; }
+.campo__error { color: #B0183D; font-weight: 800; font-size: .9rem; }
+.campo__ayuda { color: var(--texto-suave); font-size: .88rem; }
+.opciones { display: flex; flex-wrap: wrap; gap: 8px; border: 0; margin: 0; padding: 0; min-width: 0; }
+.opciones legend { font-weight: 800; font-size: .97rem; padding: 0; margin-bottom: 6px; float: left; width: 100%; }
+.opcion { position: relative; }
+.opcion input { position: absolute; opacity: 0; inset: 0; width: 100%; height: 100%; margin: 0; cursor: pointer; }
+.opcion span {
+  display: inline-flex; align-items: center; min-height: 44px; padding: 8px 16px;
+  border-radius: 999px; border: 2px solid #CFC2DC; background: var(--blanco); font-weight: 800;
+}
+.opcion input:checked + span { background: var(--violeta); color: var(--blanco); border-color: var(--negro); }
+.opcion input:focus-visible + span { outline: 3px solid var(--negro); outline-offset: 2px; }
+.opciones[aria-invalid="true"] .opcion span { border-color: #C2264B; }
+.aclaracion { margin-top: 12px; font-weight: 700; color: var(--violeta-osc); display: flex; gap: 8px; align-items: center; }
+
+/* ===================== Así de fácil ===================== */
+.pasos { display: grid; gap: 16px; counter-reset: paso; }
+@media (min-width: 760px) { .pasos { grid-template-columns: repeat(3, 1fr); } }
+.paso {
+  position: relative; background: var(--blanco); border-radius: var(--radio); padding: 22px 50px 18px 18px;
+  border: 2px solid var(--negro); box-shadow: 4px 4px 0 var(--negro);
+  display: grid; grid-template-columns: auto 1fr; gap: 4px 14px; align-items: center;
+}
+.paso__num {
+  grid-row: span 2; width: 58px; height: 58px; border-radius: 50%;
+  display: grid; place-items: center; background: var(--amarillo); border: 2px solid var(--negro);
+  font-family: var(--fuente-titulo); font-size: 1.8rem; line-height: 1; padding-top: 4px;
+}
+.paso h3 { font-size: 1.15rem; font-weight: 900; }
+.paso p { color: var(--texto-suave); font-size: .95rem; }
+.paso__emoji { position: absolute; top: 10px; right: 14px; font-size: 1.5rem; }
+
+/* ===================== Visitanos ===================== */
+.visita { display: grid; gap: 18px; }
+@media (min-width: 900px) { .visita { grid-template-columns: .9fr 1.1fr; align-items: stretch; } }
+.visita__info { background: var(--blanco); border-radius: var(--radio); border: 1.5px solid var(--violeta-medio); box-shadow: var(--sombra); padding: 20px 18px; display: grid; gap: 16px; align-content: start; }
+.dato { display: flex; gap: 12px; align-items: flex-start; }
+.dato svg { width: 24px; height: 24px; flex: none; color: var(--violeta); margin-top: 2px; }
+.dato strong { display: block; font-weight: 900; }
+.horarios { width: 100%; border-collapse: collapse; font-size: .98rem; }
+.horarios td { padding: 7px 0; border-bottom: 1px dashed var(--violeta-medio); vertical-align: top; }
+.horarios td:last-child { text-align: right; font-weight: 700; }
+.horarios tr.hoy td { font-weight: 900; color: var(--violeta-osc); }
+.horarios tr.hoy td:first-child::after { content: ' · hoy'; font-weight: 800; color: var(--texto-suave); font-size: .85em; }
+.estado--claro { background: var(--violeta-claro); border-color: var(--violeta-medio); color: var(--texto); margin: 0; }
+.visita__botones { display: grid; gap: 10px; }
+@media (min-width: 480px) { .visita__botones { grid-template-columns: 1fr 1fr; } }
+.mapa { border-radius: var(--radio); overflow: hidden; border: 3px solid var(--negro); min-height: 300px; background: var(--violeta-claro); }
+.mapa iframe { width: 100%; height: 100%; min-height: 300px; border: 0; display: block; }
+
+/* ===================== Instagram ===================== */
+.insta__grilla { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 6px; margin-bottom: 18px; }
+@media (min-width: 760px) { .insta__grilla { grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 10px; } }
+.insta__grilla a { display: block; aspect-ratio: 1; border-radius: 12px; overflow: hidden; background: var(--violeta-medio); }
+.insta__grilla img { width: 100%; height: 100%; object-fit: cover; transition: transform .25s ease; }
+.insta__grilla a:hover img { transform: scale(1.05); }
+
+/* ===================== Preguntas frecuentes ===================== */
+.faq { display: grid; gap: 10px; max-width: 820px; }
+.faq details { background: var(--blanco); border-radius: var(--radio-chico); border: 1.5px solid var(--violeta-medio); box-shadow: var(--sombra); }
+.faq summary {
+  list-style: none; cursor: pointer; min-height: 56px; padding: 14px 52px 14px 16px; position: relative;
+  font-weight: 900; font-size: 1.03rem; border-radius: var(--radio-chico);
+}
+.faq summary::-webkit-details-marker { display: none; }
+.faq summary::after {
+  content: '+'; position: absolute; right: 12px; top: 50%; transform: translateY(-50%);
+  width: 32px; height: 32px; border-radius: 50%; display: grid; place-items: center;
+  background: var(--amarillo); border: 2px solid var(--negro); font-size: 1.3rem; line-height: 1; font-weight: 900;
+}
+.faq details[open] summary::after { content: '−'; }
+.faq .respuesta { padding: 0 16px 16px; color: var(--texto-suave); }
+
+/* ===================== Pie ===================== */
+.pie { background: var(--violeta-prof); color: var(--blanco); padding: 40px 0 28px; border-top: 4px solid var(--negro); }
+.pie__grid { display: grid; gap: 24px; }
+@media (min-width: 760px) { .pie__grid { grid-template-columns: 1.2fr 1fr 1fr; } }
+.pie__marca { display: flex; gap: 14px; align-items: center; }
+.pie__marca img { width: 84px; height: 84px; border-radius: 50%; border: 3px solid var(--negro); }
+.pie__marca .logo-texto { font-size: 1.9rem; }
+.pie h2 { font-family: var(--fuente-titulo); font-weight: 400; font-size: 1.2rem; color: var(--amarillo); margin-bottom: 8px; letter-spacing: .03em; text-transform: uppercase; }
+.pie a { color: var(--blanco); font-weight: 700; }
+.pie li { padding: 4px 0; }
+.pie__links a { display: inline-flex; align-items: center; min-height: 44px; }
+.pie__chico { margin-top: 26px; padding-top: 16px; border-top: 1px solid rgba(255, 255, 255, .2); font-size: .85rem; opacity: .85; }
+
+/* ===================== Flotantes ===================== */
+.wa-flotante {
+  position: fixed; right: 16px; bottom: calc(16px + env(safe-area-inset-bottom)); z-index: 45;
+  width: 60px; height: 60px; border-radius: 50%;
+  display: grid; place-items: center;
+  background: #25D366; color: var(--blanco); border: 3px solid var(--negro); box-shadow: 3px 3px 0 var(--negro);
+  transition: bottom .2s ease;
+}
+.wa-flotante svg { width: 32px; height: 32px; }
+body.con-barra .wa-flotante { bottom: calc(88px + env(safe-area-inset-bottom)); }
+.barra-pedido {
+  position: fixed; left: 12px; right: 12px; bottom: calc(12px + env(safe-area-inset-bottom)); z-index: 44;
+  display: flex; align-items: center; justify-content: space-between; gap: 10px;
+  min-height: 60px; padding: 10px 12px 10px 18px;
+  background: var(--negro); color: var(--blanco); border-radius: 999px; border: 2px solid var(--amarillo);
+  box-shadow: var(--sombra-alta); font-weight: 800; text-align: left;
+  max-width: 560px; margin: 0 auto;
+}
+.barra-pedido__total { background: var(--amarillo); color: var(--negro); border-radius: 999px; padding: 8px 14px; font-weight: 900; white-space: nowrap; }
+
+/* ===================== Carrito (panel) ===================== */
+.carrito { position: fixed; inset: 0; z-index: 60; }
+.carrito__fondo { position: absolute; inset: 0; background: rgba(23, 18, 28, .55); animation: aparecer .2s ease; }
+.carrito__panel {
+  position: absolute; left: 0; right: 0; bottom: 0;
+  max-height: 92vh; max-height: 92dvh;
+  display: flex; flex-direction: column;
+  background: var(--blanco); border-radius: 24px 24px 0 0; border-top: 3px solid var(--negro);
+  box-shadow: 0 -10px 40px rgba(0, 0, 0, .25);
+  animation: subir .25s ease;
+}
+.carrito__panel:focus { outline: none; }
+@media (min-width: 760px) {
+  .carrito__panel { top: 0; left: auto; width: 460px; max-height: none; border-radius: 24px 0 0 24px; border-top: 0; border-left: 3px solid var(--negro); animation: entrar .25s ease; }
+}
+@keyframes subir { from { transform: translateY(40px); opacity: .4; } }
+@keyframes entrar { from { transform: translateX(40px); opacity: .4; } }
+@keyframes aparecer { from { opacity: 0; } }
+.carrito__cabeza { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 14px 16px 10px; border-bottom: 1.5px solid var(--violeta-medio); }
+.carrito__cabeza h2 { font-family: var(--fuente-titulo); font-weight: 400; font-size: 1.7rem; line-height: 1; padding-top: 4px; text-transform: uppercase; }
+.btn-cerrar { width: 48px; height: 48px; border-radius: 50%; border: 2px solid var(--negro); background: var(--blanco); display: grid; place-items: center; }
+.btn-cerrar svg { width: 22px; height: 22px; }
+.carrito__cuerpo { flex: 1; overflow-y: auto; overscroll-behavior: contain; padding: 12px 16px 20px; }
+.carrito__pie { padding: 12px 16px calc(14px + env(safe-area-inset-bottom)); border-top: 1.5px solid var(--violeta-medio); background: var(--blanco); }
+.items { display: grid; gap: 10px; }
+.item { display: grid; grid-template-columns: 60px 1fr; gap: 10px 12px; padding: 10px; border-radius: 14px; background: var(--violeta-claro); }
+.item__foto { width: 60px; height: 60px; border-radius: 12px; object-fit: cover; background: var(--violeta-medio); display: grid; place-items: center; font-size: 1.8rem; }
+.item__nombre { font-weight: 800; line-height: 1.25; overflow-wrap: anywhere; }
+.item__pres { font-size: .84rem; color: var(--texto-suave); overflow-wrap: anywhere; }
+.item__abajo { grid-column: 1 / -1; display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+.item__subtotal { font-weight: 900; text-align: right; }
+.item__subtotal small { display: block; font-weight: 700; color: var(--texto-suave); font-size: .78rem; }
+.resumen { margin-top: 14px; display: grid; gap: 6px; padding: 14px; border: 2px solid var(--negro); border-radius: 16px; }
+.resumen div { display: flex; justify-content: space-between; gap: 12px; }
+.resumen__total { font-size: 1.2rem; font-weight: 900; border-top: 1px dashed var(--violeta-medio); padding-top: 8px; margin-top: 2px; }
+.resumen__total span:last-child { background: var(--amarillo); padding: 0 8px; border-radius: 8px; }
+.resumen__nota { font-size: .85rem; color: var(--texto-suave); }
+.minimo { margin-top: 10px; font-weight: 800; font-size: .92rem; }
+.minimo__barra { height: 10px; border-radius: 999px; background: var(--violeta-medio); overflow: hidden; margin-top: 6px; }
+.minimo__barra span { display: block; height: 100%; background: var(--violeta); border-radius: 999px; }
+.carrito__form { margin-top: 20px; }
+.carrito__form h3 { font-weight: 900; font-size: 1.1rem; margin-bottom: 12px; }
+.listo { text-align: center; padding: 24px 6px; display: grid; gap: 12px; justify-items: center; }
+.listo__emoji { font-size: 3rem; }
+
+/* ===================== Aviso (toast) ===================== */
+.aviso {
+  position: fixed; left: 50%; top: calc(var(--alto-cabecera) + 10px); z-index: 70;
+  transform: translateX(-50%); width: max-content; max-width: calc(100vw - 32px);
+  background: var(--negro); color: var(--blanco); padding: 12px 18px; border-radius: 14px;
+  font-weight: 800; box-shadow: var(--sombra-alta); border: 2px solid var(--amarillo);
+  animation: aparecer .2s ease;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  *, *::before, *::after { animation: none !important; transition: none !important; }
+}
+</style>
+</head>
+<body>
+<a class="saltar" href="#tienda">Saltar al pet shop</a>
+
+<header class="cabecera sobre-oscuro" id="cabecera">
+  <div class="contenedor cabecera__fila">
+    <a class="logo" href="#inicio" aria-label="Don Gato, ir al inicio">
+      <img src="logo.png" alt="Don Gato Veterinaria y Pet Shop" width="52" height="52" onerror="this.hidden=true;this.nextElementSibling.hidden=false">
+      <span class="logo-texto" hidden>DON GATO</span>
+    </a>
+    <form class="buscador" role="search" id="form-buscar" action="#tienda">
+      <label class="sr-only" for="buscar">Buscar en el pet shop</label>
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+      <input id="buscar" type="search" placeholder="Buscá alimento, juguetes, piedras…" autocomplete="off" enterkeyhint="search">
+    </form>
+    <a class="btn btn--amarillo btn--chico" href="#turnos">Pedir turno</a>
+    <button class="btn-carrito" type="button" id="abrir-carrito" aria-haspopup="dialog" aria-controls="carrito" aria-label="Ver mi pedido: 0 productos">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 4h2l2.4 11.2a2 2 0 0 0 2 1.6h7.7a2 2 0 0 0 2-1.5L21 8H6.2"/><circle cx="10" cy="20.5" r="1.4"/><circle cx="17" cy="20.5" r="1.4"/></svg>
+      <span class="burbuja" id="burbuja" aria-hidden="true">0</span>
+    </button>
+  </div>
+</header>
+
+<main id="contenido">
+
+  <!-- ============ PORTADA ============ -->
+  <section class="portada sobre-oscuro" id="inicio">
+    <div class="contenedor portada__grid">
+      <div>
+        <p class="estado" id="estado-portada" aria-live="polite"><span class="estado__punto" aria-hidden="true"></span><span class="estado__texto">Veterinaria y pet shop</span></p>
+        <h1 class="titulo titulo--marca">Todo para tu mascota, en Berazategui</h1>
+        <p class="portada__sub">Veterinaria y pet shop. Pedí por WhatsApp y te lo llevamos sin cargo.</p>
+        <div class="portada__botones">
+          <a class="btn btn--amarillo btn--grande" href="#tienda">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 8h14l-1.2 11.1a2 2 0 0 1-2 1.9H8.2a2 2 0 0 1-2-1.9Z"/><path d="M9 8V6a3 3 0 0 1 6 0v2"/></svg>
+            Comprar en el pet shop
+          </a>
+          <a class="btn btn--violeta btn--grande" href="#turnos">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="3"/><path d="M8 3v4M16 3v4M3 10h18M12 13v5M9.5 15.5h5"/></svg>
+            Pedir turno veterinario
+          </a>
+        </div>
+      </div>
+      <figure class="portada__foto">
+        <img src="fotos/portada.webp" alt="Un perro y un gato durmiendo abrazados" width="900" height="538" fetchpriority="high" decoding="async">
+        <figcaption class="portada__globo">Te lo llevamos sin cargo 🐾</figcaption>
+      </figure>
+    </div>
+  </section>
+
+  <!-- ============ FRANJA ============ -->
+  <div class="franja">
+    <ul class="contenedor">
+      <li><span class="franja__icono" aria-hidden="true">🚚</span>Envío a domicilio sin cargo</li>
+      <li><span class="franja__icono" aria-hidden="true">🩺</span>Veterinaria y pet shop en un solo lugar</li>
+      <li><span class="franja__icono" aria-hidden="true">📍</span>Calle 12 N° 4842</li>
+    </ul>
+  </div>
+
+  <!-- ============ ¿PARA QUIÉN COMPRÁS? ============ -->
+  <section class="seccion" id="especies" aria-labelledby="titulo-especies">
+    <div class="contenedor">
+      <div class="seccion__cabeza">
+        <h2 class="titulo" id="titulo-especies">¿Para quién <span class="subrayado">comprás</span>?</h2>
+        <p class="seccion__bajada">Tocá tu mascota y te mostramos lo que tenemos para ella.</p>
+      </div>
+      <div class="especies" id="especies-botones"></div>
+    </div>
+  </section>
+
+  <!-- ============ PROMO DEL MES ============ -->
+  <section class="seccion seccion--clara promo" id="promo" aria-labelledby="titulo-promo" hidden>
+    <div class="contenedor">
+      <div class="promo__tarjeta sobre-oscuro">
+        <span class="promo__cinta">Promo del mes</span>
+        <div class="promo__cabeza">
+          <span class="promo__icono" aria-hidden="true">🎁</span>
+          <h2 class="titulo titulo--marca" id="titulo-promo"></h2>
+        </div>
+        <p class="promo__texto" id="promo-texto"></p>
+        <ul class="promo__lista" id="promo-lista" aria-label="Alimentos que entran en la promo"></ul>
+        <p class="promo__letra" id="promo-letra"></p>
+        <div class="promo__botones">
+          <button class="btn btn--amarillo" type="button" id="promo-ver">Ver alimentos de la promo</button>
+          <a class="btn btn--violeta" id="promo-consultar" href="https://wa.me/5491142165130" target="_blank" rel="noopener">Consultar por WhatsApp</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ PET SHOP ============ -->
+  <section class="seccion" id="tienda" aria-labelledby="titulo-tienda">
+    <div class="contenedor">
+      <div class="seccion__cabeza">
+        <h2 class="titulo" id="titulo-tienda">El <span class="subrayado">pet shop</span></h2>
+        <p class="seccion__bajada">Sumá lo que necesitás y mandanos el pedido por WhatsApp. El envío a domicilio es sin cargo.</p>
+      </div>
+
+      <div id="repetir" class="repetir" hidden>
+        <p id="repetir-texto">¿Lo mismo que la última vez?</p>
+        <button class="btn btn--amarillo btn--chico" type="button" id="repetir-boton">↺ Repetir mi último pedido</button>
+      </div>
+
+      <div class="filtros">
+        <p class="filtros__label" id="lbl-especie">Mascota</p>
+        <div class="chips" id="chips-especie" role="group" aria-labelledby="lbl-especie"></div>
+        <p class="filtros__label" id="lbl-categoria">Categoría</p>
+        <div class="chips" id="chips-categoria" role="group" aria-labelledby="lbl-categoria"></div>
+      </div>
+
+      <div class="tienda__barra">
+        <p class="tienda__conteo" id="conteo" aria-live="polite"></p>
+        <button class="link-boton" type="button" id="limpiar" hidden>Limpiar filtros</button>
+      </div>
+
+      <div class="grilla" id="grilla"></div>
+      <div class="vacio" id="vacio" hidden></div>
+      <div class="ver-mas"><button class="btn btn--borde" type="button" id="ver-mas" hidden>Ver más productos</button></div>
+
+      <noscript><p class="vacio">Para armar el pedido desde acá hace falta JavaScript. Igual podés escribirnos: <a href="https://wa.me/5491142165130?text=Hola%20Don%20Gato!%20Quiero%20hacer%20un%20pedido">WhatsApp +54 9 11 4216-5130</a>.</p></noscript>
+    </div>
+  </section>
+
+  <!-- ============ VETERINARIA ============ -->
+  <section class="seccion seccion--clara" id="veterinaria" aria-labelledby="titulo-vet">
+    <div class="contenedor">
+      <div class="seccion__cabeza">
+        <h2 class="titulo" id="titulo-vet">La <span class="subrayado">veterinaria</span></h2>
+        <p class="seccion__bajada">Turnos para tu compañero en Calle 12 N° 4842, Berazategui. Atendemos perros, gatos, aves, conejos, hámsters, peces, erizos y aves de corral.</p>
+      </div>
+      <div class="servicios" id="servicios"></div>
+
+      <div class="turno ancla" id="turnos">
+        <h3>Pedí tu turno</h3>
+        <p class="turno__bajada">Completalo en 30 segundos y nos llega por WhatsApp.</p>
+        <form id="form-turno" novalidate>
+          <div class="campos">
+            <div class="campos campos--2">
+              <div class="campo">
+                <label for="t-nombre">Tu nombre</label>
+                <input id="t-nombre" name="nombre" autocomplete="name" required>
+              </div>
+              <div class="campo">
+                <label for="t-mascota">Nombre de tu mascota</label>
+                <input id="t-mascota" name="mascota" required>
+              </div>
+            </div>
+            <div class="campo">
+              <label for="t-especie">Especie</label>
+              <select id="t-especie" name="especie" required>
+                <option value="">Elegí una opción</option>
+                <option>Perro</option>
+                <option>Gato</option>
+                <option>Ave</option>
+                <option>Conejo</option>
+                <option>Hámster u otro roedor</option>
+                <option>Pez</option>
+                <option>Erizo</option>
+                <option>Ave de corral</option>
+                <option>Otro</option>
+              </select>
+            </div>
+            <fieldset class="opciones" id="t-motivo" aria-describedby="t-motivo-error">
+              <legend>Motivo</legend>
+              <label class="opcion"><input type="radio" name="motivo" value="Control" required><span>Control</span></label>
+              <label class="opcion"><input type="radio" name="motivo" value="Vacuna"><span>Vacuna</span></label>
+              <label class="opcion"><input type="radio" name="motivo" value="Consulta"><span>Consulta</span></label>
+              <label class="opcion"><input type="radio" name="motivo" value="Otro"><span>Otro</span></label>
+            </fieldset>
+            <p class="campo__error" id="t-motivo-error" hidden></p>
+            <div class="campos campos--2">
+              <div class="campo">
+                <label for="t-dia">Día preferido</label>
+                <input id="t-dia" name="dia" type="date" required aria-describedby="t-dia-ayuda">
+                <p class="campo__ayuda" id="t-dia-ayuda"></p>
+              </div>
+              <div>
+                <fieldset class="opciones" id="t-franja" aria-describedby="t-franja-error">
+                  <legend>Turno</legend>
+                  <label class="opcion"><input type="radio" name="franja" value="mañana" required><span>Mañana</span></label>
+                  <label class="opcion"><input type="radio" name="franja" value="tarde"><span>Tarde</span></label>
+                </fieldset>
+                <p class="campo__error" id="t-franja-error" hidden></p>
+              </div>
+            </div>
+            <div class="campo">
+              <label for="t-comentario">Comentario <span class="opcional">(opcional)</span></label>
+              <textarea id="t-comentario" name="comentario" rows="3" placeholder="Por ejemplo: le toca la antirrábica, o anda rascándose mucho"></textarea>
+            </div>
+            <button class="btn btn--amarillo btn--grande btn--ancho" type="submit">
+              <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2a10 10 0 0 0-8.6 15l-1.3 4.8 4.9-1.3A10 10 0 1 0 12 2Zm0 18.2a8.2 8.2 0 0 1-4.2-1.2l-.3-.2-2.9.8.8-2.8-.2-.3A8.2 8.2 0 1 1 12 20.2Zm4.5-6.1c-.2-.1-1.5-.7-1.7-.8s-.4-.1-.6.1-.7.8-.8 1-.3.2-.5.1a6.7 6.7 0 0 1-3.3-2.9c-.3-.4.3-.4.7-1.3.1-.2 0-.3 0-.4l-.8-1.8c-.2-.5-.4-.4-.6-.4h-.5a1 1 0 0 0-.7.3 3 3 0 0 0-.9 2.2 5.1 5.1 0 0 0 1.1 2.7 11.6 11.6 0 0 0 4.4 3.9c1.6.7 2.3.8 3.1.6a2.7 2.7 0 0 0 1.8-1.2 2.2 2.2 0 0 0 .2-1.3c-.1-.1-.3-.2-.5-.3Z"/></svg>
+              Pedir turno por WhatsApp
+            </button>
+          </div>
+        </form>
+        <p class="aclaracion"><span aria-hidden="true">🐾</span> Te confirmamos el turno por WhatsApp.</p>
+        <p class="aclaracion" id="urgencias" hidden></p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ ASÍ DE FÁCIL ============ -->
+  <section class="seccion" id="como-comprar" aria-labelledby="titulo-pasos">
+    <div class="contenedor">
+      <div class="seccion__cabeza">
+        <h2 class="titulo" id="titulo-pasos">Así de <span class="subrayado">fácil</span></h2>
+      </div>
+      <ol class="pasos">
+        <li class="paso"><span class="paso__num" aria-hidden="true">1</span><h3>Elegís los productos</h3><p>Alimento, snacks, juguetes y lo que necesite tu compañero.</p><span class="paso__emoji" aria-hidden="true">🛒</span></li>
+        <li class="paso"><span class="paso__num" aria-hidden="true">2</span><h3>Mandás el pedido por WhatsApp</h3><p>Te llega armado, con la lista y el total.</p><span class="paso__emoji" aria-hidden="true">💬</span></li>
+        <li class="paso"><span class="paso__num" aria-hidden="true">3</span><h3>Te lo llevamos sin cargo</h3><p id="paso-envio">Lo coordinamos por WhatsApp y te lo llevamos a tu casa.</p><span class="paso__emoji" aria-hidden="true">🚚</span></li>
+      </ol>
+    </div>
+  </section>
+
+  <!-- ============ VISITANOS ============ -->
+  <section class="seccion seccion--clara" id="visitanos" aria-labelledby="titulo-visita">
+    <div class="contenedor">
+      <div class="seccion__cabeza">
+        <h2 class="titulo" id="titulo-visita"><span class="subrayado">Visitanos</span></h2>
+        <p class="seccion__bajada">Pasá cuando quieras dentro del horario. Si es por un turno, mejor avisanos antes.</p>
+      </div>
+      <div class="visita">
+        <div class="visita__info">
+          <div class="dato">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 21s-7-6.2-7-11.5a7 7 0 0 1 14 0C19 14.8 12 21 12 21Z"/><circle cx="12" cy="9.5" r="2.5"/></svg>
+            <div><strong>Calle 12 N° 4842</strong>Berazategui, Buenos Aires</div>
+          </div>
+          <p class="estado estado--claro" id="estado-visita"><span class="estado__punto" aria-hidden="true"></span><span class="estado__texto"></span></p>
+          <table class="horarios" id="tabla-horarios"><caption class="sr-only">Horarios de atención</caption><tbody></tbody></table>
+          <div class="visita__botones">
+            <a class="btn btn--amarillo" id="como-llegar" href="https://www.google.com/maps/dir/?api=1&amp;destination=Don+Gato+Veterinaria+Pet+Shop,+Calle+12+4842,+Berazategui" target="_blank" rel="noopener">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m3 11 18-8-8 18-2-8-8-2Z"/></svg>
+              Cómo llegar
+            </a>
+            <a class="btn btn--borde" href="https://wa.me/5491142165130?text=Hola%20Don%20Gato!%20Tengo%20una%20consulta" target="_blank" rel="noopener">Escribinos</a>
+          </div>
+        </div>
+        <div class="mapa">
+          <iframe title="Mapa: Don Gato en Calle 12 N° 4842, Berazategui" src="https://www.google.com/maps?q=Don+Gato+Veterinaria+Pet+Shop,+Calle+12+4842,+Berazategui&amp;z=16&amp;output=embed" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ INSTAGRAM ============ -->
+  <section class="seccion" id="instagram" aria-labelledby="titulo-insta">
+    <div class="contenedor">
+      <div class="seccion__cabeza">
+        <h2 class="titulo" id="titulo-insta">Seguinos en <span class="subrayado">@dongatobegui</span></h2>
+        <p class="seccion__bajada">Ahí subimos los ingresos nuevos, las promos y algún que otro tip.</p>
+      </div>
+      <!-- Fotos tomadas de sus publicaciones de Instagram (sacadas del video).
+           [REEMPLAZAR] por fotos nuevas o por el link a cada publicación. -->
+      <div class="insta__grilla">
+        <a href="https://www.instagram.com/dongatobegui" target="_blank" rel="noopener"><img src="fotos/ig-1.webp" alt="Gatito jugando con una varita con plumas" width="400" height="400" loading="lazy" decoding="async"></a>
+        <a href="https://www.instagram.com/dongatobegui" target="_blank" rel="noopener"><img src="fotos/ig-2.webp" alt="Gato estirándose en un rascador de cartón" width="400" height="400" loading="lazy" decoding="async"></a>
+        <a href="https://www.instagram.com/dongatobegui" target="_blank" rel="noopener"><img src="fotos/ig-3.webp" alt="Perro en la playa con remera estampada" width="400" height="400" loading="lazy" decoding="async"></a>
+        <a href="https://www.instagram.com/dongatobegui" target="_blank" rel="noopener"><img src="fotos/ig-4.webp" alt="Border collie con collar estampado" width="400" height="400" loading="lazy" decoding="async"></a>
+        <a href="https://www.instagram.com/dongatobegui" target="_blank" rel="noopener"><img src="fotos/ig-5.webp" alt="Cocker mordiendo un juguete de colores" width="400" height="400" loading="lazy" decoding="async"></a>
+        <a href="https://www.instagram.com/dongatobegui" target="_blank" rel="noopener"><img src="fotos/ig-6.webp" alt="Salchicha paseando con pretal" width="400" height="400" loading="lazy" decoding="async"></a>
+      </div>
+      <a class="btn btn--amarillo" href="https://www.instagram.com/dongatobegui" target="_blank" rel="noopener">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor"/></svg>
+        Ver el perfil
+      </a>
+    </div>
+  </section>
+
+  <!-- ============ PREGUNTAS FRECUENTES ============ -->
+  <section class="seccion seccion--clara" id="preguntas" aria-labelledby="titulo-faq">
+    <div class="contenedor">
+      <div class="seccion__cabeza">
+        <h2 class="titulo" id="titulo-faq">Preguntas <span class="subrayado">frecuentes</span></h2>
+      </div>
+      <div class="faq" id="faq"></div>
+    </div>
+  </section>
+</main>
+
+<!-- ============ PIE ============ -->
+<footer class="pie sobre-oscuro">
+  <div class="contenedor">
+    <div class="pie__grid">
+      <div>
+        <div class="pie__marca">
+          <img src="logo.png" alt="" width="84" height="84" loading="lazy" onerror="this.hidden=true;this.nextElementSibling.hidden=false">
+          <span class="logo-texto" hidden>DON GATO</span>
+          <p><strong>Don Gato Veterinaria &amp; Pet Shop</strong><br>En Don Gato encontrás todo lo que necesitás para tus mascotas.</p>
+        </div>
+      </div>
+      <div>
+        <h2>Dónde y cuándo</h2>
+        <ul>
+          <li>Calle 12 N° 4842, Berazategui</li>
+          <li id="pie-horarios"></li>
+          <li>🚚 Envíos a domicilio sin cargo</li>
+        </ul>
+      </div>
+      <div>
+        <h2>Escribinos</h2>
+        <ul class="pie__links">
+          <li><a href="https://wa.me/5491142165130?text=Hola%20Don%20Gato!%20Tengo%20una%20consulta" target="_blank" rel="noopener">WhatsApp +54 9 11 4216-5130</a></li>
+          <li><a href="https://www.instagram.com/dongatobegui" target="_blank" rel="noopener">Instagram @dongatobegui</a></li>
+        </ul>
+      </div>
+    </div>
+    <p class="pie__chico">© <span id="anio">2026</span> Don Gato Veterinaria &amp; Pet Shop · Berazategui, Buenos Aires</p>
+  </div>
+</footer>
+
+<!-- ============ FLOTANTES ============ -->
+<button class="barra-pedido" type="button" id="barra-pedido" hidden aria-haspopup="dialog" aria-controls="carrito">
+  <span id="barra-texto">Ver mi pedido</span>
+  <span class="barra-pedido__total" id="barra-total"></span>
+</button>
+<a class="wa-flotante" id="wa-flotante" href="https://wa.me/5491142165130?text=Hola%20Don%20Gato!%20Tengo%20una%20consulta" target="_blank" rel="noopener" aria-label="Escribinos por WhatsApp">
+  <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2a10 10 0 0 0-8.6 15l-1.3 4.8 4.9-1.3A10 10 0 1 0 12 2Zm0 18.2a8.2 8.2 0 0 1-4.2-1.2l-.3-.2-2.9.8.8-2.8-.2-.3A8.2 8.2 0 1 1 12 20.2Zm4.5-6.1c-.2-.1-1.5-.7-1.7-.8s-.4-.1-.6.1-.7.8-.8 1-.3.2-.5.1a6.7 6.7 0 0 1-3.3-2.9c-.3-.4.3-.4.7-1.3.1-.2 0-.3 0-.4l-.8-1.8c-.2-.5-.4-.4-.6-.4h-.5a1 1 0 0 0-.7.3 3 3 0 0 0-.9 2.2 5.1 5.1 0 0 0 1.1 2.7 11.6 11.6 0 0 0 4.4 3.9c1.6.7 2.3.8 3.1.6a2.7 2.7 0 0 0 1.8-1.2 2.2 2.2 0 0 0 .2-1.3c-.1-.1-.3-.2-.5-.3Z"/></svg>
+</a>
+
+<!-- ============ CARRITO ============ -->
+<div class="carrito" id="carrito" hidden>
+  <div class="carrito__fondo" data-cerrar></div>
+  <section class="carrito__panel" role="dialog" aria-modal="true" aria-labelledby="carrito-titulo" tabindex="-1" id="carrito-panel">
+    <div class="carrito__cabeza">
+      <h2 id="carrito-titulo">Tu pedido</h2>
+      <button class="btn-cerrar" type="button" data-cerrar aria-label="Cerrar el pedido">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"/></svg>
+      </button>
+    </div>
+    <div class="carrito__cuerpo" id="carrito-cuerpo">
+      <div id="carrito-vacio" class="vacio" hidden>
+        <span class="vacio__emoji" aria-hidden="true">🐾</span>
+        <p><strong>Tu pedido está vacío.</strong><br>Sumá productos desde el pet shop.</p>
+        <button class="btn btn--amarillo" type="button" data-ir-tienda>Ver productos</button>
+      </div>
+      <div id="carrito-listo" class="listo" hidden>
+        <span class="listo__emoji" aria-hidden="true">🐶</span>
+        <p><strong>¡Listo! Te abrimos WhatsApp con el pedido armado.</strong></p>
+        <p>Mandá el mensaje y te confirmamos por ahí. Si no se abrió WhatsApp, tocá el botón.</p>
+        <a class="btn btn--amarillo" id="carrito-listo-link" href="#" target="_blank" rel="noopener">Abrir WhatsApp</a>
+      </div>
+      <div id="carrito-contenido">
+        <ul class="items" id="carrito-lista" aria-label="Productos del pedido"></ul>
+        <div class="resumen" id="carrito-resumen"></div>
+        <div class="minimo" id="carrito-minimo" hidden></div>
+        <button class="link-boton" type="button" id="vaciar">Vaciar pedido</button>
+
+        <form class="carrito__form" id="form-pedido" novalidate>
+          <h3>¿A dónde te lo llevamos?</h3>
+          <div class="campos">
+            <div class="campo">
+              <label for="p-nombre">Tu nombre</label>
+              <input id="p-nombre" name="nombre" autocomplete="name" required>
+            </div>
+            <div class="campo">
+              <label for="p-direccion">Calle y número</label>
+              <input id="p-direccion" name="direccion" autocomplete="street-address" placeholder="Por ejemplo: 14 N° 4520" required>
+            </div>
+            <div class="campos campos--2">
+              <div class="campo">
+                <label for="p-entre">Entre calles <span class="opcional">(opcional)</span></label>
+                <input id="p-entre" name="entre" placeholder="Por ejemplo: 148 y 149">
+              </div>
+              <div class="campo">
+                <label for="p-barrio">Barrio</label>
+                <input id="p-barrio" name="barrio" required>
+              </div>
+            </div>
+            <fieldset class="opciones" id="p-pago" aria-describedby="p-pago-error">
+              <legend>¿Cómo pagás?</legend>
+            </fieldset>
+            <p class="campo__error" id="p-pago-error" hidden></p>
+            <div class="campo">
+              <label for="p-comentario">Comentario <span class="opcional">(opcional)</span></label>
+              <textarea id="p-comentario" name="comentario" rows="2" placeholder="Por ejemplo: tocar timbre 2B"></textarea>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+    <div class="carrito__pie" id="carrito-pie">
+      <button class="btn btn--amarillo btn--grande btn--ancho" type="submit" form="form-pedido" id="enviar-pedido">
+        <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2a10 10 0 0 0-8.6 15l-1.3 4.8 4.9-1.3A10 10 0 1 0 12 2Zm0 18.2a8.2 8.2 0 0 1-4.2-1.2l-.3-.2-2.9.8.8-2.8-.2-.3A8.2 8.2 0 1 1 12 20.2Zm4.5-6.1c-.2-.1-1.5-.7-1.7-.8s-.4-.1-.6.1-.7.8-.8 1-.3.2-.5.1a6.7 6.7 0 0 1-3.3-2.9c-.3-.4.3-.4.7-1.3.1-.2 0-.3 0-.4l-.8-1.8c-.2-.5-.4-.4-.6-.4h-.5a1 1 0 0 0-.7.3 3 3 0 0 0-.9 2.2 5.1 5.1 0 0 0 1.1 2.7 11.6 11.6 0 0 0 4.4 3.9c1.6.7 2.3.8 3.1.6a2.7 2.7 0 0 0 1.8-1.2 2.2 2.2 0 0 0 .2-1.3c-.1-.1-.3-.2-.5-.3Z"/></svg>
+        Enviar pedido por WhatsApp
+      </button>
+    </div>
+  </section>
+</div>
+
+<div id="aviso-vivo" class="sr-only" aria-live="polite"></div>
+
+<script>
+'use strict';
+/* =====================================================================
+   3) FUNCIONAMIENTO. No hace falta tocar nada de acá para cambiar datos.
+   ===================================================================== */
+(function () {
+  const $ = (s, el = document) => el.querySelector(s);
+  const $$ = (s, el = document) => Array.from(el.querySelectorAll(s));
+  const esc = s => String(s == null ? '' : s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+  const norm = s => String(s || '').normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase();
+  const plata = n => '$' + Math.round(n).toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+  const waLink = texto => 'https://wa.me/' + CONFIG.whatsapp + '?text=' + encodeURIComponent(texto);
+  const DIAS = ['domingo', 'lunes', 'martes', 'miércoles', 'jueves', 'viernes', 'sábado'];
+  const plural = d => DIAS[d].endsWith('s') ? DIAS[d] : DIAS[d] + 's';
+  const CLAVES = { carrito: 'dongato.carrito.v1', ultimo: 'dongato.ultimo-pedido.v1', datos: 'dongato.datos.v1' };
+  const ICONO_WA = '<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2a10 10 0 0 0-8.6 15l-1.3 4.8 4.9-1.3A10 10 0 1 0 12 2Zm0 18.2a8.2 8.2 0 0 1-4.2-1.2l-.3-.2-2.9.8.8-2.8-.2-.3A8.2 8.2 0 1 1 12 20.2Z"/></svg>';
+  const ICONO_MAS = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>';
+  const ICONO_MENOS = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" aria-hidden="true"><path d="M5 12h14"/></svg>';
+  const POR_PAGINA = 12;
+
+  const guardado = {
+    leer(clave, porDefecto) { try { const v = localStorage.getItem(clave); return v ? JSON.parse(v) : porDefecto; } catch (e) { return porDefecto; } },
+    escribir(clave, valor) { try { localStorage.setItem(clave, JSON.stringify(valor)); } catch (e) { /* modo privado: sigue andando sin guardar */ } }
+  };
+
+  const porId = new Map(PRODUCTOS.map(p => [p.id, p]));
+  const especiesDe = p => Array.isArray(p.especie) ? p.especie : [p.especie];
+  const especie = id => ESPECIES.find(e => e.id === id);
+  const categoria = id => CATEGORIAS.find(c => c.id === id);
+  const titulo = p => [p.marca, p.nombre].filter(Boolean).join(' ');
+  const tienePrecio = p => typeof p.precio === 'number' && p.precio > 0;
+
+  /* ---------- Abrir WhatsApp (sin window.open en el celu: los navegadores de Instagram lo bloquean) ---------- */
+  function abrirWhatsApp(url) {
+    const tactil = window.matchMedia('(pointer: coarse)').matches || /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+    if (!tactil) {
+      const ventana = window.open(url, '_blank');
+      if (ventana) { try { ventana.opener = null; } catch (e) {} return; }
+    }
+    window.location.href = url;
+  }
+
+  /* ---------- Avisos ---------- */
+  let timerAviso;
+  function avisar(texto) {
+    $('#aviso-vivo').textContent = texto;
+    let el = $('#aviso');
+    if (!el) { el = document.createElement('div'); el.id = 'aviso'; el.className = 'aviso'; el.setAttribute('aria-hidden', 'true'); document.body.appendChild(el); }
+    el.textContent = texto; el.hidden = false;
+    clearTimeout(timerAviso);
+    timerAviso = setTimeout(() => { el.hidden = true; }, 2400);
+  }
+
+  /* =================== HORARIO: abierto / cerrado =================== */
+  const aMin = hhmm => { const [h, m] = hhmm.split(':').map(Number); return h * 60 + m; };
+  const horaTexto = min => { const h = Math.floor(min / 60), m = min % 60; return m ? `${h}:${String(m).padStart(2, '0')}` : String(h); };
+  const franjasDe = dia => (CONFIG.horarios[dia] || []).map(([a, b]) => [aMin(a), aMin(b)]);
+
+  function ahora() {
+    const d = new Date();
+    try {
+      const partes = new Intl.DateTimeFormat('en-US', { timeZone: CONFIG.zonaHoraria, weekday: 'short', hour: '2-digit', minute: '2-digit', hourCycle: 'h23' }).formatToParts(d);
+      const v = t => partes.find(x => x.type === t).value;
+      const dia = { Sun: 0, Mon: 1, Tue: 2, Wed: 3, Thu: 4, Fri: 5, Sat: 6 }[v('weekday')];
+      return { dia, min: (Number(v('hour')) % 24) * 60 + Number(v('minute')) };
+    } catch (e) {
+      return { dia: d.getDay(), min: d.getHours() * 60 + d.getMinutes() };
+    }
+  }
+
+  function estadoAtencion() {
+    const { dia, min } = ahora();
+    for (const [a, b] of franjasDe(dia)) {
+      if (min >= a && min < b) {
+        const faltan = b - min;
+        return { abierto: true, texto: faltan <= 30 ? `Abierto ahora · cierra en ${faltan} min` : `Abierto ahora · cierra a las ${horaTexto(b)} h` };
+      }
+    }
+    for (const [a] of franjasDe(dia)) {
+      if (min < a) return { abierto: false, texto: `Cerrado ahora · abre hoy a las ${horaTexto(a)} h` };
+    }
+    for (let i = 1; i <= 7; i++) {
+      const d = (dia + i) % 7, f = franjasDe(d);
+      if (f.length) return { abierto: false, texto: `Cerrado ahora · abre ${i === 1 ? 'mañana' : 'el ' + DIAS[d]} a las ${horaTexto(f[0][0])} h` };
+    }
+    return { abierto: false, texto: 'Cerrado ahora' };
+  }
+
+  function pintarEstado() {
+    const e = estadoAtencion();
+    for (const el of [$('#estado-portada'), $('#estado-visita')]) {
+      el.classList.toggle('abierto', e.abierto);
+      $('.estado__texto', el).textContent = e.texto;
+    }
+    const hoy = ahora().dia;
+    $$('#tabla-horarios tr').forEach(tr => tr.classList.toggle('hoy', tr.dataset.dias.split(',').map(Number).includes(hoy)));
+  }
+
+  // Agrupa días con el mismo horario: "Lunes a viernes", "Sábados", "Domingos".
+  function gruposHorario() {
+    const orden = [1, 2, 3, 4, 5, 6, 0];
+    const clave = d => franjasDe(d).map(f => f.join('-')).join('|');
+    const grupos = [];
+    for (const d of orden) {
+      const ult = grupos[grupos.length - 1];
+      if (ult && ult.clave === clave(d)) ult.dias.push(d); else grupos.push({ clave: clave(d), dias: [d] });
+    }
+    const nombreDia = d => DIAS[d][0].toUpperCase() + DIAS[d].slice(1);
+    return grupos.map(g => {
+      const n = g.dias.length === 1 ? (plural(g.dias[0])[0].toUpperCase() + plural(g.dias[0]).slice(1)) : `${nombreDia(g.dias[0])} a ${DIAS[g.dias[g.dias.length - 1]]}`;
+      const f = franjasDe(g.dias[0]);
+      const texto = f.length ? f.map(([a, b]) => `${horaTexto(a)} a ${horaTexto(b)}`).join(' y ') + ' h' : 'Cerrado';
+      return { dias: g.dias, nombre: n, texto };
+    });
+  }
+
+  function pintarHorarios() {
+    const grupos = gruposHorario();
+    $('#tabla-horarios tbody').innerHTML = grupos.map(g => `<tr data-dias="${g.dias.join(',')}"><td>${esc(g.nombre)}</td><td>${esc(g.texto)}</td></tr>`).join('');
+    $('#pie-horarios').textContent = grupos.filter(g => g.texto !== 'Cerrado').map(g => `${g.nombre}: ${g.texto}`).join(' · ');
+  }
+
+  /* =================== CARRITO (se guarda en el navegador) =================== */
+  let carrito = new Map((guardado.leer(CLAVES.carrito, []) || []).filter(x => porId.has(x.id) && x.cant > 0).map(x => [x.id, Math.min(99, x.cant)]));
+  const guardarCarrito = () => guardado.escribir(CLAVES.carrito, Array.from(carrito, ([id, cant]) => ({ id, cant })));
+  const unidades = () => Array.from(carrito.values()).reduce((a, b) => a + b, 0);
+  const lineas = () => Array.from(carrito, ([id, cant]) => ({ p: porId.get(id), cant }));
+
+  function totales() {
+    let suma = 0, sinPrecio = 0;
+    for (const { p, cant } of lineas()) { if (tienePrecio(p)) suma += p.precio * cant; else sinPrecio += 1; }
+    return { suma, sinPrecio };
+  }
+  function textoTotal() {
+    const { suma, sinPrecio } = totales();
+    if (!sinPrecio) return plata(suma);
+    if (!suma) return 'a confirmar';
+    return `${plata(suma)} + ${sinPrecio} ${sinPrecio === 1 ? 'producto' : 'productos'} con precio a confirmar`;
+  }
+
+  function cambiarCantidad(id, delta, { silencio = false } = {}) {
+    const p = porId.get(id); if (!p) return;
+    const antes = carrito.get(id) || 0;
+    const nueva = Math.max(0, Math.min(99, antes + delta));
+    if (nueva === 0) carrito.delete(id); else carrito.set(id, nueva);
+    guardarCarrito();
+    actualizarTarjeta(id);
+    pintarCarrito();
+    if (!silencio) {
+      if (delta > 0 && antes === 0) avisar(`Sumaste ${titulo(p)} al pedido`);
+      else if (nueva === 0) avisar(`Sacaste ${titulo(p)} del pedido`);
+      else $('#aviso-vivo').textContent = `${titulo(p)}: ${nueva}`;
+    }
+    if (delta > 0) { const b = $('#burbuja'); b.classList.remove('salta'); void b.offsetWidth; b.classList.add('salta'); }
+  }
+
+  /* =================== CATÁLOGO =================== */
+  const estado = { especie: 'todas', categoria: 'todas', busqueda: '', visibles: POR_PAGINA };
+
+  function textoBusqueda(p) {
+    const c = categoria(p.categoria);
+    return norm([p.nombre, p.marca, p.presentacion, c && c.nombre, c && c.buscar, especiesDe(p).map(e => (especie(e) || {}).nombre).join(' '), p.buscar, p.etiqueta].join(' '));
+  }
+  const indice = new Map(PRODUCTOS.map(p => [p.id, textoBusqueda(p)]));
+
+  function filtrados({ ignorarCategoria = false } = {}) {
+    const palabras = norm(estado.busqueda).split(/\s+/).filter(Boolean);
+    const lista = PRODUCTOS.filter(p => {
+      if (estado.especie !== 'todas' && !especiesDe(p).includes(estado.especie)) return false;
+      if (!ignorarCategoria && estado.categoria !== 'todas' && p.categoria !== estado.categoria) return false;
+      if (palabras.length) { const h = indice.get(p.id); return palabras.every(w => h.includes(w) || (w.length > 3 && w.endsWith('s') && h.includes(w.slice(0, -1)))); }
+      return true;
+    });
+    return lista.map((p, i) => ({ p, i })).sort((a, b) => (b.p.destacado ? 1 : 0) - (a.p.destacado ? 1 : 0) || a.i - b.i).map(x => x.p);
+  }
+
+  function htmlFoto(p) {
+    if (p.foto) return `<img src="${esc(p.foto)}" alt="${esc(titulo(p))}" width="480" height="480" loading="lazy" decoding="async">`;
+    const c = categoria(p.categoria);
+    return `<div class="card__ph" role="img" aria-label="${esc(titulo(p))} (foto a cargar)"><span class="card__ph-emoji" aria-hidden="true">${c ? c.icono : '🐾'}</span><span class="card__ph-marca" aria-hidden="true">${esc(p.marca || CONFIG.nombreCorto)}</span></div>`;
+  }
+
+  function htmlPrecio(p) {
+    if (!tienePrecio(p)) return '<span class="sin-precio">Precio a confirmar</span>';
+    const anterior = typeof p.precioAnterior === 'number' && p.precioAnterior > p.precio ? `<span class="precio-anterior"><span class="sr-only">Antes </span>${plata(p.precioAnterior)}</span>` : '';
+    return `${anterior}<span class="precio"><span class="sr-only">${anterior ? 'Ahora ' : 'Precio: '}</span>${plata(p.precio)}</span>`;
+  }
+
+  function htmlControl(p) {
+    const cant = carrito.get(p.id) || 0;
+    if (!cant) return `<button class="btn btn--amarillo" type="button" data-accion="sumar" data-id="${esc(p.id)}" aria-label="Agregar ${esc(titulo(p))} al pedido">${ICONO_MAS} Agregar</button>`;
+    return `<div class="stepper" role="group" aria-label="Cantidad de ${esc(titulo(p))}">
+      <button type="button" data-accion="restar" data-id="${esc(p.id)}" aria-label="Sacar uno de ${esc(titulo(p))}">${ICONO_MENOS}</button>
+      <output>${cant}</output>
+      <button type="button" data-accion="sumar" data-id="${esc(p.id)}" aria-label="Sumar uno de ${esc(titulo(p))}">${ICONO_MAS}</button>
+    </div>`;
+  }
+
+  function htmlTarjeta(p) {
+    const badges = [];
+    if (typeof p.precioAnterior === 'number' && tienePrecio(p) && p.precioAnterior > p.precio) badges.push('<span class="badge badge--oferta">Oferta</span>');
+    if (p.etiqueta) badges.push(`<span class="badge${p.etiqueta === 'Promo del mes' ? ' badge--promo' : ''}">${esc(p.etiqueta)}</span>`);
+    if (p.ejemplo) badges.push('<span class="badge badge--ejemplo">Ejemplo</span>');
+    return `<article class="card" data-id="${esc(p.id)}">
+      <div class="card__foto">${htmlFoto(p)}${badges.length ? `<div class="card__badges">${badges.join('')}</div>` : ''}</div>
+      <div class="card__info">
+        ${p.marca ? `<p class="card__marca">${esc(p.marca)}</p>` : ''}
+        <h3 class="card__nombre">${esc(p.nombre)}</h3>
+        ${p.presentacion ? `<p class="card__pres">${esc(p.presentacion)}</p>` : ''}
+        <div class="card__precio">${htmlPrecio(p)}</div>
+      </div>
+      <div class="card__acciones">
+        <div class="js-control">${htmlControl(p)}</div>
+        <a class="btn-consultar" href="${esc(waLink('Hola Don Gato! Quería consultar por: ' + titulo(p) + (p.presentacion ? ' (' + p.presentacion + ')' : '')))}" target="_blank" rel="noopener" aria-label="Consultar por ${esc(titulo(p))} por WhatsApp">${ICONO_WA} Consultar</a>
+      </div>
+    </article>`;
+  }
+
+  function actualizarTarjeta(id) {
+    const card = $(`.card[data-id="${CSS.escape(id)}"]`);
+    if (!card) return;
+    const control = $('.js-control', card);
+    const habiaFoco = control.contains(document.activeElement);
+    const accion = habiaFoco ? document.activeElement.dataset.accion : null;
+    control.innerHTML = htmlControl(porId.get(id));
+    if (habiaFoco) (control.querySelector(`[data-accion="${accion}"]`) || control.querySelector('button')).focus();
+  }
+
+  function pintarChips() {
+    const base = filtrados({ ignorarCategoria: true });
+    const esp = [{ id: 'todas', nombre: 'Todas', emoji: '🐾' }, ...ESPECIES];
+    $('#chips-especie').innerHTML = esp.map(e => `<button class="chip" type="button" data-especie="${e.id}" aria-pressed="${estado.especie === e.id}"><span aria-hidden="true">${e.emoji}</span> ${esc(e.nombre)}</button>`).join('');
+    const conteo = id => base.filter(p => p.categoria === id).length;
+    const cats = CATEGORIAS.filter(c => conteo(c.id) > 0 || estado.categoria === c.id);
+    $('#chips-categoria').innerHTML = [`<button class="chip" type="button" data-categoria="todas" aria-pressed="${estado.categoria === 'todas'}">Todo <span class="chip__n">${base.length}</span></button>`]
+      .concat(cats.map(c => `<button class="chip" type="button" data-categoria="${c.id}" aria-pressed="${estado.categoria === c.id}"><span aria-hidden="true">${c.icono}</span> ${esc(c.nombre)} <span class="chip__n">${conteo(c.id)}</span></button>`)).join('');
+    $$('#especies-botones .especie').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.especie === estado.especie)));
+  }
+
+  function pintarCatalogo() {
+    const lista = filtrados();
+    const mostrar = lista.slice(0, estado.visibles);
+    $('#grilla').innerHTML = mostrar.map(htmlTarjeta).join('');
+    const hayFiltro = estado.especie !== 'todas' || estado.categoria !== 'todas' || estado.busqueda.trim();
+    $('#limpiar').hidden = !hayFiltro;
+    $('#conteo').textContent = lista.length ? (lista.length === 1 ? '1 producto' : `${mostrar.length < lista.length ? `Mostrando ${mostrar.length} de ` : ''}${lista.length} productos`) : '';
+    const resto = lista.length - mostrar.length;
+    $('#ver-mas').hidden = resto <= 0;
+    $('#ver-mas').textContent = `Ver más productos (${resto})`;
+    const vacio = $('#vacio');
+    vacio.hidden = lista.length > 0;
+    if (!lista.length) {
+      const q = estado.busqueda.trim();
+      let texto, mensaje;
+      if (q) { texto = `No encontramos «${esc(q)}» en el catálogo. Puede que lo tengamos igual: preguntanos.`; mensaje = `Hola Don Gato! ¿Tienen ${q}?`; }
+      else if (estado.especie === 'otros') { texto = 'Para erizos, aves de corral y otros compañeros todavía no cargamos productos acá. Escribinos y te contamos qué tenemos.'; mensaje = 'Hola Don Gato! Quería consultar qué productos tienen para mi mascota.'; }
+      else { texto = 'No hay productos con estos filtros.'; mensaje = 'Hola Don Gato! Quería hacer una consulta.'; }
+      vacio.innerHTML = `<span class="vacio__emoji" aria-hidden="true">🔎</span><p>${texto}</p><a class="btn btn--amarillo" href="${esc(waLink(mensaje))}" target="_blank" rel="noopener">${ICONO_WA} Preguntar por WhatsApp</a>`;
+    }
+    pintarChips();
+  }
+
+  function filtrar(cambios, { scroll = false } = {}) {
+    Object.assign(estado, cambios, { visibles: POR_PAGINA });
+    pintarCatalogo();
+    if (scroll) $('#tienda').scrollIntoView({ behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth', block: 'start' });
+  }
+
+  /* =================== PANEL DEL CARRITO =================== */
+  function pintarCarrito() {
+    const n = unidades();
+    $('#burbuja').textContent = n;
+    $('#abrir-carrito').setAttribute('aria-label', `Ver mi pedido: ${n} ${n === 1 ? 'producto' : 'productos'}`);
+    const barra = $('#barra-pedido');
+    const panelAbierto = !$('#carrito').hidden;
+    barra.hidden = n === 0 || panelAbierto;
+    document.body.classList.toggle('con-barra', !barra.hidden);
+    $('#barra-texto').textContent = `Ver mi pedido (${n})`;
+    $('#barra-total').textContent = totales().sinPrecio && !totales().suma ? 'Precio a confirmar' : plata(totales().suma) + (totales().sinPrecio ? ' +' : '');
+
+    const ls = lineas();
+    const listo = !$('#carrito-listo').hidden;
+    const enFoco = document.activeElement;
+    const claveFoco = enFoco && enFoco.closest && enFoco.closest('#carrito-lista') ? [enFoco.dataset.id, enFoco.dataset.accion] : null;
+    $('#carrito-vacio').hidden = ls.length > 0 || listo;
+    $('#carrito-contenido').hidden = ls.length === 0;
+    $('#carrito-pie').hidden = ls.length === 0;
+
+    $('#carrito-lista').innerHTML = ls.map(({ p, cant }) => `
+      <li class="item">
+        ${p.foto ? `<img class="item__foto" src="${esc(p.foto)}" alt="" width="60" height="60" loading="lazy">` : `<span class="item__foto" aria-hidden="true">${(categoria(p.categoria) || {}).icono || '🐾'}</span>`}
+        <div>
+          <p class="item__nombre">${esc(titulo(p))}</p>
+          ${p.presentacion ? `<p class="item__pres">${esc(p.presentacion)}</p>` : ''}
+        </div>
+        <div class="item__abajo">
+          <div class="stepper stepper--chico" role="group" aria-label="Cantidad de ${esc(titulo(p))}">
+            <button type="button" data-accion="restar" data-id="${esc(p.id)}" aria-label="${cant === 1 ? 'Sacar' : 'Restar uno de'} ${esc(titulo(p))}">${ICONO_MENOS}</button>
+            <output>${cant}</output>
+            <button type="button" data-accion="sumar" data-id="${esc(p.id)}" aria-label="Sumar uno de ${esc(titulo(p))}">${ICONO_MAS}</button>
+          </div>
+          <p class="item__subtotal">${tienePrecio(p) ? `${plata(p.precio * cant)}${cant > 1 ? `<small>${plata(p.precio)} c/u</small>` : ''}` : '<small>Precio a confirmar</small>'}</p>
+        </div>
+      </li>`).join('');
+    if (claveFoco) {
+      const mismo = $(`#carrito-lista [data-id="${CSS.escape(claveFoco[0])}"][data-accion="${claveFoco[1]}"]`) || $(`#carrito-lista [data-id="${CSS.escape(claveFoco[0])}"]`);
+      if (mismo) mismo.focus(); else $('#carrito-panel').focus();
+    }
+
+    const { suma, sinPrecio } = totales();
+    $('#carrito-resumen').innerHTML = `
+      <div><span>Productos</span><span>${n}</span></div>
+      <div><span>Envío a domicilio</span><span><strong>Sin cargo</strong></span></div>
+      <div class="resumen__total"><span>Total</span><span>${sinPrecio && !suma ? 'A confirmar' : plata(suma)}</span></div>
+      ${sinPrecio ? `<p class="resumen__nota">${sinPrecio === n || sinPrecio === ls.length ? 'Te confirmamos el precio por WhatsApp.' : `Falta sumar ${sinPrecio === 1 ? '1 producto' : sinPrecio + ' productos'} con precio a confirmar.`}</p>` : ''}`;
+
+    // Mínimo para el envío gratis: solo si está cargado en CONFIG.envio.minimo
+    const minimo = $('#carrito-minimo');
+    const m = Number(CONFIG.envio.minimo);
+    if (m > 0 && ls.length) {
+      const falta = Math.max(0, m - suma);
+      minimo.hidden = false;
+      minimo.innerHTML = (falta > 0 ? `Te faltan ${plata(falta)} para el envío sin cargo.` : '¡Tu pedido ya tiene envío sin cargo!') +
+        `<div class="minimo__barra" aria-hidden="true"><span style="width:${Math.min(100, Math.round(suma / m * 100))}%"></span></div>`;
+    } else minimo.hidden = true;
+  }
+
+  let ultimoFoco = null;
+  function abrirCarrito() {
+    ultimoFoco = document.activeElement;
+    const aviso = $('#aviso'); if (aviso) aviso.hidden = true;
+    $('#carrito-listo').hidden = true;
+    $('#carrito').hidden = false;
+    document.documentElement.classList.add('bloqueado');
+    pintarCarrito();
+    $('#carrito-panel').focus();
+  }
+  function cerrarCarrito() {
+    if ($('#carrito').hidden) return;
+    $('#carrito').hidden = true;
+    document.documentElement.classList.remove('bloqueado');
+    pintarCarrito();
+    if (ultimoFoco && document.contains(ultimoFoco) && !ultimoFoco.closest('[hidden]')) ultimoFoco.focus();
+    else $('#abrir-carrito').focus();
+  }
+  function enfocables(el) {
+    return $$('a[href], button:not([disabled]), input:not([disabled]), select, textarea, [tabindex]:not([tabindex="-1"])', el)
+      .filter(x => !x.closest('[hidden]') && x.offsetParent !== null);
+  }
+
+  /* ---------- Formulario del pedido ---------- */
+  function opcionesPago() {
+    const lista = Array.isArray(CONFIG.pagos) && CONFIG.pagos.length ? CONFIG.pagos : ['Efectivo', 'Transferencia', 'Otro'];
+    $('#p-pago').insertAdjacentHTML('beforeend', lista.map((x, i) => `<label class="opcion"><input type="radio" name="pago" value="${esc(x)}"${i === 0 ? ' required' : ''}><span>${esc(x)}</span></label>`).join(''));
+  }
+
+  function marcarError(campo, mensaje) {
+    if (campo.tagName === 'FIELDSET') {
+      campo.setAttribute('aria-invalid', 'true');
+      const err = document.getElementById(campo.getAttribute('aria-describedby'));
+      err.textContent = mensaje; err.hidden = false;
+      return;
+    }
+    campo.setAttribute('aria-invalid', 'true');
+    let err = campo.parentElement.querySelector('.campo__error');
+    if (!err) { err = document.createElement('p'); err.className = 'campo__error'; err.id = campo.id + '-error'; campo.parentElement.appendChild(err); }
+    err.textContent = mensaje; err.hidden = false;
+    const desc = (campo.getAttribute('aria-describedby') || '').split(' ').filter(Boolean);
+    if (!desc.includes(err.id)) campo.setAttribute('aria-describedby', desc.concat(err.id).join(' '));
+  }
+  function limpiarErrores(form) {
+    $$('[aria-invalid]', form).forEach(el => el.removeAttribute('aria-invalid'));
+    $$('.campo__error', form).forEach(el => { el.hidden = true; el.textContent = ''; });
+  }
+  // Los errores de los fieldsets viven afuera del form en el turno
+  function limpiarErroresTurno() { limpiarErrores($('#turnos')); }
+
+  function enviarPedido(ev) {
+    ev.preventDefault();
+    const form = $('#form-pedido');
+    limpiarErrores(form);
+    const datos = Object.fromEntries(new FormData(form).entries());
+    for (const k of Object.keys(datos)) datos[k] = String(datos[k]).trim();
+    const errores = [];
+    if (!datos.nombre) errores.push([$('#p-nombre'), 'Poné tu nombre así sabemos de quién es el pedido.']);
+    if (!datos.direccion) errores.push([$('#p-direccion'), 'Falta la calle y el número.']);
+    if (!datos.barrio) errores.push([$('#p-barrio'), 'Decinos el barrio.']);
+    if (!datos.pago) errores.push([$('#p-pago'), 'Elegí cómo vas a pagar.']);
+    if (!lineas().length) { avisar('Tu pedido está vacío'); return; }
+    if (errores.length) {
+      errores.forEach(([c, m]) => marcarError(c, m));
+      const primero = errores[0][0];
+      (primero.tagName === 'FIELDSET' ? primero.querySelector('input') : primero).focus();
+      avisar('Revisá los datos marcados');
+      return;
+    }
+    const mensaje = armarMensajePedido(datos);
+    const url = waLink(mensaje);
+    // Guardar último pedido y datos de entrega para la próxima
+    guardado.escribir(CLAVES.ultimo, { fecha: new Date().toISOString(), items: Array.from(carrito, ([id, cant]) => ({ id, cant })) });
+    guardado.escribir(CLAVES.datos, { nombre: datos.nombre, direccion: datos.direccion, entre: datos.entre, barrio: datos.barrio, pago: datos.pago });
+    carrito.clear(); guardarCarrito();
+    $('#carrito-listo-link').href = url;
+    $('#carrito-listo').hidden = false;
+    $('#p-comentario').value = '';
+    PRODUCTOS.forEach(p => actualizarTarjeta(p.id));
+    pintarCarrito(); pintarRepetir();
+    $('#carrito-listo-link').focus();
+    abrirWhatsApp(url);
+  }
+
+  function armarMensajePedido(datos) {
+    const ls = lineas();
+    const filas = ['Hola Don Gato! Quiero hacer este pedido 🐾'];
+    for (const { p, cant } of ls) filas.push(`• ${cant} x ${titulo(p)}${p.presentacion ? ` (${p.presentacion})` : ''} — ${tienePrecio(p) ? plata(p.precio * cant) : 'precio a confirmar'}`);
+    filas.push(`Total: ${textoTotal()}`);
+    filas.push(`Nombre: ${datos.nombre}`);
+    const entre = datos.entre ? datos.entre.replace(/^entre\s+/i, '') : '';
+    filas.push(`Dirección: ${datos.direccion}${entre ? ` (entre ${entre})` : ''}, barrio ${datos.barrio}`);
+    filas.push(`Pago: ${datos.pago}`);
+    if (datos.comentario) filas.push(`Comentario: ${datos.comentario}`);
+    return filas.join('\n');
+  }
+
+  function completarDatosGuardados() {
+    const d = guardado.leer(CLAVES.datos, null);
+    if (!d) return;
+    if (d.nombre) $('#p-nombre').value = d.nombre;
+    if (d.direccion) $('#p-direccion').value = d.direccion;
+    if (d.entre) $('#p-entre').value = d.entre;
+    if (d.barrio) $('#p-barrio').value = d.barrio;
+    if (d.pago) { const r = $$('#p-pago input').find(x => x.value === d.pago); if (r) r.checked = true; }
+  }
+
+  /* ---------- Repetir mi último pedido ---------- */
+  function ultimoPedido() {
+    const u = guardado.leer(CLAVES.ultimo, null);
+    if (!u || !Array.isArray(u.items)) return null;
+    const items = u.items.filter(x => porId.has(x.id) && x.cant > 0);
+    return items.length ? { fecha: u.fecha, items } : null;
+  }
+  function pintarRepetir() {
+    const u = ultimoPedido();
+    $('#repetir').hidden = !u;
+    if (!u) return;
+    const n = u.items.reduce((a, x) => a + x.cant, 0);
+    let cuando = '';
+    try { const f = new Date(u.fecha); cuando = ` del ${f.getDate()}/${f.getMonth() + 1}`; } catch (e) {}
+    const nombres = u.items.slice(0, 2).map(x => titulo(porId.get(x.id))).join(', ') + (u.items.length > 2 ? ' y más' : '');
+    $('#repetir-texto').textContent = `Tu último pedido${cuando}: ${nombres} (${n} ${n === 1 ? 'producto' : 'productos'}).`;
+  }
+  function repetirPedido() {
+    const u = ultimoPedido(); if (!u) return;
+    carrito = new Map(u.items.map(x => [x.id, x.cant]));
+    guardarCarrito();
+    PRODUCTOS.forEach(p => actualizarTarjeta(p.id));
+    abrirCarrito();
+    avisar('Cargamos tu último pedido');
+  }
+
+  /* =================== TURNOS =================== */
+  const fechaISO = d => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+  const desdeISO = s => { const [y, m, d] = s.split('-').map(Number); return new Date(y, m - 1, d); };
+  const atiende = (dia, franja) => franjasDe(dia).some(([a, b]) => franja === 'mañana' ? a < 14 * 60 : b > 14 * 60);
+
+  function enviarTurno(ev) {
+    ev.preventDefault();
+    const form = $('#form-turno');
+    limpiarErroresTurno();
+    const datos = Object.fromEntries(new FormData(form).entries());
+    for (const k of Object.keys(datos)) datos[k] = String(datos[k]).trim();
+    const errores = [];
+    if (!datos.nombre) errores.push([$('#t-nombre'), 'Poné tu nombre.']);
+    if (!datos.mascota) errores.push([$('#t-mascota'), '¿Cómo se llama tu mascota?']);
+    if (!datos.especie) errores.push([$('#t-especie'), 'Elegí la especie.']);
+    if (!datos.motivo) errores.push([$('#t-motivo'), 'Elegí el motivo.']);
+    if (!datos.dia) errores.push([$('#t-dia'), 'Elegí un día.']);
+    else {
+      const f = desdeISO(datos.dia);
+      const hoy = desdeISO(fechaISO(new Date()));
+      if (f < hoy) errores.push([$('#t-dia'), 'Elegí un día de hoy en adelante.']);
+      else if (!franjasDe(f.getDay()).length) errores.push([$('#t-dia'), `Los ${plural(f.getDay())} está cerrado. Elegí otro día.`]);
+      else if (datos.franja && !atiende(f.getDay(), datos.franja)) errores.push([$('#t-franja'), `Los ${plural(f.getDay())} atendemos solo a la ${datos.franja === 'tarde' ? 'mañana' : 'tarde'}.`]);
+    }
+    if (!datos.franja) errores.push([$('#t-franja'), 'Elegí mañana o tarde.']);
+    if (errores.length) {
+      errores.forEach(([c, m]) => marcarError(c, m));
+      const primero = errores[0][0];
+      (primero.tagName === 'FIELDSET' ? primero.querySelector('input') : primero).focus();
+      return;
+    }
+    abrirWhatsApp(waLink(armarMensajeTurno(datos)));
+  }
+
+  function armarMensajeTurno(d) {
+    const f = desdeISO(d.dia);
+    const dia = `${DIAS[f.getDay()]} ${f.getDate()}/${f.getMonth() + 1}`;
+    const filas = [
+      'Hola Don Gato! Quiero pedir un turno 🐾',
+      `Nombre: ${d.nombre}`,
+      `Mascota: ${d.mascota} (especie: ${d.especie.toLowerCase()})`,
+      `Motivo: ${d.motivo}`,
+      `Día preferido: ${dia} – turno ${d.franja}`
+    ];
+    if (d.comentario) filas.push(`Comentario: ${d.comentario}`);
+    return filas.join('\n');
+  }
+
+  /* =================== Secciones armadas desde CONFIG =================== */
+  function pintarEspecies() {
+    $('#especies-botones').innerHTML = ESPECIES.map(e => `<button class="especie" type="button" data-especie="${e.id}" aria-pressed="false"><span class="especie__emoji" aria-hidden="true">${e.emoji}</span>${esc(e.nombre)}</button>`).join('');
+  }
+  function pintarPromo() {
+    const pr = CONFIG.promo;
+    if (!pr || !pr.activa) return;
+    $('#promo').hidden = false;
+    $('#titulo-promo').textContent = pr.titulo;
+    $('#promo-texto').textContent = pr.texto;
+    $('#promo-lista').innerHTML = (pr.detalle || []).map(x => `<li>${esc(x)}</li>`).join('');
+    $('#promo-letra').textContent = pr.letraChica || '';
+    $('#promo-consultar').href = waLink(pr.mensaje);
+  }
+  function pintarServicios() {
+    $('#servicios').innerHTML = CONFIG.servicios.filter(s => s.confirmado).map(s => `
+      <article class="servicio"><span class="servicio__icono" aria-hidden="true">${s.icono}</span><div><h3>${esc(s.nombre)}</h3>${s.texto ? `<p>${esc(s.texto)}</p>` : ''}</div></article>`).join('');
+    const u = CONFIG.urgencias;
+    if (u && u.texto) { $('#urgencias').hidden = false; $('#urgencias').innerHTML = `<span aria-hidden="true">🚑</span> ${esc(u.texto)}${u.telefono ? `: <a href="tel:${esc(u.telefono.replace(/[^\d+]/g, ''))}">${esc(u.telefono)}</a>` : ''}`; }
+  }
+  function pintarFAQ() {
+    const env = CONFIG.envio;
+    const pagos = Array.isArray(CONFIG.pagos) && CONFIG.pagos.length ? CONFIG.pagos : null;
+    const lista = [
+      ['¿El envío tiene costo?', 'No, el envío a domicilio es sin cargo.' + (env.zona ? ` Llegamos a ${env.zona}.` : ' Pasanos tu dirección y te confirmamos si llegamos.') + (Number(env.minimo) > 0 ? ` Es para compras desde ${plata(Number(env.minimo))}.` : '')],
+      ['¿Cuánto tarda el envío?', env.demora ? `${env.demora} Hacé el pedido por WhatsApp y coordinamos el horario.` : 'Te lo confirmamos por WhatsApp cuando hacés el pedido.'],
+      ['¿Cómo pago?', pagos ? `Podés pagar con ${pagos.slice(0, -1).join(', ').toLowerCase()}${pagos.length > 1 ? ' o ' : ''}${pagos[pagos.length - 1].toLowerCase()}.` : 'Cuando nos mandás el pedido te contamos las formas de pago y lo coordinamos por WhatsApp.'],
+      ['¿Cómo pido turno?', 'Desde el formulario de turnos de esta página o escribiéndonos por WhatsApp. Te confirmamos el día y el horario por ahí.'],
+      CONFIG.urgencias && CONFIG.urgencias.texto ? ['¿Atienden urgencias?', CONFIG.urgencias.texto + (CONFIG.urgencias.telefono ? `. Número: ${CONFIG.urgencias.telefono}.` : '.')] : null, // [COMPLETAR] en CONFIG.urgencias
+      ['¿Atienden aves, conejos y otros animales?', 'Sí, también trabajamos con aves, roedores, peces y más. Perros, gatos, gallinas, conejos, loros, erizos, hámsters y peces: 🐕🐈🐓🐇🦜🦔🐀🐠']
+    ].filter(Boolean);
+    $('#faq').innerHTML = lista.map(([q, a]) => `<details><summary>${esc(q)}</summary><p class="respuesta">${esc(a)}</p></details>`).join('');
+    $('#paso-envio').textContent = env.demora ? `${env.demora} Sin costo de envío.` : 'Lo coordinamos por WhatsApp y te lo llevamos a tu casa.';
+  }
+
+  /* =================== Eventos =================== */
+  function eventos() {
+    // Altura real de la cabecera (para que los saltos no queden tapados)
+    const cab = $('#cabecera');
+    const medir = () => document.documentElement.style.setProperty('--alto-cabecera', cab.offsetHeight + 'px');
+    medir();
+    if ('ResizeObserver' in window) new ResizeObserver(medir).observe(cab); else window.addEventListener('resize', medir);
+
+    // Sumar / restar (tarjetas y carrito)
+    document.addEventListener('click', ev => {
+      const b = ev.target.closest('[data-accion]');
+      if (!b) return;
+      cambiarCantidad(b.dataset.id, b.dataset.accion === 'sumar' ? 1 : -1, { silencio: !!b.closest('#carrito') && b.dataset.accion === 'sumar' });
+    });
+
+    // Filtros
+    $('#chips-especie').addEventListener('click', ev => { const b = ev.target.closest('[data-especie]'); if (b) filtrar({ especie: b.dataset.especie, categoria: 'todas' }); });
+    $('#chips-categoria').addEventListener('click', ev => { const b = ev.target.closest('[data-categoria]'); if (b) filtrar({ categoria: b.dataset.categoria }); });
+    $('#especies-botones').addEventListener('click', ev => { const b = ev.target.closest('[data-especie]'); if (!b) return; $('#buscar').value = ''; filtrar({ especie: b.dataset.especie, categoria: 'todas', busqueda: '' }, { scroll: true }); });
+    $('#limpiar').addEventListener('click', () => { $('#buscar').value = ''; filtrar({ especie: 'todas', categoria: 'todas', busqueda: '' }); });
+    $('#ver-mas').addEventListener('click', () => {
+      const antes = estado.visibles;
+      estado.visibles += POR_PAGINA; pintarCatalogo();
+      const nueva = $$('#grilla .card')[antes];
+      if (nueva) { const b = $('button, a', nueva); if (b) b.focus({ preventScroll: true }); }
+    });
+
+    // Buscador de la cabecera
+    let timer, yaBajo = false;
+    $('#buscar').addEventListener('input', ev => {
+      clearTimeout(timer);
+      timer = setTimeout(() => {
+        filtrar({ busqueda: ev.target.value, categoria: 'todas' });
+        const r = $('#tienda').getBoundingClientRect();
+        if (!yaBajo && (r.top > window.innerHeight * .6 || r.bottom < 0)) { yaBajo = true; $('#tienda').scrollIntoView({ block: 'start' }); }
+        if (!ev.target.value) yaBajo = false;
+      }, 180);
+    });
+    $('#form-buscar').addEventListener('submit', ev => {
+      ev.preventDefault(); clearTimeout(timer);
+      filtrar({ busqueda: $('#buscar').value, categoria: 'todas' }, { scroll: true });
+      $('#buscar').blur();
+    });
+
+    // Promo
+    $('#promo-ver').addEventListener('click', () => { $('#buscar').value = CONFIG.promo.buscar || ''; filtrar({ especie: 'todas', categoria: 'todas', busqueda: CONFIG.promo.buscar || '' }, { scroll: true }); });
+
+    // Carrito
+    $('#abrir-carrito').addEventListener('click', abrirCarrito);
+    $('#barra-pedido').addEventListener('click', abrirCarrito);
+    $('#carrito').addEventListener('click', ev => { if (ev.target.closest('[data-cerrar]')) cerrarCarrito(); if (ev.target.closest('[data-ir-tienda]')) { cerrarCarrito(); $('#tienda').scrollIntoView(); } });
+    document.addEventListener('keydown', ev => {
+      if ($('#carrito').hidden) return;
+      if (ev.key === 'Escape') { ev.preventDefault(); cerrarCarrito(); return; }
+      if (ev.key === 'Tab') {
+        const f = enfocables($('#carrito-panel')); if (!f.length) return;
+        const primero = f[0], ultimo = f[f.length - 1];
+        if (ev.shiftKey && (document.activeElement === primero || document.activeElement === $('#carrito-panel'))) { ev.preventDefault(); ultimo.focus(); }
+        else if (!ev.shiftKey && document.activeElement === ultimo) { ev.preventDefault(); primero.focus(); }
+      }
+    });
+    $('#vaciar').addEventListener('click', () => { carrito.clear(); guardarCarrito(); PRODUCTOS.forEach(p => actualizarTarjeta(p.id)); pintarCarrito(); avisar('Vaciaste el pedido'); $('#carrito-panel').focus(); });
+    $('#form-pedido').addEventListener('submit', enviarPedido);
+    $('#repetir-boton').addEventListener('click', repetirPedido);
+
+    // Turnos
+    $('#form-turno').addEventListener('submit', enviarTurno);
+    ['#t-nombre', '#t-mascota', '#t-especie', '#t-dia', '#p-nombre', '#p-direccion', '#p-barrio'].forEach(s => $(s).addEventListener('input', ev => { ev.target.removeAttribute('aria-invalid'); const e = ev.target.parentElement.querySelector('.campo__error'); if (e) e.hidden = true; }));
+    $$('fieldset.opciones').forEach(fs => fs.addEventListener('change', () => { fs.removeAttribute('aria-invalid'); const e = document.getElementById(fs.getAttribute('aria-describedby')); if (e) e.hidden = true; }));
+
+    // Si el carrito cambia en otra pestaña
+    window.addEventListener('storage', ev => {
+      if (ev.key !== CLAVES.carrito) return;
+      carrito = new Map((guardado.leer(CLAVES.carrito, []) || []).filter(x => porId.has(x.id)).map(x => [x.id, x.cant]));
+      PRODUCTOS.forEach(p => actualizarTarjeta(p.id)); pintarCarrito();
+    });
+  }
+
+  /* =================== Inicio =================== */
+  function iniciar() {
+    pintarHorarios();
+    pintarEstado();
+    setInterval(pintarEstado, 60 * 1000);
+    pintarEspecies();
+    pintarPromo();
+    pintarServicios();
+    pintarFAQ();
+    opcionesPago();
+    completarDatosGuardados();
+    pintarCatalogo();
+    pintarCarrito();
+    pintarRepetir();
+    const hoy = new Date();
+    $('#t-dia').min = fechaISO(hoy);
+    $('#t-dia-ayuda').textContent = gruposHorario().map(g => `${g.nombre}: ${g.texto.toLowerCase()}`).join(' · ');
+    $('#anio').textContent = hoy.getFullYear();
+    // Mapa y "Cómo llegar" salen de CONFIG.direccionMapa
+    $('#como-llegar').href = 'https://www.google.com/maps/dir/?api=1&destination=' + encodeURIComponent(CONFIG.direccionMapa);
+    const mapa = $('.mapa iframe');
+    try { if (new URL(mapa.src).searchParams.get('q') !== CONFIG.direccionMapa) mapa.src = 'https://www.google.com/maps?q=' + encodeURIComponent(CONFIG.direccionMapa) + '&z=16&output=embed'; } catch (e) {}
+    eventos();
+  }
+  iniciar();
+})();
+</script>
+</body>
+</html>
