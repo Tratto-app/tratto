@@ -62,4 +62,4 @@ python3 dongato/tools/archivo-unico.py           # rearma dongato-muestra.html
 11. Vigencia de la promo del mes.
 12. Confirmar los días y horarios (salen de su historia "Nuestros horarios").
 13. Código postal (WhatsApp dice B1866; Google, B1880/B1884).
-14. Dominio: reemplazar `[DOMINIO]` en el `<head>`.
+14. Dominio propio (hoy está en https://dongatobegui.vercel.app).
