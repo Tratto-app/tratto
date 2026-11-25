@@ -1,0 +1,147 @@
+[
+ {
+  "efecto": "tic",
+  "t": 0.8,
+  "db": -18
+ },
+ {
+  "efecto": "tic",
+  "t": 1.9,
+  "db": -18
+ },
+ {
+  "efecto": "sello",
+  "t": 2.72,
+  "db": -18
+ },
+ {
+  "efecto": "latigazo",
+  "t": 2.87,
+  "db": -19
+ },
+ {
+  "efecto": "apagado",
+  "t": 4.54,
+  "db": -13
+ },
+ {
+  "efecto": "golpe",
+  "t": 4.79,
+  "db": -17
+ },
+ {
+  "efecto": "latigazo",
+  "t": 5.71,
+  "db": -19
+ },
+ {
+  "efecto": "pinchazo",
+  "t": 6.8,
+  "db": -22
+ },
+ {
+  "efecto": "crujido",
+  "t": 8.09,
+  "db": -13
+ },
+ {
+  "efecto": "crujido",
+  "t": 8.49,
+  "db": -15
+ },
+ {
+  "efecto": "latigazo",
+  "t": 10.04,
+  "db": -19
+ },
+ {
+  "efecto": "tic",
+  "t": 10.82,
+  "db": -16
+ },
+ {
+  "efecto": "tic",
+  "t": 10.98,
+  "db": -16
+ },
+ {
+  "efecto": "tic",
+  "t": 11.14,
+  "db": -16
+ },
+ {
+  "efecto": "tic",
+  "t": 11.3,
+  "db": -16
+ },
+ {
+  "efecto": "tic",
+  "t": 11.46,
+  "db": -16
+ },
+ {
+  "efecto": "fuego",
+  "t": 12.24,
+  "db": -14
+ },
+ {
+  "efecto": "ladrido",
+  "t": 12.59,
+  "db": -13
+ },
+ {
+  "efecto": "ladrido",
+  "t": 12.89,
+  "db": -14
+ },
+ {
+  "efecto": "latigazo",
+  "t": 13.49,
+  "db": -19
+ },
+ {
+  "efecto": "pinchazo",
+  "t": 13.84,
+  "db": -18
+ },
+ {
+  "efecto": "golpe",
+  "t": 14.39,
+  "db": -12
+ },
+ {
+  "efecto": "pop",
+  "t": 16.26,
+  "db": -16
+ },
+ {
+  "efecto": "campanita",
+  "t": 16.46,
+  "db": -18
+ },
+ {
+  "efecto": "latigazo",
+  "t": 19.16,
+  "db": -19
+ },
+ {
+  "efecto": "acierto",
+  "t": 19.76,
+  "db": -17
+ },
+ {
+  "efecto": "latigazo",
+  "t": 20.66,
+  "db": -19
+ },
+ {
+  "efecto": "ladrido",
+  "t": 22.76,
+  "db": -15
+ },
+ {
+  "efecto": "golpe",
+  "t": 23.96,
+  "db": -14
+ }
+]
