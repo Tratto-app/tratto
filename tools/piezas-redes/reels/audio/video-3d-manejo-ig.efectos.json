@@ -1,0 +1,112 @@
+[
+ {
+  "efecto": "motor",
+  "t": 0.2,
+  "db": -24
+ },
+ {
+  "efecto": "latigazo",
+  "t": 3.19,
+  "db": -19
+ },
+ {
+  "efecto": "frenada",
+  "t": 4.99,
+  "db": -18
+ },
+ {
+  "efecto": "golpe",
+  "t": 5.29,
+  "db": -15
+ },
+ {
+  "efecto": "latigazo",
+  "t": 6.72,
+  "db": -19
+ },
+ {
+  "efecto": "chapa",
+  "t": 8.54,
+  "db": -12
+ },
+ {
+  "efecto": "falla",
+  "t": 8.69,
+  "db": -17
+ },
+ {
+  "efecto": "falla",
+  "t": 9.59,
+  "db": -18
+ },
+ {
+  "efecto": "latigazo",
+  "t": 10.09,
+  "db": -19
+ },
+ {
+  "efecto": "bocina",
+  "t": 11.37,
+  "db": -15
+ },
+ {
+  "efecto": "bocina",
+  "t": 11.92,
+  "db": -16
+ },
+ {
+  "efecto": "bocina",
+  "t": 12.47,
+  "db": -15
+ },
+ {
+  "efecto": "bocina",
+  "t": 13.07,
+  "db": -17
+ },
+ {
+  "efecto": "latigazo",
+  "t": 13.67,
+  "db": -19
+ },
+ {
+  "efecto": "pop",
+  "t": 17.12,
+  "db": -16
+ },
+ {
+  "efecto": "campanita",
+  "t": 17.32,
+  "db": -18
+ },
+ {
+  "efecto": "latigazo",
+  "t": 19.65,
+  "db": -19
+ },
+ {
+  "efecto": "acierto",
+  "t": 22.15,
+  "db": -16
+ },
+ {
+  "efecto": "latigazo",
+  "t": 22.45,
+  "db": -19
+ },
+ {
+  "efecto": "tic",
+  "t": 23.45,
+  "db": -14
+ },
+ {
+  "efecto": "tic",
+  "t": 23.7,
+  "db": -14
+ },
+ {
+  "efecto": "golpe",
+  "t": 25.95,
+  "db": -14
+ }
+]
